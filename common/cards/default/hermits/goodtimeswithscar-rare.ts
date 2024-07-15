@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import RevivedByDeathloopStatusEffect from '../../../status-effects/revived-by-deathloop'
 
 class GoodTimesWithScarRareHermitCard extends Card {
 	props: Hermit = {
@@ -37,47 +38,47 @@ class GoodTimesWithScarRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		let reviveReady = false
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (attack.attacker?.entity !== component.entity) return
 			// If this component is not blocked from reviving, make possible next turn
-			if (!hasStatusEffect(game, component, 'revived-by-deathloop')) {
+			if (!component.hasStatusEffect(RevivedByDeathloopStatusEffect)) {
 				reviveReady = true
 			}
 		})
 
 		// Add before so health can be checked reliably
 		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => {
-			const targetInstance = attack.getTarget()?.row.hermitCard
-			if (!targetInstance) return
 			if (!reviveReady) return
 
 			reviveReady = false
-
-			const row = attack.getTarget()?.row
+			const row = attack.target
 			if (!row || row.health === null || row.health > 0) return
+			const target = row.getHermit()
+			if (!target) return
 
 			row.health = 50
 
-			game.state.statusEffects.forEach((ail) => {
-				if (
-					ail.targetInstance.instance === targetInstance.instance &&
-					['normal', 'damage'].includes(ail.props.type)
-				) {
-					removeStatusEffect(game, pos, ail)
-				}
-			})
+			game.components
+				.filter(
+					StatusEffectComponent,
+					(game, effect) =>
+						effect.target?.entity === target.entity &&
+						effect.statusEffect.props.id === 'revived_by_deathloop'
+				)
+				.forEach((effect) => effect.remove())
 
 			game.battleLog.addEntry(
-				player.id,
-				`Using $vDeathloop$, $p${row.hermitCard.props.name}$ revived with $g50hp$`
+				player.entity,
+				`Using $vDeathloop$, $p${target.props.name}$ revived with $g50hp$`
 			)
 
-			// Prevents hermits from being revived more than once by Deathloop
-			applyStatusEffect(game, 'revived-by-deathloop', component)
+			game.components
+				.new(StatusEffectComponent, RevivedByDeathloopStatusEffect)
+				.apply(component.entity)
 		})
 	}
 

@@ -11,7 +11,7 @@ import MuseumCollectionStatusEffect from './museum-collection'
 import SmeltingStatusEffect from './smelting'
 import MelodyStatusEffect from './melody'
 import UsedClockStatusEffect from './used-clock'
-import RevivedByDeathloopStatusEffect from './revived-by-deathloop'
+import RevivedByDeathloopStatusEffect from './revived_by_deathloop'
 import BetrayedStatusEffect from './betrayed'
 import SheepStareStatusEffect from './sheep-stare'
 import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-ping'
@@ -42,11 +42,13 @@ const effectClasses: Array<new () => StatusEffect> = [
 	InvisibilityPotionTailsStatusEffect,
 ]
 
-export const STATUS_EFFECTS: Record<string, StatusEffect> =
-	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
+export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
+	(result: Record<string, StatusEffect>, effectClass) => {
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect
 		result[effect.props.id] = effect
 		return result
-	}, {})
+	},
+	{}
+)
