@@ -8,7 +8,6 @@ import {getPlayerStateById} from 'logic/game/game-selectors'
 import Attack from './attack'
 import {Hermit, isHermit} from 'common/cards/base/types'
 import {CARDS} from 'common/cards'
-import {LocalCardInstance} from 'common/types/server-requests'
 import Card from 'common/cards/base/card'
 
 type HermitExtra = {
@@ -34,9 +33,9 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!opponentRow || !opponentRow.hermit) return null
 
 	const playerHermitInfo = activeRow.hermit
-	if (!isHermit(playerHermitInfo.props)) return null
+	if (!playerHermitInfo.card || !isHermit(playerHermitInfo.card.props)) return null
 
-	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
+	const hermitFullName = playerHermitInfo.card.props.id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce(
 		(agg, extra) => {
@@ -86,7 +85,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 				</div>
 				<div className={css.info}>
 					<div className={css.name}>
-						{playerHermitInfo.props.secondary.name}
+						{playerHermitInfo.card.props.secondary.name}
 						<span className={css.select}> Select a hermit...</span>
 					</div>
 					<button className={css.hermitOptions}>{hermitOptions}</button>

@@ -16,11 +16,11 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {PickInfo} from 'common/types/server-requests'
+import {SlotInfo} from 'common/types/server-requests'
 import {endTurnModalEmpty} from '../modals/end-turn-modal'
 
 type Props = {
-	onClick: (pickInfo: PickInfo) => void
+	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
 	id?: string
 }
@@ -31,7 +31,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const playerState = useSelector(getPlayerState)
 	const playerId = useSelector(getPlayerId)
 	const boardState = currentPlayer?.board
-	const singleUseCard = boardState?.singleUseCard || null
+	const singleUse = boardState?.singleUse || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
@@ -91,18 +91,20 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 		const handleClick = () => {
 			isPlayable &&
+				boardState &&
 				onClick({
-					type: 'single_use',
-					index: null,
-					rowIndex: null,
-					playerId: localGameState.turn.currentPlayerId,
-					card: singleUseCard,
+					entity: boardState?.singleUse.slot,
 				})
 		}
 
 		return (
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
-				<Slot card={singleUseCard} type={'single_use'} onClick={handleClick} playerId={playerId} />
+				<Slot
+					card={boardState?.singleUse.card || null}
+					type={'single_use'}
+					onClick={handleClick}
+					entity={singleUse?.slot}
+				/>
 			</div>
 		)
 	}

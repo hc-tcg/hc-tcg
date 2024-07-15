@@ -1,6 +1,6 @@
 import {LocalGameState, Message} from 'common/types/game-state'
 import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
-import {LocalCardInstance, ModalResult, PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, ModalResult, SlotInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -36,9 +36,9 @@ export const setOpenedModal = (id: string | null, info: any = null) => ({
 	payload: id === null ? null : {id, info},
 })
 
-export const slotPicked = (pickInfo: PickInfo) => ({
+export const slotPicked = (slotInfo: SlotInfo) => ({
 	type: 'SLOT_PICKED' as const,
-	payload: {pickInfo},
+	payload: {slotInfo},
 })
 
 export const forfeit = () => ({

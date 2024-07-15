@@ -1,4 +1,3 @@
-import {StatusEffectComponent} from 'common/types/game-state'
 import css from './board.module.scss'
 import StatusEffect from 'components/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'

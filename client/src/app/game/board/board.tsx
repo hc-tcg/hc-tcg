@@ -8,15 +8,14 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
 
 type Props = {
-	onClick: (pickInfo: PickInfo) => void
+	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
 }
 
-// TODO - Don't allow clicking on slots on the other side
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, localGameState}: Props) {
 	const settings = useSelector(getSettings)
@@ -27,11 +26,12 @@ function Board({onClick, localGameState}: Props) {
 	const leftPlayer = side === 'Left' ? player : opponent
 	const rightPlayer = side === 'Right' ? player : opponent
 
-	const handleRowClick = (entity: SlotEntity, type: SlotTypeT) => {
-		onClick({
-			entity,
-			type,
-		})
+	const handleRowClick = (
+		entity: SlotEntity,
+		slotType: SlotTypeT,
+		card: LocalCardInstance | null
+	) => {
+		onClick({slotEntity: entity, slotType: slotType, card: card})
 	}
 
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {

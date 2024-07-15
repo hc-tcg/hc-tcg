@@ -27,9 +27,10 @@ export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEf
 	readonly counter: number | null
 }
 
-export type PickInfo = {
-	entity: SlotEntity
-	type: SlotTypeT
+export type SlotInfo = {
+	slotEntity: SlotEntity
+	slotType: SlotTypeT
+	card: LocalCardInstance | null
 }
 
 export type PickRequest = {

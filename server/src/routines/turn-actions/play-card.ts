@@ -8,9 +8,9 @@ function* playCardSaga(
 	turnAction: PlayCardActionData
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
-	const pickInfo = turnAction?.payload?.pickInfo
+	const slotEntity = turnAction?.payload?.slot
 	const localCard = turnAction?.payload?.card
-	if (!pickInfo || !localCard) {
+	if (!slotEntity || !localCard) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
@@ -18,7 +18,7 @@ function* playCardSaga(
 
 	const {currentPlayer} = game
 
-	const pickedSlot = game.components.get(pickInfo.entity)
+	const pickedSlot = game.components.get(slotEntity)
 	if (!pickedSlot || !pickedSlot.onBoard()) {
 		throw new Error('A slot that is not on the board can not be picked: ' + pickedSlot)
 	}

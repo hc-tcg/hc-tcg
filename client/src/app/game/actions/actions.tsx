@@ -16,17 +16,17 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {PickInfo} from 'common/types/server-requests'
+import {SlotInfo} from 'common/types/server-requests'
 import {endTurnModalEmpty} from '../modals/end-turn-modal'
 
 type Props = {
-	onClick: (pickInfo: PickInfo) => void
+	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, mobile, id}: Props) => {
+const Actions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
@@ -95,7 +95,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			isPlayable &&
 				boardState &&
 				onClick({
-					type: 'single_use',
 					entity: boardState?.singleUse.slot,
 				})
 		}

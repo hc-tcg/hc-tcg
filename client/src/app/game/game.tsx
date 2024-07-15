@@ -24,14 +24,13 @@ import {
 	getEndGameOverlay,
 	getAvailableActions,
 	getPickRequestPickableSlots,
-    getCardsCanBePlacedIn,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
 import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
-import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -83,7 +82,7 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickInfo: PickInfo) => {
+	const handleBoardClick = (pickInfo: SlotInfo) => {
 		console.log('Slot selected: ', pickInfo)
 		dispatch(slotPicked(pickInfo))
 	}
@@ -98,9 +97,7 @@ function Game() {
 			const actionData: PickSlotActionData = {
 				type: 'PICK_REQUEST',
 				payload: {
-					pickResult: {
-						entity: card.slot,
-					},
+					entity: card.slot,
 				},
 			}
 
@@ -213,11 +210,11 @@ function Game() {
 	let unpickableCards: Array<LocalCardInstance> = []
 	const pickableCards = pickRequestPickableSlots
 		?.filter((slot) => slot.slotType === 'hand')
-		.map((slot) => slot.cardEntity)
+		.map((slot) => slot.card)
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card.entity)) unpickableCards.push(card)
+			if (!pickableCards.includes(card)) unpickableCards.push(card)
 		}
 	}
 

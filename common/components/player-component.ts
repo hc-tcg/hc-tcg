@@ -7,7 +7,7 @@ import type {
 	RowEntity,
 	TurnActions,
 } from '../types/game-state'
-import type {PickInfo} from '../types/server-requests'
+import type {SlotInfo} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
@@ -32,8 +32,8 @@ export class PlayerComponent {
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
 
-	pickableSlots: Array<PickInfo> | null
-	cardsCanBePlacedIn: Array<[CardComponent, Array<PickInfo>]>
+	pickableSlots: Array<SlotInfo> | null
+	cardsCanBePlacedIn: Array<[CardComponent, Array<SlotInfo>]>
 
 	activeRowEntity: RowEntity | null
 

@@ -7,7 +7,7 @@ import type {
 	LocalStatusEffectInstance,
 	ModalData,
 	ModalRequest,
-	PickInfo,
+	SlotInfo,
 	PickRequest,
 } from './server-requests'
 import type {
@@ -194,8 +194,8 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<PickInfo>]> | null
-	currentPickableSlots: Array<PickInfo> | null
+	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotInfo>]> | null
+	currentPickableSlots: Array<SlotInfo> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 
@@ -208,7 +208,7 @@ export type LocalGameState = {
 }
 
 export type Message = {
-	sender: PlayerEntity
+	sender: PlayerId
 	systemMessage: boolean
 	message: FormattedTextNode
 	createdAt: number

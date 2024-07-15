@@ -1,12 +1,12 @@
 import {GameModel} from 'common/models/game-model'
 import {ActionResult} from 'common/types/game-state'
-import {PickInfo} from 'common/types/server-requests'
+import {SlotInfo} from 'common/types/server-requests'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
 import {CardComponent} from 'common/components'
 
-function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
+function* pickRequestSaga(game: GameModel, pickResult?: SlotInfo): Generator<any, ActionResult> {
 	// First validate data sent from client
 	if (!pickResult || !pickResult.playerId) return 'FAILURE_INVALID_DATA'
 	if (pickResult.index === undefined || !pickResult.type) return 'FAILURE_INVALID_DATA'

@@ -19,7 +19,7 @@ const getSlotByLocation = (
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	onClick: (entity: SlotEntity, type: SlotTypeT) => void
+	onClick: (entity: SlotEntity, type: SlotTypeT, card: LocalCardInstance | null) => void
 	rowState: LocalRowState
 	active: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
@@ -34,7 +34,7 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 		return (
 			<Slot
 				cssId={cssId}
-				onClick={() => onClick(slot.slot, slotType)}
+				onClick={() => onClick(slot.slot, slotType, slot.card)}
 				card={slot.card}
 				entity={slot.slot}
 				rowState={rowState}

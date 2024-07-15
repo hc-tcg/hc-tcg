@@ -1,7 +1,7 @@
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
-import {AttackAction, PlayCardAction} from './game-state'
-import {LocalCardInstance, PickInfo} from './server-requests'
+import {AttackAction, PlayCardAction, SlotEntity} from './game-state'
+import {LocalCardInstance} from './server-requests'
 
 export const slotToPlayCardAction: Record<CardCategoryT, PlayCardAction | null> = {
 	hermit: 'PLAY_HERMIT_CARD',
@@ -25,7 +25,7 @@ export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
 export type PlayCardActionData = {
 	type: PlayCardAction
 	payload: {
-		pickInfo: PickInfo
+		slot: SlotEntity
 		card: LocalCardInstance
 	}
 }
@@ -33,7 +33,7 @@ export type PlayCardActionData = {
 export type ChangeActiveHermitActionData = {
 	type: 'CHANGE_ACTIVE_HERMIT'
 	payload: {
-		pickInfo: PickInfo
+		entity: SlotEntity
 	}
 }
 
@@ -47,7 +47,7 @@ export type AttackActionData = {
 export type PickSlotActionData = {
 	type: 'PICK_REQUEST'
 	payload: {
-		pickResult: PickInfo
+		entity: SlotEntity
 	}
 }
 

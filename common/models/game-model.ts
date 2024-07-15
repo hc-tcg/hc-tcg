@@ -11,12 +11,12 @@ import {getGameState, setupEcs} from '../utils/state-gen'
 import {
 	CopyAttack,
 	ModalRequest,
-	PickInfo,
+	SlotInfo,
 	PickRequest,
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {ComponentQuery, card, query, row, slot} from '../components/query'
+import {ComponentQuery, card, row, slot} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
@@ -111,7 +111,7 @@ export class GameModel {
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
 		const otherPlayer = this.components.findEntity(
 			PlayerComponent,
-			(game, otherPlayer) => player !== otherPlayer.entity
+			(_game, otherPlayer) => player !== otherPlayer.entity
 		)
 		if (!otherPlayer)
 			throw new Error('Can not query for other before because both player components are created')
@@ -266,7 +266,7 @@ export class GameModel {
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
 							CardComponent,
-							PickInfo[],
+							SlotInfo[],
 						]
 				)
 		}
@@ -339,7 +339,7 @@ export class GameModel {
 		})
 	}
 
-	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<PickInfo> {
+	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotInfo> {
 		return this.components.filter(SlotComponent, predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,

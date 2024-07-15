@@ -21,7 +21,7 @@ function AttackModal({closeModal}: Props) {
 	const availableActions = useSelector(getAvailableActions)
 	const playerId = useSelector(getPlayerId)
 	const playerState = useSelector(getPlayerStateById(playerId))
-	const singleUseCard = playerState?.board.singleUseCard
+	const singleUseCard = playerState?.board.singleUse.card
 
 	if (!activeRow || !playerState || !activeRow.hermit) return null
 	if (!opponentRow || !opponentRow.hermit) return null
