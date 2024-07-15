@@ -27,7 +27,7 @@ class FishingRodSingleUseCard extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			game.drawCards(player.entity, 2)
+			game.draw(player.entity, 2)
 			player.hooks.onApply.remove(component)
 		})
 	}

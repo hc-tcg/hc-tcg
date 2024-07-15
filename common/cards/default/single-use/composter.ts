@@ -54,7 +54,7 @@ class ComposterSingleUseCard extends Card {
 
 				applySingleUse(game, component.slot)
 
-				game.drawCards(player.entity, 2)
+				game.draw(player.entity, 2)
 			},
 		})
 	}
