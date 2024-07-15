@@ -34,21 +34,24 @@ class FalseSymmetryRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+			if (
+				!attack.isTargetting(component) ||
+				attack.type !== 'secondary' ||
+				!(attack.attacker instanceof CardComponent)
+			)
+				return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] === 'tails') return
 
 			// Heal 40hp
-			healHermit(pos.rowId, 40)
-			game.battleLog.addEntry(player.id, `$p${attacker.row.hermitCard.props.name}$ healed $g40hp$`)
+			component.slot.inRow() && component.slot.row.heal(40)
+			game.battleLog.addEntry(player.entity, `$p${this.props.name}$ healed $g40hp$`)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
