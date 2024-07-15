@@ -34,7 +34,7 @@ class EthosLabUltraRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.isTargetting(component) || attack.type !== 'secondary') return
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 			if (!(attack.attacker instanceof CardComponent)) return
 			if (!attack.attacker.slot.inRow()) return
 
