@@ -29,7 +29,7 @@ class FlintAndSteelSingleUseCard extends Card {
 
 		player.hooks.onApply.add(component, () => {
 			game.getHand(game.currentPlayer.entity).forEach((card) => card.discard())
-			game.drawCards(game.currentPlayer.entity, 3)
+			game.draw(game.currentPlayer.entity, 3)
 		})
 	}
 

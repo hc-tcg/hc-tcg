@@ -372,7 +372,7 @@ export class GameModel {
 	}
 
 	/**Draw cards from the top of a player's deck */
-	public drawCards(player: PlayerEntity, amount: number): void {
+	public draw(player: PlayerEntity, amount: number): void {
 		this.getDeck(player)
 			.sort(CardComponent.compareOrder)
 			.slice(0, amount)
