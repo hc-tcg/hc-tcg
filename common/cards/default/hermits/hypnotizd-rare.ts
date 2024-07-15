@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {HermitAttackType} from '../../../types/attack'
+import {query, slot} from '../../../components/query'
 import {PickRequest} from '../../../types/server-requests'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {CardComponent, SlotComponent} from '../../../components'
+import BetrayedStatusEffect from '../../../status-effects/betrayed'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -38,48 +39,41 @@ class HypnotizdRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent): void {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 		let target: SlotComponent | null = null
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
-			if (!target || target.rowIndex == null || !target.rowId) return
-
-			attack.setTarget(this.props.id, {
-				player: opponentPlayer,
-				rowIndex: target?.rowIndex,
-				row: target?.rowId as RowStateWithHermit,
-			})
-
+			if (!attack.isAttacker(component.entity) || !target?.inRow()) return
+			attack.setTarget(component.entity, target.row.entity)
 			target = null
 		})
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
 
-			const pickCondition = slot.every(
-				slot.player,
+			const pickCondition = query.every(
+				slot.currentPlayer,
 				slot.activeRow,
 				slot.itemSlot,
-				slot.not(slot.empty)
+				query.not(slot.empty)
 			)
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
-			if (hasStatusEffect(game, component, 'betrayed')) return
+			if (component.hasStatusEffect(BetrayedStatusEffect)) return
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
+
 			const itemRequest: PickRequest = {
 				playerId: player.id,
 				id: this.props.id,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.cardId) return
-					discardCard(game, pickedSlot.cardId)
+					pickedSlot.getCard()?.discard()
 				},
 				onTimeout() {
-					discardCard(game, game.findSlot(pickCondition)?.cardId || null)
+					game.components.find(SlotComponent, pickCondition)?.getCard()?.discard()
 				},
 			}
 
@@ -87,12 +81,13 @@ class HypnotizdRareHermitCard extends Card {
 				playerId: player.id,
 				id: this.props.id,
 				message: "Pick one of your opponent's Hermits",
-				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
+				canPick: query.every(slot.opponent, slot.hermitSlot, query.not(slot.empty)),
 				onResult: (pickedSlot) => {
+					if (!pickedSlot.inRow()) return
+					const targetingAfk = pickedSlot.rowEntity !== opponentPlayer.activeRowEntity
+
 					// Store the row index to use later
 					target = pickedSlot
-
-					const targetingAfk = pickedSlot.rowIndex !== opponentPlayer.board.activeRow
 
 					if (targetingAfk) {
 						// Add a second pick request to remove an item
@@ -103,7 +98,7 @@ class HypnotizdRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent): void {
+	override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 	}
