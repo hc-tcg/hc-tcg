@@ -23,12 +23,10 @@ class ChorusFruitSingleUseCard extends Card {
 			query.not(
 				query.exists(
 					SlotComponent,
-					query.every(
-						slot.currentPlayer,
-						slot.hermitSlot,
-						slot.activeRow,
-						slot.hasStatusEffect(SleepingStatusEffect)
-					)
+					slot.currentPlayer,
+					slot.hermitSlot,
+					slot.activeRow,
+					slot.hasStatusEffect(SleepingStatusEffect)
 				)
 			)
 		),
