@@ -19,7 +19,7 @@ class FishingRodSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.getHand(game.currentPlayer.entity).length > 2
+			(game, pos) => game.getDeck(game.currentPlayer.entity).length > 2
 		),
 	}
 

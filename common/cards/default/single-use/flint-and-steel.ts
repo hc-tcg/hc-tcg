@@ -20,7 +20,7 @@ class FlintAndSteelSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.getDiscarded(game.currentPlayer.entity).length > 3
+			(game, pos) => game.getHand(game.currentPlayer.entity).length > 3
 		),
 	}
 
