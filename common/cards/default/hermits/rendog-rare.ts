@@ -134,17 +134,6 @@ class RendogRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.onActiveRowChange.add(component, (oldHermit, newHermit) => {
-			if (oldHermit.entity !== newHermit.entity) {
-				// We switched away from ren, delete the imitating card
-				const imitatingCard = this.imitatingCard.get(component)
-				if (imitatingCard) {
-					// Detach the old card
-					// imitatingCard.card.onDetach(game, imitatingCard)
-				}
-			}
-		})
-
 		player.hooks.blockedActions.add(component, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
 			if (!game.components.exists(SlotComponent, this.pickCondition))
@@ -153,14 +142,8 @@ class RendogRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
-
-		// If the card we are imitating is still attached, detach it
-		const imitatingCard = this.imitatingCard.get(component)
-		if (imitatingCard) {
-			// imitatingCard.card.onDetach(game, imitatingCard, pos)
-		}
 
 		// Remove hooks and custom data
 		this.imitatingCard.clear(component)

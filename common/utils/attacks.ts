@@ -268,7 +268,7 @@ export function createMockedAttack(
 	)
 
 	// I am sorry the cleanup is like this!
-	game.currentPlayer.hooks.afterAttack.add(as, (hookAttack) => {
+	let hookProxy = game.currentPlayer.hooks.afterAttack.add(as, (hookAttack) => {
 		if (!hookAttack.isAttacker(attackFrom.entity)) return
 		as.attach(cardPosition)
 		attackFrom.attach(attackFromOriginalPosition)
@@ -280,7 +280,7 @@ export function createMockedAttack(
 				effect.targetEntity = as.entity
 			})
 
-		game.currentPlayer.hooks.afterAttack.remove(as)
+		game.currentPlayer.hooks.afterAttack.removeWithHookProxy(hookProxy)
 	})
 
 	return attack
