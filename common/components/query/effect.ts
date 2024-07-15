@@ -28,10 +28,10 @@ export function targetIs(
 	target: CardEntity | null | undefined
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		statusEffect.target !== null &&
+		statusEffect.targetEntity !== null &&
 		target !== null &&
 		target !== undefined &&
-		target == statusEffect.target.entity
+		target == statusEffect.targetEntity
 }
 
 export function type(type: StatusEffectProps['type']): ComponentQuery<StatusEffectComponent> {

@@ -249,39 +249,39 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	return weaknessAttack
 }
 
-/** Function to mock an attack from another hermit. */
-export function createMockedAttack(
+/** Create a mocked card that can be used to create a mocked attack. */
+export function setupMockedCard(
 	game: GameModel,
 	attackType: HermitAttackType,
 	attackFrom: CardComponent<Hermit>,
-	as: CardComponent<Hermit>
-): AttackModel | null {
+	as: CardComponent
+): CardComponent {
 	let cardPosition = as.slot
-	let attackFromOriginalPosition = attackFrom.slot
 
-	attackFrom.attach(cardPosition)
+	let mimickCard = game.components.new(
+		CardComponent,
+		attackFrom.card.props.id,
+		cardPosition.entity
+	) as CardComponent<Hermit>
 
-	let attack = attackFrom.card.getAttack(game, attackFrom, attackType)
-	let oldStausEffects = game.components.filterEntities(
-		StatusEffectComponent,
-		effect.targetIs(attackFrom.entity)
-	)
+	game.currentPlayer.hooks.getAttackRequests.call(mimickCard, attackType)
 
-	// I am sorry the cleanup is like this!
-	let hookProxy = game.currentPlayer.hooks.afterAttack.add(as, (hookAttack) => {
-		if (!hookAttack.isAttacker(attackFrom.entity)) return
-		as.attach(cardPosition)
-		attackFrom.attach(attackFromOriginalPosition)
+	// Add before is used so that when multiple attacks are being mimicked, we move the attacks back to
+	// the original hermit in the reverse order.
+	let moved = false
+	let proxy = game.currentPlayer.hooks.afterAttack.addBefore(mimickCard, (_hookAttack) => {
+		if (moved) return
+		moved = true
+		game.components.delete(mimickCard.entity)
 
 		game.components
-			.filter(StatusEffectComponent, effect.targetIs(attackFrom.entity))
+			.filter(StatusEffectComponent, effect.targetIs(mimickCard.entity))
 			.forEach((effect) => {
-				if (oldStausEffects.includes(effect.entity)) return
-				effect.targetEntity = as.entity
+				effect.apply(as.entity)
 			})
 
-		game.currentPlayer.hooks.afterAttack.removeWithHookProxy(hookProxy)
+		game.currentPlayer.hooks.afterAttack.removeWithHookProxy(proxy)
 	})
 
-	return attack
+	return mimickCard
 }

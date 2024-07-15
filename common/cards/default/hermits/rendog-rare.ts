@@ -6,7 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStandEffectCard from '../../alter-egos/effects/armor-stand'
-import {createMockedAttack} from '../../../utils/attacks'
+import {setupMockedCard} from '../../../utils/attacks'
 
 class RendogRareHermitCard extends Card {
 	props: Hermit = {
@@ -46,18 +46,18 @@ class RendogRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		component: CardComponent<Hermit>,
+		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	) {
 		if (hermitAttackType !== 'secondary') return super.getAttack(game, component, hermitAttackType)
 
 		const imitatingCard = this.imitatingCard.get(component)
 		const pickedAttack = this.pickedAttack.get(component)
-
+		
 		if (!imitatingCard?.isHermit()) return null
 		if (!pickedAttack) return null
 
-		let newAttack = createMockedAttack(game, pickedAttack, imitatingCard, component)
+		let newAttack = imitatingCard.card.getAttack(game, imitatingCard, pickedAttack)
 
 		if (!newAttack) return null
 
@@ -113,12 +113,11 @@ class RendogRareHermitCard extends Card {
 
 							// Store the chosen attack to copy
 							this.pickedAttack.set(component, modalResult.pick)
-
-							// Replace the hooks of the card we're imitating only if it changed
-							let imitatingCard = this.imitatingCard.get(component)
-							if (!imitatingCard || pickedCard?.props.id !== imitatingCard.props.id) {
-								this.imitatingCard.set(component, pickedCard)
-							}
+							if (pickedCard?.isHermit())
+								this.imitatingCard.set(
+									component,
+									setupMockedCard(game, modalResult.pick, pickedCard, component)
+								)
 
 							return 'SUCCESS'
 						},

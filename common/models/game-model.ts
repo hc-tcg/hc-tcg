@@ -12,7 +12,6 @@ import {getGameState, setupEcs} from '../utils/state-gen'
 import {
 	CopyAttack,
 	ModalRequest,
-	SlotInfo,
 	PickRequest,
 	SelectCards,
 } from '../types/server-requests'

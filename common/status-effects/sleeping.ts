@@ -31,7 +31,7 @@ class SleepingStatusEffect extends StatusEffect {
 		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
-			player.entity,
+			player.id,
 			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`
 		)
 

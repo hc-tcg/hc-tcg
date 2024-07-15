@@ -49,6 +49,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.card = CARDS[card] as Card<Props>
 		}
 		this.slotEntity = slot
+
+		if (this.slot.onBoard()) {
+			this.card.onAttach(this.game, this)
+			this.player?.hooks.onAttach.call(this)
+		}
 	}
 
 	static fromLocalCardInstance(
@@ -121,9 +126,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		let oldCard = component.getCard()
 		if (oldCard) oldCard.discard()
 
-		if (this.slot?.onBoard()) {
+		if (this.slot.onBoard()) {
 			this.card.onDetach(this.game, this)
-			this.player?.hooks.onDetach.call(this)
+			this.player.hooks.onDetach.call(this)
 		}
 
 		let oldPlayer = this.slot.player.entity
@@ -135,7 +140,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 		if (runAttach && component.onBoard()) {
 			this.card.onAttach(this.game, this)
-			this.player?.hooks.onAttach.call(this)
+			this.player.hooks.onAttach.call(this)
 		}
 	}
 
