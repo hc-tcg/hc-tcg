@@ -148,6 +148,8 @@ export function executeAttacks(
 
 		if (attack.nextAttacks.length > 0) {
 			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
+			let weaknessAttack = createWeaknessAttack(game, attack)
+			if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 			// Only want to block actions after first attack
 			withoutBlockingActions = true
 		}
