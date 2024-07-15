@@ -45,7 +45,7 @@ class WaterBucketEffectCard extends Card {
 		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick one of your Hermits',
 				canPick: query.every(slot.currentPlayer, slot.hermitSlot, query.not(slot.empty)),
 				onResult(pickedSlot) {
