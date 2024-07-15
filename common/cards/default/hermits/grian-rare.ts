@@ -104,13 +104,13 @@ class GrianRareHermitCard extends Card {
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
 					} else {
-						opponentAttachCard.discard()
+						opponentAttachCard.discard(component.player.entity)
 					}
 
 					return 'SUCCESS'
 				},
 				onTimeout() {
-					opponentAttachCard.discard()
+					opponentAttachCard.discard(component.player.entity)
 				},
 			})
 		})

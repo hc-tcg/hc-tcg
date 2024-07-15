@@ -21,7 +21,7 @@ import {
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type StatusEffect from '../status-effects/status-effect'
-import {CardEntity, SlotEntity} from '../types/game-state'
+import {CardEntity, PlayerEntity, SlotEntity} from '../types/game-state'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
 
@@ -118,6 +118,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached
 	 * to a board slot and is not currently on the player's side of the board. */
 	public attach(component: SlotComponent) {
+		let oldCard = component.getCard()
+		if (oldCard) oldCard.discard()
+
 		if (this.slot?.onBoard()) {
 			this.card.onDetach(this.game, this)
 			this.player?.hooks.onDetach.call(this)
@@ -136,14 +139,18 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 	}
 
-	// Move this card to the hand
-	public draw() {
-		this.attach(this.game.components.new(HandSlotComponent, this.slot.player.entity))
+	/** Move this card to the hand
+	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's hand if not specified.
+	 */
+	public draw(player?: PlayerEntity) {
+		this.attach(this.game.components.new(HandSlotComponent, player || this.slot.player.entity))
 	}
 
-	/** Move this card to the discard pile */
-	public discard() {
-		this.attach(this.game.components.new(DiscardSlotComponent, this.slot.player.entity))
+	/** Move this card to the discard pile.
+	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's discard pile if not specified.
+	 */
+	public discard(player?: PlayerEntity) {
+		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
 	}
 
 	public hasStatusEffect(statusEffect: new () => StatusEffect) {
