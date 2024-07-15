@@ -36,8 +36,8 @@ class SleepingStatusEffect extends StatusEffect {
 		)
 
 		player.hooks.onTurnStart.add(effect, () => {
-			if (!target.slot.inRow()) return
 			if (effect.counter !== null) effect.counter--
+			if (!target.slot.inRow()) return
 
 			if (effect.counter === 0) {
 				effect.remove()

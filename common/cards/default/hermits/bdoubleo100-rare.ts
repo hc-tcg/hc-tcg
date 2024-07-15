@@ -42,7 +42,7 @@ class BdoubleO100RareHermitCard extends Card {
 
 		player.hooks.onAttack.add(component, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(component.entity)
+			game.components.new(StatusEffectComponent, SleepingStatusEffect).apply()
 		})
 	}
 

@@ -3,6 +3,7 @@ import StatusEffect, {Counter, StatusEffectProps} from '../status-effects/status
 import {CardEntity, StatusEffectEntity} from '../types/game-state'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
+import {card, slot} from './query'
 
 let STATUS_EFFECTS: Record<any, StatusEffect>
 import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
@@ -42,14 +43,28 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		return this.game.components.get(this.targetEntity)
 	}
 
-	public apply(cardEntity: CardEntity | null | undefined) {
-		if (!cardEntity) return
-		let cardComponent = this.game.components.get(cardEntity)
-		if (!cardComponent) {
+	/** Apply a status effect to a specific card, or the active hermit if not specified */
+	public apply(cardEntity?: CardEntity | null) {
+		if (cardEntity === null) return
+		let target = null
+
+		if (cardEntity === undefined) {
+			target = this.game.components.find(
+				CardComponent,
+				card.currentPlayer,
+				card.active,
+				card.slot(slot.hermitSlot)
+			)
+		} else {
+			target = this.game.components.get(cardEntity)
+		}
+
+		if (!target) {
 			return
 		}
-		this.targetEntity = cardEntity
-		this.statusEffect.onApply(this.game, this, cardComponent)
+
+		this.targetEntity = target.entity
+		this.statusEffect.onApply(this.game, this, target)
 	}
 
 	public remove() {
