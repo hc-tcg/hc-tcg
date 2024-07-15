@@ -145,7 +145,7 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		this.pickedAttack.clear(component)
 		player.hooks.getAttackRequests.remove(component)
