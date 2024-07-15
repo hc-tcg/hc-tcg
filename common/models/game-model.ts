@@ -6,6 +6,7 @@ import {
 	TurnActions,
 	Message,
 	PlayerEntity,
+	SlotEntity,
 } from '../types/game-state'
 import {getGameState, setupEcs} from '../utils/state-gen'
 import {
@@ -266,7 +267,7 @@ export class GameModel {
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
 							CardComponent,
-							SlotInfo[],
+							SlotEntity[],
 						]
 				)
 		}
@@ -284,7 +285,13 @@ export class GameModel {
 
 		// Call before active row change hooks - if any of the results are false do not change
 		if (currentActiveRow) {
-			const results = player.hooks.beforeActiveRowChange.call(currentActiveRow?.index, newRow.index)
+			let oldHermit = currentActiveRow.getHermit()
+			let newHermit = newRow.getHermit()
+			if (!oldHermit || !newHermit)
+				throw new Error(
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+				)
+			const results = player.hooks.beforeActiveRowChange.call(oldHermit, newHermit)
 			if (results.includes(false)) return false
 		}
 
@@ -308,7 +315,13 @@ export class GameModel {
 
 		// Call on active row change hooks
 		if (currentActiveRow) {
-			player.hooks.onActiveRowChange.call(currentActiveRow.index, newRow.index)
+			let oldHermit = currentActiveRow.getHermit()
+			let newHermit = newRow.getHermit()
+			if (!oldHermit || !newHermit)
+				throw new Error(
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+				)
+			player.hooks.onActiveRowChange.call(oldHermit, newHermit)
 		}
 
 		return true
@@ -339,12 +352,7 @@ export class GameModel {
 		})
 	}
 
-	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotInfo> {
-		return this.components.filter(SlotComponent, predicate).map((slotInfo) => {
-			return {
-				entity: slotInfo.entity,
-				type: slotInfo.type,
-			}
-		})
+	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
+		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
 	}
 }

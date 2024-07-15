@@ -4,6 +4,16 @@ import type {SlotComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {ActionResult, CardEntity, SlotEntity} from './game-state'
+import {PlayerDeckT} from './deck'
+
+export type PlayerInfo = {
+	playerName: string
+	censoredPlayerName: string
+	minecraftName: string
+	playerId: string
+	playerSecret: string
+	playerDeck: PlayerDeckT
+}
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {

@@ -327,7 +327,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(
 				pickRequestSaga,
 				game,
-				(turnAction as PickSlotActionData)?.payload?.pickResult
+				(turnAction as PickSlotActionData)?.payload.entity
 			)
 			break
 		case 'MODAL_REQUEST':

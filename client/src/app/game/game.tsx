@@ -209,12 +209,10 @@ function Game() {
 
 	let unpickableCards: Array<LocalCardInstance> = []
 	const pickableCards = pickRequestPickableSlots
-		?.filter((slot) => slot.slotType === 'hand')
-		.map((slot) => slot.card)
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card)) unpickableCards.push(card)
+			if (card.slot && !pickableCards.includes(card.slot)) unpickableCards.push(card)
 		}
 	}
 

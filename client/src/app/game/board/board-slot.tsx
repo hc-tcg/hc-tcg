@@ -43,7 +43,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 
 	const getIsPickable = () => {
 		for (const slot of getPickableSlots()) {
-			if (slot.entity === entity) {
+			if (slot === entity) {
 				return true
 			}
 		}

@@ -5,9 +5,9 @@ import type {
 	CurrentCoinFlipT,
 	PlayerEntity,
 	RowEntity,
+	SlotEntity,
 	TurnActions,
 } from '../types/game-state'
-import type {SlotInfo} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
@@ -32,8 +32,8 @@ export class PlayerComponent {
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
 
-	pickableSlots: Array<SlotInfo> | null
-	cardsCanBePlacedIn: Array<[CardComponent, Array<SlotInfo>]>
+	pickableSlots: Array<SlotEntity> | null
+	cardsCanBePlacedIn: Array<[CardComponent, Array<SlotEntity>]>
 
 	activeRowEntity: RowEntity | null
 
@@ -172,7 +172,7 @@ export class PlayerComponent {
 	get opponentPlayer() {
 		let player = this.game.components.find(
 			PlayerComponent,
-			(game, player) => player.entity !== this.entity
+			(_game, player) => player.entity !== this.entity
 		)
 		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
 		return player

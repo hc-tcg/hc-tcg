@@ -25,9 +25,9 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&
 		lastActionResult?.result === 'SUCCESS' &&
 		!pState.board.singleUseCardUsed &&
-		pState.board.singleUseCard
+		pState.board.singleUse.card
 	) {
-		yield call(singleUseSaga, pState.board.singleUseCard)
+		yield call(singleUseSaga, pState.board.singleUse.card)
 	} else if (lastActionResult?.result === 'FAILURE_UNMET_CONDITION') {
 		yield put(setOpenedModal('unmet-condition'))
 	}

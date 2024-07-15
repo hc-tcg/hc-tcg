@@ -12,7 +12,7 @@ import {GameModel} from './game-model'
 import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
-import {CardComponent, SlotComponent} from '../components'
+import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
 
 export class BattleLogModel {
@@ -97,18 +97,17 @@ export class BattleLogModel {
 		const genCardName = (
 			player: PlayerComponent | undefined,
 			card: CardComponent | null | undefined,
-			rowIndex: number | null | undefined
+			row: RowComponent | null | undefined
 		) => {
 			if (card == null) return invalid
 
 			if (
 				card.props.category === 'hermit' &&
 				player &&
-				player.board.activeRow !== rowIndex &&
-				rowIndex !== null &&
-				rowIndex !== undefined
+				player.activeRowEntity !== row?.entity &&
+				row?.index
 			) {
-				return `${card.props.name} (${rowIndex + 1})`
+				return `${card.props.name} (${row?.index + 1})`
 			}
 
 			return `${card.props.name}`
@@ -145,7 +144,7 @@ export class BattleLogModel {
 		if (logMessage.length === 0) return
 
 		this.logMessageQueue.unshift({
-			player: pos.player.entity,
+			player: player.id,
 			description: logMessage,
 		})
 
@@ -158,9 +157,6 @@ export class BattleLogModel {
 		singleUse: CardComponent | null
 	) {
 		if (!attack.attacker) return
-		const playerId = attack
-
-		if (!playerId) return
 
 		const attacks = [attack, ...attack.nextAttacks]
 
@@ -181,7 +177,7 @@ export class BattleLogModel {
 				card.slot(slot.hermitSlot)
 			)
 
-			const targetFormatting = attack.target.player.entity === playerId ? 'p' : 'o'
+			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
 
 			const rowNumberString = `(${attack.target.index + 1})`
 
@@ -195,7 +191,7 @@ export class BattleLogModel {
 
 			const logMessage = subAttack.getLog({
 				attacker: `$p${attackingHermitInfo.props.name}$`,
-				player: attack.attacker.player.playerName,
+				player: attack.player.playerName,
 				opponent: attack.target.player.playerName,
 				target: `$${targetFormatting}${targetHermitInfo?.props?.name} ${rowNumberString}$`,
 				attackName: `$v${attackName}$`,
@@ -218,7 +214,7 @@ export class BattleLogModel {
 			: ''
 
 		this.logMessageQueue.push({
-			player: playerId,
+			player: attack.player.id,
 			description: log,
 		})
 	}
@@ -230,7 +226,7 @@ export class BattleLogModel {
 			if (!coinFlip.opponentFlip) return
 
 			this.logMessageQueue.push({
-				player: player.entity,
+				player: player.id,
 				description: `$o${coinFlip.card.props.name}$ ${this.generateCoinFlipDescription(
 					coinFlip
 				)} on their coinflip`,

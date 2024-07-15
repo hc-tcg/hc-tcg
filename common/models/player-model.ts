@@ -4,7 +4,7 @@ import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
 import {PlayerEntity} from '../types/game-state'
-import {LocalCardInstance} from '../types/server-requests'
+import {LocalCardInstance, PlayerInfo} from '../types/server-requests'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -49,7 +49,7 @@ export class PlayerModel {
 		return this.internalDeck
 	}
 
-	getPlayerInfo() {
+	getPlayerInfo(): PlayerInfo {
 		return {
 			playerId: this.id,
 			playerSecret: this.secret,

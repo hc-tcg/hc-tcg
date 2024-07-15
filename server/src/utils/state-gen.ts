@@ -131,7 +131,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	return deck.map((card) => {
 		return {
 			props: WithoutFunctions(CARDS[card.props.id].props),
-			instance: newEntity('card-entity') as CardEntity,
+			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 		}
 	})
@@ -204,7 +204,7 @@ export function getLocalPlayerState(
 export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(game, playerState) => playerState.id == player.id
+		(_game, playerState) => playerState.id == player.id
 	)
 
 	if (!playerState) throw new Error('Player should be added to ECS before fetching local state')

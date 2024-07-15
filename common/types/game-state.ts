@@ -54,7 +54,7 @@ export type CurrentCoinFlipT = {
 }
 
 export type BattleLogT = {
-	player: PlayerEntity
+	player: PlayerId
 	description: string
 }
 
@@ -194,8 +194,8 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotInfo>]> | null
-	currentPickableSlots: Array<SlotInfo> | null
+	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
+	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 

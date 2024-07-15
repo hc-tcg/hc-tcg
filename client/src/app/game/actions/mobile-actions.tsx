@@ -93,7 +93,9 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			isPlayable &&
 				boardState &&
 				onClick({
-					entity: boardState?.singleUse.slot,
+					slotType: 'single_use',
+					slotEntity: boardState.singleUse.slot,
+					card: boardState.singleUse.card,
 				})
 		}
 
