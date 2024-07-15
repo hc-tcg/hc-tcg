@@ -21,7 +21,9 @@ class LightningRodEffectCard extends Card {
 			query.not(
 				query.exists(
 					SlotComponent,
-					query.every(slot.currentPlayer, slot.attachSlot, slot.has(LightningRodEffectCard))
+					slot.currentPlayer,
+					slot.attachSlot,
+					slot.has(LightningRodEffectCard)
 				)
 			)
 		),

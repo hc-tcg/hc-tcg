@@ -5,6 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import SleepingStatusEffect from '../../../status-effects/sleeping'
 
 class ChorusFruitSingleUseCard extends Card {
 	props: SingleUse = {
@@ -22,13 +23,10 @@ class ChorusFruitSingleUseCard extends Card {
 			query.not(
 				query.exists(
 					SlotComponent,
-					query.every(
-						slot.currentPlayer,
-						slot.hermitSlot,
-						slot.activeRow,
-						// @todo Implement this
-						// slot.hasStatusEffect('sleeping')
-					)
+					slot.currentPlayer,
+					slot.hermitSlot,
+					slot.activeRow,
+					slot.hasStatusEffect(SleepingStatusEffect)
 				)
 			)
 		),
@@ -41,7 +39,7 @@ class ChorusFruitSingleUseCard extends Card {
 
 		player.hooks.onAttack.add(component, (attack) => {
 			// Apply the card
-			applySingleUse(game)
+			applySingleUse(game, component.slot)
 
 			player.hooks.afterAttack.add(component, (attack) => {
 				if (removedBlock) return
