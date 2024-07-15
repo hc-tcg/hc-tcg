@@ -20,13 +20,7 @@ class FlintAndSteelSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) =>
-				// What should player be here?
-				game.components.filter(
-					CardComponent,
-					card.player(game.currentPlayer.entity),
-					card.slot(slot.discardPile)
-				).length > 3
+			(game, pos) => game.getDiscarded(game.currentPlayer.entity).length > 3
 		),
 	}
 
@@ -34,14 +28,8 @@ class FlintAndSteelSingleUseCard extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			game.components
-				.filter(CardComponent, card.currentPlayer, card.slot(slot.hand))
-				.forEach((card) => card.discard())
-			game.components
-				.filter(CardComponent, card.currentPlayer, card.slot(slot.deck))
-				.sort(CardComponent.compareOrder)
-				.slice(0, 3)
-				.forEach((card) => card.draw())
+			game.getHand(game.currentPlayer.entity).forEach((card) => card.discard())
+			game.drawCards(game.currentPlayer.entity, 3)
 		})
 	}
 
