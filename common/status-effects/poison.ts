@@ -1,7 +1,7 @@
 import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {AttackModel} from '../models/attack-model'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CardComponent, StatusEffectComponent} from '../components'
 
 class PoisonStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -13,43 +13,37 @@ class PoisonStatusEffect extends StatusEffect {
 		applyLog: (values) => `${values.target} was $ePoisoned$`,
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = instance
+	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player, opponentPlayer} = target
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			let targetSlot = game.state.cards.get(instance.target.entity)?.slot
-			if (!targetSlot?.onBoard()) return
-
-			let target = targetSlot.row
-
-			if (!target) return
-
-			const statusEffectAttack = new AttackModel({
-				attacker: instance.entity,
-				target: target?.entity,
+		opponentPlayer.hooks.onTurnEnd.add(effect, () => {
+			if (!target.slot.inRow()) return
+			const statusEffectAttack = game.newAttack({
+				attacker: effect.entity,
+				target: target.slot.row.entity,
+				player: opponentPlayer.entity,
 				type: 'status-effect',
 				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
-			if (target.health && target.health >= 30) {
-				let damage = Math.max(Math.min(target.health - 10, 20), 0)
-				statusEffectAttack.addDamage(instance.entity, damage)
+			if (target.slot.row.health && target.slot.row.health >= 30) {
+				let damage = Math.max(Math.min(target.slot.row.health - 10, 20), 0)
+				statusEffectAttack.addDamage(effect.entity, damage)
 			}
 
 			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
-			const attackTarget = game.state.rows.get(attack.getTarget())
-			if (attackTarget?.health && attackTarget.health > 0) return
-			removeStatusEffect(game, pos, instance)
+		player.hooks.afterDefence.add(effect, (attack) => {
+			if (!attack.isTargetting(target) || attack.target?.health) return
+			effect.remove()
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = instance
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		player.hooks.afterDefence.remove(instance)
+	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player, opponentPlayer} = target
+		opponentPlayer.hooks.onTurnEnd.remove(effect)
+		player.hooks.afterDefence.remove(effect)
 	}
 }
 
