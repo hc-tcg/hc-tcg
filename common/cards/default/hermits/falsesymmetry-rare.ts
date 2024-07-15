@@ -35,7 +35,7 @@ class FalseSymmetryRareHermitCard extends Card {
 
 		player.hooks.onAttack.add(component, (attack) => {
 			if (
-				attack.attacker?.entity !== component.entity ||
+				attack.isAttacker(component.entity) ||
 				attack.type !== 'secondary' ||
 				!(attack.attacker instanceof CardComponent)
 			)

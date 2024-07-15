@@ -5,6 +5,7 @@ import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {ActionResult, CardEntity, SlotEntity} from './game-state'
 import {PlayerDeckT} from './deck'
+import {PlayerId} from '../models/player-model'
 
 export type PlayerInfo = {
 	playerName: string
@@ -45,9 +46,9 @@ export type SlotInfo = {
 
 export type PickRequest = {
 	/** The id of the player to request the pick from */
-	playerId: string
+	playerId: PlayerId
 	/** The id of the card that called the pick request */
-	id: string
+	id: CardEntity
 	/** The message to display to the player */
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
@@ -67,7 +68,7 @@ export type ModalResult = SelectCards.Result | CopyAttack.Result
 export namespace SelectCards {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: string
+		playerId: PlayerId
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result | undefined) => ActionResult
@@ -109,7 +110,7 @@ export namespace SelectCards {
 export namespace CopyAttack {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: string
+		playerId: PlayerId
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result | undefined) => ActionResult

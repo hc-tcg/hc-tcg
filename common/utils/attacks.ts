@@ -3,9 +3,11 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {card, query} from '../components/query'
+import {card, effect, query} from '../components/query'
 import {STRENGTHS} from '../const/strengths'
-import {CardComponent} from '../components'
+import {CardComponent, StatusEffectComponent} from '../components'
+import {HermitAttackType} from '../types/attack'
+import {Hermit} from '../cards/base/types'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -245,4 +247,41 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
+}
+
+/** Function to mock an attack from another hermit. */
+export function createMockedAttack(
+	game: GameModel,
+	attackType: HermitAttackType,
+	attackFrom: CardComponent<Hermit>,
+	as: CardComponent<Hermit>
+): AttackModel | null {
+	let cardPosition = as.slot
+	let attackFromOriginalPosition = attackFrom.slot
+
+	attackFrom.attach(cardPosition)
+
+	let attack = attackFrom.card.getAttack(game, attackFrom, attackType)
+	let oldStausEffects = game.components.filterEntities(
+		StatusEffectComponent,
+		effect.targetIs(attackFrom.entity)
+	)
+
+	// I am sorry the cleanup is like this!
+	game.currentPlayer.hooks.afterAttack.add(as, (hookAttack) => {
+		if (!hookAttack.isAttacker(attackFrom.entity)) return
+		as.attach(cardPosition)
+		attackFrom.attach(attackFromOriginalPosition)
+
+		game.components
+			.filter(StatusEffectComponent, effect.targetIs(attackFrom.entity))
+			.forEach((effect) => {
+				if (oldStausEffects.includes(effect.entity)) return
+				effect.targetEntity = as.entity
+			})
+
+		game.currentPlayer.hooks.afterAttack.remove(as)
+	})
+
+	return attack
 }

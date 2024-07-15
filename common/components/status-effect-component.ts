@@ -11,7 +11,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
-	private targetEntity: CardEntity | null
+	public targetEntity: CardEntity | null
 	public counter: number | null
 
 	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: new () => StatusEffect) {

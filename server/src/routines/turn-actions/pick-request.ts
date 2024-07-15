@@ -3,7 +3,8 @@ import {ActionResult, SlotEntity} from 'common/types/game-state'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
-import {CardComponent} from 'common/components'
+import {PlayerComponent, SlotComponent} from 'common/components'
+import {slot} from 'common/components/query'
 
 function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<any, ActionResult> {
 	// First validate data sent from client
@@ -18,20 +19,8 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 	}
 
 	// Call the bound function with the pick result
-	let slotInfo = {
-		player: game.state.players[pickResult.playerId],
-		opponentPlayer: Object.values(game.state.players).filter(
-			(opponent) => opponent.entity !== pickResult.playerId
-		)[0],
-		type: pickResult.type,
-		index: pickResult.index,
-		rowIndex: pickResult.rowIndex,
-		row:
-			pickResult.rowIndex !== null
-				? game.state.players[pickResult.playerId].board.rows[pickResult.rowIndex]
-				: null,
-		card: pickResult.card ? CardComponent.fromLocalCardInstance(game, pickResult.card) : null,
-	}
+	let slotInfo = game.components.find(SlotComponent, slot.entity(pickResult))
+	if (!slotInfo) return 'FAILURE_INVALID_DATA'
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
@@ -40,7 +29,11 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 	}
 
 	pickRequest.onResult(slotInfo)
-	game.state.players[pickRequest.playerId].pickableSlots = null
+	let player = game.components.find(
+		PlayerComponent,
+		(_game, player) => player.id === pickRequest.playerId
+	)
+	if (player) player.pickableSlots = null
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()
@@ -50,7 +43,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 			payload: {
-				playerId: game.currentPlayerId,
+				playerId: game.currentPlayer.id,
 			},
 		}
 		const attackResult = yield* call(attackSaga, game, turnAction, false)

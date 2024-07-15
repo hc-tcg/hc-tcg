@@ -74,7 +74,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Custom modals
 	if (modalRequests.length > 0) {
 		const request = modalRequests[0]
-		if (request.playerId === currentPlayer.entity) {
+		if (request.playerId === currentPlayer.id) {
 			return ['MODAL_REQUEST']
 		} else {
 			// Activate opponent action timer
@@ -89,7 +89,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Pick requests
 	if (pickRequests.length > 0) {
 		const request = pickRequests[0]
-		if (request.playerId === currentPlayer.entity) {
+		if (request.playerId === currentPlayer.id) {
 			let pickActions: TurnActions = ['PICK_REQUEST']
 			if (su && !suUsed) {
 				pickActions.push('REMOVE_EFFECT')
