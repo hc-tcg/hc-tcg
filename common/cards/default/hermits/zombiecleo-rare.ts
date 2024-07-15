@@ -62,9 +62,7 @@ class ZombieCleoRareHermitCard extends Card {
 		if (!newAttack) return null
 
 		const attackName =
-			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+			newAttack.type === 'primary' ? imitatingCard.props.primary.name : imitatingCard.props.secondary.name
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${

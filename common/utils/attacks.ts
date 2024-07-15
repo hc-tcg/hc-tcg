@@ -249,7 +249,7 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	return weaknessAttack
 }
 
-/** Create a mocked card that can be used to create a mocked attack. */
+/** Create a mocked card that can be used to create a specific specified attack type. */
 export function setupMockedCard(
 	game: GameModel,
 	attackType: HermitAttackType,
