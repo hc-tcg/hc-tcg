@@ -21,7 +21,7 @@ class ComposterSingleUseCard extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => game.getHand(game.currentPlayer.entity).length >= 2,
-			(game, pos) => game.getHand(game.currentPlayer.entity).length > 2
+			(game, pos) => game.getDeck(game.currentPlayer.entity).length > 2
 		),
 	}
 
