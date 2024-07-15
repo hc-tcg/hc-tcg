@@ -46,7 +46,6 @@ class GrianRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (!component.slot.inRow()) return
 			if (attack.attacker?.entity !== component.entity) return
 			if (attack.type !== 'primary') return
 
