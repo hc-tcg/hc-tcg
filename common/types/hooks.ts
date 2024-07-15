@@ -1,9 +1,7 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 
-type HookProxy = string & {__hook_proxy: never}
-
 export class Hook<Listener, Args extends (...args: any) => any> {
-	public listeners: Array<[Listener, Args, HookProxy]> = []
+	public listeners: Array<[Listener, Args]> = []
 	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
 
 	public constructor(eq?: (a: Listener, b: Listener) => boolean) {
@@ -13,34 +11,22 @@ export class Hook<Listener, Args extends (...args: any) => any> {
 	/**
 	 * Adds a new listener to this hook
 	 */
-	public add(listener: Listener, call: Args): HookProxy {
-		let proxy = Math.random().toString() as HookProxy
-		this.listeners.push([listener, call, proxy])
-		return proxy
+	public add(listener: Listener, call: Args) {
+		this.listeners.push([listener, call])
 	}
 
 	/**
 	 * Adds a new listener to this hook before any other existing listeners
 	 */
 	public addBefore(listener: Listener, call: Args) {
-		let proxy = Math.random().toString() as HookProxy
-		this.listeners.unshift([listener, call, proxy])
-		return proxy
+		this.listeners.unshift([listener, call])
 	}
 
 	/**
 	 * Removes all the listeners tied to a specific instance
 	 */
 	public remove(listener: Listener) {
-		this.listeners = this.listeners.filter(
-			([hookListener, _args, _poxy]) => !this.eq(hookListener, listener)
-		)
-	}
-
-	public removeWithHookProxy(proxy: HookProxy) {
-		this.listeners = this.listeners.filter(
-			([_listener, _args, targetProxy]) => targetProxy !== proxy
-		)
+		this.listeners = this.listeners.filter(([hookListener, _]) => !this.eq(hookListener, listener))
 	}
 
 	/**

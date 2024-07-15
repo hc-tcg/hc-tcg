@@ -256,32 +256,13 @@ export function setupMockedCard(
 	attackFrom: CardComponent<Hermit>,
 	as: CardComponent
 ): CardComponent {
-	let cardPosition = as.slot
-
 	let mimickCard = game.components.new(
 		CardComponent,
 		attackFrom.card.props.id,
-		cardPosition.entity
+		as.slot.entity
 	) as CardComponent<Hermit>
 
 	game.currentPlayer.hooks.getAttackRequests.call(mimickCard, attackType)
-
-	// Add before is used so that when multiple attacks are being mimicked, we move the attacks back to
-	// the original hermit in the reverse order.
-	let moved = false
-	let proxy = game.currentPlayer.hooks.afterAttack.addBefore(mimickCard, (_hookAttack) => {
-		if (moved) return
-		moved = true
-		game.components.delete(mimickCard.entity)
-
-		game.components
-			.filter(StatusEffectComponent, effect.targetIs(mimickCard.entity))
-			.forEach((effect) => {
-				effect.apply(as.entity)
-			})
-
-		game.currentPlayer.hooks.afterAttack.removeWithHookProxy(proxy)
-	})
 
 	return mimickCard
 }
