@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -20,15 +20,15 @@ class ComposterSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.hand.length >= 2,
-			(game, pos) => pos.player.pile.length > 2
+			(game, pos) => game.getHand(game.currentPlayer.entity).length >= 2,
+			(game, pos) => game.getHand(game.currentPlayer.entity).length > 2
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = component
 
-		let firstPickedCard: CardComponent | null = null
+		let firstPickedSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -36,7 +36,7 @@ class ComposterSingleUseCard extends Card {
 			message: 'Pick 2 cards from your hand',
 			canPick: slot.hand,
 			onResult(pickedSlot) {
-				firstPickedCard = pickedSlot.cardId
+				firstPickedSlot = pickedSlot
 			},
 		})
 
@@ -45,17 +45,16 @@ class ComposterSingleUseCard extends Card {
 			id: this.props.id,
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
-				if (firstPickedCard === null) return false
-				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard)))(game, pos)
+				if (firstPickedSlot === null) return false
+				return query.every(slot.hand, query.not(slot.entity(firstPickedSlot.entity)))(game, pos)
 			},
 			onResult(pickedSlot) {
-				discardFromHand(player, firstPickedCard)
-				discardFromHand(player, pickedSlot.cardId)
+				firstPickedSlot?.getCard()?.discard()
+				pickedSlot.getCard()?.discard()
 
-				// Apply
-				applySingleUse(game)
+				applySingleUse(game, component.slot)
 
-				drawCards(player, 2)
+				game.drawCards(player.entity, 2)
 			},
 		})
 	}
