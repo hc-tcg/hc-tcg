@@ -12,7 +12,7 @@ import {CardComponent} from './card-component'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
 import type {HermitAttackType} from '../types/attack'
-import type {ComponentQuery} from './query'
+import {card, slot, type ComponentQuery} from './query'
 import {DEBUG_CONFIG} from '../config'
 import {GameHook, WaterfallHook} from '../types/hooks'
 import {HandSlotComponent, SlotComponent} from './slot-component'
@@ -176,5 +176,50 @@ export class PlayerComponent {
 		)
 		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
 		return player
+	}
+
+	/** Get a player's active hermit. */
+	public getActiveHermit(): CardComponent | null {
+		return this.game.components.find(
+			CardComponent,
+			card.slot(slot.hermitSlot),
+			card.active,
+			card.player(this.entity)
+		)
+	}
+
+	/** Get a player's deck */
+	public getDeck(): Array<CardComponent> {
+		return this.game.components.filter(
+			CardComponent,
+			card.player(this.entity),
+			card.slot(slot.deck)
+		)
+	}
+
+	/** Get a player's hand */
+	public getHand(): Array<CardComponent> {
+		return this.game.components.filter(
+			CardComponent,
+			card.player(this.entity),
+			card.slot(slot.hand)
+		)
+	}
+
+	/** Get a player's discard pile */
+	public getDiscarded(): Array<CardComponent> {
+		return this.game.components.filter(
+			CardComponent,
+			card.player(this.entity),
+			card.slot(slot.discardPile)
+		)
+	}
+
+	/** Draw cards from the top of a player's deck */
+	public draw(amount: number): void {
+		this.getDeck()
+			.sort(CardComponent.compareOrder)
+			.slice(0, amount)
+			.forEach((card) => card.draw())
 	}
 }

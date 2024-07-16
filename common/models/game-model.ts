@@ -9,12 +9,7 @@ import {
 	SlotEntity,
 } from '../types/game-state'
 import {getGameState, setupEcs} from '../utils/state-gen'
-import {
-	CopyAttack,
-	ModalRequest,
-	PickRequest,
-	SelectCards,
-} from '../types/server-requests'
+import {CopyAttack, ModalRequest, PickRequest, SelectCards} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {ComponentQuery, card, row, slot} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
@@ -266,7 +261,7 @@ export class GameModel {
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
 							CardComponent,
-							SlotEntity[]
+							SlotEntity[],
 						]
 				)
 		}
@@ -353,28 +348,5 @@ export class GameModel {
 
 	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
 		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
-	}
-
-	/**Get a player's deck */
-	public getDeck(player: PlayerEntity): Array<CardComponent> {
-		return this.components.filter(CardComponent, card.player(player), card.slot(slot.deck))
-	}
-
-	/**Get a player's hand */
-	public getHand(player: PlayerEntity): Array<CardComponent> {
-		return this.components.filter(CardComponent, card.player(player), card.slot(slot.hand))
-	}
-
-	/**Get a player's discard pile */
-	public getDiscarded(player: PlayerEntity): Array<CardComponent> {
-		return this.components.filter(CardComponent, card.player(player), card.slot(slot.discardPile))
-	}
-
-	/**Draw cards from the top of a player's deck */
-	public draw(player: PlayerEntity, amount: number): void {
-		this.getDeck(player)
-			.sort(CardComponent.compareOrder)
-			.slice(0, amount)
-			.forEach((card) => card.draw())
 	}
 }

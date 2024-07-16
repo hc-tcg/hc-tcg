@@ -20,8 +20,8 @@ class Composter extends Card {
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.getHand(game.currentPlayer.entity).length >= 2,
-			(game, pos) => game.getDeck(game.currentPlayer.entity).length > 2
+			(game, pos) => pos.player.getHand().length >= 2,
+			(game, pos) => pos.player.getDeck().length > 2
 		),
 	}
 
@@ -54,7 +54,7 @@ class Composter extends Card {
 
 				applySingleUse(game, component.slot)
 
-				game.draw(player.entity, 2)
+				player.draw(2)
 			},
 		})
 	}

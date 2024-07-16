@@ -3,7 +3,8 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
+import {card, effect, slot} from '../../../components/query'
 
 class VintageBeefRare extends Card {
 	props: Hermit = {
@@ -35,28 +36,22 @@ class VintageBeefRare extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
-				return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			player.board.rows.forEach((row) => {
-				if (!row.hermitCard) return
-
-				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-					return ail.targetInstance.component === row.hermitCard.component
-				})
-
-				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail)
-				})
-			})
+			game.components
+				.filter(
+					StatusEffectComponent,
+					effect.type('normal', 'damage'),
+					effect.target(card.currentPlayer, card.slot(slot.hermitSlot))
+				)
+				.forEach((effect) => effect.remove())
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

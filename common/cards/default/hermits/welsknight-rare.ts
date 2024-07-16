@@ -30,21 +30,19 @@ class WelsknightRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-			const attacker = attack.getAttacker()
-			if (!attacker) return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow() || !component.slot.row.health) return
 
-			if (attacker.row.health < 200) attack.addDamage(this.props.id, 20)
-			if (attacker.row.health < 100) attack.addDamage(this.props.id, 20)
+			if (component.slot.row.health < 200) attack.addDamage(component.entity, 20)
+			if (component.slot.row.health < 100) attack.addDamage(component.entity, 20)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

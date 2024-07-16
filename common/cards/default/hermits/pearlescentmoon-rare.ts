@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {AussiePingImmuneStatusEffect} from '../../../status-effects/aussie-ping'
 
 class PearlescentMoonRare extends Card {
 	props: Hermit = {
@@ -40,10 +41,10 @@ class PearlescentMoonRare extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
-				return
-			applyStatusEffect(game, 'aussie-ping', attack.getTarget()?.row.hermitCard)
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components
+				.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
+				.apply(attack.target?.getHermit()?.entity)
 		})
 	}
 

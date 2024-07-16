@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {card, query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {RowEntity} from '../../../types/game-state'
 
 class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
@@ -33,30 +34,40 @@ class TinFoilChefUltraRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
-		let hasDiscardedFrom = new Set<string>()
+		let hasDiscardedFrom = new Set<RowEntity>()
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			if (opponentPlayer.board.activeRow === null) return 'NO'
-			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (!opponentActiveRow.effectCard) return
-			if (!slot.someSlotFulfills(slot.every(slot.opponent, slot.attachSlot, slot.not(slot.frozen))))
+			if (opponentPlayer.activeRow === null) return
+			if (
+				!game.components.exists(
+					SlotComponent,
+					slot.opponent,
+					slot.attachSlot,
+					query.not(slot.frozen)
+				)
+			)
 				return
 
-			// Can't discard two items on the same hermit
-			if (hasDiscardedFrom.has(opponentActiveRow.hermitCard.component)) return
+			// Can't discard two effect cards on the same hermit
+			if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
-			hasDiscardedFrom.add(opponentActiveRow.hermitCard.component)
+			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
 
-			discardCard(game, opponentActiveRow.effectCard)
+			game.components
+				.find(
+					CardComponent,
+					card.active,
+					card.opponentPlayer,
+					card.slot(slot.attachSlot, query.not(slot.frozen))
+				)
+				?.discard()
 		})
 	}
 

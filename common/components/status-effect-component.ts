@@ -44,23 +44,10 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 
 	/** Apply a status effect to a specific card, or the active hermit if not specified */
 	public apply(cardEntity?: CardEntity | null) {
-		if (cardEntity === null) return
-		let target = null
+		if (!cardEntity) return
 
-		if (cardEntity === undefined) {
-			target = this.game.components.find(
-				CardComponent,
-				card.currentPlayer,
-				card.active,
-				card.slot(slot.hermitSlot)
-			)
-		} else {
-			target = this.game.components.get(cardEntity)
-		}
-
-		if (!target) {
-			return
-		}
+		let target = this.game.components.get(cardEntity)
+		if (!target) return
 
 		this.targetEntity = target.entity
 		this.statusEffect.onApply(this.game, this, target)

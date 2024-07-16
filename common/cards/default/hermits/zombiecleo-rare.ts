@@ -6,6 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import {setupMockedCard} from '../../../utils/attacks'
+import ArmorStand from '../../alter-egos/effects/armor-stand'
 
 class ZombieCleoRare extends Card {
 	props: Hermit = {
@@ -37,8 +38,8 @@ class ZombieCleoRare extends Card {
 		slot.hermitSlot,
 		query.not(slot.empty),
 		query.not(slot.activeRow),
-		query.not(slot.hasId(this.props.id)),
-		query.not(slot.hasId('armor_stand'))
+		query.not(slot.has(ZombieCleoRare)),
+		query.not(slot.has(ArmorStand))
 	)
 
 	imitatingCard = new InstancedValue<CardComponent | null>(() => null)

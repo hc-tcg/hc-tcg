@@ -1,4 +1,3 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
 import Card from '../../base/card'
@@ -35,27 +34,25 @@ class StressMonster101Rare extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
-			const attacker = attack.getAttacker()
-			if (!attacker) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow()) return
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(component, 'selfAttack'),
-				attacker,
-				target: attacker,
+			const backlashAttack = game.newAttack({
+				attacker: component.entity,
+				target: game.opponentPlayer.activeRowEntity,
 				type: 'secondary',
 				isBacklash: true,
 				log: (values) => ` and took ${values.damage} backlash damage`,
 			})
-			const attackDamage = attacker.row.health
-			attack.addDamage(this.props.id, attackDamage)
-			backlashAttack.addDamage(this.props.id, attackDamage)
+			const attackDamage = component.slot.row.health
+			attack.addDamage(component.entity, attackDamage || 0)
+			backlashAttack.addDamage(component.entity, attackDamage || 0)
 
 			attack.addNewAttack(backlashAttack)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

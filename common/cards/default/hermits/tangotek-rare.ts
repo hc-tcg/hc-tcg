@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -32,81 +32,79 @@ class TangoTekRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(component) ||
-				attack.type !== 'secondary' ||
-				!attack.getTarget()
-			)
-				return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const opponentInactiveRowsPickCondition = slot.every(
+			const opponentInactiveRowsPickCondition = query.every(
 				slot.opponent,
 				slot.hermitSlot,
-				slot.not(slot.activeRow),
-				slot.not(slot.empty)
+				query.not(slot.activeRow),
+				query.not(slot.empty)
 			)
-			const playerInactiveRowsPickCondition = slot.every(
-				slot.player,
+			const playerInactiveRowsPickCondition = query.every(
+				slot.currentPlayer,
 				slot.hermitSlot,
-				slot.not(slot.activeRow),
-				slot.not(slot.empty)
+				query.not(slot.activeRow),
+				query.not(slot.empty)
 			)
 
 			// Check if we are blocked from changing by anything other than the game
 			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
-			if (game.someSlotFulfills(opponentInactiveRowsPickCondition)) {
+			if (game.components.exists(SlotComponent, opponentInactiveRowsPickCondition)) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
-					id: this.props.id,
+					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: opponentInactiveRowsPickCondition,
 					onResult(pickedSlot) {
-						if (pickedSlot.rowIndex === null) return
-
-						game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
+						if (!pickedSlot.inRow()) return
+						game.changeActiveRow(opponentPlayer, pickedSlot.row)
 					},
 					onTimeout() {
-						let newActiveRow = game.filterSlots(opponentInactiveRowsPickCondition)[0]
-						if (newActiveRow === undefined || newActiveRow.rowIndex === null) return
-						game.changeActiveRow(game.opponentPlayer, newActiveRow.rowIndex)
+						let newActiveRow = game.components.find(
+							SlotComponent,
+							opponentInactiveRowsPickCondition
+						)
+						if (!newActiveRow?.inRow()) return
+						game.changeActiveRow(game.opponentPlayer, newActiveRow.row)
 					},
 				})
 			}
 
 			// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
-			const attacker = attack.getAttacker()
 			if (
-				game.someSlotFulfills(playerInactiveRowsPickCondition) &&
-				attacker &&
-				attacker.row.health > 0 &&
+				game.components.exists(SlotComponent, playerInactiveRowsPickCondition) &&
+				component.slot.inRow() &&
+				component.slot.row.health &&
 				canChange
 			) {
 				game.addPickRequest({
 					playerId: player.id,
-					id: this.props.id,
+					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: playerInactiveRowsPickCondition,
 					onResult(pickedSlot) {
-						if (pickedSlot.rowIndex === null) return
-
-						game.changeActiveRow(player, pickedSlot.rowIndex)
+						if (!pickedSlot.inRow()) return
+						game.changeActiveRow(player, pickedSlot.row)
 					},
 					onTimeout() {
-						let newActiveHermit = game.findSlot(playerInactiveRowsPickCondition)
-						if (!newActiveHermit || newActiveHermit.rowIndex === null) return
-						game.changeActiveRow(game.currentPlayer, newActiveHermit.rowIndex)
+						let newActiveHermit = game.components.find(
+							SlotComponent,
+							playerInactiveRowsPickCondition
+						)
+						if (!newActiveHermit?.inRow()) return
+						game.changeActiveRow(game.currentPlayer, newActiveHermit.row)
 					},
 				})
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

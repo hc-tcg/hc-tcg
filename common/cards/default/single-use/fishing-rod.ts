@@ -19,7 +19,7 @@ class FishingRod extends Card {
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.getDeck(game.currentPlayer.entity).length > 2
+			(game, pos) => game.currentPlayer.getDeck().length > 2
 		),
 	}
 
@@ -27,7 +27,7 @@ class FishingRod extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			game.draw(player.entity, 2)
+			player.draw(2)
 			player.hooks.onApply.remove(component)
 		})
 	}

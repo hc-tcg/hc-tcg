@@ -86,7 +86,7 @@ class EvilXisumaRare extends Card {
 
 				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
 				// This will add a blocked action for the duration of their turn
-				game.addBlockedActions(this.props.id, actionToBlock)
+				game.addBlockedActions(component.entity, actionToBlock)
 
 				opponentPlayer.hooks.onTurnStart.remove(component)
 			})

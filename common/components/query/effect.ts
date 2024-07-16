@@ -1,5 +1,5 @@
 import {CardComponent, StatusEffectComponent} from '..'
-import {ComponentQuery} from '.'
+import {ComponentQuery, query} from '.'
 import StatusEffect, {StatusEffectProps} from '../../status-effects/status-effect'
 import {CardEntity} from '../../types/game-state'
 
@@ -10,18 +10,18 @@ export function id(id: string): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => statusEffect.props.id === id
 }
 
-export function is(...effect: Array<new () => StatusEffect>): ComponentQuery<StatusEffectComponent> {
-	return (_game, statusEffect) => effect.some(e => STATUS_EFFECTS[e.name].props.id === statusEffect.props.id)
+export function is(
+	...effect: Array<new () => StatusEffect>
+): ComponentQuery<StatusEffectComponent> {
+	return (_game, statusEffect) =>
+		effect.some((e) => STATUS_EFFECTS[e.name].props.id === statusEffect.props.id)
 }
 
 export function target(
-	target: ComponentQuery<CardComponent> | null | undefined
+	...predicates: Array<ComponentQuery<CardComponent>>
 ): ComponentQuery<StatusEffectComponent> {
 	return (game, statusEffect) =>
-		statusEffect.target !== null &&
-		target !== null &&
-		target !== undefined &&
-		target(game, statusEffect.target)
+		statusEffect.target !== null && query.every(...predicates)(game, statusEffect.target)
 }
 
 export function targetIs(
@@ -34,6 +34,8 @@ export function targetIs(
 		target == statusEffect.targetEntity
 }
 
-export function type(type: StatusEffectProps['type']): ComponentQuery<StatusEffectComponent> {
-	return (_game, statusEffect) => statusEffect.props.type === type
+export function type(
+	...types: Array<StatusEffectProps['type']>
+): ComponentQuery<StatusEffectComponent> {
+	return (_game, statusEffect) => types.includes(statusEffect.props.type)
 }

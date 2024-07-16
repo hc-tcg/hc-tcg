@@ -20,7 +20,7 @@ class FlintAndSteel extends Card {
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.getHand(game.currentPlayer.entity).length > 3
+			(game, pos) => pos.player.getHand().length > 3
 		),
 	}
 
@@ -28,8 +28,8 @@ class FlintAndSteel extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			game.getHand(game.currentPlayer.entity).forEach((card) => card.discard())
-			game.draw(game.currentPlayer.entity, 3)
+			player.getHand().forEach((card) => card.discard())
+			player.draw(3)
 		})
 	}
 
