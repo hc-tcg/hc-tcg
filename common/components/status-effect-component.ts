@@ -1,5 +1,5 @@
 import {GameModel} from '../models/game-model'
-import StatusEffect, {Counter, StatusEffectProps} from '../status-effects/status-effect'
+import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
 import {CardEntity, StatusEffectEntity} from '../types/game-state'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
