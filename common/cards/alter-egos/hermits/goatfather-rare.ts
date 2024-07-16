@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -33,9 +33,13 @@ class GoatfatherRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent<CardProps>): void {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent<CardProps>,
+		observer: ObserverComponent
+	): void {
 		const {player, opponentPlayer} = component
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			let coinFlip = flipCoin(player, component)[0]
@@ -68,11 +72,6 @@ class GoatfatherRare extends Card {
 						.addDamage(component.entity, 10)
 				})
 		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent<CardProps>): void {
-		const {player} = component
-		player.hooks.beforeAttack.remove(component)
 	}
 }
 

@@ -19,8 +19,11 @@ import {
 	InvisibilityPotionHeadsStatusEffect,
 	InvisibilityPotionTailsStatusEffect,
 } from './invisibility-potion'
+import TurnSkipped from './turn-skipped'
+import {PrimaryAttackDisabled, SecondaryAttackDisabled} from './derp-coin'
 
 const effectClasses: Array<new () => StatusEffect> = [
+	/* Regualr status effects */
 	FireStatusEffect,
 	PoisonStatusEffect,
 	SleepingStatusEffect,
@@ -32,6 +35,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	MuseumCollectionStatusEffect,
 	SmeltingStatusEffect,
 	MelodyStatusEffect,
+
+	/* System Status Effect */
 	UsedClockStatusEffect,
 	RevivedByDeathloopStatusEffect,
 	BetrayedStatusEffect,
@@ -40,6 +45,9 @@ const effectClasses: Array<new () => StatusEffect> = [
 	AussiePingImmuneStatusEffect,
 	InvisibilityPotionHeadsStatusEffect,
 	InvisibilityPotionTailsStatusEffect,
+	TurnSkipped,
+	PrimaryAttackDisabled,
+	SecondaryAttackDisabled,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(

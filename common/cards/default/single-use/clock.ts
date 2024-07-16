@@ -1,9 +1,16 @@
 import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
+import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
-import {CardComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import UsedClockStatusEffect from '../../../status-effects/used-clock'
+import TurnSkipped from '../../../status-effects/turn-skipped'
 
 class Clock extends Card {
 	props: SingleUse = {
@@ -25,39 +32,24 @@ class Clock extends Card {
 		],
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			// @todo Implement has status effect
-			// query.not(slot.someSlotFulfills(slot.hasStatusEffect('used-clock'))),
-			(game, pos) => game.state.turn.turnNumber !== 1
+			query.not(
+				query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClockStatusEffect))
+			),
+			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
-		player.hooks.onApply.add(component, () => {
-			opponentPlayer.hooks.onTurnStart.add(component, () => {
-				game.addBlockedActions(
-					this.props.id,
-					'APPLY_EFFECT',
-					'REMOVE_EFFECT',
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD'
-				)
-				opponentPlayer.hooks.onTurnStart.remove(component)
-			})
-
-			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, TurnSkipped)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
+			game.components
+				.new(StatusEffectComponent, UsedClockStatusEffect)
+				.apply(player.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

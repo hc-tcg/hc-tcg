@@ -1,7 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {ComponentQuery, effect, query} from '../components/query'
-import {CardComponent, StatusEffectComponent} from '../components'
-import {ObserverComponent} from '../types/hooks'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
 export type StatusEffectLog = {
 	/** The status effect target */
@@ -74,7 +73,7 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	 */
 	public onApply(
 		game: GameModel,
-		component: StatusEffectComponent,
+		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent
 	) {
@@ -86,7 +85,7 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	 */
 	public onRemoval(
 		game: GameModel,
-		component: StatusEffectComponent,
+		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent
 	) {

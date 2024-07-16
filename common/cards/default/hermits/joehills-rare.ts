@@ -6,6 +6,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {effect} from '../../../components/query'
 import UsedClockStatusEffect from '../../../status-effects/used-clock'
+import TurnSkipped from '../../../status-effects/turn-skipped'
 
 class JoeHillsRare extends Card {
 	props: Hermit = {
@@ -61,24 +62,10 @@ class JoeHillsRare extends Card {
 				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
 			)
 
+			game.components
+				.new(StatusEffectComponent, TurnSkipped)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 			game.components.new(StatusEffectComponent, UsedClockStatusEffect).apply(component.entity)
-
-			// Block all actions of opponent for one turn
-			// @todo Make this into a status effect
-			observer.subscribeOnce(opponentPlayer.hooks.onTurnStart, () => {
-				game.addBlockedActions(
-					this.props.id,
-					'APPLY_EFFECT',
-					'REMOVE_EFFECT',
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD'
-				)
-			})
 		})
 	}
 }

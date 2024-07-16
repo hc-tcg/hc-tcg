@@ -1,4 +1,4 @@
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {card} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
@@ -33,30 +33,23 @@ class HotguyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		let usingSecondaryAttack = false
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!usingSecondaryAttack) return
 			let bow = game.components.find(CardComponent, card.is(Bow))
 			if (bow) {
 				attack.addDamage(bow.entity, attack.getDamage())
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.beforeAttack.remove(component)
-		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

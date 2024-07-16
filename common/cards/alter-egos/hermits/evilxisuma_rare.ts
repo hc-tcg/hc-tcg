@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {card, query} from '../../../components/query'
+import {PrimaryAttackDisabled, SecondaryAttackDisabled} from '../../../status-effects/derp-coin'
 
 class EvilXisumaRare extends Card {
 	props: Hermit = {
@@ -36,24 +37,22 @@ class EvilXisumaRare extends Card {
 
 	opponentActiveHermitQuery = query.every(card.opponentPlayer, card.active, card.isHermit)
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.blockedActions.add(component, (blockedActions) => {
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			if (!game.components.exists(CardComponent, this.opponentActiveHermitQuery)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 			return blockedActions
 		})
 
-		player.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] !== 'heads') return
-
-			let playerPick: any = null
 
 			let opponentActiveHermit = game.components.find(CardComponent, this.opponentActiveHermitQuery)
 			if (!opponentActiveHermit) return
@@ -71,31 +70,23 @@ class EvilXisumaRare extends Card {
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
-					playerPick = modalResult.pick
+					const actionToBlock =
+						modalResult.pick === 'primary' ? PrimaryAttackDisabled : SecondaryAttackDisabled
 
+					// This will add a blocked action for the duration of their turn
+					game.components
+						.new(StatusEffectComponent, actionToBlock)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
 					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
-					playerPick = 'secondary'
+					game.components
+						.new(StatusEffectComponent, SecondaryAttackDisabled)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
 				},
 			})
-
-			opponentPlayer.hooks.onTurnStart.add(component, () => {
-				const disable = playerPick
-
-				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				// This will add a blocked action for the duration of their turn
-				game.addBlockedActions(component.entity, actionToBlock)
-
-				opponentPlayer.hooks.onTurnStart.remove(component)
-			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

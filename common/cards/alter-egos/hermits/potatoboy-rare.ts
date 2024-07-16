@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {card, row} from '../../../components/query'
+import {row} from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
-import {CardComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 
 class PotatoBoyRare extends Card {
 	props: Hermit = {
@@ -32,10 +32,10 @@ class PotatoBoyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (_attack) => {
+		observer.subscribe(player.hooks.onAttack, (_attack) => {
 			game.components
 				.filter(RowComponent, row.currentPlayer, row.adjacent(row.active))
 				.forEach((row) => {
@@ -49,11 +49,6 @@ class PotatoBoyRare extends Card {
 					)
 				})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

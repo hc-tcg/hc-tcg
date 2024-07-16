@@ -1,8 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
-import {CardProps, Hermit} from '../../base/types'
+import {Hermit} from '../../base/types'
 import {row} from '../../../components/query'
 
 class RenbobRare extends Card {
@@ -32,10 +32,10 @@ class RenbobRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent<CardProps>): void {
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (!component.slot.inRow()) return
 			attack.setTarget(
@@ -44,11 +44,6 @@ class RenbobRare extends Card {
 					?.entity || null
 			)
 		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent<CardProps>): void {
-		const {player} = component
-		player.hooks.beforeAttack.remove(component)
 	}
 }
 
