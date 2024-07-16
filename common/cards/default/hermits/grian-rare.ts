@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {card, query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -42,10 +42,10 @@ class GrianRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
 			if (attack.type !== 'primary') return
 
@@ -89,7 +89,7 @@ class GrianRare extends Card {
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -113,11 +113,6 @@ class GrianRare extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

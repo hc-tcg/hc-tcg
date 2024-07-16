@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -18,10 +18,10 @@ class CommandBlock extends Card {
 			'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.availableEnergy.add(component, (availableEnergy) => {
+		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
 			if (!component.slot.inRow()) return availableEnergy
 			if (player.activeRowEntity !== component.slot.row.entity) return availableEnergy
 
@@ -29,7 +29,7 @@ class CommandBlock extends Card {
 			return availableEnergy.map(() => 'any')
 		})
 
-		player.hooks.freezeSlots.add(component, () => {
+		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				slot.player(player.entity),
@@ -37,12 +37,6 @@ class CommandBlock extends Card {
 				slot.attachSlot
 			)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.availableEnergy.remove(component)
-		player.hooks.freezeSlots.remove(component)
 	}
 }
 

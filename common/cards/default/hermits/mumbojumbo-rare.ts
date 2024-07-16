@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -35,10 +35,10 @@ class MumboJumboRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component, 2)
@@ -53,12 +53,6 @@ class MumboJumboRare extends Card {
 			attack.addDamage(component.entity, headsAmount * 20)
 			if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

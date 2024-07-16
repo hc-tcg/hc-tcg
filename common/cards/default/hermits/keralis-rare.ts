@@ -3,7 +3,7 @@ import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
 class KeralisRare extends Card {
 	props: Hermit = {
@@ -32,13 +32,13 @@ class KeralisRare extends Card {
 
 	pickCondition = query.every(query.not(slot.activeRow), query.not(slot.empty), slot.hermitSlot)
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		let pickedAfkSlot: SlotComponent | null = null
 
 		// Pick the hermit to heal
-		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 
@@ -64,7 +64,7 @@ class KeralisRare extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (!pickedAfkSlot?.inRow()) return
@@ -78,12 +78,6 @@ class KeralisRare extends Card {
 				}$`
 			)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

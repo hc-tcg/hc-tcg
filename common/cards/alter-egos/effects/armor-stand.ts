@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach, HasHealth} from '../../base/types'
 import {attach, hermit} from '../../base/defaults'
 
@@ -27,20 +27,15 @@ class ArmorStand extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
-		component.player.hooks.freezeSlots.add(component, () => {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot?.onBoard()) return query.nothing
 			return query.every(
 				slot.player(component.player.entity),
 				slot.rowIs(component.slot.row?.entity)
 			)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		game.battleLog.addEntry(player.entity, `$pArmor Stand$ was knocked out`)
-		player.hooks.freezeSlots.remove(component)
 	}
 }
 

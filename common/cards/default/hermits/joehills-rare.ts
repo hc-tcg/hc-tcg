@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -39,10 +39,10 @@ class JoeHillsRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (
@@ -64,7 +64,8 @@ class JoeHillsRare extends Card {
 			game.components.new(StatusEffectComponent, UsedClockStatusEffect).apply(component.entity)
 
 			// Block all actions of opponent for one turn
-			opponentPlayer.hooks.onTurnStart.add(component, () => {
+			// @todo Make this into a status effect
+			observer.subscribeOnce(opponentPlayer.hooks.onTurnStart, () => {
 				game.addBlockedActions(
 					this.props.id,
 					'APPLY_EFFECT',
@@ -77,14 +78,8 @@ class JoeHillsRare extends Card {
 					'PLAY_SINGLE_USE_CARD',
 					'PLAY_EFFECT_CARD'
 				)
-				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

@@ -4,7 +4,7 @@ import {PickRequest} from '../../../types/server-requests'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import BetrayedStatusEffect from '../../../status-effects/betrayed'
 
 /*
@@ -38,17 +38,17 @@ class HypnotizdRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent): void {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
 		const {player, opponentPlayer} = component
 		let target: SlotComponent | null = null
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || !target?.inRow()) return
 			attack.setTarget(component.entity, target.row.entity)
 			target = null
 		})
 
-		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
 
 			const pickCondition = query.every(
@@ -96,11 +96,6 @@ class HypnotizdRare extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent): void {
-		const {player} = component
-		player.hooks.getAttackRequests.remove(component)
 	}
 }
 

@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, DiscardSlotComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -24,12 +24,12 @@ class LightningRod extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		let used = false
 
-		opponentPlayer.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
 			if (!component.slot?.onBoard() || !component.slot.row) return
 			if (attack.type === 'status-effect' || attack.isBacklash) return
 			if (game.currentPlayer.entity !== opponentPlayer.entity) return
@@ -39,16 +39,10 @@ class LightningRod extends Card {
 			used = true
 		})
 
-		opponentPlayer.hooks.afterAttack.add(component, (_attack) => {
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (_attack) => {
 			if (!used) return
 			component.discard()
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = component
-		opponentPlayer.hooks.beforeAttack.remove(component)
-		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

@@ -3,7 +3,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {card, effect, slot} from '../../../components/query'
 
 class VintageBeefRare extends Card {
@@ -32,10 +32,10 @@ class VintageBeefRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component)
@@ -49,12 +49,6 @@ class VintageBeefRare extends Card {
 				)
 				.forEach((effect) => effect.remove())
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

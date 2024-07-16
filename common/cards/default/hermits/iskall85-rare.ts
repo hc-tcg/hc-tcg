@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -29,10 +29,10 @@ class Iskall85Rare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const hermit = attack.target?.getHermit()
@@ -41,12 +41,6 @@ class Iskall85Rare extends Card {
 
 			attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.beforeAttack.remove(component)
 	}
 }
 

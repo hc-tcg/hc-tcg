@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,10 +33,10 @@ class FiveAMPearlRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 
 			if (!game.components.find(CardComponent, card.currentPlayer, card.active, card.is(Wolf)))
@@ -44,13 +44,6 @@ class FiveAMPearlRare extends Card {
 
 			attack.addDamage(component.entity, 30)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.beforeAttack.remove(component)
-		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

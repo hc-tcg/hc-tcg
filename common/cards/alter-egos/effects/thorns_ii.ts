@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {card} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -23,12 +23,12 @@ class ThornsII extends Card {
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 30hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer} = component
 		let hasTriggered = false
 
 		// Only when the opponent attacks us
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => {
 			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
 			if (!component.slot.inRow()) return
@@ -56,12 +56,6 @@ class ThornsII extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = component
-		opponentPlayer.hooks.afterAttack.remove(component)
-		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

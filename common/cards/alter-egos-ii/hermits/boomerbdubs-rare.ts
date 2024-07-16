@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -36,12 +36,16 @@ class BoomerBdubsRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent
+	): void {
 		const {player} = component
 
 		let extraDamage = 0
 
-		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 
@@ -96,7 +100,7 @@ class BoomerBdubsRare extends Card {
 			})
 		})
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (extraDamage === 0) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
@@ -105,13 +109,6 @@ class BoomerBdubsRare extends Card {
 
 			attack.addDamage(component.entity, extraDamage)
 		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent): void {
-		const {player} = component
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.beforeAttack.remove(component)
-		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

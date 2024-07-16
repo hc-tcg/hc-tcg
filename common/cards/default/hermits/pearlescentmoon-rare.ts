@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {AussiePingImmuneStatusEffect} from '../../../status-effects/aussie-ping'
+import {AussiePingStatusEffect} from '../../../status-effects/aussie-ping'
 
 class PearlescentMoonRare extends Card {
 	props: Hermit = {
@@ -37,20 +37,15 @@ class PearlescentMoonRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			game.components
-				.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
+				.new(StatusEffectComponent, AussiePingStatusEffect)
 				.apply(attack.target?.getHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

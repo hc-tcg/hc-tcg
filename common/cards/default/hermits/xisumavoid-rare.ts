@@ -3,7 +3,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import PoisonStatusEffect from '../../../status-effects/poison'
 
 class XisumavoidRare extends Card {
@@ -37,10 +37,10 @@ class XisumavoidRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component)
@@ -51,12 +51,6 @@ class XisumavoidRare extends Card {
 				.new(StatusEffectComponent, PoisonStatusEffect)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

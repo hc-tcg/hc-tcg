@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -37,12 +37,12 @@ class GoodTimesWithScarRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		let reviveReady = false
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
 			// If this component is not blocked from reviving, make possible next turn
 			if (!component.hasStatusEffect(RevivedByDeathloopStatusEffect)) {
@@ -51,7 +51,7 @@ class GoodTimesWithScarRare extends Card {
 		})
 
 		// Add before so health can be checked reliably
-		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => {
+		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) => {
 			if (!reviveReady) return
 
 			reviveReady = false
@@ -65,7 +65,7 @@ class GoodTimesWithScarRare extends Card {
 			game.components
 				.filter(
 					StatusEffectComponent,
-					(game, effect) =>
+					(_game, effect) =>
 						effect.target?.entity === target.entity &&
 						effect.statusEffect.props.id === 'revived_by_deathloop'
 				)
@@ -80,12 +80,6 @@ class GoodTimesWithScarRare extends Card {
 				.new(StatusEffectComponent, RevivedByDeathloopStatusEffect)
 				.apply(component.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

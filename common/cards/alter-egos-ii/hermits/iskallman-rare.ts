@@ -1,7 +1,6 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -34,7 +33,7 @@ class IskallmanRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent): void {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
 		const {player} = component
 		let pickedAfkHermit: SlotComponent | null = null
 
@@ -45,7 +44,7 @@ class IskallmanRare extends Card {
 			query.not(slot.activeRow)
 		)
 
-		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 
@@ -101,7 +100,7 @@ class IskallmanRare extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (!pickedAfkHermit?.inRow()) return
 
@@ -128,13 +127,6 @@ class IskallmanRare extends Card {
 				)
 			}
 		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent): void {
-		const {player} = component
-
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

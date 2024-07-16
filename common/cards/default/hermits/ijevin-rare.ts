@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, row, slot} from '../../../components/query'
-import {CardComponent, RowComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -31,10 +31,10 @@ class IJevinRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const pickCondition = query.every(
@@ -61,12 +61,6 @@ class IJevinRare extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

@@ -1,11 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {card, query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {RowEntity} from '../../../types/game-state'
+import {RowEntity} from '../../../entities'
 
 class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
@@ -33,12 +33,12 @@ class TinFoilChefUltraRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		let hasDiscardedFrom = new Set<RowEntity>()
 
-		player.hooks.beforeAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (opponentPlayer.activeRow === null) return
@@ -69,12 +69,6 @@ class TinFoilChefUltraRare extends Card {
 				)
 				?.discard()
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.beforeAttack.remove(component)
 	}
 }
 

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -17,10 +17,10 @@ class ChainmailArmor extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onDefence.add(component, (attack) => {
+		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!attack.isTargetting(component)) {
 				return
 			}
@@ -38,11 +38,6 @@ class ChainmailArmor extends Card {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onDefence.remove(component)
 	}
 }
 

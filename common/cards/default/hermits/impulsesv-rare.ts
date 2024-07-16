@@ -3,7 +3,7 @@ import {card, query} from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import BdoubleO100Common from './bdoubleo100-common'
 import BdoubleO100Rare from './bdoubleo100-rare'
 import TangoTekCommon from './tangotek-common'
@@ -35,10 +35,10 @@ class ImpulseSVRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			const boomerAmount = game.components.filter(
 				CardComponent,
 				card.currentPlayer,
@@ -49,12 +49,6 @@ class ImpulseSVRare extends Card {
 
 			attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

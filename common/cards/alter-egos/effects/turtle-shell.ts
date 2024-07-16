@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -19,24 +19,24 @@ class TurtleShell extends Card {
 		attachCondition: query.every(attach.attachCondition, query.not(slot.activeRow)),
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 		let firstActiveTurn = true
 
-		player.hooks.onTurnEnd.add(component, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			if (!component.slot.inRow()) return
 			if (player.activeRowEntity !== component.slot.row.entity) {
 				firstActiveTurn = false
 			}
 		})
 
-		player.hooks.onTurnStart.add(component, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!firstActiveTurn) {
 				component.discard()
 			}
 		})
 
-		player.hooks.onDefence.add(component, (attack) => {
+		observer.subscribe(player.hooks.onDefence, (attack) => {
 			// Only block if just became active
 			if (!firstActiveTurn) return
 			if (!component.slot.inRow()) return
@@ -51,13 +51,6 @@ class TurtleShell extends Card {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onDefence.remove(component)
-		player.hooks.onTurnEnd.remove(component)
-		player.hooks.onTurnStart.remove(component)
 	}
 }
 
