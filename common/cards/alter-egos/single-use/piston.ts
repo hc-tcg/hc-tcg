@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Piston extends Card {
+class PistonSingleUseCard extends Card {
 	firstPickCondition = query.every(
 		slot.currentPlayer,
 		slot.itemSlot,
@@ -16,7 +16,12 @@ class Piston extends Card {
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
 		slot.adjacentTo(
-			query.every(slot.row(row.hasHermit), slot.itemSlot, slot.empty, query.not(slot.frozen))
+			query.every(
+				slot.row(row.hasHermit),
+				slot.itemSlot,
+				slot.empty,
+				query.not(slot.frozen)
+			)
 		)
 	)
 
@@ -100,4 +105,4 @@ class Piston extends Card {
 	}
 }
 
-export default Piston
+export default PistonSingleUseCard

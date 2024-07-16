@@ -16,7 +16,7 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-class GrianRare extends Card {
+class GrianRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'grian_rare',
@@ -89,7 +89,7 @@ class GrianRare extends Card {
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -121,4 +121,4 @@ class GrianRare extends Card {
 	}
 }
 
-export default GrianRare
+export default GrianRareHermitCard

@@ -3,7 +3,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class FletchingTable extends Card {
+class FletchingTableSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fletching_table',
@@ -17,4 +17,4 @@ class FletchingTable extends Card {
 	}
 }
 
-export default FletchingTable
+export default FletchingTableSingleUseCard

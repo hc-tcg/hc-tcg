@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PixlriffsRare extends Card {
+class PixlriffsRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'pixlriffs_rare',
@@ -54,4 +54,4 @@ class PixlriffsRare extends Card {
 	}
 }
 
-export default PixlriffsRare
+export default PixlriffsRareHermitCard

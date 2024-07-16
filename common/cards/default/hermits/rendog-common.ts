@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class RendogCommon extends Card {
+class RendogCommonHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'rendog_common',
@@ -28,4 +28,4 @@ class RendogCommon extends Card {
 	}
 }
 
-export default RendogCommon
+export default RendogCommonHermitCard

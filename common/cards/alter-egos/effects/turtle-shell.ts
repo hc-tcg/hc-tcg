@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class  extends Card {
+class TurtleShellEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'turtle_shell',
@@ -61,4 +61,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default TurtleShellEffectCard

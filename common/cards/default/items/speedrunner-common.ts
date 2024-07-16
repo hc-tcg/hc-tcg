@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class SpeedrunnerItem extends Card {
+class SpeedrunnerCommonItemCard extends Card {
 	props: Item = {
 		...item,
 		id: 'item_speedrunner_common',
@@ -22,4 +22,4 @@ class SpeedrunnerItem extends Card {
 	}
 }
 
-export default SpeedrunnerItem
+export default SpeedrunnerCommonItemCard

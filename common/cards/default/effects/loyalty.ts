@@ -6,7 +6,7 @@ import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {card, slot} from '../../../components/query'
 
-class  extends Card {
+class LoyaltyEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'loyalty',
@@ -39,4 +39,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default LoyaltyEffectCard

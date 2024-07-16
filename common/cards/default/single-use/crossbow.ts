@@ -9,7 +9,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Crossbow extends Card {
+class CrossbowSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'crossbow',
@@ -122,4 +122,4 @@ class Crossbow extends Card {
 	}
 }
 
-export default Crossbow
+export default CrossbowSingleUseCard

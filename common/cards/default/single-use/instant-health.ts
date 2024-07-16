@@ -6,7 +6,7 @@ import {singleUse} from '../../base/defaults'
 import {CardComponent, SlotComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
-class InstantHealth extends Card {
+class InstantHealthSingleUseCard extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
 
 	props: SingleUse = {
@@ -44,4 +44,4 @@ class InstantHealth extends Card {
 	}
 }
 
-export default InstantHealth
+export default InstantHealthSingleUseCard

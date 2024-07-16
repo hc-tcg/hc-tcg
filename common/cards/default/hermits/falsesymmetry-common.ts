@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class FalseSymmetryCommon extends Card {
+class FalseSymmetryCommonHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'falsesymmetry_common',
@@ -28,4 +28,4 @@ class FalseSymmetryCommon extends Card {
 	}
 }
 
-export default FalseSymmetryCommon
+export default FalseSymmetryCommonHermitCard

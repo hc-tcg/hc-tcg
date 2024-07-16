@@ -4,7 +4,7 @@ import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import {CardComponent} from '../../../components'
 
-class  extends Card {
+class FurnaceEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'furnace',
@@ -30,4 +30,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default FurnaceEffectCard

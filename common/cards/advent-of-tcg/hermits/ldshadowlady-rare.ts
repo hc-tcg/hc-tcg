@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class LDShadowLadyRare extends Card {
+class LDShadowLadyRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ldshadowlady_rare',
@@ -89,4 +89,4 @@ class LDShadowLadyRare extends Card {
 	}
 }
 
-export default LDShadowLadyRare
+export default LDShadowLadyRareHermitCard

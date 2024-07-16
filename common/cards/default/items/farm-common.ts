@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class FarmItem extends Card {
+class FarmCommonItemCard extends Card {
 	props: Item = {
 		...item,
 		id: 'item_farm_common',
@@ -22,4 +22,4 @@ class FarmItem extends Card {
 	}
 }
 
-export default FarmItem
+export default FarmCommonItemCard

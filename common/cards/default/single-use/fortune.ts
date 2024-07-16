@@ -5,7 +5,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
-class Fortune extends Card {
+class FortuneSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fortune',
@@ -43,4 +43,4 @@ class Fortune extends Card {
 	}
 }
 
-export default Fortune
+export default FortuneSingleUseCard

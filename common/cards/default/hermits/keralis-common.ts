@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class KeralisCommon extends Card {
+class KeralisCommonHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'keralis_common',
@@ -28,4 +28,4 @@ class KeralisCommon extends Card {
 	}
 }
 
-export default KeralisCommon
+export default KeralisCommonHermitCard

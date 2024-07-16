@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OrionSoundRare extends Card {
+class OrionSoundRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'orionsound_rare',
@@ -86,4 +86,4 @@ class OrionSoundRare extends Card {
 	}
 }
 
-export default OrionSoundRare
+export default OrionSoundRareHermitCard

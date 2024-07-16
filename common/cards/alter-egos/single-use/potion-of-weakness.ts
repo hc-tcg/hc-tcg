@@ -5,7 +5,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {CardComponent} from '../../../components'
 
-class PotionOfWeakness extends Card {
+class PotionOfWeaknessSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'potion_of_weakness',
@@ -41,4 +41,4 @@ class PotionOfWeakness extends Card {
 	}
 }
 
-export default PotionOfWeakness
+export default PotionOfWeaknessSingleUseCard

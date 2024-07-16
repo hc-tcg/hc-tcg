@@ -7,7 +7,7 @@ import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import {setupMockedCard} from '../../../utils/attacks'
 
-class ZombieCleoRare extends Card {
+class ZombieCleoRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'zombiecleo_rare',
@@ -62,9 +62,7 @@ class ZombieCleoRare extends Card {
 		if (!newAttack) return null
 
 		const attackName =
-			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+			newAttack.type === 'primary' ? imitatingCard.props.primary.name : imitatingCard.props.secondary.name
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
@@ -155,4 +153,4 @@ class ZombieCleoRare extends Card {
 	}
 }
 
-export default ZombieCleoRare
+export default ZombieCleoRareHermitCard

@@ -8,7 +8,7 @@ import SleepingStatusEffect from '../../../status-effects/sleeping'
 
 // @todo Figure out how ladder is supposed to work
 
-class  extends Card {
+class BedEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'bed',
@@ -68,4 +68,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default BedEffectCard

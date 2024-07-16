@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RevivedByDeathloopStatusEffect from '../../../status-effects/revived-by-deathloop'
 
-class GoodTimesWithScarRare extends Card {
+class GoodTimesWithScarRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'goodtimeswithscar_rare',
@@ -89,4 +89,4 @@ class GoodTimesWithScarRare extends Card {
 	}
 }
 
-export default GoodTimesWithScarRare
+export default GoodTimesWithScarRareHermitCard

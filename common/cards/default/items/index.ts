@@ -1,46 +1,46 @@
-import BuilderItem from './builder-common'
-import BuilderDoubleItem from './builder-rare'
-import BalancedItem from './balanced-common'
-import BalancedDoubleItem from './balanced-rare'
-import RedstoneItem from './redstone-common'
-import RedstoneDoubleItem from './redstone-rare'
-import PranksterItem from './prankster-common'
-import PranksterDoubleItem from './prankster-rare'
-import ExplorerItem from './explorer-common'
-import ExplorerDoubleItem from './explorer-rare'
-import FarmItem from './farm-common'
-import FarmDoubleItem from './farm-rare'
-import PvPItem from './pvp-common'
-import PvPDoubleItem from './pvp-rare'
-import SpeedrunnerItem from './speedrunner-common'
-import SpeedrunnerDoubleItem from './speedrunner-rare'
-import TerraformItem from './terraform-common'
-import TerraformDoubleItem from './terraform-rare'
-import MinerItem from './miner-common'
-import MinerDoubleItem from './miner-rare'
+import BuilderCommonItemCard from './builder-common'
+import BuilderRareItemCard from './builder-rare'
+import BalancedCommonItemCard from './balanced-common'
+import BalancedRareItemCard from './balanced-rare'
+import RedstoneCommonItemCard from './redstone-common'
+import RedstoneRareItemCard from './redstone-rare'
+import PranksterCommonItemCard from './prankster-common'
+import PranksterRareItemCard from './prankster-rare'
+import ExplorerCommonItemCard from './explorer-common'
+import ExplorerRareItemCard from './explorer-rare'
+import FarmCommonItemCard from './farm-common'
+import FarmRareItemCard from './farm-rare'
+import PvPCommonItemCard from './pvp-common'
+import PvPRareItemCard from './pvp-rare'
+import SpeedrunnerCommonItemCard from './speedrunner-common'
+import SpeedrunnerRareItemCard from './speedrunner-rare'
+import TerraformCommonItemCard from './terraform-common'
+import TerraformRareItemCard from './terraform-rare'
+import MinerCommonItemCard from './miner-common'
+import MinerRareItemCard from './miner-rare'
 import Card from '../../base/card'
 
 const itemCardClasses: Array<new () => Card> = [
-	BuilderItem,
-	BuilderDoubleItem,
-	BalancedItem,
-	BalancedDoubleItem,
-	RedstoneItem,
-	RedstoneDoubleItem,
-	PranksterItem,
-	PranksterDoubleItem,
-	ExplorerItem,
-	ExplorerDoubleItem,
-	FarmItem,
-	FarmDoubleItem,
-	PvPItem,
-	PvPDoubleItem,
-	SpeedrunnerItem,
-	SpeedrunnerDoubleItem,
-	TerraformItem,
-	TerraformDoubleItem,
-	MinerItem,
-	MinerDoubleItem,
+	BuilderCommonItemCard,
+	BuilderRareItemCard,
+	BalancedCommonItemCard,
+	BalancedRareItemCard,
+	RedstoneCommonItemCard,
+	RedstoneRareItemCard,
+	PranksterCommonItemCard,
+	PranksterRareItemCard,
+	ExplorerCommonItemCard,
+	ExplorerRareItemCard,
+	FarmCommonItemCard,
+	FarmRareItemCard,
+	PvPCommonItemCard,
+	PvPRareItemCard,
+	SpeedrunnerCommonItemCard,
+	SpeedrunnerRareItemCard,
+	TerraformCommonItemCard,
+	TerraformRareItemCard,
+	MinerCommonItemCard,
+	MinerRareItemCard,
 ]
 
 export default itemCardClasses

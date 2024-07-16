@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class FishingRod extends Card {
+class FishingRodSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fishing_rod',
@@ -38,4 +38,4 @@ class FishingRod extends Card {
 	}
 }
 
-export default FishingRod
+export default FishingRodSingleUseCard

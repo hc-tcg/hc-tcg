@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class  extends Card {
+class CommandBlockEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'command_block',
@@ -46,4 +46,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default CommandBlockEffectCard

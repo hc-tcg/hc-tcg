@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class FlintAndSteel extends Card {
+class FlintAndSteelSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'flint_&_steel',
@@ -39,4 +39,4 @@ class FlintAndSteel extends Card {
 	}
 }
 
-export default FlintAndSteel
+export default FlintAndSteelSingleUseCard

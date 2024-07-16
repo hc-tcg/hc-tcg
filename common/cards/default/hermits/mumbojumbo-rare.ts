@@ -9,7 +9,7 @@ import {card} from '../../../components/query'
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
 */
-class MumboJumboRare extends Card {
+class MumboJumboRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'mumbojumbo_rare',
@@ -62,4 +62,4 @@ class MumboJumboRare extends Card {
 	}
 }
 
-export default MumboJumboRare
+export default MumboJumboRareHermitCard

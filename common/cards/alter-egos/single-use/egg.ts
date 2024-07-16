@@ -8,7 +8,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Egg extends Card {
+class EggSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
@@ -102,4 +102,4 @@ class Egg extends Card {
 	}
 }
 
-export default Egg
+export default EggSingleUseCard

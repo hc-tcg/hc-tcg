@@ -7,7 +7,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, SlotComponent} from '../../../components'
 
-class FireCharge extends Card {
+class FireChargeSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.currentPlayer,
 		query.not(slot.frozen),
@@ -61,4 +61,4 @@ class FireCharge extends Card {
 	}
 }
 
-export default FireCharge
+export default FireChargeSingleUseCard

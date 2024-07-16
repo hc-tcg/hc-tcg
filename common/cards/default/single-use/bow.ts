@@ -7,7 +7,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {RowEntity} from '../../../types/game-state'
 
-class Bow extends Card {
+class BowSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
@@ -77,4 +77,4 @@ class Bow extends Card {
 	}
 }
 
-export default Bow
+export default BowSingleUseCard

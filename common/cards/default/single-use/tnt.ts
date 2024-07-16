@@ -7,7 +7,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class TNT extends Card {
+class TNTSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'tnt',
@@ -62,4 +62,4 @@ class TNT extends Card {
 	}
 }
 
-export default TNT
+export default TNTSingleUseCard

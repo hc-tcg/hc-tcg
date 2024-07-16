@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class TerraformDoubleItem extends Card {
+class TerraformRareItemCard extends Card {
 	props: Item = {
 		...item,
 		id: 'item_terraform_rare',
@@ -22,4 +22,4 @@ class TerraformDoubleItem extends Card {
 	}
 }
 
-export default TerraformDoubleItem
+export default TerraformRareItemCard

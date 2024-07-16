@@ -5,7 +5,7 @@ import {CardComponent} from '../../../components'
 import {Attach, HasHealth} from '../../base/types'
 import {attach, hermit} from '../../base/defaults'
 
-class  extends Card {
+class ArmorStandEffectCard extends Card {
 	props: Attach & HasHealth = {
 		...attach,
 		id: 'armor_stand',
@@ -44,4 +44,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default ArmorStandEffectCard

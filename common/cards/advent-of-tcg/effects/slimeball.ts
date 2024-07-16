@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class  extends Card {
+class SlimeballEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'slimeball',
@@ -45,4 +45,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default SlimeballEffectCard

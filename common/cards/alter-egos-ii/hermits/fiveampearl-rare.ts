@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class FiveAMPearlRare extends Card {
+class FiveAMPearlRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'fiveampearl_rare',
@@ -52,4 +52,4 @@ class FiveAMPearlRare extends Card {
 	}
 }
 
-export default FiveAMPearlRare
+export default FiveAMPearlRareHermitCard

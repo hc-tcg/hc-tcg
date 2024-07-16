@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class InvisibilityPotion extends Card {
+class InvisibilityPotionSingleUseCard extends Card {
 	applyTo = query.every(slot.opponent, slot.activeRow, slot.hermitSlot)
 
 	props: SingleUse = {
@@ -26,10 +26,7 @@ class InvisibilityPotion extends Card {
 				name: 'missed',
 			},
 		],
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.applyTo)
-		),
+		attachCondition: query.every(singleUse.attachCondition, query.exists(SlotComponent, this.applyTo)),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
@@ -54,4 +51,4 @@ class InvisibilityPotion extends Card {
 	}
 }
 
-export default InvisibilityPotion
+export default InvisibilityPotionSingleUseCard

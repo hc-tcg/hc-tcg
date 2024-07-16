@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
 
-class BdoubleO100Rare extends Card {
+class BdoubleO100RareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'bdoubleo100_rare',
@@ -53,4 +53,4 @@ class BdoubleO100Rare extends Card {
 	}
 }
 
-export default BdoubleO100Rare
+export default BdoubleO100RareHermitCard

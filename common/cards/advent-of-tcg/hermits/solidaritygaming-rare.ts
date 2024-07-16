@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent} from '../../../components'
 
-class SolidaritygamingRare extends Card {
+class SolidaritygamingRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'solidaritygaming_rare',
@@ -83,4 +83,4 @@ class SolidaritygamingRare extends Card {
 	}
 }
 
-export default SolidaritygamingRare
+export default SolidaritygamingRareHermitCard

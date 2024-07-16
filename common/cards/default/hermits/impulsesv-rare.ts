@@ -4,12 +4,12 @@ import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import {CardComponent} from '../../../components'
-import BdoubleO100Common from './bdoubleo100-common'
-import BdoubleO100Rare from './bdoubleo100-rare'
-import TangoTekCommon from './tangotek-common'
-import TangoTekRare from './tangotek-rare'
+import BdoubleO100CommonHermitCard from './bdoubleo100-common'
+import BdoubleO100RareHermitCard from './bdoubleo100-rare'
+import TangoTekCommonHermitCard from './tangotek-common'
+import TangoTekRareHermitCard from './tangotek-rare'
 
-class ImpulseSVRare extends Card {
+class ImpulseSVRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'impulsesv_rare',
@@ -43,7 +43,12 @@ class ImpulseSVRare extends Card {
 				CardComponent,
 				card.currentPlayer,
 				card.attached,
-				card.is(BdoubleO100Common, BdoubleO100Rare, TangoTekCommon, TangoTekRare),
+				card.is(
+					BdoubleO100CommonHermitCard,
+					BdoubleO100RareHermitCard,
+					TangoTekCommonHermitCard,
+					TangoTekRareHermitCard
+				),
 				query.not(card.active)
 			).length
 
@@ -58,4 +63,4 @@ class ImpulseSVRare extends Card {
 	}
 }
 
-export default ImpulseSVRare
+export default ImpulseSVRareHermitCard

@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
-class  extends Card {
+class NetheriteArmorEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'netherite_armor',
@@ -49,4 +49,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default NetheriteArmorEffectCard

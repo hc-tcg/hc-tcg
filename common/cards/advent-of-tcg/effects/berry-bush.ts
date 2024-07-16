@@ -6,7 +6,7 @@ import {Attach} from '../../base/types'
 import {CARDS} from '../..'
 import {CardComponent} from '../../../components'
 
-class  extends Card {
+class BerryBushEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'berry_bush',
@@ -78,4 +78,4 @@ class  extends Card {
 	}
 }
 
-export default 
+export default BerryBushEffectCard

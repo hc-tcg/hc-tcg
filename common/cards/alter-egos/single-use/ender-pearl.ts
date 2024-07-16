@@ -8,7 +8,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class EnderPearl extends Card {
+class EnderPearlSingleUseCard extends Card {
 	pickCondition = query.every(slot.empty, slot.hermitSlot, slot.currentPlayer)
 
 	props: SingleUse = {
@@ -69,4 +69,4 @@ class EnderPearl extends Card {
 	}
 }
 
-export default EnderPearl
+export default EnderPearlSingleUseCard

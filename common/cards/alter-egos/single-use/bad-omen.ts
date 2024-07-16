@@ -5,7 +5,7 @@ import {singleUse} from '../../base/defaults'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import {card, query, row, slot} from '../../../components/query'
 
-class BadOmen extends Card {
+class BadOmenSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'bad_omen',
@@ -42,4 +42,4 @@ class BadOmen extends Card {
 	}
 }
 
-export default BadOmen
+export default BadOmenSingleUseCard

@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Looting extends Card {
+class LootingSingleUseCard extends Card {
 	pickCondition = query.every(slot.opponent, slot.activeRow, slot.itemSlot, query.not(slot.empty))
 
 	props: SingleUse = {
@@ -55,4 +55,4 @@ class Looting extends Card {
 	}
 }
 
-export default Looting
+export default LootingSingleUseCard

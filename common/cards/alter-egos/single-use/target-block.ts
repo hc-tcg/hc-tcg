@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class TargetBlock extends Card {
+class TargetBlockSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
@@ -69,4 +69,4 @@ class TargetBlock extends Card {
 	}
 }
 
-export default TargetBlock
+export default TargetBlockSingleUseCard

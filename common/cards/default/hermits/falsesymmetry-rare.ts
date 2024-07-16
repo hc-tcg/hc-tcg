@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class FalseSymmetryRare extends Card {
+class FalseSymmetryRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'falsesymmetry_rare',
@@ -58,4 +58,4 @@ class FalseSymmetryRare extends Card {
 	}
 }
 
-export default FalseSymmetryRare
+export default FalseSymmetryRareHermitCard

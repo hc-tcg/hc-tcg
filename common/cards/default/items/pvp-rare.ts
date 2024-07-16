@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class PvPDoubleItem extends Card {
+class PvPRareItemCard extends Card {
 	props: Item = {
 		...item,
 		id: 'item_pvp_rare',
@@ -22,4 +22,4 @@ class PvPDoubleItem extends Card {
 	}
 }
 
-export default PvPDoubleItem
+export default PvPRareItemCard

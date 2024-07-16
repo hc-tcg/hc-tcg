@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Glowstone extends Card {
+class GlowstoneSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'glowstone',
@@ -72,4 +72,4 @@ class Glowstone extends Card {
 	}
 }
 
-export default Glowstone
+export default GlowstoneSingleUseCard

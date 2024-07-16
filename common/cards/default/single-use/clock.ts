@@ -5,7 +5,7 @@ import {CardComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Clock extends Card {
+class ClockSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'clock',
@@ -61,4 +61,4 @@ class Clock extends Card {
 	}
 }
 
-export default Clock
+export default ClockSingleUseCard

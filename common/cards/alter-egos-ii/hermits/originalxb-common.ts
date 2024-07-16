@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OriginalXbCommon extends Card {
+class OriginalXbCommonHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'originalxb_common',
@@ -30,4 +30,4 @@ class OriginalXbCommon extends Card {
 	}
 }
 
-export default OriginalXbCommon
+export default OriginalXbCommonHermitCard

@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class DiamondSword extends Card {
+class DiamondSwordSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'diamond_sword',
@@ -63,4 +63,4 @@ class DiamondSword extends Card {
 	}
 }
 
-export default DiamondSword
+export default DiamondSwordSingleUseCard

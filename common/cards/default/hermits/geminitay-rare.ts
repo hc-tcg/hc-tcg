@@ -6,7 +6,7 @@ import {Hermit} from '../../base/types'
 import {card} from '../../../components/query'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
-class GeminiTayRare extends Card {
+class GeminiTayRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'geminitay_rare',
@@ -59,4 +59,4 @@ class GeminiTayRare extends Card {
 	}
 }
 
-export default GeminiTayRare
+export default GeminiTayRareHermitCard

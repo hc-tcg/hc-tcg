@@ -5,10 +5,10 @@ import {query, slot} from '../../../components/query'
 import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
-import  from '../../alter-egos/effects/armor-stand'
+import ArmorStandEffectCard from '../../alter-egos/effects/armor-stand'
 import {setupMockedCard} from '../../../utils/attacks'
 
-class RendogRare extends Card {
+class RendogRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'rendog_rare',
@@ -37,8 +37,8 @@ class RendogRare extends Card {
 		slot.opponent,
 		slot.hermitSlot,
 		query.not(slot.empty),
-		query.not(slot.has(RendogRare)),
-		query.not(slot.has())
+		query.not(slot.has(RendogRareHermitCard)),
+		query.not(slot.has(ArmorStandEffectCard))
 	)
 
 	imitatingCard = new InstancedValue<CardComponent | null>(() => null)
@@ -53,7 +53,7 @@ class RendogRare extends Card {
 
 		const imitatingCard = this.imitatingCard.get(component)
 		const pickedAttack = this.pickedAttack.get(component)
-
+		
 		if (!imitatingCard?.isHermit()) return null
 		if (!pickedAttack) return null
 
@@ -153,4 +153,4 @@ class RendogRare extends Card {
 	}
 }
 
-export default RendogRare
+export default RendogRareHermitCard

@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class Knockback extends Card {
+class KnockbackSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
@@ -72,4 +72,4 @@ class Knockback extends Card {
 	}
 }
 
-export default Knockback
+export default KnockbackSingleUseCard

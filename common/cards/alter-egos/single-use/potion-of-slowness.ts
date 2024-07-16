@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class PotionOfSlowness extends Card {
+class PotionOfSlownessSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'potion_of_slowness',
@@ -42,4 +42,4 @@ class PotionOfSlowness extends Card {
 	}
 }
 
-export default PotionOfSlowness
+export default PotionOfSlownessSingleUseCard

@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class BalancedDoubleItem extends Card {
+class BalancedRareItemCard extends Card {
 	props: Item = {
 		...item,
 		id: 'item_balanced_rare',
@@ -22,4 +22,4 @@ class BalancedDoubleItem extends Card {
 	}
 }
 
-export default BalancedDoubleItem
+export default BalancedRareItemCard
