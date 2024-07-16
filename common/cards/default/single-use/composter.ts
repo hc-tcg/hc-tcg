@@ -32,7 +32,7 @@ class Composter extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick 2 cards from your hand',
 			canPick: slot.hand,
 			onResult(pickedSlot) {
@@ -42,7 +42,7 @@ class Composter extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
 				if (firstPickedSlot === null) return false
