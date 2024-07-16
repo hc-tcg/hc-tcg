@@ -3,7 +3,6 @@ import StatusEffect, {Counter, StatusEffectProps} from '../status-effects/status
 import {CardEntity, StatusEffectEntity} from '../types/game-state'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
-import {card, slot} from './query'
 
 let STATUS_EFFECTS: Record<any, StatusEffect>
 import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
@@ -71,9 +70,5 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		if (!this.target) return
 		this.statusEffect.onRemoval(this.game, this, this.target)
 		this.targetEntity = null
-	}
-
-	public isCounter(): this is StatusEffectComponent<Counter> {
-		return isCounter(this.statusEffect.props)
 	}
 }
