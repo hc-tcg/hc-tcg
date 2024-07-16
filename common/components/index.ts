@@ -9,3 +9,4 @@ export {
 export {PlayerComponent} from './player-component'
 export {StatusEffectComponent} from './status-effect-component'
 export {RowComponent} from './row-component'
+export {ObserverComponent} from './observer-component'

@@ -3,10 +3,9 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import FireStatusEffect from '../../../status-effects/fire'
 import {card, slot} from '../../../components/query'
-import {ObserverComponent} from '../../../types/hooks'
 
 class EthosLabRare extends Card {
 	props: Hermit = {

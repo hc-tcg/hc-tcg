@@ -1,10 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
-import {ObserverComponent} from '../../../types/hooks'
 
 class BdoubleO100Rare extends Card {
 	props: Hermit = {

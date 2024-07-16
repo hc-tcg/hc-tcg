@@ -1,5 +1,5 @@
+import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
-import type {PlayerEntity, RowEntity} from '../types/game-state'
 import {CardComponent} from './card-component'
 import {card, slot} from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'

@@ -1,9 +1,9 @@
 import {GameModel} from '../models/game-model'
 import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
-import {CardEntity, StatusEffectEntity} from '../types/game-state'
-import {ObserverComponent, ObserverEntity} from '../types/hooks'
+import type {CardEntity, ObserverEntity, StatusEffectEntity} from '../entities'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
+import {ObserverComponent} from './observer-component'
 
 let STATUS_EFFECTS: Record<any, StatusEffect>
 import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))

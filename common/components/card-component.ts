@@ -1,6 +1,7 @@
 import {
 	DiscardSlotComponent,
 	HandSlotComponent,
+	ObserverComponent,
 	PlayerComponent,
 	SlotComponent,
 	StatusEffectComponent,
@@ -22,8 +23,7 @@ import {
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type StatusEffect from '../status-effects/status-effect'
-import {CardEntity, PlayerEntity, SlotEntity} from '../types/game-state'
-import {ObserverComponent, ObserverEntity} from '../types/hooks'
+import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
 

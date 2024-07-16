@@ -1,6 +1,4 @@
-import {CardComponent, StatusEffectComponent} from '../components'
-import {GameModel} from '../models/game-model'
-import {Entity} from './game-state'
+import type {ObserverEntity} from '../entities'
 
 export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args]> = []
@@ -36,57 +34,6 @@ export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	 */
 	public call(...params: Parameters<Args>) {
 		return this.listeners.map(([_, listener]) => listener(...(params as Array<any>)))
-	}
-}
-
-export type ObserverEntity = Entity<ObserverComponent>
-
-/** Abstraction over Hook interface that allows hooks to be automatically removed. This
- * is used to remove hooks when cards are removed from the board and when status effect
- * time out.
- */
-export class ObserverComponent {
-	readonly game: GameModel
-	readonly entity: ObserverEntity
-	readonly wrappingEntity: Entity<CardComponent | StatusEffectComponent>
-	private hooks: Array<Hook<any, any>>
-
-	constructor(
-		game: GameModel,
-		entity: ObserverEntity,
-		wrappingEntity: Entity<CardComponent | StatusEffectComponent>
-	) {
-		this.game = game
-		this.entity = entity
-		this.wrappingEntity = wrappingEntity
-		this.hooks = []
-	}
-
-	/** Subscribe to a hook with this observer */
-	public subscribe<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
-		hook.add(this.entity, fun)
-		this.hooks.push(hook)
-	}
-
-	/** Subscribe a specific hook, and put this observer at the top of the queue. */
-	public subscribeBefore<Args extends (...any: any) => any>(
-		hook: Hook<ObserverComponent, Args>,
-		fun: Args
-	) {
-		hook.addBefore(this, fun)
-		this.hooks.push(hook)
-	}
-
-	/** Stop listening to a specific hook */
-	public unsubscribe(hook: Hook<ObserverEntity, any>) {
-		hook.remove(this.entity)
-	}
-
-	/** Disconnect all hooks connected to this observer */
-	public unsubscribeFromEverything() {
-		for (const hook of this.hooks) {
-			hook.remove(this.entity)
-		}
 	}
 }
 

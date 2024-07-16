@@ -3,9 +3,8 @@ import {query, slot} from '../../../components/query'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach} from '../../base/types'
-import {ObserverComponent} from '../../../types/hooks'
 
 class Wolf extends Card {
 	props: Attach = {

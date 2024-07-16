@@ -3,9 +3,8 @@ import {card, query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
-import {ObserverComponent} from '../../../types/hooks'
 
 // @todo Figure out how ladder is supposed to work
 
@@ -55,7 +54,7 @@ class Bed extends Card {
 			// if sleeping has worn off, discard the bed
 			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
 				component.discard()
-				player.hooks.onTurnEnd.remove(component)
+				observer.unsubscribe(player.hooks.onTurnEnd)
 			}
 		})
 	}

@@ -1,10 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {card} from '../../../components/query'
-import {ObserverComponent} from '../../../types/hooks'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class GeminiTayRare extends Card {
