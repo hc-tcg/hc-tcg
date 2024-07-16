@@ -7,7 +7,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class SpyglassSingleUseCard extends Card {
+class Spyglass extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'spyglass',
@@ -84,4 +84,4 @@ class SpyglassSingleUseCard extends Card {
 	}
 }
 
-export default SpyglassSingleUseCard
+export default Spyglass

@@ -3,9 +3,9 @@ import {CardComponent, DeckSlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import FletchingTableSingleUseCard from './fletching-table'
+import FletchingTable from './fletching-table'
 
-class DropperSingleUseCard extends Card {
+class Dropper extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'dropper',
@@ -24,7 +24,7 @@ class DropperSingleUseCard extends Card {
 		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
 				let slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
-				game.components.new(CardComponent, FletchingTableSingleUseCard, slot.entity)
+				game.components.new(CardComponent, FletchingTable, slot.entity)
 			}
 		})
 	}
@@ -36,4 +36,4 @@ class DropperSingleUseCard extends Card {
 	}
 }
 
-export default DropperSingleUseCard
+export default Dropper

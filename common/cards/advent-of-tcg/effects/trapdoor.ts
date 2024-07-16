@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class TrapdoorEffectCard extends Card {
+class  extends Card {
 	props: Attach = {
 		...attach,
 		id: 'trapdoor',
@@ -65,4 +65,4 @@ class TrapdoorEffectCard extends Card {
 	}
 }
 
-export default TrapdoorEffectCard
+export default 

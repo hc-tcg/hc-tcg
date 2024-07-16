@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class BdoubleO100CommonHermitCard extends Card {
+class BdoubleO100Common extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'bdoubleo100_common',
@@ -28,4 +28,4 @@ class BdoubleO100CommonHermitCard extends Card {
 	}
 }
 
-export default BdoubleO100CommonHermitCard
+export default BdoubleO100Common

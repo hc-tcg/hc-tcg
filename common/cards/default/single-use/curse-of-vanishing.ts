@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class CurseOfVanishingSingleUseCard extends Card {
+class CurseOfVanishing extends Card {
 	discardCondition = query.every(
 		slot.opponent,
 		slot.activeRow,
@@ -46,4 +46,4 @@ class CurseOfVanishingSingleUseCard extends Card {
 	}
 }
 
-export default CurseOfVanishingSingleUseCard
+export default CurseOfVanishing

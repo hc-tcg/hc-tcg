@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DwarfImpulseCommonHermitCard extends Card {
+class DwarfImpulseCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'dwarfimpulse_common',
@@ -31,4 +31,4 @@ class DwarfImpulseCommonHermitCard extends Card {
 	}
 }
 
-export default DwarfImpulseCommonHermitCard
+export default DwarfImpulseCommon

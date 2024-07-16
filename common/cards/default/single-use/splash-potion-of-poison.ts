@@ -5,7 +5,7 @@ import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 import {CardComponent} from '../../../components'
 
-class SplashPotionOfPoisonSingleUseCard extends Card {
+class SplashPotionOfPoison extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_poison',
@@ -45,4 +45,4 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 	}
 }
 
-export default SplashPotionOfPoisonSingleUseCard
+export default SplashPotionOfPoison

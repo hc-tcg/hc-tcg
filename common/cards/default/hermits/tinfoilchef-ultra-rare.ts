@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class TinFoilChefUltraRareHermitCard extends Card {
+class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'tinfoilchef_ultra_rare',
@@ -67,4 +67,4 @@ class TinFoilChefUltraRareHermitCard extends Card {
 	}
 }
 
-export default TinFoilChefUltraRareHermitCard
+export default TinFoilChefUltraRare

@@ -7,7 +7,7 @@ import {Hermit} from '../../base/types'
 import {effect} from '../../../components/query'
 import UsedClockStatusEffect from '../../../status-effects/used-clock'
 
-class JoeHillsRareHermitCard extends Card {
+class JoeHillsRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'joehills_rare',
@@ -88,4 +88,4 @@ class JoeHillsRareHermitCard extends Card {
 	}
 }
 
-export default JoeHillsRareHermitCard
+export default JoeHillsRare

@@ -6,7 +6,7 @@ import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import {CardComponent} from '../../../components'
 
-class BrewingStandEffectCard extends Card {
+class  extends Card {
 	props: Attach = {
 		...attach,
 		id: 'brewing_stand',
@@ -59,4 +59,4 @@ class BrewingStandEffectCard extends Card {
 	}
 }
 
-export default BrewingStandEffectCard
+export default 

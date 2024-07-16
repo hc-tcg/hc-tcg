@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class MinerRareItemCard extends Card {
+class MinerDoubleItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_miner_rare',
@@ -22,4 +22,4 @@ class MinerRareItemCard extends Card {
 	}
 }
 
-export default MinerRareItemCard
+export default MinerDoubleItem

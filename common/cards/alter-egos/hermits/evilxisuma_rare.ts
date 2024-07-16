@@ -6,7 +6,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {card, query} from '../../../components/query'
 
-class EvilXisumaRareHermitCard extends Card {
+class EvilXisumaRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'evilxisuma_rare',
@@ -99,4 +99,4 @@ class EvilXisumaRareHermitCard extends Card {
 	}
 }
 
-export default EvilXisumaRareHermitCard
+export default EvilXisumaRare

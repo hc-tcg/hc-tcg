@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class LeadSingleUseCard extends Card {
+class Lead extends Card {
 	firstPickCondition = query.every(
 		slot.opponent,
 		slot.itemSlot,
@@ -78,4 +78,4 @@ class LeadSingleUseCard extends Card {
 	}
 }
 
-export default LeadSingleUseCard
+export default Lead

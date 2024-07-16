@@ -1,66 +1,66 @@
-import ClockSingleUseCard from './clock'
-import LavaBucketSingleUseCard from './lava-bucket'
-import SplashPotionOfPoisonSingleUseCard from './splash-potion-of-poison'
-import SplashPotionOfHealingSingleUseCard from './splash-potion-of-healing'
-import GoldenAppleSingleUseCard from './golden-apple'
-import InstantHealthSingleUseCard from './instant-health'
-import InstantHealthIISingleUseCard from './instant-health-ii'
-import BowSingleUseCard from './bow'
-import CrossbowSingleUseCard from './crossbow'
-import IronSwordSingleUseCard from './iron-sword'
-import DiamondSwordSingleUseCard from './diamond-sword'
-import NetheriteSwordSingleUseCard from './netherite-sword'
-import GoldenAxeSingleUseCard from './golden-axe'
-import TNTSingleUseCard from './tnt'
-import ChorusFruitSingleUseCard from './chorus-fruit'
-import InvisibilityPotionSingleUseCard from './invisibility-potion'
-import FishingRodSingleUseCard from './fishing-rod'
-import EmeraldSingleUseCard from './emerald'
-import FlintAndSteelSingleUseCard from './flint-and-steel'
-import ComposterSingleUseCard from './composter'
-import LeadSingleUseCard from './lead'
-import SpyglassSingleUseCard from './spyglass'
-import ChestSingleUseCard from './chest'
-import KnockbackSingleUseCard from './knockback'
-import EfficiencySingleUseCard from './efficiency'
-import CurseOfBindingSingleUseCard from './curse-of-binding'
-import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
-import FortuneSingleUseCard from './fortune'
-import MendingSingleUseCard from './mending'
-import LootingSingleUseCard from './looting'
+import Clock from './clock'
+import LavaBucket from './lava-bucket'
+import SplashPotionOfPoison from './splash-potion-of-poison'
+import SplashPotionOfHealing from './splash-potion-of-healing'
+import GoldenApple from './golden-apple'
+import InstantHealth from './instant-health'
+import InstantHealthII from './instant-health-ii'
+import Bow from './bow'
+import Crossbow from './crossbow'
+import IronSword from './iron-sword'
+import DiamondSword from './diamond-sword'
+import NetheriteSword from './netherite-sword'
+import GoldenAxe from './golden-axe'
+import TNT from './tnt'
+import ChorusFruit from './chorus-fruit'
+import InvisibilityPotion from './invisibility-potion'
+import FishingRod from './fishing-rod'
+import Emerald from './emerald'
+import FlintAndSteel from './flint-and-steel'
+import Composter from './composter'
+import Lead from './lead'
+import Spyglass from './spyglass'
+import Chest from './chest'
+import Knockback from './knockback'
+import Efficiency from './efficiency'
+import CurseOfBinding from './curse-of-binding'
+import CurseOfVanishing from './curse-of-vanishing'
+import Fortune from './fortune'
+import Mending from './mending'
+import Looting from './looting'
 import Card from '../../base/card'
 
 const singleUseCardClasses: Array<new () => Card> = [
-	InstantHealthSingleUseCard,
-	SplashPotionOfHealingSingleUseCard,
-	InstantHealthIISingleUseCard,
-	GoldenAppleSingleUseCard,
-	BowSingleUseCard,
-	ChorusFruitSingleUseCard,
-	IronSwordSingleUseCard,
-	TNTSingleUseCard,
-	CrossbowSingleUseCard,
-	DiamondSwordSingleUseCard,
-	GoldenAxeSingleUseCard,
-	LavaBucketSingleUseCard,
-	SplashPotionOfPoisonSingleUseCard,
-	NetheriteSwordSingleUseCard,
-	InvisibilityPotionSingleUseCard,
-	ClockSingleUseCard,
-	ComposterSingleUseCard,
-	FlintAndSteelSingleUseCard,
-	LeadSingleUseCard,
-	ChestSingleUseCard,
-	EmeraldSingleUseCard,
-	SpyglassSingleUseCard,
-	FishingRodSingleUseCard,
-	FortuneSingleUseCard,
-	KnockbackSingleUseCard,
-	EfficiencySingleUseCard,
-	CurseOfBindingSingleUseCard,
-	CurseOfVanishingSingleUseCard,
-	MendingSingleUseCard,
-	LootingSingleUseCard,
+	InstantHealth,
+	SplashPotionOfHealing,
+	InstantHealthII,
+	GoldenApple,
+	Bow,
+	ChorusFruit,
+	IronSword,
+	TNT,
+	Crossbow,
+	DiamondSword,
+	GoldenAxe,
+	LavaBucket,
+	SplashPotionOfPoison,
+	NetheriteSword,
+	InvisibilityPotion,
+	Clock,
+	Composter,
+	FlintAndSteel,
+	Lead,
+	Chest,
+	Emerald,
+	Spyglass,
+	FishingRod,
+	Fortune,
+	Knockback,
+	Efficiency,
+	CurseOfBinding,
+	CurseOfVanishing,
+	Mending,
+	Looting,
 ]
 
 export default singleUseCardClasses

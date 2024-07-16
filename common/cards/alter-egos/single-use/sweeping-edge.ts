@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class SweepingEdgeSingleUseCard extends Card {
+class SweepingEdge extends Card {
 	discardCondition = query.every(
 		query.some(slot.activeRow, slot.row(row.adjacent(row.active))),
 		slot.attachSlot,
@@ -47,4 +47,4 @@ class SweepingEdgeSingleUseCard extends Card {
 	}
 }
 
-export default SweepingEdgeSingleUseCard
+export default SweepingEdge

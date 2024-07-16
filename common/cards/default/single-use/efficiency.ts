@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class EfficiencySingleUseCard extends Card {
+class Efficiency extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'efficiency',
@@ -47,4 +47,4 @@ class EfficiencySingleUseCard extends Card {
 	}
 }
 
-export default EfficiencySingleUseCard
+export default Efficiency

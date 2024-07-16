@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class LadderSingleUseCard extends Card {
+class Ladder extends Card {
 	pickCondition = query.every(
 		slot.currentPlayer,
 		slot.hermitSlot,
@@ -51,4 +51,4 @@ class LadderSingleUseCard extends Card {
 	}
 }
 
-export default LadderSingleUseCard
+export default Ladder

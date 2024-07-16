@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, SlotComponent} from '../../../components'
 
-class KeralisRareHermitCard extends Card {
+class KeralisRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'keralis_rare',
@@ -87,4 +87,4 @@ class KeralisRareHermitCard extends Card {
 	}
 }
 
-export default KeralisRareHermitCard
+export default KeralisRare

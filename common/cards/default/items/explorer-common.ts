@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class ExplorerCommonItemCard extends Card {
+class ExplorerItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_explorer_common',
@@ -22,4 +22,4 @@ class ExplorerCommonItemCard extends Card {
 	}
 }
 
-export default ExplorerCommonItemCard
+export default ExplorerItem

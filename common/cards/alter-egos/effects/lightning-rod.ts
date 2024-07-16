@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class LightningRodEffectCard extends Card {
+class  extends Card {
 	props: Attach = {
 		...attach,
 		id: 'lightning_rod',
@@ -23,7 +23,7 @@ class LightningRodEffectCard extends Card {
 					SlotComponent,
 					slot.currentPlayer,
 					slot.attachSlot,
-					slot.has(LightningRodEffectCard)
+					slot.has()
 				)
 			)
 		),
@@ -57,4 +57,4 @@ class LightningRodEffectCard extends Card {
 	}
 }
 
-export default LightningRodEffectCard
+export default 

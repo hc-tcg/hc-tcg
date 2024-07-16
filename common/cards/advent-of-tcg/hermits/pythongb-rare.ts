@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PythonGBRareHermitCard extends Card {
+class PythonGBRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'pythongb_rare',
@@ -60,4 +60,4 @@ class PythonGBRareHermitCard extends Card {
 	}
 }
 
-export default PythonGBRareHermitCard
+export default PythonGBRare

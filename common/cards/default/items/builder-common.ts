@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class BuilderCommonItemCard extends Card {
+class BuilderItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_builder_common',
@@ -22,4 +22,4 @@ class BuilderCommonItemCard extends Card {
 	}
 }
 
-export default BuilderCommonItemCard
+export default BuilderItem

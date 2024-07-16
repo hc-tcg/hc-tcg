@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class ChainmailArmorEffectCard extends Card {
+class  extends Card {
 	props: Attach = {
 		...attach,
 		id: 'chainmail_armor',
@@ -46,4 +46,4 @@ class ChainmailArmorEffectCard extends Card {
 	}
 }
 
-export default ChainmailArmorEffectCard
+export default 

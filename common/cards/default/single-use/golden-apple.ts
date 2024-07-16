@@ -6,7 +6,7 @@ import {singleUse} from '../../base/defaults'
 import {CardComponent, SlotComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
-class GoldenAppleSingleUseCard extends Card {
+class GoldenApple extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.activeRow), query.not(slot.empty))
 
 	props: SingleUse = {
@@ -45,4 +45,4 @@ class GoldenAppleSingleUseCard extends Card {
 	}
 }
 
-export default GoldenAppleSingleUseCard
+export default GoldenApple

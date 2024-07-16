@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import { CardComponent } from '../../../components'
+import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Item} from '../../base/types'
-import { item } from '../../base/defaults'
+import {item} from '../../base/defaults'
 
-class BalancedCommonItemCard extends Card {
+class BalancedItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_balanced_common',
@@ -22,4 +22,4 @@ class BalancedCommonItemCard extends Card {
 	}
 }
 
-export default BalancedCommonItemCard
+export default BalancedItem

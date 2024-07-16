@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class ComposterSingleUseCard extends Card {
+class Composter extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'composter',
@@ -60,4 +60,4 @@ class ComposterSingleUseCard extends Card {
 	}
 }
 
-export default ComposterSingleUseCard
+export default Composter
