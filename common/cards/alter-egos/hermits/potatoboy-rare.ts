@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, row, slot} from '../../../components/query'
+import {card, row} from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
@@ -35,12 +35,12 @@ class PotatoBoyRare extends Card {
 	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		player.hooks.onAttack.add(component, (_attack) => {
 			game.components
 				.filter(RowComponent, row.currentPlayer, row.adjacent(row.active))
 				.forEach((row) => {
 					row.heal(40)
-					let hermit = game.components.find(CardComponent, card.rowIs(row.entity))
+					let hermit = row.getHermit()
 					game.battleLog.addEntry(
 						player.entity,
 						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
@@ -51,7 +51,7 @@ class PotatoBoyRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}

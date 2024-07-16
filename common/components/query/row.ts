@@ -29,6 +29,10 @@ export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	}
 }
 
+export function index(rowIndex: number): ComponentQuery<RowComponent> {
+	return (_game, row) => row.index === rowIndex
+}
+
 export function row(rowEntity: RowEntity | null | undefined): ComponentQuery<RowComponent> {
 	return (_game, row) => {
 		if (!rowEntity) return false

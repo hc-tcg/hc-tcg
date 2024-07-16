@@ -54,7 +54,7 @@ export type CurrentCoinFlipT = {
 }
 
 export type BattleLogT = {
-	player: PlayerId
+	player: PlayerEntity
 	description: string
 }
 

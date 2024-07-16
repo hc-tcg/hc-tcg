@@ -32,22 +32,21 @@ class LlamadadRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(this.props.id, 40)
+				attack.addDamage(component.entity, 40)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

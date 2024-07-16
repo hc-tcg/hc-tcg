@@ -47,7 +47,7 @@ class FalseSymmetryRare extends Card {
 
 			// Heal 40hp
 			attack.attacker.slot.inRow() && attack.attacker.slot.row.heal(40)
-			game.battleLog.addEntry(player.id, `$p${attack.attacker.props.name}$ healed $g40hp$`)
+			game.battleLog.addEntry(player.entity, `$p${attack.attacker.props.name}$ healed $g40hp$`)
 		})
 	}
 

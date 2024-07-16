@@ -72,7 +72,7 @@ class GoodTimesWithScarRare extends Card {
 				.forEach((effect) => effect.remove())
 
 			game.battleLog.addEntry(
-				player.id,
+				player.entity,
 				`Using $vDeathloop$, $p${target.props.name}$ revived with $g50hp$`
 			)
 

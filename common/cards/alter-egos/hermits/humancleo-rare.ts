@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
+import BetrayedStatusEffect from '../../../status-effects/betrayed'
 
 class HumanCleoRare extends Card {
 	props: Hermit = {
@@ -35,29 +35,24 @@ class HumanCleoRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		const componentKey = this.getInstanceKey(component)
+		const {player, opponentPlayer} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
+			const coinFlip = flipCoin(player, component, 2)
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
-			applyStatusEffect(
-				game,
-				'betrayed',
-				game.findSlot(slot.opponent, slot.activeRow, slot.hermitSlot)?.cardId
-			)
+			game.components
+				.new(StatusEffectComponent, BetrayedStatusEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
-		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}
 }

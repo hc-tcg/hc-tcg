@@ -14,7 +14,6 @@ import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
-import {PlayerId} from './player-model'
 import {isHermit} from '../cards/base/types'
 
 export class BattleLogModel {
@@ -69,12 +68,14 @@ export class BattleLogModel {
 	public async sendLogs() {
 		while (this.logMessageQueue.length > 0) {
 			const firstEntry = this.logMessageQueue.shift()
-			if (!firstEntry) continue
+			if (!firstEntry) return
+			let playerId = this.game.components.get(firstEntry.player)?.id
+			if (!playerId) continue
 
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
-				sender: firstEntry.player,
+				sender: playerId,
 				systemMessage: true,
 			})
 		}
@@ -212,11 +213,11 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
-			player: attack.player.id,
+			player: attack.player.entity,
 			description: log,
 		})
 	}
@@ -228,7 +229,7 @@ export class BattleLogModel {
 			if (!coinFlip.opponentFlip) return
 
 			this.logMessageQueue.push({
-				player: player.id,
+				player: player.entity,
 				description: `$o${coinFlip.card.props.name}$ ${this.generateCoinFlipDescription(
 					coinFlip
 				)} on their coinflip`,
@@ -236,7 +237,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public addEntry(player: PlayerId, entry: string) {
+	public addEntry(player: PlayerEntity, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,
@@ -272,16 +273,17 @@ export class BattleLogModel {
 		}
 	}
 
-	public addDeathEntry(player: PlayerEntity, row: RowEntity) {
+	public addDeathEntry(playerEntity: PlayerEntity, row: RowEntity) {
 		const hermitCard = this.game.components.find(CardComponent, card.isHermit, card.rowIs(row))
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
+		let player = this.game.components.get(playerEntity)
 
-		const livesRemaining = player.lives === 3 ? 'two lives' : 'one life'
+		const livesRemaining = player?.lives === 3 ? 'two lives' : 'one life'
 
 		this.logMessageQueue.push({
-			player: player.entity,
-			description: `$p${cardName}$ was knocked out, and $p{you|${player.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
+			player: playerEntity,
+			description: `$p${cardName}$ was knocked out, and $p{you|${player?.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
 		})
 		this.sendLogs()
 	}
@@ -290,7 +292,7 @@ export class BattleLogModel {
 		this.game.chat.push({
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.entity,
+			sender: this.game.opponentPlayer.id,
 			systemMessage: true,
 		})
 
@@ -303,7 +305,7 @@ export class BattleLogModel {
 	) {
 		const pos = this.game.components.get(statusEffect)?.target
 		if (!pos) return
-		const targetFormatting = pos.player.id === this.game.currentPlayerEntity ? 'p' : 'o'
+		const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
 		const rowNumberString =
 			pos.player.board.activeRow === pos.rowIndex ? '' : `(${pos.rowIndex + 1})`
 

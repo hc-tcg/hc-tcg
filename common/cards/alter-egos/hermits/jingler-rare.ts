@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {card, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -34,31 +34,29 @@ class JinglerRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
-			const attacker = attack.getAttacker()
-			if (attack.type !== 'secondary' || !attack.getTarget() || !attacker) return
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
 				playerId: opponentPlayer.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick 1 card from your hand to discard',
 				canPick: slot.hand,
 				onResult(pickedSlot) {
-					discardFromHand(opponentPlayer, pickedSlot.cardId)
+					pickedSlot.getCard()?.discard()
 				},
 				onTimeout() {
-					discardFromHand(opponentPlayer, opponentPlayer.hand[0])
+					game.components.find(CardComponent, card.slot(slot.hand), card.opponentPlayer)?.discard()
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}

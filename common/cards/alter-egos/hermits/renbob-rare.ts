@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
-import {CardComponent} from '../../../components'
+import {CardComponent, RowComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {CardProps, Hermit} from '../../base/types'
+import {row} from '../../../components/query'
 
 class RenbobRare extends Card {
 	props: Hermit = {
@@ -32,29 +32,23 @@ class RenbobRare extends Card {
 		},
 	}
 
-	override getAttack(
-		game: GameModel,
-		component: CardComponent,
-		hermitAttackType: HermitAttackType
-	) {
-		const {opponentPlayer} = pos
+	public override onAttach(game: GameModel, component: CardComponent<CardProps>): void {
+		const {player} = component
 
-		let attack = super.getAttack(game, component, pos, hermitAttackType)
-		if (!attack) return null
-		if (attack.type === 'secondary' && pos.rowIndex !== null) {
-			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
-			if (opponentPlayerRow.hermitCard) {
-				attack.setTarget(this.props.id, {
-					player: opponentPlayer,
-					rowIndex: pos.rowIndex,
-					row: opponentPlayerRow,
-				})
-			} else {
-				attack.setTarget(this.props.id, null)
-			}
-		}
+		player.hooks.beforeAttack.add(component, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow()) return
+			attack.setTarget(
+				component.entity,
+				game.components.find(RowComponent, row.opponentPlayer, row.index(component.slot.row.index))
+					?.entity || null
+			)
+		})
+	}
 
-		return attack
+	public override onDetach(_game: GameModel, component: CardComponent<CardProps>): void {
+		const {player} = component
+		player.hooks.beforeAttack.remove(component)
 	}
 }
 

@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {card, slot} from '../../../components/query'
 
 class HelsknightRare extends Card {
 	props: Hermit = {
@@ -34,29 +35,24 @@ class HelsknightRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
-				return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const attackerHermit = attacker.row.hermitCard
 			opponentPlayer.hooks.onApply.add(component, () => {
-				if (!opponentPlayer.board.singleUseCard) return
-				const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
+				let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUseSlot))
+				if (!singleUseCard) return
+
+				const coinFlip = flipCoin(player, component, 1, opponentPlayer)
 
 				if (coinFlip[0] == 'heads') {
-					moveCardInstanceoHand(game, opponentPlayer.board.singleUseCard, player)
-
-					opponentPlayer.board.singleUseCardUsed = false
-
 					game.battleLog.addEntry(
-						player.id,
-						`$p{Helsknight}$ flipped $pheads$ and took $e${opponentPlayer.board.singleUseCard.props.name}$`
+						player.entity,
+						`$p{Helsknight}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
 					)
 				} else {
-					game.battleLog.addEntry(player.id, `$p{Helsknight}$ flipped $btails$b`)
+					game.battleLog.addEntry(player.entity, `$p{Helsknight}$ flipped $btails$b`)
 				}
 			})
 
