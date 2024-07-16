@@ -3,6 +3,8 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
+import Wolf from '../../default/effects/wolf'
 
 class FiveAMPearlRare extends Card {
 	props: Hermit = {
@@ -35,12 +37,12 @@ class FiveAMPearlRare extends Card {
 		const {player} = component
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 
-			const effectCard = getActiveRow(player)?.effectCard
-			if (!effectCard || effectcard.props.numericId !== 'wolf') return
+			if (!game.components.find(CardComponent, card.currentPlayer, card.active, card.is(Wolf)))
+				return
 
-			attack.addDamage(this.props.id, 30)
+			attack.addDamage(component.entity, 30)
 		})
 	}
 
