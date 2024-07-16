@@ -11,7 +11,8 @@ import {
 	PlayerComponent,
 } from '../components'
 import ECS from '../types/ecs'
-import {GameState, PlayerEntity} from '../types/game-state'
+import {GameState} from '../types/game-state'
+import {PlayerEntity} from '../entities'
 
 export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerModel) {
 	let player1Component = components.new(PlayerComponent, player1)

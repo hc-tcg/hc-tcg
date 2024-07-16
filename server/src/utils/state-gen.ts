@@ -1,11 +1,11 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
-import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/types/game-state'
+import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
-import {card, effect, query, row, slot} from 'common/components/query'
+import {card, row, slot} from 'common/components/query'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
@@ -19,6 +19,7 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import {Hermit} from 'common/cards/base/types'
+import {CardEntity, newEntity} from 'common/entities'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

@@ -9,19 +9,16 @@ import type {
 	ModalRequest,
 	PickRequest,
 } from './server-requests'
-import type {
-	CardComponent,
-	PlayerComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '../components'
-import {PlayerId} from '../models/player-model'
+import type {CardComponent} from '../components'
+import type {PlayerId} from '../models/player-model'
+import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+
+type NewType = SlotEntity
 
 export type LocalRowState = {
 	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
-	attach: {slot: SlotEntity; card: LocalCardInstance<Attach> | null}
+	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
 	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
 	health: number | null
 }

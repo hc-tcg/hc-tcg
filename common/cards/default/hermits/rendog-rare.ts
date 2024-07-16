@@ -1,12 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {query, slot} from '../../../components/query'
 import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
-import {ObserverComponent} from '../../../types/hooks'
 
 class RendogRare extends Card {
 	props: Hermit = {

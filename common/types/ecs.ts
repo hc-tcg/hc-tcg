@@ -1,6 +1,6 @@
 import {ComponentQuery} from '../components/query'
+import {Entity, newEntity} from '../entities'
 import {GameModel} from '../models/game-model'
-import {Entity, newEntity} from './game-state'
 
 export type Component = {
 	entity: Entity<any>
@@ -40,7 +40,7 @@ export default class ECS {
 	): T {
 		const value = new newValue(
 			this.game,
-			newEntity(newValue.name + '-entity') as T['entity'],
+			newEntity<T['entity']>(newValue.name + '-entity'),
 			...args
 		)
 		this.data[value.entity] = value
