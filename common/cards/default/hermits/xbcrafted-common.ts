@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class XBCraftedCommonHermitCard extends Card {
+class XBCraftedCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'xbcrafted_common',
@@ -28,4 +28,4 @@ class XBCraftedCommonHermitCard extends Card {
 	}
 }
 
-export default XBCraftedCommonHermitCard
+export default XBCraftedCommon

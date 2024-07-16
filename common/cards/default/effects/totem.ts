@@ -6,7 +6,7 @@ import {attach} from '../../base/defaults'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import {effect} from '../../../components/query'
 
-class TotemEffectCard extends Card {
+class Totem extends Card {
 	props: Attach = {
 		...attach,
 		id: 'totem',
@@ -69,4 +69,4 @@ class TotemEffectCard extends Card {
 	}
 }
 
-export default TotemEffectCard
+export default Totem

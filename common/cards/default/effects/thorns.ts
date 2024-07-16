@@ -5,12 +5,12 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {CardComponent} from '../../../components'
-import GoldArmorEffectCard from './gold-armor'
-import IronArmorEffectCard from './iron-armor'
-import DiamondArmorEffectCard from './diamond-armor'
-import NetheriteArmorEffectCard from './netherite-armor'
+import GoldArmor from './gold-armor'
+import IronArmor from './iron-armor'
+import DiamondArmor from './diamond-armor'
+import NetheriteArmor from './netherite-armor'
 
-class ThornsEffectCard extends Card {
+class Thorns extends Card {
 	props: Attach = {
 		...attach,
 		id: 'thorns',
@@ -51,12 +51,7 @@ class ThornsEffectCard extends Card {
 				.addDamage(component.entity, 20)
 
 			backlashAttack.shouldIgnoreCards.push(
-				card.is(
-					GoldArmorEffectCard,
-					IronArmorEffectCard,
-					DiamondArmorEffectCard,
-					NetheriteArmorEffectCard
-				)
+				card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
 			)
 
 			executeExtraAttacks(game, [backlashAttack])
@@ -70,4 +65,4 @@ class ThornsEffectCard extends Card {
 	}
 }
 
-export default ThornsEffectCard
+export default Thorns

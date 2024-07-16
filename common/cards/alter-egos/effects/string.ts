@@ -3,7 +3,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class StringEffectCard extends Card {
+class String extends Card {
 	props: Attach = {
 		...attach,
 		id: 'string',
@@ -28,4 +28,4 @@ class StringEffectCard extends Card {
 	}
 }
 
-export default StringEffectCard
+export default String

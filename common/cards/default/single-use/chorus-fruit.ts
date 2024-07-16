@@ -7,7 +7,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
 
-class ChorusFruitSingleUseCard extends Card {
+class ChorusFruit extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'chorus_fruit',
@@ -71,4 +71,4 @@ class ChorusFruitSingleUseCard extends Card {
 	}
 }
 
-export default ChorusFruitSingleUseCard
+export default ChorusFruit

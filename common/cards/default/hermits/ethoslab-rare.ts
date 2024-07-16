@@ -7,7 +7,7 @@ import {CardComponent, StatusEffectComponent} from '../../../components'
 import FireStatusEffect from '../../../status-effects/fire'
 import {card, slot} from '../../../components/query'
 
-class EthosLabRareHermitCard extends Card {
+class EthosLabRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ethoslab_rare',
@@ -68,4 +68,4 @@ class EthosLabRareHermitCard extends Card {
 	}
 }
 
-export default EthosLabRareHermitCard
+export default EthosLabRare

@@ -6,9 +6,9 @@ import {attach, singleUse} from '../../base/defaults'
 import {CardComponent, SlotComponent, StatusEffectComponent} from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
 import FireStatusEffect from '../../../status-effects/fire'
-import StringEffectCard from '../../alter-egos/effects/string'
+import String from '../../alter-egos/effects/string'
 
-class WaterBucketEffectCard extends Card {
+class WaterBucket extends Card {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,
@@ -51,14 +51,10 @@ class WaterBucketEffectCard extends Card {
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 
-					WaterBucketEffectCard.removeFireEffect(game, pickedSlot)
+					WaterBucket.removeFireEffect(game, pickedSlot)
 
 					game.components
-						.filter(
-							CardComponent,
-							card.slot(slot.rowIs(pickedSlot.row.entity)),
-							card.is(StringEffectCard)
-						)
+						.filter(CardComponent, card.slot(slot.rowIs(pickedSlot.row.entity)), card.is(String))
 						.forEach((card) => card.discard())
 
 					applySingleUse(game, pickedSlot)
@@ -66,16 +62,16 @@ class WaterBucketEffectCard extends Card {
 			})
 		} else if (component.slot.type === 'attach') {
 			// Straight away remove fire
-			WaterBucketEffectCard.removeFireEffect(game, component.slot)
+			WaterBucket.removeFireEffect(game, component.slot)
 
 			player.hooks.onDefence.add(component, (_attack) => {
 				if (!component.slot.inRow()) return
-				WaterBucketEffectCard.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
 			opponentPlayer.hooks.afterApply.add(component, () => {
 				if (!component.slot.inRow()) return
-				WaterBucketEffectCard.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
 	}
@@ -87,4 +83,4 @@ class WaterBucketEffectCard extends Card {
 	}
 }
 
-export default WaterBucketEffectCard
+export default WaterBucket

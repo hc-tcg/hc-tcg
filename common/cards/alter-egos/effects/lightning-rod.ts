@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class LightningRodEffectCard extends Card {
+class LightningRod extends Card {
 	props: Attach = {
 		...attach,
 		id: 'lightning_rod',
@@ -19,12 +19,7 @@ class LightningRodEffectCard extends Card {
 		attachCondition: query.every(
 			attach.attachCondition,
 			query.not(
-				query.exists(
-					SlotComponent,
-					slot.currentPlayer,
-					slot.attachSlot,
-					slot.has(LightningRodEffectCard)
-				)
+				query.exists(SlotComponent, slot.currentPlayer, slot.attachSlot, slot.has(LightningRod))
 			)
 		),
 	}
@@ -57,4 +52,4 @@ class LightningRodEffectCard extends Card {
 	}
 }
 
-export default LightningRodEffectCard
+export default LightningRod

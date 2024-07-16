@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class RedstoneRareItemCard extends Card {
+class RedstoneDoubleItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_redstone_rare',
@@ -22,4 +22,4 @@ class RedstoneRareItemCard extends Card {
 	}
 }
 
-export default RedstoneRareItemCard
+export default RedstoneDoubleItem

@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent} from '../../../components'
 
-class VintageBeefRareHermitCard extends Card {
+class VintageBeefRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'vintagebeef_rare',
@@ -63,4 +63,4 @@ class VintageBeefRareHermitCard extends Card {
 	}
 }
 
-export default VintageBeefRareHermitCard
+export default VintageBeefRare

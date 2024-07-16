@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class CurseOfBindingSingleUseCard extends Card {
+class CurseOfBinding extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'curse_of_binding',
@@ -35,4 +35,4 @@ class CurseOfBindingSingleUseCard extends Card {
 	}
 }
 
-export default CurseOfBindingSingleUseCard
+export default CurseOfBinding

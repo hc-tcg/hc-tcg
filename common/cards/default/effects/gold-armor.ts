@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
-class GoldArmorEffectCard extends Card {
+class GoldArmor extends Card {
 	props: Attach = {
 		...attach,
 		id: 'gold_armor',
@@ -49,4 +49,4 @@ class GoldArmorEffectCard extends Card {
 	}
 }
 
-export default GoldArmorEffectCard
+export default GoldArmor

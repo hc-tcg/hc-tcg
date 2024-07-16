@@ -1,22 +1,22 @@
-import StringEffectCard from './string'
-import TurtleShellEffectCard from './turtle-shell'
-import ThornsIIEffectCard from './thorns_ii'
-import ThornsIIIEffectCard from './thorns_iii'
-import ChainmailArmorEffectCard from './chainmail-armor'
-import CommandBlockEffectCard from './command-block'
-import LightningRodEffectCard from './lightning-rod'
-import ArmorStandEffectCard from './armor-stand'
+import String from './string'
+import TurtleShell from './turtle-shell'
+import ThornsII from './thorns_ii'
+import ThornsIII from './thorns_iii'
+import ChainmailArmor from './chainmail-armor'
+import CommandBlock from './command-block'
+import LightningRod from './lightning-rod'
+import ArmorStand from './armor-stand'
 import Card from '../../base/card'
 
 const effectCardClasses: Array<new () => Card> = [
-	ArmorStandEffectCard,
-	ChainmailArmorEffectCard,
-	CommandBlockEffectCard,
-	LightningRodEffectCard,
-	StringEffectCard,
-	ThornsIIEffectCard,
-	ThornsIIIEffectCard,
-	TurtleShellEffectCard,
+	ArmorStand,
+	ChainmailArmor,
+	CommandBlock,
+	LightningRod,
+	String,
+	ThornsII,
+	ThornsIII,
+	TurtleShell,
 ]
 
 export default effectCardClasses

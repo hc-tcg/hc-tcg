@@ -12,7 +12,7 @@ import BetrayedStatusEffect from '../../../status-effects/betrayed'
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
 - TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
 */
-class HypnotizdRareHermitCard extends Card {
+class HypnotizdRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'hypnotizd_rare',
@@ -104,4 +104,4 @@ class HypnotizdRareHermitCard extends Card {
 	}
 }
 
-export default HypnotizdRareHermitCard
+export default HypnotizdRare

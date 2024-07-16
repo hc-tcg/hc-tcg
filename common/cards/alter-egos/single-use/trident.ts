@@ -7,7 +7,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class TridentSingleUseCard extends Card {
+class Trident extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'trident',
@@ -72,4 +72,4 @@ class TridentSingleUseCard extends Card {
 	}
 }
 
-export default TridentSingleUseCard
+export default Trident

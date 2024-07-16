@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
-class NetheriteSwordSingleUseCard extends Card {
+class NetheriteSword extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'netherite_sword',
@@ -56,4 +56,4 @@ class NetheriteSwordSingleUseCard extends Card {
 	}
 }
 
-export default NetheriteSwordSingleUseCard
+export default NetheriteSword

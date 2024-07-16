@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class TangoTekCommonHermitCard extends Card {
+class TangoTekCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'tangotek_common',
@@ -28,4 +28,4 @@ class TangoTekCommonHermitCard extends Card {
 	}
 }
 
-export default TangoTekCommonHermitCard
+export default TangoTekCommon

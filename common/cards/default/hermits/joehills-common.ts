@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class JoeHillsCommonHermitCard extends Card {
+class JoeHillsCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'joehills_common',
@@ -28,4 +28,4 @@ class JoeHillsCommonHermitCard extends Card {
 	}
 }
 
-export default JoeHillsCommonHermitCard
+export default JoeHillsCommon

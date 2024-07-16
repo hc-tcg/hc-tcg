@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class PranksterRareItemCard extends Card {
+class PranksterDoubleItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_prankster_rare',
@@ -22,4 +22,4 @@ class PranksterRareItemCard extends Card {
 	}
 }
 
-export default PranksterRareItemCard
+export default PranksterDoubleItem

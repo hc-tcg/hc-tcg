@@ -7,7 +7,7 @@ import {singleUse} from '../../base/defaults'
 import {AttackModel} from '../../../models/attack-model'
 import {row} from '../../../components/query'
 
-class AnvilSingleUseCard extends Card {
+class Anvil extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'anvil',
@@ -65,4 +65,4 @@ class AnvilSingleUseCard extends Card {
 	}
 }
 
-export default AnvilSingleUseCard
+export default Anvil

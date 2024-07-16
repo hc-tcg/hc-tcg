@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ArchitectFalseCommonHermitCard extends Card {
+class ArchitectFalseCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'architectfalse_common',
@@ -31,4 +31,4 @@ class ArchitectFalseCommonHermitCard extends Card {
 	}
 }
 
-export default ArchitectFalseCommonHermitCard
+export default ArchitectFalseCommon

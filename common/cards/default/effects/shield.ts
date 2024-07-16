@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
-class ShieldEffectCard extends Card {
+class Shield extends Card {
 	props: Attach = {
 		...attach,
 		id: 'shield',
@@ -53,4 +53,4 @@ class ShieldEffectCard extends Card {
 	}
 }
 
-export default ShieldEffectCard
+export default Shield

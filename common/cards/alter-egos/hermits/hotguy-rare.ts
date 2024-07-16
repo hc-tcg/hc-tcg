@@ -4,9 +4,9 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import BowSingleUseCard from '../../default/single-use/bow'
+import Bow from '../../default/single-use/bow'
 
-class HotguyRareHermitCard extends Card {
+class HotguyRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'hotguy_rare',
@@ -45,7 +45,7 @@ class HotguyRareHermitCard extends Card {
 
 		player.hooks.beforeAttack.add(component, (attack) => {
 			if (!usingSecondaryAttack) return
-			let bow = game.components.find(CardComponent, card.is(BowSingleUseCard))
+			let bow = game.components.find(CardComponent, card.is(Bow))
 			if (bow) {
 				attack.addDamage(bow.entity, attack.getDamage())
 			}
@@ -60,4 +60,4 @@ class HotguyRareHermitCard extends Card {
 	}
 }
 
-export default HotguyRareHermitCard
+export default HotguyRare

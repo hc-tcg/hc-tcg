@@ -7,7 +7,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-export class EvilXisumaRareHermitCard extends Card {
+export class EvilXisumaRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'evilxisuma_rare',

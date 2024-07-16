@@ -8,7 +8,7 @@ import {Attach, SingleUse} from '../../base/types'
 import PoisonStatusEffect from '../../../status-effects/poison'
 import BadOmenStatusEffect from '../../../status-effects/badomen'
 
-class MilkBucketEffectCard extends Card {
+class MilkBucket extends Card {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,
@@ -51,23 +51,23 @@ class MilkBucketEffectCard extends Card {
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 
-					MilkBucketEffectCard.removeFireEffect(game, pickedSlot)
+					MilkBucket.removeFireEffect(game, pickedSlot)
 
 					applySingleUse(game, pickedSlot)
 				},
 			})
 		} else if (component.slot.type === 'attach') {
 			// Straight away remove fire
-			MilkBucketEffectCard.removeFireEffect(game, component.slot)
+			MilkBucket.removeFireEffect(game, component.slot)
 
 			player.hooks.onDefence.add(component, (_attack) => {
 				if (!component.slot.inRow()) return
-				MilkBucketEffectCard.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
 			opponentPlayer.hooks.afterApply.add(component, () => {
 				if (!component.slot.inRow()) return
-				MilkBucketEffectCard.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
 	}
@@ -79,4 +79,4 @@ class MilkBucketEffectCard extends Card {
 	}
 }
 
-export default MilkBucketEffectCard
+export default MilkBucket

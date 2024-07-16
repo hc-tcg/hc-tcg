@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ImpulseSVCommonHermitCard extends Card {
+class ImpulseSVCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'impulsesv_common',
@@ -28,4 +28,4 @@ class ImpulseSVCommonHermitCard extends Card {
 	}
 }
 
-export default ImpulseSVCommonHermitCard
+export default ImpulseSVCommon

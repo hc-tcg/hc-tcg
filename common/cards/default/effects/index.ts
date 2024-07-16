@@ -1,30 +1,30 @@
-import ShieldEffectCard from './shield'
-import IronArmorEffectCard from './iron-armor'
-import GoldArmorEffectCard from './gold-armor'
-import DiamondArmorEffectCard from './diamond-armor'
-import NetheriteArmorEffectCard from './netherite-armor'
-import WolfEffectCard from './wolf'
-import TotemEffectCard from './totem'
-import BedEffectCard from './bed'
-import ThornsEffectCard from './thorns'
-import LoyaltyEffectCard from './loyalty'
-import WaterBucketEffectCard from './water-bucket'
-import MilkBucketEffectCard from './milk-bucket'
+import Shield from './shield'
+import IronArmor from './iron-armor'
+import GoldArmor from './gold-armor'
+import DiamondArmor from './diamond-armor'
+import NetheriteArmor from './netherite-armor'
+import Wolf from './wolf'
+import Totem from './totem'
+import Bed from './bed'
+import Thorns from './thorns'
+import Loyalty from './loyalty'
+import WaterBucket from './water-bucket'
+import MilkBucket from './milk-bucket'
 import type Card from '../../base/card'
 
 const effectCardClasses: Array<new () => Card> = [
-	BedEffectCard,
-	WolfEffectCard,
-	GoldArmorEffectCard,
-	IronArmorEffectCard,
-	ShieldEffectCard,
-	DiamondArmorEffectCard,
-	NetheriteArmorEffectCard,
-	TotemEffectCard,
-	ThornsEffectCard,
-	LoyaltyEffectCard,
-	WaterBucketEffectCard,
-	MilkBucketEffectCard,
+	Bed,
+	Wolf,
+	GoldArmor,
+	IronArmor,
+	Shield,
+	DiamondArmor,
+	NetheriteArmor,
+	Totem,
+	Thorns,
+	Loyalty,
+	WaterBucket,
+	MilkBucket,
 ]
 
 export default effectCardClasses

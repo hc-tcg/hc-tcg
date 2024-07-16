@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DungeonTangoRareHermitCard extends Card {
+class DungeonTangoRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'dungeontango_rare',
@@ -73,4 +73,4 @@ class DungeonTangoRareHermitCard extends Card {
 	}
 }
 
-export default DungeonTangoRareHermitCard
+export default DungeonTangoRare

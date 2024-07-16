@@ -2,7 +2,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class EthosLabCommonHermitCard extends Card {
+class EthosLabCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ethoslab_common',
@@ -28,4 +28,4 @@ class EthosLabCommonHermitCard extends Card {
 	}
 }
 
-export default EthosLabCommonHermitCard
+export default EthosLabCommon
