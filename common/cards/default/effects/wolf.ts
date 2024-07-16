@@ -5,6 +5,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {CardComponent} from '../../../components'
 import {Attach} from '../../base/types'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Wolf extends Card {
 	props: Attach = {
@@ -20,16 +21,16 @@ class Wolf extends Card {
 		attachCondition: query.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 		let activated = false
 
-		opponentPlayer.hooks.onTurnStart.add(component, () => {
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			// Allow another activation this turn
 			activated = false
 		})
 
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			// Only on opponents turn
 			if (game.currentPlayerEntity !== opponentPlayer.entity) return
@@ -55,13 +56,6 @@ class Wolf extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = component
-		// Delete hooks and custom
-		opponentPlayer.hooks.onTurnStart.remove(component)
-		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

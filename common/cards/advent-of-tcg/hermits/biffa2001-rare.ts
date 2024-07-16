@@ -31,7 +31,7 @@ class Biffa2001Rare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		applyStatusEffect(game, 'museum-collection', component)

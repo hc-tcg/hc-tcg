@@ -6,6 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
+import {ObserverComponent} from '../../../types/hooks'
 
 class ZombieCleoRare extends Card {
 	props: Hermit = {
@@ -42,6 +43,7 @@ class ZombieCleoRare extends Card {
 	)
 
 	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)
+	imitatingObserver = new InstancedValue<ObserverComponent | null>(() => null)
 	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
 
 	override getAttack(
@@ -52,14 +54,18 @@ class ZombieCleoRare extends Card {
 		if (hermitAttackType !== 'secondary') return super.getAttack(game, component, hermitAttackType)
 
 		const imitatingCard = this.imitatingCard.get(component)
+		const imitatingObserver = this.imitatingObserver.get(component)
 		const pickedAttack = this.pickedAttack.get(component)
 
-		if (!imitatingCard || !pickedAttack) return null
+		if (!imitatingCard || !pickedAttack || !imitatingObserver) return null
 		if (!imitatingCard.isHermit()) return null
 
-		imitatingCard.onAttach(game, component)
 		let newAttack = imitatingCard.getAttack(game, component, pickedAttack)
-		imitatingCard.onDetach(game, component)
+
+		imitatingObserver.subscribe(component.player.hooks.afterAttack, () => {
+			imitatingCard.onDetach(game, component, imitatingObserver)
+			imitatingObserver.unsubscribeFromEverything()
+		})
 
 		if (!newAttack) return null
 
@@ -76,10 +82,10 @@ class ZombieCleoRare extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 
@@ -119,14 +125,21 @@ class ZombieCleoRare extends Card {
 							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 							// Store the card to copy when creating the attack
+							let observer = game.components.new(ObserverComponent, component.entity)
 							this.pickedAttack.set(component, modalResult.pick)
+							this.imitatingObserver.set(component, observer)
 							if (pickedCard?.isHermit()) this.imitatingCard.set(component, pickedCard.card)
+
+							pickedCard.card.onAttach(game, component, observer)
 
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
+							let observer = game.components.new(ObserverComponent, component.entity)
 							this.imitatingCard.set(component, pickedCard.card as Card<Hermit>)
+							this.imitatingObserver.set(component, observer)
 							this.pickedAttack.set(component, 'primary')
+							pickedCard.card.onAttach(game, component, observer)
 						},
 					})
 				},
@@ -136,7 +149,7 @@ class ZombieCleoRare extends Card {
 			})
 		})
 
-		player.hooks.blockedActions.add(component, (blockedActions) => {
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
@@ -145,11 +158,8 @@ class ZombieCleoRare extends Card {
 		})
 	}
 
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
+	override onDetach(_game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		this.pickedAttack.clear(component)
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.blockedActions.remove(component)
 	}
 }
 

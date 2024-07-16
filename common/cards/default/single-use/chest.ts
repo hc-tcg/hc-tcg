@@ -22,7 +22,7 @@ class Chest extends Card {
 			return true
 		}),
 	}
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		game.addModalRequest({

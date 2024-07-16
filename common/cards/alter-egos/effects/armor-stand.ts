@@ -27,7 +27,7 @@ class ArmorStand extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		component.player.hooks.freezeSlots.add(component, () => {
 			if (!component.slot?.onBoard()) return query.nothing
 			return query.every(

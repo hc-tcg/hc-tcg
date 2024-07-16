@@ -6,7 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
-import {Observer} from '../../../types/hooks'
+import {ObserverComponent} from '../../../types/hooks'
 
 class RendogRare extends Card {
 	props: Hermit = {
@@ -42,7 +42,7 @@ class RendogRare extends Card {
 	)
 
 	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)
-	imitatingObserver = new InstancedValue<Observer | null>(() => null)
+	imitatingObserver = new InstancedValue<ObserverComponent | null>(() => null)
 	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
 
 	override getAttack(
@@ -61,7 +61,11 @@ class RendogRare extends Card {
 		if (!pickedAttack) return null
 
 		let newAttack = imitatingCard.getAttack(game, component, pickedAttack)
-		imitatingCard.onDetach(game, component, imitatingObserver)
+
+		imitatingObserver.subscribe(component.player.hooks.afterAttack, () => {
+			imitatingCard.onDetach(game, component, imitatingObserver)
+			imitatingObserver.unsubscribeFromEverything()
+		})
 
 		if (!newAttack) return null
 
@@ -78,10 +82,10 @@ class RendogRare extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.observe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 			// Only activate power on secondary attack
@@ -116,7 +120,7 @@ class RendogRare extends Card {
 							}
 
 							// Store the chosen attack to copy
-							let observer = new Observer()
+							let observer = game.components.new(ObserverComponent, component.entity)
 							this.pickedAttack.set(component, modalResult.pick)
 							this.imitatingObserver.set(component, observer)
 							pickedCard?.card.onAttach(game, component, observer)
@@ -126,7 +130,7 @@ class RendogRare extends Card {
 						},
 						onTimeout: () => {
 							if (!pickedCard) return
-							let observer = new Observer()
+							let observer = game.components.new(ObserverComponent, component.entity)
 							this.imitatingCard.set(component, pickedCard.card as Card<Hermit>)
 							this.imitatingObserver.set(component, observer)
 							pickedCard.card.onAttach(game, component, observer)
@@ -140,7 +144,7 @@ class RendogRare extends Card {
 			})
 		})
 
-		player.hooks.blockedActions.add(component, (blockedActions) => {
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
 			if (!game.components.exists(SlotComponent, this.pickCondition))
 				blockedActions.push('SECONDARY_ATTACK')
@@ -148,7 +152,7 @@ class RendogRare extends Card {
 		})
 	}
 
-	override onDetach(_game: GameModel, component: CardComponent, _observer: Observer) {
+	override onDetach(_game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		this.imitatingCard.clear(component)
 		this.pickedAttack.clear(component)
 	}

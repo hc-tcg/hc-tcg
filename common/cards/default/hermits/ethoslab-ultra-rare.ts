@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {ObserverComponent} from '../../../types/hooks'
 
 class EthosLabUltraRare extends Card {
 	props: Hermit = {
@@ -30,10 +31,10 @@ class EthosLabUltraRare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 			if (!(attack.attacker instanceof CardComponent)) return
 			if (!attack.attacker.slot.inRow()) return
@@ -42,11 +43,6 @@ class EthosLabUltraRare extends Card {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			attack.addDamage(component.entity, headsAmount * 20)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

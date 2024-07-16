@@ -29,7 +29,7 @@ class Iskall85Rare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		player.hooks.beforeAttack.add(component, (attack) => {

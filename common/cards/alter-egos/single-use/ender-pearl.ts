@@ -29,7 +29,7 @@ class EnderPearl extends Card {
 			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 		const attackId = this.getInstanceKey(component)
 

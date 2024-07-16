@@ -4,6 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {card} from '../../../components/query'
+import {ObserverComponent} from '../../../types/hooks'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class GeminiTayRare extends Card {
@@ -31,13 +32,13 @@ class GeminiTayRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 
-			player.hooks.afterAttack.add(component, (_attack) => {
+			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.
 				game.components.find(CardComponent, card.isSingleUse, card.active)?.discard()
 
@@ -46,16 +47,9 @@ class GeminiTayRare extends Card {
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
 
-				player.hooks.afterAttack.remove(component)
+				observer.unsubscribe(player.hooks.afterAttack)
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		// Remove hook
-		player.hooks.onAttack.remove(component)
 	}
 }
 

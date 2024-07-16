@@ -18,7 +18,7 @@ class CommandBlock extends Card {
 			'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		player.hooks.availableEnergy.add(component, (availableEnergy) => {

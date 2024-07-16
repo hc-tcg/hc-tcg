@@ -1,6 +1,7 @@
 import {GameModel} from '../models/game-model'
 import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
 import {CardEntity, StatusEffectEntity} from '../types/game-state'
+import {ObserverComponent, ObserverEntity} from '../types/hooks'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
 
@@ -13,6 +14,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly statusEffect: StatusEffect<Props>
 	public targetEntity: CardEntity | null
 	public counter: number | null
+	private observerEntity: ObserverEntity | null
 
 	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: new () => StatusEffect) {
 		this.game = game
@@ -20,6 +22,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
+		this.observerEntity = null
 	}
 
 	public toLocalStatusEffectInstance(): LocalStatusEffectInstance | null {
@@ -48,14 +51,19 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 
 		let target = this.game.components.get(cardEntity)
 		if (!target) return
+		let observer = this.game.components.new(ObserverComponent, this.entity)
 
+		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
-		this.statusEffect.onApply(this.game, this, target)
+		this.statusEffect.onApply(this.game, this, target, observer)
 	}
 
 	public remove() {
-		if (!this.target) return
-		this.statusEffect.onRemoval(this.game, this, this.target)
+		let observer = this.game.components.get(this.observerEntity)
+		if (!this.target || !observer) return
+		observer.unsubscribeFromEverything()
+		this.statusEffect.onRemoval(this.game, this, this.target, observer)
 		this.targetEntity = null
+		this.observerEntity = null
 	}
 }

@@ -17,7 +17,7 @@ class ChainmailArmor extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		player.hooks.onDefence.add(component, (attack) => {

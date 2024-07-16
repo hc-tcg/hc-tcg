@@ -7,6 +7,7 @@ import {CardComponent, SlotComponent, StatusEffectComponent} from '../../../comp
 import {Attach, SingleUse} from '../../base/types'
 import FireStatusEffect from '../../../status-effects/fire'
 import String from '../../alter-egos/effects/string'
+import {ObserverComponent} from '../../../types/hooks'
 
 class WaterBucket extends Card {
 	props: Attach & SingleUse = {
@@ -40,7 +41,7 @@ class WaterBucket extends Card {
 			.forEach((effect) => effect.remove())
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
@@ -64,22 +65,16 @@ class WaterBucket extends Card {
 			// Straight away remove fire
 			WaterBucket.removeFireEffect(game, component.slot)
 
-			player.hooks.onDefence.add(component, (_attack) => {
+			observer.subscribe(player.hooks.onDefence, (_attack) => {
 				if (!component.slot.inRow()) return
 				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
-			opponentPlayer.hooks.afterApply.add(component, () => {
+			observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 				if (!component.slot.inRow()) return
 				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = component
-		opponentPlayer.hooks.afterApply.remove(component)
-		player.hooks.onDefence.remove(component)
 	}
 }
 

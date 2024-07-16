@@ -4,6 +4,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Shield extends Card {
 	props: Attach = {
@@ -18,12 +19,12 @@ class Shield extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 		let damageBlocked = 0
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
-		player.hooks.onDefence.add(component, (attack) => {
+		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 60) {
@@ -33,7 +34,7 @@ class Shield extends Card {
 			}
 		})
 
-		player.hooks.afterDefence.add(component, (attack) => {
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (damageBlocked > 0) {
 				component.discard()
 				const hermitName = game.components.find(
@@ -44,12 +45,6 @@ class Shield extends Card {
 				game.battleLog.addEntry(player.entity, `$p${hermitName}'s$ $eShield$ was broken`)
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onDefence.remove(component)
-		player.hooks.afterDefence.remove(component)
 	}
 }
 

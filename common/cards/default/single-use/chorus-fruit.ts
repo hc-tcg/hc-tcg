@@ -32,7 +32,7 @@ class ChorusFruit extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		let removedBlock = false

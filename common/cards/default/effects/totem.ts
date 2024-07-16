@@ -5,6 +5,7 @@ import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import {effect} from '../../../components/query'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Totem extends Card {
 	props: Attach = {
@@ -25,7 +26,7 @@ class Totem extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		const reviveHook = (attack: AttackModel) => {
@@ -56,16 +57,11 @@ class Totem extends Card {
 
 		// If we are attacked from any source
 		// Add before any other hook so they can know a hermits health reliably
-		player.hooks.afterDefence.addBefore(component, (attack) => reviveHook(attack))
+		observer.subscribeBefore(player.hooks.afterDefence, (attack) => reviveHook(attack))
 
 		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
 		// @TODO this is slightly more hacky than I'd like
-		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => reviveHook(attack))
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		component.player.hooks.afterDefence.remove(component)
-		component.opponentPlayer.hooks.afterAttack.remove(component)
+		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) => reviveHook(attack))
 	}
 }
 

@@ -3,6 +3,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import {ObserverComponent} from '../../../types/hooks'
 
 class GoldArmor extends Card {
 	props: Attach = {
@@ -17,12 +18,12 @@ class GoldArmor extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		let damageBlocked = 0
 
-		player.hooks.onDefence.add(component, (attack) => {
+		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 10) {
@@ -37,15 +38,8 @@ class GoldArmor extends Card {
 		}
 
 		// Reset counter at the start of every turn
-		player.hooks.onTurnStart.add(component, resetCounter)
-		opponentPlayer.hooks.onTurnStart.add(component, resetCounter)
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = component
-		player.hooks.onDefence.remove(component)
-		player.hooks.onTurnStart.remove(component)
-		opponentPlayer.hooks.onTurnStart.remove(component)
+		observer.subscribe(player.hooks.onTurnStart, resetCounter)
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, resetCounter)
 	}
 }
 

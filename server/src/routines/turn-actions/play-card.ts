@@ -38,7 +38,7 @@ function* playCardSaga(
 
 	// Single use slot
 	if (pickedSlot.type === 'single_use') {
-		card.slotEntity = pickedSlot.entity
+		card.attach(pickedSlot)
 	} else {
 		// All other positions requires us to have selected a valid row
 		if (!row || rowIndex === null) return 'FAILURE_CANNOT_COMPLETE'
@@ -52,7 +52,7 @@ function* playCardSaga(
 							card.props.numericId
 					)
 
-				card.slotEntity = pickedSlot.entity
+				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
 
 				if (player?.activeRowEntity === null) {
@@ -63,7 +63,7 @@ function* playCardSaga(
 			}
 			case 'item': {
 				if (card.props.category === 'item') game.addCompletedActions('PLAY_ITEM_CARD')
-				card.slotEntity = pickedSlot.entity
+				card.attach(pickedSlot)
 				break
 			}
 			case 'attach': {
@@ -71,7 +71,7 @@ function* playCardSaga(
 					throw Error(
 						'Attempted to add card that implement attach to an attach slot: ' + card.props.numericId
 					)
-				card.slotEntity = pickedSlot.entity
+				card.attach(pickedSlot)
 				break
 			}
 			default:
@@ -83,8 +83,6 @@ function* playCardSaga(
 	if (pickedSlot.type !== 'single_use') {
 		// game.battleLog.addPlayCardEntry(card.card, card.slot, currentPlayer.coinFlips, undefined)
 	}
-
-	card.card.onAttach(game, card)
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)

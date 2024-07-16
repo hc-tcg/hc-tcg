@@ -23,7 +23,7 @@ class ThornsII extends Card {
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 30hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer} = component
 		let hasTriggered = false
 

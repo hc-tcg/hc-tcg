@@ -19,7 +19,7 @@ class SplashPotionOfHealingII extends Card {
 		log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g30hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {

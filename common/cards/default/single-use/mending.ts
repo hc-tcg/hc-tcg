@@ -37,7 +37,7 @@ class Mending extends Card {
 			`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		game.addPickRequest({

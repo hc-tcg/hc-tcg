@@ -33,7 +33,7 @@ class Egg extends Card {
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		let afkHermitSlot: SlotComponent | null = null

@@ -7,6 +7,7 @@ import {CardComponent, SlotComponent, StatusEffectComponent} from '../../../comp
 import {Attach, SingleUse} from '../../base/types'
 import PoisonStatusEffect from '../../../status-effects/poison'
 import BadOmenStatusEffect from '../../../status-effects/badomen'
+import {ObserverComponent} from '../../../types/hooks'
 
 class MilkBucket extends Card {
 	props: Attach & SingleUse = {
@@ -40,7 +41,7 @@ class MilkBucket extends Card {
 			.forEach((effect) => effect.remove())
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
@@ -60,22 +61,16 @@ class MilkBucket extends Card {
 			// Straight away remove fire
 			MilkBucket.removeFireEffect(game, component.slot)
 
-			player.hooks.onDefence.add(component, (_attack) => {
+			observer.subscribe(player.hooks.onDefence, (_attack) => {
 				if (!component.slot.inRow()) return
 				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
-			opponentPlayer.hooks.afterApply.add(component, () => {
+			observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 				if (!component.slot.inRow()) return
 				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = component
-		player.hooks.onDefence.remove(component)
-		opponentPlayer.hooks.afterApply.remove(component)
 	}
 }
 

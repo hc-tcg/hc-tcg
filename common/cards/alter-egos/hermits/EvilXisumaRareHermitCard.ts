@@ -35,7 +35,7 @@ export class EvilXisumaRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 		const disableKey = this.getInstanceKey(component, 'disable')
 

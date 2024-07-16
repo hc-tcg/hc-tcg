@@ -9,6 +9,7 @@ import GoldArmor from './gold-armor'
 import IronArmor from './iron-armor'
 import DiamondArmor from './diamond-armor'
 import NetheriteArmor from './netherite-armor'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Thorns extends Card {
 	props: Attach = {
@@ -23,12 +24,12 @@ class Thorns extends Card {
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 20hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer} = component
 		let hasTriggered = false
 
 		// Only when the opponent attacks us
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => {
 			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
 			if (!component.slot.inRow()) return
@@ -56,12 +57,6 @@ class Thorns extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = component
-		opponentPlayer.hooks.afterAttack.remove(component)
-		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

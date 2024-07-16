@@ -27,7 +27,7 @@ class Looting extends Card {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = component
 
 		player.hooks.onApply.add(component, () => {

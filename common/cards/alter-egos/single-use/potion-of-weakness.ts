@@ -25,7 +25,7 @@ class PotionOfWeakness extends Card {
 		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(component, () => {

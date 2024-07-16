@@ -4,6 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
+import {ObserverComponent} from '../../../types/hooks'
 
 class BdoubleO100Rare extends Card {
 	props: Hermit = {
@@ -37,21 +38,13 @@ class BdoubleO100Rare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components
-				.new(StatusEffectComponent, SleepingStatusEffect)
-				.apply(player.getActiveHermit()?.entity)
+			game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(component.entity)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

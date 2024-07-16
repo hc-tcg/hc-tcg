@@ -17,7 +17,7 @@ class Cat extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 		player.hooks.afterAttack.add(component, (attack) => {
 			if (!pos.rowId || !pos.rowId.hermitCard) return

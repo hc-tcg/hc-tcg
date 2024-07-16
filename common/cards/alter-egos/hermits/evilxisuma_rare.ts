@@ -36,7 +36,7 @@ class EvilXisumaRare extends Card {
 
 	opponentActiveHermitQuery = query.every(card.opponentPlayer, card.active, card.isHermit)
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = component
 
 		player.hooks.blockedActions.add(component, (blockedActions) => {

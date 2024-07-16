@@ -32,7 +32,7 @@ class KeralisRare extends Card {
 
 	pickCondition = query.every(query.not(slot.activeRow), query.not(slot.empty), slot.hermitSlot)
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		let pickedAfkSlot: SlotComponent | null = null

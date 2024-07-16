@@ -19,7 +19,7 @@ class TurtleShell extends Card {
 		attachCondition: query.every(attach.attachCondition, query.not(slot.activeRow)),
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 		let firstActiveTurn = true
 

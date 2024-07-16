@@ -32,7 +32,7 @@ class Clock extends Card {
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer, player} = component
 		player.hooks.onApply.add(component, () => {
 			opponentPlayer.hooks.onTurnStart.add(component, () => {

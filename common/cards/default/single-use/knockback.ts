@@ -31,7 +31,7 @@ class Knockback extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(component, (attack) => {

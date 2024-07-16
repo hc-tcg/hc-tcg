@@ -34,7 +34,7 @@ class HelsknightRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = component
 
 		player.hooks.onAttack.add(component, (attack) => {

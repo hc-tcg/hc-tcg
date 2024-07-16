@@ -23,7 +23,7 @@ class Lantern extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(component, () => {

@@ -5,6 +5,7 @@ import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
+import {ObserverComponent} from '../../../types/hooks'
 
 // @todo Figure out how ladder is supposed to work
 
@@ -28,7 +29,7 @@ class Bed extends Card {
 		attachCondition: query.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		// Give the current row sleeping for 3 turns
 		const {player} = component
 
@@ -44,27 +45,19 @@ class Bed extends Card {
 		game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(hermitCard()?.entity)
 
 		// Knockback/Tango/Jevin/etc
-		player.hooks.onTurnStart.add(component, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
 				component.discard()
 			}
 		})
 
-		player.hooks.onTurnEnd.add(component, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			// if sleeping has worn off, discard the bed
 			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
 				component.discard()
 				player.hooks.onTurnEnd.remove(component)
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onTurnEnd.remove(component)
-		player.hooks.onTurnStart.remove(component)
-		player.hooks.beforeApply.remove(component)
-		player.hooks.afterApply.remove(component)
 	}
 }
 

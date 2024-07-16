@@ -3,6 +3,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Cubfan135Rare extends Card {
 	props: Hermit = {
@@ -29,10 +30,10 @@ class Cubfan135Rare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isTargetting(component) || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
@@ -40,11 +41,6 @@ class Cubfan135Rare extends Card {
 			game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
 			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

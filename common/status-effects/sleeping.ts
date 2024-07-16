@@ -1,6 +1,7 @@
 import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardComponent, StatusEffectComponent} from '../components'
+import {ObserverComponent} from '../types/hooks'
 
 class SleepingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -13,7 +14,12 @@ class SleepingStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		const {player} = target
 
 		effect.counter = this.props.counter
@@ -31,11 +37,11 @@ class SleepingStatusEffect extends StatusEffect {
 		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
-			player.id,
+			player.entity,
 			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`
 		)
 
-		player.hooks.onTurnStart.add(effect, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (effect.counter !== null) effect.counter--
 			if (!target.slot.inRow()) return
 
@@ -54,15 +60,9 @@ class SleepingStatusEffect extends StatusEffect {
 			}
 		})
 
-		player.hooks.afterDefence.add(effect, (_attack) => {
+		observer.subscribe(player.hooks.afterDefence, (_attack) => {
 			if (!target.isAlive()) effect.remove()
 		})
-	}
-
-	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
-		const {player} = target
-		player.hooks.onTurnStart.remove(effect)
-		player.hooks.afterDefence.remove(effect)
 	}
 }
 

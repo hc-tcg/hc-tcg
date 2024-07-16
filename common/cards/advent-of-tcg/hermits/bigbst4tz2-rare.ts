@@ -33,7 +33,7 @@ class BigBSt4tzRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false

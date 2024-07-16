@@ -18,7 +18,7 @@ import {
 	isItem,
 	isSingleUse,
 } from './types'
-import {Observer} from '../../types/hooks'
+import {ObserverComponent} from '../../types/hooks'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -67,14 +67,14 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	public onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, component: CardComponent, observer: Observer) {
+	public onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		// default is do nothing
 	}
 

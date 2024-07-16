@@ -1,4 +1,8 @@
-export class Hook<Listener, Args extends (...args: any) => any> {
+import {CardComponent, StatusEffectComponent} from '../components'
+import {GameModel} from '../models/game-model'
+import {Entity} from './game-state'
+
+export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args]> = []
 	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
 
@@ -35,22 +39,51 @@ export class Hook<Listener, Args extends (...args: any) => any> {
 	}
 }
 
-export class Observer {
-	readonly entity: string
+export type ObserverEntity = Entity<ObserverComponent>
+
+/** Abstraction over Hook interface that allows hooks to be automatically removed. This
+ * is used to remove hooks when cards are removed from the board and when status effect
+ * time out.
+ */
+export class ObserverComponent {
+	readonly game: GameModel
+	readonly entity: ObserverEntity
+	readonly wrappingEntity: Entity<CardComponent | StatusEffectComponent>
 	private hooks: Array<Hook<any, any>>
 
-	constructor() {
-		this.entity = Math.random().toString()
+	constructor(
+		game: GameModel,
+		entity: ObserverEntity,
+		wrappingEntity: Entity<CardComponent | StatusEffectComponent>
+	) {
+		this.game = game
+		this.entity = entity
+		this.wrappingEntity = wrappingEntity
 		this.hooks = []
 	}
 
-	public observe<Args extends (...any: any) => any>(hook: Hook<any, Args>, fun: Args) {
+	/** Subscribe to a hook with this observer */
+	public subscribe<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
 		hook.add(this.entity, fun)
 		this.hooks.push(hook)
 	}
 
+	/** Subscribe a specific hook, and put this observer at the top of the queue. */
+	public subscribeBefore<Args extends (...any: any) => any>(
+		hook: Hook<ObserverComponent, Args>,
+		fun: Args
+	) {
+		hook.addBefore(this, fun)
+		this.hooks.push(hook)
+	}
+
+	/** Stop listening to a specific hook */
+	public unsubscribe(hook: Hook<ObserverEntity, any>) {
+		hook.remove(this.entity)
+	}
+
 	/** Disconnect all hooks connected to this observer */
-	public detach() {
+	public unsubscribeFromEverything() {
 		for (const hook of this.hooks) {
 			hook.remove(this.entity)
 		}
@@ -62,11 +95,11 @@ export class Observer {
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
-export class GameHook<Args extends (...args: any) => any> extends Hook<any, Args> {
+export class GameHook<Args extends (...args: any) => any> extends Hook<ObserverEntity, Args> {
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
-	public callSome(params: Parameters<Args>, predicate: (instance: Observer) => boolean) {
+	public callSome(params: Parameters<Args>, predicate: (instance: ObserverEntity) => boolean) {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
 			.map(([_, listener]) => listener(...(params as Array<any>)))

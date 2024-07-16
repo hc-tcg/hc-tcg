@@ -37,7 +37,7 @@ class Piston extends Card {
 		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 		const itemInstanceKey = this.getInstanceKey(component, 'itemInstance')
 

@@ -32,7 +32,7 @@ class LlamadadRare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {

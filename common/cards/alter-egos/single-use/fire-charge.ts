@@ -32,7 +32,7 @@ class FireCharge extends Card {
 		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
 		game.addPickRequest({

@@ -5,6 +5,7 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {card, slot} from '../../../components/query'
+import { ObserverComponent } from '../../../types/hooks'
 
 class Loyalty extends Card {
 	props: Attach = {
@@ -19,7 +20,7 @@ class Loyalty extends Card {
 			'When the Hermit that this card is attached to is knocked out, all attached item cards are returned to your hand.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		const afterAttack = (_attack: AttackModel) => {
@@ -28,14 +29,8 @@ class Loyalty extends Card {
 				.forEach((card) => card.draw())
 		}
 
-		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = component
-		player.hooks.afterAttack.remove(component)
-		opponentPlayer.hooks.afterAttack.remove(component)
+		observer.subscribe(player.hooks.afterAttack, (attack) => afterAttack(attack))
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => afterAttack(attack))
 	}
 }
 

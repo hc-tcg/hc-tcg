@@ -19,7 +19,7 @@ class NetheriteSword extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttack.add(component, () => {

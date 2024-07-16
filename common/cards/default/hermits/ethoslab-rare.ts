@@ -6,6 +6,7 @@ import {Hermit} from '../../base/types'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import FireStatusEffect from '../../../status-effects/fire'
 import {card, slot} from '../../../components/query'
+import {ObserverComponent} from '../../../types/hooks'
 
 class EthosLabRare extends Card {
 	props: Hermit = {
@@ -38,10 +39,10 @@ class EthosLabRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity === component.entity || attack.type !== 'secondary') return
 			if (!(attack.attacker instanceof CardComponent)) return
 
@@ -59,12 +60,6 @@ class EthosLabRare extends Card {
 				.new(StatusEffectComponent, FireStatusEffect)
 				.apply(opponentActiveHermit?.entity)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

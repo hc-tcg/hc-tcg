@@ -3,11 +3,9 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {card, effect, query} from '../components/query'
+import {card, query} from '../components/query'
 import {STRENGTHS} from '../const/strengths'
-import {CardComponent, StatusEffectComponent} from '../components'
-import {HermitAttackType} from '../types/attack'
-import {Hermit} from '../cards/base/types'
+import {CardComponent} from '../components'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -25,8 +23,9 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		}
 
 		// Call before attack hooks
-		player.hooks.beforeAttack.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.beforeAttack.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}
@@ -45,8 +44,9 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = target.player
 
 		// Call before defence hooks
-		player.hooks.beforeDefence.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.beforeDefence.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}
@@ -64,8 +64,9 @@ function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = attack.player
 
 		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.onAttack.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}
@@ -83,8 +84,9 @@ function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = attack.target.player
 
 		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.onDefence.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}
@@ -99,8 +101,9 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = attack.player
 
 		// Call after attack hooks
-		player.hooks.afterAttack.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.afterAttack.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}
@@ -115,8 +118,9 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = attack.target.player
 
 		// Call after attack hooks
-		player.hooks.afterDefence.callSome([attack], (instance) => {
-			if (instance instanceof CardComponent) return !shouldIgnoreCard(attack, game, instance)
+		player.hooks.afterDefence.callSome([attack], (observer) => {
+			let entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			if (entity instanceof CardComponent) return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
 	}

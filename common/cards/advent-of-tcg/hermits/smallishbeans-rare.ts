@@ -31,7 +31,7 @@ class SmallishbeansRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, rowId: row} = pos
 
 		player.hooks.onAttack.add(component, (attack) => {

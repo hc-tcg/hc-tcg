@@ -21,7 +21,7 @@ class Trident extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		let coinflipResult: CoinFlipT | null = null

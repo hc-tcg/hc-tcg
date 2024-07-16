@@ -16,7 +16,7 @@ class CurseOfBinding extends Card {
 		description: 'Your opponent can not make their active Hermit go AFK on their next turn.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(component, () => {

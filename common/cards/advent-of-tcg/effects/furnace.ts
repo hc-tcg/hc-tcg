@@ -17,7 +17,7 @@ class Furnace extends Card {
 			'After 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		applyStatusEffect(game, 'smelting', component)
 	}
 

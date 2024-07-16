@@ -23,7 +23,7 @@ import {
 import type {GameModel} from '../models/game-model'
 import type StatusEffect from '../status-effects/status-effect'
 import {CardEntity, PlayerEntity, SlotEntity} from '../types/game-state'
-import {Observer} from '../types/hooks'
+import {ObserverComponent, ObserverEntity} from '../types/hooks'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
 
@@ -36,7 +36,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
-	observer: Observer | null
+	observerEntity: ObserverEntity | null
 
 	constructor(
 		game: GameModel,
@@ -46,7 +46,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	) {
 		this.game = game
 		this.entity = entity
-		this.observer = null
+		this.observerEntity = null
 		if (card instanceof Object) {
 			this.card = CARDS[card.name] as Card<Props>
 		} else {
@@ -56,8 +56,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.slotEntity = slot
 
 		if (this.slot.onBoard()) {
-			this.observer = new Observer()
-			this.card.onAttach(this.game, this, this.observer)
+			let observer = this.game.components.new(ObserverComponent, this.entity)
+			this.observerEntity = observer.entity
+			this.card.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
 	}
@@ -133,9 +134,12 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (oldCard) oldCard.discard()
 
 		if (this.slot.onBoard()) {
-			if (!this.observer) throw new Error('All cards attached to the board should have an observer')
-			this.observer.detach()
-			this.card.onDetach(this.game, this, this.observer)
+			if (!this.observerEntity)
+				throw new Error('All cards attached to the board should have an observer')
+			let observer = this.game.components.get(this.observerEntity)
+			if (!observer) throw new Error('Observer expected to be in ECS')
+			observer.unsubscribeFromEverything()
+			this.card.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)
 		}
 
@@ -144,11 +148,12 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 		this.slotEntity = component.entity
 
-		let runAttach = oldSlotWasOnBoard || oldPlayer !== this.player.entity
+		let runAttach = !oldSlotWasOnBoard || oldPlayer !== this.player.entity
 
 		if (runAttach && component.onBoard()) {
-			this.observer = new Observer()
-			this.card.onAttach(this.game, this, this.observer)
+			let observer = this.game.components.new(ObserverComponent, this.entity)
+			this.observerEntity = observer.entity
+			this.card.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
 	}

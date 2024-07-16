@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {ObserverComponent} from '../../../types/hooks'
 
 class Docm77Rare extends Card {
 	props: Hermit = {
@@ -30,10 +31,10 @@ class Docm77Rare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 			if (!(attack.attacker instanceof CardComponent)) return
 
@@ -45,12 +46,6 @@ class Docm77Rare extends Card {
 				attack.reduceDamage(component.entity, this.props.secondary.damage / 2)
 			}
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

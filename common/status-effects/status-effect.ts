@@ -1,6 +1,7 @@
 import {GameModel} from '../models/game-model'
 import {ComponentQuery, effect, query} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
+import {ObserverComponent} from '../types/hooks'
 
 export type StatusEffectLog = {
 	/** The status effect target */
@@ -71,14 +72,24 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	/**
 	 * Called when this statusEffect has its target set
 	 */
-	public onApply(game: GameModel, component: StatusEffectComponent, target: CardComponent) {
+	public onApply(
+		game: GameModel,
+		component: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
-	public onRemoval(game: GameModel, component: StatusEffectComponent, target: CardComponent) {
+	public onRemoval(
+		game: GameModel,
+		component: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		// default is do nothing
 	}
 }

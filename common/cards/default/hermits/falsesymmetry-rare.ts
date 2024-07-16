@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {Observer} from '../../../types/hooks'
+import {ObserverComponent} from '../../../types/hooks'
 
 class FalseSymmetryRare extends Card {
 	props: Hermit = {
@@ -31,10 +31,10 @@ class FalseSymmetryRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.observe(player.hooks.onAttack, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component)[0]
