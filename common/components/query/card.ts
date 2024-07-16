@@ -64,11 +64,12 @@ export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
-	return (_game, card) => cardIds.includes(card.props.id)
+	return (_game, card) => cardIds.includes(card.props.numericId)
 }
 
 export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComponent> {
-	return (_game, card) => cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.id)
+	return (_game, card) =>
+		cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.numericId)
 }
 
 /** Return true if this card is on the active row */

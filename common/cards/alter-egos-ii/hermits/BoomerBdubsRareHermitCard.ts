@@ -90,7 +90,9 @@ export class BoomerBdubsRare extends Card {
 
 					// This is sketchy AF but fortune needs to be removed after the first coin flip
 					// to prevent infinite flips from being easy.
-					const fortuneInstances = player.playerDeck.filter((card) => card.props.id === 'fortune')
+					const fortuneInstances = player.playerDeck.filter(
+						(card) => card.props.numericId === 'fortune'
+					)
 					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.id))
 
 					return 'SUCCESS'

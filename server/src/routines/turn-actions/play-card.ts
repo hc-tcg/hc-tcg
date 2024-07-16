@@ -48,7 +48,8 @@ function* playCardSaga(
 				currentPlayer.hasPlacedHermit = true
 				if (!card.isHealth())
 					throw Error(
-						'Attempted to add card that does not implement health to hermit slot: ' + card.props.id
+						'Attempted to add card that does not implement health to hermit slot: ' +
+							card.props.numericId
 					)
 
 				card.slotEntity = pickedSlot.entity
@@ -68,7 +69,7 @@ function* playCardSaga(
 			case 'attach': {
 				if (!card.card.isAttach())
 					throw Error(
-						'Attempted to add card that implement attach to an attach slot: ' + card.props.id
+						'Attempted to add card that implement attach to an attach slot: ' + card.props.numericId
 					)
 				card.slotEntity = pickedSlot.entity
 				break

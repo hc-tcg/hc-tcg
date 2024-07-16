@@ -38,7 +38,7 @@ class FiveAMPearlRare extends Card {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 
 			const effectCard = getActiveRow(player)?.effectCard
-			if (!effectCard || effectCard.props.id !== 'wolf') return
+			if (!effectCard || effectcard.props.numericId !== 'wolf') return
 
 			attack.addDamage(this.props.id, 30)
 		})

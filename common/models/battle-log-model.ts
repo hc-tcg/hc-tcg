@@ -15,7 +15,7 @@ import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
 import {PlayerId} from './player-model'
-import { isHermit } from '../cards/base/types'
+import {isHermit} from '../cards/base/types'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -115,7 +115,7 @@ export class BattleLogModel {
 			return `${card.props.name}`
 		}
 
-		const thisFlip = coinFlips.find((flip) => flip.card.props.id === card.props.id)
+		const thisFlip = coinFlips.find((flip) => flip.card.props.numericId === card.props.numericId)
 		const invalid = '$bINVALID VALUE$'
 
 		const logMessage = card.getLog({
@@ -125,14 +125,14 @@ export class BattleLogModel {
 			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
-				id: pos.cardId ? pos.cardId.card.props.id : invalid,
+				id: pos.cardId ? pos.cardId.card.props.numericId : invalid,
 				name: pos.cardId ? genCardName(pos.player, pos.cardId, pos.rowIndex) : invalid,
 				hermitCard: genCardName(pos.player, pos.rowId?.hermitCard, pos.rowIndex),
 				slotType: pos.type,
 			},
 			pick: {
 				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
-				id: slotInfo?.cardId ? slotInfo.cardId.card.props.id : invalid,
+				id: slotInfo?.cardId ? slotInfo.cardId.card.props.numericId : invalid,
 				name: genCardName(slotInfo?.player, slotInfo?.cardId, slotInfo?.rowIndex),
 				hermitCard: genCardName(
 					slotInfo?.player,
@@ -212,7 +212,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-				}, '')
+			  }, '')
 			: ''
 
 		this.logMessageQueue.push({

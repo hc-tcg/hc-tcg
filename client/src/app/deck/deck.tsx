@@ -173,7 +173,7 @@ const Deck = ({setMenuSection}: Props) => {
 		const deck = getSavedDeck(deckName)
 		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
-		const deckIds = deck.cards?.filter((card) => card.props.id)
+		const deckIds = deck.cards?.filter((card) => card.props.numericId)
 
 		setLoadedDeck({
 			...deck,

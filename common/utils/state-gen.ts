@@ -27,7 +27,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',
 		})
-		components.new(CardComponent, card.props.id, slot.entity)
+		components.new(CardComponent, card.props.numericId, slot.entity)
 	}
 
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
@@ -44,7 +44,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 	const sortedCards = components
 		.filter(CardComponent, card.player(playerEntity), card.slot(slot.deck))
 		.sort(CardComponent.compareOrder)
-		
+
 	let index = sortedCards.findIndex((card) => card.isHermit())
 
 	if (index > 5) {

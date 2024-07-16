@@ -44,7 +44,7 @@ export const CARDS: Record<string, Card> = allCardClasses.reduce(
 	(result: Record<string, Card>, cardClass) => {
 		let card = new cardClass()
 		result[cardClass.name] = card
-		result[card.props.id] = card
+		result[card.props.numericId] = card
 		return result
 	},
 	{}

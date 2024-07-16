@@ -108,7 +108,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	while (deck.length < limits.maxCards && deck.length < effectCards.length) {
 		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
-		const duplicates = deck.filter((card) => card.props.id === effectCard.props.id)
+		const duplicates = deck.filter((card) => card.props.numericId === effectCard.props.numericId)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
 		const tokenCost = effectCard.props.tokens
@@ -130,7 +130,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 
 	return deck.map((card) => {
 		return {
-			props: WithoutFunctions(CARDS[card.props.id].props),
+			props: WithoutFunctions(CARDS[card.props.numericId].props),
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 		}

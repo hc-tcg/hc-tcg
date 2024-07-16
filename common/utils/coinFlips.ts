@@ -12,7 +12,7 @@ export function flipCoin(
 	const activeRowIndex = playerTossingCoin.game.components.get(playerTossingCoin.activeRowEntity)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.props.id} attempted to flip coin with no active row!, that shouldn't be possible`
+			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`
 		)
 		return []
 	}

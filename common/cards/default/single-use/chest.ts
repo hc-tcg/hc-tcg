@@ -17,7 +17,8 @@ class Chest extends Card {
 		tokens: 2,
 		description: 'Choose one card from your discard pile to return to your hand.',
 		attachCondition: query.every(singleUse.attachCondition, (game, pos) => {
-			if (pos.player.discarded.filter((card) => card.props.id !== 'clock').length <= 0) return false
+			if (pos.player.discarded.filter((card) => card.props.numericId !== 'clock').length <= 0)
+				return false
 			return true
 		}),
 	}

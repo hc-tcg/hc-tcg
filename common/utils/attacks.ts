@@ -258,7 +258,7 @@ export function setupMockedCard(
 ): CardComponent {
 	let mimickCard = game.components.new(
 		CardComponent,
-		attackFrom.card.props.id,
+		attackFrom.card.props.numericId,
 		as.slot.entity
 	) as CardComponent<Hermit>
 

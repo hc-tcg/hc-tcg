@@ -38,7 +38,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
-		card: string | (new () => Card),
+		card: number | string | (new () => Card),
 		slot: SlotEntity
 	) {
 		this.game = game
