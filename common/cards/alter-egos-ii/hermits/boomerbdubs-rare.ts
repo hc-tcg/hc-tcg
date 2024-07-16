@@ -4,6 +4,8 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
+import Fortune from '../../default/single-use/fortune'
 
 class BoomerBdubsRare extends Card {
 	props: Hermit = {
@@ -36,7 +38,6 @@ class BoomerBdubsRare extends Card {
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = component
-		const componentKey = this.getInstanceKey(component)
 
 		let extraDamage = 0
 
@@ -47,7 +48,7 @@ class BoomerBdubsRare extends Card {
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			const activeHermit = getActiveRow(player)?.hermitCard
+			const activeHermit = player.getActiveHermit()
 
 			if (!activeHermit) return
 
@@ -87,10 +88,7 @@ class BoomerBdubsRare extends Card {
 
 					// This is sketchy AF but fortune needs to be removed after the first coin flip
 					// to prevent infinite flips from being easy.
-					const fortuneInstances = player.playerDeck.filter(
-						(card) => card.props.numericId === 'fortune'
-					)
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card))
+					game.components.find(CardComponent, card.is(Fortune), card.active)?.discard()
 
 					return 'SUCCESS'
 				},
@@ -99,20 +97,18 @@ class BoomerBdubsRare extends Card {
 		})
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			if (attack.id !== componentKey || attack.type !== 'secondary') return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (extraDamage === 0) {
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return
 			}
 
-			attack.addDamage(this.props.id, extraDamage)
+			attack.addDamage(component.entity, extraDamage)
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
-		const componentKey = this.getInstanceKey(component)
-
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.beforeAttack.remove(component)
 		player.hooks.onTurnEnd.remove(component)

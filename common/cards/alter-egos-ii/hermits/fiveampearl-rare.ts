@@ -46,7 +46,7 @@ class FiveAMPearlRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.beforeAttack.remove(component)

@@ -1,8 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../components'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -39,11 +38,11 @@ class IskallmanRare extends Card {
 		const {player} = component
 		let pickedAfkHermit: SlotComponent | null = null
 
-		const pickCondition = slot.every(
-			slot.player,
+		const pickCondition = query.every(
+			slot.currentPlayer,
 			slot.hermitSlot,
-			slot.not(slot.empty),
-			slot.not(slot.activeRow)
+			query.not(slot.empty),
+			query.not(slot.activeRow)
 		)
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
@@ -53,12 +52,10 @@ class IskallmanRare extends Card {
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			const activeRow = getActiveRow(player)
-
-			if (!activeRow || activeRow.health < 50) return
+			if (player.activeRow && player.activeRow.health && player.activeRow.health < 50) return
 
 			// Make sure there is something to select
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -84,12 +81,10 @@ class IskallmanRare extends Card {
 					if (!modalResult.result) return 'SUCCESS'
 					game.addPickRequest({
 						playerId: player.id,
-						id: 'iskallman_rare',
+						id: component.entity,
 						message: 'Pick an AFK Hermit from either side of the board',
 						canPick: pickCondition,
 						onResult(pickedSlot) {
-							if (!pickedSlot.cardId) return
-							if (!pickedSlot.rowIndex) return
 							pickedAfkHermit = pickedSlot
 						},
 						onTimeout() {
@@ -107,43 +102,35 @@ class IskallmanRare extends Card {
 
 		// Heals the afk hermit *before* we actually do damage
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-			const activeRow = getActiveRow(player)
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!pickedAfkHermit?.inRow()) return
 
-			if (!activeRow) return
-			if (!pickedAfkHermit) return
-
-			const attacker = attack.getAttacker()
-			if (!attacker) return
-
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(component, 'selfAttack'),
-				attacker,
-				target: attacker,
+			const backlashAttack = game.newAttack({
+				attacker: component.entity,
+				target: player.activeRow?.entity,
 				type: 'effect',
 				isBacklash: true,
 			})
-			backlashAttack.addDamage(this.props.id, 50)
-			backlashAttack.shouldIgnoreCards.push(slot.anything)
+
+			backlashAttack.addDamage(component.entity, 50)
+			backlashAttack.shouldIgnoreCards.push(query.anything)
 			attack.addNewAttack(backlashAttack)
 
-			const attackerInfo = attacker.row.hermitCard.card
-			const hermitInfo = pickedAfkHermit.rowId?.hermitCard?.card
+			const hermitInfo = pickedAfkHermit.getCard()
 
 			if (hermitInfo) {
-				healHermit(pickedAfkHermit.rowId, 50)
+				pickedAfkHermit.row.heal(50)
 				game.battleLog.addEntry(
-					player.id,
-					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${
+					player.entity,
+					`$p${component.props.name}$ took $b50hp$ damage, and healed $p${
 						hermitInfo.props.name
-					} (${(pickedAfkHermit.rowIndex || 0) + 1})$ by $g50hp$`
+					} (${(pickedAfkHermit.row.index || 0) + 1})$ by $g50hp$`
 				)
 			}
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		player.hooks.getAttackRequests.remove(component)

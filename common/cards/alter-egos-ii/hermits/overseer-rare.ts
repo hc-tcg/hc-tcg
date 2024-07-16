@@ -31,22 +31,19 @@ class OverseerRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const target = attack.getTarget()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const isFarmer =
-				target.row.hermitCard.isHermit() && target.row.hermitCard.props.type === 'farm' ? 2 : 1
-
-			attack.multiplyDamage(this.props.id, isFarmer)
+			const targetHermit = attack.target?.getHermit()
+			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
+				attack.multiplyDamage(component.entity, 2)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.beforeAttack.remove(component)
