@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {Observer} from '../../../types/hooks'
 
 class FalseSymmetryRare extends Card {
 	props: Hermit = {
@@ -30,31 +31,20 @@ class FalseSymmetryRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			if (
-				attack.isAttacker(component.entity) ||
-				attack.type !== 'secondary' ||
-				!(attack.attacker instanceof CardComponent)
-			)
-				return
+		observer.observe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attack.attacker)
+			const coinFlip = flipCoin(player, component)[0]
 
-			if (coinFlip[0] === 'tails') return
+			if (coinFlip === 'tails') return
 
 			// Heal 40hp
-			attack.attacker.slot.inRow() && attack.attacker.slot.row.heal(40)
-			game.battleLog.addEntry(player.entity, `$p${attack.attacker.props.name}$ healed $g40hp$`)
+			component.slot.inRow() && component.slot.row.heal(40)
+			game.battleLog.addEntry(player.entity, `$p${component.props.name}$ healed $g40hp$`)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

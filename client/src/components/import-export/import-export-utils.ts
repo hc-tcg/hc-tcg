@@ -27,7 +27,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 export const getHashFromDeck = (pickedCards: Array<LocalCardInstance>): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
-		const id = CARDS[pickedCards[i].props.id].props.numericId
+		const id = CARDS[pickedCards[i].props.numericId].props.numericId
 		if (id >= 0) indicies.push(id)
 	}
 	const b64cards = encode(String.fromCharCode.apply(null, indicies))

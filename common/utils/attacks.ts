@@ -248,21 +248,3 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 
 	return weaknessAttack
 }
-
-/** Create a mocked card that can be used to create a specific specified attack type. */
-export function setupMockedCard(
-	game: GameModel,
-	attackType: HermitAttackType,
-	attackFrom: CardComponent<Hermit>,
-	as: CardComponent
-): CardComponent {
-	let mimickCard = game.components.new(
-		CardComponent,
-		attackFrom.card.props.numericId,
-		as.slot.entity
-	) as CardComponent<Hermit>
-
-	game.currentPlayer.hooks.getAttackRequests.call(mimickCard, attackType)
-
-	return mimickCard
-}

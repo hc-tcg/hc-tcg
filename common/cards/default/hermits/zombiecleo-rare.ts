@@ -5,7 +5,6 @@ import {CardComponent, SlotComponent} from '../../../components'
 import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
-import {setupMockedCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
 
 class ZombieCleoRare extends Card {
@@ -42,7 +41,7 @@ class ZombieCleoRare extends Card {
 		query.not(slot.has(ArmorStand))
 	)
 
-	imitatingCard = new InstancedValue<CardComponent | null>(() => null)
+	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)
 	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
 
 	override getAttack(
@@ -58,7 +57,9 @@ class ZombieCleoRare extends Card {
 		if (!imitatingCard || !pickedAttack) return null
 		if (!imitatingCard.isHermit()) return null
 
-		let newAttack = imitatingCard.card.getAttack(game, imitatingCard, pickedAttack)
+		imitatingCard.onAttach(game, component)
+		let newAttack = imitatingCard.getAttack(game, component, pickedAttack)
+		imitatingCard.onDetach(game, component)
 
 		if (!newAttack) return null
 
@@ -119,16 +120,12 @@ class ZombieCleoRare extends Card {
 
 							// Store the card to copy when creating the attack
 							this.pickedAttack.set(component, modalResult.pick)
-							if (pickedCard?.isHermit())
-								this.imitatingCard.set(
-									component,
-									setupMockedCard(game, modalResult.pick, pickedCard, component)
-								)
+							if (pickedCard?.isHermit()) this.imitatingCard.set(component, pickedCard.card)
 
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
-							this.imitatingCard.set(component, pickedCard)
+							this.imitatingCard.set(component, pickedCard.card as Card<Hermit>)
 							this.pickedAttack.set(component, 'primary')
 						},
 					})

@@ -18,6 +18,7 @@ import {
 	isItem,
 	isSingleUse,
 } from './types'
+import {Observer} from '../../types/hooks'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -53,20 +54,27 @@ export class InstancedValue<T> {
 	}
 }
 
+export type CardClass = new (cardClass: CardClass) => Card
+
 abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
+	public cardClass: CardClass
+
+	constructor(cardClass: CardClass) {
+		this.cardClass = cardClass
+	}
 
 	/**
 	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, component: CardComponent) {
+	public onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, component: CardComponent) {
+	public onDetach(game: GameModel, component: CardComponent, observer: Observer) {
 		// default is do nothing
 	}
 

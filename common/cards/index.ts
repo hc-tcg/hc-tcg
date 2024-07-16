@@ -11,29 +11,30 @@ import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
+import { CardClass } from './base/card'
 
-const effectCardClasses: Array<new () => Card> = [
+const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
 	...alterEgoEffectCards,
 	// ...adventOfTcgEffectCards,
 ]
 
-const hermitCardClasses: Array<new () => Card> = [
+const hermitCardClasses: Array<CardClass> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
 	// ...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
 ]
 
-const itemCardClasses: Array<new () => Card> = [...defaultItemCards]
+const itemCardClasses: Array<CardClass> = [...defaultItemCards]
 
-const singleUseCardClasses: Array<new () => Card> = [
+const singleUseCardClasses: Array<CardClass> = [
 	...defaultSingleUseCards,
 	...alterEgosSingleUseCards,
 	// ...adventOfTcgSingleUseCards,
 ]
 
-const allCardClasses: Array<new () => Card> = [
+const allCardClasses: Array<CardClass> = [
 	...effectCardClasses,
 	...hermitCardClasses,
 	...itemCardClasses,
@@ -42,7 +43,7 @@ const allCardClasses: Array<new () => Card> = [
 
 export const CARDS: Record<string, Card> = allCardClasses.reduce(
 	(result: Record<string, Card>, cardClass) => {
-		let card = new cardClass()
+		let card = new cardClass(cardClass)
 		result[cardClass.name] = card
 		result[card.props.numericId] = card
 		return result

@@ -11,9 +11,9 @@ import FireCharge from './fire-charge'
 import Piston from './piston'
 import SplashPotionOfHealingII from './splash-potion-of-healing-ii'
 import TargetBlock from './target-block'
-import Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const singleUseCardClasses: Array<new () => Card> = [
+const singleUseCardClasses: Array<CardClass> = [
 	Anvil,
 	BadOmen,
 	Egg,

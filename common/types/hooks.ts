@@ -1,5 +1,3 @@
-import {CardComponent, StatusEffectComponent} from '../components'
-
 export class Hook<Listener, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args]> = []
 	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
@@ -37,27 +35,38 @@ export class Hook<Listener, Args extends (...args: any) => any> {
 	}
 }
 
+export class Observer {
+	readonly entity: string
+	private hooks: Array<Hook<any, any>>
+
+	constructor() {
+		this.entity = Math.random().toString()
+		this.hooks = []
+	}
+
+	public observe<Args extends (...any: any) => any>(hook: Hook<any, Args>, fun: Args) {
+		hook.add(this.entity, fun)
+		this.hooks.push(hook)
+	}
+
+	/** Disconnect all hooks connected to this observer */
+	public detach() {
+		for (const hook of this.hooks) {
+			hook.remove(this.entity)
+		}
+	}
+}
+
 /**
  * Custom hook class for the game, derived from the generic custom hook class.
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
-export class GameHook<Args extends (...args: any) => any> extends Hook<
-	CardComponent | StatusEffectComponent,
-	Args
-> {
-	constructor() {
-		// We override the eq function because card and status instances can not be compared with the regular === operator.
-		super((a, b) => a.entity == b.entity)
-	}
-
+export class GameHook<Args extends (...args: any) => any> extends Hook<any, Args> {
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
-	public callSome(
-		params: Parameters<Args>,
-		predicate: (instance: CardComponent | StatusEffectComponent) => boolean
-	) {
+	public callSome(params: Parameters<Args>, predicate: (instance: Observer) => boolean) {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
 			.map(([_, listener]) => listener(...(params as Array<any>)))

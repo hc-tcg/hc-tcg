@@ -6,9 +6,9 @@ import ChainmailArmor from './chainmail-armor'
 import CommandBlock from './command-block'
 import LightningRod from './lightning-rod'
 import ArmorStand from './armor-stand'
-import Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const effectCardClasses: Array<new () => Card> = [
+const effectCardClasses: Array<CardClass> = [
 	ArmorStand,
 	ChainmailArmor,
 	CommandBlock,

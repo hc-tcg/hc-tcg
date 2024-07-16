@@ -6,6 +6,7 @@ import {
 	StatusEffectComponent,
 } from '.'
 import type Card from '../cards/base/card'
+import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
 	type CardProps,
@@ -22,6 +23,7 @@ import {
 import type {GameModel} from '../models/game-model'
 import type StatusEffect from '../status-effects/status-effect'
 import {CardEntity, PlayerEntity, SlotEntity} from '../types/game-state'
+import {Observer} from '../types/hooks'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
 
@@ -34,24 +36,28 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
+	observer: Observer | null
 
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
-		card: number | string | (new () => Card),
+		card: number | string | CardClass,
 		slot: SlotEntity
 	) {
 		this.game = game
 		this.entity = entity
+		this.observer = null
 		if (card instanceof Object) {
 			this.card = CARDS[card.name] as Card<Props>
 		} else {
 			this.card = CARDS[card] as Card<Props>
 		}
+
 		this.slotEntity = slot
 
 		if (this.slot.onBoard()) {
-			this.card.onAttach(this.game, this)
+			this.observer = new Observer()
+			this.card.onAttach(this.game, this, this.observer)
 			this.player?.hooks.onAttach.call(this)
 		}
 	}
@@ -127,7 +133,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (oldCard) oldCard.discard()
 
 		if (this.slot.onBoard()) {
-			this.card.onDetach(this.game, this)
+			if (!this.observer) throw new Error('All cards attached to the board should have an observer')
+			this.observer.detach()
+			this.card.onDetach(this.game, this, this.observer)
 			this.player.hooks.onDetach.call(this)
 		}
 
@@ -139,7 +147,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		let runAttach = oldSlotWasOnBoard || oldPlayer !== this.player.entity
 
 		if (runAttach && component.onBoard()) {
-			this.card.onAttach(this.game, this)
+			this.observer = new Observer()
+			this.card.onAttach(this.game, this, this.observer)
 			this.player.hooks.onAttach.call(this)
 		}
 	}

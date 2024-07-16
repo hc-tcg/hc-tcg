@@ -12,9 +12,9 @@ import ShadEECommon from './shadee-common'
 import SpookyStressCommon from '../../alter-egos-ii/hermits/spookystress-common'
 import SteampunkTangoCommon from '../../alter-egos-ii/hermits/steampunktango-common'
 import WormManCommon from '../../alter-egos-ii/hermits/wormman-common'
-import Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const hermitCardClasses: Array<new () => Card> = [
+const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
 	BoomerBdubsRare,
 	DwarfImpulseCommon,

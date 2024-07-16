@@ -28,9 +28,9 @@ import CurseOfVanishing from './curse-of-vanishing'
 import Fortune from './fortune'
 import Mending from './mending'
 import Looting from './looting'
-import Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const singleUseCardClasses: Array<new () => Card> = [
+const singleUseCardClasses: Array<CardClass> = [
 	InstantHealth,
 	SplashPotionOfHealing,
 	InstantHealthII,

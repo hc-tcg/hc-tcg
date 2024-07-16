@@ -3,6 +3,7 @@ import {ComponentQuery, card, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
 import StatusEffect from '../../status-effects/status-effect'
+import { CardClass } from '../../cards/base/card'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: ComponentQuery<SlotComponent> = (game, pos) => {
@@ -98,13 +99,13 @@ export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent>
 }
 
 /** Return true if the spot contains any of the card IDs. */
-export const hasId = (...cardIds: Array<string>): ComponentQuery<SlotComponent> => {
+export const hasId = (...cardIds: Array<number>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		return game.components.exists(CardComponent, card.id(...cardIds), card.slotIs(pos.entity))
 	}
 }
 
-export const has = (...cards: Array<new () => Card>): ComponentQuery<SlotComponent> => {
+export const has = (...cards: Array<CardClass>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		return game.components.exists(CardComponent, card.is(...cards), card.slotIs(pos.entity))
 	}

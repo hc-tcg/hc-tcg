@@ -10,9 +10,9 @@ import Thorns from './thorns'
 import Loyalty from './loyalty'
 import WaterBucket from './water-bucket'
 import MilkBucket from './milk-bucket'
-import type Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const effectCardClasses: Array<new () => Card> = [
+const effectCardClasses: Array<CardClass> = [
 	Bed,
 	Wolf,
 	GoldArmor,
