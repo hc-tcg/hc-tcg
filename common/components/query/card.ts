@@ -64,10 +64,6 @@ export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
-export function id(...cardIds: Array<number>): ComponentQuery<CardComponent> {
-	return (_game, card) => cardIds.includes(card.props.numericId)
-}
-
 export function is(...cardTypes: Array<CardClass>): ComponentQuery<CardComponent> {
 	return (_game, card) =>
 		cardTypes.map((t) => CARDS[t.name].props.numericId).includes(card.props.numericId)
