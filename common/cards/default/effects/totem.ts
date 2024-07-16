@@ -3,9 +3,8 @@ import {AttackModel} from '../../../models/attack-model'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {effect} from '../../../components/query'
-import {ObserverComponent} from '../../../types/hooks'
 
 class Totem extends Card {
 	props: Attach = {

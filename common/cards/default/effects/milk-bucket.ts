@@ -3,11 +3,15 @@ import {applySingleUse} from '../../../utils/board'
 import {card, effect, query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
-import {CardComponent, SlotComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
 import PoisonStatusEffect from '../../../status-effects/poison'
 import BadOmenStatusEffect from '../../../status-effects/badomen'
-import {ObserverComponent} from '../../../types/hooks'
 
 class MilkBucket extends Card {
 	props: Attach & SingleUse = {

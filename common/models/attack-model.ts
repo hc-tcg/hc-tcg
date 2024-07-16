@@ -8,9 +8,9 @@ import {
 	AttackerEntity,
 } from '../types/attack'
 import {CardComponent, PlayerComponent, RowComponent, StatusEffectComponent} from '../components'
-import {PlayerEntity, RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
 import {ComponentQuery} from '../components/query'
+import {PlayerEntity, RowEntity} from '../entities'
 
 export class AttackModel {
 	private readonly game: GameModel

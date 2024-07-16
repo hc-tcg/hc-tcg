@@ -1,9 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {ObserverComponent} from '../../../types/hooks'
 
 class GoldArmor extends Card {
 	props: Attach = {

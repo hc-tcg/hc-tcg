@@ -1,11 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {card, slot} from '../../../components/query'
-import { ObserverComponent } from '../../../types/hooks'
 
 class Loyalty extends Card {
 	props: Attach = {

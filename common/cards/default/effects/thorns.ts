@@ -4,12 +4,11 @@ import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import GoldArmor from './gold-armor'
 import IronArmor from './iron-armor'
 import DiamondArmor from './diamond-armor'
 import NetheriteArmor from './netherite-armor'
-import {ObserverComponent} from '../../../types/hooks'
 
 class Thorns extends Card {
 	props: Attach = {

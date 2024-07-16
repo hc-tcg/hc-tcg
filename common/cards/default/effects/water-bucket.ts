@@ -3,11 +3,10 @@ import {applySingleUse} from '../../../utils/board'
 import {card, effect, query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
-import {CardComponent, SlotComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent, StatusEffectComponent} from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
 import FireStatusEffect from '../../../status-effects/fire'
 import String from '../../alter-egos/effects/string'
-import {ObserverComponent} from '../../../types/hooks'
 
 class WaterBucket extends Card {
 	props: Attach & SingleUse = {

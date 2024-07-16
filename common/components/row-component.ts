@@ -1,6 +1,7 @@
 import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardComponent} from './card-component'
+import { PlayerComponent } from './player-component'
 import {card, slot} from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
 
@@ -20,7 +21,7 @@ export class RowComponent {
 		this.health = null
 	}
 
-	get player() {
+	get player(): PlayerComponent {
 		return this.game.components.getOrError(this.playerId)
 	}
 
