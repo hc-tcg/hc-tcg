@@ -14,6 +14,9 @@ type BoardSlotDefs =
 			player: PlayerEntity
 	  }
 
+/** A component for slots on the game board, discard pile, deck or hand.
+ * Note that slots are NOT ordered in the ECS.
+ */
 export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
@@ -25,22 +28,30 @@ export class SlotComponent {
 		this.defs = defs
 	}
 
+	// The implementation of these type guards are in the subclasses. The regular slot component
+	// does not have any of these properties so false is returned for all the type guards.
+
+	/** Return true if the slot is on the game board */
 	public onBoard(): this is BoardSlotComponent {
 		return false
 	}
 
+	/** Return true if the slot is in a row. */
 	public inRow(): this is BoardSlotComponent & {row: RowComponent} {
 		return false
 	}
 
+	/** Return true if the slot is in a player's hand */
 	public inHand(): this is HandSlotComponent {
 		return false
 	}
 
+	/** Return true if the slot is in a player's deck */
 	public inDeck(): this is DeckSlotComponent {
 		return false
 	}
 
+	/** Return true if the slot is in a player's discard pile */
 	public inDiscardPile(): this is DiscardSlotComponent {
 		return false
 	}

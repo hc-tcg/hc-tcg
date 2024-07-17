@@ -22,14 +22,15 @@ import {
 	isHermit,
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
-import type CardStatusEffect from '../status-effects/status-effect'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
+import {CardStatusEffect} from '../status-effects/status-effect'
 
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
+/** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
@@ -84,16 +85,17 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return this.card.props
 	}
 
+	/** The slot that this card is in */
 	public get slot(): SlotComponent {
 		return this.game.components.getOrError(this.slotEntity)
 	}
 
-	/** Get the player who owns the slot this card is in */
+	/** Get the player who owns the slot this card is in. */
 	public get player(): PlayerComponent {
 		return this.game.components.getOrError(this.slot?.player.entity)
 	}
 
-	/** Get the player who does not own the slot this card is in */
+	/** Get the player who does not own the slot this card is in. */
 	public get opponentPlayer(): PlayerComponent {
 		return this.game.components.getOrError(this.game.otherPlayerEntity(this.slot?.player.entity))
 	}
