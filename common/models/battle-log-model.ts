@@ -166,9 +166,15 @@ export class BattleLogModel {
 
 			if (subAttack.getDamage() === 0) return reducer
 
-			const attackingHermitInfo = attack.attacker
+			const attackingHermitInfo = this.game.components.find(
+				CardComponent,
+				card.currentPlayer,
+				card.active,
+				card.slot(slot.hermitSlot)
+			)
 			const targetHermitInfo = this.game.components.find(
 				CardComponent,
+				card.opponentPlayer,
 				card.active,
 				card.slot(slot.hermitSlot)
 			)
@@ -178,12 +184,15 @@ export class BattleLogModel {
 			const rowNumberString = `(${attack.target.index + 1})`
 
 			if (!(attackingHermitInfo instanceof CardComponent)) return reducer
-			if (!attackingHermitInfo.isHermit()) return reducer
-
-			const attackName =
-				subAttack.type === 'primary'
-					? attackingHermitInfo.props.primary.name
-					: attackingHermitInfo.props.secondary.name
+			let attackName
+			if (attackingHermitInfo.isHermit()) {
+				attackName =
+					subAttack.type === 'primary'
+						? attackingHermitInfo.props.primary.name
+						: attackingHermitInfo.props.secondary.name
+			} else {
+				attackName = singleUse?.props.name || '$eINVALID$'
+			}
 
 			const logMessage = subAttack.getLog({
 				attacker: `$p${attackingHermitInfo.props.name}$`,
