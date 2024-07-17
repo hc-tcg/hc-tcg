@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import Clock from './clock'
 
 class Chest extends Card {
 	props: SingleUse = {
@@ -16,13 +17,15 @@ class Chest extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description: 'Choose one card from your discard pile to return to your hand.',
-		attachCondition: query.every(singleUse.attachCondition, (game, pos) => {
-			if (pos.player.discarded.filter((card) => card.props.numericId !== 'clock').length <= 0)
-				return false
-			return true
+		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
+			return game.components.exists(
+				CardComponent,
+				query.card.slot(query.slot.discardPile),
+				query.not(query.card.is(Clock))
+			)
 		}),
 	}
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		game.addModalRequest({
@@ -32,7 +35,7 @@ class Chest extends Card {
 				payload: {
 					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
 					modalDescription: '',
-					cards: player.discarded.map((card) => card.toLocalCardInstance()),
+					cards: player.getDiscarded().map((card) => card.toLocalCardInstance()),
 					selectionSize: 1,
 					primaryButton: {
 						text: 'Confirm Selection',
@@ -52,10 +55,9 @@ class Chest extends Card {
 				if (modalResult.cards[0].props.id === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)
-				retrieveCard(
-					game,
-					player.discarded.find((card) => card.id === modalResult.cards![0].component) || null
-				)
+
+				let card = game.components.get(modalResult.cards[0].entity)
+				card?.draw()
 
 				return 'SUCCESS'
 			},

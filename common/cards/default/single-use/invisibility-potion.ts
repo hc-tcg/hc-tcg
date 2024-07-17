@@ -1,10 +1,19 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {
+	InvisibilityPotionHeads,
+	InvisibilityPotionTails,
+} from '../../../status-effects/invisibility-potion'
 
 class InvisibilityPotion extends Card {
 	applyTo = query.every(query.slot.opponent, query.slot.activeRow, query.slot.hermitSlot)
@@ -33,24 +42,20 @@ class InvisibilityPotion extends Card {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			let opponentActiveHermit = game.findSlot(this.applyTo)?.cardId
-			if (!opponentActiveHermit) return
-
+		observer.subscribe(player.hooks.onApply, () => {
 			if (flipCoin(player, component)[0] === 'heads') {
-				applyStatusEffect(game, 'invisibility-potion-heads', opponentActiveHermit)
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionHeads)
+					.apply(opponentPlayer.getActiveHermit()?.entity)
 			} else {
-				applyStatusEffect(game, 'invisibility-potion-tails', opponentActiveHermit)
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionTails)
+					.apply(opponentPlayer.getActiveHermit()?.entity)
 			}
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

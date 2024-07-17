@@ -1,7 +1,6 @@
 import {row} from '../../../components/query'
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -21,14 +20,16 @@ class TNT extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.getAttack.add(component, () => {
+		observer.subscribe(player.hooks.getAttack, () => {
+			applySingleUse(game)
+
 			const tntAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: game.state.rows.findEntity(row.player(opponentPlayer.id), row.active),
+					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
@@ -38,7 +39,7 @@ class TNT extends Card {
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: game.state.rows.findEntity(row.player(player.id), row.active),
+					target: player.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `and took ${values.damage} backlash damage`,
@@ -49,16 +50,6 @@ class TNT extends Card {
 
 			return tntAttack
 		})
-
-		player.hooks.afterAttack.add(component, (_) => {
-			applySingleUse(game)
-		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttack.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

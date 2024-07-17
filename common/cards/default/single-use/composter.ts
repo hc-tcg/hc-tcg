@@ -25,7 +25,7 @@ class Composter extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		let firstPickedSlot: SlotComponent | null = null

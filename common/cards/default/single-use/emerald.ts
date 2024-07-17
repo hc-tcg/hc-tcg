@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -40,30 +40,25 @@ class Emerald extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			const playerSlot = game.components.find(
 				SlotComponent,
-				slot.currentPlayer,
-				slot.activeRow,
-				slot.attachSlot
+				query.slot.currentPlayer,
+				query.slot.activeRow,
+				query.slot.attachSlot
 			)
 			const opponentSlot = game.components.find(
 				SlotComponent,
-				slot.opponent,
-				slot.activeRow,
-				slot.attachSlot
+				query.slot.opponent,
+				query.slot.activeRow,
+				query.slot.attachSlot
 			)
 
 			game.swapSlots(playerSlot, opponentSlot)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

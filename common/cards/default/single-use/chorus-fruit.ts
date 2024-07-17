@@ -37,37 +37,24 @@ class ChorusFruit extends Card {
 
 		let removedBlock = false
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (_attack) => {
 			// Apply the card
 			applySingleUse(game, component.slot)
-
-			player.hooks.afterAttack.add(component, (attack) => {
-				if (removedBlock) return
-				// Remove change active hermit from the blocked actions so it can be done once more
-				game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
-				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
-				removedBlock = true
-				// If another attack loop runs let the blocked action be removed again
-				player.hooks.beforeAttack.add(component, (attack) => {
-					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
-					removedBlock = false
-					player.hooks.beforeAttack.remove(component)
-				})
-			})
-
-			player.hooks.onTurnEnd.add(component, (attack) => {
-				player.hooks.beforeAttack.remove(component)
-				player.hooks.afterAttack.remove(component)
-				player.hooks.onTurnEnd.remove(component)
-			})
-
-			player.hooks.onAttack.remove(component)
 		})
-	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
+		observer.subscribe(player.hooks.afterAttack, (_attack) => {
+			if (removedBlock) return
+			// Remove change active hermit from the blocked actions so it can be done once more
+			game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
+			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
+			removedBlock = true
+			// If another attack loop runs let the blocked action be removed again
+			observer.subscribe(player.hooks.beforeAttack, (attack) => {
+				if (attack.isType('status-effect')) return // Ignore fire and poison attacks
+				removedBlock = false
+				observer.unsubscribe(player.hooks.beforeAttack)
+			})
+		})
 	}
 }
 

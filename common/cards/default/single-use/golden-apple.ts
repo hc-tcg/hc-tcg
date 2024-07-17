@@ -35,7 +35,7 @@ class GoldenApple extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {

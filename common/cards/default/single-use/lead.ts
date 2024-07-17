@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -42,13 +42,13 @@ class Lead extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
 		let itemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
 			onResult(pickedSlot) {
@@ -58,17 +58,10 @@ class Lead extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			canPick: this.secondPickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (pickedSlot.cardId || rowIndex === null) return
-
-				// Get the index of the chosen item
-				const opponentActivePos = getActiveRowPos(opponentPlayer)
-				if (!opponentActivePos) return
-
 				applySingleUse(game, pickedSlot)
 
 				// Move the item

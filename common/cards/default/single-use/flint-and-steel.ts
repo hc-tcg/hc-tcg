@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -20,22 +20,17 @@ class FlintAndSteel extends Card {
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.getHand().length > 3
+			(_game, pos) => pos.player.getHand().length > 3
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			player.getHand().forEach((card) => card.discard())
 			player.draw(3)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

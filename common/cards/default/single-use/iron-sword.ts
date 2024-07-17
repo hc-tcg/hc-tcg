@@ -22,7 +22,6 @@ class IronSword extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			console.log("getting extra sword attac")
 			const swordAttack = game
 				.newAttack({
 					attacker: component.entity,

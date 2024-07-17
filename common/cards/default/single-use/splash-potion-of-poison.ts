@@ -3,7 +3,8 @@ import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import PoisonEffect from '../../../status-effects/poison'
 
 class SplashPotionOfPoison extends Card {
 	props: SingleUse = {
@@ -25,23 +26,14 @@ class SplashPotionOfPoison extends Card {
 		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			const opponentActiveRow = opponentPlayer.board.activeRow
-			if (opponentActiveRow === null) return
-			applyStatusEffect(
-				game,
-				'poison',
-				opponentPlayer.board.rows[opponentActiveRow].hermitCard || undefined
-			)
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, PoisonEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

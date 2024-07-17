@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -19,22 +19,17 @@ class FishingRod extends Card {
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.currentPlayer.getDeck().length > 2
+			(game, _pos) => game.currentPlayer.getDeck().length > 2
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			player.draw(2)
-			player.hooks.onApply.remove(component)
+			observer.unsubscribe(player.hooks.onApply)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

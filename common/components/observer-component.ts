@@ -29,7 +29,7 @@ export class ObserverComponent {
 	 * Cards and status effects will destoy their own observers, so you as the user do not need to
 	 * worry about this!
 	 * If you are looking for a hook that will be called after the observer is destoryed (the card is removed
-	 * from the board), please use a status effect instead.
+	 * from the board), please use a status effect or `oneShot` instead.
 	 */
 	public subscribe<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
 		hook.add(this.entity, fun)
@@ -45,6 +45,17 @@ export class ObserverComponent {
 	) {
 		hook.addBefore(this.entity, fun)
 		this.hooks.push(hook)
+	}
+
+	/** Subscribe a specific hook and run the hook once. This hook is removed after it is called.
+	 * This hook is not removed when the observer is detached.
+	 */
+	public oneShot<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
+		// @ts-ignore
+		let proxy = hook.add(this.entity, (...args) => {
+			hook.removeByProxy(proxy)
+			return fun(...args)
+		})
 	}
 
 	/** Stop listening to a specific hook */

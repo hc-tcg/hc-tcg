@@ -1,32 +1,37 @@
 import type {ObserverEntity} from '../entities'
 
 export class Hook<Listener extends any, Args extends (...args: any) => any> {
-	public listeners: Array<[Listener, Args]> = []
-	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
-
-	public constructor(eq?: (a: Listener, b: Listener) => boolean) {
-		this.eq = eq || this.eq
-	}
+	public listeners: Array<[Listener, Args, string]> = []
 
 	/**
 	 * Adds a new listener to this hook
 	 */
 	public add(listener: Listener, call: Args) {
-		this.listeners.push([listener, call])
+		let proxy = Math.random().toString()
+		this.listeners.push([listener, call, proxy])
+		return proxy
 	}
 
 	/**
 	 * Adds a new listener to this hook before any other existing listeners
 	 */
 	public addBefore(listener: Listener, call: Args) {
-		this.listeners.unshift([listener, call])
+		let proxy = Math.random().toString()
+		this.listeners.unshift([listener, call, proxy])
+		return proxy
 	}
 
 	/**
 	 * Removes all the listeners tied to a specific instance
 	 */
 	public remove(listener: Listener) {
-		this.listeners = this.listeners.filter(([hookListener, _]) => !this.eq(hookListener, listener))
+		this.listeners = this.listeners.filter(
+			([hookListener, _func, _proxy]) => hookListener !== listener
+		)
+	}
+
+	public removeByProxy(proxy: string) {
+		this.listeners = this.listeners.filter(([_hook, _func, funcProxy]) => proxy !== funcProxy)
 	}
 
 	/**
