@@ -34,15 +34,16 @@ class Knockback extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game)
 			// Only Apply this for the first attack
 			observer.unsubscribe(player.hooks.afterAttack)
 		})
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const activeRow = getActiveRow(opponentPlayer)
+			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
+			let activeRow = opponentPlayer.activeRow
 			if (activeRow && activeRow.health) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
@@ -54,19 +55,13 @@ class Knockback extends Card {
 						game.changeActiveRow(opponentPlayer, pickedSlot.row)
 					},
 					onTimeout: () => {
-						const row = game.filterSlots(this.pickCondition)[0]
-						if (row === undefined || row.rowIndex === null) return
-						game.changeActiveRow(game.opponentPlayer, row.rowIndex)
+						const slot = game.components.find(SlotComponent, this.pickCondition)
+						if (!slot?.inRow()) return
+						game.changeActiveRow(game.opponentPlayer, slot.row)
 					},
 				})
 			}
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
-		player.hooks.onApply.remove(component)
 	}
 }
 

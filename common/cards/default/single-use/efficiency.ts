@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -18,32 +18,27 @@ class Efficiency extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		player.hooks.onApply.add(component, () => {
-			player.hooks.availableEnergy.add(component, (availableEnergy) => {
+		observer.subscribe(player.hooks.onApply, () => {
+			observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {
 				// Unliimited powwa
 				return ['any', 'any', 'any']
 			})
 
-			player.hooks.afterAttack.add(component, (attack) => {
-				player.hooks.availableEnergy.remove(component)
-				player.hooks.afterAttack.remove(component)
-				player.hooks.onTurnEnd.remove(component)
+			observer.subscribe(player.hooks.afterAttack, (_attack) => {
+				observer.unsubscribe(player.hooks.availableEnergy)
+				observer.unsubscribe(player.hooks.afterAttack)
+				observer.unsubscribe(player.hooks.onTurnEnd)
 			})
 
 			// In case the player does not attack
-			player.hooks.onTurnEnd.add(component, () => {
-				player.hooks.availableEnergy.remove(component)
-				player.hooks.afterAttack.remove(component)
-				player.hooks.onTurnEnd.remove(component)
+			observer.subscribe(player.hooks.onTurnEnd, () => {
+				observer.unsubscribe(player.hooks.availableEnergy)
+				observer.unsubscribe(player.hooks.afterAttack)
+				observer.unsubscribe(player.hooks.onTurnEnd)
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

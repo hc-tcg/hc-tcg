@@ -1,6 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, HandSlotComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	HandSlotComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -32,17 +37,17 @@ class Looting extends Card {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
@@ -52,11 +57,6 @@ class Looting extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

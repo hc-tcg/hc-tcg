@@ -23,7 +23,7 @@ class CurseOfBinding extends Card {
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
 				.new(StatusEffectComponent, CurseOfBindingEffect)
-				.apply(opponentPlayer.getActiveHermit()?.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }

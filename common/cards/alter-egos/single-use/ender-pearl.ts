@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -29,37 +29,34 @@ class EnderPearl extends Card {
 			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		const attackId = this.getInstanceKey(component)
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an empty Hermit slot',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				const rowIndex = pickedSlot.rowIndex
 				// We need to have no card there
 				if (pickedSlot.cardId || rowIndex === null) return
+				let activeHermit = player.activeRow.getHermit()
 
-				const activeRow = getActiveRowPos(player)
-				if (player.board.activeRow === null || !activeRow) return
+				if (player.activeRow === null) return
 
 				const logInfo = pickedSlot
-				logInfo.cardId = activeRow.row.hermitCard
 
 				// Apply
 				applySingleUse(game, logInfo)
 
 				// Move us
-				game.swapRows(player, player.board.activeRow, rowIndex)
+				game.swapRows(player, player.activeRow, rowIndex)
 
 				// Do 10 damage
-				const attack = new AttackModel({
-					id: attackId,
-					attacker: activeRow,
-					target: activeRow,
+				const attack = game.newAttack({
+					attacker: player.activeRow,
+					target: player.activeRow.entity,
 					type: 'effect',
 					isBacklash: true,
 				}).addDamage(this.id, 10)
