@@ -30,7 +30,7 @@ class Ladder extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		game.addPickRequest({
@@ -43,7 +43,12 @@ class Ladder extends Card {
 				applySingleUse(game, component.slot)
 				game.swapSlots(
 					pickedSlot,
-					game.components.find(SlotComponent, slot.currentPlayer, slot.hermitSlot, slot.activeRow)
+					game.components.find(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.hermitSlot,
+						query.slot.activeRow
+					)
 				)
 				game.changeActiveRow(player, pickedSlot.row)
 			},
