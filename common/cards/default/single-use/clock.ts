@@ -32,9 +32,7 @@ class Clock extends Card {
 		],
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.not(
-				query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClock))
-			),
+			query.not(query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClock))),
 			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
@@ -43,12 +41,8 @@ class Clock extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
 		observer.subscribe(player.hooks.onApply, () => {
-			game.components
-				.new(StatusEffectComponent, TurnSkipped)
-				.apply(opponentPlayer.getActiveHermit()?.entity)
-			game.components
-				.new(StatusEffectComponent, UsedClock)
-				.apply(player.getActiveHermit()?.entity)
+			game.components.new(StatusEffectComponent, TurnSkipped).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, UsedClock).apply(player.entity)
 		})
 	}
 }

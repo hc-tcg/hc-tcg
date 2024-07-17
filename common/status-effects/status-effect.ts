@@ -81,7 +81,7 @@ export abstract class StatusEffect<
 	 */
 	public onApply(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<T>,
 		target: T,
 		observer: ObserverComponent
 	) {
@@ -93,7 +93,7 @@ export abstract class StatusEffect<
 	 */
 	public onRemoval(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<T>,
 		target: T,
 		observer: ObserverComponent
 	) {
@@ -107,7 +107,7 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	 */
 	override onApply(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent
 	) {
@@ -119,7 +119,7 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	 */
 	override onRemoval(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent
 	) {
@@ -133,7 +133,7 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 	 */
 	override onApply(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
@@ -145,7 +145,7 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 	 */
 	override onRemoval(
 		game: GameModel,
-		effect: StatusEffectComponent,
+		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
