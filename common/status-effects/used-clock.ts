@@ -1,8 +1,9 @@
-import StatusEffect, {Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {Counter, PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import JoeHillsRare from '../cards/default/hermits/joehills-rare'
 
-class UsedClock extends StatusEffect {
+class UsedClock extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		id: 'used-clock',
@@ -15,11 +16,9 @@ class UsedClock extends StatusEffect {
 	override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		const {player} = target
-
 		if (effect.counter === null) effect.counter = this.props.counter
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
@@ -29,8 +28,9 @@ class UsedClock extends StatusEffect {
 		})
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (target.slot.inRow() && target.slot.row.entity === player.activeRow?.entity)
+			if (player.getActiveHermit()?.card instanceof JoeHillsRare) {
 				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
+			}
 		})
 	}
 }

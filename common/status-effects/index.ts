@@ -1,4 +1,4 @@
-import type StatusEffect from './status-effect'
+import type CardStatusEffect from './status-effect'
 import FireEffect from './fire'
 import PoisonEffect from './poison'
 import SleepingEffect from './sleeping'
@@ -24,7 +24,7 @@ import {PrimaryAttackDisabled, SecondaryAttackDisabled} from './derp-coin'
 import { TrapHoleEffect } from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
 
-const effectClasses: Array<new () => StatusEffect> = [
+const effectClasses: Array<new () => CardStatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
@@ -54,8 +54,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	CurseOfBindingEffect,
 ]
 
-export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, effectClass) => {
+export const STATUS_EFFECTS: Record<string, CardStatusEffect> = effectClasses.reduce(
+	(result: Record<string, CardStatusEffect>, effectClass) => {
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect

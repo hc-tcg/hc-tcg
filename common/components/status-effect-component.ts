@@ -1,25 +1,32 @@
 import {GameModel} from '../models/game-model'
-import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
-import type {CardEntity, ObserverEntity, StatusEffectEntity} from '../entities'
+import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
+import type {
+	CardEntity,
+	Entity,
+	ObserverEntity,
+	PlayerEntity,
+	StatusEffectEntity,
+} from '../entities'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
+import {PlayerComponent} from './player-component'
 
-let STATUS_EFFECTS: Record<any, StatusEffect>
+let STATUS_EFFECTS: Record<any, StatusEffect<any>>
 import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffectProps> {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
-	public targetEntity: CardEntity | null
+	public targetEntity: Entity<CardComponent | PlayerComponent> | null
 	public counter: number | null
 	private observerEntity: ObserverEntity | null
 
 	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: new () => StatusEffect) {
 		this.game = game
 		this.entity = entity
-		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<Props>
+		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<any, Props>
 		this.targetEntity = null
 		this.counter = null
 		this.observerEntity = null
@@ -46,7 +53,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	}
 
 	/** Apply a status effect to a specific card, or the active hermit if not specified */
-	public apply(cardEntity?: CardEntity | null) {
+	public apply(cardEntity?: CardEntity | PlayerEntity | null) {
 		if (!cardEntity) return
 
 		let target = this.game.components.get(cardEntity)

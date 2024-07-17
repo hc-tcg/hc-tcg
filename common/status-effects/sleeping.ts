@@ -1,8 +1,8 @@
-import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
+import CardStatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class SleepingEffect extends StatusEffect {
+class SleepingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'sleeping',

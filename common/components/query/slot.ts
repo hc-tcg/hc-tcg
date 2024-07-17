@@ -2,7 +2,7 @@ import type Card from '../../cards/base/card'
 import {ComponentQuery, card, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
-import StatusEffect from '../../status-effects/status-effect'
+import CardStatusEffect from '../../status-effects/status-effect'
 import {CardClass} from '../../cards/base/card'
 
 /** Return true if the card is attached to the player's side. */
@@ -127,7 +127,7 @@ export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponen
 }
 
 export function hasStatusEffect(
-	statusEffect: new () => StatusEffect
+	statusEffect: new () => CardStatusEffect
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
 		return game.components.exists(

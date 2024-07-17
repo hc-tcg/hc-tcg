@@ -1,8 +1,8 @@
-import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
+import CardStatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {isTargeting} from '../utils/attacks'
 
-class WeaknessEffect extends StatusEffect {
+class WeaknessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'weakness',

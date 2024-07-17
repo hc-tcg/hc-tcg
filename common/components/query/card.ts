@@ -3,7 +3,7 @@ import type Card from '../../cards/base/card'
 import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
-import StatusEffect from '../../status-effects/status-effect'
+import CardStatusEffect from '../../status-effects/status-effect'
 import {TypeT} from '../../types/cards'
 import {CardClass} from '../../cards/base/card'
 
@@ -76,7 +76,7 @@ export const active: ComponentQuery<CardComponent> = slot(slotCombinators.active
 export const afk: ComponentQuery<CardComponent> = query.not(slot(slotCombinators.activeRow))
 
 export const hasStatusEffect = (
-	statusEffect: new () => StatusEffect
+	statusEffect: new () => CardStatusEffect
 ): ComponentQuery<CardComponent> => {
 	return (game, card) => {
 		return game.components.exists(

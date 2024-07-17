@@ -1,9 +1,9 @@
-import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
+import CardStatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {slot} from '../components/query'
 import {StatusEffectComponent} from '../components'
 
-class BadOmenEffect extends StatusEffect {
+class BadOmenEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'badomen',

@@ -22,7 +22,7 @@ import {
 	isHermit,
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
-import type StatusEffect from '../status-effects/status-effect'
+import type CardStatusEffect from '../status-effects/status-effect'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'
@@ -172,7 +172,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
 	}
 
-	public hasStatusEffect(statusEffect: new () => StatusEffect) {
+	public hasStatusEffect(statusEffect: new () => CardStatusEffect) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			effect.is(statusEffect),

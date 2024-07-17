@@ -1,8 +1,8 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import CardStatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 
-export class InvisibilityPotionHeads extends StatusEffect {
+export class InvisibilityPotionHeads extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-heads',
@@ -38,7 +38,7 @@ export class InvisibilityPotionHeads extends StatusEffect {
 	}
 }
 
-export class InvisibilityPotionTails extends StatusEffect {
+export class InvisibilityPotionTails extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-tails',

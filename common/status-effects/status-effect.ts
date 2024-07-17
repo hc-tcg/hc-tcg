@@ -1,6 +1,11 @@
 import {GameModel} from '../models/game-model'
 import {ComponentQuery, effect, query} from '../components/query'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 
 export type StatusEffectLog = {
 	/** The status effect target */
@@ -65,7 +70,10 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 	return props !== null && 'counter' in props
 }
 
-abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps> {
+export abstract class StatusEffect<
+	T = CardComponent | PlayerComponent,
+	Props extends StatusEffectProps = StatusEffectProps,
+> {
 	public abstract props: Props
 
 	/**
@@ -74,7 +82,7 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	public onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		target: T,
 		observer: ObserverComponent
 	) {
 		// default is do nothing
@@ -86,6 +94,32 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	public onRemoval(
 		game: GameModel,
 		effect: StatusEffectComponent,
+		target: T,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+}
+
+export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
+	/**
+	 * Called when this statusEffect has its target set
+	 */
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called when the statusEffect is removed, from either timeout or other means
+	 */
+	override onRemoval(
+		game: GameModel,
+		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent
 	) {
@@ -93,4 +127,28 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	}
 }
 
-export default StatusEffect
+export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
+	/**
+	 * Called when this statusEffect has its target set
+	 */
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called when the statusEffect is removed, from either timeout or other means
+	 */
+	override onRemoval(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+}

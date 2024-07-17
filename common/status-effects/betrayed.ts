@@ -1,10 +1,10 @@
-import StatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
+import CardStatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {CardComponent, StatusEffectComponent} from '../components'
 
-class Betrayed extends StatusEffect {
+class Betrayed extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'betrayed',

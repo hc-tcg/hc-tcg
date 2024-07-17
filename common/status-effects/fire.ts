@@ -1,9 +1,9 @@
-import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
+import CardStatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class FireEffect extends StatusEffect {
+class FireEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
 		id: 'fire',
