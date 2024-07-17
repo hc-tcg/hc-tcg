@@ -38,16 +38,14 @@ class HumanCleoRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, component, 2)
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
-			game.components
-				.new(StatusEffectComponent, Betrayed)
-				.apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, Betrayed).apply(opponentPlayer.entity)
 		})
 	}
 }

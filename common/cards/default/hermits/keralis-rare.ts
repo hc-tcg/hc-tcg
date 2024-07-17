@@ -65,14 +65,14 @@ class KeralisRare extends Card {
 
 		// Heals the afk hermit *before* we actually do damage
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (!pickedAfkSlot?.inRow()) return
 			pickedAfkSlot.row.heal(100)
 			let hermit = pickedAfkSlot.row.getHermit()
 
 			game.battleLog.addEntry(
-				player.id,
+				player.entity,
 				`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
 					hermit?.props.name
 				}$`

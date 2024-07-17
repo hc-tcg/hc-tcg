@@ -3,7 +3,6 @@ import {GameModel} from '../models/game-model'
 import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {
-	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	SlotComponent,
@@ -41,19 +40,22 @@ class Betrayed extends PlayerStatusEffect {
 			// Return if the opponent has no AFK Hermits to attack
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			const opponentActiveRow = getActiveRow(pos.opponentPlayer)
-			if (!opponentActiveRow) return
+			const activeHermit = player.getActiveHermit()
+			if (!activeHermit) return
 
-			const energy = opponentActiveRow.itemCards.flatMap((item) => {
-				if (item?.isItem()) return item.props.type
-				return []
-			})
+			const energy =
+				(activeHermit.slot.inRow() &&
+					activeHermit.slot.row.getItems()?.flatMap((item) => {
+						if (item?.isItem()) return item.props.type
+						return []
+					})) ||
+				[]
 
 			// Return if no energy
 			if (
-				!opponentActiveRow.hermitCard.isHermit() ||
-				(!hasEnoughEnergy(energy, opponentActiveRow.hermitCard.props.primary.cost) &&
-					!hasEnoughEnergy(energy, opponentActiveRow.hermitCard.props.secondary.cost))
+				!activeHermit.isHermit() ||
+				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
+					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
 			) {
 				return
 			}
@@ -72,66 +74,46 @@ class Betrayed extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onDetach, blockActions)
 
 		// Add a pick request for opponent to pick an afk hermit to attack
-		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, hermitAttackType) => {
 			// Only pick if there is afk to pick
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: effect.entity,
 				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.cardId || !rowIndex === null) return
-					player.hooks.getAttackRequests.remove(effect)
 					pickedAfkHermit = pickedSlot
 				},
 				onTimeout() {
-					player.hooks.getAttackRequests.remove(effect)
-					const firstAfk = game.filterSlots(pickCondition)[0]
+					observer.unsubscribe(player.hooks.getAttackRequests)
+					const firstAfk = game.components.find(SlotComponent, pickCondition)
 					if (!firstAfk) return
 					pickedAfkHermit = firstAfk
 				},
 			})
 		})
 
-		player.hooks.beforeAttack.add(effect, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
-			player.hooks.beforeAttack.remove(effect)
+			observer.unsubscribe(player.hooks.beforeAttack)
 
-			if (
-				pickedAfkHermit !== null &&
-				pickedAfkHermit.cardId &&
-				pickedAfkHermit.rowId &&
-				pickedAfkHermit.rowIndex !== null
-			) {
-				attack.setTarget(this.props.id, {
-					player: player,
-					rowIndex: pickedAfkHermit.rowIndex,
-					// This cast is safe because we verified in the if statement that the hermit card in the row exists.
-					row: pickedAfkHermit.rowId as RowStateWithHermit,
-				})
+			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
+				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
 			}
 
 			// They attacked now, they can end turn or change hermits with Chorus Fruit
 			game.removeBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		})
 
-		player.hooks.afterAttack.add(effect, () => {
-			removeStatusEffect(game, pos, effect)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			effect.remove()
 		})
-	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = component
-
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onAttach.remove(instance)
-		player.hooks.onDetach.remove(instance)
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			effect.remove()
+		})
 	}
 }
 

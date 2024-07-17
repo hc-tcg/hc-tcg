@@ -35,7 +35,7 @@ class XBCraftedRare extends Card {
 		const {player} = component
 
 		observer.subscribeBefore(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push(
 				query.every(card.opponentPlayer, card.active, card.slot(slot.attachSlot))

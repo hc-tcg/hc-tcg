@@ -1,10 +1,11 @@
 import {GameModel} from 'common/models/game-model'
-import {ActionResult, SlotEntity} from 'common/types/game-state'
+import {ActionResult} from 'common/types/game-state'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import {slot} from 'common/components/query'
+import {SlotEntity} from 'common/entities'
 
 function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<any, ActionResult> {
 	// First validate data sent from client

@@ -35,7 +35,7 @@ class IJevinRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const pickCondition = query.every(
 				query.not(slot.activeRow),
@@ -47,7 +47,7 @@ class IJevinRare extends Card {
 
 			game.addPickRequest({
 				playerId: opponentPlayer.id, // For opponent player to pick
-				id: this.props.id,
+				id: component.entity,
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {

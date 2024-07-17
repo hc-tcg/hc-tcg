@@ -236,9 +236,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
-		const cardInfo = game.components.get(currentPickRequest.id)
-		if (cardInfo) {
-			currentPickMessage = `${cardInfo.props.name}: ${currentPickMessage}`
+		const pickRequestCreator = game.components.get(currentPickRequest.id)
+		if (pickRequestCreator) {
+			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
 		if (currentPickRequest.playerId == player.id) {

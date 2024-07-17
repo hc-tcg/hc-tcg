@@ -34,7 +34,7 @@ class WelsknightRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (!component.slot.inRow() || !component.slot.row.health) return
 
 			if (component.slot.row.health < 200) attack.addDamage(component.entity, 20)

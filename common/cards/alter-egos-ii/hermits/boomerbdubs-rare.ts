@@ -101,7 +101,7 @@ class BoomerBdubsRare extends Card {
 		})
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (extraDamage === 0) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return

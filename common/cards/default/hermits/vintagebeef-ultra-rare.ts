@@ -41,7 +41,7 @@ class VintageBeefUltraRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const hasBdubs = game.components.find(
 				CardComponent,

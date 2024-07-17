@@ -33,7 +33,7 @@ class Iskall85Rare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const hermit = attack.target?.getHermit()
 			if (!hermit) return

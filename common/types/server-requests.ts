@@ -1,12 +1,12 @@
 import type {CardProps} from '../cards/base/types'
 import type {ComponentQuery} from '../components/query'
-import type {SlotComponent} from '../components'
+import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {ActionResult} from './game-state'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
-import {CardEntity, PlayerEntity, SlotEntity} from '../entities'
+import {CardEntity, Entity, PlayerEntity, SlotEntity, StatusEffectEntity} from '../entities'
 
 export type PlayerInfo = {
 	playerName: string
@@ -57,7 +57,7 @@ export type PickRequest = {
 	/** The id of the player to request the pick from */
 	playerId: PlayerId
 	/** The id of the card that called the pick request */
-	id: CardEntity
+	id: Entity<CardComponent | StatusEffectComponent>
 	/** The message to display to the player */
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
