@@ -1,12 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
-import type {
-	CardEntity,
-	Entity,
-	ObserverEntity,
-	PlayerEntity,
-	StatusEffectEntity,
-} from '../entities'
+import type {Entity, ObserverEntity, StatusEffectEntity} from '../entities'
 import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
