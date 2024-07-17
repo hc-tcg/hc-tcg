@@ -1,4 +1,4 @@
-import CardStatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {isTargeting} from '../utils/attacks'
 

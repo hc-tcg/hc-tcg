@@ -1,4 +1,4 @@
-import CardStatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'

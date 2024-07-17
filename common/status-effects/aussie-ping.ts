@@ -1,4 +1,5 @@
-import CardStatusEffect, {
+import {
+	PlayerStatusEffect,
 	StatusEffectProps,
 	hiddenStatusEffect,
 	systemStatusEffect,
@@ -10,7 +11,7 @@ import {card, query} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
 import {STATUS_EFFECTS} from '.'
 
-export class AussiePing extends CardStatusEffect {
+export class AussiePing extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping',
@@ -70,7 +71,7 @@ export class AussiePing extends CardStatusEffect {
 	}
 }
 
-export class AussiePingImmune extends CardStatusEffect {
+export class AussiePingImmune extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping-immune',

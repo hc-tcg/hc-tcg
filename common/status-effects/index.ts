@@ -1,4 +1,3 @@
-import type CardStatusEffect from './status-effect'
 import FireEffect from './fire'
 import PoisonEffect from './poison'
 import SleepingEffect from './sleeping'
@@ -21,10 +20,11 @@ import {
 } from './invisibility-potion'
 import TurnSkipped from './turn-skipped'
 import {PrimaryAttackDisabled, SecondaryAttackDisabled} from './derp-coin'
-import { TrapHoleEffect } from './trap-hole'
+import {TrapHoleEffect} from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
+import {StatusEffect} from './status-effect'
 
-const effectClasses: Array<new () => CardStatusEffect> = [
+const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,

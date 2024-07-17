@@ -1,4 +1,4 @@
-import CardStatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 class RevivedByDeathloop extends CardStatusEffect {
 	props: StatusEffectProps = {
