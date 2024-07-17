@@ -1,7 +1,7 @@
-import {CardComponent, StatusEffectComponent} from '..'
+import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {ComponentQuery, query} from '.'
-import CardStatusEffect, {StatusEffectProps} from '../../status-effects/status-effect'
-import {CardEntity} from '../../types/game-state'
+import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
+import {CardEntity} from '../../entities'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
 import('../../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
@@ -11,7 +11,7 @@ export function id(id: string): ComponentQuery<StatusEffectComponent> {
 }
 
 export function is(
-	...effect: Array<new () => CardStatusEffect>
+	...effect: Array<new () => StatusEffect>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
 		effect.some((e) => STATUS_EFFECTS[e.name].props.id === statusEffect.props.id)
@@ -19,6 +19,12 @@ export function is(
 
 export function target(
 	...predicates: Array<ComponentQuery<CardComponent>>
+): ComponentQuery<StatusEffectComponent<CardComponent>>
+export function target(
+	...predicates: Array<ComponentQuery<PlayerComponent>>
+): ComponentQuery<StatusEffectComponent<PlayerComponent>>
+export function target(
+	...predicates: Array<ComponentQuery<any>>
 ): ComponentQuery<StatusEffectComponent> {
 	return (game, statusEffect) =>
 		statusEffect.target !== null && query.every(...predicates)(game, statusEffect.target)

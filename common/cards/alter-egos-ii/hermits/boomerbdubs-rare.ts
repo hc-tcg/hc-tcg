@@ -1,11 +1,16 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card} from '../../../components/query'
-import Fortune from '../../default/single-use/fortune'
+import * as query from '../../../components/query'
+import Fortune from '../../../status-effects/fortune'
 
 class BoomerBdubsRare extends Card {
 	props: Hermit = {
@@ -90,9 +95,12 @@ class BoomerBdubsRare extends Card {
 
 					player.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
 
-					// This is sketchy AF but fortune needs to be removed after the first coin flip
-					// to prevent infinite flips from being easy.
-					game.components.find(CardComponent, card.is(Fortune), card.active)?.discard()
+					// After the first coin flip we remove fortune to prevent infinite coin flips.
+					game.components.filter(
+						StatusEffectComponent<PlayerComponent>,
+						query.effect.is(Fortune),
+						query.effect.target((_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id)
+					)
 
 					return 'SUCCESS'
 				},

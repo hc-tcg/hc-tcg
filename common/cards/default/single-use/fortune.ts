@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import FortuneStatusEffect from '../../../status-effects/fortune'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
 class Fortune extends Card {
@@ -18,28 +19,12 @@ class Fortune extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
-			player.hooks.onCoinFlip.add(component, (card, coinFlips) => {
-				for (let i = 0; i < coinFlips.length; i++) {
-					coinFlips[i] = 'heads'
-				}
-				return coinFlips
-			})
-
-			player.hooks.onTurnStart.add(component, () => {
-				player.hooks.onTurnStart.remove(component)
-				player.hooks.onCoinFlip.remove(component)
-			})
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components.new(StatusEffectComponent, FortuneStatusEffect).apply(player.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.onApply.remove(component)
 	}
 }
 

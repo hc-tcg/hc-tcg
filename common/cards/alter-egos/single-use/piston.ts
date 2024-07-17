@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -8,15 +8,20 @@ import {singleUse} from '../../base/defaults'
 
 class Piston extends Card {
 	firstPickCondition = query.every(
-		slot.currentPlayer,
-		slot.itemSlot,
-		slot.row(row.hasHermit),
-		query.not(slot.frozen),
-		query.not(slot.empty),
+		query.slot.currentPlayer,
+		query.slot.itemSlot,
+		query.slot.row(query.row.hasHermit),
+		query.not(query.slot.frozen),
+		query.not(query.slot.empty),
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
-		slot.adjacentTo(
-			query.every(slot.row(row.hasHermit), slot.itemSlot, slot.empty, query.not(slot.frozen))
+		query.slot.adjacentTo(
+			query.every(
+				query.slot.row(query.row.hasHermit),
+				query.slot.itemSlot,
+				query.slot.empty,
+				query.not(query.slot.frozen)
+			)
 		)
 	)
 

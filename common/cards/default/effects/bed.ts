@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -25,7 +25,7 @@ class Bed extends Card {
 				name: 'sleeping',
 			},
 		],
-		attachCondition: query.every(attach.attachCondition, slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, query.slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -36,8 +36,8 @@ class Bed extends Card {
 			if (!component.slot.inRow()) return
 			return game.components.find(
 				CardComponent,
-				card.rowIs(component.slot.row.entity),
-				card.slot(slot.hermitSlot)
+				query.card.rowIs(component.slot.row.entity),
+				query.card.slot(query.slot.hermitSlot)
 			)
 		}
 

@@ -1,11 +1,11 @@
-import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
 import type Card from '../../cards/base/card'
 import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
-import CardStatusEffect from '../../status-effects/status-effect'
 import {TypeT} from '../../types/cards'
 import {CardClass} from '../../cards/base/card'
+import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
+import {CardStatusEffect} from '../../status-effects/status-effect'
 
 let CARDS: Record<string, Card>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
