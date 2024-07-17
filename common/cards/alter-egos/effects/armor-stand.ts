@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach, HasHealth} from '../../base/types'
@@ -32,8 +32,8 @@ class ArmorStand extends Card {
 		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot?.onBoard()) return query.nothing
 			return query.every(
-				slot.player(component.player.entity),
-				slot.rowIs(component.slot.row?.entity)
+				query.slot.player(component.player.entity),
+				query.slot.rowIs(component.slot.row?.entity)
 			)
 		})
 	}

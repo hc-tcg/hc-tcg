@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -19,7 +19,12 @@ class LightningRod extends Card {
 		attachCondition: query.every(
 			attach.attachCondition,
 			query.not(
-				query.exists(SlotComponent, slot.currentPlayer, slot.attachSlot, slot.has(LightningRod))
+				query.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.attachSlot,
+					query.slot.has(LightningRod)
+				)
 			)
 		),
 	}

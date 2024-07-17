@@ -1,9 +1,14 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {card, effect, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent, SlotComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
 import FireEffect from '../../../status-effects/fire'
 import String from '../../alter-egos/effects/string'
@@ -34,8 +39,8 @@ class WaterBucket extends Card {
 		game.components
 			.filter(
 				StatusEffectComponent,
-				effect.target(card.slotIs(slot.entity)),
-				effect.is(FireEffect)
+				query.effect.target(query.card.slotIs(slot.entity)),
+				query.effect.is(FireEffect)
 			)
 			.forEach((effect) => effect.remove())
 	}
@@ -47,14 +52,22 @@ class WaterBucket extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: 'Pick one of your Hermits',
-				canPick: query.every(slot.currentPlayer, slot.hermitSlot, query.not(slot.empty)),
+				canPick: query.every(
+					query.slot.currentPlayer,
+					query.slot.hermitSlot,
+					query.not(query.slot.empty)
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 
 					WaterBucket.removeFireEffect(game, pickedSlot)
 
 					game.components
-						.filter(CardComponent, card.slot(slot.rowIs(pickedSlot.row.entity)), card.is(String))
+						.filter(
+							CardComponent,
+							query.card.slot(query.slot.rowIs(pickedSlot.row.entity)),
+							query.card.is(String)
+						)
 						.forEach((card) => card.discard())
 
 					applySingleUse(game, pickedSlot)

@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {card, effect, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
 import {
@@ -39,8 +39,8 @@ class MilkBucket extends Card {
 		game.components
 			.filter(
 				StatusEffectComponent,
-				effect.target(card.slotIs(slot.entity)),
-				effect.is(PoisonEffect, BadOmenEffect)
+				query.effect.target(query.card.slotIs(query.slot.entity)),
+				query.effect.is(PoisonEffect, BadOmenEffect)
 			)
 			.forEach((effect) => effect.remove())
 	}
@@ -52,7 +52,11 @@ class MilkBucket extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: 'Pick one of your Hermits',
-				canPick: query.every(slot.currentPlayer, slot.hermitSlot, query.not(slot.empty)),
+				canPick: query.every(
+					query.slot.currentPlayer,
+					query.slot.hermitSlot,
+					query.not(query.slot.empty)
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 

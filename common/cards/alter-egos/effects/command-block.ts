@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -32,9 +32,9 @@ class CommandBlock extends Card {
 		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
-				slot.player(player.entity),
-				slot.rowIs(component.slot.row.entity),
-				slot.attachSlot
+				query.slot.player(player.entity),
+				query.slot.rowIs(component.slot.row.entity),
+				query.slot.attachSlot
 			)
 		})
 	}

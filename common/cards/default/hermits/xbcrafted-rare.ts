@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -38,7 +38,11 @@ class XBCraftedRare extends Card {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push(
-				query.every(card.opponentPlayer, card.active, card.slot(slot.attachSlot))
+				query.every(
+					query.card.opponentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.attachSlot)
+				)
 			)
 		})
 	}

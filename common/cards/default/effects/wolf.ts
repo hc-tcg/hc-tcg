@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -17,7 +17,7 @@ class Wolf extends Card {
 		tokens: 1,
 		description:
 			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
-		attachCondition: query.every(attach.attachCondition, slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, query.slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

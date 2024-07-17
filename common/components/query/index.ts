@@ -1,7 +1,6 @@
 import type {GameModel} from '../../models/game-model'
 import type {Component} from '../../types/ecs'
 
-// import * as query from './query'
 import * as slot from './slot'
 import * as row from './row'
 import * as effect from './effect'

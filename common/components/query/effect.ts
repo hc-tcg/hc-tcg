@@ -1,5 +1,5 @@
 import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
-import {ComponentQuery, query} from '.'
+import {ComponentQuery} from '.'
 import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
 import {CardEntity} from '../../entities'
 
