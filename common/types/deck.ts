@@ -32,6 +32,7 @@ export type SavedDeckT = {
 		| 'redstone'
 		| 'speedrunner'
 		| 'terraform'
+	// This type is used to ensure saving and loading compatibility with older versions of hc-tcg
 	cards: Array<{
 		cardId: string
 		cardInstance: string
@@ -43,7 +44,7 @@ export function deckToSavedDeck(deck: PlayerDeckT): SavedDeckT {
 	let icon = deck.icon
 
 	let cards = deck.cards.map((card) => {
-		return {cardId: card.props.numericId, cardInstance: card.entity}
+		return {cardId: card.props.id, cardInstance: card.entity}
 	})
 
 	return {
