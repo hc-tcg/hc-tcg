@@ -67,6 +67,9 @@ export class StatusEffectComponent<
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
 		this.statusEffect.onApply(this.game, this as any, target as any, observer)
+		if (this.statusEffect.props.applyLog) {
+			this.game.battleLog.addStatusEffectEntry(this.entity, this.statusEffect.props.applyLog)
+		}
 	}
 
 	public remove() {
@@ -74,6 +77,9 @@ export class StatusEffectComponent<
 		if (!this.target || !observer) return
 		observer.unsubscribeFromEverything()
 		this.statusEffect.onRemoval(this.game, this as any, this.target as any, observer)
+		if (this.statusEffect.props.removeLog) {
+			this.game.battleLog.addStatusEffectEntry(this.entity, this.statusEffect.props.removeLog)
+		}
 		this.targetEntity = null
 		this.observerEntity = null
 	}

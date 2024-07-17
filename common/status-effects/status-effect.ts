@@ -81,7 +81,7 @@ export abstract class StatusEffect<
 	 */
 	public onApply(
 		game: GameModel,
-		effect: StatusEffectComponent<T>,
+		effect: StatusEffectComponent,
 		target: T,
 		observer: ObserverComponent
 	) {
@@ -93,7 +93,7 @@ export abstract class StatusEffect<
 	 */
 	public onRemoval(
 		game: GameModel,
-		effect: StatusEffectComponent<T>,
+		effect: StatusEffectComponent,
 		target: T,
 		observer: ObserverComponent
 	) {
