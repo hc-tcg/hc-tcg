@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -55,25 +55,25 @@ class GrianRare extends Card {
 
 			const opponentAttachCard = game.components.find(
 				CardComponent,
-				card.opponentPlayer,
-				card.active,
-				card.attached
+				query.card.opponentPlayer,
+				query.card.active,
+				query.card.attached
 			)
 			if (!opponentAttachCard) return
 
 			const attachSlot = game.components.find(
 				SlotComponent,
-				slot.currentPlayer,
-				slot.activeRow,
-				slot.attachSlot
+				query.slot.currentPlayer,
+				query.slot.activeRow,
+				query.slot.attachSlot
 			)
 			const canAttach = game.components.find(
 				SlotComponent,
-				slot.currentPlayer,
-				query.not(slot.frozen),
-				slot.attachSlot,
-				slot.activeRow,
-				slot.empty
+				query.slot.currentPlayer,
+				query.not(query.slot.frozen),
+				query.slot.attachSlot,
+				query.slot.activeRow,
+				query.slot.empty
 			)
 
 			game.addModalRequest({

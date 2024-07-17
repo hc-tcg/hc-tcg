@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import FireEffect from '../../../status-effects/fire'
-import {card, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 
 class EthosLabRare extends Card {
 	props: Hermit = {
@@ -51,13 +51,11 @@ class EthosLabRare extends Card {
 
 			let opponentActiveHermit = game.components.find(
 				CardComponent,
-				card.opponentPlayer,
-				card.active,
-				card.slot(slot.hermitSlot)
+				query.card.opponentPlayer,
+				query.card.active,
+				query.card.slot(query.slot.hermitSlot)
 			)
-			game.components
-				.new(StatusEffectComponent, FireEffect)
-				.apply(opponentActiveHermit?.entity)
+			game.components.new(StatusEffectComponent, FireEffect).apply(opponentActiveHermit?.entity)
 		})
 	}
 }

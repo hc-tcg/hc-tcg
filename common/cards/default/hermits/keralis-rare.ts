@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -30,7 +30,11 @@ class KeralisRare extends Card {
 		},
 	}
 
-	pickCondition = query.every(query.not(slot.activeRow), query.not(slot.empty), slot.hermitSlot)
+	pickCondition = query.every(
+		query.not(query.slot.activeRow),
+		query.not(query.slot.empty),
+		query.slot.hermitSlot
+	)
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component

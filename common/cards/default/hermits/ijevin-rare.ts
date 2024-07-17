@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
 import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
 
 class IJevinRare extends Card {
 	props: Hermit = {
@@ -38,9 +38,9 @@ class IJevinRare extends Card {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const pickCondition = query.every(
-				query.not(slot.activeRow),
-				query.not(slot.empty),
-				slot.hermitSlot
+				query.not(query.slot.activeRow),
+				query.not(query.slot.empty),
+				query.slot.hermitSlot
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -55,7 +55,7 @@ class IJevinRare extends Card {
 					game.changeActiveRow(opponentPlayer, pickedSlot.row)
 				},
 				onTimeout() {
-					let rowComponent = game.components.find(RowComponent, query.not(row.active))
+					let rowComponent = game.components.find(RowComponent, query.not(query.row.active))
 					if (!rowComponent) return
 					game.changeActiveRow(opponentPlayer, rowComponent)
 				},

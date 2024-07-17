@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import {card, effect, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 
 class VintageBeefRare extends Card {
 	props: Hermit = {
@@ -44,8 +44,8 @@ class VintageBeefRare extends Card {
 			game.components
 				.filter(
 					StatusEffectComponent,
-					effect.type('normal', 'damage'),
-					effect.target(card.currentPlayer, card.slot(slot.hermitSlot))
+					query.effect.type('normal', 'damage'),
+					query.effect.target(query.card.currentPlayer, query.card.slot(query.slot.hermitSlot))
 				)
 				.forEach((effect) => effect.remove())
 		})

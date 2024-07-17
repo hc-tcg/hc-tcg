@@ -1,6 +1,6 @@
 import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {query, slot} from '../components/query'
+import * as query from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {
 	ObserverComponent,
@@ -25,10 +25,10 @@ class Betrayed extends PlayerStatusEffect {
 		observer: ObserverComponent
 	) {
 		const pickCondition = query.every(
-			slot.currentPlayer,
-			query.not(slot.activeRow),
-			query.not(slot.empty),
-			slot.hermitSlot
+			query.slot.currentPlayer,
+			query.not(query.slot.activeRow),
+			query.not(query.slot.empty),
+			query.slot.hermitSlot
 		)
 
 		let pickedAfkHermit: SlotComponent | null = null
@@ -74,7 +74,7 @@ class Betrayed extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onDetach, blockActions)
 
 		// Add a pick request for opponent to pick an afk hermit to attack
-		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, _hermitAttackType) => {
 			// Only pick if there is afk to pick
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 

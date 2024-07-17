@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
@@ -33,11 +33,11 @@ class RendogRare extends Card {
 	}
 
 	pickCondition = query.every(
-		slot.opponent,
-		slot.hermitSlot,
-		query.not(slot.empty),
-		query.not(slot.has(RendogRare)),
-		query.not(slot.has(ArmorStand))
+		query.slot.opponent,
+		query.slot.hermitSlot,
+		query.not(query.slot.empty),
+		query.not(query.slot.has(RendogRare)),
+		query.not(query.slot.has(ArmorStand))
 	)
 
 	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)

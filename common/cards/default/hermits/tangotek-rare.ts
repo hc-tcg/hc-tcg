@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -38,16 +38,16 @@ class TangoTekRare extends Card {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const opponentInactiveRowsPickCondition = query.every(
-				slot.opponent,
-				slot.hermitSlot,
-				query.not(slot.activeRow),
-				query.not(slot.empty)
+				query.slot.opponent,
+				query.slot.hermitSlot,
+				query.not(query.slot.activeRow),
+				query.not(query.slot.empty)
 			)
 			const playerInactiveRowsPickCondition = query.every(
-				slot.currentPlayer,
-				slot.hermitSlot,
-				query.not(slot.activeRow),
-				query.not(slot.empty)
+				query.slot.currentPlayer,
+				query.slot.hermitSlot,
+				query.not(query.slot.activeRow),
+				query.not(query.slot.empty)
 			)
 
 			// Check if we are blocked from changing by anything other than the game

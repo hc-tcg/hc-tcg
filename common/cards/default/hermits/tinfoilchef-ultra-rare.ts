@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -45,9 +45,9 @@ class TinFoilChefUltraRare extends Card {
 			if (
 				!game.components.exists(
 					SlotComponent,
-					slot.opponent,
-					slot.attachSlot,
-					query.not(slot.frozen)
+					query.slot.opponent,
+					query.slot.attachSlot,
+					query.not(query.slot.frozen)
 				)
 			)
 				return
@@ -63,9 +63,9 @@ class TinFoilChefUltraRare extends Card {
 			game.components
 				.find(
 					CardComponent,
-					card.active,
-					card.opponentPlayer,
-					card.slot(slot.attachSlot, query.not(slot.frozen))
+					query.card.active,
+					query.card.opponentPlayer,
+					query.card.slot(query.slot.attachSlot, query.not(query.slot.frozen))
 				)
 				?.discard()
 		})

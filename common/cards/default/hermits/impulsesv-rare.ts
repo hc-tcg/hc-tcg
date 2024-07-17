@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
@@ -41,10 +41,10 @@ class ImpulseSVRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			const boomerAmount = game.components.filter(
 				CardComponent,
-				card.currentPlayer,
-				card.attached,
-				card.is(BdoubleO100Common, BdoubleO100Rare, TangoTekCommon, TangoTekRare),
-				query.not(card.active)
+				query.card.currentPlayer,
+				query.card.attached,
+				query.card.is(BdoubleO100Common, BdoubleO100Rare, TangoTekCommon, TangoTekRare),
+				query.not(query.card.active)
 			).length
 
 			attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card, {InstancedValue} from '../../base/card'
@@ -33,12 +33,12 @@ class ZombieCleoRare extends Card {
 	}
 
 	pickCondition = query.every(
-		slot.currentPlayer,
-		slot.hermitSlot,
-		query.not(slot.empty),
-		query.not(slot.activeRow),
-		query.not(slot.has(ZombieCleoRare)),
-		query.not(slot.has(ArmorStand))
+		query.slot.currentPlayer,
+		query.slot.hermitSlot,
+		query.not(query.slot.empty),
+		query.not(query.slot.activeRow),
+		query.not(query.slot.has(ZombieCleoRare)),
+		query.not(query.slot.has(ArmorStand))
 	)
 
 	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)

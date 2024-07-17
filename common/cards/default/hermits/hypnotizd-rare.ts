@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {PickRequest} from '../../../types/server-requests'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -52,10 +52,10 @@ class HypnotizdRare extends Card {
 			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
 
 			const pickCondition = query.every(
-				slot.currentPlayer,
-				slot.activeRow,
-				slot.itemSlot,
-				query.not(slot.empty)
+				query.slot.currentPlayer,
+				query.slot.activeRow,
+				query.slot.itemSlot,
+				query.not(query.slot.empty)
 			)
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
@@ -66,7 +66,7 @@ class HypnotizdRare extends Card {
 
 			const itemRequest: PickRequest = {
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
@@ -79,9 +79,13 @@ class HypnotizdRare extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
-				canPick: query.every(slot.opponent, slot.hermitSlot, query.not(slot.empty)),
+				canPick: query.every(
+					query.slot.opponent,
+					query.slot.hermitSlot,
+					query.not(query.slot.empty)
+				),
 				onResult: (pickedSlot) => {
 					if (!pickedSlot.inRow()) return
 					const targetingAfk = pickedSlot.rowEntity !== opponentPlayer.activeRowEntity

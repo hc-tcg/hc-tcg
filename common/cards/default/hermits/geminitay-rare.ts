@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card} from '../../../components/query'
+import * as query from '../../../components/query'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class GeminiTayRare extends Card {
@@ -39,7 +39,7 @@ class GeminiTayRare extends Card {
 
 			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.
-				game.components.find(CardComponent, card.isSingleUse, card.active)?.discard()
+				game.components.find(CardComponent, query.card.isSingleUse, query.card.active)?.discard()
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
