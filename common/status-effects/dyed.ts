@@ -3,13 +3,13 @@ import {GameModel} from '../models/game-model'
 import {card, query} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
 
-class DyedStatusEffect extends StatusEffect {
+class Dyed extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'dyed',
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
-		applyCondition: query.not(card.hasStatusEffect(DyedStatusEffect)),
+		applyCondition: query.not(card.hasStatusEffect(Dyed)),
 	}
 
 	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
@@ -28,4 +28,4 @@ class DyedStatusEffect extends StatusEffect {
 	}
 }
 
-export default DyedStatusEffect
+export default Dyed

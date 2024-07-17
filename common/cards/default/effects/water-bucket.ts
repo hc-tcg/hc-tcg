@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, SlotComponent, StatusEffectComponent} from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
-import FireStatusEffect from '../../../status-effects/fire'
+import Fire from '../../../status-effects/fire'
 import String from '../../alter-egos/effects/string'
 
 class WaterBucket extends Card {
@@ -35,7 +35,7 @@ class WaterBucket extends Card {
 			.filter(
 				StatusEffectComponent,
 				effect.target(card.slotIs(slot.entity)),
-				effect.is(FireStatusEffect)
+				effect.is(Fire)
 			)
 			.forEach((effect) => effect.remove())
 	}

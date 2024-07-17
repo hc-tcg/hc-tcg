@@ -10,8 +10,8 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import {Attach, SingleUse} from '../../base/types'
-import PoisonStatusEffect from '../../../status-effects/poison'
-import BadOmenStatusEffect from '../../../status-effects/badomen'
+import Poison from '../../../status-effects/poison'
+import BadOmenEffect from '../../../status-effects/badomen'
 
 class MilkBucket extends Card {
 	props: Attach & SingleUse = {
@@ -40,7 +40,7 @@ class MilkBucket extends Card {
 			.filter(
 				StatusEffectComponent,
 				effect.target(card.slotIs(slot.entity)),
-				effect.is(PoisonStatusEffect, BadOmenStatusEffect)
+				effect.is(Poison, BadOmenEffect)
 			)
 			.forEach((effect) => effect.remove())
 	}

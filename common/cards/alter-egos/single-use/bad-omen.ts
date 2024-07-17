@@ -2,8 +2,9 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {card, query, row, slot} from '../../../components/query'
+import BadOmenEffect from '../../../status-effects/badomen'
 
 class BadOmen extends Card {
 	props: SingleUse = {
@@ -25,20 +26,16 @@ class BadOmen extends Card {
 		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			let target = game.components.findEntity(CardComponent, card.isHermit, card.row(row.active))
 			if (!target) return
-			let effect = game.components.new(StatusEffectComponent, player.entity, 'badomen')
-			effect.target = game.components.findEntity(CardComponent, card.isHermit, card.row(row.active))
+			game.components
+				.new(StatusEffectComponent, BadOmenEffect)
+				.apply(game.components.findEntity(CardComponent, card.isHermit, card.row(row.active)))
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

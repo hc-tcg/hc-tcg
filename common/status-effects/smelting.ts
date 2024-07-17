@@ -1,7 +1,7 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 
-class SmeltingStatusEffect extends StatusEffect {
+class Smelting extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'smelting',
@@ -35,4 +35,4 @@ class SmeltingStatusEffect extends StatusEffect {
 	}
 }
 
-export default SmeltingStatusEffect
+export default Smelting

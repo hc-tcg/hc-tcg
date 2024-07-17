@@ -1,11 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {RowEntity} from '../../../types/game-state'
+import {RowEntity} from '../../../entities'
 
 class Bow extends Card {
 	pickCondition = query.every(
@@ -31,12 +31,12 @@ class Bow extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		let pickedRow: RowEntity | null = null
 
-		player.hooks.getAttackRequests.add(component, () => {
+		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.props.id,
@@ -49,7 +49,7 @@ class Bow extends Card {
 			})
 		})
 
-		player.hooks.getAttack.add(component, () => {
+		observer.subscribe(player.hooks.getAttack, () => {
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
@@ -63,17 +63,10 @@ class Bow extends Card {
 			return bowAttack
 		})
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
 			applySingleUse(game, component.slot)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.getAttack.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

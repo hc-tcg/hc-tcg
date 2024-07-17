@@ -5,6 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, SlotComponent} from '../../../components'
+import { ObserverEntity } from '../../../entities'
 
 class InstantHealthII extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
@@ -26,7 +27,7 @@ class InstantHealthII extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverEntity) {
 		const {player} = component
 
 		game.addPickRequest({

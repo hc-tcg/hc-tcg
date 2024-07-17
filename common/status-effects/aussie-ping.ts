@@ -10,7 +10,7 @@ import {card, query} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
 import {STATUS_EFFECTS} from '.'
 
-export class AussiePingStatusEffect extends StatusEffect {
+export class AussiePing extends StatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping',
@@ -44,7 +44,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
+					.new(StatusEffectComponent, AussiePingImmune)
 					.apply(target.entity)
 			}
 		})
@@ -53,7 +53,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
+					.new(StatusEffectComponent, AussiePingImmune)
 					.apply(target.entity)
 			}
 		})
@@ -74,7 +74,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 	}
 }
 
-export class AussiePingImmuneStatusEffect extends StatusEffect {
+export class AussiePingImmune extends StatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
 		id: 'aussie-ping-immune',

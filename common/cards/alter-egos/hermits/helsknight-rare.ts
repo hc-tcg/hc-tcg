@@ -1,10 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
-import {flipCoin} from '../../../utils/coinFlips'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card, slot} from '../../../components/query'
+import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 
 class HelsknightRare extends Card {
 	props: Hermit = {
@@ -34,38 +33,15 @@ class HelsknightRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-
-			opponentPlayer.hooks.onApply.add(component, () => {
-				let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUseSlot))
-				if (!singleUseCard) return
-
-				const coinFlip = flipCoin(player, component, 1, opponentPlayer)
-
-				if (coinFlip[0] == 'heads') {
-					game.battleLog.addEntry(
-						player.entity,
-						`$p{Helsknight}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
-					)
-				} else {
-					game.battleLog.addEntry(player.entity, `$p{Helsknight}$ flipped $btails$b`)
-				}
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(component, () => {
-				opponentPlayer.hooks.onApply.remove(component)
-				opponentPlayer.hooks.onTurnEnd.remove(component)
-			})
+			game.components
+				.new(StatusEffectComponent, TrapHoleEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

@@ -7,7 +7,7 @@ import {GameModel} from '../models/game-model'
 import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 
-class SheepStareEffect extends StatusEffect {
+class SheepStare extends StatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'sheep-stare',
@@ -57,4 +57,4 @@ class SheepStareEffect extends StatusEffect {
 	}
 }
 
-export default SheepStareEffect
+export default SheepStare

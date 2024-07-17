@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {row} from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHealing extends Card {
@@ -19,19 +19,14 @@ class SplashPotionOfHealing extends Card {
 		log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g20hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () =>
+		observer.subscribe(player.hooks.onApply, () =>
 			game.components
 				.filter(RowComponent, row.player(player?.entity))
 				.forEach((row) => row.heal(20))
 		)
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

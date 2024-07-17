@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {CardComponent, StatusEffectComponent} from '../components'
 
-class SlownessStatusEffect extends StatusEffect {
+class Slowness extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'slowness',
@@ -47,4 +47,4 @@ class SlownessStatusEffect extends StatusEffect {
 	}
 }
 
-export default SlownessStatusEffect
+export default Slowness

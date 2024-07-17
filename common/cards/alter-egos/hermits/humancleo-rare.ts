@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import BetrayedStatusEffect from '../../../status-effects/betrayed'
+import Betrayed from '../../../status-effects/betrayed'
 
 class HumanCleoRare extends Card {
 	props: Hermit = {
@@ -46,7 +46,7 @@ class HumanCleoRare extends Card {
 			if (headsAmount < 2) return
 
 			game.components
-				.new(StatusEffectComponent, BetrayedStatusEffect)
+				.new(StatusEffectComponent, Betrayed)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

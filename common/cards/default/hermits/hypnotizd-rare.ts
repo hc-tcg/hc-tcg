@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import BetrayedStatusEffect from '../../../status-effects/betrayed'
+import Betrayed from '../../../status-effects/betrayed'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -60,7 +60,7 @@ class HypnotizdRare extends Card {
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
-			if (component.hasStatusEffect(BetrayedStatusEffect)) return
+			if (component.hasStatusEffect(Betrayed)) return
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 

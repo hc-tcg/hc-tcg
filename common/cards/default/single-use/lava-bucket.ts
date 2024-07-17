@@ -4,7 +4,7 @@ import {CardComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
-import FireStatusEffect from '../../../status-effects/fire'
+import Fire from '../../../status-effects/fire'
 
 class LavaBucket extends Card {
 	props: SingleUse = {
@@ -38,7 +38,7 @@ class LavaBucket extends Card {
 			)
 			if (opponentActiveHermit === null) return
 			game.components
-				.new(StatusEffectComponent, FireStatusEffect)
+				.new(StatusEffectComponent, Fire)
 				.apply(opponentActiveHermit.entity)
 		})
 	}

@@ -9,7 +9,7 @@ import {
 } from '../../../components'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import UsedClockStatusEffect from '../../../status-effects/used-clock'
+import UsedClock from '../../../status-effects/used-clock'
 import TurnSkipped from '../../../status-effects/turn-skipped'
 
 class Clock extends Card {
@@ -33,7 +33,7 @@ class Clock extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.not(
-				query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClockStatusEffect))
+				query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClock))
 			),
 			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
@@ -47,7 +47,7 @@ class Clock extends Card {
 				.new(StatusEffectComponent, TurnSkipped)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 			game.components
-				.new(StatusEffectComponent, UsedClockStatusEffect)
+				.new(StatusEffectComponent, UsedClock)
 				.apply(player.getActiveHermit()?.entity)
 		})
 	}

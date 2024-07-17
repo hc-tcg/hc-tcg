@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import RevivedByDeathloopStatusEffect from '../../../status-effects/revived-by-deathloop'
+import RevivedByDeathloop from '../../../status-effects/revived-by-deathloop'
 
 class GoodTimesWithScarRare extends Card {
 	props: Hermit = {
@@ -45,7 +45,7 @@ class GoodTimesWithScarRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
 			// If this component is not blocked from reviving, make possible next turn
-			if (!component.hasStatusEffect(RevivedByDeathloopStatusEffect)) {
+			if (!component.hasStatusEffect(RevivedByDeathloop)) {
 				reviveReady = true
 			}
 		})
@@ -77,7 +77,7 @@ class GoodTimesWithScarRare extends Card {
 			)
 
 			game.components
-				.new(StatusEffectComponent, RevivedByDeathloopStatusEffect)
+				.new(StatusEffectComponent, RevivedByDeathloop)
 				.apply(component.entity)
 		})
 	}

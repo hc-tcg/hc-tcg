@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import PoisonStatusEffect from '../../../status-effects/poison'
+import Poison from '../../../status-effects/poison'
 
 class XisumavoidRare extends Card {
 	props: Hermit = {
@@ -48,7 +48,7 @@ class XisumavoidRare extends Card {
 			if (coinFlip[0] !== 'heads') return
 
 			game.components
-				.new(StatusEffectComponent, PoisonStatusEffect)
+				.new(StatusEffectComponent, Poison)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
 import {CardComponent, StatusEffectComponent} from '../components'
 
-class PoisonStatusEffect extends StatusEffect {
+class Poison extends StatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
 		id: 'poison',
@@ -47,4 +47,4 @@ class PoisonStatusEffect extends StatusEffect {
 	}
 }
 
-export default PoisonStatusEffect
+export default Poison

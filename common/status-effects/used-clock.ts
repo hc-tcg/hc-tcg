@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, systemStatusEffect} from './st
 import {GameModel} from '../models/game-model'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class UsedClockStatusEffect extends StatusEffect {
+class UsedClock extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		id: 'used-clock',
@@ -35,4 +35,4 @@ class UsedClockStatusEffect extends StatusEffect {
 	}
 }
 
-export default UsedClockStatusEffect
+export default UsedClock

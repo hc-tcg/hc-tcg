@@ -4,7 +4,7 @@ import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {CardComponent, StatusEffectComponent} from '../components'
 
-class BetrayedStatusEffect extends StatusEffect {
+class Betrayed extends StatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'betrayed',
@@ -126,4 +126,4 @@ class BetrayedStatusEffect extends StatusEffect {
 	}
 }
 
-export default BetrayedStatusEffect
+export default Betrayed

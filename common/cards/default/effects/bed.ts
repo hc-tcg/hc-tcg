@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import SleepingStatusEffect from '../../../status-effects/sleeping'
+import Sleeping from '../../../status-effects/sleeping'
 
 // @todo Figure out how ladder is supposed to work
 
@@ -41,18 +41,18 @@ class Bed extends Card {
 			)
 		}
 
-		game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(hermitCard()?.entity)
+		game.components.new(StatusEffectComponent, Sleeping).apply(hermitCard()?.entity)
 
 		// Knockback/Tango/Jevin/etc
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
+			if (!hermitCard()?.hasStatusEffect(Sleeping)) {
 				component.discard()
 			}
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			// if sleeping has worn off, discard the bed
-			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
+			if (!hermitCard()?.hasStatusEffect(Sleeping)) {
 				component.discard()
 				observer.unsubscribe(player.hooks.onTurnEnd)
 			}

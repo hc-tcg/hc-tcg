@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -30,19 +30,14 @@ class CurseOfVanishing extends Card {
 		),
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
-			game
-				.filterSlots(this.discardCondition)
-				.map((slot) => slot.cardId && discardCard(game, slot.cardId))
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.filter(SlotComponent, this.discardCondition)
+				.map((slot) => slot.getCard()?.discard())
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

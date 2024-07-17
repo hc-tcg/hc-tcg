@@ -1,7 +1,7 @@
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import {card, row, slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import SlownessStatusEffect from '../../../status-effects/slowness'
+import Slowness from '../../../status-effects/slowness'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -31,7 +31,7 @@ class PotionOfSlowness extends Card {
 			)
 			if (!opponentActiveHermit) return
 			game.components
-				.new(StatusEffectComponent, SlownessStatusEffect)
+				.new(StatusEffectComponent, Slowness)
 				.apply(opponentActiveHermit.entity)
 		})
 	}

@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {slot} from '../components/query'
 import {StatusEffectComponent} from '../components'
 
-class BadOmenStatusEffect extends StatusEffect {
+class BadOmenEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'badomen',
@@ -51,4 +51,4 @@ class BadOmenStatusEffect extends StatusEffect {
 	}
 }
 
-export default BadOmenStatusEffect
+export default BadOmenEffect

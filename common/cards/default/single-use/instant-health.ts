@@ -3,7 +3,7 @@ import {applySingleUse} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
 class InstantHealth extends Card {
@@ -26,7 +26,7 @@ class InstantHealth extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g30hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		game.addPickRequest({

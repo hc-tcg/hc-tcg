@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, row, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -37,7 +37,7 @@ class Mending extends Card {
 			`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		game.addPickRequest({
@@ -46,15 +46,15 @@ class Mending extends Card {
 			message: 'Pick an empty effect slot from one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const hermitActive = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
-
-				if (!hermitActive || !hermitActive.rowId) return
-
-				const logInfo = pickedSlot
-				logInfo.cardId = hermitActive.rowId.effectCard
+				const hermitActive = game.components.find(
+					SlotComponent,
+					slot.currentPlayer,
+					slot.activeRow,
+					slot.attachSlot
+				)
 
 				// Apply the mending card
-				applySingleUse(game, logInfo)
+				applySingleUse(game, component.slot)
 
 				// Move the effect card
 				game.swapSlots(hermitActive, pickedSlot)

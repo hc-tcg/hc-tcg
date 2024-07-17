@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -21,10 +21,10 @@ class Anvil extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.getAttack.add(component, () => {
+		observer.subscribe(player.hooks.getAttack, () => {
 			return game.components
 				.filter(
 					RowComponent,
@@ -52,16 +52,9 @@ class Anvil extends Card {
 				}, null)
 		})
 
-		player.hooks.afterAttack.add(component, (_attack) => {
+		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game, component.slot)
-			player.hooks.onAttack.remove(component)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttack.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

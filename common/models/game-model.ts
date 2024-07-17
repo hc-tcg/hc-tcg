@@ -324,6 +324,7 @@ export class GameModel {
 	/**
 	 * Swaps the positions of two cards on the board.
 	 * This function does not check whether the cards can be placed in the other card's slot.
+	 * If one of the slots is undefined, do not swap the slots.
 	 */
 	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return

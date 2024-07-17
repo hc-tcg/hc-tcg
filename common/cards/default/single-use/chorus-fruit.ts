@@ -1,11 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import SleepingStatusEffect from '../../../status-effects/sleeping'
+import Sleeping from '../../../status-effects/sleeping'
 
 class ChorusFruit extends Card {
 	props: SingleUse = {
@@ -26,13 +26,13 @@ class ChorusFruit extends Card {
 					slot.currentPlayer,
 					slot.hermitSlot,
 					slot.activeRow,
-					slot.hasStatusEffect(SleepingStatusEffect)
+					slot.hasStatusEffect(Sleeping)
 				)
 			)
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		let removedBlock = false
