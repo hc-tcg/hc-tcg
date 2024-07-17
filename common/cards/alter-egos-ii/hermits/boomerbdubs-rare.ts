@@ -99,7 +99,9 @@ class BoomerBdubsRare extends Card {
 					game.components.filter(
 						StatusEffectComponent<PlayerComponent>,
 						query.effect.is(Fortune),
-						query.effect.target((_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id)
+						query.effect.targetIsPlayerAnd(
+							(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+						)
 					)
 
 					return 'SUCCESS'
