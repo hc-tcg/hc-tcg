@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {
 	CardComponent,
@@ -32,7 +32,9 @@ class Clock extends Card {
 		],
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.not(query.exists(SlotComponent, slot.currentPlayer, slot.hasStatusEffect(UsedClock))),
+			query.not(
+				query.exists(SlotComponent, query.slot.currentPlayer, query.slot.hasStatusEffect(UsedClock))
+			),
 			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,

@@ -62,10 +62,8 @@ class JoeHillsRare extends Card {
 				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
 			)
 
-			game.components
-				.new(StatusEffectComponent, TurnSkipped)
-				.apply(opponentPlayer.getActiveHermit()?.entity)
-			game.components.new(StatusEffectComponent, UsedClock).apply(component.entity)
+			game.components.new(StatusEffectComponent, TurnSkipped).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, UsedClock).apply(player.entity)
 		})
 	}
 }

@@ -1,9 +1,10 @@
-import type Card from '../../cards/base/card'
-import {ComponentQuery, card, effect, query} from '.'
+import {ComponentQuery, card, effect} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
-import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
-import CardStatusEffect from '../../status-effects/status-effect'
+import {TurnAction} from '../../types/game-state'
 import {CardClass} from '../../cards/base/card'
+import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
+import * as query from '.'
+import {StatusEffect} from '../../status-effects/status-effect'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: ComponentQuery<SlotComponent> = (game, pos) => {
@@ -127,13 +128,13 @@ export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponen
 }
 
 export function hasStatusEffect(
-	statusEffect: new () => CardStatusEffect
+	statusEffect: new () => StatusEffect
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
 		return game.components.exists(
 			StatusEffectComponent,
 			effect.is(statusEffect),
-			effect.target(card.slotIs(pos.entity))
+			effect.targetIsCardAnd(card.slotIs(pos.entity))
 		)
 	}
 }

@@ -5,8 +5,9 @@ import * as slot from './slot'
 import * as row from './row'
 import * as effect from './effect'
 import * as card from './card'
+import * as player from './player'
 
-export {slot, row, effect, card}
+export {slot, row, effect, card, player}
 
 export type ComponentQuery<Value> = (game: GameModel, value: Value) => boolean
 
