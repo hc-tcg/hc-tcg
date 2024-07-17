@@ -1,6 +1,6 @@
 import {ComponentQuery, card, slot} from '.'
 import {CardComponent, RowComponent} from '..'
-import {CardEntity, PlayerEntity, RowEntity} from '../../types/game-state'
+import {CardEntity, PlayerEntity, RowEntity} from '../../entities'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>
 	[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
@@ -33,7 +33,7 @@ export function index(rowIndex: number): ComponentQuery<RowComponent> {
 	return (_game, row) => row.index === rowIndex
 }
 
-export function row(rowEntity: RowEntity | null | undefined): ComponentQuery<RowComponent> {
+export function entity(rowEntity: RowEntity | null | undefined): ComponentQuery<RowComponent> {
 	return (_game, row) => {
 		if (!rowEntity) return false
 		return row.entity === rowEntity
