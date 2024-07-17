@@ -163,7 +163,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.components
-			.filter(CardComponent, card.slot(slot.player(currentPlayer.entity), query.slot.hand))
+			.filter(CardComponent, query.card.slot(query.slot.player(currentPlayer.entity), query.slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.components.filter(SlotComponent, card.card.props.attachCondition)
 
@@ -263,7 +263,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.components.exists(CardComponent, card.attached, card.isHermit)
+		const noHermitsLeft = !game.components.exists(CardComponent, query.card.attached, query.card.isHermit)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
