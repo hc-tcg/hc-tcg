@@ -1,6 +1,6 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 import {ComponentQuery} from '../components/query'
-import {Entity, PlayerEntity, RowEntity} from './game-state'
+import {Entity, PlayerEntity, RowEntity} from '../entities'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 

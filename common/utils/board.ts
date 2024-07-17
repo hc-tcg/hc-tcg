@@ -5,7 +5,7 @@ import {CardComponent, SlotComponent} from '../components'
 
 export function applySingleUse(
 	game: GameModel,
-	slotInfo: SlotComponent | null
+	slotInfo: SlotComponent | null = null
 ): GenericActionResult {
 	const {currentPlayer} = game
 

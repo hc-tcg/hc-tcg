@@ -1,11 +1,4 @@
-import {
-	CurrentCoinFlipT,
-	BattleLogT,
-	CardEntity,
-	RowEntity,
-	PlayerEntity,
-	StatusEffectEntity,
-} from '../types/game-state'
+import {CurrentCoinFlipT, BattleLogT} from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
@@ -15,6 +8,7 @@ import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
 import {isHermit} from '../cards/base/types'
+import {CardEntity, PlayerEntity, RowEntity, StatusEffectEntity} from '../entities'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -93,7 +87,7 @@ export class BattleLogModel {
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlipT>,
-		pos: SlotComponent | null
+		slotInfo: SlotComponent | null
 	) {
 		let {player, opponentPlayer} = card
 
@@ -116,38 +110,37 @@ export class BattleLogModel {
 			return `${card.props.name}`
 		}
 
+		let row = slotInfo?.inRow() ? slotInfo.row : null
+		let cardInfo = slotInfo?.getCard()
+
 		const thisFlip = coinFlips.find((flip) => flip.card.props.numericId === card.props.numericId)
 		const invalid = '$bINVALID VALUE$'
 
-		const logMessage = card.getLog({
+		const logMessage = card.card.getLog({
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
 			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
-				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
-				id: pos.cardId ? pos.cardId.card.props.numericId : invalid,
-				name: pos.cardId ? genCardName(pos.player, pos.cardId, pos.rowIndex) : invalid,
-				hermitCard: genCardName(pos.player, pos.rowId?.hermitCard, pos.rowIndex),
-				slotType: pos.type,
+				rowIndex: card.slot.inRow() ? `${card.slot.row.index + 1}` : invalid,
+				id: card.props.id || invalid,
+				name: genCardName(card.player, card, row),
+				hermitCard: genCardName(card.player, cardInfo, row),
+				slotType: card.slot.type,
 			},
 			pick: {
-				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
-				id: slotInfo?.cardId ? slotInfo.cardId.card.props.numericId : invalid,
-				name: genCardName(slotInfo?.player, slotInfo?.cardId, slotInfo?.rowIndex),
-				hermitCard: genCardName(
-					slotInfo?.player,
-					slotInfo?.rowIndex ? slotInfo?.player.board.rows[slotInfo?.rowIndex].hermitCard : null,
-					slotInfo?.rowIndex
-				),
-				slotType: slotInfo ? slotInfo.type : invalid,
+				rowIndex: row !== null ? `${row.index + 1}` : invalid,
+				id: cardInfo?.card.props.id || invalid,
+				name: cardInfo ? genCardName(slotInfo?.player, card, row) : invalid,
+				hermitCard: genCardName(slotInfo?.player, cardInfo, row),
+				slotType: slotInfo?.type || invalid,
 			},
 		})
 
 		if (logMessage.length === 0) return
 
 		this.logMessageQueue.unshift({
-			player: player.id,
+			player: player.entity,
 			description: logMessage,
 		})
 
@@ -303,15 +296,16 @@ export class BattleLogModel {
 		statusEffect: StatusEffectEntity,
 		log: (values: StatusEffectLog) => string
 	) {
-		const pos = this.game.components.get(statusEffect)?.target
+		const effect = this.game.components.get(statusEffect)
+		if (!effect) return
+		const pos = effect.target
 		if (!pos) return
 		const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
-		const rowNumberString =
-			pos.player.board.activeRow === pos.rowIndex ? '' : `(${pos.rowIndex + 1})`
+		const rowNumberString = (pos.slot.inRow() && pos.slot.row.index.toString()) || 'Unknown Row'
 
 		const logMessage = log({
-			target: `$${targetFormatting}${statusEffect.targetInstance.props.name} ${rowNumberString}$`,
-			statusEffect: `$e${statusEffect.props.name}$`,
+			target: `$${targetFormatting}${pos.props.name} ${rowNumberString}$`,
+			statusEffect: `$e${effect.props.name}$`,
 		})
 
 		this.logMessageQueue.push({

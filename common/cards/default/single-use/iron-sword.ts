@@ -1,4 +1,3 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
@@ -20,39 +19,27 @@ class IronSword extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
-		player.hooks.getAttack.add(component, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return null
-
-			const swordAttack = new AttackModel({
-				id: this.getInstanceKey(component, 'attack'),
-				attacker: activePos,
-				target: opponentActivePos,
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-			}).addDamage(this.props.id, 20)
+		observer.subscribe(player.hooks.getAttack, () => {
+			console.log("getting extra sword attac")
+			const swordAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 20)
 
 			return swordAttack
 		})
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component, 'attack')
-			if (attack.id !== attackId) return null
-
-			// We've executed our attack, apply effect
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			applySingleUse(game)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttack.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

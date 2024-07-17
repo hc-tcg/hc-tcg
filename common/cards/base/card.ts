@@ -4,7 +4,7 @@ import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {row} from '../../components/query'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {CardComponent, RowComponent} from '../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../components'
 import {
 	Attach,
 	CardProps,
@@ -18,7 +18,6 @@ import {
 	isItem,
 	isSingleUse,
 } from './types'
-import {ObserverComponent} from '../../types/hooks'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
