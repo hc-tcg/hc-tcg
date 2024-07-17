@@ -35,7 +35,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	const playerHermitInfo = activeRow.hermit
 	if (!playerHermitInfo.card || !isHermit(playerHermitInfo.card.props)) return null
 
-	const hermitFullName = playerHermitInfo.card.props.numericId.split('_')[0]
+	const hermitFullName = playerHermitInfo.card.props.id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce((agg, extra) => {
 		const [hermitId, action] = extra.split(':')
