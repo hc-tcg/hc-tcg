@@ -54,8 +54,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	CurseOfBindingEffect,
 ]
 
-export const STATUS_EFFECTS: Record<string, CardStatusEffect> = effectClasses.reduce(
-	(result: Record<string, CardStatusEffect>, effectClass) => {
+export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
+	(result: Record<string, StatusEffect>, effectClass) => {
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect

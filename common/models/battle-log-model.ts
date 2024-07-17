@@ -4,7 +4,7 @@ import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
-import {StatusEffectLog} from '../status-effects/status-effect'
+import {CardStatusEffect, StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
 import {isHermit} from '../cards/base/types'
@@ -309,18 +309,33 @@ export class BattleLogModel {
 		if (!effect) return
 		const pos = effect.target
 		if (!pos) return
-		const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
-		const rowNumberString = (pos.slot.inRow() && pos.slot.row.index.toString()) || 'Unknown Row'
 
-		const logMessage = log({
-			target: `$${targetFormatting}${pos.props.name} ${rowNumberString}$`,
-			statusEffect: `$e${effect.props.name}$`,
-		})
+		if (pos instanceof CardComponent) {
+			const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
+			const rowNumberString = (pos.slot.inRow() && pos.slot.row.index.toString()) || 'Unknown Row'
 
-		this.logMessageQueue.push({
-			player: this.game.currentPlayerEntity,
-			description: logMessage,
-		})
+			const logMessage = log({
+				target: `$${targetFormatting}${pos.props.name} ${rowNumberString}$`,
+				statusEffect: `$e${effect.props.name}$`,
+			})
+
+			this.logMessageQueue.push({
+				player: this.game.currentPlayerEntity,
+				description: logMessage,
+			})
+		} else if (pos instanceof PlayerComponent) {
+			const targetFormatting = pos.entity === this.game.currentPlayerEntity ? 'p' : 'o'
+
+			const logMessage = log({
+				target: `$${targetFormatting}{you|${pos.playerName}}$`,
+				statusEffect: `$e${effect.props.name}$`,
+			})
+
+			this.logMessageQueue.push({
+				player: this.game.currentPlayerEntity,
+				description: logMessage,
+			})
+		}
 
 		this.sendLogs()
 	}
