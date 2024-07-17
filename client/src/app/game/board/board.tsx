@@ -1,5 +1,5 @@
 import {useSelector} from 'react-redux'
-import {LocalGameState, LocalPlayerState, SlotEntity} from 'common/types/game-state'
+import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import css from './board.module.scss'
 import BoardRow from './board-row'
@@ -10,6 +10,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
+import { SlotEntity } from 'common/entities'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void

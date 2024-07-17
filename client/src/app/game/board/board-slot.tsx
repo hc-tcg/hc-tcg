@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {LocalRowState, SlotEntity} from 'common/types/game-state'
+import {LocalRowState} from 'common/types/game-state'
 import Card from 'components/card'
 import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
@@ -12,6 +12,7 @@ import {
 } from 'logic/game/game-selectors'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
+import { SlotEntity } from 'common/entities'
 
 export type SlotProps = {
 	type: SlotTypeT

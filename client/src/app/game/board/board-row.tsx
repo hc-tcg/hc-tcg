@@ -1,10 +1,11 @@
-import {LocalRowState, SlotEntity} from 'common/types/game-state'
+import {LocalRowState} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import HealthSlot from './board-health'
+import {SlotEntity} from 'common/entities'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
@@ -42,7 +43,8 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 				key={slotType + '-' + slotIndex}
 				type={slotType}
 				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.entity == slot.card?.entity && slotType != 'hermit'
+					(a) =>
+						a.target.type === 'card' && a.target.card === slot.card?.entity && slotType != 'hermit'
 				)}
 			/>
 		)
@@ -59,7 +61,7 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 			<HealthSlot
 				rowState={rowState}
 				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.entity == rowState.hermit?.card?.entity
+					(a) => a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity
 				)}
 			/>
 		</div>

@@ -6,6 +6,7 @@ type StatusEffectDisplayProps = {
 	statusEffects: Array<LocalStatusEffectInstance>
 }
 
+/** An object to display status effect for a specific card */
 const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 	return (
 		<div>

@@ -6,7 +6,7 @@ import {SlotTypeT} from './cards'
 import {ActionResult} from './game-state'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
-import { CardEntity, PlayerEntity, SlotEntity } from '../entities'
+import {CardEntity, PlayerEntity, SlotEntity} from '../entities'
 
 export type PlayerInfo = {
 	playerName: string
@@ -35,7 +35,15 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
-	readonly targetInstance: LocalCardInstance | PlayerEntity
+	readonly target:
+		| {
+				type: 'card'
+				card: CardEntity
+		  }
+		| {
+				type: 'player'
+				player: PlayerEntity
+		  }
 	readonly counter: number | null
 }
 
