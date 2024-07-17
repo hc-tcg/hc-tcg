@@ -5,6 +5,7 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
+import endTurnSaga from './turn-actions/end-turn'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
@@ -335,7 +336,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
-			result = 'SUCCESS'
+			result = yield *call(endTurnSaga, game)
 			break
 		default:
 			// Unknown action type, ignore it completely

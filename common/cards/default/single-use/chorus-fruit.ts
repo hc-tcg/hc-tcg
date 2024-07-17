@@ -35,24 +35,26 @@ class ChorusFruit extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		let removedBlock = false
+		let switchedActiveHermit = false
 
-		observer.subscribe(player.hooks.onAttack, (_attack) => {
-			// Apply the card
-			applySingleUse(game, component.slot)
-		})
+		observer.subscribe(player.hooks.afterAttack, () => {
+			if (switchedActiveHermit) return
+			switchedActiveHermit = true
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
-			if (removedBlock) return
-			// Remove change active hermit from the blocked actions so it can be done once more
-			game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
-			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
-			removedBlock = true
-			// If another attack loop runs let the blocked action be removed again
-			observer.subscribe(player.hooks.beforeAttack, (attack) => {
-				if (attack.isType('status-effect')) return // Ignore fire and poison attacks
-				removedBlock = false
-				observer.unsubscribe(player.hooks.beforeAttack)
+			game.addPickRequest({
+				playerId: player.id,
+				id: component.entity,
+				message: 'Pick one of your Hermits to become the new active Hermit',
+				canPick: query.every(query.slot.currentPlayer, query.slot.hermitSlot),
+				onResult(pickedSlot) {
+					if (!pickedSlot.inRow()) return
+					if (pickedSlot.row.entity !== player.activeRowEntity) {
+						game.changeActiveRow(player, pickedSlot.row)
+						applySingleUse(game, component.slot)
+					} else {
+						switchedActiveHermit = false
+					}
+				},
 			})
 		})
 	}
