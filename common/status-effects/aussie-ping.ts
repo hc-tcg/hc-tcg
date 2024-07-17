@@ -17,7 +17,7 @@ export class AussiePing extends CardStatusEffect {
 		name: 'Aussie Ping',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
-		applyCondition: query.not(card.hasStatusEffect('aussie-ping-immune')),
+		applyCondition: query.not(card.hasStatusEffect(AussiePingImmune)),
 	}
 
 	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
@@ -31,7 +31,7 @@ export class AussiePing extends CardStatusEffect {
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, effect.target)
+				const coinFlip = flipCoin(player, effect.targetEntity)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -43,18 +43,14 @@ export class AussiePing extends CardStatusEffect {
 		player.hooks.afterAttack.add(effect, (_) => {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components
-					.new(StatusEffectComponent, AussiePingImmune)
-					.apply(target.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmune).apply(target.entity)
 			}
 		})
 
 		player.hooks.onTurnEnd.add(effect, (_) => {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components
-					.new(StatusEffectComponent, AussiePingImmune)
-					.apply(target.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmune).apply(target.entity)
 			}
 		})
 
@@ -76,8 +72,10 @@ export class AussiePing extends CardStatusEffect {
 
 export class AussiePingImmune extends CardStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
+		...systemStatusEffect,
 		id: 'aussie-ping-immune',
+		name: 'Strong Connection',
+		description: 'This Hermit cannot miss due to Aussie Ping.',
 	}
 
 	public override onApply(
