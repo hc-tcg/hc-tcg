@@ -6,6 +6,8 @@ export type Component = {
 	entity: Entity<any>
 }
 
+/** This is an implementation of the Entity Component System abstraction.
+ */
 export default class ECS {
 	game: GameModel
 	data: Record<Entity<any>, Component>
@@ -15,12 +17,14 @@ export default class ECS {
 		this.data = {} as Record<Entity<any>, Component>
 	}
 
+	/** Get a specific entity by the ID */
 	public get<T>(id: Entity<T> | null): T | null {
 		if (!id) return null
 		// @ts-ignore
 		return this.data[id] || null
 	}
 
+	/** Get a specific entity by the ID. If the entity does not exist, raise an error */
 	public getOrError<T>(id: Entity<T>): T {
 		if (!id || !(id in this.data))
 			throw new Error(`Could not find component with ID \`${id}\ in ECS`)
@@ -28,7 +32,7 @@ export default class ECS {
 		return this.data[id]
 	}
 
-	/** Remove an entity from the ECS */
+	/** Remove an entity from the ECS. You should not use the method unless there is no other way.  */
 	public delete(id: Entity<any>) {
 		delete this.data[id]
 	}
@@ -47,6 +51,13 @@ export default class ECS {
 		return value
 	}
 
+	/** Filter all entities in the game by a given predicate
+	 * ```
+	 * import * as query from 'common/components/query'
+	 * // Get all slots for the current player.
+	 * game.components.filter(SlotComponent, query.slot.currentPlayer)
+	 * ```
+	 */
 	public filter<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
@@ -63,6 +74,9 @@ export default class ECS {
 		return this.filter(type, ...predicates)?.map((x) => x.entity)
 	}
 
+	/** Find a slot on the game board that fulfills a condition. This method does not neccisarily return
+	 * oldest or first item to satisfy the condition. When using this method, assume you will get a random item.
+	 */
 	public find<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
@@ -77,6 +91,7 @@ export default class ECS {
 		return this.find(type, ...predicates)?.entity || null
 	}
 
+	/** Check if a component exists and return true if that is the case. */
 	public exists<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>

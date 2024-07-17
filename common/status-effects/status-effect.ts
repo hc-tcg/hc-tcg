@@ -102,6 +102,8 @@ export abstract class StatusEffect<
 	}
 }
 
+/** A status effect with a card as the target. You should create a card status effect if the effect only
+ * effects one card on the game board */
 export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	/**
 	 * Called when this statusEffect has its target set
@@ -128,6 +130,8 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	}
 }
 
+/** A status effect effect with the player as the target. You should create a player status effect if the
+ * effect effects all cards on the board */
 export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 	/**
 	 * Called when this statusEffect has its target set
