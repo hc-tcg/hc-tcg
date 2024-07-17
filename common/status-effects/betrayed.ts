@@ -1,21 +1,30 @@
-import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 
-class Betrayed extends CardStatusEffect {
+class Betrayed extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'betrayed',
 		name: 'Betrayed',
 		description:
-			'This Hermit must attack an AFK hermit if one exists and they have the neccesary items attached to attack.',
+			'You must attack an AFK hermit if one exists and your active hermit has the neccesary items attached to attack.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, component: CardComponent) {
-		const {player} = component
-
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
 		const pickCondition = query.every(
 			slot.currentPlayer,
 			query.not(slot.activeRow),
@@ -30,7 +39,7 @@ class Betrayed extends CardStatusEffect {
 			game.removeBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 			// Return if the opponent has no AFK Hermits to attack
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			const opponentActiveRow = getActiveRow(pos.opponentPlayer)
 			if (!opponentActiveRow) return
@@ -58,14 +67,14 @@ class Betrayed extends CardStatusEffect {
 			game.addBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		}
 
-		player.hooks.onTurnStart.add(instance, blockActions)
-		player.hooks.onAttach.add(instance, blockActions)
-		player.hooks.onDetach.add(instance, blockActions)
+		observer.subscribe(player.hooks.onTurnStart, blockActions)
+		observer.subscribe(player.hooks.onAttach, blockActions)
+		observer.subscribe(player.hooks.onDetach, blockActions)
 
 		// Add a pick request for opponent to pick an afk hermit to attack
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Only pick if there is afk to pick
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
@@ -75,11 +84,11 @@ class Betrayed extends CardStatusEffect {
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.cardId || !rowIndex === null) return
-					player.hooks.getAttackRequests.remove(instance)
+					player.hooks.getAttackRequests.remove(effect)
 					pickedAfkHermit = pickedSlot
 				},
 				onTimeout() {
-					player.hooks.getAttackRequests.remove(instance)
+					player.hooks.getAttackRequests.remove(effect)
 					const firstAfk = game.filterSlots(pickCondition)[0]
 					if (!firstAfk) return
 					pickedAfkHermit = firstAfk
@@ -87,9 +96,9 @@ class Betrayed extends CardStatusEffect {
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		player.hooks.beforeAttack.add(effect, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
-			player.hooks.beforeAttack.remove(instance)
+			player.hooks.beforeAttack.remove(effect)
 
 			if (
 				pickedAfkHermit !== null &&
@@ -109,8 +118,8 @@ class Betrayed extends CardStatusEffect {
 			game.removeBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, pos, instance)
+		player.hooks.afterAttack.add(effect, () => {
+			removeStatusEffect(game, pos, effect)
 		})
 	}
 

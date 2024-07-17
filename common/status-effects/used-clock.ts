@@ -7,7 +7,7 @@ class UsedClock extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		id: 'used-clock',
-		name: 'Turn Skip Used',
+		name: 'Clocked Out',
 		description: 'Turns can not be skipped consecutively.',
 		counter: 1,
 		counterType: 'turns',

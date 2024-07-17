@@ -47,7 +47,7 @@ class HumanCleoRare extends Card {
 
 			game.components
 				.new(StatusEffectComponent, Betrayed)
-				.apply(opponentPlayer.getActiveHermit()?.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }
