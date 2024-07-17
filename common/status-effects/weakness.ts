@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {isTargeting} from '../utils/attacks'
 
-class Weakness extends StatusEffect {
+class WeaknessEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'weakness',
@@ -82,4 +82,4 @@ class Weakness extends StatusEffect {
 	}
 }
 
-export default Weakness
+export default WeaknessEffect

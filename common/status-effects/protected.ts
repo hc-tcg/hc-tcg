@@ -2,7 +2,7 @@ import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {isTargeting} from '../utils/attacks'
 
-class Protected extends StatusEffect {
+class ProtectedEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'protected',
@@ -64,4 +64,4 @@ class Protected extends StatusEffect {
 	}
 }
 
-export default Protected
+export default ProtectedEffect

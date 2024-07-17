@@ -1,9 +1,9 @@
 import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class Fire extends StatusEffect {
+class FireEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
 		id: 'fire',
@@ -13,10 +13,15 @@ class Fire extends StatusEffect {
 		applyLog: (values) => `${values.target} was $eBurned$`,
 	}
 
-	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		const {player, opponentPlayer} = target
 
-		opponentPlayer.hooks.onTurnEnd.add(effect, () => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (!target.slot.inRow()) return
 			const statusEffectAttack = game.newAttack({
 				attacker: effect.entity,
@@ -30,16 +35,10 @@ class Fire extends StatusEffect {
 			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(effect, (_attack) => {
+		observer.subscribe(player.hooks.afterDefence, (_attack) => {
 			if (!target.isAlive()) effect.remove()
 		})
 	}
-
-	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
-		const {player, opponentPlayer} = target
-		opponentPlayer.hooks.onTurnEnd.remove(effect)
-		player.hooks.afterDefence.remove(effect)
-	}
 }
 
-export default Fire
+export default FireEffect

@@ -2,13 +2,13 @@ import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {card, query, slot} from '../components/query'
 
-class Melody extends StatusEffect {
+class MelodyEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'melody',
 		name: "Ollie's Melody",
 		description: 'This Hermit heals 10hp every turn.',
-		applyCondition: query.not(card.hasStatusEffect(Melody)),
+		applyCondition: query.not(card.hasStatusEffect(MelodyEffect)),
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
@@ -43,4 +43,4 @@ class Melody extends StatusEffect {
 	}
 }
 
-export default Melody
+export default MelodyEffect

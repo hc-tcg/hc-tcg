@@ -11,7 +11,7 @@ import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
-import { CardClass } from './base/card'
+import {CardClass} from './base/card'
 
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,

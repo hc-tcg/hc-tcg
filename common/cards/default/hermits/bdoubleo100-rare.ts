@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import Sleeping from '../../../status-effects/sleeping'
+import SleepingEffect from '../../../status-effects/sleeping'
 
 class BdoubleO100Rare extends Card {
 	props: Hermit = {
@@ -42,7 +42,7 @@ class BdoubleO100Rare extends Card {
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components.new(StatusEffectComponent, Sleeping).apply(component.entity)
+			game.components.new(StatusEffectComponent, SleepingEffect).apply(component.entity)
 		})
 	}
 }

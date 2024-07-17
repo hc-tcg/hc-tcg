@@ -5,7 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import Sleeping from '../../../status-effects/sleeping'
+import SleepingEffect from '../../../status-effects/sleeping'
 
 class ChorusFruit extends Card {
 	props: SingleUse = {
@@ -26,7 +26,7 @@ class ChorusFruit extends Card {
 					slot.currentPlayer,
 					slot.hermitSlot,
 					slot.activeRow,
-					slot.hasStatusEffect(Sleeping)
+					slot.hasStatusEffect(SleepingEffect)
 				)
 			)
 		),

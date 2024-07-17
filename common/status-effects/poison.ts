@@ -1,9 +1,9 @@
 import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class Poison extends StatusEffect {
+class PoisonEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
 		id: 'poison',
@@ -13,10 +13,15 @@ class Poison extends StatusEffect {
 		applyLog: (values) => `${values.target} was $ePoisoned$`,
 	}
 
-	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		const {player, opponentPlayer} = target
 
-		opponentPlayer.hooks.onTurnEnd.add(effect, () => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (!target.slot.inRow()) return
 			const statusEffectAttack = game.newAttack({
 				attacker: effect.entity,
@@ -34,17 +39,11 @@ class Poison extends StatusEffect {
 			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(effect, (attack) => {
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!attack.isTargetting(target) || attack.target?.health) return
 			effect.remove()
 		})
 	}
-
-	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
-		const {player, opponentPlayer} = target
-		opponentPlayer.hooks.onTurnEnd.remove(effect)
-		player.hooks.afterDefence.remove(effect)
-	}
 }
 
-export default Poison
+export default PoisonEffect

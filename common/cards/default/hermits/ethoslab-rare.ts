@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import Fire from '../../../status-effects/fire'
+import FireEffect from '../../../status-effects/fire'
 import {card, slot} from '../../../components/query'
 
 class EthosLabRare extends Card {
@@ -56,7 +56,7 @@ class EthosLabRare extends Card {
 				card.slot(slot.hermitSlot)
 			)
 			game.components
-				.new(StatusEffectComponent, Fire)
+				.new(StatusEffectComponent, FireEffect)
 				.apply(opponentActiveHermit?.entity)
 		})
 	}

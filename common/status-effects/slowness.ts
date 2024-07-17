@@ -1,8 +1,8 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class Slowness extends StatusEffect {
+class SlownessEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'slowness',
@@ -12,17 +12,22 @@ class Slowness extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
 		const {player} = target
 
 		if (!effect.counter) effect.counter = this.props.counter
 
-		player.hooks.onTurnStart.add(effect, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (target.slot?.onBoard() && player.activeRowEntity === target.slot.row?.entity)
 				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
 		})
 
-		player.hooks.onTurnEnd.add(effect, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			if (!effect.counter) return
 			effect.counter--
 
@@ -32,19 +37,12 @@ class Slowness extends StatusEffect {
 			}
 		})
 
-		player.hooks.afterDefence.add(effect, (attack) => {
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!target.slot?.onBoard() || attack.target?.entity !== target.slot.row?.entity) return
 			if (target.slot.row?.health) return
 			effect.remove()
 		})
 	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, target: CardComponent) {
-		const {player} = target
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.afterDefence.remove(instance)
-	}
 }
 
-export default Slowness
+export default SlownessEffect

@@ -1,15 +1,15 @@
 import type StatusEffect from './status-effect'
-import Fire from './fire'
-import Poison from './poison'
-import Sleeping from './sleeping'
+import FireEffect from './fire'
+import PoisonEffect from './poison'
+import SleepingEffect from './sleeping'
 import BadOmenEffect from './badomen'
-import Slowness from './slowness'
-import Weakness from './weakness'
-import Protected from './protected'
-import Dyed from './dyed'
-import MuseumCollection from './museum-collection'
-import Smelting from './smelting'
-import Melody from './melody'
+import SlownessEffect from './slowness'
+import WeaknessEffect from './weakness'
+import ProtectedEffect from './protected'
+import DyedEffect from './dyed'
+import MuseumCollectionEffect from './museum-collection'
+import SmeltingEffect from './smelting'
+import MelodyEffect from './melody'
 import UsedClock from './used-clock'
 import RevivedByDeathloop from './revived-by-deathloop'
 import Betrayed from './betrayed'
@@ -26,17 +26,17 @@ import CurseOfBindingEffect from './curse-of-binding'
 
 const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
-	Fire,
-	Poison,
-	Sleeping,
+	FireEffect,
+	PoisonEffect,
+	SleepingEffect,
 	BadOmenEffect,
-	Slowness,
-	Weakness,
-	Protected,
-	Dyed,
-	MuseumCollection,
-	Smelting,
-	Melody,
+	SlownessEffect,
+	WeaknessEffect,
+	ProtectedEffect,
+	DyedEffect,
+	MuseumCollectionEffect,
+	SmeltingEffect,
+	MelodyEffect,
 
 	/* System Status Effect */
 	UsedClock,

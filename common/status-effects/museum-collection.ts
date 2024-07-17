@@ -4,7 +4,7 @@ import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
 import {slot} from '../components/query'
 
-class MuseumCollection extends StatusEffect {
+class MuseumCollectionEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'museum-collection',
@@ -91,4 +91,4 @@ class MuseumCollection extends StatusEffect {
 	}
 }
 
-export default MuseumCollection
+export default MuseumCollectionEffect
