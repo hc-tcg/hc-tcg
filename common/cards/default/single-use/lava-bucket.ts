@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
-import {CardComponent, StatusEffectComponent} from '../../../components'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -17,7 +17,7 @@ class LavaBucket extends Card {
 		tokens: 3,
 		description: "Burn your opponent's active Hermit.",
 		showConfirmationModal: true,
-		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 		sidebarDescriptions: [
 			{
 				type: 'statusEffect',
@@ -26,26 +26,14 @@ class LavaBucket extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			const opponentActiveHermit = game.components.find(
-				CardComponent,
-				card.currentPlayer,
-				card.active,
-				card.slot(slot.hermitSlot)
-			)
-			if (opponentActiveHermit === null) return
+		observer.subscribe(player.hooks.onApply, () => {
 			game.components
 				.new(StatusEffectComponent, FireEffect)
-				.apply(opponentActiveHermit.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

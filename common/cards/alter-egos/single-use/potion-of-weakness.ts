@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -22,7 +22,7 @@ class PotionOfWeakness extends Card {
 			},
 		],
 		showConfirmationModal: true,
-		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {

@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
@@ -9,7 +9,7 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class EnderPearl extends Card {
-	pickCondition = query.every(slot.empty, slot.hermitSlot, slot.currentPlayer)
+	pickCondition = query.every(query.slot.empty, query.slot.hermitSlot, query.slot.currentPlayer)
 
 	props: SingleUse = {
 		...singleUse,

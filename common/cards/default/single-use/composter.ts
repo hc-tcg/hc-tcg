@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -25,7 +25,7 @@ class Composter extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		let firstPickedSlot: SlotComponent | null = null
@@ -34,7 +34,7 @@ class Composter extends Card {
 			playerId: player.id,
 			id: component.entity,
 			message: 'Pick 2 cards from your hand',
-			canPick: slot.hand,
+			canPick: query.slot.hand,
 			onResult(pickedSlot) {
 				firstPickedSlot = pickedSlot
 			},
@@ -46,7 +46,10 @@ class Composter extends Card {
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
 				if (firstPickedSlot === null) return false
-				return query.every(slot.hand, query.not(slot.entity(firstPickedSlot.entity)))(game, pos)
+				return query.every(query.slot.hand, query.not(query.slot.entity(firstPickedSlot.entity)))(
+					game,
+					pos
+				)
 			},
 			onResult(pickedSlot) {
 				firstPickedSlot?.getCard()?.discard()

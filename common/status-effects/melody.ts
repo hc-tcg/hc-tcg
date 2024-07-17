@@ -1,6 +1,6 @@
 import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {card, query, slot} from '../components/query'
+import * as query from '../components/query'
 
 class MelodyEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -8,14 +8,14 @@ class MelodyEffect extends CardStatusEffect {
 		id: 'melody',
 		name: "Ollie's Melody",
 		description: 'This Hermit heals 10hp every turn.',
-		applyCondition: query.not(card.hasStatusEffect(MelodyEffect)),
+		applyCondition: query.not(query.card.hasStatusEffect(MelodyEffect)),
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = component
 
 		player.hooks.onTurnStart.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.target))
+			const targetPos = game.findSlot(query.slot.hasInstance(instance.target))
 			if (!targetPos || !targetPos.rowId || !targetPos.rowId.hermitCard) return
 			if (targetPos.rowIndex === null) return
 

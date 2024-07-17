@@ -1,5 +1,6 @@
 import {GameModel} from '../models/game-model'
-import {ComponentQuery, effect, query} from '../components/query'
+import {ComponentQuery} from '../components/query'
+import * as query from '../components/query'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -58,8 +59,8 @@ export const damageEffect = {
 	applyCondition: (game: GameModel, target: CardComponent) =>
 		!game.components.exists(
 			StatusEffectComponent,
-			effect.targetIs(target.entity),
-			effect.type('damage')
+			query.effect.targetIs(target.entity),
+			query.effect.type('damage')
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,

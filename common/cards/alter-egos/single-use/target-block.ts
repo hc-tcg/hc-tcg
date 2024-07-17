@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -8,10 +8,10 @@ import {singleUse} from '../../base/defaults'
 
 class TargetBlock extends Card {
 	pickCondition = query.every(
-		slot.opponent,
-		slot.hermitSlot,
-		query.not(slot.activeRow),
-		query.not(slot.empty)
+		query.slot.opponent,
+		query.slot.hermitSlot,
+		query.not(query.slot.activeRow),
+		query.not(query.slot.empty)
 	)
 
 	props: SingleUse = {

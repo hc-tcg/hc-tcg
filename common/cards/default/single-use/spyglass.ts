@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'

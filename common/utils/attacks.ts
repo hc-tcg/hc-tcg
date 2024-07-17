@@ -3,7 +3,7 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {card, query} from '../components/query'
+import * as query from '../components/query'
 import {STRENGTHS} from '../const/strengths'
 import {CardComponent} from '../components'
 
@@ -231,8 +231,8 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 
 	const targetCardInfo = game.components.find(
 		CardComponent,
-		card.rowIs(attack.targetEntity),
-		card.isHermit
+		query.card.rowIs(attack.targetEntity),
+		query.card.isHermit
 	)
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null

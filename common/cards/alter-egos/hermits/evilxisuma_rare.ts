@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card, query} from '../../../components/query'
+import * as query from '../../../components/query'
 import {PrimaryAttackDisabled, SecondaryAttackDisabled} from '../../../status-effects/derp-coin'
 
 class EvilXisumaRare extends Card {
@@ -35,7 +35,11 @@ class EvilXisumaRare extends Card {
 		},
 	}
 
-	opponentActiveHermitQuery = query.every(card.opponentPlayer, card.active, card.isHermit)
+	opponentActiveHermitQuery = query.every(
+		query.card.opponentPlayer,
+		query.card.active,
+		query.card.isHermit
+	)
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component

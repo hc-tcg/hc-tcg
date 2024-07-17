@@ -7,7 +7,7 @@ import {
 import {GameModel} from '../models/game-model'
 import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {card, query} from '../components/query'
+import * as query from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
 import {STATUS_EFFECTS} from '.'
 
@@ -18,7 +18,7 @@ export class AussiePing extends PlayerStatusEffect {
 		name: 'Aussie Ping',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
-		applyCondition: query.not(card.hasStatusEffect(AussiePingImmune)),
+		applyCondition: query.not(query.card.hasStatusEffect(AussiePingImmune)),
 	}
 
 	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {

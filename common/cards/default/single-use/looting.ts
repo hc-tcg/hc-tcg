@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, HandSlotComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -7,7 +7,12 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class Looting extends Card {
-	pickCondition = query.every(slot.opponent, slot.activeRow, slot.itemSlot, query.not(slot.empty))
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.activeRow,
+		query.slot.itemSlot,
+		query.not(query.slot.empty)
+	)
 
 	props: SingleUse = {
 		...singleUse,

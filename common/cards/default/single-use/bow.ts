@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -9,10 +9,10 @@ import {RowEntity} from '../../../entities'
 
 class Bow extends Card {
 	pickCondition = query.every(
-		slot.opponent,
-		slot.hermitSlot,
-		query.not(slot.empty),
-		query.not(slot.activeRow)
+		query.slot.opponent,
+		query.slot.hermitSlot,
+		query.not(query.slot.empty),
+		query.not(query.slot.activeRow)
 	)
 
 	props: SingleUse = {

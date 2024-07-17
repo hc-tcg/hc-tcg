@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -20,16 +20,21 @@ class Emerald extends Card {
 			singleUse.attachCondition,
 			query.exists(
 				SlotComponent,
-				query.every(slot.currentPlayer, slot.activeRow, slot.attachSlot, query.not(slot.frozen))
+				query.every(
+					query.slot.currentPlayer,
+					query.slot.activeRow,
+					query.slot.attachSlot,
+					query.not(query.slot.frozen)
+				)
 			),
 			query.exists(
 				SlotComponent,
 				query.every(
-					slot.opponent,
-					slot.activeRow,
-					slot.attachSlot,
-					query.not(slot.empty),
-					query.not(slot.frozen)
+					query.slot.opponent,
+					query.slot.activeRow,
+					query.slot.attachSlot,
+					query.not(query.slot.empty),
+					query.not(query.slot.frozen)
 				)
 			)
 		),

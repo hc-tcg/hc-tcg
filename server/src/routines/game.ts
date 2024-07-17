@@ -17,7 +17,7 @@ import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import {card, query, row, slot} from 'common/components/query'
+import * as query from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -43,9 +43,9 @@ function getAvailableEnergy(game: GameModel) {
 	const energy = game.components
 		.filter(
 			CardComponent,
-			card.isItem,
-			card.attached,
-			card.slot(slot.player(game.currentPlayer.entity))
+			query.card.isItem,
+			query.card.attached,
+			query.card.slot(query.slot.player(game.currentPlayer.entity))
 		)
 		.flatMap((card) => {
 			if (!card.isItem()) return []
@@ -67,8 +67,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	const su = game.components.find(
 		CardComponent,
-		card.isSingleUse,
-		card.attached
+		query.card.isSingleUse,
+		query.card.attached
 	) as CardComponent<SingleUse> | null
 
 	// Custom modals
@@ -109,8 +109,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	game.state.timer.opponentActionStartTime = null
 	const hasOtherHermit = game.components.filter(
 		CardComponent,
-		card.isAttach,
-		card.slot(query.not(slot.rowIs(activeRowId)))
+		query.card.isAttach,
+		query.card.slot(query.not(query.slot.rowIs(activeRowId)))
 	)
 
 	// Actions that require us to have an active row
@@ -130,7 +130,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		if (activeRowId !== null && turnState.turnNumber > 1) {
 			const hermitCard = game.components.find(
 				CardComponent,
-				card.slot(slot.rowIs(activeRowId), slot.hermitSlot)
+				query.card.slot(query.slot.rowIs(activeRowId), query.slot.hermitSlot)
 			)
 
 			// only add attack options if not sleeping
@@ -163,7 +163,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.components
-			.filter(CardComponent, card.slot(slot.player(currentPlayer.entity), slot.hand))
+			.filter(CardComponent, card.slot(slot.player(currentPlayer.entity), query.slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.components.filter(SlotComponent, card.card.props.attachCondition)
 
@@ -221,8 +221,8 @@ function* checkHermitHealth(game: GameModel) {
 
 		const hermitCards = game.components.filter(
 			CardComponent,
-			card.attached,
-			card.player(game.currentPlayer.entity)
+			query.card.attached,
+			query.card.player(game.currentPlayer.entity)
 		)
 
 		for (const card of hermitCards) {
@@ -235,8 +235,8 @@ function* checkHermitHealth(game: GameModel) {
 
 				continue
 
-				discardCard(game, row.hermitCard)
-				discardCard(game, row.effectCard)
+				discardCard(game, query.row.hermitCard)
+				discardCard(game, query.row.effectCard)
 
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
@@ -517,8 +517,8 @@ function* turnActionsSaga(game: GameModel) {
 
 				const hasActiveHermit = game.components.exists(
 					CardComponent,
-					card.player(currentPlayer.entity),
-					card.slot(slot.activeRow, slot.hermitSlot)
+					query.card.player(currentPlayer.entity),
+					query.card.slot(query.slot.activeRow, query.slot.hermitSlot)
 				)
 				if (hasActiveHermit) {
 					break
@@ -600,7 +600,11 @@ function* turnSaga(game: GameModel) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	const singleUseCard = game.components.find(CardComponent, card.attached, card.isSingleUse)
+	const singleUseCard = game.components.find(
+		CardComponent,
+		query.card.attached,
+		query.card.isSingleUse
+	)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
 			singleUseCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
@@ -611,7 +615,11 @@ function* turnSaga(game: GameModel) {
 
 	// Draw a card from deck when turn ends
 	const newCard = game.components
-		.filter(CardComponent, card.player(currentPlayer.entity), card.slot(slot.deck))
+		.filter(
+			CardComponent,
+			query.card.player(currentPlayer.entity),
+			query.card.slot(query.slot.deck)
+		)
 		.sort(CardComponent.compareOrder)
 		.at(0)
 

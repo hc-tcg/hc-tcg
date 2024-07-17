@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -8,19 +8,19 @@ import {singleUse} from '../../base/defaults'
 
 class Lead extends Card {
 	firstPickCondition = query.every(
-		slot.opponent,
-		slot.itemSlot,
-		query.not(slot.empty),
-		slot.activeRow,
-		query.not(slot.frozen)
+		query.slot.opponent,
+		query.slot.itemSlot,
+		query.not(query.slot.empty),
+		query.slot.activeRow,
+		query.not(query.slot.frozen)
 	)
 	secondPickCondition = query.every(
-		slot.opponent,
-		slot.itemSlot,
-		slot.empty,
-		slot.row(row.hasHermit),
-		query.not(slot.activeRow),
-		query.not(slot.frozen)
+		query.slot.opponent,
+		query.slot.itemSlot,
+		query.slot.empty,
+		query.slot.row(query.row.hasHermit),
+		query.not(query.slot.activeRow),
+		query.not(query.slot.frozen)
 	)
 
 	props: SingleUse = {

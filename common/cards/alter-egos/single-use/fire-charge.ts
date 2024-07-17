@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -9,10 +9,10 @@ import {CardComponent, SlotComponent} from '../../../components'
 
 class FireCharge extends Card {
 	pickCondition = query.every(
-		slot.currentPlayer,
-		query.not(slot.frozen),
-		query.not(slot.empty),
-		query.some(slot.itemSlot, slot.attachSlot)
+		query.slot.currentPlayer,
+		query.not(query.slot.frozen),
+		query.not(query.slot.empty),
+		query.some(query.slot.itemSlot, query.slot.attachSlot)
 	)
 
 	props: SingleUse = {

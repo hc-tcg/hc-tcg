@@ -1,5 +1,6 @@
 import type Card from '../../cards/base/card'
-import {ComponentQuery, effect, query} from '.'
+import * as query from '.'
+import {ComponentQuery} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
 import {TypeT} from '../../types/cards'
@@ -81,8 +82,8 @@ export const hasStatusEffect = (
 	return (game, card) => {
 		return game.components.exists(
 			StatusEffectComponent,
-			effect.is(statusEffect),
-			effect.targetIs(card.entity)
+			query.effect.is(statusEffect),
+			query.effect.targetIs(card.entity)
 		)
 	}
 }

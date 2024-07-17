@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -23,10 +23,10 @@ class ChorusFruit extends Card {
 			query.not(
 				query.exists(
 					SlotComponent,
-					slot.currentPlayer,
-					slot.hermitSlot,
-					slot.activeRow,
-					slot.hasStatusEffect(SleepingEffect)
+					query.slot.currentPlayer,
+					query.slot.hermitSlot,
+					query.slot.activeRow,
+					query.slot.hasStatusEffect(SleepingEffect)
 				)
 			)
 		),

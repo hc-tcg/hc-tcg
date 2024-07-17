@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, row, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -7,11 +7,11 @@ import {singleUse} from '../../base/defaults'
 
 class SweepingEdge extends Card {
 	discardCondition = query.every(
-		query.some(slot.activeRow, slot.row(row.adjacent(row.active))),
-		slot.attachSlot,
-		slot.opponent,
-		query.not(slot.empty),
-		query.not(slot.frozen)
+		query.some(query.slot.activeRow, query.slot.row(query.row.adjacent(query.row.active))),
+		query.slot.attachSlot,
+		query.slot.opponent,
+		query.not(query.slot.empty),
+		query.not(query.slot.frozen)
 	)
 
 	props: SingleUse = {

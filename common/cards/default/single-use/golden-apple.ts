@@ -1,13 +1,17 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
 class GoldenApple extends Card {
-	pickCondition = query.every(slot.hermitSlot, query.not(slot.activeRow), query.not(slot.empty))
+	pickCondition = query.every(
+		query.slot.hermitSlot,
+		query.not(query.slot.activeRow),
+		query.not(query.slot.empty)
+	)
 
 	props: SingleUse = {
 		...singleUse,
@@ -21,7 +25,7 @@ class GoldenApple extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.playerHasActiveHermit,
+			query.slot.playerHasActiveHermit,
 			query.exists(SlotComponent, this.pickCondition)
 		),
 	}

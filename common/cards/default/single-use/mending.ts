@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -8,12 +8,12 @@ import {singleUse} from '../../base/defaults'
 
 class Mending extends Card {
 	pickCondition = query.every(
-		slot.currentPlayer,
-		slot.attachSlot,
-		slot.empty,
-		slot.row(row.hasHermit),
-		query.not(slot.frozen),
-		query.not(slot.activeRow)
+		query.slot.currentPlayer,
+		query.slot.attachSlot,
+		query.slot.empty,
+		query.slot.row(query.row.hasHermit),
+		query.not(query.slot.frozen),
+		query.not(query.slot.activeRow)
 	)
 
 	props: SingleUse = {
@@ -30,7 +30,12 @@ class Mending extends Card {
 			query.exists(SlotComponent, this.pickCondition),
 			query.exists(
 				SlotComponent,
-				query.every(slot.activeRow, slot.attachSlot, query.not(slot.frozen), query.not(slot.empty))
+				query.every(
+					query.slot.activeRow,
+					query.slot.attachSlot,
+					query.not(query.slot.frozen),
+					query.not(query.slot.empty)
+				)
 			)
 		),
 		log: (values) =>
@@ -48,9 +53,9 @@ class Mending extends Card {
 			onResult(pickedSlot) {
 				const hermitActive = game.components.find(
 					SlotComponent,
-					slot.currentPlayer,
-					slot.activeRow,
-					slot.attachSlot
+					query.slot.currentPlayer,
+					query.slot.activeRow,
+					query.slot.attachSlot
 				)
 
 				// Apply the mending card

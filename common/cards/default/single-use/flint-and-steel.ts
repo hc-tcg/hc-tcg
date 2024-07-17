@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'

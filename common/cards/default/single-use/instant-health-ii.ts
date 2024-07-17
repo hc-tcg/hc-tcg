@@ -1,13 +1,13 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
 class InstantHealthII extends Card {
-	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
+	pickCondition = query.every(query.slot.hermitSlot, query.not(query.slot.empty))
 
 	props: SingleUse = {
 		...singleUse,
@@ -20,7 +20,7 @@ class InstantHealthII extends Card {
 		description: 'Heal one of your Hermits 60hp.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.playerHasActiveHermit,
+			query.slot.playerHasActiveHermit,
 			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,

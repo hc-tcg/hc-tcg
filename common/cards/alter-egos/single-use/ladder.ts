@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -8,10 +8,10 @@ import {singleUse} from '../../base/defaults'
 
 class Ladder extends Card {
 	pickCondition = query.every(
-		slot.currentPlayer,
-		slot.hermitSlot,
-		query.not(slot.empty),
-		slot.adjacentTo(slot.activeRow)
+		query.slot.currentPlayer,
+		query.slot.hermitSlot,
+		query.not(query.slot.empty),
+		query.slot.adjacentTo(query.slot.activeRow)
 	)
 
 	props: SingleUse = {

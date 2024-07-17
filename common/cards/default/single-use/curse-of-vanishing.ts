@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -7,11 +7,11 @@ import {singleUse} from '../../base/defaults'
 
 class CurseOfVanishing extends Card {
 	discardCondition = query.every(
-		slot.opponent,
-		slot.activeRow,
-		slot.attachSlot,
-		query.not(slot.empty),
-		query.not(slot.frozen)
+		query.slot.opponent,
+		query.slot.activeRow,
+		query.slot.attachSlot,
+		query.not(query.slot.empty),
+		query.not(query.slot.frozen)
 	)
 
 	props: SingleUse = {

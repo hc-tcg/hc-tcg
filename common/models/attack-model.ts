@@ -103,7 +103,7 @@ export class AttackModel {
 	}
 
 	/** Returns true if the attacker is a given status effect or card component.*/
-	public isAttacker(component: AttackerEntity) {
+	public isAttacker(component: AttackerEntity | null | undefined) {
 		return this.attacker?.entity === component
 	}
 

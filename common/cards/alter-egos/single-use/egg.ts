@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -10,10 +10,10 @@ import {singleUse} from '../../base/defaults'
 
 class Egg extends Card {
 	pickCondition = query.every(
-		slot.opponent,
-		slot.hermitSlot,
-		query.not(slot.activeRow),
-		query.not(slot.empty)
+		query.slot.opponent,
+		query.slot.hermitSlot,
+		query.not(query.slot.activeRow),
+		query.not(query.slot.empty)
 	)
 
 	props: SingleUse = {
@@ -33,15 +33,15 @@ class Egg extends Card {
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
 		let afkHermitSlot: SlotComponent | null = null
 
-		player.hooks.getAttackRequests.add(component, () => {
+		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
@@ -53,52 +53,30 @@ class Egg extends Card {
 			})
 		})
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
-
-			if (!afkHermitSlot || afkHermitSlot.rowIndex === null || afkHermitSlot.rowIndex == undefined)
-				return
-			const opponentRow = opponentPlayer.board.rows[afkHermitSlot.rowIndex]
-			if (!opponentRow.hermitCard) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!afkHermitSlot?.inRow()) return
+			const activeHermit = player.getActiveHermit()
+			if (!attack.isAttacker(activeHermit?.entity)) return
 
 			applySingleUse(game, afkHermitSlot)
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
-				const eggAttack = new AttackModel({
-					id: this.getInstanceKey(component),
-					attacker: activePos,
-					target: {
-						player: opponentPlayer,
-						rowIndex: afkHermitSlot.rowIndex,
-						row: opponentRow,
-					},
-					log: (values) =>
-						`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
-					type: 'effect',
-				}).addDamage(this.props.id, 10)
+				const eggAttack = game
+					.newAttack({
+						attacker: component.entity,
+						target: afkHermitSlot?.row.entity,
+						log: (values) =>
+							`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
+						type: 'effect',
+					})
+					.addDamage(component.entity, 10)
 
 				attack.addNewAttack(eggAttack)
 			}
 
-			player.hooks.afterAttack.add(component, () => {
-				if (!afkHermitSlot || afkHermitSlot.rowIndex === null || afkHermitSlot.rowIndex === null)
-					return
-				game.changeActiveRow(opponentPlayer, afkHermitSlot.rowIndex)
-				player.hooks.afterAttack.remove(component)
-			})
-
-			// Only do this once if there are multiple attacks
-			player.hooks.onAttack.remove(component)
+			game.changeActiveRow(opponentPlayer, afkHermitSlot.row)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.getAttackRequests.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 
