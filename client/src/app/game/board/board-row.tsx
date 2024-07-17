@@ -5,7 +5,7 @@ import cn from 'classnames'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import HealthSlot from './board-health'
-import {SlotEntity} from 'common/entities'
+import {PlayerEntity, SlotEntity} from 'common/entities'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
@@ -20,13 +20,14 @@ const getSlotByLocation = (
 
 type BoardRowProps = {
 	type: 'left' | 'right'
+	player: PlayerEntity
 	onClick: (entity: SlotEntity, type: SlotTypeT, card: LocalCardInstance | null) => void
 	rowState: LocalRowState
 	active: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
 }
 
-const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProps) => {
+const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: BoardRowProps) => {
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit']
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const slot = getSlotByLocation(slotType, slotIndex, rowState)
@@ -61,7 +62,9 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 			<HealthSlot
 				rowState={rowState}
 				statusEffects={statusEffects.filter(
-					(a) => a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity
+					(a) =>
+						(a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity) ||
+						(active && a.target.type === 'player' && a.target.player === player)
 				)}
 			/>
 		</div>

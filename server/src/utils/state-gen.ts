@@ -192,6 +192,7 @@ export function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
+		entity: playerState.entity,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -282,6 +283,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// ids
 		playerId: player.id,
 		opponentPlayerId: opponentState.id,
+		playerEntity: players[player.id].entity,
+		opponentPlayerEntity: players[opponentState.id].entity,
 
 		lastActionResult: game.state.lastActionResult,
 

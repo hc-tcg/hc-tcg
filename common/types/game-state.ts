@@ -143,6 +143,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
+	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -169,6 +170,8 @@ export type LocalGameState = {
 	// ids
 	playerId: PlayerId
 	opponentPlayerId: PlayerId
+	playerEntity: PlayerEntity
+	opponentPlayerEntity: PlayerEntity
 
 	lastActionResult: {
 		action: TurnAction

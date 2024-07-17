@@ -10,7 +10,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
-import { SlotEntity } from 'common/entities'
+import {SlotEntity} from 'common/entities'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -42,6 +42,7 @@ function Board({onClick, localGameState}: Props) {
 					return (
 						<BoardRow
 							key={row.entity}
+							player={direction === 'left' ? leftPlayer.entity : rightPlayer.entity}
 							rowState={row}
 							active={row.entity === player.board.activeRow}
 							onClick={handleRowClick}

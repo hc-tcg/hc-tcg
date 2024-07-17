@@ -40,10 +40,10 @@ export class StatusEffectComponent<
 		return {
 			props: WithoutFunctions(this.props),
 			instance: this.entity,
-			targetInstance:
+			target:
 				this.target instanceof CardComponent
-					? this.target.toLocalCardInstance()
-					: this.target.entity,
+					? {type: 'card', card: this.target.entity}
+					: {type: 'player', player: this.target.entity},
 			counter: this.counter,
 		}
 	}
