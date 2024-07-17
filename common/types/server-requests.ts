@@ -3,9 +3,10 @@ import type {ComponentQuery} from '../components/query'
 import type {SlotComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
-import {ActionResult, CardEntity, SlotEntity} from './game-state'
+import {ActionResult} from './game-state'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
+import { CardEntity, PlayerEntity, SlotEntity } from '../entities'
 
 export type PlayerInfo = {
 	playerName: string
@@ -34,7 +35,7 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
-	readonly targetInstance: LocalCardInstance
+	readonly targetInstance: LocalCardInstance | PlayerEntity
 	readonly counter: number | null
 }
 
