@@ -25,7 +25,7 @@ const CardList = (props: CardListProps) => {
 			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
 			: false
 		const isPicked = !!picked?.find((pickedCard) => card.entity === pickedCard.entity)
-		const isDisabled = !!disabled?.find((id) => id == card.props.numericId)
+		const isDisabled = !!disabled?.find((id) => id == card.props.id)
 		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
 
 		const cssClasses =
