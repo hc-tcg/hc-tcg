@@ -126,7 +126,6 @@ export class PlayerComponent {
 		this.lives = 3
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
-		this.cardsCanBePlacedIn = []
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
