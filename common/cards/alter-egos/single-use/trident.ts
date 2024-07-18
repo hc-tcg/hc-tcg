@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CoinFlipT} from '../../../types/game-state'
+import {CoinFlipResult} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -24,7 +24,7 @@ class Trident extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
-		let coinflipResult: CoinFlipT | null = null
+		let coinflipResult: CoinFlipResult | null = null
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			return game

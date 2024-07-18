@@ -1,10 +1,10 @@
 import {StatusEffectComponent, PlayerComponent, ObserverComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
 
 export default class FortuneEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...systemStatusEffect,
+		...hiddenStatusEffect,
 		name: 'Fortune',
 		id: 'fortune',
 		description: 'Any coin flips this turn will roll heads.',

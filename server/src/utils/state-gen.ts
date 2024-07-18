@@ -1,7 +1,12 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
-import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
+import {
+	CurrentCoinFlip,
+	LocalCurrentCoinFlip,
+	LocalGameState,
+	LocalPlayerState,
+} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
@@ -170,10 +175,7 @@ function getLocalCard<Props extends CardProps>(
 	}
 }
 
-function getLocalModalDataPayload(
-	game: GameModel,
-	modal: ModalData
-): LocalModalData['payload'] {
+function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModalData['payload'] {
 	if (modal.modalId == 'selectCards') {
 		return {
 			...modal.payload,
@@ -196,10 +198,14 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 	} as LocalModalData
 }
 
-function getLocalPlayerState(
-	game: GameModel,
-	playerState: PlayerComponent
-): LocalPlayerState {
+function getLocalCoinFlip(game: GameModel, coinFlip: CurrentCoinFlip): LocalCurrentCoinFlip {
+	return {
+		...coinFlip,
+		card: getLocalCard(game.components.get(coinFlip.card)!),
+	}
+}
+
+function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): LocalPlayerState {
 	let singleUseSlot = game.components.find(SlotComponent, slot.singleUse)?.entity
 	let singleUseCard = game.components.find(CardComponent, card.slotEntity(singleUseSlot))
 
@@ -258,7 +264,7 @@ function getLocalPlayerState(
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
-		coinFlips: playerState.coinFlips,
+		coinFlips: playerState.coinFlips.map((flip) => getLocalCoinFlip(game, flip)),
 		lives: playerState.lives,
 		board: board,
 	}

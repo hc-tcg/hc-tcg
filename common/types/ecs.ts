@@ -33,7 +33,9 @@ export default class ComponentTable {
 		return this.data[id]
 	}
 
-	/** Remove an entity from the ECS. You should not use the method unless there is no other way.  */
+	/** Remove an entity from the ECS. Before removing a component from the ECS, first consider if you can
+	 * mark the element as invalid instead.
+	 */
 	public delete(id: Entity<any>) {
 		delete this.data[id]
 	}
@@ -75,8 +77,9 @@ export default class ComponentTable {
 		return this.filter(type, ...predicates)?.map((x) => x.entity)
 	}
 
-	/** Find a slot on the game board that fulfills a condition. This method does not neccisarily return
+	/** Find a component that fulfills a condition. This method does not neccisarily return
 	 * oldest or first item to satisfy the condition. When using this method, assume you will get a random item.
+	 * For drawing cards please use `player.draw()` instead as this will grab the items in the correct order.
 	 */
 	public find<T extends Component>(
 		type: new (...args: Array<any>) => T,

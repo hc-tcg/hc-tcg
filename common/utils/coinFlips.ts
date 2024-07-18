@@ -1,13 +1,13 @@
 import {CardComponent, PlayerComponent} from '../components'
 import {DEBUG_CONFIG} from '../config'
-import {CoinFlipT} from '../types/game-state'
+import {CoinFlipResult} from '../types/game-state'
 
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null
-): Array<CoinFlipT> {
+): Array<CoinFlipResult> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.game.components.get(playerTossingCoin.activeRowEntity)
 	if (activeRowIndex === null) {
@@ -17,12 +17,12 @@ export function flipCoin(
 		return []
 	}
 
-	let coinFlips: Array<CoinFlipT> = []
+	let coinFlips: Array<CoinFlipResult> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
 			coinFlips.push('heads')
 		} else {
-			const coinFlip: CoinFlipT = Math.random() >= 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
 	}
@@ -34,7 +34,7 @@ export function flipCoin(
 	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
 	player.coinFlips.push({
-		card: card.toLocalCardInstance(),
+		card: card.entity,
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,

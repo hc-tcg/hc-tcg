@@ -10,7 +10,7 @@ import type {
 } from './server-requests'
 import type {CardComponent} from '../components'
 import type {PlayerId} from '../models/player-model'
-import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import {ModalRequest} from './modal-requests'
 
 type NewType = SlotEntity
@@ -23,13 +23,22 @@ export type LocalRowState = {
 	health: number | null
 }
 
-export type CoinFlipT = 'heads' | 'tails'
+export type CoinFlipResult = 'heads' | 'tails'
 
-export type CurrentCoinFlipT = {
+export type CurrentCoinFlip = {
+	card: CardEntity
+	opponentFlip: boolean
+	name: string
+	tosses: Array<CoinFlipResult>
+	amount: number
+	delay: number
+}
+
+export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipT>
+	tosses: Array<CoinFlipResult>
 	amount: number
 	delay: number
 }
@@ -147,7 +156,7 @@ export type LocalPlayerState = {
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
-	coinFlips: Array<CurrentCoinFlipT>
+	coinFlips: Array<LocalCurrentCoinFlip>
 	lives: number
 	board: {
 		activeRow: RowEntity | null
@@ -214,7 +223,7 @@ export type LocalGameRoot = {
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
-	currentCoinFlip: CurrentCoinFlipT | null
+	currentCoinFlip: CurrentCoinFlip | null
 	opponentConnected: boolean
 }
 

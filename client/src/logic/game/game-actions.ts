@@ -1,5 +1,5 @@
 import {LocalGameState, Message} from 'common/types/game-state'
-import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
+import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlip} from 'common/types/game-state'
 import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
@@ -63,7 +63,7 @@ export const showEndGameOverlay = (outcome: GameEndOutcomeT, reason: GameEndReas
 	},
 })
 
-export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
+export const setCoinFlip = (payload: CurrentCoinFlip | null) => ({
 	type: 'SET_COIN_FLIP',
 	payload,
 })

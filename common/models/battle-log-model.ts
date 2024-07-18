@@ -1,4 +1,4 @@
-import {CurrentCoinFlipT, BattleLogT} from '../types/game-state'
+import {CurrentCoinFlip, BattleLogT} from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
@@ -27,7 +27,7 @@ export class BattleLogModel {
 		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
 	}
 
-	private generateCoinFlipDescription(coinFlip: CurrentCoinFlipT): string {
+	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
 		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
 		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
 
@@ -44,7 +44,7 @@ export class BattleLogModel {
 
 	private generateCoinFlipMessage(
 		attack: AttackModel,
-		coinFlips: Array<CurrentCoinFlipT>
+		coinFlips: Array<CurrentCoinFlip>
 	): string | null {
 		const entry = coinFlips.reduce((r: string | null, coinFlip) => {
 			const description = this.generateCoinFlipDescription(coinFlip)
@@ -86,7 +86,7 @@ export class BattleLogModel {
 
 	public addPlayCardEntry(
 		card: CardComponent,
-		coinFlips: Array<CurrentCoinFlipT>,
+		coinFlips: Array<CurrentCoinFlip>,
 		slotInfo: SlotComponent | null
 	) {
 		let {player, opponentPlayer} = card
@@ -149,7 +149,7 @@ export class BattleLogModel {
 
 	public addAttackEntry(
 		attack: AttackModel,
-		coinFlips: Array<CurrentCoinFlipT>,
+		coinFlips: Array<CurrentCoinFlip>,
 		singleUse: CardComponent | null
 	) {
 		if (!attack.attacker) return
@@ -224,7 +224,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public opponentCoinFlipEntry(coinFlips: Array<CurrentCoinFlipT>) {
+	public opponentCoinFlipEntry(coinFlips: Array<CurrentCoinFlip>) {
 		const player = this.game.currentPlayer
 		// Opponent coin flips
 		coinFlips.forEach((coinFlip) => {

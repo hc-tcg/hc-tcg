@@ -1,6 +1,6 @@
 import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CoinFlipT} from '../types/game-state'
+import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {
 	CardComponent,
@@ -26,7 +26,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		let coinFlipResult: CoinFlipT | null = null
+		let coinFlipResult: CoinFlipResult | null = null
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.attacker?.entity !== effect.targetEntity) return

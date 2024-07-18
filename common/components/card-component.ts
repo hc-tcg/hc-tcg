@@ -23,7 +23,6 @@ import {
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
-import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import * as query from './query'
 import {CardStatusEffect} from '../status-effects/status-effect'
 
@@ -117,14 +116,6 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Return true if this hermit is in a row and this hermits HP is greater than 0 */
 	public isAlive(): boolean {
 		return this.slot.inRow() && !!this.slot.row.health
-	}
-
-	public toLocalCardInstance(): LocalCardInstance<Props> {
-		return {
-			props: this.card.props as WithoutFunctions<Props>,
-			entity: this.entity,
-			slot: this.slotEntity,
-		}
 	}
 
 	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached

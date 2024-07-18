@@ -63,7 +63,7 @@ export class ObserverComponent {
 		hook.remove(this.entity)
 	}
 
-	/** Disconnect all hooks connected to this observer */
+	/** Unsubscribe from all hooks connected to this observer. */
 	public unsubscribeFromEverything() {
 		for (const hook of this.hooks) {
 			hook.remove(this.entity)

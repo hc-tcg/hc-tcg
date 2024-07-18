@@ -1,6 +1,6 @@
 import type {GameModel} from '../models/game-model'
 import type {PlayerId, PlayerModel} from '../models/player-model'
-import type {CoinFlipT, CurrentCoinFlipT, TurnActions} from '../types/game-state'
+import type {CoinFlipResult, CurrentCoinFlip, TurnActions} from '../types/game-state'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
 import type {HermitAttackType} from '../types/attack'
@@ -25,7 +25,7 @@ export class PlayerComponent {
 
 	readonly id: PlayerId
 
-	coinFlips: Array<CurrentCoinFlipT>
+	coinFlips: Array<CurrentCoinFlip>
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
@@ -97,7 +97,7 @@ export class PlayerComponent {
 		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
 
 		/** Hook called when the player flips a coin */
-		onCoinFlip: GameHook<(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+		onCoinFlip: GameHook<(card: CardComponent, coinFlips: Array<CoinFlipResult>) => Array<CoinFlipResult>>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
@@ -279,7 +279,7 @@ export class PlayerComponent {
 		return true
 	}
 
-	/** Get an array of (card, slot the card can be placed in) for each card in the hand. */
+	/** Get an array of [card, slot the card can be placed in] for each card in the player's hand. */
 	public getCardsCanBePlacedIn() {
 		return this.game.components
 			.filter(CardComponent, query.card.slot(query.slot.hand, query.slot.player(this.entity)))
@@ -287,7 +287,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>
+						Array<SlotEntity>,
 					]
 			)
 	}
