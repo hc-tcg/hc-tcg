@@ -50,7 +50,9 @@ function SelectCardsModal({closeModal}: Props) {
 			return
 		}
 		if (selected.length <= selectionSize) {
-			dispatch(modalRequest({modalResult: {result: true, cards: selected}}))
+			dispatch(
+				modalRequest({modalResult: {result: true, cards: selected.map((card) => card.entity)}})
+			)
 			closeModal()
 		}
 	}

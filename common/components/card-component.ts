@@ -64,18 +64,6 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 	}
 
-	static fromLocalCardInstance(
-		game: GameModel,
-		localCardInstance: LocalCardInstance
-	): CardComponent {
-		for (const card of game.components.filter(CardComponent)) {
-			if (card.entity == localCardInstance.entity) {
-				return card
-			}
-		}
-		throw new Error('An ID for a nonexistent card should never be created')
-	}
-
 	/** A function that is used to order cards by thier slot's order.
 	 * ```ts
 	 * let orderedCards = game.components.filter(

@@ -3,7 +3,6 @@ import type {ComponentQuery} from '../components/query'
 import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
-import {ActionResult} from './game-state'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
@@ -70,21 +69,10 @@ export type PickRequest = {
 	onTimeout?: () => void
 }
 
-export type ModalRequest = SelectCards.Request | CopyAttack.Request
-export type ModalData = SelectCards.Data | CopyAttack.Data
-export type ModalResult = SelectCards.Result | CopyAttack.Result
+export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
+export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
 
-export namespace SelectCards {
-	export type Request = {
-		/** The id of the player to request the pick from */
-		playerId: PlayerId
-		data: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
-		/** Called when the modal request times out before being resolved successfully */
-		onTimeout: () => void
-	}
-
+export namespace LocalSelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
@@ -108,7 +96,7 @@ export namespace SelectCards {
 	export type Result =
 		| {
 				result: true
-				cards: null | LocalCardInstance[]
+				cards: null | Array<CardEntity>
 		  }
 		| {
 				result: false
@@ -116,17 +104,7 @@ export namespace SelectCards {
 		  }
 }
 
-export namespace CopyAttack {
-	export type Request = {
-		/** The id of the player to request the pick from */
-		playerId: PlayerId
-		data: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
-		/** Called when the modal request times out before being resolved successfully */
-		onTimeout: () => void
-	}
-
+export namespace LocalCopyAttack {
 	export type Data = {
 		modalId: 'copyAttack'
 		payload: {

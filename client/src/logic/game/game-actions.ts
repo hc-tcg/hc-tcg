@@ -1,6 +1,6 @@
 import {LocalGameState, Message} from 'common/types/game-state'
 import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
-import {LocalCardInstance, ModalResult, SlotInfo} from 'common/types/server-requests'
+import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -75,7 +75,7 @@ export const setOpponentConnection = (payload: boolean) => ({
 
 // ---
 
-export const modalRequest = (payload: {modalResult: ModalResult}) => ({
+export const modalRequest = (payload: {modalResult: LocalModalResult}) => ({
 	type: 'MODAL_REQUEST' as const,
 	payload,
 })

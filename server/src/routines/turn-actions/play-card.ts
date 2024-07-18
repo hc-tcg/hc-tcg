@@ -2,6 +2,7 @@ import {CardComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
 import {PlayCardActionData} from 'common/types/action-data'
 import {ActionResult} from 'common/types/game-state'
+import * as query from 'common/components/query'
 
 function* playCardSaga(
 	game: GameModel,
@@ -14,7 +15,8 @@ function* playCardSaga(
 		return 'FAILURE_INVALID_DATA'
 	}
 
-	const card = CardComponent.fromLocalCardInstance(game, localCard)
+	const card = game.components.find(CardComponent, query.card.entity(localCard.entity))
+	if (!card) return 'FAILURE_INVALID_DATA'
 
 	const {currentPlayer} = game
 

@@ -83,13 +83,13 @@ class GrianRare extends Card {
 					payload: {
 						modalName: 'Grian - Borrow',
 						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
-						cards: [opponentAttachCard.toLocalCardInstance()],
+						cards: [opponentAttachCard.entity],
 						selectionSize: 0,
 						primaryButton: canAttach
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',

@@ -5,13 +5,13 @@ import type {HermitAttackType} from './attack'
 import type {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
-	ModalData,
-	ModalRequest,
+	LocalModalData,
 	PickRequest,
 } from './server-requests'
 import type {CardComponent} from '../components'
 import type {PlayerId} from '../models/player-model'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import {ModalRequest} from './modal-requests'
 
 type NewType = SlotEntity
 
@@ -60,7 +60,7 @@ export type PickCardActionResult =
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
-export type {ModalData} from './server-requests'
+export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
@@ -181,7 +181,7 @@ export type LocalGameState = {
 	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
-	currentModalData: ModalData | null
+	currentModalData: LocalModalData | null
 
 	players: Record<PlayerId, LocalPlayerState>
 

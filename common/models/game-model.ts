@@ -1,7 +1,7 @@
 import {PlayerId, PlayerModel} from './player-model'
 import {TurnAction, GameState, ActionResult, TurnActions, Message} from '../types/game-state'
 import {getGameState, setupEcs} from '../utils/state-gen'
-import {CopyAttack, ModalRequest, PickRequest, SelectCards} from '../types/server-requests'
+import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {ComponentQuery, card} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
@@ -9,6 +9,7 @@ import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
 import ECS from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 
 export class GameModel {
 	private internalCreatedTime: number

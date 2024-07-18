@@ -1,7 +1,6 @@
+import type {Entity, ObserverEntity, StatusEffectEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
-import type {Entity, ObserverEntity, StatusEffectEntity} from '../entities'
-import {type LocalStatusEffectInstance, WithoutFunctions} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
 import {PlayerComponent} from './player-component'
@@ -11,7 +10,7 @@ import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps
+	Props extends StatusEffectProps = StatusEffectProps,
 > {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
@@ -31,21 +30,6 @@ export class StatusEffectComponent<
 		this.targetEntity = null
 		this.counter = null
 		this.observerEntity = null
-	}
-
-	public toLocalStatusEffectInstance(): LocalStatusEffectInstance | null {
-		if (!this.target) {
-			return null
-		}
-		return {
-			props: WithoutFunctions(this.props),
-			instance: this.entity,
-			target:
-				this.target instanceof CardComponent
-					? {type: 'card', card: this.target.entity}
-					: {type: 'player', player: this.target.entity},
-			counter: this.counter,
-		}
 	}
 
 	public get props(): Props {

@@ -106,7 +106,7 @@ class RendogRare extends Card {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								hermitCard: pickedCard.toLocalCardInstance(),
+								hermitCard: pickedCard.entity,
 							},
 						},
 						onResult: (modalResult) => {

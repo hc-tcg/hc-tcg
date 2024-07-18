@@ -35,7 +35,7 @@ class Chest extends Card {
 				payload: {
 					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
 					modalDescription: '',
-					cards: player.getDiscarded().map((card) => card.toLocalCardInstance()),
+					cards: player.getDiscarded().map((card) => card.entity),
 					selectionSize: 1,
 					primaryButton: {
 						text: 'Confirm Selection',

@@ -40,7 +40,7 @@ class Spyglass extends Card {
 					payload: {
 						modalName: `Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`,
 						modalDescription: '',
-						cards: opponentPlayer.getHand().map((card) => card.toLocalCardInstance()),
+						cards: opponentPlayer.getHand().map((card) => card.entity),
 						selectionSize: canDiscard ? 1 : 0,
 						primaryButton: {
 							text: canDiscard ? 'Confirm Selection' : 'Close',
