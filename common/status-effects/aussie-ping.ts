@@ -1,10 +1,5 @@
 import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
@@ -20,7 +15,12 @@ export class AussiePing extends PlayerStatusEffect {
 		applyCondition: query.not(
 			query.exists(
 				StatusEffectComponent,
-				query.every(query.effect.targetIs(query.player), query.effect.is(AussiePingImmune))
+				query.every(
+					query.effect.targetIsPlayerAnd(
+						(game, player) => player.entity === game.currentPlayer.entity
+					),
+					query.effect.is(AussiePingImmune)
+				)
 			)
 		),
 	}

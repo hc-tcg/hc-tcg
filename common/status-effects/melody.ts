@@ -1,6 +1,5 @@
 import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import * as query from '../components/query'
+import {CardComponent} from '../components'
 
 class MelodyEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -8,7 +7,8 @@ class MelodyEffect extends CardStatusEffect {
 		id: 'melody',
 		name: "Ollie's Melody",
 		description: 'This Hermit heals 10hp every turn.',
-		applyCondition: query.not(query.card.hasStatusEffect(MelodyEffect)),
+		applyCondition: (_game, card) =>
+			card instanceof CardComponent && !card.hasStatusEffect(MelodyEffect),
 	}
 
 	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {

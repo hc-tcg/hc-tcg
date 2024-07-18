@@ -22,7 +22,7 @@ export type StatusEffectProps = {
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
-	applyCondition: ComponentQuery<CardComponent>
+	applyCondition: ComponentQuery<CardComponent | PlayerComponent>
 }
 
 export type Counter = StatusEffectProps & {
@@ -56,7 +56,8 @@ export const hiddenStatusEffect = {
 
 export const damageEffect = {
 	type: 'damage' as StatusEffectProps['type'],
-	applyCondition: (game: GameModel, target: CardComponent) =>
+	applyCondition: (game: GameModel, target: CardComponent | PlayerComponent) =>
+		target instanceof CardComponent &&
 		!game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetIs(target.entity),
