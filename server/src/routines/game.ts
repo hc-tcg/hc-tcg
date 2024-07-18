@@ -227,50 +227,49 @@ function* checkHermitHealth(game: GameModel) {
 		const hermitCards = game.components.filter(
 			CardComponent,
 			query.card.attached,
-			query.card.player(game.currentPlayer.entity)
+			query.card.player(playerState.entity)
 		)
 
 		for (const card of hermitCards) {
 			if (!card.slot?.inRow()) continue
-			if (card.slot?.row?.health && card.slot.row.health <= 0) {
-				// Add battle log entry. Non Hermit cards can create their detach message themselves.
-				if (card.props.category === 'hermit') {
-					game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
-				}
+			if (card.slot?.row?.health) continue
+			// Add battle log entry. Non Hermit cards can create their detach message themselves.
+			if (card.props.category === 'hermit') {
+				game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
+			}
 
-				card.discard()
-				if (card.slot.inRow()) {
-					card.slot.row.getAttach()?.discard()
-					card.slot.row.getItems().map((item) => item.discard())
-				}
-
-				if (card.slot.row.entity === playerState.activeRowEntity) {
-					game.changeActiveRow(
-						playerState,
-						game.components.find(
-							RowComponent,
-							query.row.player(playerState.entity),
-							query.row.hasHermit
-						)
+			if (card.slot.row.entity === playerState.activeRowEntity) {
+				game.changeActiveRow(
+					playerState,
+					game.components.find(
+						RowComponent,
+						query.row.player(playerState.entity),
+						query.row.hasHermit
 					)
-					let activeHermit = playerState.activeRow?.getHermit()
-					if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
-				}
+				)
+				let activeHermit = playerState.activeRow?.getHermit()
+				if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
+			}
 
-				// Only hermit cards give points
-				if (card.props.category === 'hermit') {
-					playerState.lives -= 1
+			// We wait to discard becuse you can not change from a row with no hermits to a new active row.
+			card.slot.row.health = null
+			card.slot.row.getAttach()?.discard()
+			card.slot.row.getItems().map((item) => item.discard())
+			card.discard()
 
-					// reward card
-					const rewardCard = game.components
-						.filter(
-							CardComponent,
-							query.card.slot(query.slot.deck),
-							query.card.player(playerState.entity)
-						)
-						.sort(CardComponent.compareOrder)[0]
-					if (rewardCard) {
-					}
+			// Only hermit cards give points
+			if (card.props.category === 'hermit') {
+				playerState.lives -= 1
+
+				// reward card
+				const rewardCard = game.components
+					.filter(
+						CardComponent,
+						query.card.slot(query.slot.deck),
+						query.card.player(playerState.entity)
+					)
+					.sort(CardComponent.compareOrder)[0]
+				if (rewardCard) {
 				}
 			}
 		}
