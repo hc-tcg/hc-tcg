@@ -136,9 +136,8 @@ export class PlayerComponent {
 		}
 
 		this.hooks = {
-			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
-			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-
+			availableEnergy: new WaterfallHook(),
+			blockedActions: new WaterfallHook(),
 			onAttach: new GameHook(),
 			onDetach: new GameHook(),
 			beforeApply: new GameHook(),
