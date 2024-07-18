@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -42,20 +42,17 @@ class Piston extends Card {
 		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		const itemInstanceKey = this.getInstanceKey(component, 'itemInstance')
 
 		let pickedItemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: this.firstPickCondition,
 			onResult(pickResult) {
-				if (!pickResult.cardId) return
-
 				// Store the component of the chosen item
 				pickedItemSlot = pickResult
 			},
@@ -63,45 +60,29 @@ class Piston extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
-			canPick: slot.every(
-				slot.currentPlayer,
-				slot.itemSlot,
-				slot.empty,
-				slot.row(row.hasHermit),
-				slot.not(slot.frozen),
-				slot.adjacentTo(
-					(game, pos) =>
-						!!pickedItemSlot?.cardId && slot.hasInstance(pickedItemSlot?.cardId)(game, pos)
-				)
+			canPick: query.every(
+				query.slot.currentPlayer,
+				query.slot.itemSlot,
+				query.slot.empty,
+				query.slot.row(query.row.hasHermit),
+				query.not(query.slot.frozen),
+				query.slot.adjacentTo((game, pos) => query.slot.entity(pickedItemSlot?.entity)(game, pos))
 			),
 			onResult(pickedSlot) {
-				const logInfo = pickedSlot
-				if (pickedItemSlot !== null && pickedItemSlot.cardId !== null) {
-					logInfo.cardId = pickedItemSlot.cardId
-				}
-
 				// Move the card and apply su card
-				game.swapSlots(pickedItemSlot, pickedSlot, true)
-				applySingleUse(game, logInfo)
+				game.swapSlots(pickedItemSlot, pickedSlot)
+				applySingleUse(game, pickedSlot)
 			},
 		})
 
-		player.hooks.afterApply.add(component, () => {
-			discardSingleUse(game, player)
-
+		observer.subscribe(player.hooks.afterApply, () => {
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 
-			player.hooks.afterApply.remove(component)
+			observer.unsubscribe(player.hooks.afterApply)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.afterApply.remove(component)
 	}
 }
 

@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {row} from '../../../components/query'
 import Card from '../../base/card'
+import * as query from '../../../components/query'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
@@ -24,7 +24,7 @@ class SplashPotionOfHealing extends Card {
 
 		observer.subscribe(player.hooks.onApply, () =>
 			game.components
-				.filter(RowComponent, row.player(player?.entity))
+				.filter(RowComponent, query.row.player(player?.entity))
 				.forEach((row) => row.heal(20))
 		)
 	}

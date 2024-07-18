@@ -91,11 +91,11 @@ export const rowIs = (row: RowEntity | null | undefined): ComponentQuery<SlotCom
 	}
 }
 
-export const index = (index: number | null): ComponentQuery<SlotComponent> => {
+export const index = (index: number | null | undefined): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
-export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent> => {
+export const entity = (entity: SlotEntity | null | undefined): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => pos.entity === entity
 }
 

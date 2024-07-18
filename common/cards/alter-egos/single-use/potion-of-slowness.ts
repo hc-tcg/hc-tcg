@@ -1,5 +1,4 @@
-import {CardComponent, StatusEffectComponent} from '../../../components'
-import {card, row, slot} from '../../../components/query'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import SlownessEffect from '../../../status-effects/slowness'
 import Card from '../../base/card'
@@ -20,25 +19,14 @@ class PotionOfSlowness extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player} = component
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			const opponentActiveHermit = game.components.find(
-				CardComponent,
-				card.slot(slot.hermitSlot),
-				card.row(row.active)
-			)
-			if (!opponentActiveHermit) return
+		observer.subscribe(player.hooks.onApply, () => {
 			game.components
 				.new(StatusEffectComponent, SlownessEffect)
-				.apply(opponentActiveHermit.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

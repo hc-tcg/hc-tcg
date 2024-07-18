@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -31,19 +31,14 @@ class SweepingEdge extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.filter(CardComponent, card.slot(this.discardCondition))
+				.filter(CardComponent, query.card.slot(this.discardCondition))
 				.map((card) => card.discard())
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

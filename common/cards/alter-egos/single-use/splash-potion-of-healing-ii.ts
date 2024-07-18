@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import * as query from '../../../components/query'
 
 class SplashPotionOfHealingII extends Card {
 	props: SingleUse = {
@@ -19,19 +19,14 @@ class SplashPotionOfHealingII extends Card {
 		log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g30hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
-			game
-				.filterSlots(slot.player, slot.hermitSlot)
-				.forEach(({rowId: row, cardId: card}) => healHermit(row, 20))
-		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
+		observer.subscribe(player.hooks.onApply, () =>
+			game.components
+				.filter(RowComponent, query.row.player(player?.entity))
+				.forEach((row) => row.heal(20))
+		)
 	}
 }
 
