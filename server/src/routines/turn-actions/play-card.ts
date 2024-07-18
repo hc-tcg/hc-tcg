@@ -56,7 +56,7 @@ function* playCardSaga(
 				pickedSlot.row.health = card.props.health
 
 				if (player?.activeRowEntity === null) {
-					game.changeActiveRow(currentPlayer, pickedSlot.row)
+					currentPlayer.changeActiveRow(pickedSlot.row)
 				}
 
 				break

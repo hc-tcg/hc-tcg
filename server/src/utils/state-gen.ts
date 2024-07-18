@@ -144,7 +144,8 @@ export function getLocalPlayerState(
 ): LocalPlayerState {
 	let singleUseSlot = game.components.find(SlotComponent, slot.singleUse)?.entity
 	let singleUseCard =
-		game.components.find(CardComponent, card.slotEntity(singleUseSlot))?.toLocalCardInstance() || null
+		game.components.find(CardComponent, card.slotEntity(singleUseSlot))?.toLocalCardInstance() ||
+		null
 
 	if (!singleUseSlot) {
 		throw new Error('Slot is missing when generating local game state.')
@@ -288,10 +289,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		lastActionResult: game.state.lastActionResult,
 
-		currentCardsCanBePlacedIn: playerState.cardsCanBePlacedIn.map(([card, place]) => [
-			card.toLocalCardInstance(),
-			place,
-		]),
+		currentCardsCanBePlacedIn: playerState
+			.getCardsCanBePlacedIn()
+			.map(([card, place]) => [card.toLocalCardInstance(), place]),
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,

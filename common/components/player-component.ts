@@ -13,6 +13,7 @@ import {GameHook, WaterfallHook} from '../types/hooks'
 import {HandSlotComponent, SlotComponent} from './slot-component'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import {StatusEffectComponent} from './status-effect-component'
+import {RowComponent} from './row-component'
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -30,7 +31,6 @@ export class PlayerComponent {
 	singleUseCardUsed: boolean
 
 	pickableSlots: Array<SlotEntity> | null
-	cardsCanBePlacedIn: Array<[CardComponent, Array<SlotEntity>]>
 
 	activeRowEntity: RowEntity | null
 
@@ -226,5 +226,71 @@ export class PlayerComponent {
 			query.effect.is(effect),
 			query.effect.targetEntity(this.entity)
 		)
+	}
+
+	/** Change the active row. Return true if the active row was succesfully changed. */
+	public changeActiveRow(newRow: RowComponent | null): boolean {
+		const currentActiveRow = this.game.components.get(this.activeRowEntity)
+
+		if (!newRow) return false
+
+		// Can't change to existing active row
+		if (newRow === currentActiveRow) return false
+
+		// Call before active row change hooks - if any of the results are false do not change
+		if (currentActiveRow) {
+			let oldHermit = currentActiveRow.getHermit()
+			let newHermit = newRow.getHermit()
+			if (!oldHermit || !newHermit)
+				throw new Error(
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+				)
+			const results = this.hooks.beforeActiveRowChange.call(oldHermit, newHermit)
+			if (results.includes(false)) return false
+		}
+
+		// Create battle log entry
+		if (newRow !== null) {
+			const newHermit = this.game.components.findEntity(
+				CardComponent,
+				query.card.isHermit,
+				query.card.slot(query.slot.rowIs(currentActiveRow?.entity))
+			)
+			const oldHermit = this.game.components.findEntity(
+				CardComponent,
+				query.card.isHermit,
+				query.card.slot(query.slot.rowIs(newRow.entity))
+			)
+			this.game.battleLog.addChangeRowEntry(this, newRow.entity, oldHermit, newHermit)
+		}
+
+		// Change the active row
+		this.activeRowEntity = newRow.entity
+
+		// Call on active row change hooks
+		if (currentActiveRow) {
+			let oldHermit = currentActiveRow.getHermit()
+			let newHermit = newRow.getHermit()
+			if (!oldHermit || !newHermit)
+				throw new Error(
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+				)
+			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
+		}
+
+		return true
+	}
+
+	/** Get an array of (card, slot the card can be placed in) for each card in the hand. */
+	public getCardsCanBePlacedIn() {
+		return this.game.components
+			.filter(CardComponent, query.card.slot(query.slot.hand, query.slot.player(this.entity)))
+			.map(
+				(card) =>
+					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
+						CardComponent,
+						SlotEntity[],
+					]
+			)
 	}
 }

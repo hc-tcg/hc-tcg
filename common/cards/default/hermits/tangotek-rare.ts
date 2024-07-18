@@ -62,7 +62,7 @@ class TangoTekRare extends Card {
 					canPick: opponentInactiveRowsPickCondition,
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
-						game.changeActiveRow(opponentPlayer, pickedSlot.row)
+						opponentPlayer.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout() {
 						let newActiveRow = game.components.find(
@@ -70,7 +70,7 @@ class TangoTekRare extends Card {
 							opponentInactiveRowsPickCondition
 						)
 						if (!newActiveRow?.inRow()) return
-						game.changeActiveRow(game.opponentPlayer, newActiveRow.row)
+						opponentPlayer.changeActiveRow(newActiveRow.row)
 					},
 				})
 			}
@@ -89,7 +89,7 @@ class TangoTekRare extends Card {
 					canPick: playerInactiveRowsPickCondition,
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
-						game.changeActiveRow(player, pickedSlot.row)
+						player.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout() {
 						let newActiveHermit = game.components.find(
@@ -97,7 +97,7 @@ class TangoTekRare extends Card {
 							playerInactiveRowsPickCondition
 						)
 						if (!newActiveHermit?.inRow()) return
-						game.changeActiveRow(game.currentPlayer, newActiveHermit.row)
+						player.changeActiveRow(newActiveHermit.row)
 					},
 				})
 			}

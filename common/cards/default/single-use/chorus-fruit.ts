@@ -59,7 +59,7 @@ class ChorusFruit extends Card {
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						game.changeActiveRow(player, pickedSlot.row)
+						player.changeActiveRow(pickedSlot.row)
 						applySingleUse(game, component.slot)
 					} else {
 						switchedActiveHermit = false

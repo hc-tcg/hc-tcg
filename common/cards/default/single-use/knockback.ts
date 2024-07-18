@@ -52,12 +52,12 @@ class Knockback extends Card {
 					canPick: this.pickCondition,
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
-						game.changeActiveRow(opponentPlayer, pickedSlot.row)
+						opponentPlayer.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout: () => {
 						const slot = game.components.find(SlotComponent, this.pickCondition)
 						if (!slot?.inRow()) return
-						game.changeActiveRow(game.opponentPlayer, slot.row)
+						game.opponentPlayer.changeActiveRow(slot.row)
 					},
 				})
 			}

@@ -52,12 +52,12 @@ class IJevinRare extends Card {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
-					game.changeActiveRow(opponentPlayer, pickedSlot.row)
+					opponentPlayer.changeActiveRow(pickedSlot.row)
 				},
 				onTimeout() {
 					let rowComponent = game.components.find(RowComponent, query.not(query.row.active))
 					if (!rowComponent) return
-					game.changeActiveRow(opponentPlayer, rowComponent)
+					opponentPlayer.changeActiveRow(rowComponent)
 				},
 			})
 		})

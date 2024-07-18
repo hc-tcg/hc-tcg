@@ -63,7 +63,7 @@ class BerryBush extends Card {
 		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {
-			game.changeActiveRow(player, null)
+			player.changeActiveRow(null)
 		}
 
 		if (slot && type === 'hermit' && row) {

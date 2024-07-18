@@ -50,7 +50,7 @@ class Ladder extends Card {
 						query.slot.active
 					)
 				)
-				game.changeActiveRow(player, pickedSlot.row)
+				player.changeActiveRow(pickedSlot.row)
 			},
 		})
 	}

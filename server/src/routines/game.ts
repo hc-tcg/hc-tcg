@@ -246,7 +246,7 @@ function* checkHermitHealth(game: GameModel) {
 					query.row.hasHermit
 				)
 				if (targetRow) {
-					game.changeActiveRow(playerState, targetRow)
+					playerState.changeActiveRow(targetRow)
 				} else {
 					playerState.activeRowEntity = null
 				}
@@ -447,10 +447,6 @@ function* turnActionsSaga(game: GameModel) {
 			) {
 				break
 			}
-
-			// End of available actions code
-
-			game.updateCardsCanBePlacedIn()
 
 			// Timer calculation
 			game.state.timer.turnStartTime = game.state.timer.turnStartTime || Date.now()

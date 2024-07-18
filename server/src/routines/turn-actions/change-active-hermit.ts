@@ -19,7 +19,7 @@ function* changeActiveHermit(
 	const hadActiveHermit = currentPlayer.activeRowEntity !== null
 
 	// Change row
-	const result = game.changeActiveRow(currentPlayer, row)
+	const result = currentPlayer.changeActiveRow(row)
 	if (!result) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (hadActiveHermit) {

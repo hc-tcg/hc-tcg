@@ -3,7 +3,7 @@ import {TurnAction, GameState, ActionResult, TurnActions, Message} from '../type
 import {getGameState, setupEcs} from '../utils/state-gen'
 import {CopyAttack, ModalRequest, PickRequest, SelectCards} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {ComponentQuery, card, row, slot} from '../components/query'
+import {ComponentQuery, card} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
@@ -70,10 +70,6 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
-	}
-
-	public findOpponentActiveRow(): RowComponent | null {
-		return this.components.find(RowComponent, row.active, row.player(this.opponentPlayerEntity))
 	}
 
 	public getPlayerIds() {
@@ -243,77 +239,6 @@ export class GameModel {
 
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
-	}
-
-	/** Update the cards that the players are able to select */
-	public updateCardsCanBePlacedIn() {
-		const getCardsCanBePlacedIn = (player: PlayerComponent) => {
-			return this.components
-				.filter(CardComponent, card.slot(slot.hand, slot.player(player.entity)))
-				.map(
-					(card) =>
-						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
-							CardComponent,
-							SlotEntity[]
-						]
-				)
-		}
-
-		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
-		this.opponentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.opponentPlayer)
-	}
-
-	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerComponent, newRow: RowComponent | null): boolean {
-		const currentActiveRow = this.components.get(player.activeRowEntity)
-
-		if (!newRow) return false
-
-		// Can't change to existing active row
-		if (newRow === currentActiveRow) return false
-
-		// Call before active row change hooks - if any of the results are false do not change
-		if (currentActiveRow) {
-			let oldHermit = currentActiveRow.getHermit()
-			let newHermit = newRow.getHermit()
-			if (!oldHermit || !newHermit)
-				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
-				)
-			const results = player.hooks.beforeActiveRowChange.call(oldHermit, newHermit)
-			if (results.includes(false)) return false
-		}
-
-		// Create battle log entry
-		if (newRow !== null) {
-			const newHermit = this.components.findEntity(
-				CardComponent,
-				card.isHermit,
-				card.slot(slot.rowIs(currentActiveRow?.entity))
-			)
-			const oldHermit = this.components.findEntity(
-				CardComponent,
-				card.isHermit,
-				card.slot(slot.rowIs(newRow.entity))
-			)
-			this.battleLog.addChangeRowEntry(player, newRow.entity, oldHermit, newHermit)
-		}
-
-		// Change the active row
-		player.activeRowEntity = newRow.entity
-
-		// Call on active row change hooks
-		if (currentActiveRow) {
-			let oldHermit = currentActiveRow.getHermit()
-			let newHermit = newRow.getHermit()
-			if (!oldHermit || !newHermit)
-				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
-				)
-			player.hooks.onActiveRowChange.call(oldHermit, newHermit)
-		}
-
-		return true
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
