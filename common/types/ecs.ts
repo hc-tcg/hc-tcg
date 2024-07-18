@@ -6,7 +6,7 @@ export type Component = {
 	entity: Entity<any>
 }
 
-/** The component table is a map of Component Entities to component objects. Components in the component
+/** The component table is a map of entities to component objects. Components in the component
  * table can also be filtered. See the filter method for more information.
  */
 export default class ComponentTable {
