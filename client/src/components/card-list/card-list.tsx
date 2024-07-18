@@ -28,17 +28,6 @@ const CardList = (props: CardListProps) => {
 		const isDisabled = !!disabled?.find((id) => id == card.props.id)
 		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
 
-		const cssClasses =
-			disableAnimations !== false
-				? {
-						enter: css.enter,
-						enterActive: css.enterActive,
-						enterDone: css.enterDone,
-						exit: css.exit,
-						exitActive: css.exitActive,
-				  }
-				: {}
-
 		let cardComponent = (
 			<CardComponent
 				key={card.entity}
@@ -57,7 +46,18 @@ const CardList = (props: CardListProps) => {
 
 		if (!disableAnimations) {
 			return (
-				<CSSTransition key={card.entity} timeout={250} unmountOnExit={true} classNames={cssClasses}>
+				<CSSTransition
+					key={card.entity}
+					timeout={250}
+					unmountOnExit={true}
+					classNames={{
+						enter: css.enter,
+						enterActive: css.enterActive,
+						enterDone: css.enterDone,
+						exit: css.exit,
+						exitActive: css.exitActive,
+					}}
+				>
 					{cardComponent}
 				</CSSTransition>
 			)

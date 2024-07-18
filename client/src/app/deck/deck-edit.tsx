@@ -144,18 +144,17 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		ALL_CARDS.filter(
 			(card) =>
 				// Card Name Filter
-				(card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
-					// Card Rarity Filter
-					(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
-					// Card Type Filter
-					(typeQuery === '' ||
-						((isHermit(card.props) || isItem(card.props)) &&
-							card.props.type.includes(typeQuery))) &&
-					// Card Expansion Filter
-					expansionQuery === '') ||
-				(card.props.expansion === expansionQuery &&
-					// Don't show disabled cards
-					!EXPANSIONS.disabled.includes(card.props.expansion))
+				card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
+				// Card Rarity Filter
+				(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
+				// Card Type Filter
+				(typeQuery === '' ||
+					((isHermit(card.props) || isItem(card.props)) && card.props.type.includes(typeQuery))) &&
+				// Card Expansion Filter
+				(expansionQuery === '' ||
+					(card.props.expansion === expansionQuery &&
+						// Don't show disabled cards
+						!EXPANSIONS.disabled.includes(card.props.expansion)))
 		)
 	)
 
