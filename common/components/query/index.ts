@@ -13,12 +13,12 @@ export {slot, row, effect, card, player}
 export type ComponentQuery<Value> = (game: GameModel, value: Value) => boolean
 
 /** Always return true */
-export function anything<T>(game: GameModel, value: T) {
+export function anything<T>(_game: GameModel, _value: T) {
 	return true
 }
 
 /** Always return false */
-export function nothing<T>(game: GameModel, value: T) {
+export function nothing<T>(_game: GameModel, _value: T) {
 	return false
 }
 
@@ -45,7 +45,7 @@ export function exists<T extends Component, U>(
 	type: new (...args: Array<any>) => T,
 	...predicates: Array<ComponentQuery<T>>
 ): ComponentQuery<U> {
-	return (game, pos) => game.components.exists(type, ...predicates)
+	return (game, _value) => game.components.exists(type, ...predicates)
 }
 
 export function value<T>(getQuery: (value: T) => ComponentQuery<T>): ComponentQuery<T> {
@@ -53,5 +53,5 @@ export function value<T>(getQuery: (value: T) => ComponentQuery<T>): ComponentQu
 }
 
 export function actionAvailable<T>(action: TurnAction): ComponentQuery<T> {
-	return (game, _pos) => game.state.turn.availableActions.includes(action)
+	return (game, _value) => game.state.turn.availableActions.includes(action)
 }
