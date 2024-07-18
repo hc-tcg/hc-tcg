@@ -4,6 +4,7 @@ import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {CardEntity} from 'common/entities'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
+	console.log(decode(hash))
 	try {
 		var b64 = decode(hash)
 			.split('')

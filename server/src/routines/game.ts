@@ -239,19 +239,9 @@ function* checkHermitHealth(game: GameModel) {
 			}
 
 			if (card.slot.row.entity === playerState.activeRowEntity) {
-				let targetRow = game.components.find(
-					RowComponent,
-					query.not(query.row.entity(playerState.activeRowEntity)),
-					query.row.player(playerState.entity),
-					query.row.hasHermit
-				)
-				if (targetRow) {
-					playerState.changeActiveRow(targetRow)
-				} else {
-					playerState.activeRowEntity = null
-				}
 				let activeHermit = playerState.activeRow?.getHermit()
 				if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
+				playerState.activeRowEntity = null
 			}
 
 			// We wait to discard becuse you can not change from a row with no hermits to a new active row.
