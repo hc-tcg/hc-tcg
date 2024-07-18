@@ -161,39 +161,48 @@ export function getLocalPlayerState(
 			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
 		singleUse: {slot: singleUseSlot, card: singleUseCard},
 		singleUseCardUsed: playerState.singleUseCardUsed,
-		rows: game.components.filter(RowComponent, row.player(playerState.entity)).map((row) => {
-			const hermitCard = row.getHermit()
-			const hermitSlot = row.getHermitSlot()
-			const attachCard = row.getAttach()
-			const attachSlot = row.getAttachSlot()
+		rows: game.components
+			.filter(RowComponent, row.player(playerState.entity))
+			.map((row) => {
+				const hermitCard = row.getHermit()
+				const hermitSlot = row.getHermitSlot()
+				const attachCard = row.getAttach()
+				const attachSlot = row.getAttachSlot()
 
-			const items = row.getItemSlots().map((itemSlot) => {
-				return {
-					slot: itemSlot.entity,
-					card:
-						game.components
-							.find(CardComponent, card.slotEntity(itemSlot.entity))
-							?.toLocalCardInstance() || null,
-				}
+				const items = row.getItemSlots().map((itemSlot) => {
+					return {
+						slot: itemSlot.entity,
+						card:
+							game.components
+								.find(CardComponent, card.slotEntity(itemSlot.entity))
+								?.toLocalCardInstance() || null,
+					}
+				})
+
+				if (!hermitSlot || !attachSlot)
+					throw new Error('Slot is missing when generating local game state.')
+
+				return [
+					row.index,
+					{
+						entity: row.entity,
+						hermit: {
+							slot: hermitSlot.entity,
+							card: (hermitCard?.toLocalCardInstance() as any) || null,
+						},
+						attach: {
+							slot: attachSlot.entity,
+							card: (attachCard?.toLocalCardInstance() as any) || null,
+						},
+						items: items,
+						health: row.health,
+					},
+				]
 			})
-
-			if (!hermitSlot || !attachSlot)
-				throw new Error('Slot is missing when generating local game state.')
-
-			return {
-				entity: row.entity,
-				hermit: {
-					slot: hermitSlot.entity,
-					card: (hermitCard?.toLocalCardInstance() as any) || null,
-				},
-				attach: {
-					slot: attachSlot.entity,
-					card: (attachCard?.toLocalCardInstance() as any) || null,
-				},
-				items: items,
-				health: row.health,
-			}
-		}),
+			.sort(
+				([rowIndexA, _rowA], [rowIndexB, _rowB]) => (rowIndexA as number) - (rowIndexB as number)
+			)
+			.map(([_, row]) => row),
 	}
 
 	const localPlayerState: LocalPlayerState = {
