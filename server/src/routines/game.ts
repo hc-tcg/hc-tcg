@@ -164,7 +164,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.components
-			.filter(CardComponent, query.card.slot(query.slot.player(currentPlayer.entity), query.slot.hand))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(currentPlayer.entity), query.slot.hand)
+			)
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.components.filter(SlotComponent, card.card.props.attachCondition)
 
@@ -212,7 +215,7 @@ function playerAction(actionType: string, playerId: PlayerId) {
 
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
-function* checkHermitHealth(game: GameModel) {
+function* checkHermitHealth(game: GameModel): Array<PlayerComponent> {
 	const deadPlayerIds: Array<string> = []
 	for (let playerState of game.components.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
@@ -264,7 +267,11 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.components.exists(CardComponent, query.card.attached, query.card.isHermit)
+		const noHermitsLeft = !game.components.exists(
+			CardComponent,
+			query.card.attached,
+			query.card.isHermit
+		)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -336,7 +343,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
-			result = yield *call(endTurnSaga, game)
+			result = yield* call(endTurnSaga, game)
 			break
 		default:
 			// Unknown action type, ignore it completely
@@ -560,11 +567,10 @@ function* turnSaga(game: GameModel) {
 
 	// Check for dead hermits on turn start
 	if (game.state.turn.turnNumber > 2) {
-		const turnStartDeadPlayerIds = yield* call(checkHermitHealth, game)
-		if (turnStartDeadPlayerIds.length) {
-			game.endInfo.reason =
-				game.state.players[turnStartDeadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
-			game.endInfo.deadPlayerIds = turnStartDeadPlayerIds
+		const turnStartDeadPlayers = yield* call(checkHermitHealth, game)
+		if (turnStartDeadPlayers.length) {
+			game.endInfo.reason = turnStartDeadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
+			game.endInfo.deadPlayerIds = turnStartDeadPlayers.map((player) => player.id)
 			return 'GAME_END'
 		}
 	}
@@ -592,10 +598,10 @@ function* turnSaga(game: GameModel) {
 	}
 	game.state.modalRequests = []
 
-	const deadPlayerIds = yield* call(checkHermitHealth, game)
-	if (deadPlayerIds.length) {
-		game.endInfo.reason = game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
-		game.endInfo.deadPlayerIds = deadPlayerIds
+	const deadPlayers = yield* call(checkHermitHealth, game)
+	if (deadPlayers.length) {
+		game.endInfo.reason = deadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
+		game.endInfo.deadPlayerIds = deadPlayers.map((player) => player.id)
 		return 'GAME_END'
 	}
 
