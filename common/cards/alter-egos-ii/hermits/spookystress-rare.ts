@@ -36,7 +36,7 @@ class SpookyStressRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
-		const {player} = component
+		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.attacker?.entity !== component.entity) return
