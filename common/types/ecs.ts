@@ -49,11 +49,7 @@ export default class ComponentTable {
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
-		const value = new newValue(
-			this.game,
-			newEntity<T['entity']>(newValue.name + '-entity'),
-			...args
-		)
+		const value = new newValue(this.game, newEntity<T['entity']>(newValue.name), ...args)
 		this.data[value.entity] = value
 		return value
 	}
