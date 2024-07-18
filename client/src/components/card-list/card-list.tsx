@@ -14,11 +14,11 @@ type CardListProps = {
 	onClick?: (card: LocalCardInstance) => void
 	wrap?: boolean
 	tooltipAboveModal?: boolean
-	enableAnimations?: boolean
+	disableAnimations?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, unpickable, selected, picked, enableAnimations} = props
+	const {wrap, onClick, cards, disabled, unpickable, selected, picked, disableAnimations} = props
 
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
@@ -29,7 +29,7 @@ const CardList = (props: CardListProps) => {
 		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
 
 		const cssClasses =
-			enableAnimations !== false
+			disableAnimations !== false
 				? {
 						enter: css.enter,
 						enterActive: css.enterActive,
@@ -39,30 +39,42 @@ const CardList = (props: CardListProps) => {
 				  }
 				: {}
 
-		return (
-			<CSSTransition key={card.entity} timeout={250} unmountOnExit={true} classNames={cssClasses}>
-				<CardComponent
-					key={card.entity}
-					className={cn(css.card, {
-						[css.clickable]: !!onClick && !isDisabled,
-					})}
-					onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
-					card={card.props}
-					unpickable={isUnpickable}
-					disabled={isDisabled}
-					selected={isSelected}
-					picked={isPicked}
-					tooltipAboveModal={props.tooltipAboveModal}
-				/>
-			</CSSTransition>
+		let cardComponent = (
+			<CardComponent
+				key={card.entity}
+				className={cn(css.card, {
+					[css.clickable]: !!onClick && !isDisabled,
+				})}
+				onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
+				card={card.props}
+				unpickable={isUnpickable}
+				disabled={isDisabled}
+				selected={isSelected}
+				picked={isPicked}
+				tooltipAboveModal={props.tooltipAboveModal}
+			/>
 		)
+
+		if (!disableAnimations) {
+			return (
+				<CSSTransition key={card.entity} timeout={250} unmountOnExit={true} classNames={cssClasses}>
+					{cardComponent}
+				</CSSTransition>
+			)
+		} else {
+			return cardComponent
+		}
 	})
 
-	return (
-		<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
-			{cardsOutput}
-		</TransitionGroup>
-	)
+	if (!disableAnimations) {
+		return (
+			<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
+				{cardsOutput}
+			</TransitionGroup>
+		)
+	} else {
+		return <div className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</div>
+	}
 }
 
 export default CardList

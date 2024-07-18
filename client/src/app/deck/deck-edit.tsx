@@ -4,7 +4,7 @@ import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {CARDS} from 'common/cards'
+import {CARDS_LIST} from 'common/cards'
 import Card from 'common/cards/base/card'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {PlayerDeckT} from 'common/types/deck'
@@ -16,11 +16,12 @@ import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
 import {CONFIG, EXPANSIONS} from '../../../../common/config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
-import {getDeckCost} from 'common/utils/ranks'
+import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {CardEntity, newEntity} from 'common/entities'
+import {isHermit, isItem} from 'common/cards/base/types'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -40,7 +41,7 @@ const DECK_ICONS = [
 const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
-		return Object.values(CARDS).some(
+		return CARDS_LIST.some(
 			(card) => card.props.expansion === expansion && !EXPANSIONS.disabled.includes(expansion)
 		)
 	}),
@@ -113,6 +114,14 @@ type Props = {
 	deck: PlayerDeckT
 }
 
+const ALL_CARDS = CARDS_LIST.map(
+	(card: Card): LocalCardInstance => ({
+		props: WithoutFunctions(card.props),
+		entity: card.props.numericId.toString() as CardEntity,
+		slot: null,
+	})
+)
+
 function EditDeck({back, title, saveDeck, deck}: Props) {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
@@ -130,25 +139,24 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	//MISC
 	const initialDeckState = deck
-	const allCards = Object.values(CARDS).map(
-		(card: Card): LocalCardInstance => ({
-			props: WithoutFunctions(card.props),
-			entity: card.props.numericId.toString() as CardEntity,
-			slot: null,
-		})
-	)
-	const filteredCards: LocalCardInstance[] = allCards.filter(
-		(card) =>
-			// Card Name Filter
-			card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
-			// Card Type Filter
-			card.props.category.includes(typeQuery) &&
-			// Card Rarity Filter
-			(rankQuery === '' || card.props.rarity === rankQuery) &&
-			// Card Expansion Filter
-			(expansionQuery === '' || card.props.expansion === expansionQuery) &&
-			// Don't show disabled cards
-			!EXPANSIONS.disabled.includes(card.props.expansion)
+
+	const filteredCards: LocalCardInstance[] = sortCards(
+		ALL_CARDS.filter(
+			(card) =>
+				// Card Name Filter
+				(card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
+					// Card Rarity Filter
+					(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
+					// Card Type Filter
+					(typeQuery === '' ||
+						((isHermit(card.props) || isItem(card.props)) &&
+							card.props.type.includes(typeQuery))) &&
+					// Card Expansion Filter
+					expansionQuery === '') ||
+				(card.props.expansion === expansionQuery &&
+					// Don't show disabled cards
+					!EXPANSIONS.disabled.includes(card.props.expansion))
+		)
 	)
 
 	const selectedCards = {
@@ -344,34 +352,32 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				>
 					<Accordion header={'Hermits'}>
 						<CardList
-							cards={sortCards(filteredCards).filter((card) => card.props.category === 'hermit')}
-							enableAnimations={false}
+							cards={filteredCards.filter((card) => card.props.category === 'hermit')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter((card) => card.props.category === 'attach')}
-							enableAnimations={false}
+							cards={filteredCards.filter((card) => card.props.category === 'attach')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Single Use Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => card.props.category === 'single_use'
-							)}
-							enableAnimations={false}
+							cards={filteredCards.filter((card) => card.props.category === 'single_use')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Items'}>
 						<CardList
-							cards={sortCards(filteredCards).filter((card) => card.props.category === 'item')}
-							enableAnimations={false}
+							cards={filteredCards.filter((card) => card.props.category === 'item')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
