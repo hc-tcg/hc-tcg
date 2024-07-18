@@ -145,7 +145,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	})
 }
 
-export function getLocalStatusEffect(effect: StatusEffectComponent) {
+function getLocalStatusEffect(effect: StatusEffectComponent) {
 	if (!effect.target) {
 		return null
 	}
@@ -160,7 +160,7 @@ export function getLocalStatusEffect(effect: StatusEffectComponent) {
 	}
 }
 
-export function getLocalCard<Props extends CardProps>(
+function getLocalCard<Props extends CardProps>(
 	card: CardComponent<Props>
 ): LocalCardInstance<Props> {
 	return {
@@ -170,7 +170,7 @@ export function getLocalCard<Props extends CardProps>(
 	}
 }
 
-export function getLocalModalDataPayload(
+function getLocalModalDataPayload(
 	game: GameModel,
 	modal: ModalData
 ): LocalModalData['payload'] {
@@ -189,13 +189,14 @@ export function getLocalModalDataPayload(
 	throw new Error('Uknown modal type')
 }
 
-export function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
+function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 	return {
 		modalId: modal.modalId,
 		payload: getLocalModalDataPayload(game, modal),
 	} as LocalModalData
 }
-export function getLocalPlayerState(
+
+function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent
 ): LocalPlayerState {
