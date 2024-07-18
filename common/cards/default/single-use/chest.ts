@@ -20,6 +20,7 @@ class Chest extends Card {
 		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
 			return game.components.exists(
 				CardComponent,
+				query.card.currentPlayer,
 				query.card.slot(query.slot.discardPile),
 				query.not(query.card.is(Clock))
 			)
