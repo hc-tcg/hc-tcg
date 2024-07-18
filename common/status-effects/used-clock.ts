@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
 import JoeHillsRare from '../cards/default/hermits/joehills-rare'
 
-class UsedClock extends PlayerStatusEffect {
+class UsedClockEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		id: 'used-clock',
@@ -35,4 +35,4 @@ class UsedClock extends PlayerStatusEffect {
 	}
 }
 
-export default UsedClock
+export default UsedClockEffect

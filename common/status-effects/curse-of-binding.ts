@@ -1,10 +1,10 @@
 import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
 
 class CurseOfBindingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...hiddenStatusEffect,
 		id: 'curse-of-binding',
 		name: 'Curse of Binding',
 		description: 'You can not switch your active hermit this turn.',

@@ -11,8 +11,8 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {
-	InvisibilityPotionHeads,
-	InvisibilityPotionTails,
+	InvisibilityPotionHeadsEffect,
+	InvisibilityPotionTailsEffect,
 } from '../../../status-effects/invisibility-potion'
 
 class InvisibilityPotion extends Card {
@@ -47,9 +47,9 @@ class InvisibilityPotion extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			if (flipCoin(player, component)[0] === 'heads') {
-				game.components.new(StatusEffectComponent, InvisibilityPotionHeads).apply(player.entity)
+				game.components.new(StatusEffectComponent, InvisibilityPotionHeadsEffect).apply(player.entity)
 			} else {
-				game.components.new(StatusEffectComponent, InvisibilityPotionTails).apply(player.entity)
+				game.components.new(StatusEffectComponent, InvisibilityPotionTailsEffect).apply(player.entity)
 			}
 		})
 	}

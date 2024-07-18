@@ -2,7 +2,7 @@ import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../comp
 import {GameModel} from '../models/game-model'
 import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
-class TurnSkipped extends PlayerStatusEffect {
+class TurnSkippedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'turn-skipped',
@@ -36,4 +36,4 @@ class TurnSkipped extends PlayerStatusEffect {
 	}
 }
 
-export default TurnSkipped
+export default TurnSkippedEffect

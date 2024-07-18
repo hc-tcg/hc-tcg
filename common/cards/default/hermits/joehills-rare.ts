@@ -5,8 +5,8 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {effect} from '../../../components/query'
-import UsedClock from '../../../status-effects/used-clock'
-import TurnSkipped from '../../../status-effects/turn-skipped'
+import UsedClockEffect from '../../../status-effects/used-clock'
+import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 
 class JoeHillsRare extends Card {
 	props: Hermit = {
@@ -49,7 +49,7 @@ class JoeHillsRare extends Card {
 			if (
 				game.components.exists(
 					StatusEffectComponent,
-					effect.is(UsedClock),
+					effect.is(UsedClockEffect),
 					effect.targetEntity(component.entity)
 				)
 			)
@@ -62,8 +62,8 @@ class JoeHillsRare extends Card {
 				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
 			)
 
-			game.components.new(StatusEffectComponent, TurnSkipped).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, UsedClock).apply(player.entity)
+			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
 		})
 	}
 }

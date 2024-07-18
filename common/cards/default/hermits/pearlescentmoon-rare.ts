@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {AussiePing} from '../../../status-effects/aussie-ping'
+import {AussiePingEffect} from '../../../status-effects/aussie-ping'
 
 class PearlescentMoonRare extends Card {
 	props: Hermit = {
@@ -42,7 +42,7 @@ class PearlescentMoonRare extends Card {
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components.new(StatusEffectComponent, AussiePing).apply(player.entity)
+			game.components.new(StatusEffectComponent, AussiePingEffect).apply(player.entity)
 		})
 	}
 }

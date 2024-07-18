@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import SheepStare from '../../../status-effects/sheep-stare'
+import SheepStareEffect from '../../../status-effects/sheep-stare'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -41,7 +41,7 @@ class ZedaphPlaysRare extends Card {
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			game.components.new(StatusEffectComponent, SheepStare).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, SheepStareEffect).apply(opponentPlayer.entity)
 		})
 	}
 }

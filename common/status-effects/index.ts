@@ -9,17 +9,17 @@ import DyedEffect from './dyed'
 import MuseumCollectionEffect from './museum-collection'
 import SmeltingEffect from './smelting'
 import MelodyEffect from './melody'
-import UsedClock from './used-clock'
-import RevivedByDeathloop from './revived-by-deathloop'
-import Betrayed from './betrayed'
-import SheepStare from './sheep-stare'
-import {AussiePing as AussiePing, AussiePingImmune as AussiePingImmune} from './aussie-ping'
+import UsedClockEffect from './used-clock'
+import RevivedByDeathloopEffect from './revived-by-deathloop'
+import BetrayedEffect from './betrayed'
+import SheepStareEffect from './sheep-stare'
+import {AussiePingEffect as AussiePingEffect, AussiePingImmuneEffect as AussiePingImmuneEffect} from './aussie-ping'
 import {
-	InvisibilityPotionHeads as InvisibilityPotionHeads,
-	InvisibilityPotionTails as InvisibilityPotionTails,
+	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
+	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
-import TurnSkipped from './turn-skipped'
-import {PrimaryAttackDisabled, SecondaryAttackDisabled} from './derp-coin'
+import TurnSkippedEffect from './turn-skipped'
+import {PrimaryAttackDisabledEffect, SecondaryAttackDisabledEffect} from './derp-coin'
 import {TrapHoleEffect} from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
 import {StatusEffect} from './status-effect'
@@ -39,17 +39,17 @@ const effectClasses: Array<new () => StatusEffect> = [
 	MelodyEffect,
 
 	/* System Status Effect */
-	UsedClock,
-	RevivedByDeathloop,
-	Betrayed,
-	SheepStare,
-	AussiePing,
-	AussiePingImmune,
-	InvisibilityPotionHeads,
-	InvisibilityPotionTails,
-	TurnSkipped,
-	PrimaryAttackDisabled,
-	SecondaryAttackDisabled,
+	UsedClockEffect,
+	RevivedByDeathloopEffect,
+	BetrayedEffect,
+	SheepStareEffect,
+	AussiePingEffect,
+	AussiePingImmuneEffect,
+	InvisibilityPotionHeadsEffect,
+	InvisibilityPotionTailsEffect,
+	TurnSkippedEffect,
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
 	TrapHoleEffect,
 	CurseOfBindingEffect,
 ]

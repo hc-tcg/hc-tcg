@@ -5,7 +5,7 @@ import {CardStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
-export class PrimaryAttackDisabled extends CardStatusEffect {
+export class PrimaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
 		id: 'primary-attack-disabled',
@@ -31,7 +31,7 @@ export class PrimaryAttackDisabled extends CardStatusEffect {
 	}
 }
 
-export class SecondaryAttackDisabled extends CardStatusEffect {
+export class SecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
 		id: 'secondary-attack-disabled',

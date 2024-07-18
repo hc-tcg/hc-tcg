@@ -9,8 +9,8 @@ import {
 } from '../../../components'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import UsedClock from '../../../status-effects/used-clock'
-import TurnSkipped from '../../../status-effects/turn-skipped'
+import UsedClockEffect from '../../../status-effects/used-clock'
+import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 
 class Clock extends Card {
 	props: SingleUse = {
@@ -33,7 +33,7 @@ class Clock extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.not(
-				query.exists(SlotComponent, query.slot.currentPlayer, query.slot.hasStatusEffect(UsedClock))
+				query.exists(SlotComponent, query.slot.currentPlayer, query.slot.hasStatusEffect(UsedClockEffect))
 			),
 			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
@@ -43,8 +43,8 @@ class Clock extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
 		observer.subscribe(player.hooks.onApply, () => {
-			game.components.new(StatusEffectComponent, TurnSkipped).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, UsedClock).apply(player.entity)
+			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
 		})
 	}
 }

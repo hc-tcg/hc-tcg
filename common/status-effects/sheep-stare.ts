@@ -11,7 +11,7 @@ import {
 } from '../components'
 import {row} from '../components/query'
 
-class SheepStare extends PlayerStatusEffect {
+class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'sheep-stare',
@@ -58,4 +58,4 @@ class SheepStare extends PlayerStatusEffect {
 	}
 }
 
-export default SheepStare
+export default SheepStareEffect

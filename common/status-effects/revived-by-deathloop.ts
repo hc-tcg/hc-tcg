@@ -1,6 +1,6 @@
 import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
-class RevivedByDeathloop extends CardStatusEffect {
+class RevivedByDeathloopEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'revived_by_deathloop',
@@ -9,4 +9,4 @@ class RevivedByDeathloop extends CardStatusEffect {
 	}
 }
 
-export default RevivedByDeathloop
+export default RevivedByDeathloopEffect

@@ -5,7 +5,7 @@ import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import * as query from '../components/query'
 
-export class AussiePing extends PlayerStatusEffect {
+export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping',
@@ -19,7 +19,7 @@ export class AussiePing extends PlayerStatusEffect {
 					query.effect.targetIsPlayerAnd(
 						(game, player) => player.entity === game.currentPlayer.entity
 					),
-					query.effect.is(AussiePingImmune)
+					query.effect.is(AussiePingImmuneEffect)
 				)
 			)
 		),
@@ -54,20 +54,20 @@ export class AussiePing extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.afterAttack, () => {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components.new(StatusEffectComponent, AussiePingImmune).apply(player.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(player.entity)
 			}
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, (_) => {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components.new(StatusEffectComponent, AussiePingImmune).apply(player.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(player.entity)
 			}
 		})
 	}
 }
 
-export class AussiePingImmune extends PlayerStatusEffect {
+export class AussiePingImmuneEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping-immune',

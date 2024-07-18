@@ -9,7 +9,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 
-class Betrayed extends PlayerStatusEffect {
+class BetrayedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'betrayed',
@@ -117,4 +117,4 @@ class Betrayed extends PlayerStatusEffect {
 	}
 }
 
-export default Betrayed
+export default BetrayedEffect

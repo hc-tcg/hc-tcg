@@ -2,7 +2,7 @@ import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../comp
 import {GameModel} from '../models/game-model'
 import {PlayerStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 
-export class InvisibilityPotionHeads extends PlayerStatusEffect {
+export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-heads',
@@ -27,7 +27,7 @@ export class InvisibilityPotionHeads extends PlayerStatusEffect {
 	}
 }
 
-export class InvisibilityPotionTails extends PlayerStatusEffect {
+export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-tails',
