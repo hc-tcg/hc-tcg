@@ -37,28 +37,23 @@ class EnderPearl extends Card {
 			message: 'Pick an empty Hermit slot',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				// We need to have no card there
-				if (pickedSlot.cardId || rowIndex === null) return
-				let activeHermit = player.activeRow.getHermit()
-
-				if (player.activeRow === null) return
-
-				const logInfo = pickedSlot
+				if (!pickedSlot.inRow() || !player.activeRow) return
 
 				// Apply
-				applySingleUse(game, logInfo)
+				applySingleUse(game, pickedSlot)
 
 				// Move us
-				game.swapRows(player, player.activeRow, rowIndex)
+				game.swapRows(player.activeRow, pickedSlot.row)
 
 				// Do 10 damage
-				const attack = game.newAttack({
-					attacker: player.activeRow,
-					target: player.activeRow.entity,
-					type: 'effect',
-					isBacklash: true,
-				}).addDamage(this.id, 10)
+				const attack = game
+					.newAttack({
+						attacker: pickedSlot.getCard()?.entity,
+						target: player.activeRowEntity,
+						type: 'effect',
+						isBacklash: true,
+					})
+					.addDamage(this.id, 10)
 				executeAttacks(game, [attack], true)
 			},
 		})
