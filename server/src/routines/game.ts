@@ -243,6 +243,7 @@ function* checkHermitHealth(game: GameModel) {
 					playerState,
 					game.components.find(
 						RowComponent,
+						query.not(query.row.entity(playerState.activeRowEntity)),
 						query.row.player(playerState.entity),
 						query.row.hasHermit
 					)
