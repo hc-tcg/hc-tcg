@@ -1,12 +1,15 @@
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	// followActiveHermit,
-	systemStatusEffect,
-} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	RowComponent,
+	StatusEffectComponent,
+} from '../components'
+import {row} from '../components/query'
 
 class SheepStare extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -17,44 +20,41 @@ class SheepStare extends PlayerStatusEffect {
 			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		let {player} = pos
-
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
 		let coinFlipResult: CoinFlipT | null = null
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-			if (!attack.getAttacker()) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (attack.attacker?.entity !== effect.targetEntity) return
+			if (attack.type !== 'primary') return
+
+			const activeHermit = player.activeRow?.getHermit()
+			if (!activeHermit) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, instance.target)
+				const coinFlip = flipCoin(player, activeHermit)
 				coinFlipResult = coinFlip[0]
 			}
 
+			if (!(attack.attacker instanceof CardComponent) || !attack.attacker.slot.inRow()) return
+
 			if (coinFlipResult === 'heads') {
-				attack.setTarget(this.props.id, attack.getAttacker())
+				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
 			}
 		})
 
-		player.hooks.afterAttack.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			effect.remove()
 		})
 
-		player.hooks.onTurnEnd.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			effect.remove()
 		})
-
-		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
-	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = component
-
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.onActiveRowChange.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 	}
 }
 

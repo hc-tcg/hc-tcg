@@ -1,8 +1,8 @@
-import {CardComponent, StatusEffectComponent} from '../components'
+import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 
-export class InvisibilityPotionHeads extends CardStatusEffect {
+export class InvisibilityPotionHeads extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-heads',
@@ -10,35 +10,24 @@ export class InvisibilityPotionHeads extends CardStatusEffect {
 		description: 'Your next attack will miss.',
 	}
 
-	public override onApply(
+	override onApply(
 		game: GameModel,
-		instance: StatusEffectComponent,
-		pos: CardComponent
-	): void {
-		const {player} = pos
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.isType('weakness', 'effect', 'status-effect')) return
-			attack.multiplyDamage(this.props.id, 0)
+			attack.multiplyDamage(effect.entity, 0)
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			effect.remove()
 		})
-	}
-
-	public override onRemoval(
-		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
-		pos: CardPosModel
-	): void {
-		const {player} = pos
-		player.hooks.onActiveRowChange.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
 	}
 }
 
-export class InvisibilityPotionTails extends CardStatusEffect {
+export class InvisibilityPotionTails extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'invisibility-potion-tails',
@@ -46,30 +35,19 @@ export class InvisibilityPotionTails extends CardStatusEffect {
 		description: 'Your next attack will deal double damage.',
 	}
 
-	public override onApply(
+	override onApply(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
-		pos: CardPosModel
-	): void {
-		const {player} = pos
-		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
-
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.isType('weakness', 'effect', 'status-effect')) return
-			attack.multiplyDamage(this.props.id, 2)
+			attack.multiplyDamage(effect.entity, 2)
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			effect.remove()
 		})
-	}
-
-	public override onRemoval(
-		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
-		pos: CardPosModel
-	): void {
-		const {player} = pos
-		player.hooks.onActiveRowChange.remove(instance)
 	}
 }

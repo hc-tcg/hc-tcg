@@ -31,7 +31,7 @@ class InstantHealth extends Card {
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
