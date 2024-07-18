@@ -11,7 +11,7 @@ import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffectProps = StatusEffectProps
 > {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
@@ -56,8 +56,8 @@ export class StatusEffectComponent<
 		return this.game.components.get(this.targetEntity) as any
 	}
 
-	/** Apply a status effect to a specific card, or the active hermit if not specified */
-	public apply(targetEntity?: Entity<TargetT> | null) {
+	/** Apply a status effect to a specific player or card */
+	public apply(targetEntity: Entity<TargetT> | null) {
 		if (!targetEntity) return
 
 		let target = this.game.components.get(targetEntity)

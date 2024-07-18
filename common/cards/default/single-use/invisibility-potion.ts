@@ -47,13 +47,9 @@ class InvisibilityPotion extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			if (flipCoin(player, component)[0] === 'heads') {
-				game.components
-					.new(StatusEffectComponent, InvisibilityPotionHeads)
-					.apply(opponentPlayer.getActiveHermit()?.entity)
+				game.components.new(StatusEffectComponent, InvisibilityPotionHeads).apply(player.entity)
 			} else {
-				game.components
-					.new(StatusEffectComponent, InvisibilityPotionTails)
-					.apply(opponentPlayer.getActiveHermit()?.entity)
+				game.components.new(StatusEffectComponent, InvisibilityPotionTails).apply(player.entity)
 			}
 		})
 	}
