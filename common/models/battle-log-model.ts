@@ -7,7 +7,6 @@ import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
-import {isHermit} from '../cards/base/types'
 import {CardEntity, PlayerEntity, RowEntity, StatusEffectEntity} from '../entities'
 
 export class BattleLogModel {
