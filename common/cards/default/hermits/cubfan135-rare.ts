@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class Cubfan135RareHermitCard extends Card {
+class Cubfan135Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'cubfan135_rare',
@@ -28,12 +29,11 @@ class Cubfan135RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isTargetting(component) || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
 			// AKA remove change active hermit from blocked actions
@@ -41,11 +41,6 @@ class Cubfan135RareHermitCard extends Card {
 			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
-	}
 }
 
-export default Cubfan135RareHermitCard
+export default Cubfan135Rare

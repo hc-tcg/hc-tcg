@@ -1,11 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class DungeonTangoRareHermitCard extends Card {
+class DungeonTangoRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'dungeontango_rare',
@@ -33,11 +33,11 @@ class DungeonTangoRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId || attack.type !== 'primary') return
 
 			let i: number = 0
@@ -54,11 +54,11 @@ class DungeonTangoRareHermitCard extends Card {
 				playerId: player.id,
 				id: this.props.id,
 				message: 'Choose an item card to discard',
-				canPick: slot.every(slot.player, slot.itemSlot, slot.activeRow, slot.not(slot.empty)),
+				canPick: slot.every(slot.player, slot.item, slot.active, slot.not(slot.empty)),
 				onResult(pickedSlot) {
-					if (!pickedSlot.card) return
+					if (!pickedSlot.cardId) return
 
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 
 					player.hand.push(player.pile.splice(i, 1)[0])
 				},
@@ -66,11 +66,11 @@ class DungeonTangoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default DungeonTangoRareHermitCard
+export default DungeonTangoRare

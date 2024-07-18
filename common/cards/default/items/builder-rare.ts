@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class BuilderRareItemCard extends Card {
+class BuilderDoubleItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_builder_rare',
@@ -16,9 +17,9 @@ class BuilderRareItemCard extends Card {
 		type: 'builder',
 	}
 
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override getEnergy(game: GameModel, component: CardComponent) {
 		return [this.props.type, this.props.type]
 	}
 }
 
-export default BuilderRareItemCard
+export default BuilderDoubleItem

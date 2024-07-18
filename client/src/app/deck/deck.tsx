@@ -1,9 +1,7 @@
 import classNames from 'classnames'
 import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInstance} from 'common/types/game-state'
 import CardList from 'components/card-list'
-import {CARDS} from 'common/cards'
 import {validateDeck} from 'common/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
@@ -30,7 +28,7 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
-import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
+import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 const TYPE_ORDER = {
@@ -175,11 +173,9 @@ const Deck = ({setMenuSection}: Props) => {
 		const deck = getSavedDeck(deckName)
 		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
-		const deckIds = deck.cards?.filter((card) => card.props.id)
-
 		setLoadedDeck({
 			...deck,
-			cards: deckIds,
+			cards: deck.cards,
 		})
 	}
 	const importDeck = (deck: PlayerDeckT) => {

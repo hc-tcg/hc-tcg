@@ -1,7 +1,9 @@
-import {slot} from '../../../slot'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class FletchingTableSingleUseCard extends Card {
+class FletchingTable extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fletching_table',
@@ -11,8 +13,8 @@ class FletchingTableSingleUseCard extends Card {
 		rarity: 'common',
 		tokens: -1,
 		description: 'Completely useless! Worth -1 tokens.',
-		attachCondition: slot.nothing,
+		attachCondition: query.nothing,
 	}
 }
 
-export default FletchingTableSingleUseCard
+export default FletchingTable

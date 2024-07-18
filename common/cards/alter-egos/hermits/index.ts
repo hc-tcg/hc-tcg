@@ -1,33 +1,33 @@
 // common cards
-import BeetlejhostCommonHermitCard from './beetlejhost-common'
-import EvilJevinCommonHermitCard from './eviljevin-common'
-import PoultrymanCommonHermitCard from './poultryman-common'
+import BeetlejhostCommon from './beetlejhost-common'
+import EvilJevinCommon from './eviljevin-common'
+import PoultrymanCommon from './poultryman-common'
 // rare & ultra rare cards
-import LlamadadRareHermitCard from './llamadad-rare'
-import PotatoBoyRareHermitCard from './potatoboy-rare'
-import GoatfatherRareHermitCard from './goatfather-rare'
-import HotguyRareHermitCard from './hotguy-rare'
-import JinglerRareHermitCard from './jingler-rare'
-import EvilXisumaRareHermitCard from './evilxisuma_rare'
-import HelsknightRareHermitCard from './helsknight-rare'
-import RenbobRareHermitCard from './renbob-rare'
-import HumanCleoRareHermitCard from './humancleo-rare'
-import Card from '../../base/card'
+import LlamadadRare from './llamadad-rare'
+import PotatoBoyRare from './potatoboy-rare'
+import GoatfatherRare from './goatfather-rare'
+import HotguyRare from './hotguy-rare'
+import JinglerRare from './jingler-rare'
+import EvilXisumaRare from './evilxisuma_rare'
+import HelsknightRare from './helsknight-rare'
+import RenbobRare from './renbob-rare'
+import HumanCleoRare from './humancleo-rare'
+import {CardClass} from '../../base/card'
 
-const hermitCardClasses: Array<Card> = [
+const hermitCardClasses: Array<CardClass> = [
 	// AE Cards
-	new BeetlejhostCommonHermitCard(),
-	new EvilJevinCommonHermitCard(),
-	new EvilXisumaRareHermitCard(),
-	new GoatfatherRareHermitCard(),
-	new HelsknightRareHermitCard(),
-	new HotguyRareHermitCard(),
-	new HumanCleoRareHermitCard(),
-	new JinglerRareHermitCard(),
-	new LlamadadRareHermitCard(),
-	new PotatoBoyRareHermitCard(),
-	new PoultrymanCommonHermitCard(),
-	new RenbobRareHermitCard(),
+	BeetlejhostCommon,
+	EvilJevinCommon,
+	EvilXisumaRare,
+	GoatfatherRare,
+	HelsknightRare,
+	HotguyRare,
+	HumanCleoRare,
+	JinglerRare,
+	LlamadadRare,
+	PotatoBoyRare,
+	PoultrymanCommon,
+	RenbobRare,
 ]
 
 export default hermitCardClasses

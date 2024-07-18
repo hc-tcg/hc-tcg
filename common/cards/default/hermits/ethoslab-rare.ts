@@ -1,11 +1,13 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import FireEffect from '../../../status-effects/fire'
+import * as query from '../../../components/query'
 
-class EthosLabRareHermitCard extends Card {
+class EthosLabRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ethoslab_rare',
@@ -36,31 +38,26 @@ class EthosLabRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.getTarget() || !attacker)
-				return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (attack.attacker?.entity === component.entity || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] !== 'heads') return
 
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
-
-			applyStatusEffect(game, 'fire', opponentActiveRow?.hermitCard)
+			let opponentActiveHermit = game.components.find(
+				CardComponent,
+				query.card.opponentPlayer,
+				query.card.active,
+				query.card.slot(query.slot.hermit)
+			)
+			game.components.new(StatusEffectComponent, FireEffect).apply(opponentActiveHermit?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default EthosLabRareHermitCard
+export default EthosLabRare

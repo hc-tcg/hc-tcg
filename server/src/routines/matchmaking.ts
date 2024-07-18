@@ -4,12 +4,12 @@ import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
 
 export type ClientMessage = {
 	type: string
-	playerId: string
+	playerId: PlayerId
 	playerSecret: string
 	payload?: any
 }
@@ -77,7 +77,7 @@ function* gameManager(game: GameModel) {
 	}
 }
 
-export function inGame(playerId: string) {
+export function inGame(playerId: PlayerId) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 

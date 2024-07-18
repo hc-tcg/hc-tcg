@@ -1,10 +1,7 @@
-import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectInstance} from '../types/game-state'
-import {discardCard} from '../utils/movement'
 
-class SmeltingStatusEffect extends StatusEffect {
+class SmeltingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'smelting',
@@ -15,27 +12,27 @@ class SmeltingStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	// 	const {player} = component
 
-		player.hooks.onTurnStart.add(instance, () => {
-			if (instance.counter === null) return
-			instance.counter -= 1
-			if (instance.counter === 0) {
-				discardCard(game, pos.card)
-				pos.row?.itemCards.forEach((card) => {
-					if (!card) return
-					card.card.props.id = card.card.props.id.replace('common', 'rare')
-				})
-			}
-		})
-	}
+	// 	player.hooks.onTurnStart.add(instance, () => {
+	// 		if (instance.counter === null) return
+	// 		instance.counter -= 1
+	// 		if (instance.counter === 0) {
+	// 			discardCard(game, pos.cardId)
+	// 			pos.rowId?.itemCards.forEach((card) => {
+	// 				if (!card) return
+	// 				card.card.props.numericId = card.card.props.numericId.replace('common', 'rare')
+	// 			})
+	// 		}
+	// 	})
+	// }
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	// 	const {player} = component
 
-		player.hooks.onTurnStart.remove(instance)
-	}
+	// 	player.hooks.onTurnStart.remove(instance)
+	// }
 }
 
-export default SmeltingStatusEffect
+export default SmeltingEffect

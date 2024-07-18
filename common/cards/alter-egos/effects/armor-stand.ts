@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {slot} from '../../../slot'
-import Card, {Attach, HasHealth, attach, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {Attach, HasHealth} from '../../base/types'
+import {attach, hermit} from '../../base/defaults'
 
-class ArmorStandEffectCard extends Card {
+class ArmorStand extends Card {
 	props: Attach & HasHealth = {
 		...attach,
 		id: 'armor_stand',
@@ -26,23 +27,16 @@ class ArmorStandEffectCard extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.freezeSlots.add(instance, () => {
-			return slot.every(slot.player, slot.rowIndex(pos.rowIndex))
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+		observer.subscribe(player.hooks.freezeSlots, () => {
+			if (!component.slot?.onBoard()) return query.nothing
+			return query.every(
+				query.slot.player(component.player.entity),
+				query.slot.rowIs(component.slot.row?.entity)
+			)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-
-		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
-
-		player.hooks.blockedActions.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		player.hooks.freezeSlots.remove(instance)
 	}
 }
 
-export default ArmorStandEffectCard
+export default ArmorStand

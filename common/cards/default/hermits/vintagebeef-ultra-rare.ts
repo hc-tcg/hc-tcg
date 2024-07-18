@@ -1,9 +1,18 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
+import BdoubleO100Common from './bdoubleo100-common'
+import BdoubleO100Rare from './bdoubleo100-rare'
+import Docm77Common from './docm77-common'
+import Docm77Rare from './docm77-rare'
+import EthosLabCommon from './ethoslab-common'
+import EthosLabRare from './ethoslab-rare'
+import EthosLabUltraRare from './ethoslab-ultra-rare'
 
-class VintageBeefUltraRareHermitCard extends Card {
+class VintageBeefUltraRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'vintagebeef_ultra_rare',
@@ -28,32 +37,31 @@ class VintageBeefUltraRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const hasBdubs = player.board.rows.some((row) =>
-				row.hermitCard?.props.name.startsWith('bdoubleo100')
+			const hasBdubs = game.components.find(
+				CardComponent,
+				card.currentPlayer,
+				card.is(BdoubleO100Common, BdoubleO100Rare)
 			)
-			const hasDoc = player.board.rows.some((row) =>
-				row.hermitCard?.props.name.startsWith('docm77')
+			const hasDoc = game.components.find(
+				CardComponent,
+				card.currentPlayer,
+				card.is(Docm77Common, Docm77Rare)
 			)
-			const hasEtho = player.board.rows.some((row) =>
-				row.hermitCard?.props.name.startsWith('ethoslab')
+			const hasEtho = game.components.find(
+				CardComponent,
+				card.currentPlayer,
+				card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare)
 			)
 
-			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(this.props.id, attack.getDamage())
+			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default VintageBeefUltraRareHermitCard
+export default VintageBeefUltraRare

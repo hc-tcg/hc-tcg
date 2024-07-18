@@ -1,12 +1,13 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {RowEntity} from '../../../entities'
 
-class TinFoilChefUltraRareHermitCard extends Card {
+class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'tinfoilchef_ultra_rare',
@@ -32,39 +33,43 @@ class TinFoilChefUltraRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		let hasDiscardedFrom = new Set<string>()
+		let hasDiscardedFrom = new Set<RowEntity>()
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			if (opponentPlayer.board.activeRow === null) return 'NO'
-			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (!opponentActiveRow.effectCard) return
-			if (!slot.someSlotFulfills(slot.every(slot.opponent, slot.attachSlot, slot.not(slot.frozen))))
+			if (opponentPlayer.activeRow === null) return
+			if (
+				!game.components.exists(
+					SlotComponent,
+					query.slot.opponent,
+					query.slot.attach,
+					query.not(query.slot.frozen)
+				)
+			)
 				return
 
-			// Can't discard two items on the same hermit
-			if (hasDiscardedFrom.has(opponentActiveRow.hermitCard.instance)) return
+			// Can't discard two effect cards on the same hermit
+			if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
-			hasDiscardedFrom.add(opponentActiveRow.hermitCard.instance)
+			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
 
-			discardCard(game, opponentActiveRow.effectCard)
+			game.components
+				.find(
+					CardComponent,
+					query.card.active,
+					query.card.opponentPlayer,
+					query.card.slot(query.slot.attach, query.not(query.slot.frozen))
+				)
+				?.discard()
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.beforeAttack.remove(instance)
 	}
 }
 
-export default TinFoilChefUltraRareHermitCard
+export default TinFoilChefUltraRare

@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class PythonGBRareHermitCard extends Card {
+class PythonGBRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'pythongb_rare',
@@ -30,11 +31,11 @@ class PythonGBRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 
 			const activeRow = player.board.activeRow
 			if (activeRow === null) return
@@ -44,7 +45,7 @@ class PythonGBRareHermitCard extends Card {
 					row.hermitCard &&
 					(index === activeRow - 1 || index === activeRow + 1) &&
 					['xisumavoid_common', 'xisumavoid_rare', 'rendog_common', 'rendog_rare'].includes(
-						row.hermitCard.props.id
+						row.hermitcard.props.numericId
 					)
 			).length
 
@@ -52,11 +53,11 @@ class PythonGBRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default PythonGBRareHermitCard
+export default PythonGBRare

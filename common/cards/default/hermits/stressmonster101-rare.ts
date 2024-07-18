@@ -1,10 +1,10 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class StressMonster101RareHermitCard extends Card {
+class StressMonster101Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'stressmonster101_rare',
@@ -30,35 +30,27 @@ class StressMonster101RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			const attacker = attack.getAttacker()
-			if (!attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow()) return
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'selfAttack'),
-				attacker,
-				target: attacker,
+			const backlashAttack = game.newAttack({
+				attacker: component.entity,
+				target: game.opponentPlayer.activeRowEntity,
 				type: 'secondary',
 				isBacklash: true,
 				log: (values) => ` and took ${values.damage} backlash damage`,
 			})
-			const attackDamage = attacker.row.health
-			attack.addDamage(this.props.id, attackDamage)
-			backlashAttack.addDamage(this.props.id, attackDamage)
+			const attackDamage = component.slot.row.health
+			attack.addDamage(component.entity, attackDamage || 0)
+			backlashAttack.addDamage(component.entity, attackDamage || 0)
 
 			attack.addNewAttack(backlashAttack)
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
-	}
 }
 
-export default StressMonster101RareHermitCard
+export default StressMonster101Rare

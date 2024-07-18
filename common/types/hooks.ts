@@ -1,32 +1,37 @@
-import {CardInstance, StatusEffectInstance} from './game-state'
+import type {ObserverEntity} from '../entities'
 
-export class Hook<Listener, Args extends (...args: any) => any> {
-	public listeners: Array<[Listener, Args]> = []
-	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
-
-	public constructor(eq?: (a: Listener, b: Listener) => boolean) {
-		this.eq = eq || this.eq
-	}
+export class Hook<Listener extends any, Args extends (...args: any) => any> {
+	public listeners: Array<[Listener, Args, string]> = []
 
 	/**
 	 * Adds a new listener to this hook
 	 */
 	public add(listener: Listener, call: Args) {
-		this.listeners.push([listener, call])
+		let proxy = Math.random().toString()
+		this.listeners.push([listener, call, proxy])
+		return proxy
 	}
 
 	/**
 	 * Adds a new listener to this hook before any other existing listeners
 	 */
 	public addBefore(listener: Listener, call: Args) {
-		this.listeners.unshift([listener, call])
+		let proxy = Math.random().toString()
+		this.listeners.unshift([listener, call, proxy])
+		return proxy
 	}
 
 	/**
 	 * Removes all the listeners tied to a specific instance
 	 */
 	public remove(listener: Listener) {
-		this.listeners = this.listeners.filter(([hookListener, _]) => !this.eq(hookListener, listener))
+		this.listeners = this.listeners.filter(
+			([hookListener, _func, _proxy]) => hookListener !== listener
+		)
+	}
+
+	public removeByProxy(proxy: string) {
+		this.listeners = this.listeners.filter(([_hook, _func, funcProxy]) => proxy !== funcProxy)
 	}
 
 	/**
@@ -42,22 +47,11 @@ export class Hook<Listener, Args extends (...args: any) => any> {
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
-export class GameHook<Args extends (...args: any) => any> extends Hook<
-	CardInstance | StatusEffectInstance,
-	Args
-> {
-	constructor() {
-		// We override the eq function because card and status instances can not be compared with the regular === operator.
-		super((a, b) => a.instance == b.instance)
-	}
-
+export class GameHook<Args extends (...args: any) => any> extends Hook<ObserverEntity, Args> {
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
-	public callSome(
-		params: Parameters<Args>,
-		predicate: (instance: CardInstance | StatusEffectInstance) => boolean
-	) {
+	public callSome(params: Parameters<Args>, predicate: (instance: ObserverEntity) => boolean) {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
 			.map(([_, listener]) => listener(...(params as Array<any>)))

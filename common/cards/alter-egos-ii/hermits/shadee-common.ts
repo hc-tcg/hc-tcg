@@ -1,6 +1,8 @@
-import Card, {hermit, Hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class ShadEECommonHermitCard extends Card {
+class ShadEECommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'shadee_common',
@@ -28,4 +30,4 @@ class ShadEECommonHermitCard extends Card {
 	}
 }
 
-export default ShadEECommonHermitCard
+export default ShadEECommon

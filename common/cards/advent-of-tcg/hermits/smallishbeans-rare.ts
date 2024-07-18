@@ -1,10 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {getActiveRowPos} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class SmallishbeansRareHermitCard extends Card {
+class SmallishbeansRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'smallishbeans_rare',
@@ -31,11 +31,11 @@ class SmallishbeansRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, row} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player, rowId: row} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const activeRow = getActiveRowPos(player)
@@ -53,11 +53,11 @@ class SmallishbeansRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default SmallishbeansRareHermitCard
+export default SmallishbeansRare

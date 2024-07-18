@@ -3,7 +3,6 @@ import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
-import {equalCard} from 'common/utils/cards'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 type CardListProps = {
@@ -23,11 +22,11 @@ const CardList = (props: CardListProps) => {
 
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
-			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
 			: false
-		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
+		const isPicked = !!picked?.find((pickedCard) => card.entity === pickedCard.entity)
 		const isDisabled = !!disabled?.find((id) => id == card.props.id)
-		const isUnpickable = !!unpickable?.find((findCard) => findCard.instance === card.instance)
+		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
 
 		const cssClasses =
 			enableAnimations !== false
@@ -41,9 +40,9 @@ const CardList = (props: CardListProps) => {
 				: {}
 
 		return (
-			<CSSTransition key={card.instance} timeout={250} unmountOnExit={true} classNames={cssClasses}>
+			<CSSTransition key={card.entity} timeout={250} unmountOnExit={true} classNames={cssClasses}>
 				<CardComponent
-					key={card.instance}
+					key={card.entity}
 					className={cn(css.card, {
 						[css.clickable]: !!onClick && !isDisabled,
 					})}

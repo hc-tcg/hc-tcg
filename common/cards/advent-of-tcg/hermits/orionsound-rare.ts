@@ -1,12 +1,12 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class OrionSoundRareHermitCard extends Card {
+class OrionSoundRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'orionsound_rare',
@@ -34,25 +34,25 @@ class OrionSoundRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
 
 		let cardsWithStatusEffects: Array<string> = []
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.instance,
+				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
-				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
+				canPick: slot.every(slot.not(slot.empty), slot.hermit),
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, 'melody', pickedSlot.card)
-					cardsWithStatusEffects.push(pickedSlot.card.instance)
+					applyStatusEffect(game, 'melody', pickedSlot.cardId)
+					cardsWithStatusEffects.push(pickedSlot.cardId.component)
 				},
 			})
 		})
@@ -62,9 +62,9 @@ class OrionSoundRareHermitCard extends Card {
 			if (!attackTarget || attackTarget.row.health > 0) return
 			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 				return (
-					cardsWithStatusEffects.includes(ail.targetInstance.instance) && ail.props.id == 'melody'
+					cardsWithStatusEffects.includes(ail.targetInstance.component) && ail.props.id == 'melody'
 				)
 			})
 			statusEffectsToRemove.forEach((ail) => {
@@ -72,18 +72,18 @@ class OrionSoundRareHermitCard extends Card {
 			})
 		}
 
-		player.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
+		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 
-export default OrionSoundRareHermitCard
+export default OrionSoundRare

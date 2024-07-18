@@ -1,16 +1,17 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class TargetBlockSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.opponent,
-		slot.hermitSlot,
-		slot.not(slot.activeRow),
-		slot.not(slot.empty)
+class TargetBlock extends Card {
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.hermit,
+		query.not(query.slot.active),
+		query.not(query.slot.empty)
 	)
 
 	props: SingleUse = {
@@ -23,49 +24,34 @@ class TargetBlockSingleUseCard extends Card {
 		tokens: 3,
 		description:
 			"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: "Pick one of your opponent's AFK Hermits",
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.card || rowIndex === null) return
-
-				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row.hermitCard) return
-
+				if (!pickedSlot.inRow()) return
 				// Apply the card
 				applySingleUse(game, pickedSlot)
 
 				// Redirect all future attacks this turn
-				player.hooks.beforeAttack.add(instance, (attack) => {
+				observer.subscribe(player.hooks.beforeAttack, (attack) => {
 					if (attack.isType('status-effect') || attack.isBacklash) return
 
-					attack.setTarget(this.id, {
-						player: opponentPlayer,
-						rowIndex,
-						row,
-					})
+					attack.setTarget(this.id, pickedSlot.row.entity)
 				})
 			},
-		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			player.hooks.beforeAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
-			opponentPlayer.hooks.onDefence.remove(instance)
 		})
 	}
 }
 
-export default TargetBlockSingleUseCard
+export default TargetBlock

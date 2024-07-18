@@ -1,12 +1,12 @@
-import StatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
-class RevivedByDeathloopStatusEffect extends StatusEffect {
+class RevivedByDeathloopEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'revived-by-deathloop',
+		id: 'revived_by_deathloop',
 		name: 'Revived',
 		description: "This hermit has been revived by Scar's deathloop attack.",
 	}
 }
 
-export default RevivedByDeathloopStatusEffect
+export default RevivedByDeathloopEffect

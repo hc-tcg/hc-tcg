@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot, SlotCondition} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {singleUse, SingleUse} from '../../base/card'
+import {query} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class BrushSingleUseCard extends Card {
+class Brush extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'brush',
@@ -16,16 +17,16 @@ class BrushSingleUseCard extends Card {
 		description:
 			'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => pos.player.pile.length >= 3
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -47,11 +48,11 @@ class BrushSingleUseCard extends Card {
 
 					const cards = modalResult.cards
 
-					const topCards: Array<CardInstance> = []
-					const bottomCards: Array<CardInstance> = []
+					const topCards: Array<CardComponent> = []
+					const bottomCards: Array<CardComponent> = []
 
 					player.pile.slice(0, 3).forEach((c) => {
-						if (cards.some((d) => c.instance === d.instance)) topCards.push(c)
+						if (cards.some((d) => c.id === d.component)) topCards.push(c)
 						else bottomCards.push(c)
 					})
 
@@ -68,10 +69,10 @@ class BrushSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onApply.remove(component)
 	}
 }
 
-export default BrushSingleUseCard
+export default Brush

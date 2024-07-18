@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import * as query from '../../../components/query'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
-class SplashPotionOfHealingSingleUseCard extends Card {
+class SplashPotionOfHealing extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_healing',
@@ -18,18 +19,15 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g20hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			game.filterSlots(slot.player, slot.hermitSlot).forEach(({row, card}) => healHermit(row, 20))
-		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		observer.subscribe(player.hooks.onApply, () =>
+			game.components
+				.filter(RowComponent, query.row.player(player?.entity))
+				.forEach((row) => row.heal(20))
+		)
 	}
 }
 
-export default SplashPotionOfHealingSingleUseCard
+export default SplashPotionOfHealing

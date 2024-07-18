@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class WelsknightRareHermitCard extends Card {
+class WelsknightRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'welsknight_rare',
@@ -29,25 +30,17 @@ class WelsknightRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-			const attacker = attack.getAttacker()
-			if (!attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow() || !component.slot.row.health) return
 
-			if (attacker.row.health < 200) attack.addDamage(this.props.id, 20)
-			if (attacker.row.health < 100) attack.addDamage(this.props.id, 20)
+			if (component.slot.row.health < 200) attack.addDamage(component.entity, 20)
+			if (component.slot.row.health < 100) attack.addDamage(component.entity, 20)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default WelsknightRareHermitCard
+export default WelsknightRare

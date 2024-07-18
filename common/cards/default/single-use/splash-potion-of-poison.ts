@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import PoisonEffect from '../../../status-effects/poison'
 
-class SplashPotionOfPoisonSingleUseCard extends Card {
+class SplashPotionOfPoison extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_poison',
@@ -22,27 +23,18 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 				name: 'poison',
 			},
 		],
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const opponentActiveRow = opponentPlayer.board.activeRow
-			if (opponentActiveRow === null) return
-			applyStatusEffect(
-				game,
-				'poison',
-				opponentPlayer.board.rows[opponentActiveRow].hermitCard || undefined
-			)
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, PoisonEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default SplashPotionOfPoisonSingleUseCard
+export default SplashPotionOfPoison

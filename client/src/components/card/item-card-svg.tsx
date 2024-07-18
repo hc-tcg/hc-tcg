@@ -3,7 +3,7 @@ import css from './item-card-svg.module.scss'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import Card, {Item} from 'common/cards/base/card'
+import {Item} from 'common/cards/base/types'
 import {getCardRank} from 'common/utils/ranks'
 import {WithoutFunctions} from 'common/types/server-requests'
 

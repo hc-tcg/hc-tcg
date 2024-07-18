@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class LDShadowLadyRareHermitCard extends Card {
+class LDShadowLadyRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ldshadowlady_rare',
@@ -32,24 +33,24 @@ class LDShadowLadyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			if (
-				attack.id !== this.getInstanceKey(instance) ||
+				attack.id !== this.getInstanceKey(component) ||
 				attack.type !== 'secondary' ||
 				!attack.getTarget()
 			)
 				return
 
-			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermitSlot, slot.activeRow))) return
+			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermit, slot.active))) return
 
 			const pickCondition = slot.every(
 				slot.empty,
-				slot.hermitSlot,
+				slot.hermit,
 				slot.opponent,
-				slot.not(slot.activeRow)
+				slot.not(slot.active)
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
@@ -81,11 +82,11 @@ class LDShadowLadyRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default LDShadowLadyRareHermitCard
+export default LDShadowLadyRare

@@ -1,12 +1,17 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../slot'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
-class GoldenAppleSingleUseCard extends Card {
-	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.activeRow), slot.not(slot.empty))
+class GoldenApple extends Card {
+	pickCondition = query.every(
+		query.slot.hermit,
+		query.not(query.slot.active),
+		query.not(query.slot.empty)
+	)
 
 	props: SingleUse = {
 		...singleUse,
@@ -18,35 +23,30 @@ class GoldenAppleSingleUseCard extends Card {
 		tokens: 3,
 		description: 'Heal one of your AFK Hermits 100hp.',
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.playerHasActiveHermit,
-			slot.someSlotFulfills(this.pickCondition)
+			query.slot.playerHasActiveHermit,
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.card || rowIndex === null) return
-
-				const row = player.board.rows[rowIndex]
-				if (!row.health) return
-
+				if (!pickedSlot.onBoard()) throw new Error('Can not pick slot that is not on board')
 				// Apply
 				applySingleUse(game, pickedSlot)
 
-				healHermit(row, 100)
+				pickedSlot.row?.heal(100)
 			},
 		})
 	}
 }
 
-export default GoldenAppleSingleUseCard
+export default GoldenApple

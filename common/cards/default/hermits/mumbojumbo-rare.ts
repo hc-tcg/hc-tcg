@@ -1,13 +1,15 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
 */
-class MumboJumboRareHermitCard extends Card {
+class MumboJumboRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'mumbojumbo_rare',
@@ -33,34 +35,25 @@ class MumboJumboRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
-				return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
+			const coinFlip = flipCoin(player, component, 2)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			const pranksterAmount = player.board.rows.filter(
-				(row, index) =>
-					row.hermitCard &&
-					index !== player.board.activeRow &&
-					row.hermitCard.isHermit() &&
-					row.hermitCard.props.type === 'prankster'
+			const pranksterAmount = game.components.filter(
+				CardComponent,
+				card.currentPlayer,
+				card.afk,
+				card.type('prankster')
 			).length
 
-			attack.addDamage(this.props.id, headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(this.props.id, 2)
+			attack.addDamage(component.entity, headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default MumboJumboRareHermitCard
+export default MumboJumboRare

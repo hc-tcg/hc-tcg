@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class PvPCommonItemCard extends Card {
+class PvPItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_pvp_common',
@@ -16,9 +17,9 @@ class PvPCommonItemCard extends Card {
 		type: 'pvp',
 	}
 
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override getEnergy(game: GameModel, component: CardComponent) {
 		return [this.props.type]
 	}
 }
 
-export default PvPCommonItemCard
+export default PvPItem

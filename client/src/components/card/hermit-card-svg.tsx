@@ -5,7 +5,7 @@ import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import {memo} from 'react'
-import {Hermit} from 'common/cards/base/card'
+import {Hermit} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 
 export type HermitCardProps = {

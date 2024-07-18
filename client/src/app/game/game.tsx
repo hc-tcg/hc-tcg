@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInstance} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
@@ -28,10 +27,10 @@ import {
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
-import {PickCardActionData} from 'common/types/action-data'
+import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
-import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -83,7 +82,7 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickInfo: PickInfo) => {
+	const handleBoardClick = (pickInfo: SlotInfo) => {
 		console.log('Slot selected: ', pickInfo)
 		dispatch(slotPicked(pickInfo))
 	}
@@ -92,18 +91,13 @@ function Game() {
 		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
+			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-			const actionData: PickCardActionData = {
+			const actionData: PickSlotActionData = {
 				type: 'PICK_REQUEST',
 				payload: {
-					pickResult: {
-						playerId: gameState.playerId,
-						card: card,
-						type: 'hand',
-						rowIndex: null,
-						index,
-					},
+					entity: card.slot,
 				},
 			}
 
@@ -112,6 +106,7 @@ function Game() {
 			if (equalCard(card, selectedCard)) {
 				dispatch(setSelectedCard(null))
 			} else {
+				console.log('Selecting card:', card)
 				dispatch(setSelectedCard(card))
 			}
 		}
@@ -214,12 +209,10 @@ function Game() {
 
 	let unpickableCards: Array<LocalCardInstance> = []
 	const pickableCards = pickRequestPickableSlots
-		?.filter((slot) => slot.type === 'hand')
-		.map((slot) => slot.card?.instance)
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card.instance)) unpickableCards.push(card)
+			if (card.slot && !pickableCards.includes(card.slot)) unpickableCards.push(card)
 		}
 	}
 

@@ -1,11 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {flipCoin} from '../../../utils/coinFlips'
-import {moveCardInstanceoHand} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 
-class HelsknightRareHermitCard extends Card {
+class HelsknightRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'helsknight_rare',
@@ -33,44 +33,14 @@ class HelsknightRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
-				return
-
-			const attackerHermit = attacker.row.hermitCard
-			opponentPlayer.hooks.onApply.add(instance, () => {
-				if (!opponentPlayer.board.singleUseCard) return
-				const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
-
-				if (coinFlip[0] == 'heads') {
-					moveCardInstanceoHand(game, opponentPlayer.board.singleUseCard, player)
-
-					opponentPlayer.board.singleUseCardUsed = false
-
-					game.battleLog.addEntry(
-						player.id,
-						`$p{Helsknight}$ flipped $pheads$ and took $e${opponentPlayer.board.singleUseCard.props.name}$`
-					)
-				} else {
-					game.battleLog.addEntry(player.id, `$p{Helsknight}$ flipped $btails$b`)
-				}
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.onApply.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
-			})
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components.new(StatusEffectComponent, TrapHoleEffect).apply(opponentPlayer.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default HelsknightRareHermitCard
+export default HelsknightRare

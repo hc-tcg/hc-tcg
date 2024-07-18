@@ -31,7 +31,7 @@ function SelectCardsModal({closeModal}: Props) {
 			const newSelection = [...current]
 			// Remove a card if it is clicked on when selected
 			if (selected.includes(newSelected)) {
-				return newSelection.filter((card) => card !== newSelected)
+				return newSelection.filter((card) => card.entity !== newSelected.entity)
 			}
 			// If a new card is selected then remove the first one
 			if (newSelection.length >= selectionSize) {
@@ -50,7 +50,9 @@ function SelectCardsModal({closeModal}: Props) {
 			return
 		}
 		if (selected.length <= selectionSize) {
-			dispatch(modalRequest({modalResult: {result: true, cards: selected}}))
+			dispatch(
+				modalRequest({modalResult: {result: true, cards: selected.map((card) => card.entity)}})
+			)
 			closeModal()
 		}
 	}

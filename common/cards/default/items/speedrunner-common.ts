@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class SpeedrunnerCommonItemCard extends Card {
+class SpeedrunnerItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_speedrunner_common',
@@ -16,9 +17,9 @@ class SpeedrunnerCommonItemCard extends Card {
 		type: 'speedrunner',
 	}
 
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override getEnergy(game: GameModel, component: CardComponent) {
 		return [this.props.type]
 	}
 }
 
-export default SpeedrunnerCommonItemCard
+export default SpeedrunnerItem

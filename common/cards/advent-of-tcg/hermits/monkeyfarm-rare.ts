@@ -1,12 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {slot} from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class MonkeyfarmRareHermitCard extends Card {
+class MonkeyfarmRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'monkeyfarm_rare',
@@ -33,18 +33,18 @@ class MonkeyfarmRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
 				return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
-			const pickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty))
+			const pickCondition = slot.every(slot.opponent, slot.item, slot.not(slot.empty))
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
@@ -55,23 +55,23 @@ class MonkeyfarmRareHermitCard extends Card {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
 					if (!row.hermitCard) return
 
 					// Apply the card
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default MonkeyfarmRareHermitCard
+export default MonkeyfarmRare

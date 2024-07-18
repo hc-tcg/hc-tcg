@@ -12,12 +12,11 @@ import {
 } from 'logic/game/game-selectors'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
+import {SlotEntity} from 'common/entities'
 
 export type SlotProps = {
 	type: SlotTypeT
-	rowIndex?: number
-	index?: number
-	playerId: string
+	entity?: SlotEntity
 	onClick?: () => void
 	card: LocalCardInstance | null
 	rowState?: LocalRowState
@@ -25,17 +24,7 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
 }
-const Slot = ({
-	type,
-	rowIndex,
-	index,
-	playerId,
-	onClick,
-	card,
-	active,
-	statusEffects,
-	cssId,
-}: SlotProps) => {
+const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
@@ -50,17 +39,12 @@ const Slot = ({
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(([card, _]) => card?.instance == selectedCard.instance)[0][1]
+		return cardsCanBePlacedIn.filter(([card, _]) => card?.entity == selectedCard.entity)[0][1]
 	}
 
 	const getIsPickable = () => {
 		for (const slot of getPickableSlots()) {
-			if (
-				slot.type === type &&
-				slot.rowIndex == rowIndex &&
-				slot.index == index &&
-				slot.playerId == playerId
-			) {
+			if (slot === entity) {
 				return true
 			}
 		}

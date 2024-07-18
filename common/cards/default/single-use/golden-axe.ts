@@ -1,12 +1,12 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class GoldenAxeSingleUseCard extends Card {
+class GoldenAxe extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'golden_axe',
@@ -20,64 +20,33 @@ class GoldenAxeSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		let attacking = false
-
-		player.hooks.getAttack.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return null
-
-			const axeAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
-				attacker: activePos,
-				target: opponentActivePos,
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-			}).addDamage(this.props.id, 40)
+		observer.subscribe(player.hooks.getAttack, () => {
+			const axeAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 40)
 
 			return axeAttack
 		})
 
-		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-
-			attacking = true
-
-			if (!opponentActivePos) return null
-
-			if (attack.id === attackId) {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (attack.isAttacker(component.entity)) {
 				applySingleUse(game)
 			}
 
-			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
-		})
-
-		player.hooks.afterAttack.add(instance, () => {
-			player.hooks.getAttack.remove(instance)
-			player.hooks.afterAttack.remove(instance)
-		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			player.hooks.beforeAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
-
-			attacking = false
-		})
-
-		player.hooks.onDetach.add(instance, () => {
-			player.hooks.getAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
-			if (!attacking) {
-				player.hooks.beforeAttack.remove(instance)
-			}
+			attack.shouldIgnoreCards.push(
+				query.card.slot(query.every(query.slot.opponent, query.slot.attach, query.slot.active))
+			)
 		})
 	}
 }
 
-export default GoldenAxeSingleUseCard
+export default GoldenAxe

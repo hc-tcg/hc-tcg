@@ -1,6 +1,8 @@
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class BeetlejhostCommonHermitCard extends Card {
+class BeetlejhostCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'beetlejhost_common',
@@ -28,4 +30,4 @@ class BeetlejhostCommonHermitCard extends Card {
 	}
 }
 
-export default BeetlejhostCommonHermitCard
+export default BeetlejhostCommon

@@ -1,17 +1,17 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {discardCard} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class CurseOfVanishingSingleUseCard extends Card {
-	discardCondition = slot.every(
-		slot.opponent,
-		slot.activeRow,
-		slot.attachSlot,
-		slot.not(slot.empty),
-		slot.not(slot.frozen)
+class CurseOfVanishing extends Card {
+	discardCondition = query.every(
+		query.slot.opponent,
+		query.slot.active,
+		query.slot.attach,
+		query.not(query.slot.empty),
+		query.not(query.slot.frozen)
 	)
 
 	props: SingleUse = {
@@ -24,26 +24,21 @@ class CurseOfVanishingSingleUseCard extends Card {
 		tokens: 1,
 		description: 'Your opponent must discard any effect card attached to their active Hermit.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.discardCondition)
+			query.exists(SlotComponent, this.discardCondition)
 		),
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			game
-				.filterSlots(this.discardCondition)
-				.map((slot) => slot.card && discardCard(game, slot.card))
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.filter(SlotComponent, this.discardCondition)
+				.map((slot) => slot.getCard()?.discard())
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default CurseOfVanishingSingleUseCard
+export default CurseOfVanishing

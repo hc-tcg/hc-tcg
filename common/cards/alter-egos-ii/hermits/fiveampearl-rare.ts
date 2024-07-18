@@ -1,10 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
-import Card, {hermit, Hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
+import Wolf from '../../default/effects/wolf'
 
-class FiveAMPearlRareHermitCard extends Card {
+class FiveAMPearlRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'fiveampearl_rare',
@@ -31,25 +33,18 @@ class FiveAMPearlRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 
-			const effectCard = getActiveRow(player)?.effectCard
-			if (!effectCard || effectCard.props.id !== 'wolf') return
+			if (!game.components.find(CardComponent, card.currentPlayer, card.active, card.is(Wolf)))
+				return
 
-			attack.addDamage(this.props.id, 30)
+			attack.addDamage(component.entity, 30)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 	}
 }
 
-export default FiveAMPearlRareHermitCard
+export default FiveAMPearlRare

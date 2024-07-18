@@ -1,11 +1,10 @@
-import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class ChainmailArmorEffectCard extends Card {
+class ChainmailArmor extends Card {
 	props: Attach = {
 		...attach,
 		id: 'chainmail_armor',
@@ -18,11 +17,11 @@ class ChainmailArmorEffectCard extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onDefence.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos)) {
+		observer.subscribe(player.hooks.onDefence, (attack) => {
+			if (!attack.isTargetting(component)) {
 				return
 			}
 
@@ -30,21 +29,16 @@ class ChainmailArmorEffectCard extends Card {
 			let suRedirect = false
 
 			const lastTargetChange = attack.getHistory('set_target').pop()
-			if (lastTargetChange && CARDS[lastTargetChange.sourceId]) {
+			if (lastTargetChange) {
 				// This attack has been redirected to us by a su card
 				suRedirect = true
 			}
 
 			if (attack.isType('effect') || suRedirect) {
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onDefence.remove(instance)
-	}
 }
 
-export default ChainmailArmorEffectCard
+export default ChainmailArmor

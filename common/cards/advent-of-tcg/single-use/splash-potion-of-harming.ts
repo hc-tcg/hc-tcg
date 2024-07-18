@@ -1,11 +1,12 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class SplashPotionOfHarmingSingleUseCard extends Card {
+class SplashPotionOfHarming extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_harming',
@@ -19,10 +20,10 @@ class SplashPotionOfHarmingSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 			const activeIndex = activePos.rowIndex
@@ -31,7 +32,7 @@ class SplashPotionOfHarmingSingleUseCard extends Card {
 			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
 				if (!row || !row.hermitCard) return r
 				const newAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
@@ -51,21 +52,21 @@ class SplashPotionOfHarmingSingleUseCard extends Card {
 			return attack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
 
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default SplashPotionOfHarmingSingleUseCard
+export default SplashPotionOfHarming

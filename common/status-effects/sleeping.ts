@@ -1,11 +1,8 @@
-import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
+import {StatusEffectProps, Counter, statusEffect, CardStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class SleepingStatusEffect extends StatusEffect {
+class SleepingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
 		id: 'sleeping',
@@ -14,13 +11,20 @@ class SleepingStatusEffect extends StatusEffect {
 			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 		counter: 3,
 		counterType: 'turns',
-		applyCondition: slot.every(slot.hermitSlot, slot.not(slot.empty)),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player, card, row, rowIndex} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		const {player} = target
 
-		if (!card || !row?.hermitCard || rowIndex === null || !card.card.isHealth()) return
+		effect.counter = this.props.counter
+
+		if (!target.slot.inRow()) return
+		if (!target.isHealth()) return
 
 		game.addBlockedActions(
 			this.props.id,
@@ -29,46 +33,36 @@ class SleepingStatusEffect extends StatusEffect {
 			'CHANGE_ACTIVE_HERMIT'
 		)
 
-		row.health = card.card.props.health
+		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
-			player.id,
-			`$p${card.props.name}$ went to $eSleep$ and restored $gfull health$`
+			player.entity,
+			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`
 		)
 
-		player.hooks.onTurnStart.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos) return
-			if (instance.counter !== null) instance.counter--
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (effect.counter !== null) effect.counter--
+			if (!target.slot.inRow()) return
 
-			if (instance.counter === 0 || player.board.activeRow !== targetPos.rowIndex) {
-				removeStatusEffect(game, pos, instance)
+			if (effect.counter === 0) {
+				effect.remove()
 				return
 			}
 
-			if (player.board.activeRow === targetPos.rowIndex)
+			if (player.activeRowEntity === target.slot.row.entity) {
 				game.addBlockedActions(
 					this.props.id,
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'CHANGE_ACTIVE_HERMIT'
 				)
+			}
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
-			const attackTarget = attack.getTarget()
-			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
-			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.afterDefence, (_attack) => {
+			if (!target.isAlive()) effect.remove()
 		})
-	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.afterDefence.remove(instance)
 	}
 }
 
-export default SleepingStatusEffect
+export default SleepingEffect

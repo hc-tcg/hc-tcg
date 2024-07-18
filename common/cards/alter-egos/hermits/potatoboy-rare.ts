@@ -1,11 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {getActiveRow} from '../../../utils/board'
-import {slot} from '../../../slot'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {row} from '../../../components/query'
+import Card from '../../base/card'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 
-class PotatoBoyRareHermitCard extends Card {
+class PotatoBoyRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'potatoboy_rare',
@@ -32,45 +32,24 @@ class PotatoBoyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
-
-			const activeRow = player.board.activeRow
-			if (activeRow === null) return
-
-			const rows = player.board.rows
-
-			const activeHermit = getActiveRow(player)?.hermitCard
-			if (!activeHermit) return
-
-			game
-				.filterSlots(
-					slot.player,
-					slot.adjacentTo(slot.activeRow),
-					slot.hermitSlot,
-					slot.not(slot.empty)
-				)
-				.forEach(({row, rowIndex, card}) => {
-					if (!card || rowIndex === null) return
-					healHermit(row, 40)
+		observer.subscribe(player.hooks.onAttack, (_attack) => {
+			game.components
+				.filter(RowComponent, row.currentPlayer, row.adjacent(row.active))
+				.forEach((row) => {
+					row.heal(40)
+					let hermit = row.getHermit()
 					game.battleLog.addEntry(
-						player.id,
-						`$p${card.props.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${
-							activeHermit.props.name
+						player.entity,
+						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
+							component.props.name
 						}$`
 					)
 				})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
-	}
 }
 
-export default PotatoBoyRareHermitCard
+export default PotatoBoyRare

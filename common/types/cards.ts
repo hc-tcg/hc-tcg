@@ -1,5 +1,3 @@
-import {CardInstance, PlayerState, RowState, RowStateWithHermit} from './game-state'
-
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
 export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
@@ -19,8 +17,8 @@ export type TypeT =
 export type EnergyT = TypeT | 'any'
 
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
-export type BoardSlotTypeT = 'item' | 'attach' | 'hermit' | 'health'
-export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand'
+export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
+export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'deck' | 'discardPile'
 export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
 
 export type DamageT = {
@@ -35,22 +33,6 @@ export type HermitAttackInfo = {
 	damage: number
 	power: string | null
 	formattedPower?: Array<Node>
-}
-
-export type RowPos = {
-	player: PlayerState
-	rowIndex: number
-	row: RowStateWithHermit
-}
-
-export type SlotInfo = {
-	player: PlayerState
-	opponentPlayer: PlayerState
-	type: SlotTypeT
-	index: number | null
-	rowIndex: number | null
-	row: RowState | null
-	card: CardInstance | null
 }
 
 export type PlayCardLog = {

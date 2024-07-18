@@ -1,32 +1,32 @@
-import TridentSingleUseCard from './trident'
-import SweepingEdgeSingleUseCard from './sweeping-edge'
-import AnvilSingleUseCard from './anvil'
-import PotionOfSlownessSingleUseCard from './potion-of-slowness'
-import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
-import EggSingleUseCard from './egg'
-import EnderPearlSingleUseCard from './ender-pearl'
-import LadderSingleUseCard from './ladder'
-import BadOmenSingleUseCard from './bad-omen'
-import FireChargeSingleUseCard from './fire-charge'
-import PistonSingleUseCard from './piston'
-import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
-import TargetBlockSingleUseCard from './target-block'
-import Card from '../../base/card'
+import Trident from './trident'
+import SweepingEdge from './sweeping-edge'
+import Anvil from './anvil'
+import PotionOfSlowness from './potion-of-slowness'
+import PotionOfWeakness from './potion-of-weakness'
+import Egg from './egg'
+import EnderPearl from './ender-pearl'
+import Ladder from './ladder'
+import BadOmen from './bad-omen'
+import FireCharge from './fire-charge'
+import Piston from './piston'
+import SplashPotionOfHealingII from './splash-potion-of-healing-ii'
+import TargetBlock from './target-block'
+import {CardClass} from '../../base/card'
 
-const singleUseCardClasses: Array<Card> = [
-	new AnvilSingleUseCard(),
-	new BadOmenSingleUseCard(),
-	new EggSingleUseCard(),
-	new EnderPearlSingleUseCard(),
-	new FireChargeSingleUseCard(),
-	new LadderSingleUseCard(),
-	new PistonSingleUseCard(),
-	new PotionOfSlownessSingleUseCard(),
-	new PotionOfWeaknessSingleUseCard(),
-	new SplashPotionOfHealingIISingleUseCard(),
-	new SweepingEdgeSingleUseCard(),
-	new TargetBlockSingleUseCard(),
-	new TridentSingleUseCard(),
+const singleUseCardClasses: Array<CardClass> = [
+	Anvil,
+	BadOmen,
+	Egg,
+	EnderPearl,
+	FireCharge,
+	Ladder,
+	Piston,
+	PotionOfSlowness,
+	PotionOfWeakness,
+	SplashPotionOfHealingII,
+	SweepingEdge,
+	TargetBlock,
+	Trident,
 ]
 
 export default singleUseCardClasses

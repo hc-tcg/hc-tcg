@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import SleepingEffect from '../../../status-effects/sleeping'
 
-class BdoubleO100RareHermitCard extends Card {
+class BdoubleO100Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'bdoubleo100_rare',
@@ -36,29 +37,14 @@ class BdoubleO100RareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!attacker) return
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-
-			const row = getActiveRow(player)
-
-			if (!row) return
-
-			// Add new sleeping statusEffect
-			applyStatusEffect(game, 'sleeping', row.hermitCard)
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components.new(StatusEffectComponent, SleepingEffect).apply(component.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default BdoubleO100RareHermitCard
+export default BdoubleO100Rare

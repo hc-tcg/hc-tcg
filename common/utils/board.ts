@@ -1,48 +1,21 @@
-import {STATUS_EFFECT_CLASSES} from '../status-effects'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {RowPos, SlotInfo} from '../types/cards'
-import {
-	StatusEffectInstance,
-	GenericActionResult,
-	PlayerState,
-	RowStateWithHermit,
-	CardInstance,
-} from '../types/game-state'
+import {GenericActionResult} from '../types/game-state'
+import {card} from '../components/query'
+import {CardComponent, SlotComponent} from '../components'
 
-export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
-	if (player.board.activeRow === null) return null
-	const row = player.board.rows[player.board.activeRow]
-	if (!row.hermitCard) return null
-	return row
-}
-
-export function getActiveRowPos(player: PlayerState): RowPos | null {
-	const rowIndex = player.board.activeRow
-	if (rowIndex === null) return null
-	const row = player.board.rows[rowIndex]
-	if (!row.hermitCard) return null
-	return {
-		player: player,
-		rowIndex,
-		row,
-	}
-}
-
-export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericActionResult {
+export function applySingleUse(
+	game: GameModel,
+	slotInfo: SlotComponent | null = null
+): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = currentPlayer.board.singleUseCard
-	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
-	const pos = getCardPos(game, suCard)
-	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
+	const suCard = game.components.find(CardComponent, card.isSingleUse)
 
-	const cardInstance = currentPlayer.board.singleUseCard?.instance
-	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
+	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()
 
-	currentPlayer.board.singleUseCardUsed = true
+	currentPlayer.singleUseCardUsed = true
 
 	currentPlayer.hooks.onApply.call()
 
@@ -50,81 +23,9 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	// Create the logs
-	game.battleLog.addPlayCardEntry(suCard.card, pos, currentPlayer.coinFlips, slotInfo)
+	game.battleLog.addPlayCardEntry(suCard, currentPlayer.coinFlips, slotInfo)
 
 	currentPlayer.hooks.afterApply.call()
 
 	return 'SUCCESS'
-}
-
-/**
- * Apply an statusEffect to a card instance. statusEffectId must be a status effect id, and targetInstance must be card
- * instance.
- */
-export function applyStatusEffect(
-	game: GameModel,
-	statusEffectId: string,
-	targetInstance: CardInstance | undefined | null
-): GenericActionResult {
-	if (!targetInstance) return 'FAILURE_INVALID_DATA'
-
-	const pos = getCardPos(game, targetInstance)
-
-	if (!pos) return 'FAILURE_INVALID_DATA'
-
-	const statusEffectInstance = new StatusEffectInstance(
-		STATUS_EFFECT_CLASSES[statusEffectId],
-		Math.random().toString(),
-		targetInstance
-	)
-
-	if (!statusEffectInstance.props.applyCondition(game, pos)) return 'FAILURE_CANNOT_COMPLETE'
-
-	if (statusEffectInstance.props.applyLog) {
-		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.applyLog)
-	}
-
-	statusEffectInstance.statusEffect.onApply(game, statusEffectInstance, pos)
-	game.state.statusEffects.push(statusEffectInstance)
-
-	return 'SUCCESS'
-}
-
-/**
- * Remove an statusEffect from the game.
- */
-export function removeStatusEffect(
-	game: GameModel,
-	pos: CardPosModel | null,
-	statusEffectInstance: StatusEffectInstance
-): GenericActionResult {
-	if (!pos) return 'FAILURE_NOT_APPLICABLE'
-	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.instance === statusEffectInstance.instance
-	)
-	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
-
-	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
-	statusEffectObject.onRemoval(game, statusEffects[0], pos)
-
-	if (statusEffectInstance.props.removeLog) {
-		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.removeLog)
-	}
-
-	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
-
-	return 'SUCCESS'
-}
-
-export function hasStatusEffect(
-	game: GameModel,
-	instance: CardInstance | null,
-	statusEffectId: string
-) {
-	if (!instance) return false
-	return (
-		game.state.statusEffects.filter(
-			(ail) => ail.props.id === statusEffectId && ail.targetInstance === instance
-		).length !== 0
-	)
 }

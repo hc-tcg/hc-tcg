@@ -1,18 +1,18 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {slot} from '../../../slot'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
-class FireChargeSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.player,
-		slot.not(slot.frozen),
-		slot.not(slot.empty),
-		slot.some(slot.itemSlot, slot.attachSlot)
+class FireCharge extends Card {
+	pickCondition = query.every(
+		query.slot.currentPlayer,
+		query.not(query.slot.frozen),
+		query.not(query.slot.empty),
+		query.some(query.slot.item, query.slot.attach)
 	)
 
 	props: SingleUse = {
@@ -25,45 +25,34 @@ class FireChargeSingleUseCard extends Card {
 		tokens: 0,
 		description:
 			'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				if (!pickedSlot.card) return
-
-				// Discard the picked card and apply su card
-				discardCard(game, pickedSlot.card)
+				pickedSlot.getCard()?.discard()
 				applySingleUse(game, pickedSlot)
 			},
 		})
 
-		player.hooks.afterApply.add(instance, () => {
-			discardSingleUse(game, player)
-
+		observer.subscribe(player.hooks.afterApply, () => {
+			component.discard()
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
-			player.hooks.afterApply.remove(instance)
+			observer.unsubscribe(player.hooks.afterApply)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.afterApply.remove(instance)
 	}
 }
 
-export default FireChargeSingleUseCard
+export default FireCharge

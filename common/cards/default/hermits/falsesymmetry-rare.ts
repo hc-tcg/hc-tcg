@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class FalseSymmetryRareHermitCard extends Card {
+class FalseSymmetryRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'falsesymmetry_rare',
@@ -29,29 +30,21 @@ class FalseSymmetryRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)[0]
 
-			if (coinFlip[0] === 'tails') return
+			if (coinFlip === 'tails') return
 
 			// Heal 40hp
-			healHermit(pos.row, 40)
-			game.battleLog.addEntry(player.id, `$p${attacker.row.hermitCard.props.name}$ healed $g40hp$`)
+			component.slot.inRow() && component.slot.row.heal(40)
+			game.battleLog.addEntry(player.entity, `$p${component.props.name}$ healed $g40hp$`)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default FalseSymmetryRareHermitCard
+export default FalseSymmetryRare

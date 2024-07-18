@@ -1,11 +1,12 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {row} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class TNTSingleUseCard extends Card {
+class TNT extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'tnt',
@@ -19,52 +20,37 @@ class TNTSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.getAttack.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return null
+		observer.subscribe(player.hooks.getAttack, () => {
+			applySingleUse(game)
 
-			const tntAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
-				attacker: activePos,
-				target: opponentActivePos,
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
-			}).addDamage(this.props.id, 60)
+			const tntAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
+				})
+				.addDamage(component.entity, 60)
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: activePos,
-				target: activePos,
-				type: 'effect',
-				isBacklash: true,
-				log: (values) => `and took ${values.damage} backlash damage`,
-			}).addDamage(this.props.id, 20)
+			const backlashAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: player.activeRowEntity,
+					type: 'effect',
+					isBacklash: true,
+					log: (values) => `and took ${values.damage} backlash damage`,
+				})
+				.addDamage(component.entity, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 
 			return tntAttack
 		})
-
-		player.hooks.onAttack.add(instance, (attack) => {
-			const backlashId = this.getInstanceKey(instance, 'backlash')
-			if (attack.id !== backlashId) return
-
-			// We've executed our attack, apply effect
-			applySingleUse(game)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default TNTSingleUseCard
+export default TNT

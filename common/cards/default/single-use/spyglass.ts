@@ -1,13 +1,13 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'
-import {discardFromHand} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class SpyglassSingleUseCard extends Card {
+class Spyglass extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'spyglass',
@@ -20,18 +20,18 @@ class SpyglassSingleUseCard extends Card {
 			"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} and ${values.coinFlip}`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => game.state.turn.turnNumber !== 1
+			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, instance)
-			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.hand.length > 0
+		observer.subscribe(player.hooks.onApply, () => {
+			const coinFlip = flipCoin(player, component)
+			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -40,7 +40,7 @@ class SpyglassSingleUseCard extends Card {
 					payload: {
 						modalName: `Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`,
 						modalDescription: '',
-						cards: opponentPlayer.hand.map((card) => card.toLocalCardInstance()),
+						cards: opponentPlayer.getHand().map((card) => card.entity),
 						selectionSize: canDiscard ? 1 : 0,
 						primaryButton: {
 							text: canDiscard ? 'Confirm Selection' : 'Close',
@@ -53,15 +53,16 @@ class SpyglassSingleUseCard extends Card {
 					if (!canDiscard) return 'SUCCESS'
 
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
-					const card =
-						opponentPlayer.hand.find((card) => card.instance === modalResult.cards![0].instance) ||
-						null
-					discardFromHand(opponentPlayer, card)
+
+					let card = game.components.get(modalResult.cards[0].entity)
+					if (!card) return 'FAILURE_INVALID_DATA'
+
+					card.discard()
 
 					game.battleLog.addEntry(
-						player.id,
+						player.entity,
 						`$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
-							modalResult.cards[0].props.id,
+							card.props.id,
 							true
 						)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
 					)
@@ -71,18 +72,14 @@ class SpyglassSingleUseCard extends Card {
 				onTimeout() {
 					if (canDiscard) {
 						// Discard a random card from the opponent's hand
-						const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
-						discardFromHand(opponentPlayer, opponentPlayer.hand[slotIndex])
+						let opponentHand = opponentPlayer.getHand()
+						const slotIndex = Math.floor(Math.random() * opponentHand.length)
+						opponentHand[slotIndex].discard()
 					}
 				},
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
 }
 
-export default SpyglassSingleUseCard
+export default Spyglass

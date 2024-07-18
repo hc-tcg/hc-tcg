@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {discardSingleUse} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
-class GeminiTayRareHermitCard extends Card {
+class GeminiTayRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'geminitay_rare',
@@ -30,32 +31,25 @@ class GeminiTayRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
 
-			player.hooks.afterAttack.add(instance, (attack) => {
+			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.
-				discardSingleUse(game, player)
+				game.components.find(CardComponent, query.card.isSingleUse, query.card.active)?.discard()
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
 
-				player.hooks.afterAttack.remove(instance)
+				observer.unsubscribe(player.hooks.afterAttack)
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		// Remove hook
-		player.hooks.onAttack.remove(instance)
-	}
 }
 
-export default GeminiTayRareHermitCard
+export default GeminiTayRare

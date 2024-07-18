@@ -1,12 +1,12 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {discardCard} from '../../../utils/movement'
-import {slot} from '../../../slot'
-import Card, {Attach, attach} from '../../base/card'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {slot} from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class BrewingStandEffectCard extends Card {
+class BrewingStand extends Card {
 	props: Attach = {
 		...attach,
 		id: 'brewing_stand',
@@ -19,16 +19,16 @@ class BrewingStandEffectCard extends Card {
 			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		player.hooks.onTurnStart.add(instance, () => {
-			if (!pos.row?.itemCards || pos.row.itemCards.filter((card) => card !== null).length === 0)
+		player.hooks.onTurnStart.add(component, () => {
+			if (!pos.rowId?.itemCards || pos.rowId.itemCards.filter((card) => card !== null).length === 0)
 				return
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, instance)[0]
+			const flip = flipCoin(player, component)[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
@@ -37,26 +37,26 @@ class BrewingStandEffectCard extends Card {
 				message: 'Pick an item card to discard',
 				canPick: slot.every(
 					slot.player,
-					slot.itemSlot,
+					slot.item,
 					slot.not(slot.empty),
 					slot.rowIndex(pos.rowIndex)
 				),
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
+					if (!pickedSlot.cardId || pickedSlot.rowIndex === null) return
 
 					const playerRow = player.board.rows[pickedSlot.rowIndex]
 					healHermit(playerRow, 50)
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 
-export default BrewingStandEffectCard
+export default BrewingStand

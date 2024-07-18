@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class TinFoilChefRareHermitCard extends Card {
+class TinFoilChefRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'tinfoilchef_rare',
@@ -29,27 +30,18 @@ class TinFoilChefRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
-			const drawCard = player.pile.shift()
-			if (drawCard) player.hand.push(drawCard)
+			game.currentPlayer.draw(1)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default TinFoilChefRareHermitCard
+export default TinFoilChefRare

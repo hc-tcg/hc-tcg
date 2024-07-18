@@ -1,37 +1,38 @@
-import StatusEffect, {Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {Counter, PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import JoeHillsRare from '../cards/default/hermits/joehills-rare'
 
-class UsedClockStatusEffect extends StatusEffect {
+class UsedClockEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		id: 'used-clock',
-		name: 'Turn Skipped',
+		name: 'Clocked Out',
 		description: 'Turns can not be skipped consecutively.',
 		counter: 1,
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		if (effect.counter === null) effect.counter = this.props.counter
 
-		if (!instance.counter) instance.counter = this.props.counter
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (!instance.counter) return
-			instance.counter--
-
-			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			if (effect.counter === null) return
+			if (effect.counter === 0) effect.remove()
+			effect.counter--
 		})
-	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (player.getActiveHermit()?.card instanceof JoeHillsRare) {
+				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
+			}
+		})
 	}
 }
 
-export default UsedClockStatusEffect
+export default UsedClockEffect

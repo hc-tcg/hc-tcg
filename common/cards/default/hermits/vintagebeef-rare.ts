@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {removeStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import * as query from '../../../components/query'
 
-class VintageBeefRareHermitCard extends Card {
+class VintageBeefRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'vintagebeef_rare',
@@ -31,36 +32,24 @@ class VintageBeefRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
-				return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			player.board.rows.forEach((row) => {
-				if (!row.hermitCard) return
-
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return ail.targetInstance.instance === row.hermitCard.instance
-				})
-
-				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail)
-				})
-			})
+			game.components
+				.filter(
+					StatusEffectComponent,
+					query.effect.type('normal', 'damage'),
+					query.effect.targetIsCardAnd(query.card.currentPlayer, query.card.slot(query.slot.hermit))
+				)
+				.forEach((effect) => effect.remove())
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default VintageBeefRareHermitCard
+export default VintageBeefRare

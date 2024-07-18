@@ -1,4 +1,3 @@
-import {StatusEffectInstance} from 'common/types/game-state'
 import css from './board.module.scss'
 import StatusEffect from 'components/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
@@ -7,6 +6,7 @@ type StatusEffectDisplayProps = {
 	statusEffects: Array<LocalStatusEffectInstance>
 }
 
+/** An object to display status effect for a specific card */
 const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 	return (
 		<div>

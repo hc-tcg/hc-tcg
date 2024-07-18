@@ -6,7 +6,7 @@ const getActiveRow = (playerState: LocalPlayerState | null) => {
 	if (!playerState) return null
 	const {rows, activeRow} = playerState.board
 	if (activeRow === null) return null
-	const activeHermit = rows[activeRow]
+	const activeHermit = rows.find((row) => row.entity == playerState.board.activeRow)
 	if (!activeHermit) return null
 	return activeHermit
 }

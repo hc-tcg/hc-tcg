@@ -1,12 +1,11 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {CardProps, Hermit} from '../../base/types'
 
-class GoatfatherRareHermitCard extends Card {
+class GoatfatherRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'goatfather_rare',
@@ -34,54 +33,46 @@ class GoatfatherRareHermitCard extends Card {
 		},
 	}
 
-	override getAttack(
+	public override onAttach(
 		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
+		component: CardComponent<CardProps>,
+		observer: ObserverComponent
+	): void {
+		const {player, opponentPlayer} = component
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-		if (!attack) return attack
+			let coinFlip = flipCoin(player, component)[0]
 
-		const {player, opponentPlayer, row, rowIndex} = pos
+			if (coinFlip !== 'heads') return
 
-		if (attack.type !== 'secondary' || !row?.hermitCard) return attack
+			let opponentActiveHermit = opponentPlayer.getActiveHermit()
+			if (!opponentActiveHermit?.slot.inRow()) return
 
-		const coinFlip = flipCoin(player, row.hermitCard)
+			attack.addDamage(component.entity, 30)
 
-		if (coinFlip[0] === 'tails') return attack
-
-		attack.addDamage(this.props.id, 30)
-
-		const activeRow = opponentPlayer.board.activeRow
-		const rows = opponentPlayer.board.rows
-
-		if (activeRow === null || rowIndex === null) return attack
-		for (let i = activeRow + 1; i < rows.length; i++) {
-			const targetRow = rows[i]
-			if (!targetRow.hermitCard) continue
-
-			const newAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
-				attacker: {
-					player,
-					rowIndex: rowIndex,
-					row: row,
-				},
-				target: {
-					player: opponentPlayer,
-					rowIndex: i,
-					row: targetRow,
-				},
-				type: hermitAttackType,
-				log: (values) => `, ${values.target} for ${values.damage} damage`,
-			}).addDamage(this.props.id, 10)
-			attack.addNewAttack(newAttack)
-		}
-
-		return attack
+			game.components
+				.filter(
+					RowComponent,
+					(_game, row) =>
+						opponentActiveHermit !== null &&
+						opponentActiveHermit.slot.inRow() &&
+						row.index < opponentActiveHermit?.slot.row.index
+				)
+				.forEach((row) => {
+					attack
+						.addNewAttack(
+							game.newAttack({
+								attacker: component.entity,
+								target: row.entity,
+								type: 'secondary',
+								log: (values) => `, ${values.target} for ${values.damage} damage`,
+							})
+						)
+						.addDamage(component.entity, 10)
+				})
+		})
 	}
 }
 
-export default GoatfatherRareHermitCard
+export default GoatfatherRare

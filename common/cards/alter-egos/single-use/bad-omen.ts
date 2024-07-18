@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import * as query from '../../../components/query'
+import BadOmenEffect from '../../../status-effects/badomen'
 
-class BadOmenSingleUseCard extends Card {
+class BadOmen extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'bad_omen',
@@ -22,23 +23,30 @@ class BadOmenSingleUseCard extends Card {
 				name: 'badomen',
 			},
 		],
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			applyStatusEffect(game, 'badomen', opponentPlayer.board.rows[activeRow].hermitCard)
+		observer.subscribe(player.hooks.onApply, () => {
+			let target = game.components.findEntity(
+				CardComponent,
+				query.card.isHermit,
+				query.card.row(query.row.active)
+			)
+			if (!target) return
+			game.components
+				.new(StatusEffectComponent, BadOmenEffect)
+				.apply(
+					game.components.findEntity(
+						CardComponent,
+						query.card.isHermit,
+						query.card.row(query.row.active)
+					)
+				)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default BadOmenSingleUseCard
+export default BadOmen

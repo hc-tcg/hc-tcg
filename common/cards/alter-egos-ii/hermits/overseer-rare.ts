@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {hermit, Hermit} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class OverseerRareHermitCard extends Card {
+class OverseerRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'overseer_rare',
@@ -30,26 +31,17 @@ class OverseerRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const target = attack.getTarget()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const isFarmer =
-				target.row.hermitCard.isHermit() && target.row.hermitCard.props.type === 'farm' ? 2 : 1
-
-			attack.multiplyDamage(this.props.id, isFarmer)
+			const targetHermit = attack.target?.getHermit()
+			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
+				attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
 	}
 }
 
-export default OverseerRareHermitCard
+export default OverseerRare

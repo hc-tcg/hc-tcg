@@ -1,11 +1,12 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {slot} from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class GrianchRareHermitCard extends Card {
+class GrianchRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'grianch_rare',
@@ -33,20 +34,20 @@ class GrianchRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== instanceKey || attack.type !== 'secondary' || !attacker) return
+			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') {
-				opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+				opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
-					opponentPlayer.hooks.afterAttack.remove(instance)
+					opponentPlayer.hooks.afterAttack.remove(component)
 				})
 				return
 			}
@@ -54,14 +55,10 @@ class GrianchRareHermitCard extends Card {
 			attack.addDamage(this.props.id, this.props.secondary.damage)
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'primary') return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== componentKey || attack.type !== 'primary') return
 
-			const pickCondition = slot.every(
-				slot.not(slot.activeRow),
-				slot.not(slot.empty),
-				slot.hermitSlot
-			)
+			const pickCondition = slot.every(slot.not(slot.active), slot.not(slot.empty), slot.hermit)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
@@ -71,17 +68,17 @@ class GrianchRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					healHermit(pickedSlot.row, 40)
+					healHermit(pickedSlot.rowId, 40)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default GrianchRareHermitCard
+export default GrianchRare

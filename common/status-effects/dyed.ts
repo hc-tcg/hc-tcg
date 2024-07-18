@@ -1,39 +1,30 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {CardComponent} from '../components'
 
-class DyedStatusEffect extends StatusEffect {
+class DyedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'dyed',
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
-		applyCondition: slot.not(slot.hasStatusEffect('dyed')),
+		applyCondition: (_game, card) =>
+			card instanceof CardComponent && !card.hasStatusEffect(DyedEffect),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	// 	target.player.hooks.availableEnergy.add(effect, (availableEnergy) => {
+	// 		if (!target.slot.inRow() || target.player.activeRowEntity !== target.slot.row.entity)
+	// 			return availableEnergy
+	// 		return availableEnergy.map(() => 'any')
+	// 	})
+	// }
 
-		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
-			if (player.board.activeRow === null) return availableEnergy
+	// override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	// 	const {player, opponentPlayer} = target
 
-			const activeRow = player.board.rows[player.board.activeRow]
-
-			if (instance.targetInstance.instance !== activeRow.hermitCard?.instance)
-				return availableEnergy
-
-			return availableEnergy.map(() => 'any')
-		})
-	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.availableEnergy.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
-	}
+	// 	player.hooks.availableEnergy.remove(effect)
+	// 	opponentPlayer.hooks.onTurnEnd.remove(effect)
+	// }
 }
 
-export default DyedStatusEffect
+export default DyedEffect

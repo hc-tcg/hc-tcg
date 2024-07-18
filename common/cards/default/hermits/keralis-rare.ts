@@ -1,12 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {getActiveRow} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import {SlotInfo} from '../../../types/cards'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
-class KeralisRareHermitCard extends Card {
+class KeralisRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'keralis_rare',
@@ -31,34 +30,36 @@ class KeralisRareHermitCard extends Card {
 		},
 	}
 
-	pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
+	pickCondition = query.every(
+		query.not(query.slot.active),
+		query.not(query.slot.empty),
+		query.slot.hermit
+	)
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		let pickedAfkHermit: SlotInfo | null = null
+		let pickedAfkSlot: SlotComponent | null = null
 
 		// Pick the hermit to heal
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure there is something to select
-			if (!game.someSlotFulfills(this.pickCondition)) return
+			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
-
 					// Store the info to use later
-					pickedAfkHermit = pickedSlot
+					pickedAfkSlot = pickedSlot
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one
@@ -67,36 +68,21 @@ class KeralisRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			if (!pickedAfkHermit) return
-			const pickedRowIndex = pickedAfkHermit.rowIndex
-			const pickedRow = pickedAfkHermit.row
-			if (!pickedRow || !pickedRow.hermitCard || pickedRowIndex === null) return
+			if (!pickedAfkSlot?.inRow()) return
+			pickedAfkSlot.row.heal(100)
+			let hermit = pickedAfkSlot.row.getHermit()
 
-			const activeHermit = getActiveRow(player)?.hermitCard
-			if (!activeHermit) return
-
-			if (pickedRow.hermitCard) {
-				healHermit(pickedRow, 100)
-
-				game.battleLog.addEntry(
-					player.id,
-					`$p${pickedRow.hermitCard.props.name} (${pickedRowIndex + 1})$ was healed $g100hp$ by $p${
-						activeHermit.props.name
-					}$`
-				)
-			}
+			game.battleLog.addEntry(
+				player.entity,
+				`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
+					hermit?.props.name
+				}$`
+			)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default KeralisRareHermitCard
+export default KeralisRare

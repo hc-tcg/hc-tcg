@@ -1,12 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance, RowStateWithHermit, healHermit} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class PharaohRareHermitCard extends Card {
+class PharaohRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'pharaoh_rare',
@@ -34,14 +34,14 @@ class PharaohRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 		let pickedRow: RowStateWithHermit | null = null
 
 		// Pick the hermit to heal
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -54,8 +54,8 @@ class PharaohRareHermitCard extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			const pickCondition = slot.every(
-				slot.hermitSlot,
-				slot.not(slot.activeRow),
+				slot.hermit,
+				slot.not(slot.active),
 				slot.not(slot.empty),
 				slot.not(slot.hasId(this.props.id))
 			)
@@ -68,7 +68,7 @@ class PharaohRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					pickedRow = pickedSlot.row as RowStateWithHermit
+					pickedRow = pickedSlot.rowId as RowStateWithHermit
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one
@@ -77,23 +77,23 @@ class PharaohRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id === attackId) return
 			healHermit(pickedRow, attack.calculateDamage())
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
+		player.hooks.onTurnEnd.add(component, () => {
 			pickedRow = null
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.onAttack.remove(component)
+		player.hooks.onTurnEnd.remove(component)
 	}
 }
 
-export default PharaohRareHermitCard
+export default PharaohRare

@@ -1,11 +1,12 @@
 import {AnyAction} from 'redux'
 import {PlayerDeckT} from 'common/types/deck'
 import {ToastT} from 'common/types/app'
+import {PlayerId} from 'common/models/player-model'
 
 type SessionState = {
 	playerName: string
 	minecraftName: string
-	playerId: string
+	playerId: PlayerId
 	playerSecret: string
 	playerDeck: PlayerDeckT
 	connecting: boolean
@@ -17,7 +18,7 @@ type SessionState = {
 const defaultState: SessionState = {
 	playerName: '',
 	minecraftName: '',
-	playerId: '',
+	playerId: '' as PlayerId,
 	playerSecret: '',
 	playerDeck: {name: '', icon: 'any', cards: []},
 	connecting: false,
@@ -35,7 +36,7 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 				connecting: false,
 				playerName: '',
 				minecraftName: '',
-				playerId: '',
+				playerId: '' as PlayerId,
 				playerSecret: '',
 				playerDeck: state.playerDeck,
 				errorType: action.payload,

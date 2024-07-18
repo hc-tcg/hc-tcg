@@ -1,35 +1,35 @@
-import DungeonTangoRareHermitCard from './dungeontango-rare'
-import PythonGBRareHermitCard from './pythongb-rare'
-import OrionSoundRareHermitCard from './orionsound-rare'
-import MonkeyfarmRareHermitCard from './monkeyfarm-rare'
-import SolidaritygamingRareHermitCard from './solidaritygaming-rare'
-import Smajor1995RareHermitCard from './smajor1995'
-import Biffa2001RareHermitCard from './biffa2001-rare'
-import PixlriffsRareHermitCard from './pixlriffs-rare'
-import LDShadowLadyRareHermitCard from './ldshadowlady-rare'
-import SmallishbeansRareHermitCard from './smallishbeans-rare'
-import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
-import ShubbleYTRareHermitCard from './shubbleyt-rare'
-import PharaohRareHermitCard from './pharaoh-rare'
-import GrianchRareHermitCard from './grianch-rare'
+import DungeonTangoRare from './dungeontango-rare'
+import PythonGBRare from './pythongb-rare'
+import OrionSoundRare from './orionsound-rare'
+import MonkeyfarmRare from './monkeyfarm-rare'
+import SolidaritygamingRare from './solidaritygaming-rare'
+import Smajor1995Rare from './smajor1995'
+import Biffa2001Rare from './biffa2001-rare'
+import PixlriffsRare from './pixlriffs-rare'
+import LDShadowLadyRare from './ldshadowlady-rare'
+import SmallishbeansRare from './smallishbeans-rare'
+import BigBSt4tzRare from './bigbst4tz2-rare'
+import ShubbleYTRare from './shubbleyt-rare'
+import PharaohRare from './pharaoh-rare'
+import GrianchRare from './grianch-rare'
 import Card from '../../base/card'
 
-const hermitCardClasses: Array<Card> = [
+const hermitCardClasses: Array<new () => Card> = [
 	//Advent calendar cards
-	new MonkeyfarmRareHermitCard(),
-	new DungeonTangoRareHermitCard(),
-	new PythonGBRareHermitCard(),
-	new OrionSoundRareHermitCard(),
-	new SolidaritygamingRareHermitCard(),
-	new Smajor1995RareHermitCard(),
-	new Biffa2001RareHermitCard(),
-	new PixlriffsRareHermitCard(),
-	new ShubbleYTRareHermitCard(),
-	new LDShadowLadyRareHermitCard(),
-	new SmallishbeansRareHermitCard(),
-	new BigBSt4tzRareHermitCard(),
-	new PharaohRareHermitCard(),
-	new GrianchRareHermitCard(),
+	MonkeyfarmRare,
+	DungeonTangoRare,
+	PythonGBRare,
+	OrionSoundRare,
+	SolidaritygamingRare,
+	Smajor1995Rare,
+	Biffa2001Rare,
+	PixlriffsRare,
+	ShubbleYTRare,
+	LDShadowLadyRare,
+	SmallishbeansRare,
+	BigBSt4tzRare,
+	PharaohRare,
+	GrianchRare,
 ]
 
 export default hermitCardClasses

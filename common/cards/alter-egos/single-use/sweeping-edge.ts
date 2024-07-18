@@ -1,17 +1,17 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {discardCard} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class SweepingEdgeSingleUseCard extends Card {
-	discardCondition = slot.every(
-		slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
-		slot.attachSlot,
-		slot.opponent,
-		slot.not(slot.empty),
-		slot.not(slot.frozen)
+class SweepingEdge extends Card {
+	discardCondition = query.every(
+		query.some(query.slot.active, query.slot.row(query.row.adjacent(query.row.active))),
+		query.slot.attach,
+		query.slot.opponent,
+		query.not(query.slot.empty),
+		query.not(query.slot.frozen)
 	)
 
 	props: SingleUse = {
@@ -25,26 +25,21 @@ class SweepingEdgeSingleUseCard extends Card {
 		description:
 			'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.discardCondition)
+			query.exists(SlotComponent, this.discardCondition)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			game
-				.filterSlots(this.discardCondition)
-				.map((slot) => slot.card && discardCard(game, slot.card))
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.filter(CardComponent, query.card.slot(this.discardCondition))
+				.map((card) => card.discard())
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default SweepingEdgeSingleUseCard
+export default SweepingEdge

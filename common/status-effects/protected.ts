@@ -1,11 +1,8 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
+import {CardComponent, StatusEffectComponent} from '../components'
 
-class ProtectedStatusEffect extends StatusEffect {
+class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'protected',
@@ -13,58 +10,58 @@ class ProtectedStatusEffect extends StatusEffect {
 		description: 'This Hermit does not take damage on their first active turn.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent, ) {
+	// 	const {player} = component
 
-		let canBlock = true
+	// 	let canBlock = true
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (player.board.activeRow === pos.rowIndex) {
-				canBlock = false
-			}
-		})
+	// 	player.hooks.onTurnEnd.add(effect, () => {
+	// 		if (player.board.activeRow === target.rowIndex) {
+	// 			canBlock = false
+	// 		}
+	// 	})
 
-		player.hooks.onTurnStart.add(instance, () => {
-			if (!canBlock) {
-				removeStatusEffect(game, pos, instance)
-			}
-		})
+	// 	player.hooks.onTurnStart.add(effect, () => {
+	// 		if (!canBlock) {
+	// 			removeStatusEffect(game, target, effect)
+	// 		}
+	// 	})
 
-		player.hooks.onDefence.add(instance, (attack) => {
-			const targetPos = getCardPos(game, instance.targetInstance)
-			if (!targetPos) return
-			// Only block if just became active
-			if (!canBlock) return
+	// 	player.hooks.onDefence.add(effect, (attack) => {
+	// 		const targetPos = getCardPos(game, effect.target)
+	// 		if (!targetPos) return
+	// 		// Only block if just became active
+	// 		if (!canBlock) return
 
-			// Only block damage when we are active
-			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !isTargetingPos(attack, targetPos)) return
-			// Do not block backlash attacks
-			if (attack.isBacklash) return
+	// 		// Only block damage when we are active
+	// 		const isActive = player.board.activeRow === target.rowIndex
+	// 		if (!isActive || !isTargeting(attack, targetPos)) return
+	// 		// Do not block backlash attacks
+	// 		if (attack.isBacklash) return
 
-			if (attack.getDamage() > 0) {
-				// Block all damage
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
-			}
-		})
+	// 		if (attack.getDamage() > 0) {
+	// 			// Block all damage
+	// 			attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+	// 		}
+	// 	})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
-			const attackTarget = attack.getTarget()
-			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
-			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, instance)
-		})
-	}
+	// 	player.hooks.afterDefence.add(effect, (attack) => {
+	// 		const attackTarget = attack.getTarget()
+	// 		if (!attackTarget) return
+	// 		if (attackTarget.row.hermitCard.instance !== effect.target.entity) return
+	// 		if (attackTarget.row.health > 0) return
+	// 		removeStatusEffect(game, target, effect)
+	// 	})
+	// }
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	// 	const {player} = component
 
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onDefence.remove(instance)
-	}
+	// 	player.hooks.onDefence.remove(instance)
+	// 	player.hooks.onTurnEnd.remove(instance)
+	// 	player.hooks.onTurnStart.remove(instance)
+	// 	player.hooks.onDefence.remove(instance)
+	// }
 }
 
-export default ProtectedStatusEffect
+export default ProtectedEffect
