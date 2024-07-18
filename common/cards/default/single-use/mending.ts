@@ -9,11 +9,11 @@ import {singleUse} from '../../base/defaults'
 class Mending extends Card {
 	pickCondition = query.every(
 		query.slot.currentPlayer,
-		query.slot.attachSlot,
+		query.slot.attach,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
 		query.not(query.slot.frozen),
-		query.not(query.slot.activeRow)
+		query.not(query.slot.active)
 	)
 
 	props: SingleUse = {
@@ -31,8 +31,8 @@ class Mending extends Card {
 			query.exists(
 				SlotComponent,
 				query.every(
-					query.slot.activeRow,
-					query.slot.attachSlot,
+					query.slot.active,
+					query.slot.attach,
 					query.not(query.slot.frozen),
 					query.not(query.slot.empty)
 				)
@@ -54,8 +54,8 @@ class Mending extends Card {
 				const hermitActive = game.components.find(
 					SlotComponent,
 					query.slot.currentPlayer,
-					query.slot.activeRow,
-					query.slot.attachSlot
+					query.slot.active,
+					query.slot.attach
 				)
 
 				// Apply the mending card

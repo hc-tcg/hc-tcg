@@ -41,7 +41,7 @@ class XBCraftedRare extends Card {
 				query.every(
 					query.card.opponentPlayer,
 					query.card.active,
-					query.card.slot(query.slot.attachSlot)
+					query.card.slot(query.slot.attach)
 				)
 			)
 		})

@@ -34,7 +34,7 @@ class CommandBlock extends Card {
 			return query.every(
 				query.slot.player(player.entity),
 				query.slot.rowIs(component.slot.row.entity),
-				query.slot.attachSlot
+				query.slot.attach
 			)
 		})
 	}

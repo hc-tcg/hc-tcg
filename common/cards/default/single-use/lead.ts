@@ -9,17 +9,17 @@ import {singleUse} from '../../base/defaults'
 class Lead extends Card {
 	firstPickCondition = query.every(
 		query.slot.opponent,
-		query.slot.itemSlot,
+		query.slot.item,
 		query.not(query.slot.empty),
-		query.slot.activeRow,
+		query.slot.active,
 		query.not(query.slot.frozen)
 	)
 	secondPickCondition = query.every(
 		query.slot.opponent,
-		query.slot.itemSlot,
+		query.slot.item,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
-		query.not(query.slot.activeRow),
+		query.not(query.slot.active),
 		query.not(query.slot.frozen)
 	)
 

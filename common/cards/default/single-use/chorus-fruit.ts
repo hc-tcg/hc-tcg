@@ -24,15 +24,15 @@ class ChorusFruit extends Card {
 				query.exists(
 					SlotComponent,
 					query.slot.currentPlayer,
-					query.slot.hermitSlot,
-					query.slot.activeRow,
+					query.slot.hermit,
+					query.slot.active,
 					query.slot.hasStatusEffect(SleepingEffect)
 				)
 			),
 			query.exists(
 				CardComponent,
 				query.card.currentPlayer,
-				query.card.slot(query.slot.hermitSlot),
+				query.card.slot(query.slot.hermit),
 				query.not(query.card.active)
 			)
 		),
@@ -53,7 +53,7 @@ class ChorusFruit extends Card {
 				message: 'Pick one of your Hermits to become the new active Hermit',
 				canPick: query.every(
 					query.slot.currentPlayer,
-					query.slot.hermitSlot,
+					query.slot.hermit,
 					query.not(query.slot.empty)
 				),
 				onResult(pickedSlot) {

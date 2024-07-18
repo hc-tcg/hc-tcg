@@ -170,13 +170,13 @@ export class BattleLogModel {
 				CardComponent,
 				card.currentPlayer,
 				card.active,
-				card.slot(slot.hermitSlot)
+				card.slot(slot.hermit)
 			)
 			const targetHermitInfo = this.game.components.find(
 				CardComponent,
 				card.opponentPlayer,
 				card.active,
-				card.slot(slot.hermitSlot)
+				card.slot(slot.hermit)
 			)
 
 			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'

@@ -25,7 +25,7 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 		observer: ObserverComponent
 	) {
 		observer.subscribe(player.hooks.onApply, () => {
-			let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUseSlot))
+			let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUse))
 			if (!singleUseCard) return
 			let opponentActiveHermit = player.opponentPlayer.getActiveHermit()
 			if (!opponentActiveHermit) return

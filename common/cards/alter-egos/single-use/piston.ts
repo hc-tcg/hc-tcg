@@ -9,7 +9,7 @@ import {singleUse} from '../../base/defaults'
 class Piston extends Card {
 	firstPickCondition = query.every(
 		query.slot.currentPlayer,
-		query.slot.itemSlot,
+		query.slot.item,
 		query.slot.row(query.row.hasHermit),
 		query.not(query.slot.frozen),
 		query.not(query.slot.empty),
@@ -18,7 +18,7 @@ class Piston extends Card {
 		query.slot.adjacentTo(
 			query.every(
 				query.slot.row(query.row.hasHermit),
-				query.slot.itemSlot,
+				query.slot.item,
 				query.slot.empty,
 				query.not(query.slot.frozen)
 			)
@@ -64,7 +64,7 @@ class Piston extends Card {
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			canPick: query.every(
 				query.slot.currentPlayer,
-				query.slot.itemSlot,
+				query.slot.item,
 				query.slot.empty,
 				query.slot.row(query.row.hasHermit),
 				query.not(query.slot.frozen),

@@ -1,5 +1,6 @@
 import type {GameModel} from '../../models/game-model'
 import type {Component} from '../../types/ecs'
+import type {TurnAction} from '../../types/game-state'
 
 import * as slot from './slot'
 import * as row from './row'
@@ -49,4 +50,8 @@ export function exists<T extends Component, U>(
 
 export function value<T>(getQuery: (value: T) => ComponentQuery<T>): ComponentQuery<T> {
 	return (game, value) => getQuery(value)(game, value)
+}
+
+export function actionAvailable<T>(action: TurnAction): ComponentQuery<T> {
+	return (game, _pos) => game.state.turn.availableActions.includes(action)
 }

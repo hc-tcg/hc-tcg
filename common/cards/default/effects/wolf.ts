@@ -17,7 +17,7 @@ class Wolf extends Card {
 		tokens: 1,
 		description:
 			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
-		attachCondition: query.every(attach.attachCondition, query.slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, query.slot.active),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

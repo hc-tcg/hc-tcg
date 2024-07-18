@@ -16,7 +16,7 @@ import {
 } from '../../../status-effects/invisibility-potion'
 
 class InvisibilityPotion extends Card {
-	applyTo = query.every(query.slot.opponent, query.slot.activeRow, query.slot.hermitSlot)
+	applyTo = query.every(query.slot.opponent, query.slot.active, query.slot.hermit)
 
 	props: SingleUse = {
 		...singleUse,

@@ -39,9 +39,9 @@ class IskallmanRare extends Card {
 
 		const pickCondition = query.every(
 			query.slot.currentPlayer,
-			query.slot.hermitSlot,
+			query.slot.hermit,
 			query.not(query.slot.empty),
-			query.not(query.slot.activeRow)
+			query.not(query.slot.active)
 		)
 
 		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {

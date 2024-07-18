@@ -28,7 +28,7 @@ export class RowComponent {
 	public getHermitSlot() {
 		return this.game.components.find(
 			SlotComponent,
-			slot.hermitSlot,
+			slot.hermit,
 			slot.rowIs(this.entity)
 		) as BoardSlotComponent
 	}
@@ -36,7 +36,7 @@ export class RowComponent {
 	public getAttachSlot() {
 		return this.game.components.find(
 			SlotComponent,
-			slot.attachSlot,
+			slot.attach,
 			slot.rowIs(this.entity)
 		) as BoardSlotComponent
 	}
@@ -44,7 +44,7 @@ export class RowComponent {
 	public getItemSlots() {
 		return this.game.components.filter(
 			SlotComponent,
-			slot.itemSlot,
+			slot.item,
 			slot.rowIs(this.entity)
 		) as Array<BoardSlotComponent>
 	}
@@ -52,7 +52,7 @@ export class RowComponent {
 	public getHermit() {
 		return this.game.components.find(
 			CardComponent,
-			card.slot(slot.hermitSlot),
+			card.slot(slot.hermit),
 			card.rowIs(this.entity)
 		)
 	}
@@ -60,7 +60,7 @@ export class RowComponent {
 	public getAttach() {
 		return this.game.components.find(
 			CardComponent,
-			card.slot(slot.attachSlot),
+			card.slot(slot.attach),
 			card.rowIs(this.entity)
 		)
 	}
@@ -68,7 +68,7 @@ export class RowComponent {
 	public getItems() {
 		return this.game.components.filter(
 			CardComponent,
-			card.slot(slot.itemSlot),
+			card.slot(slot.item),
 			card.rowIs(this.entity)
 		)
 	}

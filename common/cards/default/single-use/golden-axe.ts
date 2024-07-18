@@ -44,7 +44,7 @@ class GoldenAxe extends Card {
 
 			attack.shouldIgnoreCards.push(
 				query.card.slot(
-					query.every(query.slot.opponent, query.slot.attachSlot, query.slot.activeRow)
+					query.every(query.slot.opponent, query.slot.attach, query.slot.active)
 				)
 			)
 		})

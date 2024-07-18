@@ -9,9 +9,9 @@ import {singleUse} from '../../base/defaults'
 class Ladder extends Card {
 	pickCondition = query.every(
 		query.slot.currentPlayer,
-		query.slot.hermitSlot,
+		query.slot.hermit,
 		query.not(query.slot.empty),
-		query.slot.adjacentTo(query.slot.activeRow)
+		query.slot.adjacentTo(query.slot.active)
 	)
 
 	props: SingleUse = {
@@ -46,8 +46,8 @@ class Ladder extends Card {
 					game.components.find(
 						SlotComponent,
 						query.slot.currentPlayer,
-						query.slot.hermitSlot,
-						query.slot.activeRow
+						query.slot.hermit,
+						query.slot.active
 					)
 				)
 				game.changeActiveRow(player, pickedSlot.row)

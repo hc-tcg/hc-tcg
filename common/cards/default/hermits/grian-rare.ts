@@ -64,15 +64,15 @@ class GrianRare extends Card {
 			const attachSlot = game.components.find(
 				SlotComponent,
 				query.slot.currentPlayer,
-				query.slot.activeRow,
-				query.slot.attachSlot
+				query.slot.active,
+				query.slot.attach
 			)
 			const canAttach = game.components.find(
 				SlotComponent,
 				query.slot.currentPlayer,
 				query.not(query.slot.frozen),
-				query.slot.attachSlot,
-				query.slot.activeRow,
+				query.slot.attach,
+				query.slot.active,
 				query.slot.empty
 			)
 

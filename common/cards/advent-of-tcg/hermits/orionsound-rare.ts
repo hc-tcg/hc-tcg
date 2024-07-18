@@ -46,7 +46,7 @@ class OrionSoundRare extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
-				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
+				canPick: slot.every(slot.not(slot.empty), slot.hermit),
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.cardId || rowIndex === null) return

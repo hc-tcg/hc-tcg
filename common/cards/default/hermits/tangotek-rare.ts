@@ -39,14 +39,14 @@ class TangoTekRare extends Card {
 
 			const opponentInactiveRowsPickCondition = query.every(
 				query.slot.opponent,
-				query.slot.hermitSlot,
-				query.not(query.slot.activeRow),
+				query.slot.hermit,
+				query.not(query.slot.active),
 				query.not(query.slot.empty)
 			)
 			const playerInactiveRowsPickCondition = query.every(
 				query.slot.currentPlayer,
-				query.slot.hermitSlot,
-				query.not(query.slot.activeRow),
+				query.slot.hermit,
+				query.not(query.slot.active),
 				query.not(query.slot.empty)
 			)
 

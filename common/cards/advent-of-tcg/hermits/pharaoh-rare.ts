@@ -54,8 +54,8 @@ class PharaohRare extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			const pickCondition = slot.every(
-				slot.hermitSlot,
-				slot.not(slot.activeRow),
+				slot.hermit,
+				slot.not(slot.active),
 				slot.not(slot.empty),
 				slot.not(slot.hasId(this.props.id))
 			)

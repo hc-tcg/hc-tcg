@@ -19,8 +19,8 @@ class String extends Card {
 			query.slot.opponent,
 			query.slot.empty,
 			query.slot.row(query.row.hasHermit),
-			query.slot.actionAvailable('PLAY_EFFECT_CARD'),
-			query.some(query.slot.attachSlot, query.slot.itemSlot),
+			query.actionAvailable('PLAY_EFFECT_CARD'),
+			query.some(query.slot.attach, query.slot.item),
 			query.not(query.slot.frozen)
 		),
 		log: (values) =>

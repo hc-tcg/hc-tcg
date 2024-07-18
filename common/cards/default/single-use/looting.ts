@@ -14,8 +14,8 @@ import {singleUse} from '../../base/defaults'
 class Looting extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
-		query.slot.activeRow,
-		query.slot.itemSlot,
+		query.slot.active,
+		query.slot.item,
 		query.not(query.slot.empty)
 	)
 

@@ -54,7 +54,7 @@ class WaterBucket extends Card {
 				message: 'Pick one of your Hermits',
 				canPick: query.every(
 					query.slot.currentPlayer,
-					query.slot.hermitSlot,
+					query.slot.hermit,
 					query.not(query.slot.empty)
 				),
 				onResult(pickedSlot) {

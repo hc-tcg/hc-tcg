@@ -16,7 +16,7 @@ class TurtleShell extends Card {
 		tokens: 1,
 		description:
 			"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
-		attachCondition: query.every(attach.attachCondition, query.not(query.slot.activeRow)),
+		attachCondition: query.every(attach.attachCondition, query.not(query.slot.active)),
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {

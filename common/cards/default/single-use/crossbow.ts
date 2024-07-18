@@ -26,7 +26,7 @@ class Crossbow extends Card {
 		const {player} = component
 		const pickCondition = query.every(
 			query.slot.opponent,
-			query.slot.hermitSlot,
+			query.slot.hermit,
 			query.not(query.slot.empty)
 		)
 

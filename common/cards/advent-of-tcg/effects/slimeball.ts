@@ -18,7 +18,7 @@ class Slimeball extends Card {
 			"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
 		attachCondition: query.every(
 			slot.opponent,
-			slot.attachSlot,
+			slot.attach,
 			slot.empty,
 			slot.row(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
@@ -33,7 +33,7 @@ class Slimeball extends Card {
 			return slot.every(
 				slot.player,
 				slot.rowIndex(pos.rowIndex),
-				slot.not(slot.attachSlot),
+				slot.not(slot.attach),
 				slot.not(slot.empty)
 			)
 		})

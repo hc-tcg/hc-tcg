@@ -142,7 +142,7 @@ export function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent
 ): LocalPlayerState {
-	let singleUseSlot = game.components.find(SlotComponent, slot.singleUseSlot)?.entity
+	let singleUseSlot = game.components.find(SlotComponent, slot.singleUse)?.entity
 	let singleUseCard =
 		game.components.find(CardComponent, card.slotIs(singleUseSlot))?.toLocalCardInstance() || null
 

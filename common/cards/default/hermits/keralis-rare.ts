@@ -31,9 +31,9 @@ class KeralisRare extends Card {
 	}
 
 	pickCondition = query.every(
-		query.not(query.slot.activeRow),
+		query.not(query.slot.active),
 		query.not(query.slot.empty),
-		query.slot.hermitSlot
+		query.slot.hermit
 	)
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

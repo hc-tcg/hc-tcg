@@ -44,13 +44,13 @@ class LDShadowLadyRare extends Card {
 			)
 				return
 
-			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermitSlot, slot.activeRow))) return
+			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermit, slot.active))) return
 
 			const pickCondition = slot.every(
 				slot.empty,
-				slot.hermitSlot,
+				slot.hermit,
 				slot.opponent,
-				slot.not(slot.activeRow)
+				slot.not(slot.active)
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return

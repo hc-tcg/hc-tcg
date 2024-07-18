@@ -38,9 +38,9 @@ class IJevinRare extends Card {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const pickCondition = query.every(
-				query.not(query.slot.activeRow),
+				query.not(query.slot.active),
 				query.not(query.slot.empty),
-				query.slot.hermitSlot
+				query.slot.hermit
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return

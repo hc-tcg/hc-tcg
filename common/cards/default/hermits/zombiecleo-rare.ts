@@ -34,9 +34,9 @@ class ZombieCleoRare extends Card {
 
 	pickCondition = query.every(
 		query.slot.currentPlayer,
-		query.slot.hermitSlot,
+		query.slot.hermit,
 		query.not(query.slot.empty),
-		query.not(query.slot.activeRow),
+		query.not(query.slot.active),
 		query.not(query.slot.has(ZombieCleoRare)),
 		query.not(query.slot.has(ArmorStand))
 	)

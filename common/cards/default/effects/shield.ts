@@ -38,7 +38,7 @@ class Shield extends Card {
 				component.discard()
 				const hermitName = game.components.find(
 					CardComponent,
-					card.slot(slot.hermitSlot),
+					card.slot(slot.hermit),
 					card.row(row.entity(attack.target?.entity))
 				)
 				game.battleLog.addEntry(player.entity, `$p${hermitName}'s$ $eShield$ was broken`)

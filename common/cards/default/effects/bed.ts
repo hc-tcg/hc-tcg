@@ -25,7 +25,7 @@ class Bed extends Card {
 				name: 'sleeping',
 			},
 		],
-		attachCondition: query.every(attach.attachCondition, query.slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, query.slot.active),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -37,7 +37,7 @@ class Bed extends Card {
 			return game.components.find(
 				CardComponent,
 				query.card.rowIs(component.slot.row.entity),
-				query.card.slot(query.slot.hermitSlot)
+				query.card.slot(query.slot.hermit)
 			)
 		}
 

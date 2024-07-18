@@ -34,7 +34,7 @@ class RendogRare extends Card {
 
 	pickCondition = query.every(
 		query.slot.opponent,
-		query.slot.hermitSlot,
+		query.slot.hermit,
 		query.not(query.slot.empty),
 		query.not(query.slot.has(RendogRare)),
 		query.not(query.slot.has(ArmorStand))

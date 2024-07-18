@@ -8,8 +8,8 @@ import {singleUse} from '../../base/defaults'
 class CurseOfVanishing extends Card {
 	discardCondition = query.every(
 		query.slot.opponent,
-		query.slot.activeRow,
-		query.slot.attachSlot,
+		query.slot.active,
+		query.slot.attach,
 		query.not(query.slot.empty),
 		query.not(query.slot.frozen)
 	)

@@ -46,7 +46,7 @@ class TinFoilChefUltraRare extends Card {
 				!game.components.exists(
 					SlotComponent,
 					query.slot.opponent,
-					query.slot.attachSlot,
+					query.slot.attach,
 					query.not(query.slot.frozen)
 				)
 			)
@@ -65,7 +65,7 @@ class TinFoilChefUltraRare extends Card {
 					CardComponent,
 					query.card.active,
 					query.card.opponentPlayer,
-					query.card.slot(query.slot.attachSlot, query.not(query.slot.frozen))
+					query.card.slot(query.slot.attach, query.not(query.slot.frozen))
 				)
 				?.discard()
 		})

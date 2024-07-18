@@ -37,7 +37,7 @@ class BrewingStand extends Card {
 				message: 'Pick an item card to discard',
 				canPick: slot.every(
 					slot.player,
-					slot.itemSlot,
+					slot.item,
 					slot.not(slot.empty),
 					slot.rowIndex(pos.rowIndex)
 				),

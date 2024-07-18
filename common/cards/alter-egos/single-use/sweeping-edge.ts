@@ -7,8 +7,8 @@ import {singleUse} from '../../base/defaults'
 
 class SweepingEdge extends Card {
 	discardCondition = query.every(
-		query.some(query.slot.activeRow, query.slot.row(query.row.adjacent(query.row.active))),
-		query.slot.attachSlot,
+		query.some(query.slot.active, query.slot.row(query.row.adjacent(query.row.active))),
+		query.slot.attach,
 		query.slot.opponent,
 		query.not(query.slot.empty),
 		query.not(query.slot.frozen)

@@ -7,7 +7,7 @@ import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
 class InstantHealthII extends Card {
-	pickCondition = query.every(query.slot.hermitSlot, query.not(query.slot.empty))
+	pickCondition = query.every(query.slot.hermit, query.not(query.slot.empty))
 
 	props: SingleUse = {
 		...singleUse,

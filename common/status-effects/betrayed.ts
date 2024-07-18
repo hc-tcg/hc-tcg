@@ -26,9 +26,9 @@ class Betrayed extends PlayerStatusEffect {
 	) {
 		const pickCondition = query.every(
 			query.slot.currentPlayer,
-			query.not(query.slot.activeRow),
+			query.not(query.slot.active),
 			query.not(query.slot.empty),
-			query.slot.hermitSlot
+			query.slot.hermit
 		)
 
 		let pickedAfkHermit: SlotComponent | null = null

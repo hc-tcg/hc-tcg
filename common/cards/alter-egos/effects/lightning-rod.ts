@@ -22,7 +22,7 @@ class LightningRod extends Card {
 				query.exists(
 					SlotComponent,
 					query.slot.currentPlayer,
-					query.slot.attachSlot,
+					query.slot.attach,
 					query.slot.has(LightningRod)
 				)
 			)

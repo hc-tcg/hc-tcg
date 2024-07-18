@@ -6,10 +6,10 @@ export const item = {
 	category: 'item' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
-		query.slot.itemSlot,
+		query.slot.item,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
-		query.slot.actionAvailable('PLAY_ITEM_CARD'),
+		query.actionAvailable('PLAY_ITEM_CARD'),
 		query.not(query.slot.frozen)
 	),
 	log: (values: PlayCardLog) =>
@@ -20,10 +20,10 @@ export const hermit = {
 	hermit: null,
 	category: 'hermit' as CardCategoryT,
 	attachCondition: query.every(
-		query.slot.hermitSlot,
+		query.slot.hermit,
 		query.slot.currentPlayer,
 		query.slot.empty,
-		query.slot.actionAvailable('PLAY_HERMIT_CARD'),
+		query.actionAvailable('PLAY_HERMIT_CARD'),
 		query.not(query.slot.frozen)
 	),
 	log: (values: PlayCardLog) =>
@@ -35,10 +35,10 @@ export const attach = {
 	category: 'attach' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
-		query.slot.attachSlot,
+		query.slot.attach,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
-		query.slot.actionAvailable('PLAY_EFFECT_CARD'),
+		query.actionAvailable('PLAY_EFFECT_CARD'),
 		query.not(query.slot.frozen)
 	),
 	log: (values: PlayCardLog) =>
@@ -51,8 +51,8 @@ export const singleUse = {
 	hasAttack: false,
 	category: 'single_use' as CardCategoryT,
 	attachCondition: query.every(
-		query.slot.singleUseSlot,
+		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,
-		query.slot.actionAvailable('PLAY_SINGLE_USE_CARD')
+		query.actionAvailable('PLAY_SINGLE_USE_CARD')
 	),
 }

@@ -10,8 +10,8 @@ import {singleUse} from '../../base/defaults'
 class Egg extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
-		query.slot.hermitSlot,
-		query.not(query.slot.activeRow),
+		query.slot.hermit,
+		query.not(query.slot.active),
 		query.not(query.slot.empty)
 	)
 

@@ -12,7 +12,7 @@ class FireCharge extends Card {
 		query.slot.currentPlayer,
 		query.not(query.slot.frozen),
 		query.not(query.slot.empty),
-		query.some(query.slot.itemSlot, query.slot.attachSlot)
+		query.some(query.slot.item, query.slot.attach)
 	)
 
 	props: SingleUse = {

@@ -1,6 +1,5 @@
 import {ComponentQuery, card, effect} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
-import {TurnAction} from '../../types/game-state'
 import {CardClass} from '../../cards/base/card'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import * as query from '.'
@@ -28,27 +27,27 @@ export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 /** Return true if the card is attached to a hermit slot. */
-export const hermitSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
+export const hermit: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'hermit'
 }
 
 /** Return true if the card is attached to an effect slot. */
-export const attachSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
+export const attach: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'attach'
 }
 
 /** Return true if this slot is the single use slot. */
-export const singleUseSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
+export const singleUse: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'single_use'
 }
 
 /** Return true if the card is attached to an item slot. */
-export const itemSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
+export const item: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'item'
 }
 
 /** Return true if the card is attached to the active row. */
-export const activeRow: ComponentQuery<SlotComponent> = (_game, pos) => {
+export const active: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.onBoard() && pos.player?.activeRowEntity === pos.rowEntity
 }
 
@@ -121,10 +120,6 @@ export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 		.some((result) => result(game, pos))
 
 	return playerResult || opponentResult
-}
-
-export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponent> => {
-	return (game, _pos) => game.state.turn.availableActions.includes(action)
 }
 
 export function hasStatusEffect(

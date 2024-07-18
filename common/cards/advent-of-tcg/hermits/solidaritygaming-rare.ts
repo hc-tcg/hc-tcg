@@ -55,9 +55,9 @@ class SolidaritygamingRare extends Card {
 
 			const pickCondition = slot.every(
 				slot.player,
-				slot.not(slot.activeRow),
+				slot.not(slot.active),
 				slot.not(slot.empty),
-				slot.hermitSlot
+				slot.hermit
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return

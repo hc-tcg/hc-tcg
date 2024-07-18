@@ -132,7 +132,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		if (activeRowId !== null && turnState.turnNumber > 1) {
 			const hermitCard = game.components.find(
 				CardComponent,
-				query.card.slot(query.slot.rowIs(activeRowId), query.slot.hermitSlot)
+				query.card.slot(query.slot.rowIs(activeRowId), query.slot.hermit)
 			)
 
 			// only add attack options if not sleeping
@@ -539,7 +539,7 @@ function* turnActionsSaga(game: GameModel) {
 				const hasActiveHermit = game.components.exists(
 					CardComponent,
 					query.card.player(currentPlayer.entity),
-					query.card.slot(query.slot.activeRow, query.slot.hermitSlot)
+					query.card.slot(query.slot.active, query.slot.hermit)
 				)
 				if (hasActiveHermit) {
 					break

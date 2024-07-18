@@ -68,7 +68,7 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttack(game, activeInstance, hermitAttackType)
 
-	const thisAttackSU = game.components.find(CardComponent, card.slot(slot.singleUseSlot))
+	const thisAttackSU = game.components.find(CardComponent, card.slot(slot.singleUse))
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

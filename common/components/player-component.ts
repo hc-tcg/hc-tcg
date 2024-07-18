@@ -179,7 +179,7 @@ export class PlayerComponent {
 	public getActiveHermit(): CardComponent | null {
 		return this.game.components.find(
 			CardComponent,
-			query.card.slot(query.slot.hermitSlot),
+			query.card.slot(query.slot.hermit),
 			query.card.active,
 			query.card.player(this.entity)
 		)

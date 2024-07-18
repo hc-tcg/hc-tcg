@@ -53,8 +53,8 @@ class HypnotizdRare extends Card {
 
 			const pickCondition = query.every(
 				query.slot.currentPlayer,
-				query.slot.activeRow,
-				query.slot.itemSlot,
+				query.slot.active,
+				query.slot.item,
 				query.not(query.slot.empty)
 			)
 
@@ -83,7 +83,7 @@ class HypnotizdRare extends Card {
 				message: "Pick one of your opponent's Hermits",
 				canPick: query.every(
 					query.slot.opponent,
-					query.slot.hermitSlot,
+					query.slot.hermit,
 					query.not(query.slot.empty)
 				),
 				onResult: (pickedSlot) => {

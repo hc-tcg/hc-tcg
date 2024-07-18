@@ -24,7 +24,7 @@ class Loyalty extends Card {
 
 		const afterAttack = (_attack: AttackModel) => {
 			game.components
-				.filter(CardComponent, card.currentPlayer, card.slot(slot.itemSlot))
+				.filter(CardComponent, card.currentPlayer, card.slot(slot.item))
 				.forEach((card) => card.draw())
 		}
 

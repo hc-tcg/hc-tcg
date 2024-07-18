@@ -54,7 +54,7 @@ class DungeonTangoRare extends Card {
 				playerId: player.id,
 				id: this.props.id,
 				message: 'Choose an item card to discard',
-				canPick: slot.every(slot.player, slot.itemSlot, slot.activeRow, slot.not(slot.empty)),
+				canPick: slot.every(slot.player, slot.item, slot.active, slot.not(slot.empty)),
 				onResult(pickedSlot) {
 					if (!pickedSlot.cardId) return
 

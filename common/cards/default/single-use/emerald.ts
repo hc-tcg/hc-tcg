@@ -22,8 +22,8 @@ class Emerald extends Card {
 				SlotComponent,
 				query.every(
 					query.slot.currentPlayer,
-					query.slot.activeRow,
-					query.slot.attachSlot,
+					query.slot.active,
+					query.slot.attach,
 					query.not(query.slot.frozen)
 				)
 			),
@@ -31,8 +31,8 @@ class Emerald extends Card {
 				SlotComponent,
 				query.every(
 					query.slot.opponent,
-					query.slot.activeRow,
-					query.slot.attachSlot,
+					query.slot.active,
+					query.slot.attach,
 					query.not(query.slot.empty),
 					query.not(query.slot.frozen)
 				)
@@ -47,14 +47,14 @@ class Emerald extends Card {
 			const playerSlot = game.components.find(
 				SlotComponent,
 				query.slot.currentPlayer,
-				query.slot.activeRow,
-				query.slot.attachSlot
+				query.slot.active,
+				query.slot.attach
 			)
 			const opponentSlot = game.components.find(
 				SlotComponent,
 				query.slot.opponent,
-				query.slot.activeRow,
-				query.slot.attachSlot
+				query.slot.active,
+				query.slot.attach
 			)
 
 			game.swapSlots(playerSlot, opponentSlot)
