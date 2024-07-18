@@ -25,6 +25,11 @@ import {CardEntity, newEntity} from 'common/entities'
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
+// Dear Reader,
+// On 07/17/23, This still has not been sorted out properly. I think I might have
+// even made it worse.
+// Sincerely, Lunarmagpie
+
 function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
