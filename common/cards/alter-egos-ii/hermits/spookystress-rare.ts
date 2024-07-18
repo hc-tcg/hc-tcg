@@ -42,16 +42,14 @@ class SpookyStressRare extends Card {
 			if (attack.attacker?.entity !== component.entity) return
 			if (attack.type !== 'secondary') return
 
-			if (
-				!game.components.exists(
-					SlotComponent,
-					query.slot.active,
-					query.slot.has(WaterBucket),
-					query.slot.currentPlayer
-				)
-			) {
-				return
-			}
+			const waterBucketAttached = game.components.exists(
+				SlotComponent,
+				query.slot.active,
+				query.slot.has(WaterBucket),
+				query.slot.currentPlayer
+			)
+
+			if (!waterBucketAttached) return
 
 			game.components
 				.filter(RowComponent, query.not(query.row.active), query.row.opponentPlayer)
