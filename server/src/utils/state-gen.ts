@@ -197,11 +197,9 @@ export function getLocalPlayerState(
 						items: items,
 						health: row.health,
 					},
-				]
+				] as const
 			})
-			.sort(
-				([rowIndexA, _rowA], [rowIndexB, _rowB]) => (rowIndexA as number) - (rowIndexB as number)
-			)
+			.sort(([rowIndexA, _rowA], [rowIndexB, _rowB]) => rowIndexA - rowIndexB)
 			.map(([_, row]) => row),
 	}
 
