@@ -14,6 +14,11 @@ import ECS from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {PlayerEntity} from '../entities'
 
+/* Set up the components that will be referenced during the game. This includes:
+ * - The player objects
+ * - Board Slot
+ * - Cards in the deck and hand
+ */
 export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerModel) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)

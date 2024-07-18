@@ -20,6 +20,8 @@ export class GameModel {
 	public players: Record<PlayerId, PlayerModel>
 	public task: any
 	public state: GameState
+
+	/** The objects used in the game. */
 	public components: ECS
 
 	public endInfo: {

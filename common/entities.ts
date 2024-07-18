@@ -1,4 +1,5 @@
-/** This file contains entities for the ECS. The entities are shared between the client and server to keep a unique
+/**
+ * This file contains entities for the ECS. The entities are shared between the client and server to keep a unique
  * and consistent reference each variable.
  */
 
@@ -11,7 +12,7 @@ import type {
 	StatusEffectComponent,
 } from './components'
 
-// Due to how typescript works, we need `Wrapping` to show up in the type for type inference to work.
+// Due to how typescript works, we need `Wrapping` to show up in the type for type inference.
 export type Entity<Wrapping> = string & {
 	__entity_type_do_not_use_ever_the_program_will_crash: Wrapping
 }
