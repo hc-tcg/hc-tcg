@@ -1,7 +1,7 @@
 import {useDeferredValue, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
-import {sortCards, cardGroupHeader} from './deck'
+import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {CARDS_LIST} from 'common/cards'
@@ -114,12 +114,62 @@ type Props = {
 	deck: PlayerDeckT
 }
 
-const ALL_CARDS = CARDS_LIST.map(
-	(card: Card): LocalCardInstance => ({
-		props: WithoutFunctions(card.props),
-		entity: card.props.numericId.toString() as CardEntity,
-		slot: null,
+const TYPE_ORDER = {
+	hermit: 0,
+	attach: 1,
+	single_use: 2,
+	item: 3,
+	health: 4,
+}
+
+export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInstance> {
+	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
+		const cardCostA = a.props.tokens
+		const cardCostB = b.props.tokens
+
+		if (a.props.category !== b.props.category) {
+			// seperate by types first
+			return TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category]
+		} else if (
+			// then by hermit types
+			isHermit(a.props) &&
+			isHermit(b.props) &&
+			a.props.type !== b.props.type
+		) {
+			return a.props.type.localeCompare(b.props.type)
+		} else if (
+			// then by item types
+			isItem(a.props) &&
+			isItem(b.props) &&
+			a.props.type !== b.props.type
+		) {
+			return a.props.type.localeCompare(b.props.type)
+		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
+			// then by expansion if they are both hermits
+			return a.props.expansion.localeCompare(a.props.expansion)
+		} else if (cardCostA !== cardCostB) {
+			// order by ranks
+			return cardCostA - cardCostB
+		} else if (a.props.name !== b.props.name) {
+			return a.props.name.localeCompare(b.props.name)
+		}
+
+		// rarity is our last hope
+		const rarities = ['common', 'rare', 'ultra_rare']
+		const rarityValueA = rarities.findIndex((s) => s === a.props.rarity) + 1
+		const rarityValueB = rarities.findIndex((s) => s === b.props.rarity) + 1
+		return rarityValueA - rarityValueB
 	})
+}
+
+const ALL_CARDS = sortCards(
+	CARDS_LIST.map(
+		(card: Card): LocalCardInstance => ({
+			props: WithoutFunctions(card.props),
+			entity: card.props.numericId.toString() as CardEntity,
+			slot: null,
+		})
+	)
 )
 
 function EditDeck({back, title, saveDeck, deck}: Props) {
