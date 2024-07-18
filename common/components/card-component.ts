@@ -76,6 +76,16 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		throw new Error('An ID for a nonexistent card should never be created')
 	}
 
+	/** A function that is used to order cards by thier slot's order
+	 * ```
+	 * let orderedCards = game.components.filter(
+	 *        CardComponent,
+	 *        query.card.slot(query.slot.deck),
+	 *        query.card.currentPlayer,
+	 *    )
+	 *    .order(CardComponent.compareOrder)
+	 * ```
+	 */
 	static compareOrder(a: CardComponent, b: CardComponent) {
 		if (!('order' in a.slot) || !('order' in b.slot)) return 0
 		return (a.slot.order as number) - (b.slot.order as number)
