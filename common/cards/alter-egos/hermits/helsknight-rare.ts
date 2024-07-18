@@ -38,9 +38,7 @@ class HelsknightRare extends Card {
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components
-				.new(StatusEffectComponent, TrapHoleEffect)
-				.apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, TrapHoleEffect).apply(opponentPlayer.entity)
 		})
 	}
 }

@@ -12,7 +12,9 @@
 .AlertDialogContent {
 	background-color: var(--gray-500);
 	border: 2px solid var(--gray-900);
-	box-shadow: hsl(206deg 22% 7% / 35%) 0 10px 38px -10px, hsl(206deg 22% 7% / 20%) 0 10px 20px -15px;
+	box-shadow:
+		hsl(206deg 22% 7% / 35%) 0 10px 38px -10px,
+		hsl(206deg 22% 7% / 20%) 0 10px 20px -15px;
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -67,7 +69,9 @@
 	gap: 0.25rem;
 	justify-content: center;
 	width: 100%;
-	box-shadow: inset 0 2px 0 0 var(--gray-400), inset 0 -2px 0 0 var(--gray-700);
+	box-shadow:
+		inset 0 2px 0 0 var(--gray-400),
+		inset 0 -2px 0 0 var(--gray-700);
 
 	button {
 		flex-grow: 1;

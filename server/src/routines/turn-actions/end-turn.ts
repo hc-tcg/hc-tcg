@@ -13,7 +13,7 @@ function* endTurnSaga(game: GameModel): Generator<never, GenericActionResult> {
 	if (!game.currentPlayer.singleUseCardUsed) singleUseCard?.draw()
 
 	game.currentPlayer.singleUseCardUsed = false
-	
+
 	return 'SUCCESS'
 }
 

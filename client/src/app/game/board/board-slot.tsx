@@ -12,7 +12,7 @@ import {
 } from 'logic/game/game-selectors'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
-import { SlotEntity } from 'common/entities'
+import {SlotEntity} from 'common/entities'
 
 export type SlotProps = {
 	type: SlotTypeT

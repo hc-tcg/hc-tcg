@@ -239,15 +239,17 @@ function* checkHermitHealth(game: GameModel) {
 			}
 
 			if (card.slot.row.entity === playerState.activeRowEntity) {
-				game.changeActiveRow(
-					playerState,
-					game.components.find(
-						RowComponent,
-						query.not(query.row.entity(playerState.activeRowEntity)),
-						query.row.player(playerState.entity),
-						query.row.hasHermit
-					)
+				let targetRow = game.components.find(
+					RowComponent,
+					query.not(query.row.entity(playerState.activeRowEntity)),
+					query.row.player(playerState.entity),
+					query.row.hasHermit
 				)
+				if (targetRow) {
+					game.changeActiveRow(playerState, targetRow)
+				} else {
+					playerState.activeRowEntity = null
+				}
 				let activeHermit = playerState.activeRow?.getHermit()
 				if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
 			}
@@ -263,15 +265,15 @@ function* checkHermitHealth(game: GameModel) {
 				playerState.lives -= 1
 
 				// reward card
-				const rewardCard = game.components
+				game.components
 					.filter(
 						CardComponent,
 						query.card.slot(query.slot.deck),
 						query.card.player(playerState.entity)
 					)
-					.sort(CardComponent.compareOrder)[0]
-				if (rewardCard) {
-				}
+					.sort(CardComponent.compareOrder)
+					.at(0)
+					?.draw(playerState.opponentPlayer.entity)
 			}
 		}
 
@@ -279,6 +281,7 @@ function* checkHermitHealth(game: GameModel) {
 
 		const noHermitsLeft = !game.components.exists(
 			CardComponent,
+			query.card.player(playerState.entity),
 			query.card.attached,
 			query.card.isHermit
 		)

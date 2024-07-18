@@ -45,7 +45,10 @@ class VintageBeefRare extends Card {
 				.filter(
 					StatusEffectComponent,
 					query.effect.type('normal', 'damage'),
-					query.effect.targetIsCardAnd(query.card.currentPlayer, query.card.slot(query.slot.hermitSlot))
+					query.effect.targetIsCardAnd(
+						query.card.currentPlayer,
+						query.card.slot(query.slot.hermitSlot)
+					)
 				)
 				.forEach((effect) => effect.remove())
 		})

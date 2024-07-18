@@ -41,9 +41,7 @@ class ZedaphPlaysRare extends Card {
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			game.components
-				.new(StatusEffectComponent, SheepStare)
-				.apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, SheepStare).apply(opponentPlayer.entity)
 		})
 	}
 }

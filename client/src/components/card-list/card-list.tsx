@@ -36,7 +36,7 @@ const CardList = (props: CardListProps) => {
 						enterDone: css.enterDone,
 						exit: css.exit,
 						exitActive: css.exitActive,
-				  }
+					}
 				: {}
 
 		return (

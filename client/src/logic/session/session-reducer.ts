@@ -1,7 +1,7 @@
 import {AnyAction} from 'redux'
 import {PlayerDeckT} from 'common/types/deck'
 import {ToastT} from 'common/types/app'
-import { PlayerId } from 'common/models/player-model'
+import {PlayerId} from 'common/models/player-model'
 
 type SessionState = {
 	playerName: string

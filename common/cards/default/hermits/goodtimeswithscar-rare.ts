@@ -76,9 +76,7 @@ class GoodTimesWithScarRare extends Card {
 				`Using $vDeathloop$, $p${target.props.name}$ revived with $g50hp$`
 			)
 
-			game.components
-				.new(StatusEffectComponent, RevivedByDeathloop)
-				.apply(component.entity)
+			game.components.new(StatusEffectComponent, RevivedByDeathloop).apply(component.entity)
 		})
 	}
 }
