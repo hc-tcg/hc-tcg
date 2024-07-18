@@ -10,7 +10,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import * as query from '../../../components/query'
-import Fortune from '../../../status-effects/fortune'
+import FortuneEffect from '../../../status-effects/fortune'
 
 class BoomerBdubsRare extends Card {
 	props: Hermit = {
@@ -98,7 +98,7 @@ class BoomerBdubsRare extends Card {
 					// After the first coin flip we remove fortune to prevent infinite coin flips.
 					game.components.filter(
 						StatusEffectComponent<PlayerComponent>,
-						query.effect.is(Fortune),
+						query.effect.is(FortuneEffect),
 						query.effect.targetIsPlayerAnd(
 							(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
 						)
