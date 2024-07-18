@@ -7,7 +7,7 @@ export type Component = {
 }
 
 /** The component table is a map of entities to component objects. Components in the component
- * table can also be filtered. See the filter method for more information.
+ * table can also be queried. See the filter and find methods for more information.
  */
 export default class ComponentTable {
 	game: GameModel
