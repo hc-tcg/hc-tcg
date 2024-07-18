@@ -60,7 +60,7 @@ export const damageEffect = {
 		target instanceof CardComponent &&
 		!game.components.exists(
 			StatusEffectComponent,
-			query.effect.targetIs(target.entity),
+			query.effect.targetEntity(target.entity),
 			query.effect.type('damage')
 		),
 	applyLog: (values: StatusEffectLog) =>

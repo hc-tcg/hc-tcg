@@ -229,7 +229,7 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 
 	const targetCardInfo = game.components.find(
 		CardComponent,
-		query.card.rowIs(attack.targetEntity),
+		query.card.rowEntity(attack.targetEntity),
 		query.card.isHermit
 	)
 

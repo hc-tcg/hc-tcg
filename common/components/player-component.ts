@@ -224,7 +224,7 @@ export class PlayerComponent {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
-			query.effect.targetIs(this.entity)
+			query.effect.targetEntity(this.entity)
 		)
 	}
 }

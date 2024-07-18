@@ -50,7 +50,7 @@ class JoeHillsRare extends Card {
 				game.components.exists(
 					StatusEffectComponent,
 					effect.is(UsedClock),
-					effect.targetIs(component.entity)
+					effect.targetEntity(component.entity)
 				)
 			)
 				return

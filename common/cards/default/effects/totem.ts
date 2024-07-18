@@ -39,7 +39,7 @@ class Totem extends Card {
 			let targetHermit = target.getHermit()
 
 			game.components
-				.filter(StatusEffectComponent, effect.targetIs(targetHermit?.entity))
+				.filter(StatusEffectComponent, effect.targetEntity(targetHermit?.entity))
 				.forEach((ail) => {
 					ail.remove()
 				})

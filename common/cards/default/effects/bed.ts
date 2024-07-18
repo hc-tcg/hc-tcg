@@ -36,7 +36,7 @@ class Bed extends Card {
 			if (!component.slot.inRow()) return
 			return game.components.find(
 				CardComponent,
-				query.card.rowIs(component.slot.row.entity),
+				query.card.rowEntity(component.slot.row.entity),
 				query.card.slot(query.slot.hermit)
 			)
 		}

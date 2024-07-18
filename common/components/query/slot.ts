@@ -23,7 +23,7 @@ export function player(player: PlayerEntity | null): ComponentQuery<SlotComponen
 
 /** Return true if the spot is empty. */
 export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
-	return !game.components.exists(CardComponent, card.slotIs(pos.entity))
+	return !game.components.exists(CardComponent, card.slotEntity(pos.entity))
 }
 
 /** Return true if the card is attached to a hermit slot. */
@@ -100,7 +100,7 @@ export const entity = (entity: SlotEntity | null | undefined): ComponentQuery<Sl
 
 export const has = (...cards: Array<CardClass>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
-		return game.components.exists(CardComponent, card.is(...cards), card.slotIs(pos.entity))
+		return game.components.exists(CardComponent, card.is(...cards), card.slotEntity(pos.entity))
 	}
 }
 
@@ -129,7 +129,7 @@ export function hasStatusEffect(
 		return game.components.exists(
 			StatusEffectComponent,
 			effect.is(statusEffect),
-			effect.targetIsCardAnd(card.slotIs(pos.entity))
+			effect.targetIsCardAnd(card.slotEntity(pos.entity))
 		)
 	}
 }

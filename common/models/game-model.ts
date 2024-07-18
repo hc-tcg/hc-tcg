@@ -331,8 +331,8 @@ export class GameModel {
 	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, card.slotIs(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, card.slotIs(slotB.entity))
+		const slotACards = this.components.filter(CardComponent, card.slotEntity(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, card.slotEntity(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.slotEntity = slotB.entity

@@ -37,11 +37,11 @@ export function row(
 	}
 }
 
-export function slotIs(slot: SlotEntity | null | undefined): ComponentQuery<CardComponent> {
+export function slotEntity(slot: SlotEntity | null | undefined): ComponentQuery<CardComponent> {
 	return (_game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
 }
 
-export function rowIs(row: RowEntity | null): ComponentQuery<CardComponent> {
+export function rowEntity(row: RowEntity | null): ComponentQuery<CardComponent> {
 	return (_game, card) => {
 		if (!row) return false
 		if (!card.slot?.onBoard()) return false
@@ -85,7 +85,7 @@ export const hasStatusEffect = (
 		return game.components.exists(
 			StatusEffectComponent,
 			query.effect.is(statusEffect),
-			query.effect.targetIs(card.entity)
+			query.effect.targetEntity(card.entity)
 		)
 	}
 }

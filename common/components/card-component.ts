@@ -178,7 +178,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(statusEffect),
-			query.effect.targetIs(this.entity)
+			query.effect.targetEntity(this.entity)
 		)
 	}
 }

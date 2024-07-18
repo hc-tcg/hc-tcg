@@ -36,7 +36,7 @@ export function targetIsCardAnd(
 		query.every(...predicates)(game, statusEffect.target)
 }
 
-export function targetIs(
+export function targetEntity(
 	target: CardEntity | PlayerEntity | null | undefined
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>

@@ -74,7 +74,7 @@ export class SlotComponent {
 	}
 
 	public getCard() {
-		return this.game.components.find(CardComponent, card.slotIs(this.entity))
+		return this.game.components.find(CardComponent, card.slotEntity(this.entity))
 	}
 }
 
