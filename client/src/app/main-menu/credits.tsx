@@ -91,7 +91,7 @@ function Credits({setMenuSection}: Props) {
 					handle="lunarmagpie"
 					social="github"
 					link="https://github.com/lunarmagpie"
-					avatar="https://avatars.githubusercontent.com/u/65521138?s=400&u=1b01fc6add4c386264f42e43bd253467f06fc006&v=4"
+					avatar="https://avatars.githubusercontent.com/u/65521138"
 				/>
 			</div>
 		</MenuLayout>
