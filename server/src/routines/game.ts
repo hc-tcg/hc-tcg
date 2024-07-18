@@ -239,8 +239,6 @@ function* checkHermitHealth(game: GameModel) {
 			}
 
 			if (card.slot.row.entity === playerState.activeRowEntity) {
-				let activeHermit = playerState.activeRow?.getHermit()
-				if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
 				playerState.activeRowEntity = null
 			}
 
