@@ -17,7 +17,12 @@ export class AussiePing extends PlayerStatusEffect {
 		name: 'Aussie Ping',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
-		applyCondition: query.not(query.effect.targetIsPlayerAnd),
+		applyCondition: query.not(
+			query.exists(
+				StatusEffectComponent,
+				query.every(query.effect.targetIs(query.player), query.effect.is(AussiePingImmune))
+			)
+		),
 	}
 
 	override onApply(
