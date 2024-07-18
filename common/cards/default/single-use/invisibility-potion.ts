@@ -47,9 +47,13 @@ class InvisibilityPotion extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			if (flipCoin(player, component)[0] === 'heads') {
-				game.components.new(StatusEffectComponent, InvisibilityPotionHeadsEffect).apply(player.entity)
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionHeadsEffect)
+					.apply(player.entity)
 			} else {
-				game.components.new(StatusEffectComponent, InvisibilityPotionTailsEffect).apply(player.entity)
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionTailsEffect)
+					.apply(player.entity)
 			}
 		})
 	}

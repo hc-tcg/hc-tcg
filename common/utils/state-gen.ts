@@ -19,7 +19,11 @@ import {PlayerEntity} from '../entities'
  * - Board Slot
  * - Cards in the deck and hand
  */
-export function setupComponents(components: ComponentTable, player1: PlayerModel, player2: PlayerModel) {
+export function setupComponents(
+	components: ComponentTable,
+	player1: PlayerModel,
+	player2: PlayerModel
+) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
 
@@ -28,7 +32,11 @@ export function setupComponents(components: ComponentTable, player1: PlayerModel
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
-function setupEcsForPlayer(components: ComponentTable, playerModel: PlayerModel, playerEntity: PlayerEntity) {
+function setupEcsForPlayer(
+	components: ComponentTable,
+	playerModel: PlayerModel,
+	playerEntity: PlayerEntity
+) {
 	for (const card of playerModel.deck.cards) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',

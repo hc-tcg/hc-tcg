@@ -33,7 +33,11 @@ class Clock extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.not(
-				query.exists(SlotComponent, query.slot.currentPlayer, query.slot.hasStatusEffect(UsedClockEffect))
+				query.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.hasStatusEffect(UsedClockEffect)
+				)
 			),
 			(game, _pos) => game.state.turn.turnNumber !== 1
 		),

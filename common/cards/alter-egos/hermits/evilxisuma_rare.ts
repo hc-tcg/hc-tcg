@@ -5,7 +5,10 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import * as query from '../../../components/query'
-import {PrimaryAttackDisabledEffect, SecondaryAttackDisabledEffect} from '../../../status-effects/derp-coin'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/derp-coin'
 
 class EvilXisumaRare extends Card {
 	props: Hermit = {
@@ -75,7 +78,9 @@ class EvilXisumaRare extends Card {
 					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 					const actionToBlock =
-						modalResult.pick === 'primary' ? PrimaryAttackDisabledEffect : SecondaryAttackDisabledEffect
+						modalResult.pick === 'primary'
+							? PrimaryAttackDisabledEffect
+							: SecondaryAttackDisabledEffect
 
 					// This will add a blocked action for the duration of their turn
 					game.components

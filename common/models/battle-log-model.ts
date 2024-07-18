@@ -49,9 +49,12 @@ export class BattleLogModel {
 		const entry = coinFlips.reduce((r: string | null, coinFlip) => {
 			const description = this.generateCoinFlipDescription(coinFlip)
 
+			let coinFlipCard = this.game.components.get(coinFlip.card)
+
+			if (!coinFlip) return r
 			if (coinFlip.opponentFlip) return r
-			if (isHermit(coinFlip.card.props) && attack.type === 'effect') return r
-			if (isHermit(coinFlip.card.props) && attack.type !== 'effect') return r
+			if (coinFlipCard?.isHermit() && attack.type === 'effect') return r
+			if (coinFlipCard?.isHermit() && attack.type !== 'effect') return r
 
 			return description
 		}, null)
@@ -113,7 +116,7 @@ export class BattleLogModel {
 		let row = slotInfo?.inRow() ? slotInfo.row : null
 		let cardInfo = slotInfo?.getCard()
 
-		const thisFlip = coinFlips.find((flip) => flip.card.props.numericId === card.props.numericId)
+		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
 
 		const logMessage = card.card.getLog({
@@ -232,9 +235,9 @@ export class BattleLogModel {
 
 			this.logMessageQueue.push({
 				player: player.entity,
-				description: `$o${coinFlip.card.props.name}$ ${this.generateCoinFlipDescription(
-					coinFlip
-				)} on their coinflip`,
+				description: `$o${
+					this.game.components.get(coinFlip.card)?.props.name
+				}$ ${this.generateCoinFlipDescription(coinFlip)} on their coinflip`,
 			})
 		})
 	}

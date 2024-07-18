@@ -13,7 +13,10 @@ import UsedClockEffect from './used-clock'
 import RevivedByDeathloopEffect from './revived-by-deathloop'
 import BetrayedEffect from './betrayed'
 import SheepStareEffect from './sheep-stare'
-import {AussiePingEffect as AussiePingEffect, AussiePingImmuneEffect as AussiePingImmuneEffect} from './aussie-ping'
+import {
+	AussiePingEffect as AussiePingEffect,
+	AussiePingImmuneEffect as AussiePingImmuneEffect,
+} from './aussie-ping'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,

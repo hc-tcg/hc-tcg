@@ -97,7 +97,9 @@ export class PlayerComponent {
 		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
 
 		/** Hook called when the player flips a coin */
-		onCoinFlip: GameHook<(card: CardComponent, coinFlips: Array<CoinFlipResult>) => Array<CoinFlipResult>>
+		onCoinFlip: GameHook<
+			(card: CardComponent, coinFlips: Array<CoinFlipResult>) => Array<CoinFlipResult>
+		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
@@ -287,7 +289,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>,
+						Array<SlotEntity>
 					]
 			)
 	}
