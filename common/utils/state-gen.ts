@@ -1,5 +1,5 @@
 import {DEBUG_CONFIG} from '../config'
-import {card, slot} from '../components/query'
+import * as query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {
@@ -43,7 +43,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 
 	// Ensure there is a hermit in the first 5 cards
 	const sortedCards = components
-		.filter(CardComponent, card.player(playerEntity), card.slot(slot.deck))
+		.filter(CardComponent, query.card.player(playerEntity), query.card.slot(query.slot.deck))
 		.sort(CardComponent.compareOrder)
 
 	let index = sortedCards.findIndex((card) => card.isHermit())

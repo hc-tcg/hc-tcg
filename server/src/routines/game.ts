@@ -572,8 +572,8 @@ function* turnSaga(game: GameModel) {
 	const result = yield* call(turnActionsSaga, game)
 	if (result === 'GAME_END') return 'GAME_END'
 
-	// Create card draw array
-	const drawCards: Array<CardComponent | null> = []
+	// Draw a card from deck when turn ends
+	let drawCards = currentPlayer.draw(1)
 
 	// Call turn end hooks
 	currentPlayer.hooks.onTurnEnd.call(drawCards)
@@ -612,20 +612,6 @@ function* turnSaga(game: GameModel) {
 		} else {
 			singleUseCard.attach(game.components.new(DiscardSlotComponent, currentPlayer.entity))
 		}
-	}
-
-	// Draw a card from deck when turn ends
-	const newCard = game.components
-		.filter(
-			CardComponent,
-			query.card.player(currentPlayer.entity),
-			query.card.slot(query.slot.deck)
-		)
-		.sort(CardComponent.compareOrder)
-		.at(0)
-
-	if (newCard) {
-		newCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

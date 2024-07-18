@@ -212,12 +212,12 @@ export class PlayerComponent {
 		)
 	}
 
-	/** Draw cards from the top of a player's deck */
-	public draw(amount: number): void {
-		this.getDeck()
-			.sort(CardComponent.compareOrder)
-			.slice(0, amount)
-			.forEach((card) => card.draw())
+	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
+	public draw(amount: number): Array<CardComponent> {
+		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
+
+		cards.forEach((card) => card.draw())
+		return cards
 	}
 
 	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
