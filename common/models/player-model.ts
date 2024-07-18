@@ -3,20 +3,14 @@ import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
-import {PlayerEntity} from '../types/game-state'
-import {LocalCardInstance, PlayerInfo} from '../types/server-requests'
+import {PlayerInfo} from '../types/server-requests'
 
 export type PlayerId = string & {__player_id: never}
 
 export class PlayerModel {
 	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: {
-		name: string
-		icon: string
-		cards: Array<LocalCardInstance>
-	}
-
+	private internalDeck: PlayerDeckT
 	public name: string
 	public minecraftName: string
 	public censoredName: string

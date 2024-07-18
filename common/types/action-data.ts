@@ -1,6 +1,7 @@
+import {SlotEntity} from '../entities'
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
-import {AttackAction, PlayCardAction, SlotEntity} from './game-state'
+import {AttackAction, PlayCardAction} from './game-state'
 import {LocalCardInstance} from './server-requests'
 
 export const slotToPlayCardAction: Record<CardCategoryT, PlayCardAction | null> = {

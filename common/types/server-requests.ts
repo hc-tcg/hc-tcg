@@ -6,7 +6,7 @@ import {SlotTypeT} from './cards'
 import {ActionResult} from './game-state'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
-import {CardEntity, Entity, PlayerEntity, SlotEntity, StatusEffectEntity} from '../entities'
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 
 export type PlayerInfo = {
 	playerName: string
