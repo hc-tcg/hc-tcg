@@ -86,6 +86,13 @@ function Credits({setMenuSection}: Props) {
 					social="discord"
 					avatar="https://cdn.discordapp.com/avatars/547104418131083285/0e6fa62e2f647943f21ecbe2d21a9291.webp"
 				/>
+				<Credit
+					name="Lunarmagpie"
+					handle="lunarmagpie"
+					social="github"
+					link="https://github.com/lunarmagpie"
+					avatar="https://avatars.githubusercontent.com/u/65521138?s=400&u=1b01fc6add4c386264f42e43bd253467f06fc006&v=4"
+				/>
 			</div>
 		</MenuLayout>
 	)
