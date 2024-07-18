@@ -7,19 +7,6 @@ export const getOpponentId = (game: GameModel, playerId: string) => {
 	return players.filter((p) => p.id !== playerId)[0]?.id
 }
 
-export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): number {
-	const itemCards = row.itemCards
-	let total = 0
-	for (const itemCard of itemCards) {
-		if (!itemCard?.isItem()) continue
-		const pos = getCardPos(game, itemCard)
-		if (!pos) continue
-		total += itemCard.card.getEnergy(game, itemCard, pos).length
-	}
-
-	return total
-}
-
 export function printHooksState(game: GameModel) {
 	const {currentPlayer, opponentPlayer} = game
 	const cardsInfo: Record<string, any> = {}
@@ -28,8 +15,8 @@ export function printHooksState(game: GameModel) {
 
 	// First loop to populate cardsInfo
 	for (const player of [currentPlayer, opponentPlayer]) {
-		for (const card of player.playerDeck) {
-			cardsInfo[card.instance] = {
+		for (const card of player.getDeck()) {
+			cardsInfo[card.entity] = {
 				card,
 				player: player,
 			}
@@ -40,22 +27,23 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			hookValue.listeners.forEach(([instance, _], i) => {
-				if (!(instance instanceof CardComponent)) return
-				const pos = getCardPos(game, instance)
+			hookValue.listeners.forEach(([observer, _], i) => {
+				let target = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+				if (!(target instanceof CardComponent)) return
+				const pos = target.slot
 				const inBoard = Boolean(pos)
-				const instanceEntry = instancesInfo[instance.entity] || {
+				const instanceEntry = instancesInfo[target.entity] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance.entity] && cardsInfo[instance.entity].card,
-					player: cardsInfo[instance.entity] && cardsInfo[instance.entity].player,
+					card: cardsInfo[target.entity] && cardsInfo[target.entity].card,
+					player: cardsInfo[target.entity] && cardsInfo[target.entity].player,
 					type: pos?.type,
-					index: pos?.index,
-					row: pos?.rowIndex,
+					index: pos.inRow() && pos?.index,
+					row: pos.inRow() && pos?.row.index,
 				}
 
 				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
-				instancesInfo[instance.entity] = instanceEntry
+				instancesInfo[target.entity] = instanceEntry
 			})
 		}
 
