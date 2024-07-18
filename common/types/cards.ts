@@ -19,7 +19,13 @@ export type EnergyT = TypeT | 'any'
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
 export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'deck' | 'discardPile'
-export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
+export type ExpansionT =
+	| 'default'
+	| 'alter_egos'
+	| 'alter_egos_ii'
+	| 'season_x'
+	| 'advent_of_tcg'
+	| 'dream'
 
 export type DamageT = {
 	target?: number
