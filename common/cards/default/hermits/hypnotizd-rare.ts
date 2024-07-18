@@ -81,11 +81,7 @@ class HypnotizdRare extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
-				canPick: query.every(
-					query.slot.opponent,
-					query.slot.hermit,
-					query.not(query.slot.empty)
-				),
+				canPick: query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty)),
 				onResult: (pickedSlot) => {
 					if (!pickedSlot.inRow()) return
 					const targetingAfk = pickedSlot.rowEntity !== opponentPlayer.activeRowEntity

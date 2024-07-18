@@ -58,11 +58,7 @@ class GrianchRare extends Card {
 		player.hooks.afterAttack.add(component, (attack) => {
 			if (attack.id !== componentKey || attack.type !== 'primary') return
 
-			const pickCondition = slot.every(
-				slot.not(slot.active),
-				slot.not(slot.empty),
-				slot.hermit
-			)
+			const pickCondition = slot.every(slot.not(slot.active), slot.not(slot.empty), slot.hermit)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
