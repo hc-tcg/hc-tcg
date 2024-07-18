@@ -201,10 +201,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				(typeQuery === '' ||
 					((isHermit(card.props) || isItem(card.props)) && card.props.type.includes(typeQuery))) &&
 				// Card Expansion Filter
-				(expansionQuery === '' ||
-					(card.props.expansion === expansionQuery &&
-						// Don't show disabled cards
-						!EXPANSIONS.disabled.includes(card.props.expansion)))
+				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
+				// Don't show disabled cards
+				!EXPANSIONS.disabled.includes(card.props.expansion)
 		)
 	)
 
