@@ -6,10 +6,13 @@ import type {AttackModel} from '../models/attack-model'
 import type {HermitAttackType} from '../types/attack'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import {CardComponent} from './card-component'
-import {card, slot, type ComponentQuery} from './query'
+import * as query from './query'
+import {ComponentQuery} from './query'
 import {DEBUG_CONFIG} from '../config'
 import {GameHook, WaterfallHook} from '../types/hooks'
 import {HandSlotComponent, SlotComponent} from './slot-component'
+import {PlayerStatusEffect} from '../status-effects/status-effect'
+import {StatusEffectComponent} from './status-effect-component'
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -176,9 +179,9 @@ export class PlayerComponent {
 	public getActiveHermit(): CardComponent | null {
 		return this.game.components.find(
 			CardComponent,
-			card.slot(slot.hermitSlot),
-			card.active,
-			card.player(this.entity)
+			query.card.slot(query.slot.hermitSlot),
+			query.card.active,
+			query.card.player(this.entity)
 		)
 	}
 
@@ -186,8 +189,8 @@ export class PlayerComponent {
 	public getDeck(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
-			card.player(this.entity),
-			card.slot(slot.deck)
+			query.card.player(this.entity),
+			query.card.slot(query.slot.deck)
 		)
 	}
 
@@ -195,8 +198,8 @@ export class PlayerComponent {
 	public getHand(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
-			card.player(this.entity),
-			card.slot(slot.hand)
+			query.card.player(this.entity),
+			query.card.slot(query.slot.hand)
 		)
 	}
 
@@ -204,8 +207,8 @@ export class PlayerComponent {
 	public getDiscarded(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
-			card.player(this.entity),
-			card.slot(slot.discardPile)
+			query.card.player(this.entity),
+			query.card.slot(query.slot.discardPile)
 		)
 	}
 
@@ -215,5 +218,13 @@ export class PlayerComponent {
 			.sort(CardComponent.compareOrder)
 			.slice(0, amount)
 			.forEach((card) => card.draw())
+	}
+
+	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+		return this.game.components.find(
+			StatusEffectComponent,
+			query.effect.is(effect),
+			query.effect.targetIs(this.entity)
+		)
 	}
 }

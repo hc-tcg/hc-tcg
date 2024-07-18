@@ -39,7 +39,7 @@ class MilkBucket extends Card {
 		game.components
 			.filter(
 				StatusEffectComponent,
-				query.effect.target(query.card.slotIs(query.slot.entity)),
+				query.effect.targetIsCardAnd(query.card.slotIs(slot.entity)),
 				query.effect.is(PoisonEffect, BadOmenEffect)
 			)
 			.forEach((effect) => effect.remove())

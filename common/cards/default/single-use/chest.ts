@@ -25,7 +25,7 @@ class Chest extends Card {
 			)
 		}),
 	}
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		game.addModalRequest({
@@ -47,7 +47,7 @@ class Chest extends Card {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
 				if (!modalResult.result) {
 					// Allow player to cancel using Chest
-					discardSingleUse(game, player)
+					component.draw()
 					return 'SUCCESS'
 				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'

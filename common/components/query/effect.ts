@@ -1,7 +1,7 @@
 import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
 import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
-import {CardEntity} from '../../entities'
+import {CardEntity, PlayerEntity} from '../../entities'
 import * as query from '.'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
@@ -37,7 +37,7 @@ export function targetIsCardAnd(
 }
 
 export function targetIs(
-	target: CardEntity | null | undefined
+	target: CardEntity | PlayerEntity | null | undefined
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
 		statusEffect.targetEntity !== null &&

@@ -24,7 +24,7 @@ import {
 import type {GameModel} from '../models/game-model'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
-import {effect} from './query'
+import * as query from './query'
 import {CardStatusEffect} from '../status-effects/status-effect'
 
 let CARDS: Record<any, Card>
@@ -177,8 +177,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public hasStatusEffect(statusEffect: new () => CardStatusEffect) {
 		return this.game.components.find(
 			StatusEffectComponent,
-			effect.is(statusEffect),
-			effect.targetIs(this.entity)
+			query.effect.is(statusEffect),
+			query.effect.targetIs(this.entity)
 		)
 	}
 }

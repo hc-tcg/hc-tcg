@@ -60,7 +60,7 @@ class HypnotizdRare extends Card {
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
-			if (component.hasStatusEffect(Betrayed)) return
+			if (player.hasStatusEffect(Betrayed)) return
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 

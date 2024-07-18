@@ -1,4 +1,3 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {CoinFlipT} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -6,6 +5,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent} from '../../../components'
 
 class Trident extends Card {
 	props: SingleUse = {
@@ -21,54 +21,41 @@ class Trident extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
 		let coinflipResult: CoinFlipT | null = null
 
-		player.hooks.getAttack.add(component, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return null
-
-			const tridentAttack = new AttackModel({
-				id: this.getInstanceKey(component),
-				attacker: activePos,
-				target: opponentActivePos,
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage, then ${values.coinFlip}`,
-			}).addDamage(this.props.id, 30)
-
-			return tridentAttack
+		observer.subscribe(player.hooks.getAttack, () => {
+			return game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 20)
 		})
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
+			applySingleUse(game)
+		})
+
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 
 			coinflipResult = flipCoin(player, component)[0]
 
 			applySingleUse(game)
 		})
 
-		player.hooks.onApply.add(component, () => {
-			// Return to hand
+		observer.subscribe(player.hooks.onApply, () => {
 			if (coinflipResult === 'heads') {
-				// Reset single use card used, won't return to the hand otherwise
-				player.board.singleUseCardUsed = false
-				discardSingleUse(game, player)
+				component.draw()
 			}
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.getAttack.remove(component)
-		player.hooks.onApply.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

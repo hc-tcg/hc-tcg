@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, SlotComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -30,41 +30,26 @@ class TargetBlock extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = component
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: "Pick one of your opponent's AFK Hermits",
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.cardId || rowIndex === null) return
-
-				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row.hermitCard) return
-
+				if (!pickedSlot.inRow()) return
 				// Apply the card
 				applySingleUse(game, pickedSlot)
 
 				// Redirect all future attacks this turn
-				player.hooks.beforeAttack.add(component, (attack) => {
+				observer.subscribe(player.hooks.beforeAttack, (attack) => {
 					if (attack.isType('status-effect') || attack.isBacklash) return
 
-					attack.setTarget(this.id, {
-						player: opponentPlayer,
-						rowIndex,
-						row,
-					})
+					attack.setTarget(this.id, pickedSlot.row.entity)
 				})
 			},
-		})
-
-		player.hooks.onTurnEnd.add(component, () => {
-			player.hooks.beforeAttack.remove(component)
-			player.hooks.onTurnEnd.remove(component)
-			opponentPlayer.hooks.onDefence.remove(component)
 		})
 	}
 }

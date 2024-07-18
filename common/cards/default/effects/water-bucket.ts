@@ -39,7 +39,7 @@ class WaterBucket extends Card {
 		game.components
 			.filter(
 				StatusEffectComponent,
-				query.effect.target(query.card.slotIs(slot.entity)),
+				query.effect.targetIsCardAnd(query.card.slotIs(slot.entity)),
 				query.effect.is(FireEffect)
 			)
 			.forEach((effect) => effect.remove())
