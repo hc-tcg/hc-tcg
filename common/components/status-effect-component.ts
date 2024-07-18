@@ -11,7 +11,7 @@ import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps
+	Props extends StatusEffectProps = StatusEffectProps,
 > {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
@@ -57,7 +57,7 @@ export class StatusEffectComponent<
 	}
 
 	/** Apply a status effect to a specific player or card */
-	public apply(targetEntity: Entity<TargetT> | null) {
+	public apply(targetEntity: Entity<TargetT> | null | undefined) {
 		if (!targetEntity) return
 
 		let target = this.game.components.get(targetEntity)
