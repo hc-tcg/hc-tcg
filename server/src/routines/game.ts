@@ -24,6 +24,7 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
+	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
@@ -215,8 +216,8 @@ function playerAction(actionType: string, playerId: PlayerId) {
 
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
-function* checkHermitHealth(game: GameModel): Array<PlayerComponent> {
-	const deadPlayerIds: Array<string> = []
+function* checkHermitHealth(game: GameModel) {
+	const deadPlayers: Array<PlayerComponent> = []
 	for (let playerState of game.components.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
 		if (!playerState.hasPlacedHermit) {
@@ -230,42 +231,51 @@ function* checkHermitHealth(game: GameModel): Array<PlayerComponent> {
 		)
 
 		for (const card of hermitCards) {
-			if (!card.slot?.onBoard()) continue
+			if (!card.slot?.inRow()) continue
 			if (card.slot?.row?.health && card.slot.row.health <= 0) {
 				// Add battle log entry. Non Hermit cards can create their detach message themselves.
 				if (card.props.category === 'hermit') {
 					game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
 				}
 
-				continue
+				card.discard()
+				if (card.slot.inRow()) {
+					card.slot.row.getAttach()?.discard()
+					card.slot.row.getItems().map((item) => item.discard())
+				}
 
-				discardCard(game, query.row.hermitCard)
-				discardCard(game, query.row.effectCard)
-
-				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
-				playerRows[rowIndex] = getEmptyRow()
-				if (Number(rowIndex) === activeRow) {
-					game.changeActiveRow(playerState, null)
-					playerState.hooks.onActiveRowChange.call(activeRow, null)
+				if (card.slot.row.entity === playerState.activeRowEntity) {
+					game.changeActiveRow(
+						playerState,
+						game.components.find(
+							RowComponent,
+							query.row.player(playerState.entity),
+							query.row.hasHermit
+						)
+					)
+					let activeHermit = playerState.activeRow?.getHermit()
+					if (activeHermit) playerState.hooks.onActiveRowChange.call(card, activeHermit)
 				}
 
 				// Only hermit cards give points
-				if (cardType === 'hermit') {
+				if (card.props.category === 'hermit') {
 					playerState.lives -= 1
 
 					// reward card
-					const opponentState = playerStates.find((s) => s.id !== playerState.id)
-					if (!opponentState) continue
-					const rewardCard = playerState.pile.shift()
-					if (rewardCard) opponentState.hand.push(rewardCard)
+					const rewardCard = game.components
+						.filter(
+							CardComponent,
+							query.card.slot(query.slot.deck),
+							query.card.player(playerState.entity)
+						)
+						.sort(CardComponent.compareOrder)[0]
+					if (rewardCard) {
+					}
 				}
 			}
 		}
 
 		const isDead = playerState.lives <= 0
-		const firstPlayerTurn =
-			playerState.lives >= 3 &&
-			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
 		const noHermitsLeft = !game.components.exists(
 			CardComponent,
@@ -273,11 +283,11 @@ function* checkHermitHealth(game: GameModel): Array<PlayerComponent> {
 			query.card.isHermit
 		)
 		if (isDead || noHermitsLeft) {
-			deadPlayerIds.push(playerState.id)
+			deadPlayers.push(playerState)
 		}
 	}
 
-	return deadPlayerIds
+	return deadPlayers
 }
 
 function* sendGameState(game: GameModel) {

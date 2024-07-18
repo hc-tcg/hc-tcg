@@ -264,8 +264,10 @@ export class GameModel {
 	}
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerComponent, newRow: RowComponent): boolean {
+	public changeActiveRow(player: PlayerComponent, newRow: RowComponent | null): boolean {
 		const currentActiveRow = this.components.get(player.activeRowEntity)
+
+		if (!newRow) return false
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
