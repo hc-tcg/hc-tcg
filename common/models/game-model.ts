@@ -1,13 +1,13 @@
 import {PlayerId, PlayerModel} from './player-model'
 import {TurnAction, GameState, ActionResult, TurnActions, Message} from '../types/game-state'
-import {getGameState, setupEcs} from '../utils/state-gen'
+import {getGameState, setupComponents} from '../utils/state-gen'
 import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {ComponentQuery, card} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
-import ECS from '../types/ecs'
+import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 
@@ -23,7 +23,7 @@ export class GameModel {
 	public state: GameState
 
 	/** The objects used in the game. */
-	public components: ECS
+	public components: ComponentTable
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -53,8 +53,8 @@ export class GameModel {
 			[player2.id]: player2,
 		}
 
-		this.components = new ECS(this)
-		setupEcs(this.components, player1, player2)
+		this.components = new ComponentTable(this)
+		setupComponents(this.components, player1, player2)
 
 		this.state = getGameState(this)
 	}

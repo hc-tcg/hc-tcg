@@ -6,9 +6,10 @@ export type Component = {
 	entity: Entity<any>
 }
 
-/** This is an implementation of the Entity Component System abstraction.
+/** The component table is a map of Component Entities to component objects. Components in the component
+ * table can also be filtered. See the filter method for more information.
  */
-export default class ECS {
+export default class ComponentTable {
 	game: GameModel
 	data: Record<Entity<any>, Component>
 

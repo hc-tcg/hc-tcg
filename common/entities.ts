@@ -1,6 +1,6 @@
 /**
- * This file contains entities for the ECS. The entities are shared between the client and server to keep a unique
- * and consistent reference each variable.
+ * This file contains entities for the Component Table. The entities are shared between the client and server to keep a unique
+ * and consistent reference each component.
  */
 
 import type {
