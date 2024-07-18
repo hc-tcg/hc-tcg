@@ -8,6 +8,10 @@ export type Component = {
 
 /** A map of entities to component objects. Components in the component
  * table can be queried. See the filter and find methods for more information.
+ *
+ * Fruther Work - We can likely optimize queries by giving each component their
+ * own table. Additionally we can reduce queries by finding a faster way to do
+ * relations for slots and the card that is in them.
  */
 export default class ComponentTable {
 	game: GameModel
