@@ -8,6 +8,12 @@ import {singleUse} from '../../base/defaults'
 import Clock from './clock'
 
 class Chest extends Card {
+	pickCondition = query.every(
+		query.card.currentPlayer,
+		query.card.slot(query.slot.discardPile),
+		query.not(query.card.is(Clock))
+	)
+
 	props: SingleUse = {
 		...singleUse,
 		id: 'chest',
@@ -18,12 +24,7 @@ class Chest extends Card {
 		tokens: 2,
 		description: 'Choose one card from your discard pile to return to your hand.',
 		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
-			return game.components.exists(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.slot(query.slot.discardPile),
-				query.not(query.card.is(Clock))
-			)
+			return game.components.exists(CardComponent, this.pickCondition)
 		}),
 	}
 	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
@@ -36,7 +37,9 @@ class Chest extends Card {
 				payload: {
 					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
 					modalDescription: '',
-					cards: player.getDiscarded().map((card) => card.entity),
+					cards: game.components
+						.filter(CardComponent, this.pickCondition)
+						.map((card) => card.entity),
 					selectionSize: 1,
 					primaryButton: {
 						text: 'Confirm Selection',
