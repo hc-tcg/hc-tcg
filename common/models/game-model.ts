@@ -254,7 +254,7 @@ export class GameModel {
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
 							CardComponent,
-							SlotEntity[],
+							SlotEntity[]
 						]
 				)
 		}

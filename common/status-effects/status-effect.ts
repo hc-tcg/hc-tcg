@@ -74,7 +74,7 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 
 export abstract class StatusEffect<
 	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffectProps = StatusEffectProps
 > {
 	public abstract props: Props
 
