@@ -10,7 +10,7 @@ class SpookyStressRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'spookystress_rare',
-		numericId: 238,
+		numericId: 173,
 		name: 'Spooky Stress',
 		shortName: 'S. Stress',
 		expansion: 'alter_egos_ii',
