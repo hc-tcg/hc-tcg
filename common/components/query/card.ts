@@ -44,7 +44,7 @@ export function slotEntity(slot: SlotEntity | null | undefined): ComponentQuery<
 export function rowEntity(row: RowEntity | null): ComponentQuery<CardComponent> {
 	return (_game, card) => {
 		if (!row) return false
-		if (!card.slot?.onBoard()) return false
+		if (!card.slot?.inRow()) return false
 		return row === card.slot?.row?.entity
 	}
 }
