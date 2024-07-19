@@ -6,7 +6,6 @@ export default class FortuneEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
 		name: 'Fortune',
-		icon: 'fortune',
 		description: 'Any coin flips this turn will roll heads.',
 	}
 

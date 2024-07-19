@@ -48,6 +48,7 @@ export const systemStatusEffect = {
 
 export const hiddenStatusEffect = {
 	type: 'hiddenSystem' as StatusEffectProps['type'],
+	icon: '',
 	name: '',
 	description: '',
 	applyCondition: query.anything,
@@ -75,7 +76,7 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 
 export abstract class StatusEffect<
 	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffectProps = StatusEffectProps
 > {
 	public abstract props: Props
 

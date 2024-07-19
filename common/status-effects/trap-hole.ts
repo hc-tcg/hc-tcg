@@ -13,7 +13,6 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
 		name: 'Trap Hole',
-		icon: 'trap-hole',
 		description:
 			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
 	}

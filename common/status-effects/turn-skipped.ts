@@ -3,10 +3,7 @@ import {GameModel} from '../models/game-model'
 import {hiddenStatusEffect, PlayerStatusEffect, StatusEffectProps} from './status-effect'
 
 class TurnSkippedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...hiddenStatusEffect,
-		icon: 'turn-skipped',
-	}
+	props: StatusEffectProps = hiddenStatusEffect
 
 	public override onApply(
 		game: GameModel,

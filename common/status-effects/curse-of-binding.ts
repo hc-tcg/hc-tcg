@@ -5,7 +5,6 @@ import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './statu
 class CurseOfBindingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
-		icon: 'curse-of-binding',
 		name: 'Curse of Binding',
 		description: 'You can not switch your active hermit this turn.',
 	}
