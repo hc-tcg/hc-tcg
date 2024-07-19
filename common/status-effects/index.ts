@@ -22,7 +22,7 @@ import {
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
 import TurnSkippedEffect from './turn-skipped'
-import {PrimaryAttackDisabledEffect, SecondaryAttackDisabledEffect} from './derpcoin'
+import {PrimaryAttackDisabledEffect, SecondaryAttackDisabledEffect} from './derp-coin'
 import {TrapHoleEffect} from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
 import {StatusEffect} from './status-effect'
