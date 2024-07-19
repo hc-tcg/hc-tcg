@@ -6,6 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
+import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 
 class RendogRare extends Card {
 	props: Hermit = {
@@ -36,13 +37,10 @@ class RendogRare extends Card {
 		query.slot.opponent,
 		query.slot.hermit,
 		query.not(query.slot.empty),
-		query.not(query.slot.has(RendogRare)),
 		query.not(query.slot.has(ArmorStand))
 	)
 
-	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)
-	imitatingObserver = new InstancedValue<ObserverComponent | null>(() => null)
-	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
+	mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 
 	override getAttack(
 		game: GameModel,
@@ -51,32 +49,18 @@ class RendogRare extends Card {
 	) {
 		if (hermitAttackType !== 'secondary') return super.getAttack(game, component, hermitAttackType)
 
-		const imitatingCard = this.imitatingCard.get(component)
-		const imitatingObserver = this.imitatingObserver.get(component)
-		const pickedAttack = this.pickedAttack.get(component)
+		const mockedAttack = this.mockedAttacks.get(component)
+		if (!mockedAttack) return null
 
-		if (!imitatingCard?.isHermit()) return null
-		if (!imitatingObserver) return null
-		if (!pickedAttack) return null
-
-		let newAttack = imitatingCard.getAttack(game, component, pickedAttack)
-
-		imitatingObserver.subscribe(component.player.hooks.afterAttack, () => {
-			imitatingCard.onDetach(game, component, imitatingObserver)
-			imitatingObserver.unsubscribeFromEverything()
-		})
-
+		let newAttack = mockedAttack.getAttack()
 		if (!newAttack) return null
 
-		const attackName =
-			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+		const attackName = mockedAttack.attackName
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with $v${imitatingCard?.props.name}'s ${attackName}$ for ${values.damage} damage`
+				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
 		)
 		return newAttack
 	}
@@ -96,7 +80,7 @@ class RendogRare extends Card {
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
 				onResult: (pickedSlot) => {
-					let pickedCard = pickedSlot.getCard()
+					let pickedCard = pickedSlot.getCard() as CardComponent<Hermit>
 					if (!pickedCard) return
 
 					game.addModalRequest({
@@ -119,21 +103,18 @@ class RendogRare extends Card {
 							}
 
 							// Store the chosen attack to copy
-							let observer = game.components.new(ObserverComponent, component.entity)
-							this.pickedAttack.set(component, modalResult.pick)
-							this.imitatingObserver.set(component, observer)
-							pickedCard?.card.onAttach(game, component, observer)
-							if (pickedCard?.isHermit()) this.imitatingCard.set(component, pickedCard.card)
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, modalResult.pick)
+							)
 
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
-							if (!pickedCard) return
-							let observer = game.components.new(ObserverComponent, component.entity)
-							this.imitatingCard.set(component, pickedCard.card as Card<Hermit>)
-							this.imitatingObserver.set(component, observer)
-							pickedCard.card.onAttach(game, component, observer)
-							this.pickedAttack.set(component, 'primary')
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, 'primary')
+							)
 						},
 					})
 				},
@@ -152,8 +133,7 @@ class RendogRare extends Card {
 	}
 
 	override onDetach(_game: GameModel, component: CardComponent, _observer: ObserverComponent) {
-		this.imitatingCard.clear(component)
-		this.pickedAttack.clear(component)
+		this.mockedAttacks.clear(component)
 	}
 }
 

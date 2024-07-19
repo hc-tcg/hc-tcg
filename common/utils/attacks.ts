@@ -5,7 +5,8 @@ import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import * as query from '../components/query'
 import {STRENGTHS} from '../const/strengths'
-import {CardComponent} from '../components'
+import {CardComponent, ObserverComponent} from '../components'
+import {Hermit} from '../cards/base/types'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -249,4 +250,41 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
+}
+
+export type MockedAttack = {
+	hermitName: string
+	attackName: string
+	getAttack: () => AttackModel | null
+}
+
+/** Create a card that is able to mock a single attack. Return a function to retrieve said attack. */
+export function setupMockCard(
+	game: GameModel,
+	component: CardComponent,
+	mocking: CardComponent<Hermit>,
+	attackType: 'primary' | 'secondary'
+): MockedAttack {
+	let observer = game.components.new(ObserverComponent, component.entity)
+
+	mocking.card.onAttach(game, component, observer)
+
+	component.player.hooks.getAttackRequests.callSome(
+		[component, attackType],
+		(observerEntity) => observerEntity == observer.entity
+	)
+
+	return {
+		hermitName: mocking.props.name,
+		attackName:
+			attackType === 'primary' ? mocking.props.primary.name : mocking.props.secondary.name,
+		getAttack: () => {
+			let attack = mocking.card.getAttack(game, component, attackType)
+			observer.subscribe(component.player.hooks.afterAttack, () => {
+				mocking.card.onDetach(game, component, observer)
+				observer.unsubscribeFromEverything()
+			})
+			return attack
+		},
+	}
 }

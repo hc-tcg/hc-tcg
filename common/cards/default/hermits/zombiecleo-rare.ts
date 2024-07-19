@@ -6,6 +6,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
+import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 
 class ZombieCleoRare extends Card {
 	props: Hermit = {
@@ -37,13 +38,10 @@ class ZombieCleoRare extends Card {
 		query.slot.hermit,
 		query.not(query.slot.empty),
 		query.not(query.slot.active),
-		query.not(query.slot.has(ZombieCleoRare)),
 		query.not(query.slot.has(ArmorStand))
 	)
 
-	imitatingCard = new InstancedValue<Card<Hermit> | null>(() => null)
-	imitatingObserver = new InstancedValue<ObserverComponent | null>(() => null)
-	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
+	mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 
 	override getAttack(
 		game: GameModel,
@@ -52,31 +50,18 @@ class ZombieCleoRare extends Card {
 	) {
 		if (hermitAttackType !== 'secondary') return super.getAttack(game, component, hermitAttackType)
 
-		const imitatingCard = this.imitatingCard.get(component)
-		const imitatingObserver = this.imitatingObserver.get(component)
-		const pickedAttack = this.pickedAttack.get(component)
+		const mockedAttack = this.mockedAttacks.get(component)
+		if (!mockedAttack) return null
 
-		if (!imitatingCard || !pickedAttack || !imitatingObserver) return null
-		if (!imitatingCard.isHermit()) return null
-
-		let newAttack = imitatingCard.getAttack(game, component, pickedAttack)
-
-		imitatingObserver.subscribe(component.player.hooks.afterAttack, () => {
-			imitatingCard.onDetach(game, component, imitatingObserver)
-			imitatingObserver.unsubscribeFromEverything()
-		})
-
+		let newAttack = mockedAttack.getAttack()
 		if (!newAttack) return null
 
-		const attackName =
-			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+		const attackName = mockedAttack.attackName
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with $v${imitatingCard.props.name}'s ${attackName}$ for ${values.damage} damage`
+				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
 		)
 		return newAttack
 	}
@@ -100,7 +85,7 @@ class ZombieCleoRare extends Card {
 				message: 'Pick one of your AFK Hermits',
 				canPick: this.pickCondition,
 				onResult: (pickedSlot) => {
-					const pickedCard = pickedSlot.getCard()
+					const pickedCard = pickedSlot.getCard() as CardComponent<Hermit> | null
 					if (!pickedCard) return
 
 					game.addModalRequest({
@@ -124,21 +109,18 @@ class ZombieCleoRare extends Card {
 							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 							// Store the card to copy when creating the attack
-							let observer = game.components.new(ObserverComponent, component.entity)
-							this.pickedAttack.set(component, modalResult.pick)
-							this.imitatingObserver.set(component, observer)
-							if (pickedCard?.isHermit()) this.imitatingCard.set(component, pickedCard.card)
-
-							pickedCard.card.onAttach(game, component, observer)
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, modalResult.pick)
+							)
 
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
-							let observer = game.components.new(ObserverComponent, component.entity)
-							this.imitatingCard.set(component, pickedCard.card as Card<Hermit>)
-							this.imitatingObserver.set(component, observer)
-							this.pickedAttack.set(component, 'primary')
-							pickedCard.card.onAttach(game, component, observer)
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, 'primary')
+							)
 						},
 					})
 				},
@@ -158,7 +140,7 @@ class ZombieCleoRare extends Card {
 	}
 
 	override onDetach(_game: GameModel, component: CardComponent, _observer: ObserverComponent) {
-		this.pickedAttack.clear(component)
+		this.mockedAttacks.clear(component)
 	}
 }
 
