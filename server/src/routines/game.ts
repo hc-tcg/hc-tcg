@@ -24,7 +24,6 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
-	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'

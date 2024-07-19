@@ -6,6 +6,7 @@ import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
 import {PlayerId} from '../models/player-model'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {TurnActions} from './game-state'
 
 export type PlayerInfo = {
 	playerName: string
@@ -111,6 +112,7 @@ export namespace LocalCopyAttack {
 			modalName: string
 			modalDescription: string
 			hermitCard: LocalCardInstance
+			blockedActions: TurnActions
 		}
 	}
 

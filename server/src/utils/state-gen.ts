@@ -182,9 +182,16 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 			cards: modal.payload.cards.map((entity) => getLocalCard(game.components.get(entity)!)),
 		}
 	} else if (modal.modalId === 'copyAttack') {
+		let hermitCard = game.components.get(modal.payload.hermitCard)!
+		let blockedActions = hermitCard.player.hooks.blockedActions.callSome([[]], (observerEntity) => {
+			let observer = game.components.get(observerEntity)
+			return observer?.wrappingEntity === hermitCard.entity
+		})[0]
+
 		return {
 			...modal.payload,
-			hermitCard: getLocalCard(game.components.get(modal.payload.hermitCard)!),
+			hermitCard: getLocalCard(hermitCard),
+			blockedActions: blockedActions,
 		}
 	}
 
