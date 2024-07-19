@@ -7,6 +7,7 @@ import {Hermit} from '../../base/types'
 import {effect} from '../../../components/query'
 import UsedClockEffect from '../../../status-effects/used-clock'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
+import {TimeskipSecondaryAttackDisabledEffect} from '../../../status-effects/joehills-attack-disabled'
 
 class JoeHillsRare extends Card {
 	props: Hermit = {
@@ -52,8 +53,9 @@ class JoeHillsRare extends Card {
 					effect.is(UsedClockEffect),
 					effect.targetEntity(component.entity)
 				)
-			)
+			) {
 				return
+			}
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
@@ -64,6 +66,9 @@ class JoeHillsRare extends Card {
 
 			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
 			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
+			game.components
+				.new(StatusEffectComponent, TimeskipSecondaryAttackDisabledEffect)
+				.apply(component.entity)
 		})
 	}
 }

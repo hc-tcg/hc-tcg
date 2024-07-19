@@ -1,13 +1,11 @@
 import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {hiddenStatusEffect, PlayerStatusEffect, StatusEffectProps} from './status-effect'
 
 class TurnSkippedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...systemStatusEffect,
+		...hiddenStatusEffect,
 		id: 'turn-skipped',
-		name: 'Turn Skipped',
-		description: 'You cannot attack or play a card on your next turn.',
 	}
 
 	public override onApply(

@@ -8,7 +8,7 @@ class UsedClockEffect extends PlayerStatusEffect {
 		...systemStatusEffect,
 		id: 'used-clock',
 		name: 'Clocked Out',
-		description: 'Turns can not be skipped consecutively.',
+		description: "Your opponent's turns cannot be skipped consecutively.",
 		counter: 1,
 		counterType: 'turns',
 	}
@@ -25,12 +25,6 @@ class UsedClockEffect extends PlayerStatusEffect {
 			if (effect.counter === null) return
 			if (effect.counter === 0) effect.remove()
 			effect.counter--
-		})
-
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (player.getActiveHermit()?.card instanceof JoeHillsRare) {
-				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
-			}
 		})
 	}
 }
