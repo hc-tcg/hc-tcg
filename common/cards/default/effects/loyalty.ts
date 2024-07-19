@@ -4,7 +4,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {card, slot} from '../../../components/query'
+import * as query from '../../../components/query'
 
 class Loyalty extends Card {
 	props: Attach = {
@@ -23,8 +23,15 @@ class Loyalty extends Card {
 		const {player, opponentPlayer} = component
 
 		const afterAttack = (_attack: AttackModel) => {
+			if (!component.slot.inRow() || component.slot.row.health) return
+
 			game.components
-				.filter(CardComponent, card.currentPlayer, card.slot(slot.item))
+				.filter(
+					CardComponent,
+					query.card.player(player.entity),
+					query.card.active,
+					query.card.slot(query.slot.item)
+				)
 				.forEach((card) => card.draw())
 		}
 
