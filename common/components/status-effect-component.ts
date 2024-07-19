@@ -42,6 +42,7 @@ export class StatusEffectComponent<
 
 	/** Apply a status effect to a specific player or card */
 	public apply(targetEntity: Entity<TargetT> | null | undefined) {
+		console.log('here')
 		if (!targetEntity) return
 
 		let target = this.game.components.get(targetEntity)

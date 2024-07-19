@@ -39,7 +39,9 @@ class Mending extends Card {
 			)
 		),
 		log: (values) =>
-			`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
+			`${values.defaultLog} to move $e${
+				values.game.currentPlayer.activeRow?.getAttach()?.props.name
+			}$ to $p${values.pick.hermitCard}$`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
