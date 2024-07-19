@@ -1,3 +1,5 @@
+import {GameModel} from '../models/game-model'
+
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
 export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
@@ -71,4 +73,6 @@ export type PlayCardLog = {
 		slotType: string
 	}
 	previousLog?: string
+	/* The game this log is on*/
+	game: GameModel
 }

@@ -4,7 +4,8 @@ import {CardComponent, ObserverComponent, SlotComponent} from '../../../componen
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
+import {attach, item, singleUse} from '../../base/defaults'
+import {opponent} from '../../../components/query/slot'
 
 class Lead extends Card {
 	firstPickCondition = query.every(
@@ -33,8 +34,6 @@ class Lead extends Card {
 		tokens: 1,
 		description:
 			"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
-		log: (values) =>
-			`${values.defaultLog} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.firstPickCondition),
@@ -62,7 +61,16 @@ class Lead extends Card {
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			canPick: this.secondPickCondition,
 			onResult(pickedSlot) {
-				applySingleUse(game, pickedSlot)
+				if (!itemSlot || !pickedSlot.inRow()) return
+				applySingleUse(game)
+
+				// A custom entry is needed here because the battle log can't support doing this type of entry automatically at the moment
+				game.battleLog.addEntry(
+					player.entity,
+					`$p{You|${player.playerName}}$ used $eLead$ to move $m${
+						itemSlot.getCard()?.props.name
+					}$ to $o${pickedSlot.row.getHermit()?.props.name} (${pickedSlot.row.index})$`
+				)
 
 				// Move the item
 				game.swapSlots(itemSlot, pickedSlot)

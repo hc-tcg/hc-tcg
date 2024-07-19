@@ -25,7 +25,9 @@ class EnderPearl extends Card {
 			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) =>
-			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
+			`${values.defaultLog} to move $p${
+				values.game.currentPlayer.activeRow?.getHermit()?.props.name
+			}$ to row #${values.pick.rowIndex}`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

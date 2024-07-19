@@ -137,6 +137,7 @@ export class BattleLogModel {
 				hermitCard: genCardName(slotInfo?.player, cardInfo, row),
 				slotType: slotInfo?.type || invalid,
 			},
+			game: this.game,
 		})
 
 		if (logMessage.length === 0) return
