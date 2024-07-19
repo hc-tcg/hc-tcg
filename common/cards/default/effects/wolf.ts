@@ -46,7 +46,7 @@ class Wolf extends Card {
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: attack.target.entity,
+					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
