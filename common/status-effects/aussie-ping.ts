@@ -3,26 +3,18 @@ import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './statu
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import * as query from '../components/query'
 
 export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		id: 'aussie-ping',
-		name: 'Aussie Ping',
+		name: 'Weak Connection',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
-		applyCondition: query.not(
-			query.exists(
-				StatusEffectComponent,
-				query.every(
-					query.effect.targetIsPlayerAnd(
-						(game, player) => player.entity === game.currentPlayer.entity
-					),
-					query.effect.is(AussiePingImmuneEffect)
-				)
-			)
-		),
+		applyCondition: (_game, player) => {
+			if (!(player instanceof PlayerComponent)) return false
+			return !player.hasStatusEffect(AussiePingImmuneEffect)
+		},
 	}
 
 	override onApply(

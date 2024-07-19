@@ -42,15 +42,20 @@ export class StatusEffectComponent<
 
 	/** Apply a status effect to a specific player or card */
 	public apply(targetEntity: Entity<TargetT> | null | undefined) {
+		console.log('here')
 		if (!targetEntity) return
 
 		let target = this.game.components.get(targetEntity)
 		if (!target) return
+
+		if (!this.props.applyCondition(this.game, target)) return
+
 		let observer = this.game.components.new(ObserverComponent, this.entity)
 
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
 		this.statusEffect.onApply(this.game, this as any, target as any, observer)
+
 		if (this.statusEffect.props.applyLog) {
 			this.game.battleLog.addStatusEffectEntry(this.entity, this.statusEffect.props.applyLog)
 		}
