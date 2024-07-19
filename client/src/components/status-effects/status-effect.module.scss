@@ -5,6 +5,8 @@
 .statusEffectImage {
 	width: 22px;
 	height: 22px;
+	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
+	image-rendering: crisp-edges;
 }
 
 .damageStatusEffectImage {
