@@ -12,7 +12,7 @@ class ShadEECommon extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'common',
-		tokens: 1,
+		tokens: 0,
 		type: 'prankster',
 		health: 280,
 		primary: {
