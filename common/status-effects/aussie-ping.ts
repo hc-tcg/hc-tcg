@@ -1,19 +1,14 @@
 import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	hiddenStatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 
 export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
+		...systemStatusEffect,
 		id: 'aussie-ping',
-		name: 'Aussie Ping',
+		name: 'Weak Connection',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
 		applyCondition: (_game, player) => {
