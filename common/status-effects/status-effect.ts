@@ -16,7 +16,8 @@ export type StatusEffectLog = {
 }
 
 export type StatusEffectProps = {
-	id: string
+	/** The icon of the status effect, not including the file extension */
+	icon: string
 	name: string
 	description: string
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
@@ -74,7 +75,7 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 
 export abstract class StatusEffect<
 	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps
+	Props extends StatusEffectProps = StatusEffectProps,
 > {
 	public abstract props: Props
 

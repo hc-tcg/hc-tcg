@@ -6,7 +6,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class PoisonEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		id: 'poison',
+		icon: 'poison',
 		name: 'Poison',
 		description:
 			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",

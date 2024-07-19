@@ -5,7 +5,7 @@ import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './statu
 class CurseOfBindingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...hiddenStatusEffect,
-		id: 'curse-of-binding',
+		icon: 'curse-of-binding',
 		name: 'Curse of Binding',
 		description: 'You can not switch your active hermit this turn.',
 	}
@@ -17,7 +17,7 @@ class CurseOfBindingEffect extends PlayerStatusEffect {
 		observer: ObserverComponent
 	) {
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			game.addBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT')
+			game.addBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT')
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {

@@ -4,7 +4,7 @@ import {CardComponent} from '../components'
 class DyedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'dyed',
+		icon: 'dyed',
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
 		applyCondition: (_game, card) =>

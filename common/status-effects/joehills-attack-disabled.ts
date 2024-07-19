@@ -14,7 +14,7 @@ import {
 export class TimeskipSecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		id: 'secondary-attack-disabled',
+		icon: 'secondary-attack-disabled',
 		counter: 1,
 		counterType: 'turns',
 		name: 'Secondary Attack Disabled',

@@ -5,7 +5,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class SleepingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'sleeping',
+		icon: 'sleeping',
 		name: 'Sleep',
 		description:
 			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
@@ -27,7 +27,7 @@ class SleepingEffect extends CardStatusEffect {
 		if (!target.isHealth()) return
 
 		game.addBlockedActions(
-			this.props.id,
+			this.props.icon,
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
 			'CHANGE_ACTIVE_HERMIT'
@@ -51,7 +51,7 @@ class SleepingEffect extends CardStatusEffect {
 
 			if (player.activeRowEntity === target.slot.row.entity) {
 				game.addBlockedActions(
-					this.props.id,
+					this.props.icon,
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'CHANGE_ACTIVE_HERMIT'

@@ -5,7 +5,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class BadOmenEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'badomen',
+		icon: 'badomen',
 		name: 'Bad Omen',
 		description: 'All coinflips are tails.',
 		counter: 3,

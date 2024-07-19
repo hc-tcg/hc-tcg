@@ -5,7 +5,7 @@ import {PlayerStatusEffect, StatusEffectProps, statusEffect} from './status-effe
 export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'invisibility-potion-heads',
+		icon: 'invisibility-potion-heads',
 		name: 'Invisibility Potion - Heads',
 		description: 'Your next attack will miss.',
 	}
@@ -30,7 +30,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'invisibility-potion-tails',
+		icon: 'invisibility-potion-tails',
 		name: 'Invisibility Potion - Tails',
 		description: 'Your next attack will deal double damage.',
 	}

@@ -66,7 +66,7 @@ export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect
-		result[effect.props.id] = effect
+		result[effect.props.icon] = effect
 		return result
 	},
 	{}

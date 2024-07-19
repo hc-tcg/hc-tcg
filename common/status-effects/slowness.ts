@@ -5,7 +5,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class SlownessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'slowness',
+		icon: 'slowness',
 		name: 'Slowness',
 		description: 'This Hermit can only use their primary attack.',
 		counter: 1,
@@ -24,7 +24,7 @@ class SlownessEffect extends CardStatusEffect {
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (target.slot?.onBoard() && player.activeRowEntity === target.slot.row?.entity)
-				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
+				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {

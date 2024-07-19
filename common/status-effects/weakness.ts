@@ -5,7 +5,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class WeaknessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'weakness',
+		icon: 'weakness',
 		name: 'Weakness',
 		description: "This Hermit is weak to the opponent's active Hermit's type.",
 		counter: 3,

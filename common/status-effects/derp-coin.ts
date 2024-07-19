@@ -13,7 +13,7 @@ import {
 export class PrimaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'primary-attack-disabled',
+		icon: 'primary-attack-disabled',
 		name: 'Primary Attack Disabled',
 		description: "This hermit's primary attack is disabled for this turn.",
 	}
@@ -39,7 +39,7 @@ export class PrimaryAttackDisabledEffect extends CardStatusEffect {
 export class SecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'secondary-attack-disabled',
+		icon: 'secondary-attack-disabled',
 		name: 'Secondary Attack Disabled',
 		description: "This hermit's secondary attack is disabled for this turn.",
 	}
