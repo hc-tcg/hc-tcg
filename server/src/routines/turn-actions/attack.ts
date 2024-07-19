@@ -49,7 +49,12 @@ function* attackSaga(
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
-	const activeInstance = game.components.find(CardComponent, card.currentPlayer, card.active)
+	const activeInstance = game.components.find(
+		CardComponent,
+		card.currentPlayer,
+		card.isHermit,
+		card.active
+	)
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (checkForRequests) {

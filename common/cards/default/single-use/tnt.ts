@@ -1,4 +1,3 @@
-import {row} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'

@@ -46,6 +46,7 @@ function getAvailableEnergy(game: GameModel) {
 			CardComponent,
 			query.card.isItem,
 			query.card.attached,
+			query.card.rowEntity(currentPlayer.activeRowEntity),
 			query.card.slot(query.slot.player(game.currentPlayer.entity))
 		)
 		.flatMap((card) => {
