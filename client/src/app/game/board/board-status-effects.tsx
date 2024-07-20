@@ -10,7 +10,7 @@ type StatusEffectDisplayProps = {
 
 /** An object to display status effect for a specific card */
 const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayProps) => {
-	let classes 
+	let classes
 	if (!forHermit) {
 		classes = classNames(css.statusEffectContainer)
 	} else {
@@ -19,18 +19,14 @@ const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayPr
 
 	// We want to show the newest status effect first in the list.
 	statusEffects = [...statusEffects].reverse()
-	
+
 	return (
 		<div>
 			<div className={classes}>
 				{statusEffects.map((effect) => {
 					if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem') return
 					return (
-						<StatusEffect
-							key={effect.instance}
-							statusEffect={effect.props}
-							counter={effect.counter}
-						/>
+						<StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
 					)
 				})}
 			</div>
@@ -38,11 +34,7 @@ const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayPr
 				{statusEffects.map((effect) => {
 					if (effect.props.type !== 'damage') return
 					return (
-						<StatusEffect
-							key={effect.instance}
-							statusEffect={effect.props}
-							counter={effect.counter}
-						/>
+						<StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
 					)
 				})}
 			</div>
