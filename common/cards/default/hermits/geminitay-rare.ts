@@ -45,6 +45,7 @@ class GeminiTayRare extends Card {
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
+				player.singleUseCardUsed = false
 
 				observer.unsubscribe(player.hooks.afterAttack)
 			})

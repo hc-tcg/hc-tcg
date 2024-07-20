@@ -5,6 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {getFormattedName} from '../../../utils/game'
 
 class Piston extends Card {
 	firstPickCondition = query.every(
@@ -39,7 +40,7 @@ class Piston extends Card {
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.firstPickCondition)
 		),
-		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
+		log: (values) => `${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -78,9 +79,10 @@ class Piston extends Card {
 		})
 
 		observer.subscribe(player.hooks.afterApply, () => {
+			component.discard()
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
+			player.singleUseCardUsed = false
 			observer.unsubscribe(player.hooks.afterApply)
 		})
 	}
