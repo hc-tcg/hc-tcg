@@ -185,7 +185,7 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 		let blockedActions = hermitCard.player.hooks.blockedActions.callSome([[]], (observerEntity) => {
 			let observer = game.components.get(observerEntity)
 			return observer?.wrappingEntity === hermitCard.entity
-		})[0]
+		})
 
 		return {
 			...modal.payload,

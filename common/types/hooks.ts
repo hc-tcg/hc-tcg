@@ -64,12 +64,24 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<ObserverE
  * Allows adding and removing listeners with the card instance as a reference, and calling all listeners while passing through the first parameter.
  */
 export class WaterfallHook<
-	Args extends (...args: any) => Parameters<Args>[0]
+	Args extends (...args: any) => Parameters<Args>[0],
 > extends GameHook<Args> {
 	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
 		return this.listeners.reduce((params, [_, listener]) => {
 			params[0] = listener(...(params as Array<any>))
 			return params
 		}, params)[0]
+	}
+
+	public override callSome(
+		params: Parameters<Args>,
+		predicate: (instance: ObserverEntity) => boolean
+	) {
+		return this.listeners
+			.filter(([instance, _]) => predicate(instance))
+			.reduce((params, [_, listener]) => {
+				params[0] = listener(...(params as Array<any>))
+				return params
+			}, params)[0]
 	}
 }
