@@ -6,10 +6,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
-	RowComponent,
 	StatusEffectComponent,
 } from '../components'
-import {row} from '../components/query'
 
 class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -17,7 +15,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		icon: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:
-			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
+			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	}
 
 	override onApply(
