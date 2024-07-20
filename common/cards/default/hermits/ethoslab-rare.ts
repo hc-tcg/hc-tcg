@@ -42,7 +42,7 @@ class EthosLabRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.attacker?.entity === component.entity || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (!(attack.attacker instanceof CardComponent)) return
 
 			const coinFlip = flipCoin(player, attack.attacker)

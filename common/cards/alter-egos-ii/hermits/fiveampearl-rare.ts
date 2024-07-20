@@ -37,7 +37,7 @@ class FiveAMPearlRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (!game.components.find(CardComponent, card.currentPlayer, card.active, card.is(Wolf)))
 				return
