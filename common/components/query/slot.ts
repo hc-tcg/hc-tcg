@@ -135,17 +135,15 @@ export function hasStatusEffect(
 }
 
 /* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
-export const adjacentTo = (
+export const adjacent = (
 	predicate: ComponentQuery<SlotComponent>
 ): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
-		if (!pos.onBoard() || pos.row === null) return false
-		return (
-			game.components.filter(SlotComponent, predicate).filter((pickedPos) => {
-				if (!pickedPos.onBoard()) return false
-				if (pos.row === null || pickedPos.row === null) return false
-				return [pos.row.index - 1, pos.row.index + 1].includes(pickedPos.row.index)
-			}).length >= 1
-		)
+		if (!pos.inRow()) return false
+		return game.components
+			.filter(SlotComponent, predicate, player(pos.player.entity))
+			.some((targetPos) => {
+				return targetPos.inRow() && Math.abs(pos.row.index - targetPos.row.index) === 1
+			})
 	}
 }

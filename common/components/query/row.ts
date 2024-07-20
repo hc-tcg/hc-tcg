@@ -40,11 +40,11 @@ export function entity(rowEntity: RowEntity | null | undefined): ComponentQuery<
 	}
 }
 
+/** Check if a row is next to a row satisfying a condition on the same player */
 export function adjacent(adjacentRow: ComponentQuery<RowComponent>): ComponentQuery<RowComponent> {
 	return (game, row) => {
-		return game.components.filter(RowComponent, adjacentRow).some((adjacentRow) => {
-			if (!adjacentRow) return false
-			return Math.abs(row.index - adjacentRow.index) == 1
-		})
+		return game.components
+			.filter(RowComponent, adjacentRow, player(row.player.entity))
+			.some((adjacentRow) => Math.abs(row.index - adjacentRow.index) === 1)
 	}
 }

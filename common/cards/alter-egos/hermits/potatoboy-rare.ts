@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {row} from '../../../components/query'
+import * as query from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
@@ -35,9 +35,15 @@ class PotatoBoyRare extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (_attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			game.components
-				.filter(RowComponent, row.currentPlayer, row.adjacent(row.active))
+				.filter(
+					RowComponent,
+					query.row.currentPlayer,
+					query.row.adjacent(query.row.active),
+					query.row.hasHermit
+				)
 				.forEach((row) => {
 					row.heal(40)
 					let hermit = row.getHermit()
