@@ -8,7 +8,7 @@ class OriginalXbEffect extends PlayerStatusEffect {
 		id: 'original_xb',
 		name: 'Original XB',
 		description:
-			"Draw an additional card at the end",
+			"Draw an additional card at the end of your turn",
 	}
 
 	override onApply(_game: GameModel, effect: StatusEffectComponent<PlayerComponent>, player: PlayerComponent, observer: ObserverComponent): void {
