@@ -9,23 +9,14 @@
 	height: 8px;
 	image-rendering: crisp-edges;
 
-	&.card {
-		filter: drop-shadow(.5px 0px 0 white) drop-shadow(-.5px 0px 0 white) drop-shadow(0px .5px 0 white)
-		drop-shadow(0px -.5px 0 white);
-	}
-
-	&.player {
-		filter: drop-shadow(.5px 0px 0 lightblue) drop-shadow(-.5px 0px 0 lightblue) drop-shadow(0px .5px 0 lightblue)
-		drop-shadow(0px -.5px 0 lightblue);
-	}
-	
+	filter: drop-shadow(.5px 0px 0 white) drop-shadow(-.5px 0px 0 white) drop-shadow(0px .5px 0 white) drop-shadow(0px -.5px 0 white);
 
 	@media (orientation: landscape) {
 		transform: translateX(4px) translateY(-4px) scale(2);
 	}
 
 	@media (orientation: portrait) {
-		transform: translateX(6px) translateY(-4px) scale(3);
+		transform: translateX(6px) translateY(-6px) scale(3);
 	}
 }
 
@@ -37,6 +28,6 @@
 .durationIndicator {
 	color: white;
 	font-family: MinecraftBold;
-	transform: translate(10px, -18px);
-	filter: drop-shadow(1px 1px 0 rgb(0, 0, 0));
+	transform: translate(7px, -15px);
+	filter: drop-shadow(1px 0px 0 black) drop-shadow(-1px 0px 0 black) drop-shadow(0px 1px 0 black) drop-shadow(0px -1px 0 black);
 }

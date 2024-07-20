@@ -1,4 +1,5 @@
 import css from './board.module.scss'
+import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
 import StatusEffect from 'components/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import classNames from 'classnames'
@@ -9,15 +10,19 @@ type ExpandStatusEffectProps = {
 }
 
 const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
-	let tooltipWindow = <div>
-		<div className={css.expandStatusEffects}>
-			<div className={css.expandStatusEffectGrid}> {statusEffects} </div>
+	let tooltipWindow = (
+		<div>
+			<div className={css.expandStatusEffects}>
+				<div className={css.expandStatusEffectGrid}> {statusEffects} </div>
+			</div>
 		</div>
-	</div>
-	
+	)
+
 	return (
 		<Tooltip tooltip={tooltipWindow}>
-			<div className={css.rectangle} />
+			<div className={statusEffectImageCss.statusEffect}>
+				<img src="images/status/expand.png" className={statusEffectImageCss.statusEffectImage} />
+			</div>
 		</Tooltip>
 	)
 }

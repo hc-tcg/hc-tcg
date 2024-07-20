@@ -3,7 +3,6 @@ import Tooltip from 'components/tooltip'
 import StatusEffectTooltip from './status-effect-tooltip'
 import {isCounter} from 'common/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
-import classnames from 'classnames'
 
 interface StatusEffectReactProps
 	extends React.DetailedHTMLProps<
@@ -23,13 +22,11 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 	const statusEffectClass =
 		statusEffect.props.type == 'damage' ? css.damageStatusEffectImage : css.statusEffectImage
 
-	let targetClass = statusEffect.target.type === 'card' ? css.card : css.player
-
 	return (
 		<Tooltip tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} counter={counter} />}>
 			<div className={css.statusEffect}>
 				<img
-					className={classnames(statusEffectClass, targetClass)}
+					className={statusEffectClass}
 					src={'/images/status/' + statusEffect.props.icon + extension}
 				></img>
 				{isCounter(statusEffect.props) &&
