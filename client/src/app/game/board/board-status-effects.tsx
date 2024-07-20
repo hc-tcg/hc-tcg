@@ -28,12 +28,13 @@ const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
 }
 
 type StatusEffectDisplayProps = {
+	shouldDim?: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
 	forHermit?: boolean
 }
 
 /** An object to display status effect for a specific card */
-const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayProps) => {
+const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffectDisplayProps) => {
 	let classes
 	if (!forHermit) {
 		classes = classNames(css.statusEffectContainer)
@@ -41,12 +42,20 @@ const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayPr
 		classes = classNames(css.statusEffectContainerForHermit)
 	}
 
+	console.log(shouldDim)
 	// We want to show the newest status effect first in the list.
 	statusEffects = [...statusEffects].reverse()
 
 	let sidebarStatusEffects = statusEffects.map((effect) => {
 		if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem') return
-		return <StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
+		return (
+			<StatusEffect
+				key={effect.instance}
+				statusEffect={effect}
+				counter={effect.counter}
+				dimmed={shouldDim}
+			/>
+		)
 	})
 
 	if (sidebarStatusEffects.length > 4) {
@@ -63,7 +72,12 @@ const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayPr
 				{statusEffects.map((effect) => {
 					if (effect.props.type !== 'damage') return
 					return (
-						<StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
+						<StatusEffect
+							key={effect.instance}
+							statusEffect={effect}
+							counter={effect.counter}
+							dimmed={shouldDim}
+						/>
 					)
 				})}
 			</div>

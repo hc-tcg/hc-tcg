@@ -7,6 +7,8 @@ import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-
 import HealthSlot from './board-health'
 import {PlayerEntity, SlotEntity} from 'common/entities'
 import StatusEffectContainer from './board-status-effects'
+import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {useSelector} from 'react-redux'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
@@ -29,6 +31,14 @@ type BoardRowProps = {
 }
 
 const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: BoardRowProps) => {
+	const localGameState = useSelector(getGameState)
+	const selectedCard = useSelector(getSelectedCard)
+
+	let shouldDim = !!(
+		(selectedCard || localGameState?.currentPickableSlots) &&
+		localGameState?.turn.currentPlayerId === localGameState?.playerId
+	)
+
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit']
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const slot = getSlotByLocation(slotType, slotIndex, rowState)
@@ -60,9 +70,10 @@ const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: Boar
 			})}
 		>
 			{slots}
-			<HealthSlot rowState={rowState} />
+			<HealthSlot rowState={rowState} shouldDim={shouldDim} />
 			<div className={cn(css.effect, css.slot)}>
 				<StatusEffectContainer
+					shouldDim={shouldDim}
 					forHermit={true}
 					statusEffects={statusEffects.filter(
 						(a) =>

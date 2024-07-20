@@ -3,6 +3,7 @@ import Tooltip from 'components/tooltip'
 import StatusEffectTooltip from './status-effect-tooltip'
 import {isCounter} from 'common/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
+import classnames from 'classnames'
 
 interface StatusEffectReactProps
 	extends React.DetailedHTMLProps<
@@ -11,10 +12,11 @@ interface StatusEffectReactProps
 	> {
 	statusEffect: LocalStatusEffectInstance
 	counter: number | null
+	dimmed?: boolean
 }
 
 const StatusEffect = (props: StatusEffectReactProps) => {
-	const {statusEffect, counter} = props
+	const {dimmed, statusEffect, counter} = props
 
 	const extension = ['poison', 'fire'].includes(statusEffect.props.icon) ? '.gif' : '.png'
 	const statusEffectClass =
@@ -22,7 +24,7 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 
 	return (
 		<Tooltip tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} counter={counter} />}>
-			<div className={css.statusEffect}>
+			<div className={classnames(css.statusEffect, {[css.dimmed]: dimmed})}>
 				<img
 					className={statusEffectClass}
 					src={'/images/status/' + statusEffect.props.icon + extension}
