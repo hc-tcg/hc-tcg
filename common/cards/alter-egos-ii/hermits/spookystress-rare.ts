@@ -39,8 +39,7 @@ class SpookyStressRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity) return
-			if (attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			const waterBucketAttached = game.components.exists(
 				SlotComponent,

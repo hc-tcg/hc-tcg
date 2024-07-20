@@ -5,7 +5,7 @@ import {Hermit} from '../../base/types'
 class SmallishbeansCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'smallishbeansnormal_common',
+		id: 'smallishbeans_common',
 		numericId: 160,
 		name: 'Joel',
 		expansion: 'season_x',

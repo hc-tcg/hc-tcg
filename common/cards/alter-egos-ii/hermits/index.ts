@@ -15,6 +15,7 @@ import WormManCommon from '../../alter-egos-ii/hermits/wormman-common'
 import {CardClass} from '../../base/card'
 import KingJoelCommon from './kingjoel-common'
 import PoePoeSkizzCommon from './poepoeskizz-common'
+import KingJoelRare from './kingjoel-rare'
 
 const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
@@ -32,6 +33,7 @@ const hermitCardClasses: Array<CardClass> = [
 	SteampunkTangoCommon,
 	WormManCommon,
 	KingJoelCommon,
+	KingJoelRare,
 	PoePoeSkizzCommon,
 ]
 
