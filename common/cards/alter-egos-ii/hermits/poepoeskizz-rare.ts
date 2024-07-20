@@ -16,7 +16,7 @@ class PoePoeSkizzRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 2,
 		type: 'pvp',
 		health: 250,
 		primary: {

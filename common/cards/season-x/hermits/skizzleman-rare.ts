@@ -15,7 +15,7 @@ class SkizzlemanRare extends Card {
 		expansion: 'season_x',
 		background: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 2,
 		type: 'builder',
 		health: 290,
 		primary: {
