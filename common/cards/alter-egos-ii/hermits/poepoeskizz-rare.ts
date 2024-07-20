@@ -10,7 +10,7 @@ class PoePoeSkizzRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'poepoeskizz_rare',
-		numericId: 166,
+		numericId: 167,
 		name: 'Poe Poe Skizz',
 		expansion: 'alter_egos_ii',
 		background: 'alter_egos',
