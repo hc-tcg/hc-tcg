@@ -15,6 +15,7 @@ export class StatusEffectComponent<
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
+	readonly order: number
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
 	public counter: number | null
 	private observerEntity: ObserverEntity | null
@@ -27,6 +28,7 @@ export class StatusEffectComponent<
 		this.game = game
 		this.entity = entity
 		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<any, Props>
+		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
 		this.counter = null
 		this.observerEntity = null
