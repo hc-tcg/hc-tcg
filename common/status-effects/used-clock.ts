@@ -6,7 +6,7 @@ import JoeHillsRare from '../cards/default/hermits/joehills-rare'
 class UsedClockEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		id: 'used-clock',
+		icon: 'used-clock',
 		name: 'Clocked Out',
 		description: "Your opponent's turns cannot be skipped consecutively.",
 		counter: 1,

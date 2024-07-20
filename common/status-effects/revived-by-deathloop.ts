@@ -3,7 +3,7 @@ import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-
 class RevivedByDeathloopEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'revived_by_deathloop',
+		icon: 'revived_by_deathloop',
 		name: 'Revived',
 		description: "This hermit has been revived by Scar's deathloop attack.",
 	}

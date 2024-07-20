@@ -7,7 +7,7 @@ import {flipCoin} from '../utils/coinFlips'
 export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'aussie-ping',
+		icon: 'aussie-ping',
 		name: 'Weak Connection',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
@@ -62,7 +62,7 @@ export class AussiePingEffect extends PlayerStatusEffect {
 export class AussiePingImmuneEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'aussie-ping-immune',
+		icon: 'aussie-ping-immune',
 		name: 'Strong Connection',
 		description: 'This Hermit cannot miss due to Aussie Ping.',
 	}

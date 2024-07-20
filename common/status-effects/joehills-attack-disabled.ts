@@ -1,20 +1,14 @@
 import {CardProps} from '../cards/base/types'
 import {StatusEffectComponent, CardComponent, ObserverComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	hiddenStatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
 export class TimeskipSecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		id: 'secondary-attack-disabled',
+		icon: 'secondary-attack-disabled',
 		counter: 1,
 		counterType: 'turns',
 		name: 'Secondary Attack Disabled',

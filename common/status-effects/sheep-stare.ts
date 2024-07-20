@@ -14,7 +14,7 @@ import {row} from '../components/query'
 class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'sheep-stare',
+		icon: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',

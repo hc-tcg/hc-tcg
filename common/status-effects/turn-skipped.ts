@@ -3,10 +3,7 @@ import {GameModel} from '../models/game-model'
 import {hiddenStatusEffect, PlayerStatusEffect, StatusEffectProps} from './status-effect'
 
 class TurnSkippedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...hiddenStatusEffect,
-		id: 'turn-skipped',
-	}
+	props: StatusEffectProps = hiddenStatusEffect
 
 	public override onApply(
 		game: GameModel,
@@ -16,7 +13,7 @@ class TurnSkippedEffect extends PlayerStatusEffect {
 	): void {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(
-				this.props.id,
+				this.props.icon,
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
 				'SINGLE_USE_ATTACK',
