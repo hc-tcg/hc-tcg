@@ -1,14 +1,14 @@
 import {CardProps} from '../cards/base/types'
 import {StatusEffectComponent, CardComponent, ObserverComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
 export class PrimaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
-		id: 'primary-attack-disabled',
+		...systemStatusEffect,
+		icon: 'primary-attack-disabled',
 		name: 'Primary Attack Disabled',
 		description: "This hermit's primary attack is disabled for this turn.",
 	}
@@ -33,8 +33,8 @@ export class PrimaryAttackDisabledEffect extends CardStatusEffect {
 
 export class SecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
-		id: 'secondary-attack-disabled',
+		...systemStatusEffect,
+		icon: 'secondary-attack-disabled',
 		name: 'Secondary Attack Disabled',
 		description: "This hermit's secondary attack is disabled for this turn.",
 	}

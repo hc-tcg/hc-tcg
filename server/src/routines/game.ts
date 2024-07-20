@@ -24,7 +24,6 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
-	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
@@ -47,6 +46,7 @@ function getAvailableEnergy(game: GameModel) {
 			CardComponent,
 			query.card.isItem,
 			query.card.attached,
+			query.card.rowEntity(currentPlayer.activeRowEntity),
 			query.card.slot(query.slot.player(game.currentPlayer.entity))
 		)
 		.flatMap((card) => {
@@ -109,10 +109,11 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
-	const hasOtherHermit = game.components.filter(
+	const hasOtherHermit = game.components.exists(
 		CardComponent,
-		query.card.isAttach,
-		query.card.slot(query.not(query.slot.rowIs(activeRowId)))
+		query.card.currentPlayer,
+		query.card.slot(query.slot.hermit),
+		query.card.slot(query.not(query.slot.active))
 	)
 
 	// Actions that require us to have an active row
@@ -227,6 +228,7 @@ function* checkHermitHealth(game: GameModel) {
 		const hermitCards = game.components.filter(
 			CardComponent,
 			query.card.attached,
+			query.card.slot(query.slot.hermit),
 			query.card.player(playerState.entity)
 		)
 

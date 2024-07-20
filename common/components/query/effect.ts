@@ -8,14 +8,14 @@ let STATUS_EFFECTS: Record<any, CardStatusEffect>
 import('../../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export function id(id: string): ComponentQuery<StatusEffectComponent> {
-	return (_game, statusEffect) => statusEffect.props.id === id
+	return (_game, statusEffect) => statusEffect.props.icon === id
 }
 
 export function is(
 	...effect: Array<new () => StatusEffect>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		effect.some((e) => STATUS_EFFECTS[e.name].props.id === statusEffect.props.id)
+		effect.some((e) => STATUS_EFFECTS[e.name].props.icon === statusEffect.props.icon)
 }
 
 export function targetIsPlayerAnd(

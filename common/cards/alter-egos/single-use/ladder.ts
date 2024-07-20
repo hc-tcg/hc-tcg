@@ -11,7 +11,7 @@ class Ladder extends Card {
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.not(query.slot.empty),
-		query.slot.adjacentTo(query.slot.active)
+		query.slot.adjacent(query.slot.active)
 	)
 
 	props: SingleUse = {

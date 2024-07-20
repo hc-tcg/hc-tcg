@@ -4,7 +4,7 @@ import {GameModel} from '../models/game-model'
 class SmeltingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'smelting',
+		icon: 'smelting',
 		name: 'Smelting',
 		description:
 			'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',

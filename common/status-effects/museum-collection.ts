@@ -7,7 +7,7 @@ import {slot} from '../components/query'
 class MuseumCollectionEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'museum-collection',
+		icon: 'museum-collection',
 		name: 'Museum Collection Size',
 		description:
 			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",

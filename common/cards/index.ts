@@ -55,3 +55,5 @@ export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
 	},
 	{}
 )
+
+export const CARDS_LIST = allCardClasses.map((card) => new card(card))

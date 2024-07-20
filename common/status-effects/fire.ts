@@ -6,7 +6,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 class FireEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		id: 'fire',
+		icon: 'fire',
 		name: 'Burn',
 		description:
 			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",

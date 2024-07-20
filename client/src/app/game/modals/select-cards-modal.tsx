@@ -74,7 +74,7 @@ function SelectCardsModal({closeModal}: Props) {
 							selected={selected}
 							wrap
 							tooltipAboveModal
-							enableAnimations
+							disableAnimations
 						/>
 					</div>
 				</div>

@@ -67,7 +67,7 @@ class GoodTimesWithScarRare extends Card {
 					StatusEffectComponent,
 					(_game, effect) =>
 						effect.target?.entity === target.entity &&
-						effect.statusEffect.props.id === 'revived_by_deathloop'
+						effect.statusEffect.props.icon === 'revived_by_deathloop'
 				)
 				.forEach((effect) => effect.remove())
 

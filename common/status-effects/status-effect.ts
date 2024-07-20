@@ -16,7 +16,8 @@ export type StatusEffectLog = {
 }
 
 export type StatusEffectProps = {
-	id: string
+	/** The icon of the status effect, not including the file extension */
+	icon: string
 	name: string
 	description: string
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
@@ -47,6 +48,7 @@ export const systemStatusEffect = {
 
 export const hiddenStatusEffect = {
 	type: 'hiddenSystem' as StatusEffectProps['type'],
+	icon: '',
 	name: '',
 	description: '',
 	applyCondition: query.anything,

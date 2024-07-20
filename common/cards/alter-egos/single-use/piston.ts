@@ -15,7 +15,7 @@ class Piston extends Card {
 		query.not(query.slot.empty),
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
-		query.slot.adjacentTo(
+		query.slot.adjacent(
 			query.every(
 				query.slot.row(query.row.hasHermit),
 				query.slot.item,
@@ -68,7 +68,7 @@ class Piston extends Card {
 				query.slot.empty,
 				query.slot.row(query.row.hasHermit),
 				query.not(query.slot.frozen),
-				query.slot.adjacentTo((game, pos) => query.slot.entity(pickedItemSlot?.entity)(game, pos))
+				query.slot.adjacent((game, pos) => query.slot.entity(pickedItemSlot?.entity)(game, pos))
 			),
 			onResult(pickedSlot) {
 				// Move the card and apply su card

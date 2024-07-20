@@ -27,6 +27,7 @@ import {TrapHoleEffect} from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
 import {StatusEffect} from './status-effect'
 import FortuneEffect from './fortune'
+import {TimeskipSecondaryAttackDisabledEffect} from './joehills-attack-disabled'
 
 const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
@@ -57,6 +58,7 @@ const effectClasses: Array<new () => StatusEffect> = [
 	TrapHoleEffect,
 	CurseOfBindingEffect,
 	FortuneEffect,
+	TimeskipSecondaryAttackDisabledEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
@@ -64,7 +66,7 @@ export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect
-		result[effect.props.id] = effect
+		result[effect.props.icon] = effect
 		return result
 	},
 	{}

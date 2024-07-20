@@ -5,7 +5,7 @@ import {CardComponent, StatusEffectComponent} from '../components'
 class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'protected',
+		icon: 'protected',
 		name: "Sheriff's Protection",
 		description: 'This Hermit does not take damage on their first active turn.',
 	}

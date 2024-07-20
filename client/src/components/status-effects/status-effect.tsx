@@ -15,7 +15,7 @@ interface StatusEffectReactProps
 const StatusEffect = (props: StatusEffectReactProps) => {
 	const {statusEffect, counter} = props
 
-	const extension = ['sleeping', 'poison', 'fire'].includes(statusEffect.id) ? '.gif' : '.png'
+	const extension = ['sleeping', 'poison', 'fire'].includes(statusEffect.icon) ? '.gif' : '.png'
 	const statusEffectClass =
 		statusEffect.type == 'damage' ? css.damageStatusEffectImage : css.statusEffectImage
 
@@ -24,7 +24,7 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 			<div className={css.statusEffect}>
 				<img
 					className={statusEffectClass}
-					src={'/images/status/' + statusEffect.id + extension}
+					src={'/images/status/' + statusEffect.icon + extension}
 				></img>
 				{isCounter(statusEffect) &&
 					((statusEffect.counterType === 'turns' && statusEffect.counter !== 1) ||

@@ -9,7 +9,7 @@ import DeckLayout from './layout'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PlayerDeckT} from 'common/types/deck'
-import EditDeck from './deck-edit'
+import EditDeck, {sortCards} from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
 import {CopyIcon, DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
@@ -30,54 +30,6 @@ import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
-
-const TYPE_ORDER = {
-	hermit: 0,
-	attach: 1,
-	single_use: 2,
-	item: 3,
-	health: 4,
-}
-
-export const sortCards = (cards: Array<LocalCardInstance>): Array<LocalCardInstance> => {
-	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
-		const cardCostA = a.props.tokens
-		const cardCostB = b.props.tokens
-
-		if (a.props.category !== b.props.category) {
-			// seperate by types first
-			return TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category]
-		} else if (
-			// then by hermit types
-			isHermit(a.props) &&
-			isHermit(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.type.localeCompare(b.props.type)
-		} else if (
-			// then by item types
-			isItem(a.props) &&
-			isItem(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.type.localeCompare(b.props.type)
-		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
-			// then by expansion if they are both hermits
-			return a.props.expansion.localeCompare(a.props.expansion)
-		} else if (cardCostA !== cardCostB) {
-			// order by ranks
-			return cardCostA - cardCostB
-		} else if (a.props.name !== b.props.name) {
-			return a.props.name.localeCompare(b.props.name)
-		}
-
-		// rarity is our last hope
-		const rarities = ['common', 'rare', 'ultra_rare']
-		const rarityValueA = rarities.findIndex((s) => s === a.props.rarity) + 1
-		const rarityValueB = rarities.findIndex((s) => s === b.props.rarity) + 1
-		return rarityValueA - rarityValueB
-	})
-}
 
 export const cardGroupHeader = (title: string, cards: Array<LocalCardInstance>) => (
 	<p className={css.cardGroupHeader}>
