@@ -19,7 +19,6 @@ export class DeathloopReady extends CardStatusEffect {
 	) {
 		const {player, opponentPlayer} = target
 
-	
 		// Add before so health can be checked reliably
 		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) => {
 			const row = attack.target
@@ -45,7 +44,7 @@ export class DeathloopReady extends CardStatusEffect {
 
 			game.components.new(StatusEffectComponent, RevivedByDeathloopEffect).apply(target.entity)
 			effect.remove()
-		})	
+		})
 	}
 }
 
