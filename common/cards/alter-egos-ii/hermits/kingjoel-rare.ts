@@ -7,25 +7,10 @@ import * as query from '../../../components/query'
 import {flipCoin} from '../../../utils/coinFlips'
 
 class KingJoelRare extends Card {
-	firstPickCondition = query.every(
-		query.slot.opponent,
-		query.not(query.slot.active),
-		query.slot.item,
-		query.not(query.slot.empty)
-	)
-
-	secondPickCondition = query.every(
-		query.slot.currentPlayer,
-		query.not(query.slot.active),
-		query.slot.item,
-		query.slot.empty,
-		query.slot.row(query.row.hasHermit)
-	)
-
 	props: Hermit = {
 		...hermit,
 		id: 'kingjoel_rare',
-		numericId: 162,
+		numericId: 163,
 		name: 'King Joel',
 		expansion: 'alter_egos_ii',
 		background: 'alter_egos',
@@ -52,12 +37,27 @@ class KingJoelRare extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
+		const firstPickCondition = query.every(
+			query.slot.opponent,
+			query.not(query.slot.active),
+			query.slot.item,
+			query.not(query.slot.empty)
+		)
+
+		const secondPickCondition = query.every(
+			query.slot.currentPlayer,
+			query.not(query.slot.active),
+			query.slot.item,
+			query.slot.empty,
+			query.slot.row(query.row.hasHermit)
+		)
+
 		let fistPickedCard: CardComponent | null = null
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			if (!game.components.exists(SlotComponent, this.firstPickCondition)) return
-			if (!game.components.exists(SlotComponent, this.secondPickCondition)) return
+			if (!game.components.exists(SlotComponent, firstPickCondition)) return
+			if (!game.components.exists(SlotComponent, secondPickCondition)) return
 
 			const coinFlip = flipCoin(player, component)
 
@@ -67,7 +67,7 @@ class KingJoelRare extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: "Pick an item card from your opponent's AFK Hermits",
-				canPick: this.firstPickCondition,
+				canPick: firstPickCondition,
 				onResult(pickedSlot) {
 					fistPickedCard = pickedSlot.getCard()
 				},
@@ -77,7 +77,7 @@ class KingJoelRare extends Card {
 				playerId: player.id,
 				id: component.entity,
 				message: 'Pick a slot to place the item card',
-				canPick: this.secondPickCondition,
+				canPick: secondPickCondition,
 				onResult(pickedSlot) {
 					if (!fistPickedCard) return
 					fistPickedCard.attach(pickedSlot)

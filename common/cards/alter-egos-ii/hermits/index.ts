@@ -16,6 +16,7 @@ import {CardClass} from '../../base/card'
 import KingJoelCommon from './kingjoel-common'
 import PoePoeSkizzCommon from './poepoeskizz-common'
 import KingJoelRare from './kingjoel-rare'
+import PoePoeSkizzRare from './poepoeskizz-common'
 
 const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
@@ -35,6 +36,7 @@ const hermitCardClasses: Array<CardClass> = [
 	KingJoelCommon,
 	KingJoelRare,
 	PoePoeSkizzCommon,
+	PoePoeSkizzRare,
 ]
 
 export default hermitCardClasses
