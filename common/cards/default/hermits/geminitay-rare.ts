@@ -39,7 +39,7 @@ class GeminiTayRare extends Card {
 
 			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.
-				game.components.find(CardComponent, query.card.isSingleUse, query.card.active)?.discard()
+				game.components.find(CardComponent, query.card.slot(query.slot.singleUse))?.discard()
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
