@@ -49,12 +49,6 @@ class Clock extends Card {
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
 			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
 		})
 	}
 }
