@@ -48,7 +48,6 @@ class ArchitectFalseRare extends Card {
 
 		observer.subscribe(opponentPlayer.hooks.onAttack, (attack) => {
 			if (!blockAttack) return
-			console.log(attack.type)
 			if (attack.type === 'primary') {
 				game.components
 					.new(StatusEffectComponent, MultiturnPrimaryAttackDisabledEffect)
