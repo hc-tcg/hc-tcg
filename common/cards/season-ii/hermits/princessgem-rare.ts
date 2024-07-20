@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
 
-class SteampunkTangoRare extends Card {
+class PrincessGemRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'princess_gem',
@@ -42,4 +42,4 @@ class SteampunkTangoRare extends Card {
 	}
 }
 
-export default SteampunkTangoRare
+export default PrincessGemRare

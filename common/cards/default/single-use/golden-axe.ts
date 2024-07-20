@@ -5,8 +5,11 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import { RowEntity } from '../../../entities'
 
 class GoldenAxe extends Card {
+	selectionAvailable = false
+
 	props: SingleUse = {
 		...singleUse,
 		id: 'golden_axe',
@@ -23,11 +26,31 @@ class GoldenAxe extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
+		let redirectTarget: RowEntity | null = null
+
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
+			game.addPickRequest({
+				playerId: player.id,
+				id: component.entity,
+				message: "Pick one one of your opponent's AFK Hermits to target with Golden Axe",
+				canPick: query.every(
+					query.slot.opponent,
+					query.slot.hermit,
+					query.not(query.slot.empty),
+					query.not(query.slot.active)
+				),
+				onResult(pickedSlot) {
+					if (!pickedSlot.inRow()) return
+					redirectTarget = pickedSlot.rowEntity
+				},
+			})
+		})
+
 		observer.subscribe(player.hooks.getAttack, () => {
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: opponentPlayer.activeRowEntity,
+					target: redirectTarget || opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
