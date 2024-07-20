@@ -152,11 +152,11 @@ export function executeAttacks(
 	// STEP 3 - Execute all attacks
 	attacks.forEach((attack) => {
 		attack.target?.damage(attack.calculateDamage())
+		let weaknessAttack = createWeaknessAttack(game, attack)
+		if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
 		if (attack.nextAttacks.length > 0) {
 			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
-			let weaknessAttack = createWeaknessAttack(game, attack)
-			if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 			// Only want to block actions after first attack
 			withoutBlockingActions = true
 		}
@@ -220,9 +220,10 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 	return remainingEnergy.length >= anyCost.length
 }
 
-// @todo
 function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
+	// Only hermit attacks have extra weakness damage.
+	if (!['primary', 'secondary'].includes(attack.type)) return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
 	let attacker = attack.attacker

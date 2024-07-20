@@ -43,7 +43,7 @@ class InvisibilityPotion extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
 			if (flipCoin(player, component)[0] === 'heads') {
