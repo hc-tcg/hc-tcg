@@ -28,6 +28,10 @@
 	height: 75px;
 }
 
+.dimmed {
+	filter: brightness(70%);
+}
+
 .durationIndicator {
 	color: white;
 	font-family: MinecraftBold;
