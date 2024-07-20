@@ -7,12 +7,13 @@ import {
 import {card, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
-import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 export class TrapHoleEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
+		...systemStatusEffect,
 		name: 'Trap Hole',
+		icon: 'trap-hole',
 		description:
 			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
 	}

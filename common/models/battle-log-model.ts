@@ -318,7 +318,8 @@ export class BattleLogModel {
 			const rowNumberString = (pos.slot.inRow() && pos.slot.row.index.toString()) || 'Unknown Row'
 
 			const logMessage = log({
-				target: `$${targetFormatting}${pos.props.name} ${rowNumberString}$`,
+				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,
+				verb: `was`,
 				statusEffect: `$e${effect.props.name}$`,
 			})
 
@@ -330,7 +331,8 @@ export class BattleLogModel {
 			const targetFormatting = pos.entity === this.game.currentPlayerEntity ? 'p' : 'o'
 
 			const logMessage = log({
-				target: `$${targetFormatting}{you|${pos.playerName}}$`,
+				target: `$${targetFormatting}{You|${pos.playerName}}$`,
+				verb: `{were|was}`,
 				statusEffect: `$e${effect.props.name}$`,
 			})
 
