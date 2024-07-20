@@ -3,17 +3,14 @@ import HealthDisplayModule from 'components/card/health-card-svg'
 import slotCss from './board.module.scss'
 import cardCss from './board.module.scss'
 import cn from 'classnames'
-import StatusEffectContainer from './board-status-effects'
 import {useSelector} from 'react-redux'
 import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
-import {LocalStatusEffectInstance} from 'common/types/server-requests'
 
 type HealthSlotProps = {
 	rowState: LocalRowState
-	statusEffects: Array<LocalStatusEffectInstance>
 }
 
-const HealthSlot = ({rowState, statusEffects}: HealthSlotProps) => {
+const HealthSlot = ({rowState}: HealthSlotProps) => {
 	const localGameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
 
@@ -27,7 +24,6 @@ const HealthSlot = ({rowState, statusEffects}: HealthSlotProps) => {
 			})}
 		>
 			{rowState.health && <HealthDisplayModule health={rowState.health} />}
-			<StatusEffectContainer statusEffects={statusEffects} />
 		</div>
 	)
 }

@@ -6,6 +6,7 @@ import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import HealthSlot from './board-health'
 import {PlayerEntity, SlotEntity} from 'common/entities'
+import StatusEffectContainer from './board-status-effects'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
@@ -59,14 +60,17 @@ const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: Boar
 			})}
 		>
 			{slots}
-			<HealthSlot
-				rowState={rowState}
-				statusEffects={statusEffects.filter(
-					(a) =>
-						(a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity) ||
-						(active && a.target.type === 'player' && a.target.player === player)
-				)}
-			/>
+			<HealthSlot rowState={rowState} />
+			<div className={cn(css.effect, css.slot)}>
+				<StatusEffectContainer
+					forHermit={true}
+					statusEffects={statusEffects.filter(
+						(a) =>
+							(a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity) ||
+							(active && a.target.type === 'player' && a.target.player === player)
+					)}
+				/>
+			</div>
 		</div>
 	)
 }

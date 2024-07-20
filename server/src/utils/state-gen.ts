@@ -338,6 +338,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		order: game.state.order,
 		statusEffects: game.components
 			.filter(StatusEffectComponent)
+			.sort((a, b) => a.order - b.order)
 			.map(getLocalStatusEffect)
 			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
 
