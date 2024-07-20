@@ -72,4 +72,16 @@ export class WaterfallHook<
 			return params
 		}, params)[0]
 	}
+
+	public override callSome(
+		params: Parameters<Args>,
+		predicate: (instance: ObserverEntity) => boolean
+	) {
+		return this.listeners
+			.filter(([instance, _]) => predicate(instance))
+			.reduce((params, [_, listener]) => {
+				params[0] = listener(...(params as Array<any>))
+				return params
+			}, params)[0]
+	}
 }
