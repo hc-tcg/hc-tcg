@@ -215,12 +215,12 @@ $grid-size: 25px;
 .statusEffectContainerForHermit {
 	position: absolute;
 	display: grid;
-	grid-template-rows: repeat(5, 20%);
+	grid-template-rows: repeat(10, 25%);
 	border: #595959 2px solid;
 	pointer-events: none;
 	height: 100%;
 	width: 100%;
-	padding: 2px;
+	padding: 4px;
 }
 
 .damageStatusEffectContainer {

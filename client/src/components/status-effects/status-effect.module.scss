@@ -3,9 +3,10 @@
 }
 
 .statusEffectImage {
-	width: 16px;
-	height: 16px;
-	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
+	width: 8px;
+	height: 8px;
+	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white) ;
+	transform: scale(2) translateX(1px) translateY(-1px);
 	image-rendering: crisp-edges;
 }
 
