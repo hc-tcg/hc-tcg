@@ -36,7 +36,7 @@ class ZedaphPlaysRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return

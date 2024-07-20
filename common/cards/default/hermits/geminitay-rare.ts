@@ -35,7 +35,7 @@ class GeminiTayRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.

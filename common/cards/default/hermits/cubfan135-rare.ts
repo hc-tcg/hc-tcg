@@ -33,7 +33,7 @@ class Cubfan135Rare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isTargetting(component) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
 			// AKA remove change active hermit from blocked actions

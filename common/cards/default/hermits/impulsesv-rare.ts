@@ -39,6 +39,8 @@ class ImpulseSVRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
 			const boomerAmount = game.components.filter(
 				CardComponent,
 				query.card.currentPlayer,
