@@ -17,6 +17,9 @@ const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayPr
 		classes = classNames(css.statusEffectContainerForHermit)
 	}
 
+	// We want to show the newest status effect first in the list.
+	statusEffects = [...statusEffects].reverse()
+	
 	return (
 		<div>
 			<div className={classes}>

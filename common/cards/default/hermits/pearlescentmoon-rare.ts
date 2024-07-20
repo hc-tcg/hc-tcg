@@ -43,12 +43,6 @@ class PearlescentMoonRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
 		})
 	}
 }
