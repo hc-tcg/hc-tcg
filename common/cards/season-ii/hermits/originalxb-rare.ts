@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import OriginalXBEffect from '../../../status-effects/original-xb'
 
 class OriginalXBRare extends Card {
 	props: Hermit = {
@@ -29,15 +30,13 @@ class OriginalXBRare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			observer.oneShot(opponentPlayer.hooks.onTurnEnd, () => {
-				opponentPlayer.draw(1)
-			})
+			game.components.new(StatusEffectComponent, OriginalXBEffect).apply(opponentPlayer.entity)
 		})
 	}
 }
