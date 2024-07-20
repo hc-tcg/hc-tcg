@@ -7,7 +7,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 		...statusEffect,
 		icon: 'invisibility-potion-heads',
 		name: 'Invisibility Potion - Heads',
-		description: 'Your next attack will miss.',
+		description: "Your opponent's next attack will miss.",
 	}
 
 	override onApply(
@@ -16,12 +16,12 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (attack.isType('weakness', 'effect', 'status-effect')) return
 			attack.multiplyDamage(effect.entity, 0)
 		})
 
-		observer.subscribe(player.hooks.afterAttack, () => {
+		observer.subscribe(player.hooks.afterDefence, () => {
 			effect.remove()
 		})
 	}
@@ -32,7 +32,7 @@ export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 		...statusEffect,
 		icon: 'invisibility-potion-tails',
 		name: 'Invisibility Potion - Tails',
-		description: 'Your next attack will deal double damage.',
+		description: "Your opponent's next attack will deal double damage.",
 	}
 
 	override onApply(
@@ -41,12 +41,12 @@ export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (attack.isType('weakness', 'effect', 'status-effect')) return
 			attack.multiplyDamage(effect.entity, 2)
 		})
 
-		observer.subscribe(player.hooks.afterAttack, () => {
+		observer.subscribe(player.hooks.afterDefence, () => {
 			effect.remove()
 		})
 	}
