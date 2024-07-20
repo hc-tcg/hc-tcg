@@ -1,5 +1,7 @@
 .statusEffect {
 	pointer-events: all;
+	width: 16px;
+	height: 16px;
 }
 
 .statusEffectImage {
@@ -19,11 +21,11 @@
 	
 
 	@media (orientation: landscape) {
-		transform: translateX(2px) translateY(-2px) scale(2);
+		transform: translateX(4px) translateY(-4px) scale(2);
 	}
 
 	@media (orientation: portrait) {
-		transform: translateX(4px) translateY(-4px) scale(3);
+		transform: translateX(6px) translateY(-4px) scale(3);
 	}
 }
 

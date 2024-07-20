@@ -230,13 +230,13 @@ $grid-size: 25px;
 
 	@media (orientation: landscape) {
 		border: #6d6e64 2px solid;
-		padding-top: 2px;
-		padding-left: 5px;
+		padding-top: 4px;
+		padding-left: 3px;
 	}
 
 	@media (orientation: portrait) {
 		border: #6d6e64 3px solid;
-		padding-top: 10px;
+		padding-top: 12px;
 		padding-left: 13px;
 	}
 }
@@ -293,4 +293,47 @@ $grid-size: 25px;
 				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ';
 		}
 	}
+}
+
+
+.rectangle {
+	pointer-events: all;
+	height: 16px;
+	width: 16px;
+	background: orange;
+}
+
+.expandStatusEffects {
+	overflow: hidden;
+	background-color: rgba(10, 1, 15, 95%);
+	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
+	color: rgb(161, 161, 161);
+	border-radius: 4px;
+
+	@media (orientation: landscape) {
+		padding: 8px;
+	}
+
+	@media (orientation: portrait) {
+		padding: 12px;
+	}
+}
+
+.expandStatusEffectGrid {
+	padding-top: 4px;
+	display: flex;
+	flex-direction: row;
+
+	@media (orientation: landscape) {
+		gap: 8px;
+	}
+
+	@media (orientation: portrait) {
+		gap: 16px;
+	}
+}
+
+.expandStatusTitle {
+	color: white;
+	font-family: MinecraftBold;
 }
