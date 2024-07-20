@@ -37,7 +37,7 @@ $grid-size: 25px;
 
 	display: grid;
 	border: 4px solid transparent;
-	grid-template-columns: repeat(11, $size);
+	grid-template-columns: repeat(12, $size);
 	grid-template-rows: repeat(6, $size);
 	grid-template-areas:
 		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect'
@@ -216,7 +216,7 @@ $grid-size: 25px;
 	position: absolute;
 	display: grid;
 	grid-template-rows: repeat(10, 25%);
-	border: #595959 2px solid;
+	border: #6d6e64 2px solid;
 	pointer-events: none;
 	height: 100%;
 	width: 100%;
