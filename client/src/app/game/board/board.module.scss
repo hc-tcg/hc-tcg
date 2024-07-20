@@ -40,21 +40,21 @@ $grid-size: 25px;
 	grid-template-columns: repeat(11, $size);
 	grid-template-rows: repeat(6, $size);
 	grid-template-areas:
-		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit'
-		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit'
-		'item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit'
-		'item2 item2 health health health hermit hermit hermit hermit hermit hermit'
-		'item3 item3 health health health hermit hermit hermit hermit hermit hermit'
-		'item3 item3 health health health hermit hermit hermit hermit hermit hermit';
+		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect'
+		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect'
+		'item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit effect'
+		'item2 item2 health health health hermit hermit hermit hermit hermit hermit effect'
+		'item3 item3 health health health hermit hermit hermit hermit hermit hermit effect'
+		'item3 item3 health health health hermit hermit hermit hermit hermit hermit effect';
 
 	&.reversed {
 		grid-template-areas:
-			'hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
-			'hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
-			'hermit hermit hermit hermit hermit hermit attach attach attach item2 item2'
-			'hermit hermit hermit hermit hermit hermit health health health item2 item2'
-			'hermit hermit hermit hermit hermit hermit health health health item3 item3'
-			'hermit hermit hermit hermit hermit hermit health health health item3 item3';
+			'effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
+			'effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
+			'effect hermit hermit hermit hermit hermit hermit attach attach attach item2 item2'
+			'effect hermit hermit hermit hermit hermit hermit health health health item2 item2'
+			'effect hermit hermit hermit hermit hermit hermit health health health item3 item3'
+			'effect hermit hermit hermit hermit hermit hermit health health health item3 item3';
 	}
 
 	&:hover {
@@ -91,6 +91,13 @@ $grid-size: 25px;
 
 	&.attach {
 		background: #353536;
+	}
+
+	&.effect {
+		aspect-ratio: .25;
+		height: 400%;
+		width: 100%;
+		background: #212121;
 	}
 
 	&.pickable {
@@ -205,6 +212,17 @@ $grid-size: 25px;
 	pointer-events: none;
 }
 
+.statusEffectContainerForHermit {
+	position: absolute;
+	display: grid;
+	grid-template-rows: repeat(5, 20%);
+	border: #595959 2px solid;
+	pointer-events: none;
+	height: 100%;
+	width: 100%;
+	padding: 2px;
+}
+
 .damageStatusEffectContainer {
 	position: absolute;
 	bottom: -40px;
@@ -239,14 +257,23 @@ $grid-size: 25px;
 	}
 
 	.row {
-		$size: 100px;
+		$size: 25px;
 
-		grid-template-columns: repeat(6, $size);
-		grid-template-rows: repeat(1, $size);
-		grid-template-areas: 'item3 item2 item1 attach hermit health';
+		grid-template-columns: repeat(25, $size);
+		grid-template-rows: repeat(4, $size);
+		grid-template-areas:
+		'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
+		'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
+		'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
+		'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect';
 
 		&.reversed {
-			grid-template-areas: 'health hermit attach item1 item2 item3';
+			grid-template-areas:
+		'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
+		'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
+		'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
+		'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ';
+
 		}
 	}
 }
