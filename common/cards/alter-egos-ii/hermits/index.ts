@@ -17,9 +17,11 @@ import KingJoelCommon from './kingjoel-common'
 import PoePoeSkizzCommon from './poepoeskizz-common'
 import KingJoelRare from './kingjoel-rare'
 import PoePoeSkizzRare from './poepoeskizz-common'
+import ArchitectFalseRare from './architectfalse-rare'
 
 const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
+	ArchitectFalseRare,
 	BoomerBdubsRare,
 	DwarfImpulseCommon,
 	FiveAMPearlRare,
