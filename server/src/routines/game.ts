@@ -228,6 +228,7 @@ function* checkHermitHealth(game: GameModel) {
 		const hermitCards = game.components.filter(
 			CardComponent,
 			query.card.attached,
+			query.card.slot(query.slot.hermit),
 			query.card.player(playerState.entity)
 		)
 
