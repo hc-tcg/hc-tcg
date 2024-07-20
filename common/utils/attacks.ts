@@ -222,6 +222,7 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 
 function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
+	// Only hermit attacks have extra weakness damage.
 	if (!['primary', 'secondary'].includes(attack.type)) return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
