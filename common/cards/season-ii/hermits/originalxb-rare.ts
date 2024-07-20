@@ -16,7 +16,7 @@ class OriginalXBRare extends Card {
 		type: 'miner',
 		health: 270,
 		primary: {
-			name: 'Slabs ‘n Stairs!',
+			name: "Slabs 'n Stairs!",
 			cost: ['miner'],
 			damage: 50,
 			power: null,

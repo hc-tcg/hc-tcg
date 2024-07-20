@@ -10,7 +10,7 @@ class DwarfImpulseRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'dwarf_impulse_rare',
-		numericId: 163,
+		numericId: 152,
 		name: 'Dwarf Impulse',
 		expansion: 'default',
 		rarity: 'rare',
