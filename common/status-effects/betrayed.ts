@@ -15,7 +15,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 		icon: 'betrayed',
 		name: 'Betrayed',
 		description:
-			'You must attack an AFK hermit if one exists and your active hermit has the neccesary items attached to attack.',
+			'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
 	}
 
 	override onApply(
