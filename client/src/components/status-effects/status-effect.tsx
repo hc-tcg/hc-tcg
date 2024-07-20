@@ -30,7 +30,7 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 					src={'/images/status/' + statusEffect.props.icon + extension}
 				></img>
 				{isCounter(statusEffect.props) &&
-					((statusEffect.props.counterType === 'turns' && statusEffect.counter !== 1) ||
+					((statusEffect.props.counterType === 'turns' && statusEffect.props.counter > 1) ||
 						statusEffect.props.counterType === 'number') && (
 						<p className={css.durationIndicator}>{counter}</p>
 					)}

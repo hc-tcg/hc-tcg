@@ -13,11 +13,13 @@
 		drop-shadow(0px 0.5px 0 white) drop-shadow(0px -0.5px 0 white);
 
 	@media (orientation: landscape) {
-		transform: translateX(4px) translateY(-4px) scale(2);
+		transform: translate(1px, -4px) scale(2);
+		transform-origin: top left;
 	}
 
 	@media (orientation: portrait) {
-		transform: translateX(6px) translateY(-6px) scale(3);
+		transform: translate(10px, 0px) scale(3);
+		transform-origin: top left;
 	}
 }
 
