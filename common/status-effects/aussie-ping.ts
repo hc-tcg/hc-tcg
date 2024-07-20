@@ -10,7 +10,7 @@ export class AussiePingEffect extends PlayerStatusEffect {
 		icon: 'aussie-ping',
 		name: 'Weak Connection',
 		description:
-			'When you attack, flip a coin. If heads, this hermit misses. Lasts until you attack or the end of the turn.',
+			'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
 		applyCondition: (_game, player) => {
 			if (!(player instanceof PlayerComponent)) return false
 			return !player.hasStatusEffect(AussiePingImmuneEffect)
@@ -64,11 +64,11 @@ export class AussiePingImmuneEffect extends PlayerStatusEffect {
 		...systemStatusEffect,
 		icon: 'aussie-ping-immune',
 		name: 'Strong Connection',
-		description: 'You cannot miss due to Aussie Ping.',
+		description: 'You are immune to Aussie Ping for the duration of this turn.',
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent
