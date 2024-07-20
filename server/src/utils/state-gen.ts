@@ -24,7 +24,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from 'common/components'
-import {CardProps, Hermit} from 'common/cards/base/types'
+import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
 import {CardEntity, newEntity} from 'common/entities'
 import {ModalData} from 'common/types/modal-requests'
 
@@ -86,6 +86,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	// hermits, but not diamond ones
 	let hermitCards = cards
 		.filter((card) => card.isHermit())
+		.filter((card) => !isHermit(card.props) || types.includes(card.props.type))
 		.filter((card) => card.props.name !== 'diamond') as Array<Card<Hermit>>
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
@@ -101,9 +102,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		tokens += hermitCard.props.tokens * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			// @todo Figure out why this is broken
-			// Possibly just need to enable all types?
-			// itemCounts[hermitCard.props.type].items += 2
+			itemCounts[hermitCard.props.type].items += 2
 		}
 	}
 
