@@ -16,7 +16,7 @@ class WormManRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 1,
 		type: 'prankster',
 		health: 260,
 		primary: {

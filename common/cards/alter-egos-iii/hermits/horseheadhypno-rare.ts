@@ -17,7 +17,7 @@ class HorseHeadHypnoRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 1,
 		type: 'builder',
 		health: 260,
 		primary: {

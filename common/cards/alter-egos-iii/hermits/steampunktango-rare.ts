@@ -16,7 +16,7 @@ class SteampunkTangoRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 2,
 		type: 'terraform',
 		health: 270,
 		primary: {
@@ -29,7 +29,7 @@ class SteampunkTangoRare extends Card {
 			name: 'Assembly line',
 			cost: ['terraform', 'terraform'],
 			damage: 80,
-			power: 'Deal an additional 10hp damage for each afk hermit you have.',
+			power: 'For each of your AFK Hermits on the game board, do an additional 10hp damage.',
 		},
 	}
 

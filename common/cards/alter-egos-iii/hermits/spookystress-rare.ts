@@ -17,7 +17,7 @@ class SpookyStressRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 2,
+		tokens: 1,
 		type: 'terraform',
 		health: 260,
 		primary: {

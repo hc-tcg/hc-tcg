@@ -16,7 +16,7 @@ class BeetlejhostRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 1,
 		type: 'balanced',
 		health: 300,
 		primary: {
