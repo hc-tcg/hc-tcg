@@ -25,7 +25,7 @@ class OriginalXBRare extends Card {
 			power: null,
 		},
 		secondary: {
-			name: 'Get good',
+			name: 'Get Good',
 			cost: ['miner', 'miner', 'any'],
 			damage: 90,
 			power: 'Opponent must draw an additional card from their deck on their next turn.',
