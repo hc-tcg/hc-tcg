@@ -4,11 +4,15 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../compon
 import * as query from '../components/query'
 import FiveAMPearlRare from '../cards/alter-egos-ii/hermits/fiveampearl-rare'
 import EthosLabRare from '../cards/default/hermits/ethoslab-rare'
+import ArchitectFalseCommon from '../cards/alter-egos-ii/hermits/architectfalse-common'
+import ArchitectFalseRare from '../cards/alter-egos-iii/hermits/architectfalse-rare'
+import KingJoelCommon from '../cards/alter-egos-iii/hermits/kingjoel-common'
+import KingJoelRare from '../cards/alter-egos-iii/hermits/kingjoel-rare'
 
 class RoyalProtectionEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'royal_protection',
+		icon: 'royal_protection',
 		name: 'Royal Protection',
 		description: 'This hermit takes no damage from King Joel or Grand Architect attacks',
 	}
@@ -26,7 +30,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.attached,
-				query.card.is(FiveAMPearlRare, EthosLabRare) //@TODO: placeholder until cards implemented
+				query.card.is(ArchitectFalseCommon, ArchitectFalseRare, KingJoelCommon, KingJoelRare)
 			)
 
 			if (royalHermits.includes(attack.attacker)) {
