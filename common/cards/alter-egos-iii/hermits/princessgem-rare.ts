@@ -5,7 +5,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import Card from '../../base/card'
+import Card, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
@@ -35,9 +35,11 @@ class PrincessGemRare extends Card {
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				'After your attack, grant Royal Protection to an AFK Hermit. The first attack against this Hermit deals no damage.',
+				'After your attack, grant Royal Protection to an AFK Hermit. The first attack against this Hermit deals no damage. When this card is knocked out, Royal Protection is removed.',
 		},
 	}
+
+	protectedEffects = new InstancedValue<Array<StatusEffectComponent>>(() => [])
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
@@ -60,12 +62,16 @@ class PrincessGemRare extends Card {
 				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,
 				onResult: (pickedSlot) => {
-					game.components
-						.new(StatusEffectComponent, RoyalProtectionEffect)
-						.apply(pickedSlot.getCard()?.entity)
+					const effect = game.components.new(StatusEffectComponent, RoyalProtectionEffect)
+					effect.apply(pickedSlot.getCard()?.entity)
+					this.protectedEffects.get(component).push(effect)
 				},
 			})
 		})
+	}
+
+	override onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+		this.protectedEffects.get(component).forEach((effect) => effect.remove())
 	}
 }
 
