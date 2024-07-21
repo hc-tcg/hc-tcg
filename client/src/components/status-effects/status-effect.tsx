@@ -12,11 +12,10 @@ interface StatusEffectReactProps
 	> {
 	statusEffect: LocalStatusEffectInstance
 	counter: number | null
-	dimmed?: boolean
 }
 
 const StatusEffect = (props: StatusEffectReactProps) => {
-	const {dimmed, statusEffect, counter} = props
+	const {statusEffect, counter} = props
 
 	const extension = ['poison', 'fire'].includes(statusEffect.props.icon) ? '.gif' : '.png'
 	const statusEffectClass =
@@ -24,7 +23,7 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 
 	return (
 		<Tooltip tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} counter={counter} />}>
-			<div className={classnames(css.statusEffect, {[css.dimmed]: dimmed})}>
+			<div className={classnames(css.statusEffect)}>
 				<img
 					className={statusEffectClass}
 					src={'/images/status/' + statusEffect.props.icon + extension}

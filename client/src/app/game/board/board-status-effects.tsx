@@ -39,7 +39,9 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 	if (!forHermit) {
 		classes = classNames(css.statusEffectContainer)
 	} else {
-		classes = classNames(css.statusEffectContainerForHermit)
+		classes = classNames(css.statusEffectContainerForHermit, {
+			[statusEffectImageCss.dimmed]: shouldDim,
+		})
 	}
 
 	console.log(shouldDim)
@@ -48,14 +50,7 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 
 	let sidebarStatusEffects = statusEffects.map((effect) => {
 		if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem') return
-		return (
-			<StatusEffect
-				key={effect.instance}
-				statusEffect={effect}
-				counter={effect.counter}
-				dimmed={shouldDim}
-			/>
-		)
+		return <StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
 	})
 
 	if (sidebarStatusEffects.length > 4) {
@@ -72,12 +67,7 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 				{statusEffects.map((effect) => {
 					if (effect.props.type !== 'damage') return
 					return (
-						<StatusEffect
-							key={effect.instance}
-							statusEffect={effect}
-							counter={effect.counter}
-							dimmed={shouldDim}
-						/>
+						<StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
 					)
 				})}
 			</div>
