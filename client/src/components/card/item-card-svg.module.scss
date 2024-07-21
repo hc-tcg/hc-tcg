@@ -53,7 +53,12 @@
 }
 
 .cardBackground.any {
-	fill: rgb(25, 24, 31);
+	fill: rgb(0, 0, 0);
+}
+
+.icon.any {
+	filter: drop-shadow(8px 0px 1px rgb(0, 0, 0)) drop-shadow(-8px -0px 1px rgb(0, 0, 0))
+		drop-shadow(0px 8px 1px rgb(0, 0, 0)) drop-shadow(0px -8px 1px rgb(0, 0, 0));
 }
 
 .type {

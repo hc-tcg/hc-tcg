@@ -46,7 +46,7 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 				(card.secondary.power ? `**${card.secondary.name}**\n*${card.secondary.power}*` : '')
 		)
 	} else if (HasDescription(card)) {
-		text = formatText(card.description)
+		text = formatText(`*${card.description}*`)
 	}
 	return FormattedText(text)
 }
