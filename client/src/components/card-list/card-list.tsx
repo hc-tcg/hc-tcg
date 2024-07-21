@@ -57,7 +57,9 @@ const CardList = (props: CardListProps) => {
 						exitActive: css.exitActive,
 					}}
 				>
-					<div className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>{cardComponent}</div>
+					<div className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+						{cardComponent}
+					</div>
 				</CSSTransition>
 			)
 		} else {
