@@ -166,7 +166,7 @@ const ALL_CARDS = sortCards(
 	CARDS_LIST.map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			entity: card.props.numericId.toString() as CardEntity,
+			entity: newEntity('deck_editor_card'),
 			slot: null,
 			turnedOver: false,
 		})
