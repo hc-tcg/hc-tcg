@@ -1,14 +1,10 @@
 import * as AlertDialog from '@radix-ui/react-dialog'
-import {PlayerDeckT} from 'common/types/deck'
 import Button from 'components/button'
-import Dropdown from 'components/dropdown'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
-import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
-import {useState} from 'react'
-import {EnergyT} from 'common/types/cards'
-import {getDeckFromHash, getHashFromDeck} from './import-export-utils'
+import {getHashFromDeck} from './import-export-utils'
 import {getSavedDecks} from 'logic/saved-decks/saved-decks'
+import {loadSavedDeck} from 'common/types/deck'
 
 type Props = {
 	setOpen: boolean
@@ -19,9 +15,9 @@ export function MassExportModal({setOpen, onClose}: Props) {
 	const getExportDecks = () => {
 		const decks: string[] = []
 		getSavedDecks().forEach((deck) => {
-			const deckJson = JSON.parse(deck)
-			if (deckJson) {
-				decks.push(`${deckJson.name}:${deckJson.icon}:${getHashFromDeck(deckJson.cards)}\n`)
+			let savedDeck = loadSavedDeck(JSON.parse(deck))
+			if (savedDeck) {
+				decks.push(`${savedDeck.name}:${savedDeck.icon}:${getHashFromDeck(savedDeck.cards)}\n`)
 			}
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
