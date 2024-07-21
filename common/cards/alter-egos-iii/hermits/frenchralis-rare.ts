@@ -7,10 +7,12 @@ import {Hermit} from '../../base/types'
 class FrenchralisRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'frenchralis_rare',
+		id: 'frenchkeralis_rare',
 		numericId: 155,
 		name: 'Frenchralis',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'prankster',

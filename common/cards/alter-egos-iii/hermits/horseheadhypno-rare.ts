@@ -9,10 +9,13 @@ import Clock from '../../default/single-use/clock'
 class HorseHeadHypnoRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'horse_head_hypno',
+		id: 'horseheadhypno_rare',
 		numericId: 158,
 		name: 'Horse Head Hypno',
-		expansion: 'default',
+		shortName: 'H. H. Hypno',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'builder',
@@ -50,9 +53,7 @@ class HorseHeadHypnoRare extends Card {
 					payload: {
 						modalName: 'Horse Head Hypno: Choose a card to retrieve from your discard pile.',
 						modalDescription: '',
-						cards: game.components
-							.filter(CardComponent, pickCondition)
-							.map((card) => card.entity),
+						cards: game.components.filter(CardComponent, pickCondition).map((card) => card.entity),
 						selectionSize: 1,
 						primaryButton: {
 							text: 'Confirm Selection',

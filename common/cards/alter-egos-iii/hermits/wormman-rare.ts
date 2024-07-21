@@ -12,7 +12,7 @@ class WormManRare extends Card {
 		id: 'wormman_rare',
 		numericId: 240,
 		name: 'Worm Man',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',

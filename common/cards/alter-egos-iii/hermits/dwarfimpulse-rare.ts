@@ -9,10 +9,12 @@ import GoldenAxe from '../../default/single-use/golden-axe'
 class DwarfImpulseRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'dwarf_impulse_rare',
+		id: 'dwarfimpulse_rare',
 		numericId: 152,
 		name: 'Dwarf Impulse',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'miner',

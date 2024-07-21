@@ -8,10 +8,12 @@ import OriginalXBEffect from '../../../status-effects/original-xb'
 class OriginalXBRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'original_xb_rare',
+		id: 'originalxb_rare',
 		numericId: 164,
 		name: 'Original XB',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'miner',

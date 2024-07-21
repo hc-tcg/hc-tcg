@@ -27,6 +27,7 @@ export type ExpansionT =
 	| 'alter_egos'
 	| 'alter_egos_ii'
 	| 'season_x'
+	| 'alter_egos_iii'
 	| 'advent_of_tcg'
 	| 'dream'
 

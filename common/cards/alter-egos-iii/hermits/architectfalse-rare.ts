@@ -15,7 +15,7 @@ class ArchitectFalseRare extends Card {
 		numericId: 156,
 		name: 'Grand Architect',
 		shortName: 'G. Architect',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',

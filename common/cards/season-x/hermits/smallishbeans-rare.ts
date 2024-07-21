@@ -5,7 +5,7 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import * as query from '../../../components/query'
 import SmallishbeansCommon from './smallishbeans-common'
-import KingJoelCommon from '../../alter-egos-ii/hermits/kingjoel-common'
+import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 
 class SmallishbeansRare extends Card {
 	props: Hermit = {

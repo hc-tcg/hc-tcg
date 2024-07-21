@@ -13,7 +13,7 @@ class SpookyStressRare extends Card {
 		numericId: 173,
 		name: 'Spooky Stress',
 		shortName: 'S. Stress',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',

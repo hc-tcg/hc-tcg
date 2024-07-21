@@ -8,10 +8,12 @@ import * as query from '../../../components/query'
 class SteampunkTangoRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'steampunk_tango_rare',
+		id: 'steampunktango_rare',
 		numericId: 174,
 		name: 'Steampunk Tango',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'terraform',

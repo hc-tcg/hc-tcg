@@ -8,10 +8,12 @@ import RoyalProtectionEffect from '../../../status-effects/royal-protection'
 class PrincessGemRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'princess_gem',
+		id: 'princessgem_rare',
 		numericId: 168,
 		name: 'Princess Gem',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'speedrunner',

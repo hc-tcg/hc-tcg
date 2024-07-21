@@ -9,10 +9,12 @@ import Egg from '../../alter-egos/single-use/egg'
 class PoultryManRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'poultry_man_rare',
+		id: 'poultryman_rare',
 		numericId: 178,
 		name: 'Poultry Man',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'farm',
@@ -37,7 +39,10 @@ class PoultryManRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const singleUse = game.components.filter(CardComponent, query.card.slot(query.slot.singleUse))[0]
+			const singleUse = game.components.filter(
+				CardComponent,
+				query.card.slot(query.slot.singleUse)
+			)[0]
 			if (singleUse && singleUse instanceof Egg)
 				observer.oneShot(player.hooks.afterAttack, () => {
 					singleUse.draw(player.entity)

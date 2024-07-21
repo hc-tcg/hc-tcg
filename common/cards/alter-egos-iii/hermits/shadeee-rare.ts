@@ -3,15 +3,17 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../../common/components/query'
+import * as query from '../../../components/query'
 
 class ShadeEERare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'shade_e_e_rare',
+		id: 'shadee_rare',
 		numericId: 170,
 		name: 'Shade E E',
-		expansion: 'default',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 0,
 		type: 'redstone',
@@ -36,9 +38,18 @@ class ShadeEERare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const afkHermits = game.components.filter(CardComponent, query.card.attached, query.card.slot(query.slot.hermit), query.card.afk)
-			const playerAfkHermits = afkHermits.filter((card) => {card.player === player}).length
-			const opponentAfkHermits = afkHermits.filter((card) => {card.player === opponentPlayer}).length
+			const afkHermits = game.components.filter(
+				CardComponent,
+				query.card.attached,
+				query.card.slot(query.slot.hermit),
+				query.card.afk
+			)
+			const playerAfkHermits = afkHermits.filter((card) => {
+				card.player === player
+			}).length
+			const opponentAfkHermits = afkHermits.filter((card) => {
+				card.player === opponentPlayer
+			}).length
 			if (playerAfkHermits < opponentAfkHermits) {
 				attack.addDamage(component.entity, 40)
 			}

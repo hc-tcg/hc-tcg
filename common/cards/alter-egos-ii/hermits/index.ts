@@ -13,16 +13,9 @@ import SpookyStressCommon from '../../alter-egos-ii/hermits/spookystress-common'
 import SteampunkTangoCommon from '../../alter-egos-ii/hermits/steampunktango-common'
 import WormManCommon from '../../alter-egos-ii/hermits/wormman-common'
 import {CardClass} from '../../base/card'
-import KingJoelCommon from './kingjoel-common'
-import PoePoeSkizzCommon from './poepoeskizz-common'
-import KingJoelRare from './kingjoel-rare'
-import PoePoeSkizzRare from './poepoeskizz-common'
-import ArchitectFalseRare from './architectfalse-rare'
-import WormManRare from './wormman-rare'
 
 const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
-	ArchitectFalseRare,
 	BoomerBdubsRare,
 	DwarfImpulseCommon,
 	FiveAMPearlRare,
@@ -34,13 +27,9 @@ const hermitCardClasses: Array<CardClass> = [
 	PrincessGemCommon,
 	ShadEECommon,
 	SpookyStressCommon,
+	SpookyStressCommon,
 	SteampunkTangoCommon,
 	WormManCommon,
-	WormManRare,
-	KingJoelCommon,
-	KingJoelRare,
-	PoePoeSkizzCommon,
-	PoePoeSkizzRare,
 ]
 
 export default hermitCardClasses

@@ -8,7 +8,7 @@ class KingJoelCommon extends Card {
 		id: 'kingjoel_common',
 		numericId: 162,
 		name: 'King Joel',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'common',

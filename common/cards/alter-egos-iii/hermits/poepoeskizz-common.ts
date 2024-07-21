@@ -8,7 +8,7 @@ class PoePoeSkizzCommon extends Card {
 		id: 'poepoeskizz_common',
 		numericId: 166,
 		name: 'Poe Poe Skizz',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'common',
