@@ -2,7 +2,7 @@ import React from 'react'
 import {TypeT} from 'common/types/cards'
 import {
 	CardProps,
-	HasDescription,
+	hasDescription,
 	isAttach,
 	isHermit,
 	isItem,
@@ -45,7 +45,7 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 			(card.primary.power ? `**${card.primary.name}**\n*${card.primary.power}*` : '') +
 				(card.secondary.power ? `**${card.secondary.name}**\n*${card.secondary.power}*` : '')
 		)
-	} else if (HasDescription(card)) {
+	} else if (hasDescription(card)) {
 		text = formatText(`*${card.description}*`)
 	}
 	return FormattedText(text)

@@ -50,8 +50,6 @@ class SpookyStressRare extends Card {
 
 			if (!waterBucketAttached) return
 
-			console.log('water bucket')
-
 			game.components
 				.filter(RowComponent, query.not(query.row.active), query.row.opponentPlayer)
 				.forEach((row) => {

@@ -53,11 +53,11 @@ export type Description = CardProps & {
 	description: string
 }
 
-export function HasDescription(
+export function hasDescription(
 	props: WithoutFunctions<CardProps>
 ): props is WithoutFunctions<Description>
-export function HasDescription(props: CardProps): props is Description
-export function HasDescription(
+export function hasDescription(props: CardProps): props is Description
+export function hasDescription(
 	props: CardProps | WithoutFunctions<CardProps> | null
 ): props is Description {
 	return props !== null && 'description' in props

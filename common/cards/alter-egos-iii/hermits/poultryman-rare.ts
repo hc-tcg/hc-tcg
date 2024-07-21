@@ -46,10 +46,11 @@ class PoultryManRare extends Card {
 				query.card.is(Egg)
 			)
 
-			if (singleUse)
+			if (singleUse) {
 				observer.oneShot(player.hooks.afterAttack, () => {
 					singleUse.draw(player.entity)
 				})
+			}
 		})
 	}
 }
