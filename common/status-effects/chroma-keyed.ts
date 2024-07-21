@@ -19,17 +19,25 @@ class ChromaKeyedEffect extends CardStatusEffect {
 		target: CardComponent,
 		observer: ObserverComponent
 	): void {
-		let chromaUsedThisTurn = false
+		if (!effect.counter) effect.counter = this.props.counter
+
+		let chromaUsedThisTurn = true
 
 		observer.subscribe(target.player.hooks.onAttack, (attack: AttackModel) => {
-			if (!attack.isAttacker(target.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(target.entity) || attack.type !== 'secondary') {
+				effect.remove()
+				return
+			}
+			if (effect.counter === null) return
 
-			attack.reduceDamage(effect.entity, (effect.counter || 0) * 10)
+			attack.reduceDamage(effect.entity, effect.counter * 10)
+			effect.counter++
 			chromaUsedThisTurn = true
 		})
 
 		observer.subscribe(target.player.hooks.onTurnEnd, () => {
 			if (!chromaUsedThisTurn) effect.remove()
+			chromaUsedThisTurn = false
 		})
 	}
 }

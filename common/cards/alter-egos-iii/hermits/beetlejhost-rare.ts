@@ -42,7 +42,7 @@ class BeetlejhostRare extends Card {
 			const chromakeyed = game.components.filter(
 				StatusEffectComponent,
 				query.effect.targetEntity(component.entity),
-				query.effect.id('chroma-keyed')
+				query.effect.is(ChromaKeyedEffect)
 			)[0]
 			if (!chromakeyed) {
 				game.components.new(StatusEffectComponent, ChromaKeyedEffect).apply(component.entity)

@@ -31,6 +31,8 @@ import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
+import ChromaKeyedEffect from './chroma-keyed'
+import OriginalXbEffect from './original-xb'
 
 const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
@@ -64,6 +66,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	FortuneEffect,
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
+	ChromaKeyedEffect,
+	OriginalXbEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
