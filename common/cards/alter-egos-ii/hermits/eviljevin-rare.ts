@@ -4,14 +4,9 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
 
 class EvilJevinRare extends Card {
-	pickCondition = query.every(
-		query.card.currentPlayer,
-		query.card.slot(query.slot.discardPile),
-		query.card.isHermit
-	)
-
 	props: Hermit = {
 		...hermit,
 		id: 'eviljevin_rare',
@@ -35,14 +30,27 @@ class EvilJevinRare extends Card {
 			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
 			power:
-				'Flip a coin. If heads, look through your discard pile and choose 1 Hermit to return to your hand.',
+				'Flip a coin. If heads, choose one Hermit card from your discard pile and return it to your hand.',
 		},
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, () => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			const modalCondition = query.every(
+				query.card.currentPlayer,
+				query.card.slot(query.slot.discardPile),
+				query.card.isHermit
+			)
+
+			if (!game.components.exists(CardComponent, modalCondition)) return
+
+			const coinFlip = flipCoin(player, component, 1)
+			if (coinFlip[0] !== 'heads') return
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -50,23 +58,20 @@ class EvilJevinRare extends Card {
 					payload: {
 						modalName: 'Evil Jevin: Choose a Hermit card to retrieve from your discard pile.',
 						modalDescription: '',
-						cards: game.components
-							.filter(CardComponent, this.pickCondition)
-							.map((card) => card.entity),
+						cards: game.components.filter(CardComponent, modalCondition).map((card) => card.entity),
 						selectionSize: 1,
 						primaryButton: {
-							text: 'Confirm Selection',
+							text: 'Draw Card',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'Do Nothing',
 							variant: 'default',
 						},
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.result) {
-						// Allow player to cancel using Chest
-						component.draw()
-						return 'SUCCESS'
-					}
+					if (!modalResult?.result) return 'SUCCESS'
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
 

@@ -1,3 +1,4 @@
+import EvilJevinRare from '../../alter-egos-ii/hermits/eviljevin-rare'
 import {CardClass} from '../../base/card'
 import Iskall85Common from '../../default/hermits/iskall85-common'
 import ArchitectFalseRare from './architectfalse-rare'
@@ -61,6 +62,7 @@ const hermitCardClasses: Array<CardClass> = [
 	FiveAMPearlCommon,
 	Iskall85Common,
 	BoomerBdubsCommon,
+	EvilJevinRare,
 ]
 
 export default hermitCardClasses

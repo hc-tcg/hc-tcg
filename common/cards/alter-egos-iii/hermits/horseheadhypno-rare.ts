@@ -30,7 +30,8 @@ class HorseHeadHypnoRare extends Card {
 			name: 'Restock',
 			cost: ['builder', 'builder', 'any'],
 			damage: 90,
-			power: 'After this attack, return any 1 discarded item card to your hand.',
+			power:
+				'After this attack, choose one Item card from your discard pile and return it to your hand.',
 		},
 	}
 
