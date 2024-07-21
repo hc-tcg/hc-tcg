@@ -43,7 +43,7 @@ class HorseHeadHypnoRare extends Card {
 			const pickCondition = query.every(
 				query.card.currentPlayer,
 				query.card.slot(query.slot.discardPile),
-				query.not(query.card.is(Clock))
+				query.card.isItem
 			)
 
 			game.addModalRequest({
@@ -51,7 +51,7 @@ class HorseHeadHypnoRare extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Horse Head Hypno: Choose a card to retrieve from your discard pile.',
+						modalName: 'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
 						modalDescription: '',
 						cards: game.components.filter(CardComponent, pickCondition).map((card) => card.entity),
 						selectionSize: 1,
@@ -70,7 +70,6 @@ class HorseHeadHypnoRare extends Card {
 					}
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-					if (modalResult.cards[0].props.id === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
 					let card = game.components.get(modalResult.cards[0].entity)
 					card?.draw()
