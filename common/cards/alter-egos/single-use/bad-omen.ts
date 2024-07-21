@@ -29,22 +29,16 @@ class BadOmen extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onApply, () => {
+		// BadOmenEffect must be applied before TrapHoleEffect flips a coin
+		observer.subscribeBefore(player.hooks.onApply, () => {
 			let target = game.components.findEntity(
 				CardComponent,
+				query.card.opponentPlayer,
 				query.card.isHermit,
 				query.card.row(query.row.active)
 			)
 			if (!target) return
-			game.components
-				.new(StatusEffectComponent, BadOmenEffect)
-				.apply(
-					game.components.findEntity(
-						CardComponent,
-						query.card.isHermit,
-						query.card.row(query.row.active)
-					)
-				)
+			game.components.new(StatusEffectComponent, BadOmenEffect).apply(target)
 		})
 	}
 }

@@ -33,9 +33,9 @@ class Trident extends Card {
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
-						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage and ${values.coinFlip}`,
 				})
-				.addDamage(component.entity, 20)
+				.addDamage(component.entity, 30)
 		})
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {

@@ -53,7 +53,7 @@ export class BattleLogModel {
 			if (!coinFlip) return r
 			if (coinFlip.opponentFlip) return r
 			if (coinFlipCard?.isHermit() && attack.type === 'effect') return r
-			if (coinFlipCard?.isHermit() && attack.type !== 'effect') return r
+			if (coinFlipCard?.isSingleUse() && attack.type !== 'effect') return r
 
 			return description
 		}, null)
