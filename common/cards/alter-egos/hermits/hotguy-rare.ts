@@ -39,7 +39,7 @@ class HotguyRare extends Card {
 		let usingSecondaryAttack = false
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity) return
+			if (!attack.isAttacker(component.entity)) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 

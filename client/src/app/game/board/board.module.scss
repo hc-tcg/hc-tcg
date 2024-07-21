@@ -222,22 +222,20 @@ $grid-size: 25px;
 .statusEffectContainerForHermit {
 	position: absolute;
 	display: grid;
-	grid-template-rows: repeat(4, 26%);
+	grid-template-rows: repeat(4, 25%);
 	pointer-events: none;
 	overflow: hidden;
 	width: 100%;
 	height: 100%;
+	box-sizing: border-box;
 
 	@media (orientation: landscape) {
 		border: #6d6e64 2px solid;
-		padding-top: 4px;
-		padding-left: 3px;
+		padding-left: 2px;
 	}
 
 	@media (orientation: portrait) {
 		border: #6d6e64 3px solid;
-		padding-top: 12px;
-		padding-left: 13px;
 	}
 }
 
@@ -277,7 +275,7 @@ $grid-size: 25px;
 	.row {
 		$size: 25px;
 
-		grid-template-columns: repeat(25, $size);
+		grid-template-columns: repeat(24, $size) 27px;
 		grid-template-rows: repeat(4, $size);
 		grid-template-areas:
 			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
@@ -286,6 +284,7 @@ $grid-size: 25px;
 			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect';
 
 		&.reversed {
+			grid-template-columns: 27px repeat(24, $size);
 			grid-template-areas:
 				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
 				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '

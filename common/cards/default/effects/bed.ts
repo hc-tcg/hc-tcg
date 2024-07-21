@@ -16,7 +16,7 @@ class Bed extends Card {
 		expansion: 'default',
 		name: 'Bed',
 		rarity: 'ultra_rare',
-		tokens: 3,
+		tokens: 2,
 		description:
 			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
 		sidebarDescriptions: [

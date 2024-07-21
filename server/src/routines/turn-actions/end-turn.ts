@@ -4,11 +4,7 @@ import {GenericActionResult} from 'common/types/game-state'
 import * as query from 'common/components/query'
 
 function* endTurnSaga(game: GameModel): Generator<never, GenericActionResult> {
-	let singleUseCard = game.components.find(
-		CardComponent,
-		query.card.onBoard,
-		query.card.isSingleUse
-	)
+	let singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 
 	if (!game.currentPlayer.singleUseCardUsed) singleUseCard?.draw()
 

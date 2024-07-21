@@ -43,7 +43,8 @@ class HypnotizdRare extends Card {
 		let target: SlotComponent | null = null
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || !target?.inRow()) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!target?.inRow()) return
 			attack.setTarget(component.entity, target.row.entity)
 			target = null
 		})

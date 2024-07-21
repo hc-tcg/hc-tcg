@@ -1,10 +1,10 @@
 import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		icon: 'invisibility-potion-heads',
 		name: 'Invisibility Potion - Heads',
 		description: "Your opponent's next attack will miss.",
@@ -29,7 +29,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 
 export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		icon: 'invisibility-potion-tails',
 		name: 'Invisibility Potion - Tails',
 		description: "Your opponent's next attack will deal double damage.",

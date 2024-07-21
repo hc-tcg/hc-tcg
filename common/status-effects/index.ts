@@ -10,7 +10,7 @@ import MuseumCollectionEffect from './museum-collection'
 import SmeltingEffect from './smelting'
 import MelodyEffect from './melody'
 import UsedClockEffect from './used-clock'
-import RevivedByDeathloopEffect from './revived-by-deathloop'
+import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import BetrayedEffect from './betrayed'
 import SheepStareEffect from './sheep-stare'
 import {
@@ -48,6 +48,7 @@ const effectClasses: Array<new () => StatusEffect> = [
 
 	/* System Status Effect */
 	UsedClockEffect,
+	DeathloopReady,
 	RevivedByDeathloopEffect,
 	BetrayedEffect,
 	SheepStareEffect,
