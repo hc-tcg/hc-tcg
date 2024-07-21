@@ -1,9 +1,15 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
+import * as query from '../../../components/query'
 
 class PrincessGemRare extends Card {
 	props: Hermit = {
@@ -29,7 +35,7 @@ class PrincessGemRare extends Card {
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"On opponent's next turn, any attack from King Joel or Grand Architect does no damage. Does not include status or effect cards.",
+				'After your attack, grant Royal Protection to an AFK Hermit. The first attack against this Hermit deals no damage.',
 		},
 	}
 
@@ -39,7 +45,26 @@ class PrincessGemRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			game.components.new(StatusEffectComponent, RoyalProtectionEffect).apply(component.entity)
+			const pickCondition = query.every(
+				query.slot.currentPlayer,
+				query.slot.hermit,
+				query.not(query.slot.empty),
+				query.not(query.slot.active)
+			)
+
+			if (!game.components.exists(SlotComponent, pickCondition)) return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: component.entity,
+				message: 'Pick one of your AFK Hermits',
+				canPick: pickCondition,
+				onResult: (pickedSlot) => {
+					game.components
+						.new(StatusEffectComponent, RoyalProtectionEffect)
+						.apply(pickedSlot.getCard()?.entity)
+				},
+			})
 		})
 	}
 }
