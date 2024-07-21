@@ -14,7 +14,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 		...statusEffect,
 		icon: 'royal_protection',
 		name: 'Royal Protection',
-		description: 'This hermit takes no damage from King Joel or Grand Architect attacks',
+		description: "This hermit takes no damage from King Joel's or Grand Architect's attacks.",
 	}
 
 	override onApply(
@@ -30,12 +30,17 @@ class RoyalProtectionEffect extends CardStatusEffect {
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.attached,
-				query.card.is(ArchitectFalseCommon, ArchitectFalseRare, KingJoelCommon, KingJoelRare)
+				//@TODO Add King Joel here when he's enabled
+				query.card.is(ArchitectFalseCommon, ArchitectFalseRare)
 			)
 
 			if (royalHermits.includes(attack.attacker)) {
 				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
 			}
+		})
+
+		observer.subscribe(target.opponentPlayer.hooks.onTurnEnd, () => {
+			effect.remove()
 		})
 	}
 }
