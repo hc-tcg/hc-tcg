@@ -41,8 +41,8 @@ class FireCharge extends Card {
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				pickedSlot.getCard()?.discard()
 				applySingleUse(game, pickedSlot)
+				pickedSlot.getCard()?.discard()
 			},
 		})
 
@@ -50,6 +50,7 @@ class FireCharge extends Card {
 			component.discard()
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+			player.singleUseCardUsed = false
 			observer.unsubscribe(player.hooks.afterApply)
 		})
 	}

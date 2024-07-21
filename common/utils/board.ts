@@ -1,6 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {GenericActionResult} from '../types/game-state'
-import {card} from '../components/query'
+import {card, slot} from '../components/query'
 import {CardComponent, SlotComponent} from '../components'
 
 export function applySingleUse(
@@ -9,7 +9,7 @@ export function applySingleUse(
 ): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.components.find(CardComponent, card.isSingleUse)
+	const suCard = game.components.find(CardComponent, card.slot(slot.singleUse))
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 

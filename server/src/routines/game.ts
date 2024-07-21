@@ -69,8 +69,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	const su = game.components.find(
 		CardComponent,
-		query.card.isSingleUse,
-		query.card.attached
+		query.card.slot(query.slot.singleUse)
 	) as CardComponent<SingleUse> | null
 
 	// Custom modals
@@ -606,11 +605,7 @@ function* turnSaga(game: GameModel) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	const singleUseCard = game.components.find(
-		CardComponent,
-		query.card.attached,
-		query.card.isSingleUse
-	)
+	const singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
 			singleUseCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
