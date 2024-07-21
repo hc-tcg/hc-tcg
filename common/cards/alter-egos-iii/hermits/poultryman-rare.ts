@@ -40,11 +40,13 @@ class PoultryManRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const singleUse = game.components.filter(
+			const singleUse = game.components.find(
 				CardComponent,
-				query.card.slot(query.slot.singleUse)
-			)[0]
-			if (singleUse && singleUse instanceof Egg)
+				query.card.slot(query.slot.singleUse),
+				query.card.is(Egg)
+			)
+
+			if (singleUse)
 				observer.oneShot(player.hooks.afterAttack, () => {
 					singleUse.draw(player.entity)
 				})
