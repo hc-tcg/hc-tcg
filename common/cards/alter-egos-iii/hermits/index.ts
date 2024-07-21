@@ -52,7 +52,6 @@ const hermitCardClasses: Array<CardClass> = [
 	HotguyCommon,
 	LlamadadCommmon,
 	OverseerCommon,
-	PotatoBoyCommon,
 	RenbobCommon,
 	LlamadadCommmon,
 	PotatoBoyCommon,
