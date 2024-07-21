@@ -40,13 +40,13 @@ class HorseHeadHypnoRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const pickCondition = query.every(
+			const modalCondition = query.every(
 				query.card.currentPlayer,
 				query.card.slot(query.slot.discardPile),
 				query.card.isItem
 			)
 
-			if (!game.components.exists(CardComponent, pickCondition)) return
+			if (!game.components.exists(CardComponent, modalCondition)) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -55,14 +55,14 @@ class HorseHeadHypnoRare extends Card {
 					payload: {
 						modalName: 'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
 						modalDescription: '',
-						cards: game.components.filter(CardComponent, pickCondition).map((card) => card.entity),
+						cards: game.components.filter(CardComponent, modalCondition).map((card) => card.entity),
 						selectionSize: 1,
 						primaryButton: {
-							text: 'Confirm Selection',
+							text: 'Draw Card',
 							variant: 'default',
 						},
 						secondaryButton: {
-							text: 'Cancel',
+							text: 'Do Nothing',
 							variant: 'default',
 						},
 					},
