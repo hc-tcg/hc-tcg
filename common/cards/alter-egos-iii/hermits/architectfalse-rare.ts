@@ -39,28 +39,20 @@ class ArchitectFalseRare extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
 		const {player, opponentPlayer} = component
 
-		let blockAttack = false
-
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			blockAttack = true
-		})
 
-		observer.subscribe(opponentPlayer.hooks.onAttack, (attack) => {
-			if (!blockAttack) return
-			if (attack.type === 'primary') {
-				game.components
-					.new(StatusEffectComponent, MultiturnPrimaryAttackDisabledEffect)
-					.apply(opponentPlayer.getActiveHermit()?.entity)
-			} else if (attack.type === 'secondary') {
-				game.components
-					.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
-					.apply(opponentPlayer.getActiveHermit()?.entity)
-			}
-		})
-
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			blockAttack = false
+			observer.oneShot(opponentPlayer.hooks.onAttack, (attack) => {
+				if (attack.type === 'primary') {
+					game.components
+						.new(StatusEffectComponent, MultiturnPrimaryAttackDisabledEffect)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
+				} else if (attack.type === 'secondary') {
+					game.components
+						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
+				}
+			})
 		})
 	}
 }

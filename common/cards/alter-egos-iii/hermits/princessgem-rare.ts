@@ -21,7 +21,7 @@ class PrincessGemRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 2,
 		type: 'speedrunner',
 		health: 270,
 		primary: {
