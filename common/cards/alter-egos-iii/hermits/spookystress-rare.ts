@@ -43,26 +43,27 @@ class SpookyStressRare extends Card {
 
 			const waterBucketAttached = game.components.exists(
 				SlotComponent,
-				query.slot.active,
 				query.slot.has(WaterBucket),
+				query.slot.active,
 				query.slot.currentPlayer
 			)
 
 			if (!waterBucketAttached) return
 
+			console.log('water bucket')
+
 			game.components
 				.filter(RowComponent, query.not(query.row.active), query.row.opponentPlayer)
 				.forEach((row) => {
-					attack
-						.addNewAttack(
-							game.newAttack({
-								attacker: component.entity,
-								target: row.entity,
-								type: 'secondary',
-								log: (values) => `, ${values.target} for ${values.damage} damage`,
-							})
-						)
-						.addDamage(component.entity, 10)
+					const newAttack = game.newAttack({
+						attacker: component.entity,
+						target: row.entity,
+						type: 'secondary',
+						log: (values) => `, ${values.target} for ${values.damage} damage`,
+					})
+					newAttack.addDamage(component.entity, 10)
+					newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+					attack.addNewAttack(newAttack)
 				})
 		})
 	}

@@ -31,7 +31,7 @@ class WormManRare extends Card {
 			cost: ['prankster', 'prankster', 'any'],
 			damage: 90,
 			power:
-				"At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. When Worm Man is knocked out, this card becomes active, or it's info needs to be shown, it is revealed.",
+				"At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. When either Worm Man is knocked out or it's info needs to be shown to the opponent, it is revealed.",
 		},
 	}
 
