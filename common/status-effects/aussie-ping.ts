@@ -24,17 +24,16 @@ export class AussiePingEffect extends PlayerStatusEffect {
 		observer: ObserverComponent
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
+		const flippingHermit = game.currentPlayer.getActiveHermit()
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 			if (!attack.attacker) return
 
-			const activeHermit = player.opponentPlayer.activeRow?.getHermit()
-			if (!activeHermit) return
-
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, activeHermit)
+				if (!flippingHermit) return
+				const coinFlip = flipCoin(player.opponentPlayer, flippingHermit, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -44,6 +43,7 @@ export class AussiePingEffect extends PlayerStatusEffect {
 		})
 
 		observer.subscribe(player.hooks.afterAttack, () => {
+			if (!coinFlipResult) return
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(player.entity)

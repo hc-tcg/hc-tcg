@@ -28,19 +28,23 @@ const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
 }
 
 type StatusEffectDisplayProps = {
+	shouldDim?: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
 	forHermit?: boolean
 }
 
 /** An object to display status effect for a specific card */
-const StatusEffectContainer = ({statusEffects, forHermit}: StatusEffectDisplayProps) => {
+const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffectDisplayProps) => {
 	let classes
 	if (!forHermit) {
 		classes = classNames(css.statusEffectContainer)
 	} else {
-		classes = classNames(css.statusEffectContainerForHermit)
+		classes = classNames(css.statusEffectContainerForHermit, {
+			[statusEffectImageCss.dimmed]: shouldDim,
+		})
 	}
 
+	console.log(shouldDim)
 	// We want to show the newest status effect first in the list.
 	statusEffects = [...statusEffects].reverse()
 

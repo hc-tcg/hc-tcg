@@ -7,12 +7,13 @@ import {
 import {card, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
-import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 export class TrapHoleEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...hiddenStatusEffect,
+		...systemStatusEffect,
 		name: 'Trap Hole',
+		icon: 'trap-hole',
 		description:
 			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
 	}
@@ -23,25 +24,23 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
+		const flippingHermit = game.currentPlayer.getActiveHermit()
+
 		observer.subscribe(player.hooks.onApply, () => {
 			let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUse))
 			if (!singleUseCard) return
-			let opponentActiveHermit = player.opponentPlayer.getActiveHermit()
-			if (!opponentActiveHermit) return
+			if (!flippingHermit) return
 
-			const coinFlip = flipCoin(player, opponentActiveHermit)
+			const coinFlip = flipCoin(player.opponentPlayer, flippingHermit, 1, player)
 
 			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
 					player.entity,
-					`$p${opponentActiveHermit.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
+					`$p${flippingHermit.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
 				)
 				singleUseCard.draw(player.opponentPlayer.entity)
 			} else {
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${opponentActiveHermit.props.name}$ flipped $btails$b`
-				)
+				game.battleLog.addEntry(player.entity, `$p${flippingHermit.props.name}$ flipped $btails$b`)
 			}
 		})
 		observer.subscribe(player.hooks.onTurnEnd, () => {

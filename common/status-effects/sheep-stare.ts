@@ -6,10 +6,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
-	RowComponent,
 	StatusEffectComponent,
 } from '../components'
-import {row} from '../components/query'
 
 class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -17,7 +15,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		icon: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:
-			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
+			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	}
 
 	override onApply(
@@ -27,17 +25,16 @@ class SheepStareEffect extends PlayerStatusEffect {
 		observer: ObserverComponent
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
+		const flippingHermit = game.currentPlayer.getActiveHermit()
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (attack.attacker?.entity !== effect.targetEntity) return
 			if (attack.type !== 'primary') return
 
-			const activeHermit = player.activeRow?.getHermit()
-			if (!activeHermit) return
-
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, activeHermit)
+				if (!flippingHermit) return
+				const coinFlip = flipCoin(player.opponentPlayer, flippingHermit, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -49,7 +46,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		})
 
 		observer.subscribe(player.hooks.afterAttack, () => {
-			effect.remove()
+			if (coinFlipResult) effect.remove()
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {

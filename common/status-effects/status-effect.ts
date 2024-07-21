@@ -11,6 +11,8 @@ import {
 export type StatusEffectLog = {
 	/** The status effect target */
 	target: string
+	/** The verb to use for the status effect. Either "was" or "were" depending on subject */
+	verb: string
 	/** The status effect name */
 	statusEffect: string
 }
@@ -35,7 +37,7 @@ export const statusEffect = {
 	type: 'normal' as StatusEffectProps['type'],
 	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
-		`${values.target} was inflicted with ${values.statusEffect}`,
+		`${values.target} ${values.verb} inflicted with ${values.statusEffect}`,
 	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
 }
 

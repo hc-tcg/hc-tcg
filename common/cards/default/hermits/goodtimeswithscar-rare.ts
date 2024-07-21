@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import RevivedByDeathloopEffect from '../../../status-effects/revived-by-deathloop'
+import {DeathloopReady, RevivedByDeathloopEffect} from '../../../status-effects/death-loop'
 
 class GoodTimesWithScarRare extends Card {
 	props: Hermit = {
@@ -38,45 +38,14 @@ class GoodTimesWithScarRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = component
-
-		let reviveReady = false
+		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// If this component is not blocked from reviving, make possible next turn
-			if (!component.hasStatusEffect(RevivedByDeathloopEffect)) {
-				reviveReady = true
-			}
-		})
+			if (component.hasStatusEffect(DeathloopReady, RevivedByDeathloopEffect)) return
 
-		// Add before so health can be checked reliably
-		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) => {
-			if (!reviveReady) return
-
-			reviveReady = false
-			const row = attack.target
-			if (!row || row.health === null || row.health > 0) return
-			const target = row.getHermit()
-			if (!target) return
-
-			row.health = 50
-
-			game.components
-				.filter(
-					StatusEffectComponent,
-					(_game, effect) =>
-						effect.target?.entity === target.entity &&
-						effect.statusEffect.props.icon === 'revived_by_deathloop'
-				)
-				.forEach((effect) => effect.remove())
-
-			game.battleLog.addEntry(
-				player.entity,
-				`Using $vDeathloop$, $p${target.props.name}$ revived with $g50hp$`
-			)
-
-			game.components.new(StatusEffectComponent, RevivedByDeathloopEffect).apply(component.entity)
+			game.components.new(StatusEffectComponent, DeathloopReady).apply(component.entity)
 		})
 	}
 }

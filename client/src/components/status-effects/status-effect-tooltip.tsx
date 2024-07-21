@@ -16,7 +16,7 @@ const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
 			<div className={css.topLine}>
 				<div className={css.name}>{statusEffect.props.name} </div>
 				<div className={classnames(css.tooltip, targetClass)}>
-					{statusEffect.target.type === 'card' ? 'Hermit Status Effect' : 'Player Status Effect'}
+					{statusEffect.target.type === 'card' ? 'Hermit' : 'Player'}
 				</div>
 			</div>
 			<div className={css.description}>{statusEffect.props.description}</div>

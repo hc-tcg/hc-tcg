@@ -46,8 +46,7 @@ class GrianRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity) return
-			if (attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
 
 			const coinFlip = flipCoin(player, component)
 
