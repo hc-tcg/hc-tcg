@@ -31,7 +31,7 @@ class SpookyStressRare extends Card {
 			cost: ['terraform', 'terraform', 'any'],
 			damage: 90,
 			power:
-				'If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits',
+				'If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits.',
 		},
 	}
 
