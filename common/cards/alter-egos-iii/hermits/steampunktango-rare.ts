@@ -41,6 +41,7 @@ class SteampunkTangoRare extends Card {
 
 			const afkHermits = game.components.filter(
 				CardComponent,
+				query.card.currentPlayer,
 				query.card.slot(query.slot.hermit),
 				query.not(query.card.active)
 			).length
