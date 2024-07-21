@@ -29,6 +29,9 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 		return 'FAILURE_INVALID_SLOT'
 	}
 
+	const card = slotInfo.getCard()
+	if (card) card.turnedOver = false
+
 	pickRequest.onResult(slotInfo)
 	let player = game.components.find(
 		PlayerComponent,

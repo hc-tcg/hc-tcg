@@ -84,7 +84,11 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 		>
 			{card ? (
 				<div className={css.cardWrapper}>
-					<Card card={card.props} />
+					{card.turnedOver ? (
+						<img src="/images/card-back.jpg" className={css.cardBack} />
+					) : (
+						<Card card={card.props} />
+					)}
 				</div>
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />

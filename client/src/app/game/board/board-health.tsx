@@ -23,7 +23,9 @@ const HealthSlot = ({rowState}: HealthSlotProps) => {
 					localGameState?.turn.currentPlayerId === localGameState?.playerId,
 			})}
 		>
-			{rowState.health && <HealthDisplayModule health={rowState.health} />}
+			{rowState.health && (
+				<HealthDisplayModule health={rowState.hermit.card?.turnedOver ? null : rowState.health} />
+			)}
 		</div>
 	)
 }

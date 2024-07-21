@@ -18,6 +18,7 @@ import PoePoeSkizzCommon from './poepoeskizz-common'
 import KingJoelRare from './kingjoel-rare'
 import PoePoeSkizzRare from './poepoeskizz-common'
 import ArchitectFalseRare from './architectfalse-rare'
+import WormManRare from './wormman-rare'
 
 const hermitCardClasses: Array<CardClass> = [
 	ArchitectFalseCommon,
@@ -35,6 +36,7 @@ const hermitCardClasses: Array<CardClass> = [
 	SpookyStressCommon,
 	SteampunkTangoCommon,
 	WormManCommon,
+	WormManRare,
 	KingJoelCommon,
 	KingJoelRare,
 	PoePoeSkizzCommon,
