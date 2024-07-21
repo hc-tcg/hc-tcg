@@ -28,7 +28,7 @@ export const getHashFromDeck = (pickedCards: Array<LocalCardInstance>): string =
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
 		if (!pickedCards[i].props) {
-			console.log('Error exporting: ' + i)
+			console.error('Error exporting: ' + i)
 			continue
 		}
 		const id = pickedCards[i].props.numericId
