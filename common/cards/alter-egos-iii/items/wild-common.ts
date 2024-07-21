@@ -12,7 +12,7 @@ class WildItem extends Card {
 		name: 'Wild Item',
 		description: 'Counts as any single Item card.',
 		shortName: 'Wild',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		rarity: 'common',
 		tokens: 1,
 		type: 'any',

@@ -10,7 +10,7 @@ class ShadeEERare extends Card {
 		...hermit,
 		id: 'shadee_rare',
 		numericId: 170,
-		name: 'Shade E E',
+		name: 'Shade-E-E',
 		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',

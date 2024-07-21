@@ -11,6 +11,7 @@ class SteampunkTangoRare extends Card {
 		id: 'steampunktango_rare',
 		numericId: 174,
 		name: 'Steampunk Tango',
+		shortName: 'S. Tango',
 		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',

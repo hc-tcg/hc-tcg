@@ -2,33 +2,32 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DwarfImpulseCommon extends Card {
+class EvilXisumaCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'dwarfimpulse_common',
-		numericId: 229,
-		name: 'Dwarf Impulse',
-		shortName: 'D. Impulse',
-		expansion: 'alter_egos_ii',
+		id: 'evilxisuma_common',
+		numericId: 154,
+		name: 'Evil X',
+		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'common',
 		tokens: 0,
-		type: 'farm',
-		health: 250,
+		type: 'redstone',
+		health: 290,
 		primary: {
-			name: 'Beard Bash',
+			name: 'Minion',
 			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: 'Diggy Diggy',
-			cost: ['farm', 'any'],
-			damage: 70,
+			name: 'Withermen',
+			cost: ['redstone', 'redstone', 'any'],
+			damage: 90,
 			power: null,
 		},
 	}
 }
 
-export default DwarfImpulseCommon
+export default EvilXisumaCommon
