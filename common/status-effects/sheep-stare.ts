@@ -35,7 +35,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, activeHermit)
+				const coinFlip = flipCoin(player.opponentPlayer, activeHermit, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
