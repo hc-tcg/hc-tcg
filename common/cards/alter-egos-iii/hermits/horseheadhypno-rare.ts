@@ -46,6 +46,8 @@ class HorseHeadHypnoRare extends Card {
 				query.card.isItem
 			)
 
+			if (!game.components.exists(CardComponent, pickCondition)) return
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -59,15 +61,14 @@ class HorseHeadHypnoRare extends Card {
 							text: 'Confirm Selection',
 							variant: 'default',
 						},
+						secondaryButton: {
+							text: 'Cancel',
+							variant: 'default',
+						},
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.result) {
-						// Allow player to cancel using Chest
-						component.draw()
-						return 'SUCCESS'
-					}
+					if (!modalResult?.result) return 'SUCCESS'
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
 
