@@ -1,29 +1,32 @@
 $gap: 0;
 $speed: 250ms;
+$card-size: 118px;
 
 .cardList {
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex-flow: row nowrap;
-	height: 110px;
+	flex-flow: row;
 	gap: $gap;
+  container-type: inline-size;
+	container-name: cardList;
 }
 
 .wrap {
 	flex-wrap: wrap;
-	height: unset;
 
 	svg {
-		height: 118px;
+		height: 100%;
 	}
 }
 
 .card {
-	flex: 0 0 auto;
 	display: grid;
-	place-content: center;
-	vertical-align: middle;
+	@for $i from 1 through 6 {
+		@container cardList (width > calc(#{$i} * #{$card-size})) {
+			width: calc(100% / #{$i});
+		}
+	}
 }
 
 .clickable:not(:disabled) {
@@ -40,7 +43,6 @@ $speed: 250ms;
 .enter {
 	transition: all $speed ease-in;
 	opacity: 0;
-	width: 0;
 
 	> svg {
 		transition: all $speed ease-in;
@@ -78,7 +80,6 @@ $speed: 250ms;
 .exitActive {
 	transition: all $speed ease-in;
 	opacity: 0;
-	width: 0;
 	margin-right: -$gap;
 
 	> svg {
