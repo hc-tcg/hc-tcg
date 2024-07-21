@@ -27,6 +27,7 @@ import {
 import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
 import {CardEntity, newEntity} from 'common/entities'
 import {ModalData} from 'common/types/modal-requests'
+import { ViewerComponent } from 'common/components/viewer-component'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -279,8 +280,8 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 
 export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
 	const playerState = game.components.find(
-		PlayerComponent,
-		(_game, playerState) => playerState.id == player.id
+		ViewerComponent,
+		(_game, viewer) => viewer.playerId == player.id
 	)
 
 	if (!playerState) throw new Error('Player should be added to ECS before fetching local state')
