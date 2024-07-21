@@ -34,11 +34,11 @@ class HelsknightRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player} = component
+		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components.new(StatusEffectComponent, TrapHoleEffect).apply(component.entity)
+			game.components.new(StatusEffectComponent, TrapHoleEffect).apply(opponentPlayer.entity)
 		})
 	}
 }

@@ -1,39 +1,39 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
-import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 
-export class AussiePingEffect extends CardStatusEffect {
+export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		icon: 'aussie-ping',
 		name: 'Weak Connection',
 		description:
-			'When your opponent attacks, flip a coin. If heads, that attack misses. Lasts until they attack or the end of the turn.',
-		applyCondition: (_game, card) => {
-			if (!(card instanceof CardComponent)) return false
-			return !card.hasStatusEffect(AussiePingImmuneEffect)
+			'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
+		applyCondition: (_game, player) => {
+			if (!(player instanceof PlayerComponent)) return false
+			return !player.hasStatusEffect(AussiePingImmuneEffect)
 		},
 	}
 
 	override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
+		const flippingHermit = game.currentPlayer.getActiveHermit()
 
-		const opponentPlayer = target.opponentPlayer
-
-		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 			if (!attack.attacker) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(target.player, target, 1, opponentPlayer)
+				if (!flippingHermit) return
+				const coinFlip = flipCoin(player.opponentPlayer, flippingHermit, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -42,38 +42,38 @@ export class AussiePingEffect extends CardStatusEffect {
 			}
 		})
 
-		observer.subscribe(opponentPlayer.hooks.afterAttack, () => {
+		observer.subscribe(player.hooks.afterAttack, () => {
 			if (!coinFlipResult) return
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(target.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(player.entity)
 			}
 		})
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, (_) => {
+		observer.subscribe(player.hooks.onTurnEnd, (_) => {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
-				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(target.entity)
+				game.components.new(StatusEffectComponent, AussiePingImmuneEffect).apply(player.entity)
 			}
 		})
 	}
 }
 
-export class AussiePingImmuneEffect extends CardStatusEffect {
+export class AussiePingImmuneEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		icon: 'aussie-ping-immune',
 		name: 'Strong Connection',
-		description: 'This Hermit can not cause your opponent to miss with Aussie Ping this turn.',
+		description: 'You are immune to Aussie Ping for the duration of this turn.',
 	}
 
 	override onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		observer.subscribe(target.opponentPlayer.hooks.onTurnStart, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			effect.remove()
 		})
 	}
