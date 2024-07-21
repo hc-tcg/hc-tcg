@@ -72,7 +72,7 @@ function SelectCardsModal({closeModal}: Props) {
 							onClick={handleSelection}
 							cards={cards}
 							selected={selected}
-							wrap
+							wrap={true}
 							tooltipAboveModal
 							disableAnimations
 						/>

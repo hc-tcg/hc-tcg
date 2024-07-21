@@ -1,6 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	DiscardSlotComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
