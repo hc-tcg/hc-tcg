@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
+import {applySingleUse} from '../../../utils/board'
 
 class Cubfan135Rare extends Card {
 	props: Hermit = {
@@ -35,10 +37,34 @@ class Cubfan135Rare extends Card {
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			// We used our secondary attack, activate power
-			// AKA remove change active hermit from blocked actions
-			game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
-			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
+			if (
+				!game.components.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.active),
+					query.not(query.slot.empty)
+				)
+			)
+				return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: component.entity,
+				message: 'Pick one of your Hermits to become the new active Hermit',
+				canPick: query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.empty)
+				),
+				onResult(pickedSlot) {
+					if (!pickedSlot.inRow()) return
+					if (pickedSlot.row.entity !== player.activeRowEntity) {
+						player.changeActiveRow(pickedSlot.row)
+						applySingleUse(game, component.slot)
+					}
+				},
+			})
 		})
 	}
 }
