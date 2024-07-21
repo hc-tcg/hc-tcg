@@ -75,15 +75,12 @@ class Piston extends Card {
 				// Move the card and apply su card
 				game.swapSlots(pickedItemSlot, pickedSlot)
 				applySingleUse(game, pickedSlot)
-			},
-		})
 
-		observer.subscribe(player.hooks.afterApply, () => {
-			component.discard()
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-			player.singleUseCardUsed = false
-			observer.unsubscribe(player.hooks.afterApply)
+				if (component.slot.onBoard()) component.discard()
+				// Remove playing a single use from completed actions so it can be done again
+				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+				player.singleUseCardUsed = false
+			},
 		})
 	}
 }

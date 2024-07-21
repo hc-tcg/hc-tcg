@@ -7,45 +7,42 @@ import {
 import {card, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 
-export class TrapHoleEffect extends PlayerStatusEffect {
+export class TrapHoleEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		name: 'Trap Hole',
 		icon: 'trap-hole',
 		description:
-			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
+			'When your opponent uses a single use effect card, flip a coin. If heads, you steal said effect card.',
 	}
 
 	public override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		player: PlayerComponent,
+		target: CardComponent,
 		observer: ObserverComponent
 	) {
-		observer.subscribe(player.hooks.onApply, () => {
+		const opponentPlayer = target.opponentPlayer
+
+		observer.subscribe(opponentPlayer.hooks.onApply, () => {
 			let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUse))
 			if (!singleUseCard) return
-			let opponentActiveHermit = player.opponentPlayer.getActiveHermit()
-			if (!opponentActiveHermit) return
 
-			const coinFlip = flipCoin(player.opponentPlayer, opponentActiveHermit, 1, player)
+			const coinFlip = flipCoin(target.player, target, 1, opponentPlayer)
 
 			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
-					player.entity,
-					`$p${opponentActiveHermit.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
+					target.player.entity,
+					`$p${target.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
 				)
-				singleUseCard.draw(player.opponentPlayer.entity)
+				singleUseCard.draw(target.player.entity)
 			} else {
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${opponentActiveHermit.props.name}$ flipped $btails$b`
-				)
+				game.battleLog.addEntry(target.player.entity, `$p${target.props.name}$ flipped $btails$`)
 			}
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
 	}

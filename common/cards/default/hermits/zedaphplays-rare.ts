@@ -33,7 +33,7 @@ class ZedaphPlaysRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
@@ -41,7 +41,7 @@ class ZedaphPlaysRare extends Card {
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			game.components.new(StatusEffectComponent, SheepStareEffect).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, SheepStareEffect).apply(component.entity)
 		})
 	}
 }

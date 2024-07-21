@@ -1,4 +1,4 @@
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
@@ -9,33 +9,32 @@ import {
 	StatusEffectComponent,
 } from '../components'
 
-class SheepStareEffect extends PlayerStatusEffect {
+class SheepStareEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
 		icon: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:
-			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
+			'When your opponent attacks, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until they attack or the end of the turn.',
 	}
 
 	override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		player: PlayerComponent,
+		target: CardComponent,
 		observer: ObserverComponent
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.attacker?.entity !== effect.targetEntity) return
-			if (attack.type !== 'primary') return
+		const opponentPlayer = target.opponentPlayer
 
-			const activeHermit = player.activeRow?.getHermit()
-			if (!activeHermit) return
+		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
+			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+			if (!attack.attacker) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player.opponentPlayer, activeHermit, 1, player)
+				const coinFlip = flipCoin(target.player, target, 1, opponentPlayer)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -46,11 +45,11 @@ class SheepStareEffect extends PlayerStatusEffect {
 			}
 		})
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			effect.remove()
+		observer.subscribe(opponentPlayer.hooks.afterAttack, () => {
+			if (coinFlipResult) effect.remove()
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
 	}

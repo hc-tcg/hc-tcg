@@ -13,7 +13,7 @@ class BadOmenEffect extends CardStatusEffect {
 	}
 
 	override onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent
@@ -31,7 +31,12 @@ class BadOmenEffect extends CardStatusEffect {
 
 		observer.subscribeBefore(player.hooks.onCoinFlip, (card, coinFlips) => {
 			// Only modify when the target hermit is "flipping"
-			if (target.entity !== card.entity) return coinFlips
+			if (
+				target.entity !== card.entity &&
+				(game.currentPlayer.id !== player.id ||
+					player.activeRow?.getHermit()?.entity !== target.entity)
+			)
+				return coinFlips
 
 			for (let i = 0; i < coinFlips.length; i++) {
 				if (coinFlips[i]) coinFlips[i] = 'tails'
