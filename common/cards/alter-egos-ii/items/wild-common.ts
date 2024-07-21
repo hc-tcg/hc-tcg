@@ -4,23 +4,23 @@ import Card from '../../base/card'
 import {Description, Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
-class MinerDoubleItem extends Card {
+class WildItem extends Card {
 	props: Item & Description = {
 		...item,
-		id: 'item_miner_rare',
-		numericId: 58,
-		name: 'Miner Item x2',
-		shortName: 'Miner',
-		description: 'Counts as 2 Miner Item cards.',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'miner',
+		id: 'item_any_common',
+		numericId: 185,
+		name: 'Wild Item',
+		description: 'Counts as any single Item card.',
+		shortName: 'Wild',
+		expansion: 'alter_egos_ii',
+		rarity: 'common',
+		tokens: 1,
+		type: 'any',
 	}
 
 	override getEnergy(game: GameModel, component: CardComponent) {
-		return [this.props.type, this.props.type]
+		return [this.props.type]
 	}
 }
 
-export default MinerDoubleItem
+export default WildItem

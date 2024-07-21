@@ -1,6 +1,13 @@
 import React from 'react'
 import {TypeT} from 'common/types/cards'
-import {CardProps, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/types'
+import {
+	CardProps,
+	HasDescription,
+	isAttach,
+	isHermit,
+	isItem,
+	isSingleUse,
+} from 'common/cards/base/types'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
@@ -38,10 +45,8 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 			(card.primary.power ? `**${card.primary.name}**\n*${card.primary.power}*` : '') +
 				(card.secondary.power ? `**${card.secondary.name}**\n*${card.secondary.power}*` : '')
 		)
-	} else if (isAttach(card) || isSingleUse(card)) {
+	} else if (HasDescription(card)) {
 		text = formatText(card.description)
-	} else if (isItem(card)) {
-		text = card.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : EmptyNode()
 	}
 	return FormattedText(text)
 }

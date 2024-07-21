@@ -15,6 +15,7 @@ export type TypeT =
 	| 'prankster'
 	| 'miner'
 	| 'explorer'
+	| 'any'
 
 export type EnergyT = TypeT | 'any'
 
