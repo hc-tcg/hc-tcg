@@ -35,7 +35,8 @@
 .durationIndicator {
 	color: white;
 	font-family: MinecraftBold;
-	transform: translate(7px, -15px);
+	font-size: 13px;
+	transform: translate(12px, -9px);
 	filter: drop-shadow(1px 0px 0 black) drop-shadow(-1px 0px 0 black) drop-shadow(0px 1px 0 black)
 		drop-shadow(0px -1px 0 black);
 }
