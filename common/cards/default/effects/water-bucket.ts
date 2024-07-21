@@ -23,7 +23,7 @@ class WaterBucket extends Card {
 		numericId: 105,
 		name: 'Water Bucket',
 		rarity: 'common',
-		tokens: 2,
+		tokens: 0,
 		description:
 			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
 		attachCondition: query.some(attach.attachCondition, singleUse.attachCondition),
