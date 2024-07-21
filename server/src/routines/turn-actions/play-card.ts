@@ -83,7 +83,7 @@ function* playCardSaga(
 
 	// Add entry to battle log, unless it is played in a single use slot
 	if (pickedSlot.type !== 'single_use') {
-		// game.battleLog.addPlayCardEntry(card.card, card.slot, currentPlayer.coinFlips, undefined)
+		game.battleLog.addPlayCardEntry(card, currentPlayer.coinFlips, card.slot)
 	}
 
 	// Call onAttach hook
