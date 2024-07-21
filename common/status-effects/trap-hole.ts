@@ -30,7 +30,7 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 			let opponentActiveHermit = player.opponentPlayer.getActiveHermit()
 			if (!opponentActiveHermit) return
 
-			const coinFlip = flipCoin(player, opponentActiveHermit)
+			const coinFlip = flipCoin(player.opponentPlayer, opponentActiveHermit, 1, player)
 
 			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
