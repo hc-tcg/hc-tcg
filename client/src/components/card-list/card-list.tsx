@@ -30,7 +30,6 @@ const CardList = (props: CardListProps) => {
 
 		let cardComponent = (
 			<CardComponent
-				key={card.entity}
 				className={cn(css.card, {
 					[css.clickable]: !!onClick && !isDisabled,
 				})}
@@ -48,7 +47,7 @@ const CardList = (props: CardListProps) => {
 			return (
 				<CSSTransition
 					key={card.entity}
-					timeout={250}
+					timeout={200}
 					unmountOnExit={true}
 					classNames={{
 						enter: css.enter,
@@ -58,11 +57,15 @@ const CardList = (props: CardListProps) => {
 						exitActive: css.exitActive,
 					}}
 				>
-					{cardComponent}
+					<div className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>{cardComponent}</div>
 				</CSSTransition>
 			)
 		} else {
-			return cardComponent
+			return (
+				<div key={card.entity} className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+					{cardComponent}
+				</div>
+			)
 		}
 	})
 

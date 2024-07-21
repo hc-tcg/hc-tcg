@@ -1,5 +1,5 @@
 $gap: 0;
-$speed: 250ms;
+$speed: 200ms;
 $card-size: 118px;
 
 .cardList {
@@ -8,25 +8,29 @@ $card-size: 118px;
 	align-items: center;
 	flex-flow: row;
 	gap: $gap;
-  container-type: inline-size;
-	container-name: cardList;
 }
 
 .wrap {
+	container-type: inline-size;
+	container-name: cardList;
 	flex-wrap: wrap;
-
-	svg {
-		height: 100%;
-	}
 }
 
-.card {
-	display: grid;
-	@for $i from 1 through 6 {
+.autoscale {
+	@for $i from 1 through 20 {
 		@container cardList (width > calc(#{$i} * #{$card-size})) {
 			width: calc(100% / #{$i});
 		}
 	}
+}
+
+.defaultSize {
+	width: $card-size;
+	flex: 0 0 auto;
+}
+
+.card {
+	display: grid;
 }
 
 .clickable:not(:disabled) {
@@ -41,8 +45,8 @@ $card-size: 118px;
 
 // React Transitions Group Animations
 .enter {
-	transition: all $speed ease-in;
 	opacity: 0;
+	width: 0px;
 
 	> svg {
 		transition: all $speed ease-in;
@@ -53,12 +57,7 @@ $card-size: 118px;
 .enterActive {
 	transition: all $speed ease-in;
 	opacity: 1;
-	width: 100px;
-
-	> svg {
-		transition: all $speed ease-in;
-		filter: scale(100%);
-	}
+	width: $card-size;
 }
 
 .enterDone {
@@ -68,7 +67,6 @@ $card-size: 118px;
 .exit {
 	transition: all $speed ease-in;
 	opacity: 1;
-	width: 100px;
 
 	> svg {
 		transition: all $speed ease-in;
@@ -81,6 +79,7 @@ $card-size: 118px;
 	transition: all $speed ease-in;
 	opacity: 0;
 	margin-right: -$gap;
+	width: 0px;
 
 	> svg {
 		transition: all $speed ease-in;
