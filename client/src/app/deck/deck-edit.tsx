@@ -143,7 +143,7 @@ export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInsta
 			isItem(b.props) &&
 			a.props.type !== b.props.type
 		) {
-			return a.props.type.localeCompare(b.props.type)
+			return a.props.name.localeCompare(b.props.name)
 		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
 			// then by expansion if they are both hermits
 			return a.props.expansion.localeCompare(a.props.expansion)
