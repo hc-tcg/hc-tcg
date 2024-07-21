@@ -18,7 +18,7 @@ class FrenchralisRare extends Card {
 		type: 'prankster',
 		health: 250,
 		primary: {
-			name: "Je M'appelle Keralis",
+			name: 'French.',
 			cost: ['prankster'],
 			damage: 60,
 			power: null,

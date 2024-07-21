@@ -39,6 +39,7 @@ export type DamageT = {
 
 export type HermitAttackInfo = {
 	name: string
+	shortName?: string
 	cost: Array<EnergyT>
 	damage: number
 	power: string | null

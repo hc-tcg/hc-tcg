@@ -27,6 +27,7 @@ class WormManRare extends Card {
 		},
 		secondary: {
 			name: 'Total Anonymity',
+			shortName: 'T. Anonymity',
 			cost: ['prankster', 'prankster', 'any'],
 			damage: 90,
 			power:

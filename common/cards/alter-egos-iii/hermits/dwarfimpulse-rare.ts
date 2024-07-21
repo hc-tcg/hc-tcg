@@ -27,6 +27,7 @@ class DwarfImpulseRare extends Card {
 		},
 		secondary: {
 			name: 'Can I Axe You A Question?',
+			shortName: 'Axe A Question',
 			cost: ['miner', 'miner'],
 			damage: 80,
 			power:

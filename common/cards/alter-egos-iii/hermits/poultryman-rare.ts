@@ -27,6 +27,7 @@ class PoultryManRare extends Card {
 		},
 		secondary: {
 			name: 'It Was The Man In The Chicken Costume',
+			shortName: 'Chicken C.',
 			cost: ['farm', 'farm', 'any'],
 			damage: 90,
 			power: 'When played with egg, egg is returned to your hand instead of being discarded.',

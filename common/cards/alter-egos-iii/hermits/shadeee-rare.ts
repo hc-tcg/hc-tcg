@@ -19,7 +19,7 @@ class ShadeEERare extends Card {
 		type: 'redstone',
 		health: 270,
 		primary: {
-			name: 'Corrupt Contract',
+			name: 'Corrupt Contr.',
 			cost: ['redstone'],
 			damage: 60,
 			power: null,

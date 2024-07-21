@@ -16,7 +16,7 @@ class PoePoeSkizzCommon extends Card {
 		type: 'explorer',
 		health: 300,
 		primary: {
-			name: 'Citation Smackdown',
+			name: 'Citation',
 			cost: ['any'],
 			damage: 40,
 			power: null,
