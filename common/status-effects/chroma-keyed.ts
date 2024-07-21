@@ -1,16 +1,12 @@
-import {
-	StatusEffectComponent,
-	ObserverComponent,
-	CardComponent,
-} from '../components'
-import { AttackModel } from '../models/attack-model'
+import {StatusEffectComponent, ObserverComponent, CardComponent} from '../components'
+import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 
 class ChromaKeyedEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		id: 'chroma-keyed',
+		icon: 'chroma-keyed',
 		name: 'Chroma keyed',
 		description: 'You deal 10hp less damage for each level of this status effect.',
 		counter: 1,

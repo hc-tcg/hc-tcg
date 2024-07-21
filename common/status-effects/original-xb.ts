@@ -5,17 +5,21 @@ import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../comp
 class OriginalXbEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		id: 'original_xb',
+		icon: 'original_xb',
 		name: 'Original XB',
-		description:
-			"Draw an additional card at the end of your turn",
+		description: 'Draw an additional card at the end of your turn',
 	}
 
-	override onApply(_game: GameModel, effect: StatusEffectComponent<PlayerComponent>, player: PlayerComponent, observer: ObserverComponent): void {
+	override onApply(
+		_game: GameModel,
+		effect: StatusEffectComponent<PlayerComponent>,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	): void {
 		observer.oneShot(player.opponentPlayer.hooks.onTurnEnd, () => {
-            player.opponentPlayer.draw(1)
-            effect.remove()
-        })
+			player.opponentPlayer.draw(1)
+			effect.remove()
+		})
 	}
 }
 

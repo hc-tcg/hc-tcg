@@ -5,7 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import { RowEntity } from '../../../entities'
+import {RowEntity} from '../../../entities'
 
 class GoldenAxe extends Card {
 	selectionAvailable = false
