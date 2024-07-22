@@ -45,6 +45,10 @@ export class DeathloopReady extends CardStatusEffect {
 			game.components.new(StatusEffectComponent, RevivedByDeathloopEffect).apply(target.entity)
 			effect.remove()
 		})
+
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
+			effect.remove()
+		})
 	}
 }
 
