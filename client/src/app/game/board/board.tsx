@@ -13,7 +13,7 @@ import {SlotTypeT} from 'common/types/cards'
 import {SlotEntity} from 'common/entities'
 
 type Props = {
-	onClick: (pickInfo: SlotInfo) => void
+	onClick: (pickInfo: SlotInfo, row?: number, index?: number) => void
 	localGameState: LocalGameState
 }
 
@@ -28,24 +28,26 @@ function Board({onClick, localGameState}: Props) {
 	const rightPlayer = side === 'Right' ? player : opponent
 
 	const handleRowClick = (
+		rowIndex: number,
 		entity: SlotEntity,
 		slotType: SlotTypeT,
-		card: LocalCardInstance | null
+		card: LocalCardInstance | null,
+		index: number
 	) => {
-		onClick({slotEntity: entity, slotType: slotType, card: card})
+		onClick({slotEntity: entity, slotType: slotType, card: card}, rowIndex, index)
 	}
 
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
-				{player.board.rows.map((row) => {
+				{player.board.rows.map((row, rowIndex) => {
 					return (
 						<BoardRow
 							key={row.entity}
 							player={direction === 'left' ? leftPlayer.entity : rightPlayer.entity}
 							rowState={row}
 							active={row.entity === player.board.activeRow}
-							onClick={handleRowClick}
+							onClick={(...args) => handleRowClick(rowIndex, ...args)}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
 						/>
