@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -18,10 +17,6 @@ class FlintAndSteel extends Card {
 			'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(_game, pos) => pos.player.getHand().length > 3
-		),
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
