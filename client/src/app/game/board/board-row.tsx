@@ -24,7 +24,12 @@ const getSlotByLocation = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	player: PlayerEntity
-	onClick: (entity: SlotEntity, type: SlotTypeT, card: LocalCardInstance | null) => void
+	onClick: (
+		entity: SlotEntity,
+		type: SlotTypeT,
+		card: LocalCardInstance | null,
+		index: number
+	) => void
 	rowState: LocalRowState
 	active: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
@@ -47,7 +52,7 @@ const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: Boar
 		return (
 			<Slot
 				cssId={cssId}
-				onClick={() => onClick(slot.slot, slotType, slot.card)}
+				onClick={() => onClick(slot.slot, slotType, slot.card, slotIndex)}
 				card={slot.card}
 				entity={slot.slot}
 				rowState={rowState}

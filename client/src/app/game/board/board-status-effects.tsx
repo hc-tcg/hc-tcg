@@ -44,7 +44,6 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 		})
 	}
 
-	console.log(shouldDim)
 	// We want to show the newest status effect first in the list.
 	statusEffects = [...statusEffects].reverse()
 

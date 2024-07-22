@@ -36,9 +36,13 @@ export const setOpenedModal = (id: string | null, info: any = null) => ({
 	payload: id === null ? null : {id, info},
 })
 
-export const slotPicked = (slotInfo: SlotInfo) => ({
+export const slotPicked = (slotInfo: SlotInfo, row?: number, index?: number) => ({
 	type: 'SLOT_PICKED' as const,
-	payload: {slotInfo},
+	payload: {
+		slot: slotInfo,
+		row: row,
+		index: index,
+	},
 })
 
 export const forfeit = () => ({

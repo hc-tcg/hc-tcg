@@ -82,9 +82,11 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickInfo: SlotInfo) => {
+	const handleBoardClick = (pickInfo: SlotInfo, row?: number, index?: number) => {
 		console.log('Slot selected: ', pickInfo)
-		dispatch(slotPicked(pickInfo))
+
+		// This is a hack to make picked cards appear
+		dispatch(slotPicked(pickInfo, row, index))
 	}
 
 	const selectCard = (card: LocalCardInstance) => {
