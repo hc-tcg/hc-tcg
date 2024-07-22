@@ -13,7 +13,7 @@ class GoodTimesWithScarRare extends Card {
 		name: 'Scar',
 		expansion: 'default',
 		rarity: 'rare',
-		tokens: 2,
+		tokens: 1,
 		type: 'builder',
 		health: 270,
 		primary: {
