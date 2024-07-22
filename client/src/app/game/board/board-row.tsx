@@ -70,7 +70,16 @@ const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: Boar
 			})}
 		>
 			{slots}
-			<HealthSlot rowState={rowState} shouldDim={shouldDim} />
+			<HealthSlot
+				rowState={rowState}
+				shouldDim={shouldDim}
+				damageStatusEffect={statusEffects.find(
+					(a) =>
+						a.target.type === 'card' &&
+						a.target.card === rowState.hermit.card?.entity &&
+						a.props.type === 'damage'
+				)}
+			/>
 			<div className={cn(css.effect, css.slot)}>
 				<StatusEffectContainer
 					shouldDim={shouldDim}
