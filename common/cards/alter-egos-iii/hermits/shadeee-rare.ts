@@ -38,18 +38,20 @@ class ShadeEERare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const afkHermits = game.components.filter(
+			const playerAfkHermits = game.components.filter(
 				CardComponent,
-				query.card.attached,
+				query.card.player(player.entity),
 				query.card.slot(query.slot.hermit),
 				query.card.afk
-			)
-			const playerAfkHermits = afkHermits.filter((card) => {
-				card.player === player
-			}).length
-			const opponentAfkHermits = afkHermits.filter((card) => {
-				card.player === opponentPlayer
-			}).length
+			).length
+
+			const opponentAfkHermits = game.components.filter(
+				CardComponent,
+				query.card.player(opponentPlayer.entity),
+				query.card.slot(query.slot.hermit),
+				query.card.afk
+			).length
+
 			if (playerAfkHermits < opponentAfkHermits) {
 				attack.addDamage(component.entity, 40)
 			}
