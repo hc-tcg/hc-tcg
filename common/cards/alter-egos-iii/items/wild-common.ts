@@ -1,5 +1,3 @@
-import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Description, Item} from '../../base/types'
 import {item} from '../../base/defaults'
@@ -16,10 +14,7 @@ class WildItem extends Card {
 		rarity: 'common',
 		tokens: 1,
 		type: 'any',
-	}
-
-	override getEnergy(game: GameModel, component: CardComponent) {
-		return [this.props.type]
+		energy: ['any'],
 	}
 }
 
