@@ -7,7 +7,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 		...statusEffect,
 		icon: 'royal_protection',
 		name: 'Royal Protection',
-		description: 'The first attack against this Hermit deals no damage.',
+		description: 'Any attacks targeting this hermit are prevented.',
 		applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	}
 
@@ -21,6 +21,9 @@ class RoyalProtectionEffect extends CardStatusEffect {
 			if (!attack.isTargetting(target)) return
 
 			attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+		})
+
+		observer.subscribe(target.opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
 	}
