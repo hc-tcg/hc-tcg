@@ -1,11 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {
-	CardComponent,
-	DiscardSlotComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -25,8 +20,7 @@ class Composter extends Card {
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.getHand().length >= 2,
-			(game, pos) => pos.player.getDeck().length > 2
+			(game, pos) => pos.player.getHand().length >= 2
 		),
 	}
 

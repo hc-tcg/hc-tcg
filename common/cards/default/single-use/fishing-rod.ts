@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -17,10 +16,6 @@ class FishingRod extends Card {
 		description: 'Draw 2 cards.',
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(game, _pos) => game.currentPlayer.getDeck().length > 2
-		),
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
