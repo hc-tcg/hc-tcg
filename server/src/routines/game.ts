@@ -28,7 +28,6 @@ import {
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
 import {PlayerId} from 'common/models/player-model'
-import {PlayerEntity} from 'common/entities'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -632,6 +631,8 @@ function* turnSaga(game: GameModel) {
 }
 
 function* checkDeckedOut(game: GameModel) {
+	if (DEBUG_CONFIG.disableDeckOut || DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards)
+		return []
 	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {
 		if (player.deckedOut) return [player]
 		return []
