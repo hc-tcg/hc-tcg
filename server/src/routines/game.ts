@@ -28,6 +28,7 @@ import {
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
 import {PlayerId} from 'common/models/player-model'
+import {PlayerEntity} from 'common/entities'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -356,8 +357,10 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	// Set action result to be sent back to client
 	game.setLastActionResult(actionType, result)
 
-	const deadPlayerIds = yield* call(checkHermitHealth, game)
-	if (deadPlayerIds.length) endTurn = true
+	let deadPlayers = []
+	deadPlayers.push(...(yield* call(checkDeckedOut, game)))
+	deadPlayers.push(...(yield* call(checkHermitHealth, game)))
+	if (deadPlayers.length) endTurn = true
 
 	if (endTurn) {
 		return 'END_TURN'
@@ -579,18 +582,6 @@ function* turnSaga(game: GameModel) {
 	// Draw a card from deck when turn ends
 	let drawCards = currentPlayer.draw(1)
 
-	// The decked out loss condition is triggered when you cannot draw a card.
-	if (
-		drawCards.length === 0 &&
-		!DEBUG_CONFIG.disableDeckOut &&
-		!DEBUG_CONFIG.startWithAllCards &&
-		!DEBUG_CONFIG.unlimitedCards
-	) {
-		game.endInfo.reason = 'cards'
-		game.endInfo.deadPlayerIds = [currentPlayer.id]
-		return 'GAME_END'
-	}
-
 	// Call turn end hooks
 	currentPlayer.hooks.onTurnEnd.call(drawCards)
 
@@ -608,9 +599,18 @@ function* turnSaga(game: GameModel) {
 	}
 	game.state.modalRequests = []
 
-	const deadPlayers = yield* call(checkHermitHealth, game)
+	let deadPlayers: Array<PlayerComponent> = []
+	deadPlayers.push(...(yield* call(checkHermitHealth, game)))
+	deadPlayers.push(...(yield* call(checkDeckedOut, game)))
+
 	if (deadPlayers.length) {
-		game.endInfo.reason = deadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
+		if (deadPlayers[0].deckedOut) {
+			game.endInfo.reason = 'cards'
+		} else if (deadPlayers[0].lives <= 0) {
+			game.endInfo.reason = 'lives'
+		} else {
+			game.endInfo.reason = 'hermits'
+		}
 		game.endInfo.deadPlayerIds = deadPlayers.map((player) => player.id)
 		return 'GAME_END'
 	}
@@ -629,6 +629,13 @@ function* turnSaga(game: GameModel) {
 	game.battleLog.addTurnEndEntry()
 
 	return 'DONE'
+}
+
+function* checkDeckedOut(game: GameModel) {
+	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {
+		if (player.deckedOut) return [player]
+		return []
+	})
 }
 
 function* backgroundTasksSaga(game: GameModel) {

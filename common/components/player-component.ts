@@ -29,6 +29,7 @@ export class PlayerComponent {
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
+	deckedOut: boolean
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -128,6 +129,7 @@ export class PlayerComponent {
 		this.lives = 3
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
+		this.deckedOut = false
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
@@ -215,7 +217,9 @@ export class PlayerComponent {
 	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
-
+		if (cards.length < amount) {
+			this.deckedOut = true
+		}
 		cards.forEach((card) => card.draw())
 		return cards
 	}
@@ -289,7 +293,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>
+						Array<SlotEntity>,
 					]
 			)
 	}
