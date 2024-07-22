@@ -20,7 +20,9 @@ const HealthSlot = ({shouldDim, rowState, damageStatusEffect}: HealthSlotProps) 
 				[slotCss.unpickable]: shouldDim,
 			})}
 		>
-			{rowState.health && <HealthDisplayModule health={rowState.health} />}
+			{rowState.health && (
+				<HealthDisplayModule health={rowState.hermit.card?.turnedOver ? null : rowState.health} />
+			)}
 			{damageStatusEffect && (
 				<div className={slotCss.damageStatusEffectContainer}>
 					<StatusEffect

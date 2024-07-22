@@ -7,6 +7,8 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class GoldenAxe extends Card {
+	selectionAvailable = false
+
 	props: SingleUse = {
 		...singleUse,
 		id: 'golden_axe',

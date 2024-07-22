@@ -10,7 +10,10 @@ import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
+import alterEgosIIHermitCards from './alter-egos-ii/hermits'
+import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
+import alterEgosIIIItemCards from './alter-egos-iii/items'
+import seasonXHermitCards from './season-x/hermits'
 import {CardClass} from './base/card'
 
 const effectCardClasses: Array<CardClass> = [
@@ -24,9 +27,11 @@ const hermitCardClasses: Array<CardClass> = [
 	...alterEgosHermitCards,
 	// ...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
+	...seasonXHermitCards,
+	...alterEgosIIIHermitCards,
 ]
 
-const itemCardClasses: Array<CardClass> = [...defaultItemCards]
+const itemCardClasses: Array<CardClass> = [...defaultItemCards, ...alterEgosIIIItemCards]
 
 const singleUseCardClasses: Array<CardClass> = [
 	...defaultSingleUseCards,

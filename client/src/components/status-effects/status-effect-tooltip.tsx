@@ -25,11 +25,13 @@ const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
 					Number: <span className={css.counter}>{counter}</span>
 				</div>
 			)}
-			{isCounter(statusEffect.props) && statusEffect.props.counterType === 'turns' && (
-				<div className={css.turnsRemaining}>
-					Turns remaining: <span className={css.counter}>{counter}</span>
-				</div>
-			)}
+			{isCounter(statusEffect.props) &&
+				((statusEffect.props.counterType === 'turns' && statusEffect.props.counter > 1) ||
+					statusEffect.props.counterType === 'number') && (
+					<div className={css.turnsRemaining}>
+						Turns remaining: <span className={css.counter}>{counter}</span>
+					</div>
+				)}
 		</div>
 	)
 }

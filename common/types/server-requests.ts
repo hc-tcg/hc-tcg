@@ -30,6 +30,7 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
+	turnedOver: boolean
 }
 
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {

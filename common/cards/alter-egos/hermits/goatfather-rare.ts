@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {CardProps, Hermit} from '../../base/types'
+import * as query from '../../../components/query'
 
 class GoatfatherRare extends Card {
 	props: Hermit = {
@@ -60,16 +61,15 @@ class GoatfatherRare extends Card {
 						row.index < opponentActiveHermit?.slot.row.index
 				)
 				.forEach((row) => {
-					attack
-						.addNewAttack(
-							game.newAttack({
-								attacker: component.entity,
-								target: row.entity,
-								type: 'secondary',
-								log: (values) => `, ${values.target} for ${values.damage} damage`,
-							})
-						)
-						.addDamage(component.entity, 10)
+					const newAttack = game.newAttack({
+						attacker: component.entity,
+						target: row.entity,
+						type: 'secondary',
+						log: (values) => `, ${values.target} for ${values.damage} damage`,
+					})
+					newAttack.addDamage(component.entity, 10)
+					newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+					attack.addNewAttack(newAttack)
 				})
 		})
 	}

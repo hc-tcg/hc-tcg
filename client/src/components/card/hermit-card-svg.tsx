@@ -144,7 +144,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.primary.name}
+					{card.primary.shortName ? card.primary.shortName : card.primary.name}
 				</text>
 				<text
 					x="380"
@@ -180,7 +180,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.secondary.name}
+					{card.secondary.shortName ? card.secondary.shortName : card.secondary.name}
 				</text>
 				<text
 					x="380"

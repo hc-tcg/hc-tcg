@@ -15,13 +15,21 @@ export type TypeT =
 	| 'prankster'
 	| 'miner'
 	| 'explorer'
+	| 'any'
 
 export type EnergyT = TypeT | 'any'
 
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
 export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'deck' | 'discardPile'
-export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
+export type ExpansionT =
+	| 'default'
+	| 'alter_egos'
+	| 'alter_egos_ii'
+	| 'season_x'
+	| 'alter_egos_iii'
+	| 'advent_of_tcg'
+	| 'dream'
 
 export type DamageT = {
 	target?: number
@@ -31,6 +39,7 @@ export type DamageT = {
 
 export type HermitAttackInfo = {
 	name: string
+	shortName?: string
 	cost: Array<EnergyT>
 	damage: number
 	power: string | null

@@ -143,7 +143,7 @@ export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInsta
 			isItem(b.props) &&
 			a.props.type !== b.props.type
 		) {
-			return a.props.type.localeCompare(b.props.type)
+			return a.props.name.localeCompare(b.props.name)
 		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
 			// then by expansion if they are both hermits
 			return a.props.expansion.localeCompare(a.props.expansion)
@@ -166,8 +166,9 @@ const ALL_CARDS = sortCards(
 	CARDS_LIST.map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			entity: card.props.numericId.toString() as CardEntity,
+			entity: newEntity('deck_editor_card'),
 			slot: null,
+			turnedOver: false,
 		})
 	)
 )
@@ -224,7 +225,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			...loadedDeck,
 			cards: [
 				...loadedDeck.cards,
-				{props: card.props, entity: newEntity('card-entity') as CardEntity, slot: null},
+				{
+					props: card.props,
+					entity: newEntity('card-entity') as CardEntity,
+					slot: null,
+					turnedOver: false,
+				},
 			],
 		}))
 	}
