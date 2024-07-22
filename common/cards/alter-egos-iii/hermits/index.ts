@@ -1,10 +1,9 @@
-import EvilJevinRare from '../../alter-egos-ii/hermits/eviljevin-rare'
 import {CardClass} from '../../base/card'
-import Iskall85Common from '../../default/hermits/iskall85-common'
 import ArchitectFalseRare from './architectfalse-rare'
 import BeetlejhostRare from './beetlejhost-rare'
 import BoomerBdubsCommon from './boomerbdubs-common'
 import DwarfImpulseRare from './dwarfimpulse-rare'
+import EvilJevinRare from './eviljevin-rare'
 import EvilXisumaCommon from './evilxisuma-common'
 import FiveAMPearlCommon from './fiveampearl-common'
 import FrenchralisRare from './frenchralis-rare'
@@ -13,6 +12,7 @@ import HelsknightCommon from './helsknight-common'
 import HorseHeadHypnoRare from './horseheadhypno-rare'
 import HotguyCommon from './hotguy-common'
 import HumanCleoCommon from './humancleo-common'
+import IskallManCommon from './iskallman-common'
 import JinglerCommon from './jingler-common'
 import KingJoelCommon from './kingjoel-common'
 import KingJoelRare from './kingjoel-rare'
@@ -53,13 +53,12 @@ const hermitCardClasses: Array<CardClass> = [
 	LlamadadCommmon,
 	OverseerCommon,
 	RenbobCommon,
-	LlamadadCommmon,
 	PotatoBoyCommon,
 	GoatfatherCommon,
 	HumanCleoCommon,
 	JinglerCommon,
 	FiveAMPearlCommon,
-	Iskall85Common,
+	IskallManCommon,
 	BoomerBdubsCommon,
 	EvilJevinRare,
 ]

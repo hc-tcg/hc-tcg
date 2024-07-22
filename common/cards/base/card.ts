@@ -81,10 +81,6 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isItem(this.props)
 	}
 
-	public getEnergy(this: Card<Item>, game: GameModel, component: CardComponent): Array<TypeT> {
-		return []
-	}
-
 	public isHealth(): this is Card<CardProps & HasHealth> {
 		return isHealth(this.props)
 	}

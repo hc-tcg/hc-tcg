@@ -27,7 +27,6 @@ const hermitCardClasses: Array<CardClass> = [
 	PrincessGemCommon,
 	ShadEECommon,
 	SpookyStressCommon,
-	SpookyStressCommon,
 	SteampunkTangoCommon,
 	WormManCommon,
 ]

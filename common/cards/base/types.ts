@@ -29,6 +29,7 @@ export type CardProps = {
 export type Item = CardProps & {
 	item: null
 	type: TypeT
+	energy: Array<TypeT>
 }
 
 export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>

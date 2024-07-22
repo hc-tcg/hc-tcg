@@ -89,7 +89,7 @@ export class BattleLogModel {
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlip>,
-		slotInfo: SlotComponent | null
+		pickedSlot: SlotComponent | null
 	) {
 		let {player, opponentPlayer} = card
 
@@ -112,8 +112,9 @@ export class BattleLogModel {
 			return `${card.props.name}`
 		}
 
-		let row = slotInfo?.inRow() ? slotInfo.row : null
-		let cardInfo = slotInfo?.getCard()
+		const cardRow = card.slot.inRow() ? card.slot.row : null
+		const pickedRow = pickedSlot?.inRow() ? pickedSlot.row : null
+		const pickedCard = pickedSlot?.getCard()
 
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
@@ -124,18 +125,18 @@ export class BattleLogModel {
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
 			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
-				rowIndex: card.slot.inRow() ? `${card.slot.row.index + 1}` : invalid,
-				id: card.props.id || invalid,
-				name: genCardName(card.player, card, row),
-				hermitCard: genCardName(card.player, cardInfo, row),
+				rowIndex: cardRow ? `${cardRow.index + 1}` : invalid,
+				id: card.props.id,
+				name: genCardName(card.player, card, cardRow),
+				hermitCard: genCardName(card.player, cardRow?.getHermit(), cardRow),
 				slotType: card.slot.type,
 			},
 			pick: {
-				rowIndex: row !== null ? `${row.index + 1}` : invalid,
-				id: cardInfo?.card.props.id || invalid,
-				name: cardInfo ? genCardName(slotInfo?.player, card, row) : invalid,
-				hermitCard: genCardName(slotInfo?.player, cardInfo, row),
-				slotType: slotInfo?.type || invalid,
+				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
+				id: pickedCard?.card.props.id || invalid,
+				name: pickedCard ? genCardName(pickedSlot?.player, pickedCard, pickedRow) : invalid,
+				hermitCard: genCardName(pickedSlot?.player, pickedRow?.getHermit(), pickedRow),
+				slotType: pickedSlot?.type || invalid,
 			},
 			game: this.game,
 		})
@@ -315,7 +316,8 @@ export class BattleLogModel {
 
 		if (pos instanceof CardComponent) {
 			const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
-			const rowNumberString = (pos.slot.inRow() && pos.slot.row.index.toString()) || 'Unknown Row'
+			const rowNumberString =
+				(pos.slot.inRow() && (pos.slot.row.index + 1).toString()) || 'Unknown Row'
 
 			const logMessage = log({
 				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,

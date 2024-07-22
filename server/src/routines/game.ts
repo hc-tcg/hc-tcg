@@ -51,7 +51,7 @@ function getAvailableEnergy(game: GameModel) {
 		)
 		.flatMap((card) => {
 			if (!card.isItem()) return []
-			return card.card.getEnergy(game, card)
+			return card.props.energy
 		})
 
 	return currentPlayer.hooks.availableEnergy.call(energy)

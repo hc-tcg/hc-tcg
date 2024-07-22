@@ -1,5 +1,3 @@
-import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Description, Item} from '../../base/types'
 import {item} from '../../base/defaults'
@@ -16,10 +14,7 @@ class BalancedDoubleItem extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		type: 'balanced',
-	}
-
-	override getEnergy(game: GameModel, component: CardComponent) {
-		return [this.props.type, this.props.type]
+		energy: ['balanced', 'balanced'],
 	}
 }
 
