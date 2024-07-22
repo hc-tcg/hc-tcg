@@ -59,6 +59,10 @@ class Thorns extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
+
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
+			hasTriggered = false
+		})
 	}
 }
 
