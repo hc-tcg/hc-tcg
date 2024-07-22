@@ -7,6 +7,7 @@ $card-size: 118px;
 	justify-content: flex-start;
 	align-items: center;
 	flex-flow: row;
+	height: $card-size;
 	gap: $gap;
 }
 
@@ -14,6 +15,7 @@ $card-size: 118px;
 	container-type: inline-size;
 	container-name: cardList;
 	flex-wrap: wrap;
+	height: 100%;
 }
 
 .autoscale {
