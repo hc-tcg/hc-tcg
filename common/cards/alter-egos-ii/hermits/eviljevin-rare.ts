@@ -46,10 +46,12 @@ class EvilJevinRare extends Card {
 				query.card.isHermit
 			)
 
-			let pickableCards = game.components.filter(CardComponent, modalCondition).map((card) => card.entity)
+			let pickableCards = game.components
+				.filter(CardComponent, modalCondition)
+				.map((card) => card.entity)
 
 			if (pickableCards.length === 0) return
-			
+
 			const coinFlip = flipCoin(player, component, 1)
 			if (coinFlip[0] !== 'heads') return
 
