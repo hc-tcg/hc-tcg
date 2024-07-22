@@ -58,7 +58,7 @@ $grid-size: 25px;
 	}
 
 	&:hover {
-		filter: brightness(120%);
+		filter: brightness(110%);
 	}
 }
 
@@ -108,9 +108,13 @@ $grid-size: 25px;
 	}
 
 	&.pickable {
-		filter: brightness(130%);
+		filter: brightness(105%);
 
-		&.hermit {
+		&.empty {
+			filter: brightness(130%);
+		}
+
+		&.hermit .empty {
 			filter: brightness(105%);
 		}
 
