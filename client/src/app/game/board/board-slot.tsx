@@ -29,6 +29,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
+	console.log("UPDATING SELF")
 
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
