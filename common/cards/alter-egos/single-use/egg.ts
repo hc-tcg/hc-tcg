@@ -59,6 +59,9 @@ class Egg extends Card {
 
 			applySingleUse(game, afkHermitSlot)
 
+			// Do not apply single use more than once
+			observer.unsubscribe(player.hooks.onAttack)
+
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = game
