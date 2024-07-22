@@ -37,11 +37,6 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 			board.activeRow = board.rows[row].entity
 		}
 
-		// If we placed a hermit and its not the first turn, we can probably do an attack so lets make the
-		// button visible
-		if (gameState.turn.turnNumber > 1) {
-			gameState.turn.availableActions.push('PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-		}
 		// If we couldn't before, we can always end our turn after playing a hermit
 		gameState.turn.availableActions.push('END_TURN')
 	}
