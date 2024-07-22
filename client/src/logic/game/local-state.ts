@@ -2,8 +2,9 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import {slotPicked} from './game-actions'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
-import {HasHealth} from 'common/cards/base/types'
+import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
+import {hasEnoughEnergy} from 'common/utils/attacks'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
@@ -45,6 +46,16 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 	}
 	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
 		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
+
+		// When we place our first item card, lets make the attack button visible.
+		// This is a bit of a hack, but all primaries are one cost so if we can use the primary,
+		// we can definitely do something.
+		let hermit = board.rows[row].hermit
+		if (hermit.card && isHermit(hermit.card.props) && isItem(selectedCard.props)) {
+			if (hasEnoughEnergy(hermit.card.props.primary.cost, [selectedCard.props.type])) {
+				gameState.turn.availableActions.push('PRIMARY_ATTACK')
+			}
+		}
 	}
 
 	yield* put({type: 'UPDATE_GAME'})
