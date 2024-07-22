@@ -38,12 +38,15 @@ class ThornsII extends Card {
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.attacker.slot.inRow()) return
+
 			hasTriggered = true
 
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: component.slot.row.entity,
+					target: attack.attacker.slot.rowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
