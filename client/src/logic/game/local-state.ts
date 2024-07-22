@@ -80,28 +80,6 @@ export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
 	yield* put({type: 'UPDATE_GAME'})
 }
 
-/** Remove the primary and secondary available actions. This is used to disable the attack button
- * when we use a hermit attack */
-export function* localRemoveAttackOptions() {
-	let localPlayerState = yield* select(getGameState)
-
-	if (localPlayerState?.turn)
-		localPlayerState.turn.availableActions = localPlayerState.turn.availableActions.filter(
-			(action) =>
-				![
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_EFFECT_CARD',
-					'PLAY_SINGLE_USE_CARD',
-				].includes(action)
-		)
-
-	yield* put({type: 'UPDATE_GAME'})
-}
-
 export function* localApplyEffect() {
 	let playerState = yield* select(getPlayerState)
 
@@ -124,6 +102,7 @@ export function* localRemoveEffect() {
 
 export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 	let playerState = yield* select(getPlayerState)
+	let gameState = yield* select(getGameState)
 
 	if (playerState?.board) {
 		// Rows are changed by sending a hermit slot.
@@ -135,7 +114,19 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 		}
 	}
 
-	yield* localRemoveAttackOptions()
+	if (gameState?.turn)
+		gameState.turn.availableActions = gameState.turn.availableActions.filter(
+			(action) =>
+				![
+					'SINGLE_USE_ATTACK',
+					'PRIMARY_ATTACK',
+					'SECONDARY_ATTACK',
+					'PLAY_HERMIT_CARD',
+					'PLAY_ITEM_CARD',
+					'PLAY_EFFECT_CARD',
+					'PLAY_SINGLE_USE_CARD',
+				].includes(action)
+		)
 
 	yield* put({type: 'UPDATE_GAME'})
 }
