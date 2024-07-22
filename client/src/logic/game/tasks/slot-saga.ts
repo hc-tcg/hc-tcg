@@ -16,6 +16,7 @@ import {
 import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
@@ -77,7 +78,8 @@ function* pickWithSelectedSaga(
 		const actionType = slotToPlayCardAction[selectedCard.props.category]
 		if (!actionType) return
 
-		yield* makeCardLookPlayedHack(action, selectedCard)
+		yield* localPutCardInSlot(action, selectedCard)
+		yield* localRemoveCardFromHand(selectedCard)
 
 		const actionData: PlayCardActionData = {
 			type: actionType,

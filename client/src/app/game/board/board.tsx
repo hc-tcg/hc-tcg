@@ -10,10 +10,10 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
-import {SlotEntity} from 'common/entities'
+import {PlayerEntity, SlotEntity} from 'common/entities'
 
 type Props = {
-	onClick: (pickInfo: SlotInfo, row?: number, index?: number) => void
+	onClick: (pickInfo: SlotInfo, player: PlayerEntity, row?: number, index?: number) => void
 	localGameState: LocalGameState
 }
 
@@ -29,12 +29,13 @@ function Board({onClick, localGameState}: Props) {
 
 	const handleRowClick = (
 		rowIndex: number,
+		player: PlayerEntity,
 		entity: SlotEntity,
 		slotType: SlotTypeT,
 		card: LocalCardInstance | null,
 		index: number
 	) => {
-		onClick({slotEntity: entity, slotType: slotType, card: card}, rowIndex, index)
+		onClick({slotEntity: entity, slotType: slotType, card: card}, player, rowIndex, index)
 	}
 
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
@@ -47,7 +48,7 @@ function Board({onClick, localGameState}: Props) {
 							player={direction === 'left' ? leftPlayer.entity : rightPlayer.entity}
 							rowState={row}
 							active={row.entity === player.board.activeRow}
-							onClick={(...args) => handleRowClick(rowIndex, ...args)}
+							onClick={(...args) => handleRowClick(rowIndex, player.entity, ...args)}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
 						/>
@@ -67,11 +68,19 @@ function Board({onClick, localGameState}: Props) {
 
 			<div className={css.actualBoard}>
 				{PlayerBoard(leftPlayer, 'left')}
-				<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
+				<Actions
+					localGameState={localGameState}
+					onClick={(value) => onClick(value, player.entity)}
+					id={css.actions}
+				/>
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>
 
-			<MobileActions localGameState={localGameState} onClick={onClick} id={css.actions} />
+			<MobileActions
+				localGameState={localGameState}
+				onClick={(value) => onClick(value, player.entity)}
+				id={css.actions}
+			/>
 		</div>
 	)
 }
