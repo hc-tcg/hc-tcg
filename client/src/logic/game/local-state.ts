@@ -47,13 +47,19 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
 		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
 
-		// When we place our first item card, lets make the attack button visible.
-		// This is a bit of a hack, but all primaries are one cost so if we can use the primary,
-		// we can definitely do something.
+		// When we place a item card, lets update the available actions to include what we have enough
+		// energy for.
 		let hermit = board.rows[row].hermit
+		let rowEnergy = board.rows[row].items.flatMap((item) => {
+			if (!item.card || !isItem(item.card.props)) return []
+			return item.card.props.energy
+		})
 		if (hermit.card && isHermit(hermit.card.props) && isItem(selectedCard.props)) {
-			if (hasEnoughEnergy(hermit.card.props.primary.cost, [selectedCard.props.type])) {
+			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy)) {
 				gameState.turn.availableActions.push('PRIMARY_ATTACK')
+			}
+			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy)) {
+				gameState.turn.availableActions.push('SECONDARY_ATTACK')
 			}
 		}
 	}
