@@ -199,10 +199,10 @@ const Deck = ({setMenuSection}: Props) => {
 	})
 	const validationMessage = validateDeck(loadedDeck.cards)
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter((card) => isHermit(card.props)),
-		items: loadedDeck.cards.filter((card) => isItem(card.props)),
-		attachableEffects: loadedDeck.cards.filter((card) => isAttach(card.props)),
-		singleUseEffects: loadedDeck.cards.filter((card) => isSingleUse(card.props)),
+		hermits: loadedDeck.cards.filter((card) => card.props.category === 'hermit'),
+		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
+		attachableEffects: loadedDeck.cards.filter((card) => card.props.category === 'attach'),
+		singleUseEffects: loadedDeck.cards.filter((card) => card.props.category === 'single_use'),
 	}
 
 	//MISC
