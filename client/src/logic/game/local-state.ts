@@ -101,7 +101,6 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 
 	if (playerState?.board) {
 		// Rows are changed by sending a hermit slot.
-		console.log('changing active row')
 		for (let row of playerState.board.rows) {
 			if (row.hermit.slot === action.payload.entity) {
 				playerState.board.activeRow = row.entity
