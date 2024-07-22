@@ -38,6 +38,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	slotEntity: SlotEntity
 	observerEntity: ObserverEntity | null
 
+	turnedOver: boolean
+
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
@@ -61,6 +63,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.card.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
+
+		this.turnedOver = false
 	}
 
 	/** A function that is used to order cards by thier slot's order.

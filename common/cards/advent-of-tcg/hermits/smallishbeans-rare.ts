@@ -4,10 +4,10 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SmallishbeansRare extends Card {
+class SmallishbeansAdventRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'smallishbeans_rare',
+		id: 'smallishbeansadvent_rare',
 		numericId: 219,
 		name: 'Joel',
 		expansion: 'advent_of_tcg',
@@ -60,4 +60,4 @@ class SmallishbeansRare extends Card {
 	}
 }
 
-export default SmallishbeansRare
+export default SmallishbeansAdventRare

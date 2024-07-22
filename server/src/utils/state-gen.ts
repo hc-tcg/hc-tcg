@@ -145,6 +145,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			props: WithoutFunctions(CARDS[card.props.numericId].props),
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
+			turnedOver: false,
 		}
 	})
 }
@@ -171,6 +172,7 @@ function getLocalCard<Props extends CardProps>(
 		props: card.card.props as WithoutFunctions<Props>,
 		entity: card.entity,
 		slot: card.slotEntity,
+		turnedOver: card.turnedOver,
 	}
 }
 

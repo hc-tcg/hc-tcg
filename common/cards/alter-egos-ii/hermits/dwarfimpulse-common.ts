@@ -18,7 +18,7 @@ class DwarfImpulseCommon extends Card {
 		health: 250,
 		primary: {
 			name: 'Beard Bash',
-			cost: ['farm'],
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},

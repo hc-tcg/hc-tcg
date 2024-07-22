@@ -7,7 +7,7 @@ import {Hermit} from '../../base/types'
 import {effect} from '../../../components/query'
 import UsedClockEffect from '../../../status-effects/used-clock'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
-import {TimeskipSecondaryAttackDisabledEffect} from '../../../status-effects/joehills-attack-disabled'
+import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/multiturn-attack-disabled'
 
 class JoeHillsRare extends Card {
 	props: Hermit = {
@@ -67,7 +67,7 @@ class JoeHillsRare extends Card {
 			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
 			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
 			game.components
-				.new(StatusEffectComponent, TimeskipSecondaryAttackDisabledEffect)
+				.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
 				.apply(component.entity)
 		})
 	}
