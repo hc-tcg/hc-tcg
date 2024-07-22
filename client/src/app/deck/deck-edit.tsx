@@ -199,6 +199,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
 				// Card Type Filter
 				(typeQuery === '' ||
+					!(isHermit(card.props) || isItem(card.props)) ||
 					((isHermit(card.props) || isItem(card.props)) && card.props.type.includes(typeQuery))) &&
 				// Card Expansion Filter
 				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
