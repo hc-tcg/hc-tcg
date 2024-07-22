@@ -1,11 +1,15 @@
-import {createStore, applyMiddleware, compose} from 'redux'
+import {configureStore, Tuple} from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from './root-saga'
-import rootReducer from './root-reducer'
+import rootReducer from 'root-reducer'
 
-export const sagaMiddleware = createSagaMiddleware()
-const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(sagaMiddleware)))
+const sagaMiddleware = createSagaMiddleware()
+
+export const store = configureStore({
+	reducer: rootReducer,
+	middleware: () => new Tuple(sagaMiddleware),
+})
+
 sagaMiddleware.run(rootSaga)
 
 export default store
