@@ -1,11 +1,28 @@
-import {createStore, applyMiddleware, compose} from 'redux'
+import {configureStore, Tuple} from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
 import rootSaga from './root-saga'
-import rootReducer from './root-reducer'
 
-export const sagaMiddleware = createSagaMiddleware()
-const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-export const store = createStore(rootReducer, composeEnhancers(applyMiddleware(sagaMiddleware)))
+import sessionReducer from 'logic/session/session-reducer'
+import gameReducer from 'logic/game/game-reducer'
+import socketReducer from 'logic/socket/socket-reducer'
+import matchmakingReducer from 'logic/matchmaking/matchmaking-reducer'
+import fbdbReducer from 'logic/fbdb/fbdb-reducer'
+import localSettingsReducer from 'logic/local-settings/local-settings-reducer'
+
+const sagaMiddleware = createSagaMiddleware()
+
+export const store = configureStore({
+	reducer: {
+		session: sessionReducer,
+		game: gameReducer,
+		socketStatus: socketReducer,
+		matchmaking: matchmakingReducer,
+		fbdb: fbdbReducer,
+		localSettings: localSettingsReducer,
+	},
+	middleware: () => new Tuple(sagaMiddleware),
+})
+
 sagaMiddleware.run(rootSaga)
 
 export default store

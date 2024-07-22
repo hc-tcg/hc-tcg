@@ -4,7 +4,7 @@ type SocketState = null | 'connecting' | 'connected'
 
 const defaultState: SocketState = null
 
-const loginReducer = (state = defaultState, action: AnyAction): SocketState => {
+const loginReducer = (state: SocketState = defaultState, action: AnyAction): SocketState => {
 	switch (action.type) {
 		case 'SOCKET_CONNECTING':
 			return 'connecting'
