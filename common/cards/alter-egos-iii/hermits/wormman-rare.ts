@@ -10,7 +10,7 @@ class WormManRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'wormman_rare',
-		numericId: 240,
+		numericId: 175,
 		name: 'Worm Man',
 		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
