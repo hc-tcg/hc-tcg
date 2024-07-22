@@ -77,7 +77,7 @@ function* pickWithSelectedSaga(
 		const actionType = slotToPlayCardAction[selectedCard.props.category]
 		if (!actionType) return
 
-		yield *makeCardLookPlayedHack(action, selectedCard)
+		yield* makeCardLookPlayedHack(action, selectedCard)
 
 		const actionData: PlayCardActionData = {
 			type: actionType,
