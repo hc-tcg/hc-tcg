@@ -31,6 +31,7 @@ import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import {PlayerEntity} from 'common/entities'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -82,11 +83,16 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickInfo: SlotInfo, row?: number, index?: number) => {
+	const handleBoardClick = (
+		pickInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number
+	) => {
 		console.log('Slot selected: ', pickInfo)
 
 		// This is a hack to make picked cards appear
-		dispatch(slotPicked(pickInfo, row, index))
+		dispatch(slotPicked(pickInfo, player, row, index))
 	}
 
 	const selectCard = (card: LocalCardInstance) => {

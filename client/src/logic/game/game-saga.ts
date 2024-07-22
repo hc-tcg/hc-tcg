@@ -30,6 +30,7 @@ import {
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
 import actionModalsSaga from './tasks/action-modals-saga'
+import {localEndTurn} from './local-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -61,6 +62,7 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.attack) {
 		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
+		yield* localEndTurn()
 		yield call(sendMsg, 'END_TURN')
 	} else if (turnAction.changeActiveHermit) {
 		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
