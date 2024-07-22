@@ -16,6 +16,7 @@ import {
 import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {LocalCardInstance} from 'common/types/server-requests'
+import { localPutCardInSlot, localRemoveCardFromHand } from '../local-state'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
@@ -35,35 +36,6 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	yield put(actionData)
 }
 
-function* makeCardLookPlayedHack(action: SlotPickedAction, selectedCard: LocalCardInstance) {
-	let playerState = yield* select(getPlayerState)
-	let board = playerState?.board
-	let slot = action.payload.slot
-	if (!board) return
-
-	let row = action.payload.row
-	let index = action.payload.index
-
-	if (slot.slotType === 'single_use') {
-		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
-	}
-	if (slot.slotType === 'hermit' && row !== undefined) {
-		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-
-		if (board.activeRow) {
-			board.activeRow = board.rows[row].entity
-		}
-	}
-	if (slot.slotType === 'attach' && row !== undefined) {
-		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
-	}
-	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
-		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
-	}
-
-	yield put({type: 'UPDATE_BOARD'})
-}
-
 function* pickWithSelectedSaga(
 	action: SlotPickedAction,
 	selectedCard: LocalCardInstance
@@ -77,7 +49,8 @@ function* pickWithSelectedSaga(
 		const actionType = slotToPlayCardAction[selectedCard.props.category]
 		if (!actionType) return
 
-		yield* makeCardLookPlayedHack(action, selectedCard)
+		yield* localPutCardInSlot(action, selectedCard)
+		yield* localRemoveCardFromHand(selectedCard)
 
 		const actionData: PlayCardActionData = {
 			type: actionType,
