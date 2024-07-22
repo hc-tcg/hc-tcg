@@ -78,7 +78,7 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 		// server sends the new state.
 		// This updates based on outside mutations because I am so confused by redux and I want to ship
 		// the release tomorrow.
-		case 'UPDATE_BOARD':
+		case 'UPDATE_GAME':
 			return state
 
 		default:
