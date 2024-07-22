@@ -170,18 +170,8 @@ export class BattleLogModel {
 
 			if (subAttack.getDamage() === 0) return reducer
 
-			const attackingHermitInfo = this.game.components.find(
-				CardComponent,
-				card.currentPlayer,
-				card.active,
-				card.slot(slot.hermit)
-			)
-			const targetHermitInfo = this.game.components.find(
-				CardComponent,
-				card.opponentPlayer,
-				card.active,
-				card.slot(slot.hermit)
-			)
+			const attackingHermitInfo = attack.attacker
+			const targetHermitInfo = attack.target.getHermit()
 
 			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
 
