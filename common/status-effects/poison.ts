@@ -40,7 +40,7 @@ class PoisonEffect extends CardStatusEffect {
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!attack.isTargetting(target) || attack.target?.health) return
+			if (!attack.isTargeting(target) || attack.target?.health) return
 			effect.remove()
 		})
 	}

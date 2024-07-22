@@ -23,7 +23,7 @@ class IronArmor extends Card {
 		let damageBlocked = 0
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
+			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 20) {
 				const damageReduction = Math.min(attack.calculateDamage(), 20 - damageBlocked)

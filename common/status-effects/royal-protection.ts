@@ -18,7 +18,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 		observer: ObserverComponent
 	): void {
 		observer.subscribe(target.player.hooks.beforeDefence, (attack) => {
-			if (!attack.isTargetting(target)) return
+			if (!attack.isTargeting(target)) return
 
 			attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
 		})

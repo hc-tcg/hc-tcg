@@ -108,7 +108,7 @@ export class AttackModel {
 	}
 
 	/** Returns true if this attack is targetting a card in a specific row */
-	public isTargetting(card: CardComponent) {
+	public isTargeting(card: CardComponent) {
 		return card.slot.inRow() && card.slot.row.entity === this.target?.entity
 	}
 

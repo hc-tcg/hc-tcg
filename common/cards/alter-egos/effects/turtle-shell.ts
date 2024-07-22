@@ -42,7 +42,7 @@ class TurtleShell extends Card {
 			if (!component.slot.inRow()) return
 			// Only block damage when we are active
 			const isActive = player.activeRowEntity === component.slot.row.entity
-			if (!isActive || !attack.isTargetting(component)) return
+			if (!isActive || !attack.isTargeting(component)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 
