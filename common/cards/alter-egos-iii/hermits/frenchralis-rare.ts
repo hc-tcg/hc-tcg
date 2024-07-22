@@ -27,7 +27,7 @@ class FrenchralisRare extends Card {
 			name: 'Oh là là!',
 			cost: ['prankster', 'prankster'],
 			damage: 80,
-			power: 'If you have 1 life remaining, this attack does double damage.',
+			power: 'If you have one life remaining, this attack does double damage.',
 		},
 	}
 
