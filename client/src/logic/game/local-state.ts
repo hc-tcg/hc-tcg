@@ -110,6 +110,8 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 		}
 	}
 
+	yield* localRemoveAttackOptions()
+
 	yield* put({type: 'UPDATE_GAME'})
 }
 
