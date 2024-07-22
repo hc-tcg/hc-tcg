@@ -34,7 +34,6 @@ import {
 	localApplyEffect,
 	localChangeActiveHermit,
 	localEndTurn,
-	localRemoveAttackOptions,
 	localRemoveEffect,
 } from './local-state'
 
@@ -69,7 +68,6 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.customModal) {
 		yield call(sendMsg, 'MODAL_REQUEST', turnAction.customModal.payload)
 	} else if (turnAction.attack) {
-		yield* localRemoveAttackOptions()
 		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
 		yield* localEndTurn()
