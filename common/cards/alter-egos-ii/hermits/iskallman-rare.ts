@@ -15,7 +15,7 @@ class IskallmanRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 0,
 		type: 'explorer',
 		health: 260,
 		primary: {
