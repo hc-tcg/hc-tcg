@@ -12,7 +12,7 @@ class EvilJevinRare extends Card {
 		id: 'eviljevin_rare',
 		numericId: 153,
 		name: 'Evil Jevin',
-		expansion: 'alter_egos_ii',
+		expansion: 'alter_egos_iii',
 		palette: 'alter_egos',
 		background: 'alter_egos',
 		rarity: 'rare',
