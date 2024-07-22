@@ -16,7 +16,7 @@ import {
 import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {LocalCardInstance} from 'common/types/server-requests'
-import { localPutCardInSlot, localRemoveCardFromHand } from '../local-state'
+import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
