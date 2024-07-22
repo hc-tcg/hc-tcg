@@ -37,8 +37,13 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 			board.activeRow = board.rows[row].entity
 		}
 
-		// If we placed a hermit and we can't end our turn, we can probably attack and end our turn now.
-		gameState.turn.availableActions.push('END_TURN', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+		// If we placed a hermit and its not the first turn, we can probably do an attack so lets make the
+		// button visible
+		if (gameState.turn.turnNumber > 1) {
+			gameState.turn.availableActions.push('PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+		}
+		// If we couldn't before, we can always end our turn after playing a hermit
+		gameState.turn.availableActions.push('END_TURN')
 	}
 	if (slot.slotType === 'attach' && row !== undefined) {
 		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
@@ -70,7 +75,16 @@ export function* localRemoveAttackOptions() {
 
 	if (localPlayerState?.turn)
 		localPlayerState.turn.availableActions = localPlayerState.turn.availableActions.filter(
-			(action) => !['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(action)
+			(action) =>
+				![
+					'SINGLE_USE_ATTACK',
+					'PRIMARY_ATTACK',
+					'SECONDARY_ATTACK',
+					'PLAY_HERMIT_CARD',
+					'PLAY_ITEM_CARD',
+					'PLAY_EFFECT_CARD',
+					'PLAY_SINGLE_USE_CARD',
+				].includes(action)
 		)
 
 	yield* put({type: 'UPDATE_GAME'})
