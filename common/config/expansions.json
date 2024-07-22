@@ -8,5 +8,5 @@
 		"advent_of_tcg": "Advent of TCG",
 		"dream": "Dream"
 	},
-	"disabled": ["advent_of_tcg", "dream"]
+	"disabled": ["advent_of_tcg", "dream", "season_x", "alter_egos_iii"]
 }
