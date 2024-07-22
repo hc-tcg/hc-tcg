@@ -63,9 +63,9 @@ export type PlayCardLog = {
 		name: string
 		/**The id of this card */
 		id: string
-		/**The name of the Hermit Card on the row the card was placed.*/
+		/**The name of the Hermit Card on the row this card was placed.*/
 		hermitCard: string
-		/**The slot type the card was placed on.*/
+		/**The slot type this card was placed on.*/
 		slotType: string
 	}
 	/**Information about the pick for the card.*/
@@ -74,7 +74,7 @@ export type PlayCardLog = {
 		rowIndex: string
 		/**Name of the card in the slot that was picked.*/
 		name: string
-		/**The id of this card */
+		/**The id of the picked card */
 		id: string
 		/**The name of the Hermit Card on the row that was picked.*/
 		hermitCard: string

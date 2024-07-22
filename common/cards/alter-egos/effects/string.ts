@@ -24,7 +24,7 @@ class String extends Card {
 			query.not(query.slot.frozen)
 		),
 		log: (values) =>
-			`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
+			`$o{${values.opponent}|You}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`,
 	}
 }
 
