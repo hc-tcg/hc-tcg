@@ -18,7 +18,6 @@ class CurseOfBindingEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT')
 		})
-
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
