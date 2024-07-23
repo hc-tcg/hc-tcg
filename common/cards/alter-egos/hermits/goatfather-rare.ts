@@ -55,6 +55,7 @@ class GoatfatherRare extends Card {
 			game.components
 				.filter(
 					RowComponent,
+					query.row.opponentPlayer,
 					(_game, row) =>
 						opponentActiveHermit !== null &&
 						opponentActiveHermit.slot.inRow() &&
