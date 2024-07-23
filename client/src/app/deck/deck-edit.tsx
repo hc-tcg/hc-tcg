@@ -168,6 +168,7 @@ const ALL_CARDS = sortCards(
 			props: WithoutFunctions(card.props),
 			entity: newEntity('deck_editor_card'),
 			slot: null,
+			attackHint: null,
 			turnedOver: false,
 		})
 	)

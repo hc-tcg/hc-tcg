@@ -16,7 +16,7 @@ class NetheriteSword extends Card {
 		tokens: 3,
 		description: "Do 60hp damage to your opponent's active Hermit.",
 		hasAttack: true,
-		attackPreview: (_game) => "60",
+		attackPreview: (_game) => '60',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

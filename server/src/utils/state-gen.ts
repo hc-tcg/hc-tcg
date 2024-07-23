@@ -179,7 +179,7 @@ function getLocalCard<Props extends CardProps>(
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
-		attackPreview: attackPreview,
+		attackHint: attackPreview,
 	}
 }
 
