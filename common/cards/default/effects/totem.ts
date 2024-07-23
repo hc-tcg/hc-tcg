@@ -34,9 +34,10 @@ class Totem extends Card {
 
 			if (!target) return
 
-			target.health = 10
-
 			let targetHermit = target.getHermit()
+			if (targetHermit?.isAlive()) return
+
+			target.health = 10
 
 			game.components
 				.filter(StatusEffectComponent, effect.targetEntity(targetHermit?.entity))
