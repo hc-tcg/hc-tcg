@@ -21,7 +21,7 @@ class ChainmailArmor extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargetting(component)) {
+			if (!attack.isTargeting(component)) {
 				return
 			}
 

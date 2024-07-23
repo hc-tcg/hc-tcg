@@ -29,6 +29,11 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 		return 'FAILURE_INVALID_SLOT'
 	}
 
+	const card = slotInfo.getCard()
+
+	// Because Worm Man, all cards need to be flipped over to normal once they're picked
+	if (card) card.turnedOver = false
+
 	pickRequest.onResult(slotInfo)
 	let player = game.components.find(
 		PlayerComponent,

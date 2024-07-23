@@ -45,9 +45,8 @@ class HotguyRare extends Card {
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!usingSecondaryAttack) return
-			let bow = game.components.find(CardComponent, card.is(Bow))
-			if (bow) {
-				attack.addDamage(bow.entity, attack.getDamage())
+			if (attack.attacker instanceof CardComponent && attack.attacker.card instanceof Bow) {
+				attack.addDamage(attack.attacker.entity, attack.getDamage())
 			}
 		})
 	}

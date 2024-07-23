@@ -15,7 +15,7 @@ class IskallmanRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 0,
 		type: 'explorer',
 		health: 260,
 		primary: {
@@ -101,12 +101,13 @@ class IskallmanRare extends Card {
 
 		// Heals the afk hermit *before* we actually do damage
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary' || attack.isBacklash)
+				return
 			if (!pickedAfkHermit?.inRow()) return
 
 			const backlashAttack = game.newAttack({
 				attacker: component.entity,
-				target: player.activeRow?.entity,
+				target: player.activeRowEntity,
 				type: 'effect',
 				isBacklash: true,
 			})

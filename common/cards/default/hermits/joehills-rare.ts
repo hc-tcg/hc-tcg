@@ -4,10 +4,10 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {effect} from '../../../components/query'
+import * as query from '../../../components/query'
 import UsedClockEffect from '../../../status-effects/used-clock'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
-import {TimeskipSecondaryAttackDisabledEffect} from '../../../status-effects/joehills-attack-disabled'
+import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/multiturn-attack-disabled'
 
 class JoeHillsRare extends Card {
 	props: Hermit = {
@@ -50,8 +50,8 @@ class JoeHillsRare extends Card {
 			if (
 				game.components.exists(
 					StatusEffectComponent,
-					effect.is(UsedClockEffect),
-					effect.targetEntity(component.entity)
+					query.effect.is(UsedClockEffect),
+					query.effect.targetEntity(component.entity)
 				)
 			) {
 				return
@@ -66,9 +66,14 @@ class JoeHillsRare extends Card {
 
 			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
 			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
+
 			game.components
-				.new(StatusEffectComponent, TimeskipSecondaryAttackDisabledEffect)
-				.apply(component.entity)
+				.filter(CardComponent, query.card.currentPlayer, query.card.is(JoeHillsRare))
+				.forEach((joe) =>
+					game.components
+						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
+						.apply(joe.entity)
+				)
 		})
 	}
 }

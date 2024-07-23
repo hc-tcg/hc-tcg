@@ -1,3 +1,4 @@
+import {PlayerEntity} from 'common/entities'
 import {LocalCurrentCoinFlip, LocalGameState, Message} from 'common/types/game-state'
 import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlip} from 'common/types/game-state'
 import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
@@ -36,9 +37,19 @@ export const setOpenedModal = (id: string | null, info: any = null) => ({
 	payload: id === null ? null : {id, info},
 })
 
-export const slotPicked = (slotInfo: SlotInfo) => ({
+export const slotPicked = (
+	slotInfo: SlotInfo,
+	player: PlayerEntity,
+	row?: number,
+	index?: number
+) => ({
 	type: 'SLOT_PICKED' as const,
-	payload: {slotInfo},
+	payload: {
+		slot: slotInfo,
+		player: player,
+		row: row,
+		index: index,
+	},
 })
 
 export const forfeit = () => ({

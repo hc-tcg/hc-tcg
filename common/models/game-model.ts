@@ -263,10 +263,10 @@ export class GameModel {
 		const slotBCards = this.components.filter(CardComponent, card.slotEntity(slotB.entity))
 
 		slotACards.forEach((card) => {
-			card.slotEntity = slotB.entity
+			card.attach(slotB)
 		})
 		slotBCards.forEach((card) => {
-			card.slotEntity = slotA.entity
+			card.attach(slotA)
 		})
 	}
 

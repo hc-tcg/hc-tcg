@@ -29,6 +29,7 @@ export type CardProps = {
 export type Item = CardProps & {
 	item: null
 	type: TypeT
+	energy: Array<TypeT>
 }
 
 export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
@@ -49,6 +50,20 @@ export function isHealth(
 	return props !== null && 'health' in props
 }
 
+export type Description = CardProps & {
+	description: string
+}
+
+export function hasDescription(
+	props: WithoutFunctions<CardProps>
+): props is WithoutFunctions<Description>
+export function hasDescription(props: CardProps): props is Description
+export function hasDescription(
+	props: CardProps | WithoutFunctions<CardProps> | null
+): props is Description {
+	return props !== null && 'description' in props
+}
+
 export type Hermit = HasHealth & {
 	hermit: null
 	type: TypeT
@@ -64,10 +79,10 @@ export function isHermit(props: CardProps | WithoutFunctions<CardProps> | null):
 	return props !== null && 'hermit' in props
 }
 
-export type Attach = CardProps & {
-	attachable: null
-	description: string
-}
+export type Attach = CardProps &
+	Description & {
+		attachable: null
+	}
 
 export function isAttach(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Attach>
 export function isAttach(props: CardProps): props is Attach
@@ -75,12 +90,12 @@ export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null):
 	return props !== null && 'attachable' in props
 }
 
-export type SingleUse = CardProps & {
-	singleUse: null
-	showConfirmationModal: boolean
-	hasAttack: boolean
-	description: string
-}
+export type SingleUse = CardProps &
+	Description & {
+		singleUse: null
+		showConfirmationModal: boolean
+		hasAttack: boolean
+	}
 
 export function isSingleUse(
 	props: WithoutFunctions<CardProps>

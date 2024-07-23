@@ -29,6 +29,7 @@ export class PlayerComponent {
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
+	deckedOut: boolean
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -128,6 +129,7 @@ export class PlayerComponent {
 		this.lives = 3
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
+		this.deckedOut = false
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
@@ -215,7 +217,9 @@ export class PlayerComponent {
 	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
-
+		if (cards.length < amount) {
+			this.deckedOut = true
+		}
 		cards.forEach((card) => card.draw())
 		return cards
 	}
@@ -254,12 +258,12 @@ export class PlayerComponent {
 			const newHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(currentActiveRow?.entity))
+				query.card.slot(query.slot.rowIs(newRow.entity))
 			)
 			const oldHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(newRow.entity))
+				query.card.slot(query.slot.rowIs(currentActiveRow?.entity))
 			)
 			this.game.battleLog.addChangeRowEntry(this, newRow.entity, oldHermit, newHermit)
 		}

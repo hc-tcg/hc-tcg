@@ -1,7 +1,7 @@
 // common cards
 import BeetlejhostCommon from './beetlejhost-common'
 import EvilJevinCommon from './eviljevin-common'
-import PoultrymanCommon from './poultryman-common'
+import PoultryManCommon from './poultryman-common'
 // rare & ultra rare cards
 import LlamadadRare from './llamadad-rare'
 import PotatoBoyRare from './potatoboy-rare'
@@ -26,7 +26,7 @@ const hermitCardClasses: Array<CardClass> = [
 	JinglerRare,
 	LlamadadRare,
 	PotatoBoyRare,
-	PoultrymanCommon,
+	PoultryManCommon,
 	RenbobRare,
 ]
 

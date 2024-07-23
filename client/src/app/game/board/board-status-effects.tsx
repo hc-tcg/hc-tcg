@@ -44,7 +44,6 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 		})
 	}
 
-	console.log(shouldDim)
 	// We want to show the newest status effect first in the list.
 	statusEffects = [...statusEffects].reverse()
 
@@ -60,19 +59,7 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 		]
 	}
 
-	return (
-		<div>
-			<div className={classes}>{sidebarStatusEffects.slice(0, 4)}</div>
-			<div className={css.damageStatusEffectContainer}>
-				{statusEffects.map((effect) => {
-					if (effect.props.type !== 'damage') return
-					return (
-						<StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
-					)
-				})}
-			</div>
-		</div>
-	)
+	return <div className={classes}>{sidebarStatusEffects.slice(0, 4)}</div>
 }
 
 export default StatusEffectContainer

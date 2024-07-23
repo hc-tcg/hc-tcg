@@ -38,6 +38,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	slotEntity: SlotEntity
 	observerEntity: ObserverEntity | null
 
+	turnedOver: boolean
+
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
@@ -61,6 +63,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.card.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
+
+		this.turnedOver = false
 	}
 
 	/** A function that is used to order cards by thier slot's order.
@@ -121,27 +125,25 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached
 	 * to a board slot and is not currently on the player's side of the board. */
 	public attach(component: SlotComponent) {
-		let oldCard = component.getCard()
-		if (oldCard) oldCard.discard()
+		let oldSlotWasOnBoard = this.slot.onBoard()
+		let reattach = !oldSlotWasOnBoard || this.player.entity !== component.player.entity
 
 		if (this.slot.onBoard()) {
 			if (!this.observerEntity)
 				throw new Error('All cards attached to the board should have an observer')
 			let observer = this.game.components.get(this.observerEntity)
 			if (!observer) throw new Error('Observer expected to be in ECS')
-			observer.unsubscribeFromEverything()
-			this.card.onDetach(this.game, this, observer)
-			this.player.hooks.onDetach.call(this)
-		}
 
-		let oldPlayer = this.slot.player.entity
-		let oldSlotWasOnBoard = this.slot.onBoard()
+			if (reattach) {
+				observer.unsubscribeFromEverything()
+				this.card.onDetach(this.game, this, observer)
+				this.player.hooks.onDetach.call(this)
+			}
+		}
 
 		this.slotEntity = component.entity
 
-		let runAttach = !oldSlotWasOnBoard || oldPlayer !== this.player.entity
-
-		if (runAttach && component.onBoard()) {
+		if (reattach && component.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
 			this.card.onAttach(this.game, this, observer)

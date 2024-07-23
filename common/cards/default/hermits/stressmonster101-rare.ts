@@ -34,19 +34,22 @@ class StressMonster101Rare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary' || attack.isBacklash)
+				return
 			if (!component.slot.inRow()) return
 
 			const backlashAttack = game.newAttack({
 				attacker: component.entity,
-				target: game.opponentPlayer.activeRowEntity,
+				target: player.activeRowEntity,
 				type: 'secondary',
 				isBacklash: true,
 				log: (values) => ` and took ${values.damage} backlash damage`,
 			})
 			const attackDamage = component.slot.row.health
-			attack.addDamage(component.entity, attackDamage || 0)
-			backlashAttack.addDamage(component.entity, attackDamage || 0)
+			console.log(attackDamage)
+			if (attackDamage === null) return
+			attack.addDamage(component.entity, attackDamage)
+			backlashAttack.addDamage(component.entity, attackDamage)
 
 			attack.addNewAttack(backlashAttack)
 		})

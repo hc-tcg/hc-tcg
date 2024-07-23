@@ -32,18 +32,21 @@ class ThornsII extends Card {
 			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
 			if (!component.slot.inRow()) return
-			if (!attack.isTargetting(component)) return
+			if (!attack.isTargeting(component)) return
 
 			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
+
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.attacker.slot.inRow()) return
 
 			hasTriggered = true
 
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: component.slot.row.entity,
+					target: attack.attacker.slot.rowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
@@ -55,6 +58,10 @@ class ThornsII extends Card {
 			)
 
 			executeExtraAttacks(game, [backlashAttack])
+		})
+
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
+			hasTriggered = false
 		})
 	}
 }
