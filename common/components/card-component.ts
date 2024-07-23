@@ -125,25 +125,23 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached
 	 * to a board slot and is not currently on the player's side of the board. */
 	public attach(component: SlotComponent) {
-		let oldSlotWasOnBoard = this.slot.onBoard()
-		let reattach = !oldSlotWasOnBoard || this.player.entity !== component.player.entity
+		// Stores if the card is moving to the slot's player's board or leaving the slot's player's board.
+		let changingBoards =
+			this.slot.onBoard() !== component.onBoard() || this.player.entity !== component.player.entity
 
-		if (this.slot.onBoard()) {
+		if (this.slot.onBoard() && changingBoards) {
 			if (!this.observerEntity)
 				throw new Error('All cards attached to the board should have an observer')
 			let observer = this.game.components.get(this.observerEntity)
 			if (!observer) throw new Error('Observer expected to be in ECS')
-
-			if (reattach) {
-				observer.unsubscribeFromEverything()
-				this.card.onDetach(this.game, this, observer)
-				this.player.hooks.onDetach.call(this)
-			}
+			observer.unsubscribeFromEverything()
+			this.card.onDetach(this.game, this, observer)
+			this.player.hooks.onDetach.call(this)
 		}
 
 		this.slotEntity = component.entity
 
-		if (reattach && component.onBoard()) {
+		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
 			this.card.onAttach(this.game, this, observer)
