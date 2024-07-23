@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {AmnesiaEffect} from '../../../status-effects/amnesia'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
@@ -42,17 +43,9 @@ class ArchitectFalseRare extends Card {
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			observer.oneShot(opponentPlayer.hooks.onAttack, (attack) => {
-				if (attack.type === 'primary') {
-					game.components
-						.new(StatusEffectComponent, MultiturnPrimaryAttackDisabledEffect)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
-				} else if (attack.type === 'secondary') {
-					game.components
-						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
-				}
-			})
+			const opponentActiveHermit = opponentPlayer.activeRow?.getHermit()?.entity
+
+			game.components.new(StatusEffectComponent, AmnesiaEffect).apply(opponentActiveHermit)
 		})
 	}
 }
