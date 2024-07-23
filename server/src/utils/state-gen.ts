@@ -166,13 +166,20 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 }
 
 function getLocalCard<Props extends CardProps>(
+	game: GameModel,
 	card: CardComponent<Props>
 ): LocalCardInstance<Props> {
+	let attackPreview = null
+	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+		attackPreview = card.props.attackPreview(game)
+	}
+
 	return {
 		props: card.card.props as WithoutFunctions<Props>,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
+		attackPreview: attackPreview,
 	}
 }
 
@@ -180,7 +187,7 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 	if (modal.modalId == 'selectCards') {
 		return {
 			...modal.payload,
-			cards: modal.payload.cards.map((entity) => getLocalCard(game.components.get(entity)!)),
+			cards: modal.payload.cards.map((entity) => getLocalCard(game, game.components.get(entity)!)),
 		}
 	} else if (modal.modalId === 'copyAttack') {
 		let hermitCard = game.components.get(modal.payload.hermitCard)!
@@ -191,7 +198,7 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 
 		return {
 			...modal.payload,
-			hermitCard: getLocalCard(hermitCard),
+			hermitCard: getLocalCard(game, hermitCard),
 			blockedActions: blockedActions,
 		}
 	}
@@ -209,7 +216,7 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 function getLocalCoinFlip(game: GameModel, coinFlip: CurrentCoinFlip): LocalCurrentCoinFlip {
 	return {
 		...coinFlip,
-		card: getLocalCard(game.components.get(coinFlip.card)!),
+		card: getLocalCard(game, game.components.get(coinFlip.card)!),
 	}
 }
 
@@ -224,7 +231,10 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 	let board = {
 		activeRow:
 			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
-		singleUse: {slot: singleUseSlot, card: singleUseCard ? getLocalCard(singleUseCard) : null},
+		singleUse: {
+			slot: singleUseSlot,
+			card: singleUseCard ? getLocalCard(game, singleUseCard) : null,
+		},
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components
 			.filter(RowComponent, row.player(playerState.entity))
@@ -238,7 +248,7 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 					let itemCard = game.components.find(CardComponent, card.slotEntity(itemSlot.entity))
 					return {
 						slot: itemSlot.entity,
-						card: itemCard ? getLocalCard(itemCard) : null,
+						card: itemCard ? getLocalCard(game, itemCard) : null,
 					}
 				})
 
@@ -251,11 +261,11 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 						entity: row.entity,
 						hermit: {
 							slot: hermitSlot.entity,
-							card: hermitCard ? (getLocalCard(hermitCard) as any) : null,
+							card: hermitCard ? (getLocalCard(game, hermitCard) as any) : null,
 						},
 						attach: {
 							slot: attachSlot.entity,
-							card: attachCard ? (getLocalCard(attachCard) as any) : null,
+							card: attachCard ? (getLocalCard(game, attachCard) as any) : null,
 						},
 						items: items,
 						health: row.health,
@@ -348,14 +358,14 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		hand: game.components
 			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.hand))
 			.sort(CardComponent.compareOrder)
-			.map(getLocalCard),
+			.map((card) => getLocalCard(game, card)),
 		pileCount: game.components.filter(
 			CardComponent,
 			card.slot(slot.player(playerState.entity), slot.deck)
 		).length,
 		discarded: game.components
 			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.discardPile))
-			.map(getLocalCard),
+			.map((card) => getLocalCard(game, card)),
 
 		// ids
 		playerId: player.id,
@@ -367,7 +377,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()
-			.map(([card, place]) => [getLocalCard(card), place]),
+			.map(([card, place]) => [getLocalCard(game, card), place]),
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,

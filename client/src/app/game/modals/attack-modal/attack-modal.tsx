@@ -73,6 +73,7 @@ function AttackModal({closeModal}: Props) {
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
 				attackInfo={playerHermitInfo.props.primary}
 				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackPreview || undefined}
 				onClick={primaryAttack}
 			/>
 		)
@@ -86,6 +87,7 @@ function AttackModal({closeModal}: Props) {
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
 				attackInfo={playerHermitInfo.props.secondary}
 				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackPreview || undefined}
 				onClick={secondaryAttack}
 			/>
 		)

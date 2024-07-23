@@ -9,13 +9,22 @@ type SingleUseAttackInfo = {
 type Props = {
 	attackInfo: HermitAttackInfo | SingleUseAttackInfo
 	singleUseIcon?: string
+	singleUseDamage?: string
 	onClick: () => void
 	icon: string
 	name: string
 	extra?: boolean
 }
 
-const Attack = ({attackInfo, singleUseIcon, onClick, name, icon, extra}: Props) => {
+const Attack = ({
+	attackInfo,
+	singleUseIcon,
+	singleUseDamage,
+	onClick,
+	name,
+	icon,
+	extra,
+}: Props) => {
 	let attackDescription
 	let imageClass
 
@@ -30,10 +39,11 @@ const Attack = ({attackInfo, singleUseIcon, onClick, name, icon, extra}: Props) 
 							[css.specialMove]: !!attackInfo?.power,
 						})}
 					>
-						{attackInfo?.damage}
+						{attackInfo?.damage}{' '}
 					</span>
+					{singleUseDamage && <span>+ {singleUseDamage}</span>}
 				</p>
-				{attackInfo?.power && <p>{attackInfo?.power}</p>}
+				{attackInfo?.power && <p>{attackInfo?.power}</p>}{' '}
 			</div>
 		)
 	} else {

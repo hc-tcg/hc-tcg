@@ -19,6 +19,7 @@ class Trident extends Card {
 		description:
 			"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
 		hasAttack: true,
+		attackPreview: (_game) => '30',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, PlayerComponent, RowComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -19,37 +19,40 @@ class Anvil extends Card {
 		description:
 			'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
 		hasAttack: true,
+		attackPreview: (game) => `30 + 10 x ${this.getTargetHermis(game, game.currentPlayer).length}`,
+	}
+
+	getTargetHermis(game: GameModel, player: PlayerComponent) {
+		return game.components.filter(
+			RowComponent,
+			row.opponentPlayer,
+			(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
+		)
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			return game.components
-				.filter(
-					RowComponent,
-					row.opponentPlayer,
-					(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
-				)
-				.reduce((attacks: null | AttackModel, row) => {
-					const newAttack = game
-						.newAttack({
-							attacker: component.entity,
-							target: row.entity,
-							type: 'effect',
-							log: (values) =>
-								row.index === player.activeRow?.index
-									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: `, ${values.target} for ${values.damage} damage`,
-						})
-						.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
-					if (attacks === null) {
-						return newAttack
-					} else {
-						attacks.addNewAttack(newAttack)
-						return attacks
-					}
-				}, null)
+			return this.getTargetHermis(game, player).reduce((attacks: null | AttackModel, row) => {
+				const newAttack = game
+					.newAttack({
+						attacker: component.entity,
+						target: row.entity,
+						type: 'effect',
+						log: (values) =>
+							row.index === player.activeRow?.index
+								? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+								: `, ${values.target} for ${values.damage} damage`,
+					})
+					.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
+				if (attacks === null) {
+					return newAttack
+				} else {
+					attacks.addNewAttack(newAttack)
+					return attacks
+				}
+			}, null)
 		})
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {
