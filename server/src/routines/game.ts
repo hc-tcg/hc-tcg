@@ -469,7 +469,7 @@ function* turnActionsSaga(game: GameModel) {
 			// Handle timeout
 			if (raceResult.timeout) {
 				// @TODO this works, but could be cleaned
-				yield *endTurnSaga(game)
+				yield* endTurnSaga(game)
 				const currentAttack = game.state.turn.currentAttack
 				let reset = false
 
