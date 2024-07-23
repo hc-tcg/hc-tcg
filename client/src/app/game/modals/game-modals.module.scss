@@ -107,11 +107,28 @@
 		border-bottom: 2px solid var(--gray-700);
 		background: var(--gray-100);
 
-		img {
-			flex: 0 0 auto;
+		.hermitImage {
+			display: absolute;
 			margin-top: 5px;
 			width: 85px;
 			height: auto;
+		}
+
+		.effectImage {
+			display: absolute;
+			margin-top: -2px;
+			width: $size;
+			height: $size;
+		}
+
+		.singleUseIcon {
+			position: absolute;
+			z-index: 100;
+			width: 35px;
+			height: 35px;
+			transform: translate(20px, 25px);
+			filter: drop-shadow(0 0 2px black);
+			overflow: hidden;
 		}
 	}
 

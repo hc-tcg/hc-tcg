@@ -2,28 +2,26 @@ import cn from 'classnames'
 import {HermitAttackInfo} from 'common/types/cards'
 import css from '../game-modals.module.scss'
 
+type SingleUseAttackInfo = {
+	description: string
+}
+
 type Props = {
-	attackInfo: HermitAttackInfo | null
+	attackInfo: HermitAttackInfo | SingleUseAttackInfo
+	singleUseIcon?: string
 	onClick: () => void
 	icon: string
 	name: string
 	extra?: boolean
 }
 
-const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
-	return (
-		<button key={name} className={cn(css.attack, {[css.extra]: extra})} onClick={onClick}>
-			{/* PORTRAIT */}
-			<div
-				className={cn(css.portrait, {
-					[css.effectIcon]: !attackInfo,
-					[css.hermitIcon]: !!attackInfo,
-				})}
-			>
-				<img src={icon} />
-			</div>
+const Attack = ({attackInfo, singleUseIcon, onClick, name, icon, extra}: Props) => {
+	let attackDescription
+	let imageClass
 
-			{/* ATTACK NAME */}
+	if ('damage' in attackInfo) {
+		imageClass = css.hermitImage
+		attackDescription = (
 			<div className={css.info}>
 				<p className={css.name}>
 					{name} -{' '}
@@ -37,6 +35,32 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 				</p>
 				{attackInfo?.power && <p>{attackInfo?.power}</p>}
 			</div>
+		)
+	} else {
+		imageClass = css.effectImage
+		attackDescription = (
+			<div className={css.info}>
+				<p className={css.name}>{name}</p>
+				{attackInfo.description}
+			</div>
+		)
+	}
+
+	return (
+		<button key={name} className={cn(css.attack, {[css.extra]: extra})} onClick={onClick}>
+			{/* PORTRAIT */}
+			<div
+				className={cn(css.portrait, {
+					[css.effectIcon]: !attackInfo,
+					[css.hermitIcon]: !!attackInfo,
+				})}
+			>
+				<img src={icon} className={imageClass} />
+				{singleUseIcon && <img src={singleUseIcon} className={css.singleUseIcon} />}
+			</div>
+
+			{/* ATTACK NAME */}
+			{attackDescription}
 		</button>
 	)
 }
