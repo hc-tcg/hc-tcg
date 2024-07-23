@@ -43,19 +43,19 @@ class VintageBeefUltraRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const hasBdubs = game.components.find(
+			const hasBdubs = game.components.exists(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.is(BdoubleO100Common, BdoubleO100Rare),
 				query.card.attached
 			)
-			const hasDoc = game.components.find(
+			const hasDoc = game.components.exists(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.is(Docm77Common, Docm77Rare),
 				query.card.attached
 			)
-			const hasEtho = game.components.find(
+			const hasEtho = game.components.exists(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare),
