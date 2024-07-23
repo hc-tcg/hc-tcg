@@ -9,14 +9,14 @@ type Props = {
 }
 
 const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
-	let targetClass = statusEffect.target.type === 'player' ? css.player : css.card
+	let targetClass = statusEffect.target.type === 'global' ? css.player : css.card
 
 	return (
 		<div className={css.statusEffectTooltip}>
 			<div className={css.topLine}>
 				<div className={css.name}>{statusEffect.props.name} </div>
 				<div className={classnames(css.tooltip, targetClass)}>
-					{statusEffect.target.type === 'card' ? 'Hermit' : 'Player'}
+					{statusEffect.target.type === 'card' ? 'Hermit' : 'Global'}
 				</div>
 			</div>
 			<div className={css.description}>{statusEffect.props.description}</div>
