@@ -146,7 +146,7 @@
 		}
 
 		.singleUseMove {
-			color: #ffffff;
+			color: hsl(0deg, 90%, 50%);
 		}
 	}
 
@@ -174,12 +174,10 @@
 }
 
 .singleUseIcon {
-	vertical-align: top;
-	margin-right: 2px;
-	margin-top: -1px;
-	filter: drop-shadow(0 0 2px black);
-	width: 1.6rem;
-	height: auto;
+	height: 1.8rem;
+	transform: translateY(0.45rem);
+	pointer-events: none;
+	margin-top: -0.6rem;
 }
 
 .hermitOptions {

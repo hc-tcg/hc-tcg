@@ -146,6 +146,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 			turnedOver: false,
+			attackHint: null,
 		}
 	})
 }

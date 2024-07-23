@@ -231,6 +231,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					entity: newEntity('card-entity') as CardEntity,
 					slot: null,
 					turnedOver: false,
+					attackHint: null,
 				},
 			],
 		}))
