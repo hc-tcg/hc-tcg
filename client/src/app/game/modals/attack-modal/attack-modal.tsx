@@ -60,6 +60,7 @@ function AttackModal({closeModal}: Props) {
 				name={`${namePrefix}${singleUseInfo.props.name}`}
 				icon={`/images/effects/${singleUseInfo?.props.id}.png`}
 				attackInfo={{description: singleUseProps?.description || ''}}
+				singleUseDamage={singleUseInfo.attackPreview || undefined}
 				onClick={effectAttack}
 			/>
 		)

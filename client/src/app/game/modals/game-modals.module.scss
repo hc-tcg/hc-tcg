@@ -120,16 +120,6 @@
 			width: $size;
 			height: $size;
 		}
-
-		.singleUseIcon {
-			position: absolute;
-			z-index: 100;
-			width: 32px;
-			height: 32px;
-			transform: translate(23px, 31px);
-			filter: drop-shadow(0 0 2px black);
-			overflow: hidden;
-		}
 	}
 
 	.info {
@@ -152,7 +142,11 @@
 		}
 
 		.specialMove {
-			color: hsl(220deg, 90%, 50%);
+			color: rgb(74, 128, 255);
+		}
+
+		.singleUseMove {
+			color: #ffffff;
 		}
 	}
 
@@ -177,6 +171,15 @@
 		height: 32px;
 		width: 32px;
 	}
+}
+
+.singleUseIcon {
+	vertical-align: top;
+	margin-right: 2px;
+	margin-top: -1px;
+	filter: drop-shadow(0 0 2px black);
+	width: 1.6rem;
+  height: auto;
 }
 
 .hermitOptions {

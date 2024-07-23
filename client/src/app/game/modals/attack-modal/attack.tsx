@@ -41,7 +41,12 @@ const Attack = ({
 					>
 						{attackInfo?.damage}{' '}
 					</span>
-					{singleUseDamage && <span>+ {singleUseDamage}</span>}
+					{singleUseDamage && (
+						<span>
+							+{<img src={singleUseIcon} className={css.singleUseIcon} />}
+							<span className={css.singleUseMove}>{singleUseDamage}</span>
+						</span>
+					)}
 				</p>
 				{attackInfo?.power && <p>{attackInfo?.power}</p>}{' '}
 			</div>
@@ -50,7 +55,15 @@ const Attack = ({
 		imageClass = css.effectImage
 		attackDescription = (
 			<div className={css.info}>
-				<p className={css.name}>{name}</p>
+				<p className={css.name}>
+					{name}{' '}
+					{singleUseDamage && (
+						<span>
+							{' '}
+							{' - '} <span className={css.singleUseMove}> {singleUseDamage} </span>{' '}
+						</span>
+					)}
+				</p>
 				{attackInfo.description}
 			</div>
 		)
@@ -66,7 +79,6 @@ const Attack = ({
 				})}
 			>
 				<img src={icon} className={imageClass} />
-				{singleUseIcon && <img src={singleUseIcon} className={css.singleUseIcon} />}
 			</div>
 
 			{/* ATTACK NAME */}
