@@ -160,7 +160,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 		target:
 			effect.target instanceof CardComponent
 				? {type: 'card', card: effect.target.entity}
-				: {type: 'player', player: effect.target.entity},
+				: {type: 'global', player: effect.target.entity},
 		counter: effect.counter,
 	}
 }
