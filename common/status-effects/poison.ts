@@ -32,7 +32,7 @@ class PoisonEffect extends CardStatusEffect {
 			})
 
 			if (target.slot.row.health && target.slot.row.health >= 30) {
-				let damage = Math.max(Math.min(target.slot.row.health - 10, 20), 0)
+				let damage = Math.max(Math.min(target.slot.row.health - 10, 10), 0)
 				statusEffectAttack.addDamage(effect.entity, damage)
 			}
 
