@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card} from '../../../components/query'
+import * as query from '../../../components/query'
 import BdoubleO100Common from './bdoubleo100-common'
 import BdoubleO100Rare from './bdoubleo100-rare'
 import Docm77Common from './docm77-common'
@@ -45,18 +45,21 @@ class VintageBeefUltraRare extends Card {
 
 			const hasBdubs = game.components.find(
 				CardComponent,
-				card.currentPlayer,
-				card.is(BdoubleO100Common, BdoubleO100Rare)
+				query.card.currentPlayer,
+				query.card.is(BdoubleO100Common, BdoubleO100Rare),
+				query.card.attached
 			)
 			const hasDoc = game.components.find(
 				CardComponent,
-				card.currentPlayer,
-				card.is(Docm77Common, Docm77Rare)
+				query.card.currentPlayer,
+				query.card.is(Docm77Common, Docm77Rare),
+				query.card.attached
 			)
 			const hasEtho = game.components.find(
 				CardComponent,
-				card.currentPlayer,
-				card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare)
+				query.card.currentPlayer,
+				query.card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare),
+				query.card.attached
 			)
 
 			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(component.entity, 2)
