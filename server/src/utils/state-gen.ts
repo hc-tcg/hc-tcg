@@ -283,7 +283,7 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 export function getLocalGameState(game: GameModel, viewer: ViewerComponent): LocalGameState | null {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(_game, player) => player.entity == viewer.playerOnLeftEntity
+		(_game, player) => player.entity == viewer.playerOnLeft.entity
 	)
 
 	if (!playerState) throw new Error('Player should be added to ECS before fetching local state')
@@ -360,7 +360,8 @@ export function getLocalGameState(game: GameModel, viewer: ViewerComponent): Loc
 			.map(getLocalCard),
 
 		// ids
-		playerId: viewer.playerId,
+		playerId: viewer.playerOnLeft.id,
+		opponentPlayerId: viewer.playerOnRight.id,
 
 		// The entity of the player on the left of the screen
 		playerEntity: players[viewer.playerOnLeft.id].entity,

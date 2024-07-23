@@ -28,8 +28,16 @@ export function setupComponents(
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
 
-	components.new(ViewerComponent, player1.id, player1Component.entity, false)
-	components.new(ViewerComponent, player2.id, player2Component.entity, false)
+	components.new(ViewerComponent, {
+		playerOnLeft: player1Component.entity,
+		player: player1,
+		spectator: false,
+	})
+	components.new(ViewerComponent, {
+		playerOnLeft: player2Component.entity,
+		player: player2,
+		spectator: false,
+	})
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)
