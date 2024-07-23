@@ -49,6 +49,22 @@ function AttackModal({closeModal}: Props) {
 		: undefined
 
 	const attacks = []
+	let canUseHermitAttacks =
+		availableActions.includes('PRIMARY_ATTACK') || availableActions.includes('SECONDARY_ATTACK')
+
+	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
+		let namePrefix = canUseHermitAttacks ? 'Only use ' : ''
+		attacks.push(
+			<Attack
+				key="single-use"
+				name={`${namePrefix}${singleUseInfo.props.name}`}
+				icon={`/images/effects/${singleUseInfo?.props.id}.png`}
+				attackInfo={{description: singleUseProps?.description || ''}}
+				onClick={effectAttack}
+			/>
+		)
+	}
+
 	if (availableActions.includes('PRIMARY_ATTACK')) {
 		attacks.push(
 			<Attack
@@ -71,21 +87,6 @@ function AttackModal({closeModal}: Props) {
 				attackInfo={playerHermitInfo.props.secondary}
 				singleUseIcon={singleUseIcon}
 				onClick={secondaryAttack}
-			/>
-		)
-	}
-
-	let canUseHermitAttacks = attacks.length !== 0
-	let namePrefix = canUseHermitAttacks ? 'Only use ' : ''
-
-	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
-		attacks.push(
-			<Attack
-				key="single-use"
-				name={`${namePrefix}${singleUseInfo.props.name}`}
-				icon={`/images/effects/${singleUseInfo?.props.id}.png`}
-				attackInfo={{description: singleUseProps?.description || ''}}
-				onClick={effectAttack}
 			/>
 		)
 	}
