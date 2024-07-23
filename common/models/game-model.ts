@@ -10,6 +10,7 @@ import {AttackModel} from './attack-model'
 import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {ViewerComponent} from '../components/viewer-component'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -73,6 +74,10 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
+	}
+
+	public get viewers(): Array<ViewerComponent> {
+		return this.components.filter(ViewerComponent)
 	}
 
 	public getPlayerIds() {

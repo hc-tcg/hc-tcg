@@ -6,6 +6,7 @@ import {getLocalGameState} from '../../utils/state-gen'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
 import {PlayerModel} from 'common/models/player-model'
+import {ViewerComponent} from 'common/components/viewer-component'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
@@ -22,8 +23,18 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 	}
 
+	let viewer = game.components.find(
+		ViewerComponent,
+		(game, viewer) => viewer.playerId === player.id
+	)
+
+	if (!viewer) {
+		console.error('Player tried to connect with invalid player id')
+		return
+	}
+
 	const payload = {
-		localGameState: getLocalGameState(game, player),
+		localGameState: getLocalGameState(game, viewer),
 		order: game.getPlayerIds(),
 	}
 	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)

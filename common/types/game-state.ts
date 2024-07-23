@@ -178,7 +178,6 @@ export type LocalGameState = {
 
 	// ids
 	playerId: PlayerId
-	opponentPlayerId: PlayerId
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 

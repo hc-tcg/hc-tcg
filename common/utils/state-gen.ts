@@ -13,6 +13,7 @@ import {
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {PlayerEntity} from '../entities'
+import {ViewerComponent} from '../components/viewer-component'
 
 /* Set up the components that will be referenced during the game. This includes:
  * - The player objects
@@ -26,6 +27,9 @@ export function setupComponents(
 ) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
+
+	components.new(ViewerComponent, player1.id, player1Component.entity, false)
+	components.new(ViewerComponent, player2.id, player2Component.entity, false)
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)

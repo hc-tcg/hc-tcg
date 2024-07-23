@@ -283,10 +283,10 @@ function* checkHermitHealth(game: GameModel) {
 }
 
 function* sendGameState(game: GameModel) {
-	game.getPlayers().forEach((player) => {
-		const localGameState = getLocalGameState(game, player)
+	game.viewers.forEach((viewer) => {
+		const localGameState = getLocalGameState(game, viewer)
 
-		player.socket.emit('GAME_STATE', {
+		viewer.player.socket.emit('GAME_STATE', {
 			type: 'GAME_STATE',
 			payload: {
 				localGameState,
