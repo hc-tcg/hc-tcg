@@ -65,6 +65,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 
 		this.turnedOver = false
+
+		this.card.onCreate(this.game, this)
 	}
 
 	/** A function that is used to order cards by thier slot's order.
