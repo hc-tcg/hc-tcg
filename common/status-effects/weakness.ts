@@ -29,11 +29,9 @@ class WeaknessEffect extends CardStatusEffect {
 			if (effect.counter === 0) effect.remove()
 		})
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (attack.targetEntity !== effect.targetEntity || attack.createWeakness === 'never') {
-				return
-			}
-
+		observer.subscribe(player.hooks.beforeDefence, (attack) => {
+			if (!target.slot.inRow()) return
+			if (attack.targetEntity !== target.slot.rowEntity || attack.createWeakness === 'never') return
 			attack.createWeakness = 'always'
 		})
 	}
