@@ -56,7 +56,7 @@ class GrianRare extends Card {
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.active,
-				query.card.attached
+				query.card.slot(query.slot.attach)
 			)
 			if (!opponentAttachCard) return
 
@@ -88,7 +88,7 @@ class GrianRare extends Card {
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
