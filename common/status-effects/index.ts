@@ -22,7 +22,10 @@ import {
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
 import TurnSkippedEffect from './turn-skipped'
-import {PrimaryAttackDisabledEffect, SecondaryAttackDisabledEffect} from './derp-coin'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from './singleturn-attack-disabled'
 import {TrapHoleEffect} from './trap-hole'
 import CurseOfBindingEffect from './curse-of-binding'
 import {StatusEffect} from './status-effect'
@@ -34,7 +37,6 @@ import {
 import ChromaKeyedEffect from './chroma-keyed'
 import OriginalXbEffect from './original-xb'
 import RoyalProtectionEffect from './royal-protection'
-import {AmnesiaEffect} from './amnesia'
 
 const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
@@ -71,7 +73,6 @@ const effectClasses: Array<new () => StatusEffect> = [
 	ChromaKeyedEffect,
 	OriginalXbEffect,
 	RoyalProtectionEffect,
-	AmnesiaEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
