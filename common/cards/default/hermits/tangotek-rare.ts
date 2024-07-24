@@ -83,7 +83,7 @@ class TangoTekRare extends Card {
 				canChange
 			) {
 				game.addPickRequest({
-					playerId: player.id,
+					player: player.entity,
 					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: playerInactiveRowsPickCondition,

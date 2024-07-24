@@ -43,7 +43,7 @@ class OrionSoundRare extends Card {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermit),

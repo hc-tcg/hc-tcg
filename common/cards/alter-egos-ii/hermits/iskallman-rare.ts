@@ -57,7 +57,7 @@ class IskallmanRare extends Card {
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
@@ -79,7 +79,7 @@ class IskallmanRare extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 					game.addPickRequest({
-						playerId: player.id,
+						player: player.entity,
 						id: component.entity,
 						message: 'Pick an AFK Hermit from either side of the board',
 						canPick: pickCondition,

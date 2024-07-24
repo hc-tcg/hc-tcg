@@ -79,7 +79,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: effect.entity,
 				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,

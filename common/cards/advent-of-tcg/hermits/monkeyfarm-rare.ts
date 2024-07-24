@@ -49,7 +49,7 @@ class MonkeyfarmRare extends Card {
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,

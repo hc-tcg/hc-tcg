@@ -41,7 +41,7 @@ class Looting extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,

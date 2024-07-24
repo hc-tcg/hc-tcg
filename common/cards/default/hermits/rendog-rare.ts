@@ -75,7 +75,7 @@ class RendogRare extends Card {
 			if (hermitAttackType !== 'secondary') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
@@ -84,7 +84,7 @@ class RendogRare extends Card {
 					if (!pickedCard) return
 
 					game.addModalRequest({
-						playerId: player.id,
+						player: player.entity,
 						data: {
 							modalId: 'copyAttack',
 							payload: {

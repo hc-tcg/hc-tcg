@@ -50,7 +50,7 @@ class HorseHeadHypnoRare extends Card {
 			if (!game.components.exists(CardComponent, modalCondition)) return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

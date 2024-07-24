@@ -26,7 +26,7 @@ class Cat extends Card {
 			if (player.pile.length === 0) return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

@@ -80,7 +80,7 @@ class ZombieCleoRare extends Card {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick one of your AFK Hermits',
 				canPick: this.pickCondition,
@@ -89,7 +89,7 @@ class ZombieCleoRare extends Card {
 					if (!pickedCard) return
 
 					game.addModalRequest({
-						playerId: player.id,
+						player: player.entity,
 						data: {
 							modalId: 'copyAttack',
 							payload: {

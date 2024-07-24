@@ -63,7 +63,7 @@ class PharaohRare extends Card {
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,

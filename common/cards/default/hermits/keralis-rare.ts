@@ -53,7 +53,7 @@ class KeralisRare extends Card {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,

@@ -56,7 +56,7 @@ class EvilJevinRare extends Card {
 			if (coinFlip[0] !== 'heads') return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

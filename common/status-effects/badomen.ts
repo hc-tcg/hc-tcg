@@ -33,7 +33,7 @@ class BadOmenEffect extends CardStatusEffect {
 			// Only modify when the target hermit is "flipping"
 			if (
 				target.entity !== card.entity &&
-				(game.currentPlayer.id !== player.id ||
+				(game.currentPlayer.entity !== player.entity ||
 					player.activeRow?.getHermit()?.entity !== target.entity)
 			)
 				return coinFlips

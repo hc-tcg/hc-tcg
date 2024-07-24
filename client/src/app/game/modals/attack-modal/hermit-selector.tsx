@@ -3,8 +3,7 @@ import {useState} from 'react'
 import classnames from 'classnames'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {getPlayerStateByEntity} from 'logic/game/game-selectors'
+import {getPlayerEntity, getPlayerStateByEntity} from 'logic/game/game-selectors'
 import Attack from './attack'
 import {Hermit, isHermit} from 'common/cards/base/types'
 import {CARDS} from 'common/cards'
@@ -23,8 +22,8 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	// TODO - This whole file needs to be rafactored
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
-	const playerId = useSelector(getPlayerId)
-	const playerState = useSelector(getPlayerStateByEntity(playerId))
+	const playerEntity = useSelector(getPlayerEntity)
+	const playerState = useSelector(getPlayerStateByEntity(playerEntity))
 
 	const initialId = extraAttacks[0].split(':')[0]
 	const [selectedHermit, setSelectedHermit] = useState<string>(initialId)
@@ -37,25 +36,28 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const hermitFullName = playerHermitInfo.card.props.id.split('_')[0]
 
-	const eaResult = extraAttacks.reduce((agg, extra) => {
-		const [hermitId, action] = extra.split(':')
-		const hermitInfo = CARDS[hermitId] as Card<Hermit>
-		if (!hermitInfo) throw new Error('Invalid extra attack')
-		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
-		const hermitFullName = hermitInfo.props.id.split('_')[0]
-		agg[hermitId] = agg[hermitId] || {}
-		agg[hermitId][type] = (
-			<Attack
-				key={extra}
-				name={hermitInfo.props[type].name}
-				icon={`/images/hermits-nobg/${hermitFullName}.png`}
-				attackInfo={hermitInfo.props[type]}
-				onClick={() => handleExtraAttack({hermitId, type})}
-				extra
-			/>
-		)
-		return agg
-	}, {} as Record<string, any>)
+	const eaResult = extraAttacks.reduce(
+		(agg, extra) => {
+			const [hermitId, action] = extra.split(':')
+			const hermitInfo = CARDS[hermitId] as Card<Hermit>
+			if (!hermitInfo) throw new Error('Invalid extra attack')
+			const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
+			const hermitFullName = hermitInfo.props.id.split('_')[0]
+			agg[hermitId] = agg[hermitId] || {}
+			agg[hermitId][type] = (
+				<Attack
+					key={extra}
+					name={hermitInfo.props[type].name}
+					icon={`/images/hermits-nobg/${hermitFullName}.png`}
+					attackInfo={hermitInfo.props[type]}
+					onClick={() => handleExtraAttack({hermitId, type})}
+					extra
+				/>
+			)
+			return agg
+		},
+		{} as Record<string, any>
+	)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
 		const hermitInfo = CARDS[hermitId]

@@ -32,7 +32,7 @@ class BrewingStand extends Card {
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: 'Pick an item card to discard',
 				canPick: slot.every(

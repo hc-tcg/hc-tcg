@@ -64,7 +64,7 @@ class KingJoelRare extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick an item card from your opponent's AFK Hermits",
 				canPick: firstPickCondition,
@@ -74,7 +74,7 @@ class KingJoelRare extends Card {
 			})
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick a slot to place the item card',
 				canPick: secondPickCondition,

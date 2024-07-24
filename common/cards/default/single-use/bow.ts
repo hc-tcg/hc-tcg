@@ -38,7 +38,7 @@ class Bow extends Card {
 
 		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,

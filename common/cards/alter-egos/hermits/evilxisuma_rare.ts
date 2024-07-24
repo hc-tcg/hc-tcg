@@ -65,7 +65,7 @@ class EvilXisumaRare extends Card {
 			if (!opponentActiveHermit) return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'copyAttack',
 					payload: {

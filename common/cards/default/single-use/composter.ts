@@ -30,7 +30,7 @@ class Composter extends Card {
 		let firstPickedSlot: SlotComponent | null = null
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: 'Pick 2 cards from your hand',
 			canPick: query.slot.hand,
@@ -40,7 +40,7 @@ class Composter extends Card {
 		})
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {

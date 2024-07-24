@@ -56,7 +56,7 @@ class LDShadowLadyRare extends Card {
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: "Move your opponent's active Hermit to a new slot.",
 				canPick: pickCondition,

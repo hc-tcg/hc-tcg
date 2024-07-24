@@ -121,7 +121,6 @@ export class PlayerComponent {
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.id = player.id
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
