@@ -92,7 +92,7 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				id="deckname"
 				type="text"
 				value={deckNameInput}
-				onChange={(e) => setDeckNameInput(e.target.value)}
+				onChange={(e) => setDeckNameInput((e.target as any).value)}
 				maxLength={32}
 				placeholder="Enter Deck Name..."
 				className={css.input}

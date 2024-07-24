@@ -1,4 +1,3 @@
-import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {setCode, leaveMatchmaking} from 'logic/matchmaking/matchmaking-actions'
 import {getStatus, getCode, getInvalidCode} from 'logic/matchmaking/matchmaking-selectors'
@@ -18,9 +17,9 @@ function MatchMaking() {
 		dispatch(leaveMatchmaking())
 	}
 
-	const handleCodeSubmit = (ev: React.SyntheticEvent<HTMLFormElement>) => {
+	const handleCodeSubmit = (ev: SubmitEvent) => {
 		ev.preventDefault()
-		const code = ev.currentTarget.gameCode.value.trim()
+		const code = (ev.currentTarget as any).gameCode.value.trim()
 		dispatch(setCode(code))
 	}
 

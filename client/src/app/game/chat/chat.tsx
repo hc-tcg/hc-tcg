@@ -1,4 +1,4 @@
-import {SyntheticEvent, useState} from 'react'
+import {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
@@ -55,7 +55,7 @@ function Chat() {
 
 	if (settings.showChat !== 'on') return null
 
-	const handleNewMessage = (ev: SyntheticEvent<HTMLFormElement>) => {
+	const handleNewMessage = (ev: SubmitEvent) => {
 		ev.preventDefault()
 		const form = ev.currentTarget
 		const messageEl = form.message as HTMLInputElement

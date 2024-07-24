@@ -92,7 +92,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 					)}
 				</div>
 			) : (
-				<img draggable="false" className={css.frame} src={frameImg} />
+				<img draggable={false} className={css.frame} src={frameImg} />
 			)}
 			<StatusEffectContainer statusEffects={statusEffects || []} />
 		</div>
