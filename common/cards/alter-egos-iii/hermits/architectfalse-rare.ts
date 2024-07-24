@@ -1,10 +1,11 @@
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from '../../../status-effects/multiturn-attack-disabled'
-import Card from '../../base/card'
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/singleturn-attack-disabled'
+import {HermitAttackType} from '../../../types/attack'
+import Card, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -36,23 +37,37 @@ class ArchitectFalseRare extends Card {
 		},
 	}
 
+	lastAttacker = new InstancedValue<CardComponent | null>(() => null)
+	lastAttackType = new InstancedValue<HermitAttackType | null>(() => null)
+
+	override onCreate(game: GameModel, component: CardComponent) {
+		const {opponentPlayer} = component
+
+		const newObserver = game.components.new(ObserverComponent, component.entity)
+
+		newObserver.subscribe(opponentPlayer.hooks.onAttack, (attack) => {
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.isType('primary', 'secondary')) return
+			this.lastAttacker.set(component, attack.attacker)
+			this.lastAttackType.set(component, attack.type)
+		})
+	}
+
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			observer.oneShot(opponentPlayer.hooks.onAttack, (attack) => {
-				if (attack.type === 'primary') {
-					game.components
-						.new(StatusEffectComponent, MultiturnPrimaryAttackDisabledEffect)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
-				} else if (attack.type === 'secondary') {
-					game.components
-						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
-				}
-			})
+			if (this.lastAttackType.get(component) === 'primary') {
+				game.components
+					.new(StatusEffectComponent, PrimaryAttackDisabledEffect)
+					.apply(this.lastAttacker.get(component)?.entity)
+			} else if (this.lastAttackType.get(component) === 'secondary') {
+				game.components
+					.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
+					.apply(this.lastAttacker.get(component)?.entity)
+			}
 		})
 	}
 }

@@ -21,24 +21,22 @@ class TurtleShell extends Card {
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		let firstActiveTurn = true
+		let hasBeenActive = false
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			if (!component.slot.inRow()) return
-			if (player.activeRowEntity !== component.slot.row.entity) {
-				firstActiveTurn = false
+			if (player.activeRowEntity === component.slot.row.entity) {
+				hasBeenActive = true
 			}
 		})
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!firstActiveTurn) {
+			if (hasBeenActive) {
 				component.discard()
 			}
 		})
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
-			// Only block if just became active
-			if (!firstActiveTurn) return
 			if (!component.slot.inRow()) return
 			// Only block damage when we are active
 			const isActive = player.activeRowEntity === component.slot.row.entity

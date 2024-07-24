@@ -452,7 +452,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			const graceTime = 1000
-			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
 
 			yield* call(sendGameState, game)
 			game.battleLog.sendLogs()
@@ -469,6 +469,7 @@ function* turnActionsSaga(game: GameModel) {
 			// Handle timeout
 			if (raceResult.timeout) {
 				// @TODO this works, but could be cleaned
+				yield* endTurnSaga(game)
 				const currentAttack = game.state.turn.currentAttack
 				let reset = false
 
@@ -559,7 +560,7 @@ function* turnSaga(game: GameModel) {
 	game.state.turn.currentAttack = null
 
 	game.state.timer.turnStartTime = Date.now()
-	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime * 1000
 
 	// Call turn start hooks
 

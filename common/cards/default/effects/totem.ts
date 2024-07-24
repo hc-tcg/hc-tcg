@@ -29,14 +29,15 @@ class Totem extends Card {
 		const {player, opponentPlayer} = component
 
 		const reviveHook = (attack: AttackModel) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
+			if (!attack.isTargeting(component)) return
 			let target = attack.target
 
 			if (!target) return
 
-			target.health = 10
-
 			let targetHermit = target.getHermit()
+			if (targetHermit?.isAlive()) return
+
+			target.health = 10
 
 			game.components
 				.filter(StatusEffectComponent, effect.targetEntity(targetHermit?.entity))

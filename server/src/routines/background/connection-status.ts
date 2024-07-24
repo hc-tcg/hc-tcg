@@ -20,7 +20,7 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000
 		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 		const graceTime = 1000
-		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+		game.state.timer.turnRemaining = remainingTime + graceTime
 	}
 
 	let viewer = game.components.find(

@@ -132,12 +132,6 @@ export class PlayerComponent {
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
-		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-			const id = DEBUG_CONFIG.extraStartingCards[i]
-			let slot = game.components.new(HandSlotComponent, this.entity)
-			game.components.new(CardComponent, id, slot.entity)
-		}
-
 		this.hooks = {
 			availableEnergy: new WaterfallHook(),
 			blockedActions: new WaterfallHook(),

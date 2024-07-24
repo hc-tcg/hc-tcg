@@ -80,7 +80,10 @@ export const active: ComponentQuery<CardComponent> = slot(slotCombinators.active
 export const onBoard: ComponentQuery<CardComponent> = (_game, card) => card.slot.onBoard()
 
 /** Return true if this card is not on the active row */
-export const afk: ComponentQuery<CardComponent> = query.not(slot(slotCombinators.active))
+export const afk: ComponentQuery<CardComponent> = query.every(
+	attached,
+	query.not(slot(slotCombinators.active))
+)
 
 export const hasStatusEffect = (
 	statusEffect: new () => CardStatusEffect

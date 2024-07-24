@@ -26,7 +26,7 @@ class BeetlejhostRare extends Card {
 			power: null,
 		},
 		secondary: {
-			name: 'Chroma',
+			name: 'Jopacity',
 			cost: ['balanced', 'balanced'],
 			damage: 100,
 			power: 'This attack does 10 hp less damage every time it is used consecutively.',

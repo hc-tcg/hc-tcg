@@ -84,8 +84,10 @@ export class AttackModel {
 	}
 
 	/** Returns true if one of the passed in types are this attacks type */
-	public isType(...types: Array<AttackType>) {
-		return types.includes(this.type)
+	public isType<This extends {type: AttackType}, T extends AttackType>(
+		...types: Array<T>
+	): this is This & {type: T} {
+		return (types as Array<AttackType>).includes(this.type)
 	}
 
 	/** Return the player that created this attack. For cards, this is the player who owns the card.
