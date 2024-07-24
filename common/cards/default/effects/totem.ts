@@ -29,7 +29,7 @@ class Totem extends Card {
 		const {player, opponentPlayer} = component
 
 		const reviveHook = (attack: AttackModel) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
+			if (!attack.isTargeting(component)) return
 			let target = attack.target
 
 			if (!target) return
