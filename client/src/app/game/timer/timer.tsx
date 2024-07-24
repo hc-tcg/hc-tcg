@@ -43,7 +43,7 @@ function Timer() {
 		<div className={cn(css.timer, css.white)}>
 			<p>Time Left:</p>
 			<span>
-				{timeInfo.getMinutes()}:{timeInfo.getSeconds()}
+				{timeInfo.getMinutes()}:{timeInfo.getSeconds().toString().padStart(2, '0')}
 			</span>
 		</div>
 	)
