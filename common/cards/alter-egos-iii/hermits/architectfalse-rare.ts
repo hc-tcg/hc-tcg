@@ -18,6 +18,7 @@ import {Hermit} from '../../base/types'
 type AttackInfo = {
 	attacker: CardComponent
 	attackType: HermitAttackType
+	turn: number
 }
 
 class ArchitectFalseRare extends Card {
@@ -65,6 +66,7 @@ class ArchitectFalseRare extends Card {
 				this.lastAttackInfo.get(game)[player.entity] = {
 					attacker: attack.attacker,
 					attackType: attack.type,
+					turn: game.state.turn.turnNumber,
 				}
 			})
 		)
@@ -82,7 +84,7 @@ class ArchitectFalseRare extends Card {
 				return
 
 			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
-			if (!lastAttackInfo) return
+			if (!lastAttackInfo || lastAttackInfo.turn !== game.state.turn.turnNumber - 1) return
 
 			if (lastAttackInfo.attackType === 'primary') {
 				game.components
