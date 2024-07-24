@@ -11,6 +11,32 @@ import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 
+/** Type that allows for additional data about a game to be shared between components */
+export class GameValue<T> {
+	default: () => T
+	values: Record<string, T> = {}
+
+	public constructor(defaultFactory: () => T) {
+		this.default = defaultFactory
+	}
+
+	public set(game: GameModel, value: T) {
+		this.values[game.id] = value
+		game.task
+	}
+
+	public get(game: GameModel) {
+		if (game.id in this.values) {
+			return this.values[game.id]
+		}
+		return this.default()
+	}
+
+	public clear(game: GameModel) {
+		delete this.values[game.id]
+	}
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string

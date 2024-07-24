@@ -5,13 +5,13 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import {PlayerEntity} from '../../../entities'
-import {GameModel} from '../../../models/game-model'
+import {GameModel, GameValue} from '../../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
-import Card, {InstancedValue} from '../../base/card'
+import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -48,12 +48,13 @@ class ArchitectFalseRare extends Card {
 		},
 	}
 
-	lastAttackInfo = new InstancedValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
+	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
 		return {}
 	})
 
 	override onCreate(game: GameModel, component: CardComponent) {
-		this.lastAttackInfo.set(component, {})
+		if (Object.hasOwn(this.lastAttackInfo, game.id)) return
+		this.lastAttackInfo.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
@@ -61,7 +62,7 @@ class ArchitectFalseRare extends Card {
 			newObserver.subscribe(player.hooks.onAttack, (attack) => {
 				if (!(attack.attacker instanceof CardComponent)) return
 				if (!attack.isType('primary', 'secondary')) return
-				this.lastAttackInfo.get(component)[player.entity] = {
+				this.lastAttackInfo.get(game)[player.entity] = {
 					attacker: attack.attacker,
 					attackType: attack.type,
 				}
@@ -80,7 +81,7 @@ class ArchitectFalseRare extends Card {
 			)
 				return
 
-			const lastAttackInfo = this.lastAttackInfo.get(component)[attack.target.playerId]
+			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
 			if (!lastAttackInfo) return
 
 			if (lastAttackInfo.attackType === 'primary') {
