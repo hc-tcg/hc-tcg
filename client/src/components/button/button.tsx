@@ -3,7 +3,7 @@ import css from './button.module.scss'
 import {ButtonHTMLAttributes, ReactNode, forwardRef} from 'preact/compat'
 import React from 'preact/compat'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 	ref?: any
 	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 	size?: 'small' | 'medium' | 'large'
