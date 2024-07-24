@@ -14,7 +14,8 @@ class Emerald extends Card {
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
-		description: "Swap the attached effect cards of your active Hermit and your opponent's active Hermit, or steal their effect card if your active Hermit does not have one attached.",
+		description:
+			"Swap the attached effect cards of your active Hermit and your opponent's active Hermit, or steal their effect card if your active Hermit does not have one attached.",
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
