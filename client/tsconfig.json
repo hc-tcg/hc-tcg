@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"baseUrl": "src",
-    "jsxImportSource": "preact",
+		"jsxImportSource": "preact",
 		"paths": {
 			"server/*": ["../../server/*"],
 			"common/*": ["../../common/*"],
