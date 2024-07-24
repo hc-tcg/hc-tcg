@@ -25,7 +25,13 @@ import {
 	getAvailableActions,
 	getPickRequestPickableSlots,
 } from 'logic/game/game-selectors'
-import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {
+	endTurn,
+	endTurnAction,
+	setOpenedModal,
+	setSelectedCard,
+	slotPicked,
+} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
 import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
@@ -34,6 +40,7 @@ import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {PlayerEntity} from 'common/entities'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -155,7 +162,13 @@ function Game() {
 				dispatch(setOpenedModal('attack'))
 			}
 			if (e.key === 'e' || e.key === 'E') {
-				if (availableActions.includes('END_TURN')) dispatch(setOpenedModal('end-turn'))
+				if (availableActions.includes('END_TURN')) {
+					if (shouldShowEndTurnModal(availableActions, settings)) {
+						dispatch(endTurnAction())
+					} else {
+						dispatch(endTurn())
+					}
+				}
 			}
 			if (e.key === 'm' || e.key === 'M') {
 				dispatch(setSetting('muted', !settings.muted))

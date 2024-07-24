@@ -17,7 +17,7 @@ import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SlotInfo} from 'common/types/server-requests'
-import {endTurnModalEmpty} from '../modals/end-turn-modal'
+import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -42,10 +42,10 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
-		if (endTurnModalEmpty(availableActions) || settings.confirmationDialogs === 'off') {
-			dispatch(endTurn())
-		} else {
+		if (shouldShowEndTurnModal(availableActions, settings)) {
 			dispatch(endTurnAction())
+		} else {
+			dispatch(endTurn())
 		}
 	}
 
