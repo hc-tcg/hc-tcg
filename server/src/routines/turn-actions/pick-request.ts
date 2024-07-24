@@ -3,7 +3,7 @@ import {ActionResult} from 'common/types/game-state'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
-import {PlayerComponent, SlotComponent} from 'common/components'
+import {SlotComponent} from 'common/components'
 import {slot} from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 
@@ -35,10 +35,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 	if (card) card.turnedOver = false
 
 	pickRequest.onResult(slotInfo)
-	let player = game.components.find(
-		PlayerComponent,
-		(_game, player) => player.id === pickRequest.playerId
-	)
+	let player = game.components.get(pickRequest.player)
 	if (player) player.pickableSlots = null
 
 	// We completed this pick request, remove it
@@ -49,7 +46,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 			payload: {
-				playerId: game.currentPlayer.id,
+				player: game.currentPlayer.entity,
 			},
 		}
 		const attackResult = yield* call(attackSaga, game, turnAction, false)

@@ -11,6 +11,7 @@ import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {ViewerComponent} from '../components/viewer-component'
+import {broadcast} from '../../server/src/utils/comm'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -98,6 +99,14 @@ export class GameModel {
 
 	public get code() {
 		return this.internalCode
+	}
+
+	public broadcastToViewers(type: string, payload: any) {
+		broadcast(
+			this.viewers.map((viewer) => viewer.player),
+			type,
+			payload
+		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

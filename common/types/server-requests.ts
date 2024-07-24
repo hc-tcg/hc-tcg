@@ -4,7 +4,6 @@ import type {CardComponent, SlotComponent, StatusEffectComponent} from '../compo
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
-import {PlayerId} from '../models/player-model'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {TurnActions} from './game-state'
 
@@ -56,7 +55,7 @@ export type SlotInfo = {
 
 export type PickRequest = {
 	/** The id of the player to request the pick from */
-	playerId: PlayerId
+	player: PlayerEntity
 	/** The id of the card that called the pick request */
 	id: Entity<CardComponent | StatusEffectComponent>
 	/** The message to display to the player */

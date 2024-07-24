@@ -1,4 +1,4 @@
-import {SlotEntity} from '../entities'
+import {PlayerEntity, SlotEntity} from '../entities'
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
 import {AttackAction, PlayCardAction} from './game-state'
@@ -41,7 +41,7 @@ export type ChangeActiveHermitActionData = {
 export type AttackActionData = {
 	type: AttackAction
 	payload: {
-		playerId: string
+		player: PlayerEntity
 	}
 }
 

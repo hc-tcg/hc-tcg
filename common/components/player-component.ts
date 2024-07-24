@@ -1,5 +1,5 @@
 import type {GameModel} from '../models/game-model'
-import type {PlayerId, PlayerModel} from '../models/player-model'
+import type {PlayerModel} from '../models/player-model'
 import type {CoinFlipResult, CurrentCoinFlip, TurnActions} from '../types/game-state'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
@@ -8,9 +8,8 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import {CardComponent} from './card-component'
 import * as query from './query'
 import {ComponentQuery} from './query'
-import {DEBUG_CONFIG} from '../config'
 import {GameHook, WaterfallHook} from '../types/hooks'
-import {HandSlotComponent, SlotComponent} from './slot-component'
+import {SlotComponent} from './slot-component'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import {StatusEffectComponent} from './status-effect-component'
 import {RowComponent} from './row-component'
@@ -22,7 +21,6 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-	readonly id: PlayerId
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number

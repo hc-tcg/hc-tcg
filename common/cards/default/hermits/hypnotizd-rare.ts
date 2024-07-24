@@ -66,7 +66,7 @@ class HypnotizdRare extends Card {
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			const itemRequest: PickRequest = {
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
@@ -79,7 +79,7 @@ class HypnotizdRare extends Card {
 			}
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
 				canPick: query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty)),
