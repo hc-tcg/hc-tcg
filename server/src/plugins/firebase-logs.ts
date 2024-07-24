@@ -6,6 +6,7 @@ import {CONFIG} from 'common/config'
 import {ServiceAccount} from 'firebase-admin/app'
 import {RootModel} from 'common/models/root-model'
 import {PlayerComponent} from 'common/components'
+import { ViewerComponent } from 'common/components/viewer-component'
 
 export class FirebaseLogs {
 	public id: string = 'firebase_logs'
@@ -45,7 +46,7 @@ export class FirebaseLogs {
 			}
 			const type = game.code ? 'private' : 'public'
 
-			const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
+			const playerStates = game.components.filter(PlayerComponent)
 
 			function getHand(pState: PlayerComponent) {
 				return pState.getHand()
@@ -56,7 +57,7 @@ export class FirebaseLogs {
 				startHand1: getHand(playerStates[0]),
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
-				startDeck: game.getPlayerIds()[0] == playerStates[0].id ? 'deck1' : 'deck2',
+				startDeck: game.state.order[0] == playerStates[0].entity ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -84,6 +85,7 @@ export class FirebaseLogs {
 				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
+
 				let pid0 = playerStates[0].id
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
@@ -96,6 +98,7 @@ export class FirebaseLogs {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
 				})
+
 				summaryObj.deck2 = root.players[pid1]?.deck
 				if (game.endInfo.winner === pid0) {
 					summaryObj.outcome = 'deck1win'

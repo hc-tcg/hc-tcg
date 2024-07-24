@@ -390,7 +390,7 @@ function* turnActionsSaga(game: GameModel) {
 	const turnActionChannel = yield* actionChannel(
 		[
 			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
-				playerAction(type, opponentViewer.playerId)
+				playerAction(type, (opponentViewer as ViewerComponent).playerId)
 			),
 			...[
 				'PLAY_HERMIT_CARD',
@@ -406,7 +406,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
-			].map((type) => playerAction(type, playerViewer.playerId)),
+			].map((type) => playerAction(type, (playerViewer as ViewerComponent).playerId)),
 		],
 		buffers.dropping(10)
 	)
