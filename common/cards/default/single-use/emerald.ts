@@ -14,7 +14,7 @@ class Emerald extends Card {
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
-		description: "Steal or swap the attached effect card of your opponent's active Hermit.",
+		description: "Swap the attached effect cards of your active Hermit and your opponent's active Hermit, or steal their effect card if your active Hermit does not have one attached.",
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
@@ -33,7 +33,6 @@ class Emerald extends Card {
 					query.slot.opponent,
 					query.slot.active,
 					query.slot.attach,
-					query.not(query.slot.empty),
 					query.not(query.slot.frozen)
 				)
 			)
