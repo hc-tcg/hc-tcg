@@ -67,12 +67,20 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 
 		texture.flipY = true
 
-		return (
+		// This section is ts-ignored because preact does not work well react/three.
+		// This works at runtime! It just seems to have compile time issues.
+		let mesh = (
+			// @ts-ignore
 			<mesh>
+				{/* @ts-ignore */}
 				<sphereGeometry />
+				{/* @ts-ignore */}
 				<meshBasicMaterial envMap={texture} side={THREE.BackSide} />
+				{/* @ts-ignore */}
 			</mesh>
 		)
+
+		return mesh
 	}
 
 	if (disabled || gameState) return <div className={cn(css.background, css.canvas)} />

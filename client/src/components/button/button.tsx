@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import css from './button.module.scss'
-import {ReactNode, forwardRef} from 'preact/compat'
+import {ButtonHTMLAttributes, ReactNode, forwardRef} from 'preact/compat'
 import React from 'preact/compat'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

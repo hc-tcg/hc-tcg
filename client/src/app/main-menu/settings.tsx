@@ -1,4 +1,4 @@
-import React, {useState} from 'preact/compat'
+import {useState} from 'preact/compat'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'
@@ -18,11 +18,11 @@ function Settings({setMenuSection}: Props) {
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
-	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+	const handleSoundChange = (ev: InputEvent) => {
+		dispatch(setSetting('soundVolume', (ev.currentTarget as HTMLInputElement).value))
 	}
-	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('musicVolume', ev.currentTarget.value))
+	const handleMusicChange = (ev: InputEvent) => {
+		dispatch(setSetting('musicVolume', (ev.currentTarget as HTMLInputElement).value))
 	}
 
 	const handlePanoramaToggle = () => {
