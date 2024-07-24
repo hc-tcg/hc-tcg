@@ -169,6 +169,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
+
 	statusEffects: Array<LocalStatusEffectInstance>
 
 	// personal data
