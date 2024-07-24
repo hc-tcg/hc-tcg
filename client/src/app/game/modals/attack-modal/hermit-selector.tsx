@@ -4,7 +4,7 @@ import classnames from 'classnames'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {getPlayerStateById} from 'logic/game/game-selectors'
+import {getPlayerStateByEntity} from 'logic/game/game-selectors'
 import Attack from './attack'
 import {Hermit, isHermit} from 'common/cards/base/types'
 import {CARDS} from 'common/cards'
@@ -24,7 +24,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const playerId = useSelector(getPlayerId)
-	const playerState = useSelector(getPlayerStateById(playerId))
+	const playerState = useSelector(getPlayerStateByEntity(playerId))
 
 	const initialId = extraAttacks[0].split(':')[0]
 	const [selectedHermit, setSelectedHermit] = useState<string>(initialId)

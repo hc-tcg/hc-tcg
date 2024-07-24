@@ -24,8 +24,8 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				openedModal: null,
 			}
 			if (
-				state.localGameState?.turn.currentPlayerId ===
-				action.payload.localGameState?.currentPlayerId
+				state.localGameState?.turn.currentPlayerEntity ===
+				action.payload.localGameState?.currentPlayerEntity
 			)
 				return newGame
 			return {...newGame}

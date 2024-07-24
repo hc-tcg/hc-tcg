@@ -4,15 +4,15 @@ import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
 import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
 import {
-	getPlayerStateById,
+	getPlayerStateByEntity,
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getGameState,
 	getPlayerState,
 	getCurrentPickMessage,
+	getPlayerEntity,
 } from 'logic/game/game-selectors'
 import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -27,10 +27,10 @@ type Props = {
 }
 
 const Actions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
+	const currentPlayer = useSelector(getPlayerStateByEntity(localGameState.turn.currentPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
-	const playerId = useSelector(getPlayerId)
+	const playerEntity = useSelector(getPlayerEntity)
 	const boardState = currentPlayer?.board
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
@@ -39,7 +39,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
-	const turn = localGameState.turn.currentPlayerId === playerId
+	const turn = localGameState.turn.currentPlayerEntity === playerEntity
 
 	if (!gameState || !playerState) return <main>Loading</main>
 

@@ -4,15 +4,15 @@ import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
 import {endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
 import {
-	getPlayerStateById,
+	getPlayerStateByEntity,
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getGameState,
 	getPlayerState,
 	getCurrentPickMessage,
+	getPlayerEntity,
 } from 'logic/game/game-selectors'
 import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -26,10 +26,10 @@ type Props = {
 }
 
 const MobileActions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
+	const currentPlayer = useSelector(getPlayerStateByEntity(localGameState.turn.currentPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
-	const playerId = useSelector(getPlayerId)
+	const playerEntity = useSelector(getPlayerEntity)
 	const boardState = currentPlayer?.board
 	const singleUse = boardState?.singleUse || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
@@ -50,7 +50,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	}
 
 	const Status = () => {
-		const turn = localGameState.turn.currentPlayerId === playerId
+		const turn = localGameState.turn.currentPlayerEntity === playerEntity
 		const waitingForOpponent =
 			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
 		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick a card' : "Opponent's Turn"

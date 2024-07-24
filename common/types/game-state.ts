@@ -84,7 +84,6 @@ export type TurnState = {
 
 export type LocalTurnState = {
 	turnNumber: number
-	currentPlayerId: PlayerId
 	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
@@ -151,7 +150,6 @@ export type GameEndOutcomeT =
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
-	id: PlayerId
 	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
@@ -178,8 +176,6 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerId
-	opponentPlayerId: PlayerId
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
@@ -193,7 +189,7 @@ export type LocalGameState = {
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
 
-	players: Record<PlayerId, LocalPlayerState>
+	players: Record<PlayerEntity, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number

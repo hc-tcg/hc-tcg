@@ -136,7 +136,6 @@ export function* localEndTurn() {
 	let localPlayerState = yield* select(getGameState)
 	if (localPlayerState?.turn) {
 		localPlayerState.turn.currentPlayerEntity = localPlayerState?.opponentPlayerEntity
-		localPlayerState.turn.currentPlayerId = localPlayerState?.opponentPlayerId
 		localPlayerState.turn.turnNumber++
 	}
 

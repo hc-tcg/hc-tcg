@@ -57,7 +57,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	let isClickable = false
 
 	if (
-		(localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) ||
+		(localGameState && localGameState.playerEntity === localGameState.turn.currentPlayerEntity) ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()

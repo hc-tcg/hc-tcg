@@ -62,7 +62,7 @@ class BoomerBdubsRare extends Card {
 			if (!activeHermit) return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
@@ -100,7 +100,7 @@ class BoomerBdubsRare extends Card {
 						StatusEffectComponent<PlayerComponent>,
 						query.effect.is(FortuneEffect),
 						query.effect.targetIsPlayerAnd(
-							(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+							(_game, targetPlayer: PlayerComponent) => targetPlayer.entity === player.entity
 						)
 					)
 

@@ -22,7 +22,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const attackData: AttackActionData = {
 		type: actionType,
 		payload: {
-			playerId: player.id,
+			player: player.entity,
 		},
 	}
 	yield put(attackData)
