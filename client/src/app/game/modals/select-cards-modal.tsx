@@ -1,5 +1,5 @@
 import {useSelector, useDispatch} from 'react-redux'
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {ModalData} from 'common/types/game-state'

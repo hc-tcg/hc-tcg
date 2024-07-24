@@ -1,4 +1,4 @@
-import {ReactNode, useState} from 'react'
+import {ReactNode, useState} from 'preact/compat'
 import classNames from 'classnames'
 import css from './deck-sidebar.module.scss'
 import {KebabMenuIcon} from 'components/svgs'

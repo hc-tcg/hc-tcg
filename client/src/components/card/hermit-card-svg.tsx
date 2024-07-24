@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
-import {memo} from 'react'
+import {memo} from 'preact/compat'
 import {Hermit} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 

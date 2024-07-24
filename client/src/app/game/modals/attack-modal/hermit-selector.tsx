@@ -1,5 +1,5 @@
 import {useSelector} from 'react-redux'
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import classnames from 'classnames'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'

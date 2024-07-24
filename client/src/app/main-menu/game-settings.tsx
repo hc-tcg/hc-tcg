@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'preact/compat'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
@@ -32,9 +32,9 @@ function GameSettings({setMenuSection}: Props) {
 	const handleProfanityChange = () => {
 		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
 	}
-	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
+	const handleMinecraftName = (ev: SubmitEvent) => {
 		ev.preventDefault()
-		const username = ev.currentTarget.minecraftName.value.trim()
+		const username = (ev.currentTarget as HTMLFormElement).minecraftName.value.trim()
 		if (username.length > 3) {
 			dispatch({
 				type: 'UPDATE_MINECRAFT_NAME',

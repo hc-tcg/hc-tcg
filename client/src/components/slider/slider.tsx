@@ -1,4 +1,4 @@
-import React, {forwardRef} from 'react'
+import React, {forwardRef} from 'preact/compat'
 import css from './slider.module.scss'
 import classnames from 'classnames'
 

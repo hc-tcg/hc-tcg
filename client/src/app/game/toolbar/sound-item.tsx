@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import {useDispatch, useSelector} from 'react-redux'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'

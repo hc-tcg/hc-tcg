@@ -1,4 +1,4 @@
-import {HTMLAttributes, ReactNode} from 'react'
+import {HTMLAttributes, ReactNode} from 'preact/compat'
 import css from './error-banner.module.scss'
 import {ErrorIcon} from 'components/svgs'
 

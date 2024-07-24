@@ -1,4 +1,4 @@
-import {useDeferredValue, useRef, useState} from 'react'
+import {useDeferredValue, useRef, useState} from 'preact/compat'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {cardGroupHeader} from './deck'
@@ -366,7 +366,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								placeholder="Search cards..."
 								className={css.input}
 								value={textQuery}
-								onChange={(e) => setTextQuery(e.target.value)}
+								onChange={(e) => setTextQuery((e.target as any).value)}
 							/>
 							<div className={css.dynamicSpace} />
 							<button

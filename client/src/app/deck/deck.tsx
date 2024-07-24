@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import {useState, ReactNode} from 'react'
+import {useState, ReactNode} from 'preact/compat'
 import {useSelector, useDispatch} from 'react-redux'
 import CardList from 'components/card-list'
 import {validateDeck} from 'common/utils/validation'

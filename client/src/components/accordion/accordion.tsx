@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import {ReactNode, useState} from 'react'
+import {ReactNode, useState} from 'preact/compat'
 import css from './accordion.module.css'
 
 type Props = {

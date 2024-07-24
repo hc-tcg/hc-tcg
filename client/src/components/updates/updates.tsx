@@ -1,7 +1,7 @@
 import AlertModal from 'components/alert-modal'
 import {toHTML} from 'discord-markdown'
 import {getUpdates} from 'logic/session/session-selectors'
-import {useRef, useEffect} from 'react'
+import {useRef, useEffect} from 'preact/compat'
 import {useSelector} from 'react-redux'
 import sanitize from 'sanitize-html'
 import css from './updates.module.scss'

@@ -1,5 +1,5 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import {useState, useRef} from 'react'
+import {useState, useRef} from 'preact/compat'
 import Button from 'components/button'
 import {PlayerDeckT} from 'common/types/deck'
 import Dropdown from 'components/dropdown'
@@ -172,7 +172,9 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 						<input
 							id="file-input"
 							type="file"
-							onChange={(e) => importFromFile(e.target.files ? e.target.files[0] : undefined)}
+							onChange={(e) =>
+								importFromFile((e.target as any).files ? (e.target as any).files[0] : undefined)
+							}
 							style={{display: 'none'}}
 						/>
 					</div>

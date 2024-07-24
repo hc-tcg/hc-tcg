@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState} from 'preact/compat'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'

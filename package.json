@@ -16,7 +16,6 @@
 		"@react-three/drei": "^9.65.3",
 		"@react-three/fiber": "^8.12.1",
 		"@use-gesture/react": "^10.2.27",
-		"@vitejs/plugin-react": "^3.0.1",
 		"classnames": "^2.3.2",
 		"cors": "^2.8.5",
 		"discord-markdown": "^2.5.1",
@@ -26,8 +25,9 @@
 		"js-base64": "^3.7.5",
 		"node-fetch": "^3.3.2",
 		"preact": "^10.23.0",
-    "react": "npm:@preact/compat",
-    "react-dom": "npm:@preact/compat",
+		"preact-reconciler": "^0.1.8",
+		"react": "npm:@preact/compat",
+		"react-dom": "npm:@preact/compat",
 		"react-redux": "^8.0.5",
 		"react-transition-group": "^4.4.5",
 		"redux": "^4.2.0",
@@ -39,6 +39,7 @@
 		"typed-redux-saga": "^1.5.0"
 	},
 	"devDependencies": {
+		"@preact/preset-vite": "^2.9.0",
 		"@types/node": "^16.18.11",
 		"@types/react-transition-group": "^4.4.6",
 		"@types/sanitize-html": "^2.11.0",

@@ -7,7 +7,7 @@ import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import UpdatesModal from 'components/updates'
 
 type Props = {

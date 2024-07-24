@@ -1,4 +1,4 @@
-import {useRef, useEffect, useState} from 'react'
+import {useRef, useEffect, useState} from 'preact/compat'
 import css from './mouse-indicator.module.css'
 
 let globalClientX = -100

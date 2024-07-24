@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import css from './main-menu.module.scss'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'

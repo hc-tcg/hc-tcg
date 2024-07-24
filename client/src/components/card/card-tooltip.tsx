@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'preact/compat'
 import {TypeT} from 'common/types/cards'
 import {
 	CardProps,

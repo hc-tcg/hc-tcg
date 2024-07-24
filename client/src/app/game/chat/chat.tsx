@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import {useDispatch, useSelector} from 'react-redux'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
@@ -57,7 +57,7 @@ function Chat() {
 
 	const handleNewMessage = (ev: SubmitEvent) => {
 		ev.preventDefault()
-		const form = ev.currentTarget
+		const form = ev.currentTarget as HTMLFormElement
 		const messageEl = form.message as HTMLInputElement
 		const message = messageEl.value.trim()
 		messageEl.value = ''

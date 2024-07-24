@@ -1,4 +1,4 @@
-import {ReactNode} from 'react'
+import {ReactNode} from 'preact/compat'
 import cn from 'classnames'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import css from './alert-modal.module.scss'

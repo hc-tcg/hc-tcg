@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unknown-property */
-import React from 'react'
-import {useRef} from 'react'
+import React from 'preact/compat'
+import {useRef} from 'preact/compat'
 import * as THREE from 'three'
 import css from './background.module.scss'
 import {PerspectiveCamera} from '@react-three/drei'

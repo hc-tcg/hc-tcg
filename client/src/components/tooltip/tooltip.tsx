@@ -1,5 +1,5 @@
 import css from './tooltip.module.scss'
-import React, {memo, useState} from 'react'
+import React, {memo, useState} from 'preact/compat'
 import {
 	useFloating,
 	autoUpdate,

@@ -1,4 +1,4 @@
-import {ReactNode} from 'react'
+import {ReactNode} from 'preact/compat'
 import css from './deck-main.module.scss'
 
 type Props = {

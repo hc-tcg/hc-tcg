@@ -1,4 +1,3 @@
-import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
@@ -26,9 +25,9 @@ const Login = () => {
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
 
-	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
+	const handlePlayerName = (ev: SubmitEvent) => {
 		ev.preventDefault()
-		const name = ev.currentTarget.playerName.value.trim()
+		const name = (ev.currentTarget as HTMLFormElement).playerName.value.trim()
 		if (name.length > 0) dispatch(login(name))
 	}
 

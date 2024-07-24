@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react'
+import React, {ReactNode} from 'preact/compat'
 import css from './modal.module.scss'
 import {
 	Dialog,

@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'preact/compat'
 import {useSelector, useDispatch} from 'react-redux'
 import CardList from 'components/card-list'
 import Board from './board'
@@ -208,7 +208,7 @@ function Game() {
 					type="text"
 					placeholder="Search for cards..."
 					value={filter}
-					onChange={(e) => setFilter(e.target.value)}
+					onChange={(e) => setFilter((e.target as any).value)}
 				/>
 			)
 		}

@@ -1,11 +1,11 @@
 import path from 'path'
-import {defineConfig} from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite'
+import preact from "@preact/preset-vite";
 import CONFIG from '../common/config/server-config.json'
-import {getAppVersion} from '../version'
+import { getAppVersion } from '../version'
 
 export default defineConfig({
-	plugins: [react()],
+	plugins: [preact()],
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__PORT__: JSON.stringify(CONFIG.port),
@@ -23,6 +23,10 @@ export default defineConfig({
 			logic: path.resolve(__dirname, './src/logic'),
 			store: path.resolve(__dirname, './src/store'),
 			socket: path.resolve(__dirname, './src/socket'),
+	    react: 'preact/compat',
+	    'react-dom': 'preact/compat',
+			// Allows react-three.js to work with preact
+	    'react-reconciler': 'preact-reconciler',
 		},
 	},
 	css: {

@@ -1,5 +1,5 @@
 import css from './deck-layout.module.scss'
-import {ReactNode} from 'react'
+import {ReactNode} from 'preact/compat'
 import DeckSidebar from './deck-sidebar'
 import DeckMain from './deck-main'
 

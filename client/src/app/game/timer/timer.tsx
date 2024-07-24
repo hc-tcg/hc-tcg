@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux'
-import {useEffect, useState} from 'react'
+import {useEffect, useState} from 'preact/compat'
 import cn from 'classnames'
 import css from './timer.module.scss'
 import {LocalGameState} from 'common/types/game-state'

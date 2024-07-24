@@ -1,4 +1,4 @@
-import {useState, useRef, useMemo, useEffect, memo} from 'react'
+import {useState, useRef, useMemo, useEffect, memo} from 'preact/compat'
 import css from './health-card-svg.module.scss'
 import classnames from 'classnames'
 

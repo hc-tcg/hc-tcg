@@ -1,5 +1,5 @@
 import css from './toolbar.module.scss'
-import {useState} from 'react'
+import {useState} from 'preact/compat'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import {getChatMessages, getOpponentId} from 'logic/game/game-selectors'
