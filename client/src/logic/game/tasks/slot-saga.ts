@@ -36,35 +36,6 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	yield put(actionData)
 }
 
-function* makeCardLookPlayedHack(action: SlotPickedAction, selectedCard: LocalCardInstance) {
-	let playerState = yield* select(getPlayerState)
-	let board = playerState?.board
-	let slot = action.payload.slot
-	if (!board) return
-
-	let row = action.payload.row
-	let index = action.payload.index
-
-	if (slot.slotType === 'single_use') {
-		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
-	}
-	if (slot.slotType === 'hermit' && row !== undefined) {
-		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-
-		if (board.activeRow) {
-			board.activeRow = board.rows[row].entity
-		}
-	}
-	if (slot.slotType === 'attach' && row !== undefined) {
-		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
-	}
-	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
-		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
-	}
-
-	yield put({type: 'UPDATE_BOARD'})
-}
-
 function* pickWithSelectedSaga(
 	action: SlotPickedAction,
 	selectedCard: LocalCardInstance

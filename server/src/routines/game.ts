@@ -29,6 +29,7 @@ import {
 import {SingleUse} from 'common/cards/base/types'
 import {PlayerId} from 'common/models/player-model'
 import {PlayerEntity} from 'common/entities'
+import {ViewerComponent} from 'common/components/viewer-component'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -211,8 +212,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (action: any) => action.type === actionType && action.player === playerEntity
+function playerAction(actionType: string, playerId: PlayerId) {
+	return (action: any) => action.type === actionType && action.playerId === playerId
 }
 
 // return false in case one player is dead
@@ -300,8 +301,13 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
 
+	let currentPlayerView = game.components.find(
+		ViewerComponent,
+		(_game, viewer) => viewer.playerOnLeft.entity === currentPlayer.entity
+	)
+
 	const availableActions =
-		turnAction.playerId === currentPlayer.entity
+		turnAction.playerId === currentPlayerView?.playerId
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -370,9 +376,22 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, currentPlayer} = game
 
+	let playerViewer = game.viewers.find(
+		(viewer) => viewer.playerOnLeft.entity === currentPlayer.entity
+	)
+	let opponentViewer = game.viewers.find(
+		(viewer) => viewer.playerOnLeft.entity === opponentPlayer.entity
+	)
+
+	if (!playerViewer || !opponentViewer) {
+		throw new Error('Can not start a game without a player or opponent')
+	}
+
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayer.entity)),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
+				playerAction(type, opponentViewer.playerId)
+			),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
@@ -387,7 +406,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
-			].map((type) => playerAction(type, currentPlayer.entity)),
+			].map((type) => playerAction(type, playerViewer.playerId)),
 		],
 		buffers.dropping(10)
 	)
