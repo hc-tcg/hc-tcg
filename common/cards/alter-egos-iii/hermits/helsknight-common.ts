@@ -14,7 +14,7 @@ class HelsknightCommon extends Card {
 		rarity: 'common',
 		tokens: 0,
 		type: 'miner',
-		health: 290,
+		health: 270,
 		primary: {
 			name: 'Slash',
 			cost: ['any'],
