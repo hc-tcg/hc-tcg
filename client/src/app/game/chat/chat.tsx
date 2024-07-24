@@ -76,15 +76,25 @@ function Chat() {
 	}
 
 	// @TODO: Repopulate chat messages after reconnecting
+
+	let style = {
+		top: chatPos.y + chatPosSetting.y,
+		left: chatPos.x + chatPosSetting.x,
+		width: chatSize.w !== 0 ? chatSize.w : '94vw',
+		height: chatSize.h !== 0 ? chatSize.h : '50vh',
+	}
+
+	if (window.innerHeight > window.innerWidth) {
+		style.top = 0
+		style.left = 0
+		style.width = '100%'
+		style.height = '100%'
+	}
+
 	return (
 		<div
 			className={css.chat}
-			style={{
-				top: chatPos.y + chatPosSetting.y,
-				left: chatPos.x + chatPosSetting.x,
-				width: chatSize.w !== 0 ? chatSize.w : '94vw',
-				height: chatSize.h !== 0 ? chatSize.h : '50vh',
-			}}
+			style={style}
 			onClick={(e) => {
 				dispatch(
 					setSetting('chatSize', {
