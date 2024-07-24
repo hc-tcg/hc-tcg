@@ -144,8 +144,8 @@ function Game() {
 			// We do not do anything if the chat is opened because then you couldn't type the C key.
 			// Users can still use ESC to close the window.
 			if (chatIsClosed) {
-				e.stopImmediatePropagation();
-		    e.preventDefault();
+				e.stopImmediatePropagation()
+				e.preventDefault()
 				dispatch(setSetting('showChat', 'on'))
 			}
 		}
