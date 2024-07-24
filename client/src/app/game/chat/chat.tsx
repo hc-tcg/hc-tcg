@@ -1,4 +1,4 @@
-import {SyntheticEvent, useState} from 'react'
+import {SyntheticEvent, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
@@ -24,6 +24,11 @@ function Chat() {
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
+
+	// If the chat menu was opened previously, lets make sure it is off at the start of the game.
+	useEffect(() => {
+		dispatch(setSetting('showChat', 'off'))
+	}, [])
 
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 

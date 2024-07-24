@@ -1,5 +1,4 @@
 import {useDispatch, useSelector} from 'react-redux'
-import {getOpenedModal} from 'logic/game/game-selectors'
 import css from './toolbar.module.scss'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -18,7 +17,9 @@ function TooltipsItem() {
 		<button
 			className={css.item}
 			title={
-				settings.showAdvancedTooltips === 'on' ? 'Hide detailed tooltips' : 'Show detailed tooltips'
+				settings.showAdvancedTooltips === 'on'
+					? 'Hide detailed tooltips (H)'
+					: 'Show detailed tooltips (H)'
 			}
 			onClick={handleTooltips}
 		>

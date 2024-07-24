@@ -33,7 +33,8 @@ function Modal({children, description, closeModal, title, centered}: Props) {
 					onEscapeKeyDown={closeModal}
 				>
 					{title && <DialogTitle className={css.title}>{title}</DialogTitle>}
-					<DialogClose className={css.close}>
+					{/* When tabbing around it is more convient to click the buttons only */}
+					<DialogClose className={css.close} tabIndex={-1}>
 						<img src="/images/CloseX.svg" alt="close" />
 					</DialogClose>
 					{children}

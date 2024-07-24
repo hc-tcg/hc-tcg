@@ -32,6 +32,8 @@ import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {PlayerEntity} from 'common/entities'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -65,7 +67,7 @@ function Game() {
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
-	// const settings = useSelector(getSettings)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const [filter, setFilter] = useState<string>('')
@@ -78,6 +80,13 @@ function Game() {
 
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeys)
+		return () => {
+			window.removeEventListener('keydown', handleKeys)
+		}
+	}, [handleKeys])
 
 	const handleOpenModal = (id: string | null) => {
 		dispatch(setOpenedModal(id))
@@ -124,28 +133,38 @@ function Game() {
 		dispatch(setSelectedCard(null))
 	}
 
-	// TODO: handleKeys is disabled due to eventListeners not able to use state
-	// function handleKeys(e: any) {
-	// 	// const chatIsClosed = settings.showChat === 'off'
-	// 	const chatIsClosed = false
+	function handleKeys(e: any) {
+		const chatIsClosed = settings.showChat === 'off'
 
-	// 	if (e.key === 'Escape') {
-	// 		dispatch(setSetting('showChat', 'off'))
-	// 	}
+		if (e.key === 'Escape') {
+			dispatch(setSetting('showChat', 'off'))
+		}
 
-	// 	if (chatIsClosed) {
-	// 		e.key === '/' && dispatch(setSetting('showChat', 'on'))
-	// 		if (e.key === 'a' || e.key === 'A') {
-	// 			dispatch(setOpenedModal('attack'))
-	// 		}
-	// 		if (e.key === 'e' || e.key === 'E') {
-	// 			dispatch(setOpenedModal('end-turn'))
-	// 		}
-	// 		if (e.key === 'm' || e.key === 'M') {
-	// 			console.log('Mute!')
-	// 		}
-	// 	}
-	// }
+		if (e.key === 'c' || e.key === 'C') {
+			if (chatIsClosed) {
+				dispatch(setSetting('showChat', 'on'))
+			} else {
+				dispatch(setSetting('showChat', 'off'))
+			}
+		}
+
+		if (chatIsClosed) {
+			if (e.key === 'a' || e.key === 'A') {
+				dispatch(setOpenedModal('attack'))
+			}
+			if (e.key === 'e' || e.key === 'E') {
+				if (availableActions.includes('END_TURN')) dispatch(setOpenedModal('end-turn'))
+			}
+			if (e.key === 'm' || e.key === 'M') {
+				dispatch(setSetting('muted', !settings.muted))
+			}
+			if (e.key === 'h' || e.key === 'H') {
+				dispatch(
+					setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+				)
+			}
+		}
+	}
 
 	function handleResize() {
 		if (!gameWrapperRef.current || !gameRef.current) return
