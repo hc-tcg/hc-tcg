@@ -59,7 +59,7 @@ const hermitCardClasses: Array<CardClass> = [
 	JinglerCommon,
 	FiveAMPearlCommon,
 	IskallManCommon,
-	// BoomerBdubsCommon,
+	BoomerBdubsCommon,
 	EvilJevinRare,
 ]
 
