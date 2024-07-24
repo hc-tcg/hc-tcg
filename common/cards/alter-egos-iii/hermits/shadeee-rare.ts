@@ -15,7 +15,7 @@ class ShadeEERare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 3,
+		tokens: 2,
 		type: 'redstone',
 		health: 270,
 		primary: {

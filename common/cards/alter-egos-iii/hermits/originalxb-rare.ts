@@ -10,7 +10,7 @@ class OriginalXBRare extends Card {
 		...hermit,
 		id: 'originalxb_rare',
 		numericId: 164,
-		name: 'Original XB',
+		name: 'Original xB',
 		expansion: 'alter_egos_iii',
 		background: 'alter_egos',
 		palette: 'alter_egos',
@@ -19,7 +19,7 @@ class OriginalXBRare extends Card {
 		type: 'miner',
 		health: 270,
 		primary: {
-			name: "Slabs 'n Stairs!",
+			name: "Slabs 'n Stairs",
 			cost: ['miner'],
 			damage: 50,
 			power: null,
