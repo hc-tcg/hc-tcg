@@ -28,6 +28,7 @@ import {
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
 import {PlayerId} from 'common/models/player-model'
+import {PlayerEntity} from 'common/entities'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -75,7 +76,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Custom modals
 	if (modalRequests.length > 0) {
 		const request = modalRequests[0]
-		if (request.playerId === currentPlayer.id) {
+		if (request.player === currentPlayer.entity) {
 			return ['MODAL_REQUEST']
 		} else {
 			// Activate opponent action timer
@@ -90,7 +91,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Pick requests
 	if (pickRequests.length > 0) {
 		const request = pickRequests[0]
-		if (request.playerId === currentPlayer.id) {
+		if (request.player === currentPlayer.entity) {
 			let pickActions: TurnActions = ['PICK_REQUEST']
 			if (su && !suUsed) {
 				pickActions.push('REMOVE_EFFECT')
@@ -210,8 +211,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerId: PlayerId) {
-	return (action: any) => action.type === actionType && action.playerId === playerId
+function playerAction(actionType: string, playerEntity: PlayerEntity) {
+	return (action: any) => action.type === actionType && action.player === playerEntity
 }
 
 // return false in case one player is dead
@@ -300,7 +301,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	const actionType = turnAction.type as TurnAction
 
 	const availableActions =
-		turnAction.playerId === currentPlayer.id
+		turnAction.playerId === currentPlayer.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -371,7 +372,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayer.id)),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayer.entity)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
@@ -386,7 +387,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
-			].map((type) => playerAction(type, currentPlayer.id)),
+			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10)
 	)
@@ -423,9 +424,9 @@ function* turnActionsSaga(game: GameModel) {
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
-			if (game.state.pickRequests[0]?.playerId === opponentPlayer.id) {
+			if (game.state.pickRequests[0]?.player === opponentPlayer.entity) {
 				opponentAction = 'PICK_REQUEST'
-			} else if (game.state.modalRequests[0]?.playerId === opponentPlayer.id) {
+			} else if (game.state.modalRequests[0]?.player === opponentPlayer.entity) {
 				opponentAction = 'MODAL_REQUEST'
 			}
 			game.state.turn.opponentAvailableActions = [opponentAction]
@@ -476,7 +477,7 @@ function* turnActionsSaga(game: GameModel) {
 				// First check to see if the opponent had a pick request active
 				const currentPickRequest = game.state.pickRequests[0]
 				if (currentPickRequest) {
-					if (currentPickRequest.playerId === currentPlayer.id) {
+					if (currentPickRequest.player === currentPlayer.entity) {
 						if (!!currentAttack) {
 							reset = true
 						}
@@ -488,7 +489,7 @@ function* turnActionsSaga(game: GameModel) {
 				// Check to see if the opponent had a modal request active
 				const currentModalRequest = game.state.modalRequests[0]
 				if (currentModalRequest) {
-					if (currentModalRequest.playerId === currentPlayer.id) {
+					if (currentModalRequest.player === currentPlayer.entity) {
 						if (!!currentAttack) {
 							reset = true
 						}
@@ -515,7 +516,7 @@ function* turnActionsSaga(game: GameModel) {
 						const turnAction: AttackActionData = {
 							type: attackToAttackAction[currentAttack],
 							payload: {
-								playerId: game.currentPlayer.id,
+								player: game.currentPlayer.entity,
 							},
 						}
 						yield* call(attackSaga, game, turnAction, false)
@@ -571,7 +572,7 @@ function* turnSaga(game: GameModel) {
 		const turnStartDeadPlayers = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayers.length) {
 			game.endInfo.reason = turnStartDeadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
-			game.endInfo.deadPlayerIds = turnStartDeadPlayers.map((player) => player.id)
+			game.endInfo.deadPlayerIds = turnStartDeadPlayers.map((player) => player.entity)
 			return 'GAME_END'
 		}
 	}
@@ -611,7 +612,7 @@ function* turnSaga(game: GameModel) {
 		} else {
 			game.endInfo.reason = 'hermits'
 		}
-		game.endInfo.deadPlayerIds = deadPlayers.map((player) => player.id)
+		game.endInfo.deadPlayerIds = deadPlayers.map((player) => player.entity)
 		return 'GAME_END'
 	}
 

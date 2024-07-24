@@ -56,7 +56,7 @@ class TangoTekRare extends Card {
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (game.components.exists(SlotComponent, opponentInactiveRowsPickCondition)) {
 				game.addPickRequest({
-					playerId: opponentPlayer.id,
+					player: opponentPlayer.entity,
 					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: opponentInactiveRowsPickCondition,

@@ -46,7 +46,7 @@ class IJevinRare extends Card {
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
-				playerId: opponentPlayer.id, // For opponent player to pick
+				player: opponentPlayer.entity, // For opponent player to pick
 				id: component.entity,
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,

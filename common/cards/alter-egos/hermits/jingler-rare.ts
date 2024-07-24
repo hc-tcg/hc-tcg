@@ -42,7 +42,7 @@ class JinglerRare extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
-				playerId: opponentPlayer.id,
+				player: opponentPlayer.entity,
 				id: component.entity,
 				message: 'Pick 1 card from your hand to discard',
 				canPick: slot.hand,

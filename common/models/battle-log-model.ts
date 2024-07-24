@@ -174,7 +174,7 @@ export class BattleLogModel {
 			const attackingHermitInfo = attack.attacker
 			const targetHermitInfo = attack.target.getHermit()
 
-			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
+			const targetFormatting = attack.target.player.entity === attack.player.entity ? 'p' : 'o'
 
 			const rowNumberString = `(${attack.target.index + 1})`
 
@@ -210,7 +210,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
@@ -289,7 +289,7 @@ export class BattleLogModel {
 		this.game.chat.push({
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.id,
+			sender: this.game.opponentPlayer.entity,
 			systemMessage: true,
 		})
 

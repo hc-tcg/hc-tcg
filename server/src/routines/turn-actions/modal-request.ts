@@ -40,7 +40,7 @@ function* modalRequestSaga(
 			const turnAction: AttackActionData = {
 				type: attackToAttackAction[game.state.turn.currentAttack],
 				payload: {
-					playerId: game.currentPlayer.id,
+					player: game.currentPlayer.entity,
 				},
 			}
 			const attackResult = yield* call(attackSaga, game, turnAction, false)
