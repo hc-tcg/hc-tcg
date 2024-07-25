@@ -9,10 +9,6 @@
 	border: 4px solid var(--gray-900);
 	background: hsla(210deg, 2%, 20%, 50%);
 	flex-grow: 1;
-
-	@media (orientation: portrait) {
-		margin-top: 10px;
-	}
 }
 
 .active {

@@ -126,6 +126,10 @@
 }
 
 .mobile {
+	#singleUse {
+		width: unset;
+	}
+
 	.buttons {
 		display: flex;
 		flex-direction: row;
@@ -134,8 +138,8 @@
 	.status {
 		display: flex;
 		flex-direction: row;
-		width: 100%;
-		height: 100%;
+		flex-grow: 1;
+		font-size: 22px;
 	}
 
 	.mobileButton {

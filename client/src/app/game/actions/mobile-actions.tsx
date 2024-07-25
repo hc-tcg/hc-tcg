@@ -65,8 +65,6 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			message = pickMessage
 		} else if (waitingForOpponent) {
 			message = "Waiting for opponent's action..."
-		} else if (endTurn && availableActions.length === 1) {
-			message = 'End your turn when ready'
 		} else if (changeHermit && availableActions.length === 1) {
 			message = 'Select a new active Hermit'
 		} else if (endTurn && changeHermit && availableActions.length === 2) {
