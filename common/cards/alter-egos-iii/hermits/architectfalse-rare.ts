@@ -1,13 +1,25 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import {PlayerEntity} from '../../../entities'
+import {GameModel, GameValue} from '../../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
-import Card, {InstancedValue} from '../../base/card'
+import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+
+type AttackInfo = {
+	attacker: CardComponent
+	attackType: HermitAttackType
+	turn: number
+}
 
 class ArchitectFalseRare extends Card {
 	props: Hermit = {
@@ -37,36 +49,51 @@ class ArchitectFalseRare extends Card {
 		},
 	}
 
-	lastAttacker = new InstancedValue<CardComponent | null>(() => null)
-	lastAttackType = new InstancedValue<HermitAttackType | null>(() => null)
+	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
+		return {}
+	})
 
 	override onCreate(game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = component
+		if (Object.hasOwn(this.lastAttackInfo.values, game.id)) return
+		this.lastAttackInfo.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
-		newObserver.subscribe(opponentPlayer.hooks.onAttack, (attack) => {
-			if (!(attack.attacker instanceof CardComponent)) return
-			if (!attack.isType('primary', 'secondary')) return
-			this.lastAttacker.set(component, attack.attacker)
-			this.lastAttackType.set(component, attack.type)
-		})
+		game.components.filter(PlayerComponent).forEach((player) =>
+			newObserver.subscribe(player.hooks.onAttack, (attack) => {
+				if (!(attack.attacker instanceof CardComponent)) return
+				if (!attack.isType('primary', 'secondary')) return
+				this.lastAttackInfo.get(game)[player.entity] = {
+					attacker: attack.attacker,
+					attackType: attack.type,
+					turn: game.state.turn.turnNumber,
+				}
+			})
+		)
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (
+				!attack.isAttacker(component.entity) ||
+				attack.type !== 'secondary' ||
+				attack.target === null
+			)
+				return
 
-			if (this.lastAttackType.get(component) === 'primary') {
+			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
+			if (!lastAttackInfo || lastAttackInfo.turn !== game.state.turn.turnNumber - 1) return
+
+			if (lastAttackInfo.attackType === 'primary') {
 				game.components
 					.new(StatusEffectComponent, PrimaryAttackDisabledEffect)
-					.apply(this.lastAttacker.get(component)?.entity)
-			} else if (this.lastAttackType.get(component) === 'secondary') {
+					.apply(lastAttackInfo.attacker.entity)
+			} else if (lastAttackInfo.attackType === 'secondary') {
 				game.components
 					.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
-					.apply(this.lastAttacker.get(component)?.entity)
+					.apply(lastAttackInfo.attacker.entity)
 			}
 		})
 	}

@@ -235,3 +235,30 @@ export type GameLog = {
 	startTimestamp: number
 	startDeck: string
 }
+
+export abstract class DefaultDictionary<Keys, Type> {
+	default: () => Type
+	values: Record<string, Type> = {}
+
+	public constructor(defaultFactory: () => Type) {
+		this.default = defaultFactory
+	}
+
+	public abstract set(key: Keys, value: Type): void
+	protected setValue(stringKey: string, value: Type) {
+		this.values[stringKey] = value
+	}
+
+	public abstract get(key: Keys): Type
+	protected getValue(stringKey: string) {
+		if (stringKey in this.values) {
+			return this.values[stringKey]
+		}
+		return this.default()
+	}
+
+	public abstract clear(key: Keys): void
+	protected clearValue(stringKey: string) {
+		delete this.values[stringKey]
+	}
+}
