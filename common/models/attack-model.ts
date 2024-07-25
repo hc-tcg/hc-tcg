@@ -185,7 +185,7 @@ export class AttackModel {
 		return this
 	}
 
-	/** Sets the target for this attack. Unlike reidrect, this does not trigger Chainmail Armor. */
+	/** Sets the target for this attack. Unlike redirect, this does not trigger Chainmail Armor. */
 	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.targetEntity = target
 		this.addHistory(sourceId, 'set_target', target)
