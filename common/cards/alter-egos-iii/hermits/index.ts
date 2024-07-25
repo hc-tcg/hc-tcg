@@ -41,7 +41,7 @@ const hermitCardClasses: Array<CardClass> = [
 	OriginalXBRare,
 	// PoePoeSkizzCommon,
 	// PoePoeSkizzRare,
-	// PoultryManRare,
+	PoultryManRare,
 	// PrincessGemRare,
 	ShadeEERare,
 	// SpookyStressRare,
