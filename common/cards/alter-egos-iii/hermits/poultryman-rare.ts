@@ -16,7 +16,7 @@ class PoultryManRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 3,
 		type: 'farm',
 		health: 280,
 		primary: {
