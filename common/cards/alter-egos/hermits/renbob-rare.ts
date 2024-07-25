@@ -38,7 +38,7 @@ class RenbobRare extends Card {
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (!component.slot.inRow()) return
-			attack.redirect(
+			attack.setTarget(
 				component.entity,
 				game.components.find(RowComponent, row.opponentPlayer, row.index(component.slot.row.index))
 					?.entity || null
