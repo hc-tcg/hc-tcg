@@ -25,6 +25,8 @@ function Chat() {
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
 
+	const viewingFromMobile = window.innerHeight > window.innerWidth
+
 	// If the chat menu was opened previously, lets make sure it is off at the start of the game.
 	useEffect(() => {
 		dispatch(setSetting('showChat', 'off'))
@@ -33,6 +35,10 @@ function Chat() {
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
 	const bindChatPos = useDrag((params: any) => {
+		// When on mobile the chat uses a different size. Dragging it causes the mobile size to saved
+		// which feels buggy.
+		if (viewingFromMobile) return
+
 		const {innerWidth: width, innerHeight: height} = window
 		let [x, y] = params.movement
 
@@ -84,7 +90,7 @@ function Chat() {
 		height: chatSize.h !== 0 ? chatSize.h : '50vh',
 	}
 
-	if (window.innerHeight > window.innerWidth) {
+	if (viewingFromMobile) {
 		style.top = 0
 		style.left = 0
 		style.width = '100%'

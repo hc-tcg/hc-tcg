@@ -9,6 +9,10 @@
 	border: 4px solid var(--gray-900);
 	background: hsla(210deg, 2%, 20%, 50%);
 	flex-grow: 1;
+
+	@media (orientation: portrait) {
+		margin-top: 10px;
+	}
 }
 
 .active {
@@ -41,8 +45,12 @@
 		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 20ch;
+		width: 80ch;
 		overflow: hidden;
+
+		@media (orientation: portrait) {
+			width: 15ch;
+		}
 	}
 
 	> p {
