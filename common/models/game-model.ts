@@ -82,8 +82,8 @@ export class GameModel {
 		}
 
 		this.components = new ComponentTable(this)
-		setupComponents(this.components, player1, player2)
 		this.afterGameEnd = new Hook<string, () => void>()
+		setupComponents(this.components, player1, player2)
 
 		this.state = getGameState(this)
 	}
