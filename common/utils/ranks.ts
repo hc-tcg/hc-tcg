@@ -1,7 +1,7 @@
 import {RankT} from '../types/cards'
 import {LocalCardInstance} from '../types/server-requests'
 
-export function getCardRank(tokens: number): RankT {
+export function getCardRank(tokens: number | 'wild'): RankT {
 	if (tokens === 0) {
 		return 'stone'
 	} else if (tokens === 1) {
@@ -17,5 +17,13 @@ export function getCardRank(tokens: number): RankT {
 }
 
 export function getDeckCost(deckCards: Array<LocalCardInstance>) {
-	return deckCards.reduce((cost, card) => (cost += card.props.tokens), 0)
+	let wildCards = deckCards.filter((card) => card.props.id === 'item_any_common').length
+	let wildCost = Math.ceil(wildCards / 3)
+
+	return (
+		deckCards.reduce(
+			(cost, card) => (cost += card.props.tokens !== 'wild' ? card.props.tokens : 0),
+			0
+		) + wildCost
+	)
 }

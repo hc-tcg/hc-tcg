@@ -124,8 +124,8 @@ const TYPE_ORDER = {
 
 export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInstance> {
 	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
-		const cardCostA = a.props.tokens
-		const cardCostB = b.props.tokens
+		let cardCostA = a.props.tokens
+		let cardCostB = b.props.tokens
 
 		if (a.props.category !== b.props.category) {
 			// seperate by types first
@@ -149,6 +149,8 @@ export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInsta
 			return a.props.expansion.localeCompare(a.props.expansion)
 		} else if (cardCostA !== cardCostB) {
 			// order by ranks
+			if (cardCostA === 'wild') cardCostA = 0
+			if (cardCostB === 'wild') cardCostB = 0
 			return cardCostA - cardCostB
 		} else if (a.props.name !== b.props.name) {
 			return a.props.name.localeCompare(b.props.name)

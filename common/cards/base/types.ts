@@ -18,7 +18,7 @@ export type CardProps = {
 	name: string
 	shortName?: string
 	rarity: CardRarityT
-	tokens: number
+	tokens: 0 | 1 | 2 | 3 | 4 | 5 | 'wild'
 	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
