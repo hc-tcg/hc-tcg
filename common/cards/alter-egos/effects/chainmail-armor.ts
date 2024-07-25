@@ -28,7 +28,7 @@ class ChainmailArmor extends Card {
 			// only protect against su attacks and attacks which have been redirected by su cards
 			let suRedirect = false
 
-			const lastTargetChange = attack.getHistory('set_target').pop()
+			const lastTargetChange = attack.getHistory('redirect').pop()
 			if (lastTargetChange) {
 				// This attack has been redirected to us by a su card
 				suRedirect = true
