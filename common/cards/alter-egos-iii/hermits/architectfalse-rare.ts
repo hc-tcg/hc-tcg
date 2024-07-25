@@ -54,7 +54,7 @@ class ArchitectFalseRare extends Card {
 	})
 
 	override onCreate(game: GameModel, component: CardComponent) {
-		if (Object.hasOwn(this.lastAttackInfo, game.id)) return
+		if (Object.hasOwn(this.lastAttackInfo.values, game.id)) return
 		this.lastAttackInfo.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)

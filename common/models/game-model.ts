@@ -1,5 +1,12 @@
 import {PlayerId, PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions, Message} from '../types/game-state'
+import {
+	TurnAction,
+	GameState,
+	ActionResult,
+	TurnActions,
+	Message,
+	DefaultDictionary,
+} from '../types/game-state'
 import {getGameState, setupComponents} from '../utils/state-gen'
 import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
@@ -10,29 +17,23 @@ import {AttackModel} from './attack-model'
 import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {Hook} from '../types/hooks'
 
 /** Type that allows for additional data about a game to be shared between components */
-export class GameValue<T> {
-	default: () => T
-	values: Record<string, T> = {}
-
-	public constructor(defaultFactory: () => T) {
-		this.default = defaultFactory
-	}
-
+export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
-		this.values[game.id] = value
+		if (!Object.hasOwn(this.values, game.id)) {
+			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+		}
+		this.setValue(game.id, value)
 	}
 
-	public get(game: GameModel) {
-		if (game.id in this.values) {
-			return this.values[game.id]
-		}
-		return this.default()
+	public get(game: GameModel): T {
+		return this.getValue(game.id)
 	}
 
 	public clear(game: GameModel) {
-		delete this.values[game.id]
+		this.clearValue(game.id)
 	}
 }
 
@@ -49,6 +50,8 @@ export class GameModel {
 
 	/** The objects used in the game. */
 	public components: ComponentTable
+	/** Hook for when the game ends and references needs to be disposed */
+	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -80,6 +83,7 @@ export class GameModel {
 
 		this.components = new ComponentTable(this)
 		setupComponents(this.components, player1, player2)
+		this.afterGameEnd = new Hook<string, () => void>()
 
 		this.state = getGameState(this)
 	}
