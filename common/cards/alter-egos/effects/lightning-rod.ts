@@ -40,7 +40,7 @@ class LightningRod extends Card {
 			if (game.currentPlayer.entity !== opponentPlayer.entity) return
 			if (attack.target?.player.id !== player.id) return
 
-			attack.setTarget(component.entity, component.slot.row?.entity)
+			attack.redirect(component.entity, component.slot.row?.entity)
 			used = true
 		})
 

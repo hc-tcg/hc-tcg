@@ -42,7 +42,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 			if (!(attack.attacker instanceof CardComponent) || !attack.attacker.slot.inRow()) return
 
 			if (coinFlipResult === 'heads') {
-				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
+				attack.redirect(effect.entity, attack.attacker.slot.rowEntity)
 			}
 		})
 

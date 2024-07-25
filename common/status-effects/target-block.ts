@@ -21,7 +21,7 @@ export class TargetBlockEffect extends CardStatusEffect {
 		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (!target.slot.inRow()) return
-			attack.setTarget(effect.entity, target.slot.row.entity)
+			attack.redirect(effect.entity, target.slot.row.entity)
 		})
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
