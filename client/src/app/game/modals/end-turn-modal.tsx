@@ -29,7 +29,9 @@ type Props = {
 }
 
 export function shouldShowEndTurnModal(actions: Array<TurnAction>, settings: any): boolean {
-	return actions.some((action) => ActionMap[action] !== null) && settings.confirmationDialogs === 'on'
+	return (
+		actions.some((action) => ActionMap[action] !== null) && settings.confirmationDialogs === 'on'
+	)
 }
 
 function EndTurnModal({closeModal}: Props) {
