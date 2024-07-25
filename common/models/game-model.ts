@@ -22,7 +22,6 @@ export class GameValue<T> {
 
 	public set(game: GameModel, value: T) {
 		this.values[game.id] = value
-		game.task
 	}
 
 	public get(game: GameModel) {
