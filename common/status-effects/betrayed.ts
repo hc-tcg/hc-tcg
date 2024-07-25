@@ -100,7 +100,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 			observer.unsubscribe(player.hooks.beforeAttack)
 
 			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
-				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
+				attack.redirect(effect.entity, pickedAfkHermit.row.entity)
 			}
 
 			// They attacked now, they can end turn or change hermits with Chorus Fruit
