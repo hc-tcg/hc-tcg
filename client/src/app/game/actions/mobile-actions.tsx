@@ -51,7 +51,6 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const Status = () => {
 		const waitingForOpponent =
 			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
-		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 		// TODO: Show coin flip results for longer amount of time
@@ -67,8 +66,6 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			message = "Waiting for opponent's action..."
 		} else if (changeHermit && availableActions.length === 1) {
 			message = 'Select a new active Hermit'
-		} else if (endTurn && changeHermit && availableActions.length === 2) {
-			message = 'Switch to a new Hermit or end your turn'
 		}
 
 		if (message == '') return null
