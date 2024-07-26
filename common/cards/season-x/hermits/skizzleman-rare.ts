@@ -72,7 +72,9 @@ class SkizzlemanRare extends Card {
 				return
 			}
 
-			if (attack.targetEntity) attackedEntities.add(attack.targetEntity)
+			if (attack.targetEntity && opponentPlayer.activeRowEntity !== attack.targetEntity) {
+				attackedEntities.add(attack.targetEntity)
+			}
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
