@@ -63,7 +63,11 @@ class SkizzlemanRare extends Card {
 		observer.subscribe(opponentPlayer.hooks.onDefence, (attack) => {
 			// Status effect attacks have a special case because they happen at the end of the turn
 			if (attack.type === 'status-effect' && attack.targetEntity) {
-				if (attackedEntities.has(attack.targetEntity) || opponentPlayer.activeRowEntity === attack.targetEntity) return
+				if (
+					attackedEntities.has(attack.targetEntity) ||
+					opponentPlayer.activeRowEntity === attack.targetEntity
+				)
+					return
 				attack.addNewAttack(game.newAttack(this.newGasLightAttack(component, attack.targetEntity)))
 				return
 			}
