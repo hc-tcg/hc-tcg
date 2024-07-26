@@ -32,6 +32,8 @@ class Anvil extends Card {
 					(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
 				)
 				.reduce((attacks: null | AttackModel, row) => {
+					if (!row.getHermit()) return attacks
+
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
