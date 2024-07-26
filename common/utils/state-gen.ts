@@ -2,6 +2,7 @@ import {DEBUG_CONFIG} from '../config'
 import * as query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
+import {VirtualPlayerModel} from '../models/virtual-player-model'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -21,8 +22,8 @@ import {PlayerEntity} from '../entities'
  */
 export function setupComponents(
 	components: ComponentTable,
-	player1: PlayerModel,
-	player2: PlayerModel
+	player1: PlayerModel | VirtualPlayerModel,
+	player2: PlayerModel | VirtualPlayerModel
 ) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
@@ -34,7 +35,7 @@ export function setupComponents(
 
 function setupEcsForPlayer(
 	components: ComponentTable,
-	playerModel: PlayerModel,
+	playerModel: PlayerModel | VirtualPlayerModel,
 	playerEntity: PlayerEntity
 ) {
 	for (const card of playerModel.deck.cards) {

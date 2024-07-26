@@ -1,13 +1,23 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import * as query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import ExBossNineStatusEffect from '../../../status-effects/exboss-nine'
+import FireEffect from '../../../status-effects/fire'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from '../../../status-effects/multiturn-attack-disabled'
+import PoisonEffect from '../../../status-effects/poison'
+import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow, removeStatusEffect} from '../../../utils/board'
-import {discardCard} from '../../../utils/movement'
 import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
-import {InstancedValue} from '../../base/card'
+import {CardClass, InstancedValue} from '../../base/card'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
 type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'
@@ -17,8 +27,8 @@ export type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK?, TERTIARY_ATTACK?]
 
 const bossAttacks = new InstancedValue<BOSS_ATTACK>(() => ['50DMG'])
 
-export const supplyBossAttack = (instance: CardInstance, value: BOSS_ATTACK) =>
-	bossAttacks.set(instance, value)
+export const supplyBossAttack = (component: CardComponent, value: BOSS_ATTACK) =>
+	bossAttacks.set(component, value)
 
 const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | undefined => {
 	let attackName: string
@@ -59,261 +69,274 @@ const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | u
 	return baseLog
 }
 
-const effectDiscardCondition = slot.every(
-	slot.opponent,
-	slot.activeRow,
-	slot.attachSlot,
-	slot.not(slot.empty),
-	slot.not(slot.frozen)
+const effectDiscardCondition = query.card.slot(
+	query.slot.opponent,
+	query.slot.active,
+	query.slot.attach,
+	query.not(query.slot.frozen)
 )
 
+/** EX is immune to poison, fire, and slowness */
+function removeImmuneEffects(game: GameModel, slot: SlotComponent) {
+	if (!slot) return
+	game.components
+		.filter(
+			StatusEffectComponent,
+			query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
+			query.effect.is(PoisonEffect, FireEffect, SlownessEffect)
+		)
+		.forEach((effect) => effect.remove())
+}
+
+function destroyCard(game: GameModel, card: CardComponent) {
+	game.components.delete(card.slotEntity)
+	game.components.delete(card.entity)
+}
+
 class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
-	constructor() {
-		super()
-		this.props.id = 'evilxisuma_boss'
-		this.props.expansion = 'boss'
-		this.props.health = 300
+	constructor(cardClass: CardClass) {
+		super(cardClass)
+
+		this.props = {
+			...this.props, // EvilXisumaRareHermitCard.props
+			id: 'evilxisuma_boss',
+			numericId: -1,
+			expansion: 'boss',
+			health: 300,
+		}
 	}
 
 	/** Determines whether the player attempting to use this is the boss */
-	private isBeingImitated(pos: CardPosModel) {
-		return pos.player.board.rows.length !== 1
+	private isBeingMocked(game: GameModel, component: CardComponent) {
+		return (
+			game.components.filter(RowComponent, query.row.player(component.slot.player.entity))
+				.length !== 1
+		)
 	}
 
-	disabled = new InstancedValue<boolean>(() => false)
+	damageDisabled = new InstancedValue<boolean>(() => false)
 
 	override getAttack(
 		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
+		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	) {
 		// Players who imitate this card should use regular attacks and not the boss'
-		if (this.isBeingImitated(pos)) {
-			return super.getAttack(game, instance, pos, hermitAttackType)
+		if (this.isBeingMocked(game, component)) {
+			return super.getAttack(game, component, hermitAttackType)
 		}
 
-		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
+		const bossAttack = bossAttacks.get(component)
 
-		const {player, row, rowIndex, opponentPlayer} = pos
-		const activeIndex = opponentPlayer.board.activeRow
-		if (activeIndex === null) return null
+		const attack = game
+			.newAttack({
+				attacker: component.entity,
+				target: game.components.findEntity(
+					RowComponent,
+					query.row.opponentPlayer,
+					query.row.active
+				),
+				type: hermitAttackType,
+				createWeakness: 'ifWeak',
+				log: attackLog(bossAttack),
+			})
+			.addDamage(component.entity, Number(bossAttack[0].substring(0, 2)))
 
-		const targetRow = opponentPlayer.board.rows[activeIndex]
-		if (!targetRow.hermitCard) return null
-
-		const bossAttack = bossAttacks.get(instance)
-
-		const attacker = {player, rowIndex, row}
-		// Create an attack with 0 damage
-		const attack = new AttackModel({
-			id: this.getInstanceKey(instance),
-			attacker,
-			target: {
-				player: opponentPlayer,
-				rowIndex: activeIndex,
-				row: targetRow,
-			},
-			type: hermitAttackType,
-			log: attackLog(bossAttack),
-		})
-
-		const disabled = game.getAllBlockedActions().some((blockedAction) => {
-			return blockedAction == 'PRIMARY_ATTACK' || blockedAction == 'SECONDARY_ATTACK'
-		})
-		this.disabled.set(instance, disabled)
+		const disabled = game.components.exists(
+			StatusEffectComponent,
+			query.effect.targetIsCardAnd(query.card.entity(component.entity)),
+			query.effect.is(MultiturnPrimaryAttackDisabledEffect, MultiturnSecondaryAttackDisabledEffect)
+		)
+		this.damageDisabled.set(component, disabled)
 
 		if (bossAttack[2] === 'EFFECTCARD') {
 			// Remove effect card before attack is executed to mimic Curse of Vanishing
-			game
-				.filterSlots(effectDiscardCondition)
-				.map((slot) => slot.card && discardCard(game, slot.card))
+			game.components.find(CardComponent, effectDiscardCondition)?.discard()
 		}
 
 		// If the opponent blocks EX's "attack", then EX can not deal damage or set opponent on fire
 		if (disabled) {
-			attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+			attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 		} else {
-			attack.addDamage(this.props.id, Number(bossAttack[0].substring(0, 2)))
+			attack.addDamage(component.entity, Number(bossAttack[0].substring(0, 2)))
 
-			if (bossAttack[1] === 'DOUBLE') attack.multiplyDamage(this.props.id, 2)
+			if (bossAttack[1] === 'DOUBLE') attack.multiplyDamage(component.entity, 2)
 
 			if (bossAttack[2] === 'AFK20') {
-				const opponentRows = opponentPlayer.board.rows
-				opponentRows.forEach((row, rowIndex) => {
-					if (!row || !row.hermitCard) return
-					if (rowIndex === activeIndex) return
-					const newAttack = new AttackModel({
-						id: this.getInstanceKey(instance, 'inactive'),
-						attacker,
-						target: {
-							player: opponentPlayer,
-							rowIndex,
-							row,
-						},
-						type: hermitAttackType,
-						log: (values) => `, ${values.damage} damage to ${values.target}`,
-					}).addDamage(this.props.id, 20)
-					attack.addNewAttack(newAttack)
-				})
+				game.components
+					.filter(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.row.hasHermit,
+						query.not(query.row.active)
+					)
+					.forEach((afkRow) => {
+						const newAttack = game
+							.newAttack({
+								attacker: component.entity,
+								target: afkRow.entity,
+								type: hermitAttackType,
+								log: (values) => `, ${values.damage} damage to ${values.target}`,
+							})
+							.addDamage(component.entity, 20)
+						newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+						attack.addNewAttack(newAttack)
+					})
 			}
 		}
 
 		return attack
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		if (this.isBeingImitated(pos)) {
-			super.onAttach(game, instance, pos)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		if (this.isBeingMocked(game, component)) {
+			super.onAttach(game, component, observer)
 			return
 		}
 
 		// Apply an ailment to act on EX's ninth turn
-		applyStatusEffect(game, 'exboss-nine', instance)
+		game.components.new(StatusEffectComponent, ExBossNineStatusEffect).apply(component.entity)
 
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer} = component
 
 		// If opponent gave EX any extra cards on turn 1, remove all of them
-		player.hand = []
-		player.pile = []
+		game.components
+			.filter(CardComponent, query.card.currentPlayer, query.not(query.card.onBoard))
+			.forEach((card) => destroyCard(game, card))
 
 		// Let EX use secondary attack in case opponent blocks primary
-		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
+		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
 			return availableEnergy.length ? availableEnergy : ['balanced', 'balanced']
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
-			const bossAttack = bossAttacks.get(instance)
+			const bossAttack = bossAttacks.get(component)
 
 			if (bossAttack[1] !== undefined) {
-				const opponentActiveRow = getActiveRow(opponentPlayer)
-
 				switch (bossAttack[1]) {
 					case 'HEAL150':
 						// Heal for 150 damage
-						if (pos.row && pos.row.health) {
-							const row = pos.row
-							row.health = Math.min(row.health + 150, 300)
-						}
+						if (component.slot.inRow()) component.slot.row.heal(150)
 						break
 					case 'ABLAZE':
 						// Set opponent ablaze
-						if (opponentActiveRow && opponentActiveRow.hermitCard && !this.disabled.get(instance))
-							applyStatusEffect(game, 'fire', opponentActiveRow.hermitCard)
+						if (this.damageDisabled.get(component)) break
+						const opponentActiveHermit = game.components.findEntity(
+							CardComponent,
+							query.card.isHermit,
+							query.card.row(query.row.active)
+						)
+						if (opponentActiveHermit)
+							game.components.new(StatusEffectComponent, FireEffect).apply(opponentActiveHermit)
 						break
 				}
 			}
 
-			this.disabled.clear(instance)
+			this.damageDisabled.clear(component)
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
-			const bossAttack = bossAttacks.get(instance)
+			const bossAttack = bossAttacks.get(component)
 			if (bossAttack[2] === 'ITEMCARD') {
 				// Remove an item card attached to the opponent's active Hermit
-				const pickCondition = slot.every(
-					slot.opponent,
-					slot.activeRow,
-					slot.itemSlot,
-					slot.not(slot.empty),
-					(game, pos) => pos.card?.isItem() === true
+				const pickCondition = query.every(
+					query.slot.opponent,
+					query.slot.active,
+					query.slot.item,
+					query.not(query.slot.empty),
+					(_game, slot) => slot.getCard()?.isItem() === true
 				)
-				if (getActiveRow(opponentPlayer)?.health && game.someSlotFulfills(pickCondition)) {
+				if (
+					opponentPlayer.activeRow?.health &&
+					game.components.exists(SlotComponent, pickCondition)
+				) {
 					game.addPickRequest({
 						playerId: opponentPlayer.id,
-						id: this.props.id,
+						id: component.entity,
 						message: 'Choose an item to discard from your active Hermit.',
 						canPick: pickCondition,
 						onResult(pickedSlot) {
-							if (pickedSlot.rowIndex === null || pickedSlot.card === null) return
+							if (!pickedSlot.inRow()) return
 
-							const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
+							const playerRow = pickedSlot.row
 
-							const hermitCard = playerRow.hermitCard
+							const hermitCard = playerRow.getHermit()
 							if (!hermitCard || !playerRow.health) return
 
-							if (!pickedSlot.card.isItem()) return
+							const card = pickedSlot.getCard()
+							if (!card || !card.isItem()) return
 
-							discardCard(game, pickedSlot.card)
+							card.discard()
 
 							return 'SUCCESS'
 						},
 						onTimeout() {
 							// Discard the first available item card
-							const activeRow = getActiveRow(opponentPlayer)
-							if (!activeRow) return
-							const itemCard = activeRow.itemCards.find((card) => card?.isItem())
-							if (!itemCard) return
-							discardCard(game, itemCard)
+							game.components.find(CardComponent, query.card.slot(pickCondition))?.discard()
 						},
 					})
 				}
 			}
-			bossAttacks.clear(instance)
+			bossAttacks.clear(component)
 		})
 
-		// EX is immune to poison, fire, and slowness
-		const IMMUNE_STATUS_EFFECTS = new Set(['poison', 'fire', 'slowness'])
-		opponentPlayer.hooks.afterApply.add(instance, () => {
+		observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 			// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
-			if (player.pile.length) player.pile = []
-
-			if (!row) return
-			const ailmentsToRemove = game.state.statusEffects.filter((ail) => {
-				return ail.targetInstance === row.hermitCard && IMMUNE_STATUS_EFFECTS.has(ail.props.id)
-			})
-			ailmentsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail)
-			})
+			game.components
+				.filter(CardComponent, query.card.opponentPlayer, query.card.slot(query.slot.deck))
+				.forEach((card) => destroyCard(game, card))
+			removeImmuneEffects(game, component.slot)
 		})
-		player.hooks.onDefence.add(instance, (_) => {
-			if (!row) return
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-				return ail.targetInstance === row.hermitCard && IMMUNE_STATUS_EFFECTS.has(ail.props.id)
-			})
-			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail)
-			})
+		let lastAttackDisabledByAmnesia = false
+		observer.subscribe(player.hooks.onDefence, (_attack) => {
+			removeImmuneEffects(game, component.slot)
+			// Prevent Grand Architect's "Amnesia" disabling boss damage consecutively
+			// Evil Xisuma's "Derp Coin" disables after a modal request, so this shouldn't nerf consecutive heads
+			const amnesiaEffect = game.components.find(
+				StatusEffectComponent<CardComponent>,
+				query.effect.targetIsCardAnd(query.card.entity(component.entity)),
+				query.effect.is(
+					MultiturnPrimaryAttackDisabledEffect,
+					MultiturnSecondaryAttackDisabledEffect
+				)
+			)
+			if (lastAttackDisabledByAmnesia) {
+				if (amnesiaEffect) amnesiaEffect.remove()
+
+				lastAttackDisabledByAmnesia = false
+			} else if (amnesiaEffect) {
+				lastAttackDisabledByAmnesia = true
+			}
 		})
 
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
-		player.hooks.afterDefence.addBefore(instance, () => {
-			if (!row || row.health === null || row.health > 0) return
+		observer.subscribeBefore(player.hooks.afterDefence, () => {
+			if (
+				!component.slot.inRow() ||
+				component.slot.row.health === null ||
+				component.slot.row.health > 0
+			)
+				return
 
 			if (player.lives > 1) {
 				// TODO: Death entry appears in log before the attack entry
-				game.battleLog.addDeathEntry(player, row)
+				game.battleLog.addDeathEntry(player.entity, component.slot.row.entity)
 
-				row.health = 300
+				component.slot.row.health = 300
 				player.lives -= 1
 
-				const rewardCard = opponentPlayer.pile.shift()
-				if (rewardCard) opponentPlayer.hand.push(rewardCard)
+				// Reward card
+				opponentPlayer.draw(1)
 			} else {
-				player.hooks.afterDefence.remove(instance)
+				observer.unsubscribe(player.hooks.afterDefence)
 			}
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		if (this.isBeingImitated(pos)) {
-			super.onDetach(game, instance, pos)
-			return
-		}
-
-		const {player, opponentPlayer} = pos
-		player.hooks.availableEnergy.remove(instance)
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterApply.remove(instance)
-		player.hooks.onDefence.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 

@@ -54,17 +54,16 @@ class Anvil extends Card {
 								}
 							}, null)
 				  }
-				: () => {
+				: () =>
 						game
 							.newAttack({
 								attacker: component.entity,
-								target: game.components.filterEntities(RowComponent)[0],
+								target: game.components.findEntity(RowComponent, row.opponentPlayer),
 								type: 'effect',
 								log: (values) =>
 									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 							})
 							.addDamage(component.entity, 30)
-				  }
 		)
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {

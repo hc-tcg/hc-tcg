@@ -33,7 +33,7 @@ export default function* virtualPlayerActionSaga(game: GameModel, ai: VirtualAI)
 				formatText(`$oAI$: "${ai.id}" `),
 				formatNodefromShorthand('b', TextNode(`${e}`))
 			),
-			sender: game.currentPlayerId,
+			sender: game.currentPlayer.id,
 			systemMessage: true,
 		})
 		broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)

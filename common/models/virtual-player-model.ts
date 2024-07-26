@@ -1,19 +1,16 @@
 import {PlayerDeckT} from '../types/deck'
-import {CardInstance} from '../types/game-state'
-import {LocalCardInstance} from '../types/server-requests'
+import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
 import {encode, decode} from 'js-base64'
 import {CARDS} from '../cards'
+import {PlayerId} from './player-model'
+import {CardEntity, newEntity} from '../entities'
 
 export class VirtualPlayerModel {
-	private internalId: string
+	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: {
-		name: string
-		icon: string
-		cards: Array<LocalCardInstance>
-	}
+	private internalDeck: PlayerDeckT
 	public name: string
 	public minecraftName: string
 	public censoredName: string
@@ -21,13 +18,13 @@ export class VirtualPlayerModel {
 	public ai: string
 
 	constructor(playerName: string, minecraftName: string, ai: string) {
-		this.internalId = Math.random().toString()
+		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
 		// always generate a starter deck as the default
 		this.internalDeck = {
 			name: 'virtual',
-			icon: '',
+			icon: 'any',
 			cards: this.getHashFromDeck(
 				this.possibleDecks[Math.floor(Math.random() * this.possibleDecks.length)]
 			),
@@ -55,7 +52,12 @@ export class VirtualPlayerModel {
 		for (let i = 0; i < b64.length; i++) {
 			const card = Object.values(CARDS).find((value) => value.props.numericId === b64[i])
 			if (!card) continue
-			deck.push(new CardInstance(card, Math.random().toString()).toLocalCardInstance())
+			deck.push({
+				props: WithoutFunctions(card.props),
+				entity: newEntity('card-entity') as CardEntity,
+				slot: null,
+				turnedOver: false,
+			})
 		}
 		return deck
 	}

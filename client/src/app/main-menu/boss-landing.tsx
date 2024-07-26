@@ -6,14 +6,24 @@ import {createBossGame} from 'logic/matchmaking/matchmaking-actions'
 import CardList from 'components/card-list'
 import {CARDS} from 'common/cards'
 import {EXPANSIONS} from 'common/config'
-import {CardInstance} from 'common/types/game-state'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {CardEntity} from 'common/entities'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 
-function createUICardInstance(cardId: string) {
-	return new CardInstance(CARDS[cardId], cardId).toLocalCardInstance()
+function createUICardInstance(cardId: string): LocalCardInstance {
+	return {
+		props: WithoutFunctions(CARDS[cardId].props),
+		entity: cardId as CardEntity,
+		slot: null,
+		turnedOver: false,
+	} as const
+}
+
+function removeDisabledExpansions(cardId: string) {
+	return !EXPANSIONS.disabled.includes(CARDS[cardId].props.expansion)
 }
 
 function BossLanding({setMenuSection}: Props) {
@@ -37,11 +47,19 @@ function BossLanding({setMenuSection}: Props) {
 		'potion_of_slowness',
 		'target_block',
 
-		'dropper',
-		'glowstone',
-		'berry_bush',
+		//'dropper',
+		//'glowstone',
+		//'berry_bush',
 	]
-		.filter((cardId) => !EXPANSIONS.disabled.includes(CARDS[cardId].props.expansion))
+		.filter(removeDisabledExpansions)
+		.map(createUICardInstance)
+
+	const directlyOppositeCards = [
+		'anvil',
+		'renbob_rare',
+		//'poe_poe_skizz'
+	]
+		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
 	return (
@@ -66,10 +84,14 @@ function BossLanding({setMenuSection}: Props) {
 					his card has 300hp, comes back again at full health when knocked out, and will perform
 					harder attacks with every life lost.
 				</p>
-				<p>
-					For the purposes of <u>Renbob</u> and <u>Anvil</u>, EX is always directly opposite your
-					active Hermit.
-				</p>
+				{directlyOppositeCards.length
+					? [
+							<p>EX is always directly opposite your active hermit for the purposes of:</p>,
+							<div>
+								<CardList cards={directlyOppositeCards} wrap={true} />
+							</div>,
+					  ]
+					: undefined}
 				<p>EX is immune to and cannot be inflicted with Fire, Poison, and Slowness.</p>
 				<p>The following cards don't work in this battle:</p>
 				<div>

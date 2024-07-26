@@ -14,6 +14,7 @@ import {HandSlotComponent, SlotComponent} from './slot-component'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import {StatusEffectComponent} from './status-effect-component'
 import {RowComponent} from './row-component'
+import {VirtualPlayerModel} from '../models/virtual-player-model'
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -118,7 +119,7 @@ export class PlayerComponent {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel | VirtualPlayerModel) {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
