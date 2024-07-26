@@ -14,7 +14,7 @@ class DiamondBoots extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. any damage from effect cards and any damage redirected by effect cards.',
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Additonally, any damage from effect cards and any damage redirected by effect cards is prevented.',
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -24,6 +24,16 @@ class DiamondBoots extends Card {
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
+
+			if (attack.attacker instanceof CardComponent) {
+				if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
+					attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
+				}
+			}
+
+			if (attack.getHistory('redirect')) {
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
+			}
 
 			if (damageBlocked < 20) {
 				const damageReduction = Math.min(attack.calculateDamage(), 20 - damageBlocked)
