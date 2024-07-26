@@ -14,7 +14,6 @@ class SkizzlemanRare extends Card {
 		numericId: 172,
 		name: 'Skizz',
 		expansion: 'season_x',
-		background: 'alter_egos',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'builder',

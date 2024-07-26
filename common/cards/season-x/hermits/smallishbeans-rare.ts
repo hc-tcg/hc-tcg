@@ -14,7 +14,6 @@ class SmallishbeansRare extends Card {
 		numericId: 161,
 		name: 'Joel',
 		expansion: 'season_x',
-		background: 'alter_egos',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'explorer',

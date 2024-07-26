@@ -8,7 +8,7 @@ import * as query from '../../../components/query'
 class PoePoeSkizzRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'poe_poe_skizz',
+		id: 'poepoeskizz_rare',
 		numericId: 167,
 		name: 'Poe Poe Skizz',
 		expansion: 'alter_egos_iii',
