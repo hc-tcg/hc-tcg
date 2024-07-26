@@ -21,6 +21,7 @@ export class PlayerComponent {
 	readonly entity: PlayerEntity
 
 	readonly playerName: string
+	readonly playerType: 'real' | 'virtual'
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
 
@@ -123,6 +124,7 @@ export class PlayerComponent {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
+		this.playerType = player.socket ? 'real' : 'virtual'
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
 		this.id = player.id
@@ -213,7 +215,8 @@ export class PlayerComponent {
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
 		if (cards.length < amount) {
-			this.deckedOut = true
+			if (!this.game.rules.disableVirtualDeckOut || this.playerType !== 'virtual')
+				this.deckedOut = true
 		}
 		cards.forEach((card) => card.draw())
 		return cards

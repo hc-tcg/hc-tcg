@@ -158,8 +158,6 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		if (disabled) {
 			attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 		} else {
-			attack.addDamage(component.entity, Number(bossAttack[0].substring(0, 2)))
-
 			if (bossAttack[1] === 'DOUBLE') attack.multiplyDamage(component.entity, 2)
 
 			if (bossAttack[2] === 'AFK20') {

@@ -5,8 +5,15 @@ import {AttackAction} from 'common/types/game-state'
 import {broadcast} from '../../utils/comm'
 import {VirtualAI, VirtualAIReturn} from './virtual-action'
 import {BOSS_ATTACK, supplyBossAttack} from 'common/cards/boss/hermits/evilxisuma_boss'
-import {CardComponent, PlayerComponent, StatusEffectComponent} from 'common/components'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from 'common/components'
+import * as query from 'common/components/query'
 import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
+import {WithoutFunctions} from 'common/types/server-requests'
 
 class ExBossAI implements VirtualAI {
 	get id(): string {
@@ -56,7 +63,7 @@ class ExBossAI implements VirtualAI {
 				// Handles when challenger plays "Lantern"
 				return {
 					type: 'MODAL_REQUEST',
-					playerId: game.opponentPlayerId,
+					playerId: game.opponentPlayer.id,
 					payload: {result: true, cards: null},
 				}
 
@@ -131,7 +138,7 @@ class ExBossAI implements VirtualAI {
 			yield* delay(10600)
 		}
 
-		return {type: 'END_TURN', playerId: game.currentPlayer.id}
+		return {type: 'END_TURN', playerId: currentPlayer.id}
 	}
 }
 

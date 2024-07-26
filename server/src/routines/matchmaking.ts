@@ -7,8 +7,12 @@ import {getLocalGameState} from '../utils/state-gen'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
 import {VirtualPlayerModel} from 'common/models/virtual-player-model'
-import {CardInstance} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
+import {BoardSlotComponent, PlayerComponent, RowComponent} from 'common/components'
+import {not, row, slot} from 'common/components/query'
+import {slotEntity} from 'common/components/query/card'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {CardEntity, newEntity} from 'common/entities'
 
 export type ClientMessage = {
 	type: string
@@ -209,21 +213,40 @@ function* createBossGame(msg: ClientMessage) {
 
 	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma', 'evilxisuma_boss')
 	EX_BOSS_PLAYER.deck.cards = [
-		new CardInstance(CARDS['evilxisuma_boss'], Math.random().toString()).toLocalCardInstance(),
+		{
+			props: WithoutFunctions(CARDS['evilxisuma_boss'].props),
+			entity: newEntity('card-entity') as CardEntity,
+			slot: null,
+			turnedOver: false,
+		},
 	]
 
 	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
 	newBossGame.state.isBossGame = true
-	if (newBossGame.state.order[0] !== playerId) {
+	if (newBossGame.opponentPlayer.id !== playerId) {
 		newBossGame.state.order.reverse()
-		newBossGame.state.turn.currentPlayerId = playerId
 	}
 
-	const {[playerId]: challengerState, [EX_BOSS_PLAYER.id]: bossState} = newBossGame.state.players
-	challengerState.board.rows = challengerState.board.rows.splice(0, 3)
-	const bossRowState = bossState.board.rows[0]
-	bossRowState.itemCards = []
-	bossState.board.rows = [bossRowState]
+	function destroyRow(row: RowComponent) {
+		newBossGame.components
+			.filterEntities(BoardSlotComponent, slot.rowIs(row.entity))
+			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+		newBossGame.components.delete(row.entity)
+	}
+
+	// Remove challenger's rows other than indexes 0, 1, and 2
+	newBossGame.components
+		.filter(RowComponent, row.opponentPlayer, (_game, row) => row.index > 2)
+		.forEach(destroyRow)
+	// Remove boss' rows other than index 0
+	newBossGame.components
+		.filter(RowComponent, row.currentPlayer, not(row.index(0)))
+		.forEach(destroyRow)
+	// Remove boss' item slots
+	newBossGame.components
+		.filterEntities(BoardSlotComponent, slot.currentPlayer, slot.item)
+		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+
 	newBossGame.rules = {
 		disableRewardCards: true,
 		disableVirtualDeckOut: true,
