@@ -5,8 +5,7 @@ import {modalRequest} from 'logic/game/game-actions'
 import Attack from './attack-modal/attack'
 import {getGameState} from 'logic/game/game-selectors'
 import {ModalData} from 'common/types/game-state'
-import {RowPos} from 'common/types/cards'
-import {isHermit} from 'common/cards/base/card'
+import {isHermit} from 'common/cards/base/types'
 
 type Props = {
 	closeModal: () => void
@@ -37,25 +36,32 @@ function CopyAttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
+	let isPrimaryAvailable = !modalData.payload.blockedActions.includes('PRIMARY_ATTACK')
+	let isSecondaryAvailable = !modalData.payload.blockedActions.includes('SECONDARY_ATTACK')
+
 	return (
 		<Modal closeModal={handleClose} title={modalData.payload.modalName}>
 			<div className={css.confirmModal}>
 				<div className={css.description}>{modalData.payload.modalDescription}</div>
 				<div className={css.description}>
-					<Attack
-						key="primary"
-						name={opponentHermitInfo.props.primary.name}
-						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.primary}
-						onClick={handlePrimary}
-					/>
-					<Attack
-						key="secondary"
-						name={opponentHermitInfo.props.secondary.name}
-						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.secondary}
-						onClick={handleSecondary}
-					/>
+					{isPrimaryAvailable && (
+						<Attack
+							key="primary"
+							name={opponentHermitInfo.props.primary.name}
+							icon={`/images/hermits-nobg/${hermitFullName}.png`}
+							attackInfo={opponentHermitInfo.props.primary}
+							onClick={handlePrimary}
+						/>
+					)}
+					{isSecondaryAvailable && (
+						<Attack
+							key="secondary"
+							name={opponentHermitInfo.props.secondary.name}
+							icon={`/images/hermits-nobg/${hermitFullName}.png`}
+							attackInfo={opponentHermitInfo.props.secondary}
+							onClick={handleSecondary}
+						/>
+					)}
 				</div>
 			</div>
 		</Modal>

@@ -1,11 +1,18 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance, TurnActions} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import UsedClockEffect from '../../../status-effects/used-clock'
+import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 
-class ClockSingleUseCard extends Card {
+class Clock extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'clock',
@@ -23,42 +30,27 @@ class ClockSingleUseCard extends Card {
 				name: 'turnSkip',
 			},
 		],
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.not(slot.someSlotFulfills(slot.hasStatusEffect('used-clock'))),
-			(game, pos) => game.state.turn.turnNumber !== 1
+			query.not(
+				query.exists(
+					PlayerComponent,
+					query.player.currentPlayer,
+					query.player.hasStatusEffect(UsedClockEffect)
+				)
+			),
+			(game, _pos) => game.state.turn.turnNumber !== 1
 		),
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
-
-		player.hooks.onApply.add(instance, () => {
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				game.addBlockedActions(
-					this.props.id,
-					'APPLY_EFFECT',
-					'REMOVE_EFFECT',
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD'
-				)
-				opponentPlayer.hooks.onTurnStart.remove(instance)
-			})
-
-			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {opponentPlayer, player} = component
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
+			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default ClockSingleUseCard
+export default Clock

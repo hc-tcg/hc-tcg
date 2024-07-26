@@ -1,17 +1,10 @@
+import {CardComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
 import {GenericActionResult} from 'common/types/game-state'
-import {discardSingleUse} from 'common/utils/movement'
+import * as query from 'common/components/query'
 
 function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResult> {
-	const {currentPlayer} = game
-
-	if (!currentPlayer.board.singleUseCard) {
-		return 'FAILURE_NOT_APPLICABLE'
-	}
-
-	if (currentPlayer.board.singleUseCardUsed) {
-		return 'FAILURE_CANNOT_COMPLETE'
-	}
+	let singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 
 	game.cancelPickRequests()
 
@@ -20,7 +13,7 @@ function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResul
 		game.state.turn.currentAttack = null
 	}
 
-	discardSingleUse(game, currentPlayer)
+	singleUseCard?.draw()
 
 	return 'SUCCESS'
 }

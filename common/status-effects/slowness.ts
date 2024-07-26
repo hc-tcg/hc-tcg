@@ -1,61 +1,48 @@
-import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class SlownessStatusEffect extends StatusEffect {
+class SlownessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		id: 'slowness',
+		icon: 'slowness',
 		name: 'Slowness',
 		description: 'This Hermit can only use their primary attack.',
 		counter: 1,
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		const {player} = target
 
-		if (!instance.counter) instance.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.props.counter
 
-		player.hooks.onTurnStart.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos || targetPos.rowIndex === null) return
-
-			if (player.board.activeRow === targetPos.rowIndex)
-				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (target.slot?.onBoard() && player.activeRowEntity === target.slot.row?.entity)
+				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos || targetPos.rowIndex === null) return
-			if (!instance.counter) return
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			if (!effect.counter) return
+			effect.counter--
 
-			instance.counter--
-
-			if (instance.counter === 0) {
-				removeStatusEffect(game, pos, instance)
+			if (effect.counter === 0) {
+				effect.remove()
 				return
 			}
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
-			const attackTarget = attack.getTarget()
-			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
-			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
+			if (!target.slot?.onBoard() || attack.target?.entity !== target.slot.row?.entity) return
+			if (target.slot.row?.health) return
+			effect.remove()
 		})
-	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.afterDefence.remove(instance)
 	}
 }
 
-export default SlownessStatusEffect
+export default SlownessEffect

@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
 
-class IJevinRareHermitCard extends Card {
+class IJevinRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ijevin_rare',
@@ -30,45 +31,38 @@ class IJevinRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary' || !attack.getTarget()) return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const pickCondition = slot.every(
-				slot.not(slot.activeRow),
-				slot.not(slot.empty),
-				slot.hermitSlot
+			const pickCondition = query.every(
+				query.not(query.slot.active),
+				query.not(query.slot.empty),
+				query.slot.opponent,
+				query.slot.hermit
 			)
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: opponentPlayer.id, // For opponent player to pick
-				id: this.props.id,
+				id: component.entity,
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
-
-					game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
+					if (!pickedSlot.inRow()) return
+					opponentPlayer.changeActiveRow(pickedSlot.row)
 				},
 				onTimeout() {
-					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex
-					if (rowIndex === null) return
-					game.changeActiveRow(opponentPlayer, rowIndex)
+					let rowComponent = game.components.find(RowComponent, query.not(query.row.active))
+					if (!rowComponent) return
+					opponentPlayer.changeActiveRow(rowComponent)
 				},
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.afterAttack.remove(instance)
-	}
 }
 
-export default IJevinRareHermitCard
+export default IJevinRare

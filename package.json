@@ -20,6 +20,7 @@
 		"classnames": "^2.3.2",
 		"cors": "^2.8.5",
 		"discord-markdown": "^2.5.1",
+		"dotenv": "^16.4.5",
 		"express": "^4.18.2",
 		"firebase-admin": "^11.5.0",
 		"js-base64": "^3.7.5",
@@ -33,6 +34,7 @@
 		"sanitize-html": "^2.13.0",
 		"socket.io": "^4.5.4",
 		"socket.io-client": "^4.5.4",
+		"terser": "^5.31.3",
 		"typed-redux-saga": "^1.5.0"
 	},
 	"devDependencies": {

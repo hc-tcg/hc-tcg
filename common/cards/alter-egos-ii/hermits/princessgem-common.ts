@@ -1,6 +1,8 @@
-import Card, {hermit, Hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class PrincessGemCommonHermitCard extends Card {
+class PrincessGemCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'princessgem_common',
@@ -28,4 +30,4 @@ class PrincessGemCommonHermitCard extends Card {
 	}
 }
 
-export default PrincessGemCommonHermitCard
+export default PrincessGemCommon

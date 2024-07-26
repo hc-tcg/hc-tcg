@@ -1,12 +1,19 @@
 import React from 'react'
 import {TypeT} from 'common/types/cards'
-import {CardProps, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
+import {
+	CardProps,
+	hasDescription,
+	isAttach,
+	isHermit,
+	isItem,
+	isSingleUse,
+} from 'common/cards/base/types'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
-import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -38,10 +45,8 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 			(card.primary.power ? `**${card.primary.name}**\n*${card.primary.power}*` : '') +
 				(card.secondary.power ? `**${card.secondary.name}**\n*${card.secondary.power}*` : '')
 		)
-	} else if (isAttach(card) || isSingleUse(card)) {
-		text = formatText(card.description)
-	} else if (isItem(card)) {
-		text = card.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : EmptyNode()
+	} else if (hasDescription(card)) {
+		text = formatText(`*${card.description}*`)
 	}
 	return FormattedText(text)
 }
@@ -143,9 +148,9 @@ const getSidebarDescriptions = (card: WithoutFunctions<CardProps>): React.ReactN
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{STATUS_EFFECT_CLASSES[statusEffect].props.name}</u>
+						<u>{STATUS_EFFECTS[statusEffect].props.name}</u>
 					</b>
-					<p>{STATUS_EFFECT_CLASSES[statusEffect].props.description}</p>
+					<p>{STATUS_EFFECTS[statusEffect].props.description}</p>
 				</div>
 			)
 		}

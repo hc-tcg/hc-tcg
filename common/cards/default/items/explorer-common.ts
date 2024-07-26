@@ -1,9 +1,8 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class ExplorerCommonItemCard extends Card {
+class ExplorerItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_explorer_common',
@@ -14,11 +13,8 @@ class ExplorerCommonItemCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		type: 'explorer',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type]
+		energy: ['explorer'],
 	}
 }
 
-export default ExplorerCommonItemCard
+export default ExplorerItem

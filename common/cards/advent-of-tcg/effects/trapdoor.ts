@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {AttackModel} from '../../../models/attack-model'
-import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
-import Card, {Attach, attach} from '../../base/card'
+import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class TrapdoorEffectCard extends Card {
+class Trapdoor extends Card {
 	props: Attach = {
 		...attach,
 		id: 'trapdoor',
@@ -17,12 +18,12 @@ class TrapdoorEffectCard extends Card {
 			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
 		let totalReduction = 0
 
-		player.hooks.onDefence.add(instance, (attack) => {
+		player.hooks.onDefence.add(component, (attack) => {
 			const target = attack.getTarget()
 			if (target?.player.id !== player.id || attack.getAttacker()?.player.id !== opponentPlayer.id)
 				return
@@ -36,12 +37,12 @@ class TrapdoorEffectCard extends Card {
 				attack.reduceDamage(this.props.id, damageReduction)
 
 				const newAttack: AttackModel = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: attack.getAttacker(),
 					target: {
 						player: player,
 						rowIndex: pos.rowIndex,
-						row: pos.row as RowStateWithHermit,
+						row: pos.rowId as RowStateWithHermit,
 					},
 					type: attack.type,
 					createWeakness: ['primary', 'secondary'].includes(attack.type) ? 'ifWeak' : 'never',
@@ -50,18 +51,18 @@ class TrapdoorEffectCard extends Card {
 			}
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
-			const {player} = pos
+		player.hooks.afterDefence.add(component, (attack) => {
+			const {player} = component
 			totalReduction = 0
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.onDefence.remove(instance)
-		player.hooks.afterDefence.remove(instance)
+		player.hooks.onDefence.remove(component)
+		player.hooks.afterDefence.remove(component)
 	}
 }
 
-export default TrapdoorEffectCard
+export default Trapdoor

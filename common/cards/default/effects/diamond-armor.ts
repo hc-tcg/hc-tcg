@@ -1,10 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {Attach} from '../../base/types'
+import {attach} from '../../base/defaults'
 
-class DiamondArmorEffectCard extends Card {
+class DiamondArmor extends Card {
 	props: Attach = {
 		...attach,
 		id: 'diamond_armor',
@@ -17,18 +17,18 @@ class DiamondArmorEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 30hp each turn.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
 		let damageBlocked = 0
 
-		player.hooks.onDefence.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return
+		observer.subscribe(player.hooks.onDefence, (attack) => {
+			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 30) {
 				const damageReduction = Math.min(attack.calculateDamage(), 30 - damageBlocked)
 				damageBlocked += damageReduction
-				attack.reduceDamage(this.props.id, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 			}
 		})
 
@@ -37,16 +37,9 @@ class DiamondArmorEffectCard extends Card {
 		}
 
 		// Reset counter at the start of every turn
-		player.hooks.onTurnStart.add(instance, resetCounter)
-		opponentPlayer.hooks.onTurnStart.add(instance, resetCounter)
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.onTurnStart.remove(instance)
+		observer.subscribe(player.hooks.onTurnStart, resetCounter)
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, resetCounter)
 	}
 }
 
-export default DiamondArmorEffectCard
+export default DiamondArmor

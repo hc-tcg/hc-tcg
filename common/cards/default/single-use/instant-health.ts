@@ -1,12 +1,13 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../slot'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
-class InstantHealthSingleUseCard extends Card {
-	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
+class InstantHealth extends Card {
+	pickCondition = query.every(query.slot.hermit, query.not(query.slot.empty))
 
 	props: SingleUse = {
 		...singleUse,
@@ -17,36 +18,30 @@ class InstantHealthSingleUseCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		description: 'Heal one of your Hermits 30hp.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.playerHasActiveHermit,
-			slot.someSlotFulfills(this.pickCondition)
+			query.slot.playerHasActiveHermit,
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g30hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.card || rowIndex === null) return
-
-				const row = player.board.rows[rowIndex]
-				if (!row.health) return
-
+				if (!pickedSlot.onBoard()) return
 				// Apply
+				pickedSlot.row?.heal(30)
 				applySingleUse(game, pickedSlot)
-
-				healHermit(row, 30)
 			},
 		})
 	}
 }
 
-export default InstantHealthSingleUseCard
+export default InstantHealth

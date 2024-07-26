@@ -1,12 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import WeaknessEffect from '../../../status-effects/weakness'
 
-class PotionOfWeaknessSingleUseCard extends Card {
+class PotionOfWeakness extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'potion_of_weakness',
@@ -23,23 +23,18 @@ class PotionOfWeaknessSingleUseCard extends Card {
 			},
 		],
 		showConfirmationModal: true,
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {opponentPlayer, player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard)
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, WeaknessEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default PotionOfWeaknessSingleUseCard
+export default PotionOfWeakness

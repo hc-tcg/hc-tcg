@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import PoisonEffect from '../../../status-effects/poison'
 
-class XisumavoidRareHermitCard extends Card {
+class XisumavoidRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'xisumavoid_rare',
@@ -36,31 +37,21 @@ class XisumavoidRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.getTarget() || !attacker)
-				return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] !== 'heads') return
 
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
-
-			applyStatusEffect(game, 'poison', opponentActiveRow?.hermitCard)
+			game.components
+				.new(StatusEffectComponent, PoisonEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default XisumavoidRareHermitCard
+export default XisumavoidRare

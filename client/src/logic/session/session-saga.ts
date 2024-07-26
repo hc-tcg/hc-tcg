@@ -20,35 +20,36 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import {validateDeck} from 'common/utils/validation'
 import {PlayerDeckT} from '../../../../common/types/deck'
+import {PlayerInfo} from 'common/types/server-requests'
 
-type PlayerInfoT = {
-	playerName: string
-	minecraftName: string
-	playerId: string
-	playerSecret: string
-}
-
-const loadSession = (): PlayerInfoT | null => {
+const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
+	const censoredPlayerName = sessionStorage.getItem('censoredPlayerName')
 	const minecraftName = sessionStorage.getItem('minecraftName')
 	const playerId = sessionStorage.getItem('playerId')
 	const playerSecret = sessionStorage.getItem('playerSecret')
-	if (!playerName || !minecraftName || !playerId || !playerSecret) return null
-	return {playerName, minecraftName, playerId, playerSecret}
+	const playerDeck = JSON.parse(sessionStorage.getItem('playerDeck') || '{}')
+	if (!playerName || !minecraftName || !censoredPlayerName || !playerId || !playerSecret)
+		return null
+	return {playerName, minecraftName, censoredPlayerName, playerId, playerSecret, playerDeck}
 }
 
-const saveSession = (playerInfo: PlayerInfoT) => {
+const saveSession = (playerInfo: PlayerInfo) => {
 	sessionStorage.setItem('playerName', playerInfo.playerName)
+	sessionStorage.setItem('censoredName', playerInfo.playerName)
 	sessionStorage.setItem('minecraftName', playerInfo.minecraftName)
 	sessionStorage.setItem('playerId', playerInfo.playerId)
 	sessionStorage.setItem('playerSecret', playerInfo.playerSecret)
+	sessionStorage.setItem('playerDeck', JSON.stringify(playerInfo.playerDeck))
 }
 
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
+	sessionStorage.removeItem('censoredName')
 	sessionStorage.removeItem('minecraftName')
 	sessionStorage.removeItem('playerId')
 	sessionStorage.removeItem('playerSecret')
+	sessionStorage.removeItem('playerDeck')
 }
 
 const getClientVersion = () => {
@@ -126,7 +127,7 @@ export function* loginSaga(): SagaIterator {
 	}
 
 	if (result.playerInfo) {
-		const {payload} = result.playerInfo
+		const payload = result.playerInfo.payload as PlayerInfo
 		yield put(setPlayerInfo({...payload}))
 		saveSession(payload)
 

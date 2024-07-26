@@ -1,28 +1,43 @@
-import {PlayerModel} from './player-model'
+import {PlayerId, PlayerModel} from './player-model'
+import {VirtualPlayerModel} from './virtual-player-model'
 import {
 	TurnAction,
 	GameState,
 	ActionResult,
 	TurnActions,
-	PlayerState,
 	GameRules,
 	Message,
-	CardInstance,
+	DefaultDictionary,
 } from '../types/game-state'
-import {getGameState} from '../utils/state-gen'
-import {
-	CopyAttack,
-	ModalRequest,
-	PickInfo,
-	PickRequest,
-	PickedSlotType,
-	SelectCards,
-} from '../types/server-requests'
+import {getGameState, setupComponents} from '../utils/state-gen'
+import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {SlotCondition, slot} from '../slot'
-import {SlotInfo} from '../types/cards'
-import {getCardPos} from './card-pos-model'
-import {VirtualPlayerModel} from './virtual-player-model'
+import {ComponentQuery, card} from '../components/query'
+import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
+import {AttackDefs} from '../types/attack'
+import {AttackModel} from './attack-model'
+import ComponentTable from '../types/ecs'
+import {PlayerEntity, SlotEntity} from '../entities'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {Hook} from '../types/hooks'
+
+/** Type that allows for additional data about a game to be shared between components */
+export class GameValue<T> extends DefaultDictionary<GameModel, T> {
+	public set(game: GameModel, value: T) {
+		if (!Object.hasOwn(this.values, game.id)) {
+			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+		}
+		this.setValue(game.id, value)
+	}
+
+	public get(game: GameModel): T {
+		return this.getValue(game.id)
+	}
+
+	public clear(game: GameModel) {
+		this.clearValue(game.id)
+	}
+}
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -31,9 +46,14 @@ export class GameModel {
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public players: Record<string, PlayerModel | VirtualPlayerModel>
+	public players: Record<PlayerId, PlayerModel | VirtualPlayerModel>
 	public task: any
 	public state: GameState
+
+	/** The objects used in the game. */
+	public components: ComponentTable
+	/** Hook for when the game ends and references needs to be disposed */
+	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -71,37 +91,31 @@ export class GameModel {
 
 		this.rules = {}
 
+		this.components = new ComponentTable(this)
+		this.afterGameEnd = new Hook<string, () => void>()
+		setupComponents(this.components, player1, player2)
+
 		this.state = getGameState(this)
 	}
 
-	public get currentPlayerId() {
+	public get currentPlayerEntity() {
 		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
 
-	public get opponentPlayerId() {
+	public get opponentPlayerEntity() {
 		return this.state.order[this.state.turn.turnNumber % 2]
 	}
 
-	public get currentPlayer() {
-		return this.state.players[this.currentPlayerId]
+	public get currentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.currentPlayerEntity)
 	}
 
-	public get opponentPlayer() {
-		return this.state.players[this.opponentPlayerId]
-	}
-
-	public get activeRow() {
-		const player = this.currentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
-	}
-
-	public get opponentActiveRow() {
-		const player = this.opponentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
+	public get opponentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
 	public getPlayerIds() {
-		return Object.keys(this.players)
+		return Object.keys(this.players) as Array<PlayerId>
 	}
 
 	public getPlayers() {
@@ -120,6 +134,16 @@ export class GameModel {
 		return this.internalCode
 	}
 
+	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
+		const otherPlayer = this.components.findEntity(
+			PlayerComponent,
+			(_game, otherPlayer) => player !== otherPlayer.entity
+		)
+		if (!otherPlayer)
+			throw new Error('Can not query for other before because both player components are created')
+		return otherPlayer
+	}
+
 	// Functions
 
 	/** Set actions as completed so they cannot be done again this turn */
@@ -131,6 +155,7 @@ export class GameModel {
 			}
 		}
 	}
+
 	/** Remove action from the completed list so they can be done again this turn */
 	public removeCompletedActions(...actions: TurnActions) {
 		for (let i = 0; i < actions.length; i++) {
@@ -223,7 +248,7 @@ export class GameModel {
 		}
 	}
 	public cancelPickRequests() {
-		if (this.state.pickRequests[0]?.playerId === this.currentPlayerId) {
+		if (this.state.pickRequests[0]?.playerId === this.currentPlayer.id) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
 				this.state.pickRequests[i].onCancel?.()
@@ -250,193 +275,41 @@ export class GameModel {
 		}
 	}
 
+	public newAttack(defs: AttackDefs): AttackModel {
+		return new AttackModel(this, defs)
+	}
+
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
 	}
 
-	/** Update the cards that the players are able to select */
-	public updateCardsCanBePlacedIn() {
-		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
-				return cards
-			}, [] as Array<[CardInstance, Array<PickInfo>]>)
-		}
-
-		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
-		this.opponentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.opponentPlayer)
-	}
-
-	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
-		const currentActiveRow = player.board.activeRow
-
-		// Can't change to existing active row
-		if (newRow === currentActiveRow) return false
-
-		// Call before active row change hooks - if any of the results are false do not change
-		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
-		if (results.includes(false)) return false
-
-		// Create battle log entry
-		if (newRow !== null) {
-			const newHermit = player.board.rows[newRow].hermitCard
-			const oldHermit =
-				currentActiveRow !== null ? player.board.rows[currentActiveRow].hermitCard : null
-			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
-		}
-
-		// Change the active row
-		player.board.activeRow = newRow
-
-		// Call on active row change hooks
-		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
-
-		return true
-	}
-
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-		const activeRowChanged = this.changeActiveRow(player, newRow)
-		if (!activeRowChanged) return false
-
-		const oldRowState = player.board.rows[oldRow]
-		player.board.rows[oldRow] = player.board.rows[newRow]
-		player.board.rows[newRow] = oldRowState
-
-		return true
-	}
-
-	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
-		let predicate = slot.every(...predicates)
-		let pickableSlots: Array<SlotInfo> = []
-
-		for (const player of Object.values(this.state.players)) {
-			const opponentPlayer = Object.values(this.state.players).filter(
-				(opponent) => opponent.id !== player.id
-			)[0]
-
-			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
-				const row = player.board.rows[rowIndex]
-
-				const appendAttachCondition = (
-					type: PickedSlotType,
-					index: number,
-					cardInstance: CardInstance | null
-				) => {
-					const slotInfo = {
-						player,
-						opponentPlayer,
-						type,
-						index,
-						rowIndex,
-						row,
-						card: cardInstance,
-					}
-					if (predicate(this, slotInfo)) {
-						pickableSlots.push(slotInfo)
-					}
-				}
-
-				for (const [index, item] of row.itemCards.entries()) {
-					appendAttachCondition('item', index, item)
-				}
-				appendAttachCondition('attach', 3, row.effectCard)
-				appendAttachCondition('hermit', 4, row.hermitCard)
-			}
-
-			for (const card of player.hand) {
-				const slotInfo: SlotInfo = {
-					player: player,
-					opponentPlayer: opponentPlayer,
-					type: 'hand',
-					index: null,
-					rowIndex: null,
-					row: null,
-					card,
-				}
-				if (predicate(this, slotInfo)) pickableSlots.push(slotInfo)
-			}
-		}
-
-		const singleUseSlotInfo: SlotInfo = {
-			player: this.currentPlayer,
-			opponentPlayer: this.opponentPlayer,
-			type: 'single_use',
-			index: null,
-			rowIndex: null,
-			row: null,
-			card: this.currentPlayer.board.singleUseCard,
-		}
-
-		if (predicate(this, singleUseSlotInfo)) {
-			pickableSlots.push(singleUseSlotInfo)
-		}
-
-		return pickableSlots
-	}
-
-	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
-		return this.filterSlots(slot.every(...predicates))[0]
+	public swapRows(oldRow: RowComponent, newRow: RowComponent) {
+		let oldIndex = oldRow.index
+		oldRow.index = newRow.index
+		newRow.index = oldIndex
 	}
 
 	/**
 	 * Swaps the positions of two cards on the board.
 	 * This function does not check whether the cards can be placed in the other card's slot.
+	 * If one of the slots is undefined, do not swap the slots.
 	 */
-	public swapSlots(
-		slotA: SlotInfo | null,
-		slotB: SlotInfo | null,
-		withoutDetach: boolean = false
-	): void {
+	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return
-		if (slotA.type !== slotB.type) return
-		if (!slotA.row || !slotB.row) return
 
-		// Swap
-		if (slotA.type === 'hermit') {
-			let tempCard = slotA.row?.hermitCard
-			slotA.row.hermitCard = slotB.row.hermitCard
-			slotB.row.hermitCard = tempCard
-		} else if (slotA.type === 'attach') {
-			let tempCard = slotA.row.effectCard
-			slotA.row.effectCard = slotB.row.effectCard
-			slotB.row.effectCard = tempCard
-		} else if (slotA.type === 'item') {
-			if (slotA.index === null || slotB.index === null) return
-			let tempCard = slotA.row.itemCards[slotA.index]
-			slotA.row.itemCards[slotA.index] = slotB.row.itemCards[slotB.index]
-			slotB.row.itemCards[slotB.index] = tempCard
-		}
+		const slotACards = this.components.filter(CardComponent, card.slotEntity(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, card.slotEntity(slotB.entity))
 
-		if (!withoutDetach) {
-			// onAttach
-			;[slotA, slotB].forEach((slot) => {
-				if (!slot.card) return
-				const cardPos = getCardPos(this, slot.card)
-				if (!cardPos) return
-
-				slot.card.card.onAttach(this, slot.card, cardPos)
-
-				cardPos.player.hooks.onAttach.call(slot.card)
-			})
-		}
-	}
-
-	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		return this.filterSlots(predicate).map((slot) => {
-			return {
-				playerId: slot.player.id,
-				rowIndex: slot.rowIndex,
-				card: slot.card?.toLocalCardInstance() || null,
-				type: slot.type,
-				index: slot.index,
-			}
+		slotACards.forEach((card) => {
+			card.attach(slotB)
+		})
+		slotBCards.forEach((card) => {
+			card.attach(slotA)
 		})
 	}
 
-	public someSlotFulfills(predicate: SlotCondition) {
-		return this.filterSlots(predicate).length !== 0
+	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
+		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
 	}
 }

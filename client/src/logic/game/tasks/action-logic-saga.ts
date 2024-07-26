@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal} from 'logic/game/game-actions'
-import {isSingleUse} from 'common/cards/base/card'
+import {isSingleUse} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
@@ -25,9 +25,9 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&
 		lastActionResult?.result === 'SUCCESS' &&
 		!pState.board.singleUseCardUsed &&
-		pState.board.singleUseCard
+		pState.board.singleUse.card
 	) {
-		yield call(singleUseSaga, pState.board.singleUseCard)
+		yield call(singleUseSaga, pState.board.singleUse.card)
 	} else if (lastActionResult?.result === 'FAILURE_UNMET_CONDITION') {
 		yield put(setOpenedModal('unmet-condition'))
 	}

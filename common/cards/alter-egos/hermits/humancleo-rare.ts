@@ -1,12 +1,12 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import BetrayedEffect from '../../../status-effects/betrayed'
 
-class HumanCleoRareHermitCard extends Card {
+class HumanCleoRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'humancleo_rare',
@@ -34,32 +34,20 @@ class HumanCleoRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== instanceKey || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
+			const coinFlip = flipCoin(player, component, 2)
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
-			applyStatusEffect(
-				game,
-				'betrayed',
-				game.findSlot(slot.opponent, slot.activeRow, slot.hermitSlot)?.card
-			)
+			game.components.new(StatusEffectComponent, BetrayedEffect).apply(opponentPlayer.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default HumanCleoRareHermitCard
+export default HumanCleoRare

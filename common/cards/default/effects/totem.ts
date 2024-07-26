@@ -1,13 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
-import {discardCard} from '../../../utils/movement'
-import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
-import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {Attach} from '../../base/types'
+import {attach} from '../../base/defaults'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {effect} from '../../../components/query'
 
-class TotemEffectCard extends Card {
+class Totem extends Card {
 	props: Attach = {
 		...attach,
 		id: 'totem',
@@ -26,44 +25,44 @@ class TotemEffectCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
 		const reviveHook = (attack: AttackModel) => {
-			const target = attack.getTarget()
-			if (!isTargetingPos(attack, pos) || !target) return
-			const {row} = target
-			if (row.health) return
+			if (!attack.isTargeting(component)) return
+			let target = attack.target
 
-			row.health = 10
+			if (!target) return
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-				return ail.targetInstance.instance === pos.card?.instance
-			})
-			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail)
-			})
+			let targetHermit = target.getHermit()
+			if (targetHermit?.isAlive()) return
 
-			const revivedHermit = row.hermitCard.props.name
-			game.battleLog.addEntry(player.id, `Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`)
+			target.health = 10
+
+			game.components
+				.filter(StatusEffectComponent, effect.targetEntity(targetHermit?.entity))
+				.forEach((ail) => {
+					ail.remove()
+				})
+
+			const revivedHermit = targetHermit?.props.name
+			game.battleLog.addEntry(
+				player.entity,
+				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`
+			)
 
 			// This will remove this hook, so it'll only be called once
-			discardCard(game, row.effectCard)
+			component.discard()
 		}
 
 		// If we are attacked from any source
 		// Add before any other hook so they can know a hermits health reliably
-		player.hooks.afterDefence.addBefore(instance, (attack) => reviveHook(attack))
+		observer.subscribeBefore(player.hooks.afterDefence, (attack) => reviveHook(attack))
 
 		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
 		// @TODO this is slightly more hacky than I'd like
-		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => reviveHook(attack))
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		pos.player.hooks.afterDefence.remove(instance)
-		pos.opponentPlayer.hooks.afterAttack.remove(instance)
+		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) => reviveHook(attack))
 	}
 }
 
-export default TotemEffectCard
+export default Totem

@@ -1,12 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import {discardFromHand, drawCards} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class ComposterSingleUseCard extends Card {
+class Composter extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'composter',
@@ -18,47 +18,48 @@ class ComposterSingleUseCard extends Card {
 		description:
 			'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.hand.length >= 2,
-			(game, pos) => pos.player.pile.length > 2
+			(game, pos) => pos.player.getHand().length >= 2
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
 
-		let firstPickedCard: CardInstance | null = null
+		let firstPickedSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick 2 cards from your hand',
-			canPick: slot.hand,
+			canPick: query.slot.hand,
 			onResult(pickedSlot) {
-				firstPickedCard = pickedSlot.card
+				firstPickedSlot = pickedSlot
 			},
 		})
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.props.id,
+			id: component.entity,
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
-				if (firstPickedCard === null) return false
-				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard)))(game, pos)
+				if (firstPickedSlot === null) return false
+				return query.every(query.slot.hand, query.not(query.slot.entity(firstPickedSlot.entity)))(
+					game,
+					pos
+				)
 			},
 			onResult(pickedSlot) {
-				discardFromHand(player, firstPickedCard)
-				discardFromHand(player, pickedSlot.card)
+				firstPickedSlot?.getCard()?.discard()
+				pickedSlot.getCard()?.discard()
 
-				// Apply
-				applySingleUse(game)
+				applySingleUse(game, component.slot)
 
-				drawCards(player, 2)
+				player.draw(2)
 			},
 		})
 	}
 }
 
-export default ComposterSingleUseCard
+export default Composter

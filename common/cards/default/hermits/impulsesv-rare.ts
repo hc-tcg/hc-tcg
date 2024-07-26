@@ -1,10 +1,15 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
+import {CardComponent, ObserverComponent} from '../../../components'
+import BdoubleO100Common from './bdoubleo100-common'
+import BdoubleO100Rare from './bdoubleo100-rare'
+import TangoTekCommon from './tangotek-common'
+import TangoTekRare from './tangotek-rare'
 
-class ImpulseSVRareHermitCard extends Card {
+class ImpulseSVRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'impulsesv_rare',
@@ -30,26 +35,23 @@ class ImpulseSVRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			const boomerAmount = game.filterSlots(
-				slot.player,
-				slot.hasId('bdoubleo100_common', 'bdoubleo100_rare', 'tangotek_common', 'tangotek_rare'),
-				slot.not(slot.activeRow)
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			const boomerAmount = game.components.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.attached,
+				query.card.is(BdoubleO100Common, BdoubleO100Rare, TangoTekCommon, TangoTekRare),
+				query.not(query.card.active)
 			).length
 
-			attack.addDamage(this.props.id, Math.min(boomerAmount, 2) * 40)
+			attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default ImpulseSVRareHermitCard
+export default ImpulseSVRare

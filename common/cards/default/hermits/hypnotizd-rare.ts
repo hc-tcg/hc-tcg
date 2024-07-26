@@ -1,20 +1,20 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {HermitAttackType} from '../../../types/attack'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
+import * as query from '../../../components/query'
 import {PickRequest} from '../../../types/server-requests'
-import {hasStatusEffect} from '../../../utils/board'
-import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import BetrayedEffect from '../../../status-effects/betrayed'
+import {AttackModel} from '../../../models/attack-model'
+import {HermitAttackType} from '../../../types/attack'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
 - TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
 */
-class HypnotizdRareHermitCard extends Card {
+class HypnotizdRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'hypnotizd_rare',
@@ -40,62 +40,57 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
-		let target: SlotInfo | null = null
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+		const {player, opponentPlayer} = component
+		let target: SlotComponent | null = null
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			if (!target || target.rowIndex == null || !target.row) return
-
-			attack.setTarget(this.props.id, {
-				player: opponentPlayer,
-				rowIndex: target?.rowIndex,
-				row: target?.row as RowStateWithHermit,
-			})
-
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!target?.inRow()) return
+			attack.setTarget(component.entity, target.row.entity)
 			target = null
 		})
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			if (activeInstance.instance !== instance.instance || hermitAttackType !== 'secondary') return
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
+			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
 
-			const pickCondition = slot.every(
-				slot.player,
-				slot.activeRow,
-				slot.itemSlot,
-				slot.not(slot.empty)
+			const pickCondition = query.every(
+				query.slot.currentPlayer,
+				query.slot.active,
+				query.slot.item,
+				query.not(query.slot.empty)
 			)
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
-			if (hasStatusEffect(game, instance, 'betrayed')) return
+			if (player.hasStatusEffect(BetrayedEffect)) return
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
+
 			const itemRequest: PickRequest = {
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card) return
-					discardCard(game, pickedSlot.card)
+					pickedSlot.getCard()?.discard()
 				},
 				onTimeout() {
-					discardCard(game, game.findSlot(pickCondition)?.card || null)
+					game.components.find(SlotComponent, pickCondition)?.getCard()?.discard()
 				},
 			}
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
-				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
+				canPick: query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty)),
 				onResult: (pickedSlot) => {
+					if (!pickedSlot.inRow()) return
+					const targetingAfk = pickedSlot.rowEntity !== opponentPlayer.activeRowEntity
+
 					// Store the row index to use later
 					target = pickedSlot
-
-					const targetingAfk = pickedSlot.rowIndex !== opponentPlayer.board.activeRow
 
 					if (targetingAfk) {
 						// Add a second pick request to remove an item
@@ -105,11 +100,6 @@ class HypnotizdRareHermitCard extends Card {
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-	}
 }
 
-export default HypnotizdRareHermitCard
+export default HypnotizdRare

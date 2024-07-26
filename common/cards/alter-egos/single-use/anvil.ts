@@ -1,11 +1,13 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {AttackModel} from '../../../models/attack-model'
+import {row} from '../../../components/query'
 
-class AnvilSingleUseCard extends Card {
+class Anvil extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'anvil',
@@ -19,74 +21,56 @@ class AnvilSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.getAttack.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const activeIndex = activePos.rowIndex
+		observer.subscribe(
+			player.hooks.getAttack,
+			game.components.filter(RowComponent, row.player(player.opponentPlayer.entity)).length > 1
+				? () => {
+						return game.components
+							.filter(
+								RowComponent,
+								row.opponentPlayer,
+								(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
+							)
+							.reduce((attacks: null | AttackModel, row) => {
+								const newAttack = game
+									.newAttack({
+										attacker: component.entity,
+										target: row.entity,
+										type: 'effect',
+										log: (values) =>
+											row.index === player.activeRow?.index
+												? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+												: `, ${values.target} for ${values.damage} damage`,
+									})
+									.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
+								if (attacks === null) {
+									return newAttack
+								} else {
+									attacks.addNewAttack(newAttack)
+									return attacks
+								}
+							}, null)
+				  }
+				: () => {
+						game
+							.newAttack({
+								attacker: component.entity,
+								target: game.components.filterEntities(RowComponent)[0],
+								type: 'effect',
+								log: (values) =>
+									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+							})
+							.addDamage(component.entity, 30)
+				  }
+		)
 
-			const opponentRows = opponentPlayer.board.rows
-
-			// If opponent only has 1 rowState, Anvil should always attack that row
-			if (opponentRows.length == 1 && opponentRows[0].hermitCard) {
-				return new AttackModel({
-					id: this.getInstanceKey(instance, 'active'),
-					attacker: activePos,
-					target: {
-						player: opponentPlayer,
-						rowIndex: 0,
-						row: opponentRows[0],
-					},
-					type: 'effect',
-					log: (values) =>
-						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-				}).addDamage(this.props.id, 30)
-			}
-
-			const attack = opponentRows.reduce((r: null | AttackModel, row, rowIndex) => {
-				if (!row || !row.hermitCard) return r
-				if (rowIndex < activeIndex) return r
-				const newAttack = new AttackModel({
-					id: this.getInstanceKey(instance, activeIndex === rowIndex ? 'active' : 'inactive'),
-					attacker: activePos,
-					target: {
-						player: opponentPlayer,
-						rowIndex: rowIndex,
-						row: row,
-					},
-					type: 'effect',
-					log: (values) =>
-						rowIndex === activeIndex
-							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-							: `, ${values.target} for ${values.damage} damage`,
-				}).addDamage(this.props.id, rowIndex === activeIndex ? 30 : 10)
-
-				if (r) return r.addNewAttack(newAttack)
-
-				return newAttack
-			}, null)
-
-			return attack
+		observer.subscribe(player.hooks.afterAttack, (_attack) => {
+			applySingleUse(game, component.slot)
 		})
-
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance, 'active')
-			const inactiveAttackId = this.getInstanceKey(instance, 'active')
-			if (attack.id !== attackId && attackId !== inactiveAttackId) return
-
-			applySingleUse(game)
-
-			player.hooks.onAttack.remove(instance)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default AnvilSingleUseCard
+export default Anvil

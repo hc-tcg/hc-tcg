@@ -1,9 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {card} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import Bow from '../../default/single-use/bow'
 
-class HotguyRareHermitCard extends Card {
+class HotguyRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'hotguy_rare',
@@ -30,34 +33,23 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
 		let usingSecondaryAttack = false
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 
-		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const singleUseCard = player.board.singleUseCard
-			if (singleUseCard?.props.id !== 'bow' || !usingSecondaryAttack) return
-
-			const bowId = singleUseCard.card.getInstanceKey(singleUseCard)
-			if (attack.id === bowId) {
-				attack.addDamage(this.props.id, attack.getDamage())
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!usingSecondaryAttack) return
+			if (attack.attacker instanceof CardComponent && attack.attacker.card instanceof Bow) {
+				attack.addDamage(attack.attacker.entity, attack.getDamage())
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-	}
 }
 
-export default HotguyRareHermitCard
+export default HotguyRare

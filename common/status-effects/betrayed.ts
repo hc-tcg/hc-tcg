@@ -1,53 +1,61 @@
-import StatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {getActiveRow, removeStatusEffect} from '../utils/board'
-import {RowStateWithHermit, StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import * as query from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {SlotInfo} from '../types/cards'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 
-class BetrayedStatusEffect extends StatusEffect {
+class BetrayedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'betrayed',
+		icon: 'betrayed',
 		name: 'Betrayed',
 		description:
-			'This Hermit must attack an AFK hermit if one exists and they have the neccesary items attached to attack.',
+			'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		const pickCondition = slot.every(
-			slot.player,
-			slot.not(slot.activeRow),
-			slot.not(slot.empty),
-			slot.hermitSlot
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		const pickCondition = query.every(
+			query.slot.currentPlayer,
+			query.not(query.slot.active),
+			query.not(query.slot.empty),
+			query.slot.hermit
 		)
 
-		let pickedAfkHermit: SlotInfo | null = null
+		let pickedAfkHermit: SlotComponent | null = null
 
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
-			game.removeBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			game.removeBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 			// Return if the opponent has no AFK Hermits to attack
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			const opponentActiveRow = getActiveRow(pos.opponentPlayer)
-			if (!opponentActiveRow) return
+			const activeHermit = player.getActiveHermit()
+			if (!activeHermit) return
 
-			const energy = opponentActiveRow.itemCards.flatMap((item) => {
-				if (item?.isItem()) return item.props.type
-				return []
-			})
+			const energy =
+				(activeHermit.slot.inRow() &&
+					activeHermit.slot.row.getItems()?.flatMap((item) => {
+						if (item?.isItem()) return item.props.type
+						return []
+					})) ||
+				[]
 
 			// Return if no energy
 			if (
-				!opponentActiveRow.hermitCard.isHermit() ||
-				(!hasEnoughEnergy(energy, opponentActiveRow.hermitCard.props.primary.cost) &&
-					!hasEnoughEnergy(energy, opponentActiveRow.hermitCard.props.secondary.cost))
+				!activeHermit.isHermit() ||
+				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
+					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
 			) {
 				return
 			}
@@ -58,75 +66,55 @@ class BetrayedStatusEffect extends StatusEffect {
 			}
 
 			// The opponent needs to attack in this case, so prevent them switching or ending turn
-			game.addBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			game.addBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		}
 
-		player.hooks.onTurnStart.add(instance, blockActions)
-		player.hooks.onAttach.add(instance, blockActions)
-		player.hooks.onDetach.add(instance, blockActions)
+		observer.subscribe(player.hooks.onTurnStart, blockActions)
+		observer.subscribe(player.hooks.onAttach, blockActions)
+		observer.subscribe(player.hooks.onDetach, blockActions)
 
 		// Add a pick request for opponent to pick an afk hermit to attack
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, _hermitAttackType) => {
 			// Only pick if there is afk to pick
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: effect.entity,
 				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || !rowIndex === null) return
-					player.hooks.getAttackRequests.remove(instance)
 					pickedAfkHermit = pickedSlot
 				},
 				onTimeout() {
-					player.hooks.getAttackRequests.remove(instance)
-					const firstAfk = game.filterSlots(pickCondition)[0]
+					observer.unsubscribe(player.hooks.getAttackRequests)
+					const firstAfk = game.components.find(SlotComponent, pickCondition)
 					if (!firstAfk) return
 					pickedAfkHermit = firstAfk
 				},
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
-			player.hooks.beforeAttack.remove(instance)
+			observer.unsubscribe(player.hooks.beforeAttack)
 
-			if (
-				pickedAfkHermit !== null &&
-				pickedAfkHermit.card &&
-				pickedAfkHermit.row &&
-				pickedAfkHermit.rowIndex !== null
-			) {
-				attack.setTarget(this.props.id, {
-					player: player,
-					rowIndex: pickedAfkHermit.rowIndex,
-					// This cast is safe because we verified in the if statement that the hermit card in the row exists.
-					row: pickedAfkHermit.row as RowStateWithHermit,
-				})
+			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
+				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
 			}
 
 			// They attacked now, they can end turn or change hermits with Chorus Fruit
-			game.removeBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			game.removeBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			effect.remove()
 		})
-	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onAttach.remove(instance)
-		player.hooks.onDetach.remove(instance)
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			effect.remove()
+		})
 	}
 }
 
-export default BetrayedStatusEffect
+export default BetrayedEffect

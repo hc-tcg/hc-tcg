@@ -1,24 +1,21 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Description, Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class FarmRareItemCard extends Card {
-	props: Item = {
+class FarmDoubleItem extends Card {
+	props: Item & Description = {
 		...item,
 		id: 'item_farm_rare',
 		numericId: 56,
 		name: 'Farm Item x2',
 		shortName: 'Farm',
+		description: 'Counts as 2 Farm Item cards.',
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'farm',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type, this.props.type]
+		energy: ['farm', 'farm'],
 	}
 }
 
-export default FarmRareItemCard
+export default FarmDoubleItem

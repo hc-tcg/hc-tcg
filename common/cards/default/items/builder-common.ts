@@ -1,9 +1,8 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class BuilderCommonItemCard extends Card {
+class BuilderItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_builder_common',
@@ -14,11 +13,8 @@ class BuilderCommonItemCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		type: 'builder',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type]
+		energy: ['builder'],
 	}
 }
 
-export default BuilderCommonItemCard
+export default BuilderItem

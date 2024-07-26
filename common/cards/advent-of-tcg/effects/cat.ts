@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class CatEffectCard extends Card {
+class Cat extends Card {
 	props: Attach = {
 		...attach,
 		id: 'cat',
@@ -16,11 +17,11 @@ class CatEffectCard extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (!pos.row || !pos.row.hermitCard) return
-			if (attack.id !== pos.row.hermitCard.card.getInstanceKey(pos.row.hermitCard)) return
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (!pos.rowId || !pos.rowId.hermitCard) return
+			if (attack.id !== pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)) return
 
 			if (player.pile.length === 0) return
 
@@ -47,8 +48,8 @@ class CatEffectCard extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					player.hooks.onTurnEnd.add(instance, (drawCards) => {
-						player.hooks.onTurnEnd.remove(instance)
+					player.hooks.onTurnEnd.add(component, (drawCards) => {
+						player.hooks.onTurnEnd.remove(component)
 						return [player.pile[-1]]
 					})
 
@@ -59,10 +60,10 @@ class CatEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default CatEffectCard
+export default Cat

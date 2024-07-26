@@ -3,7 +3,7 @@ import css from './item-card-svg.module.scss'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import Card, {Item} from 'common/cards/base/card'
+import {Item} from 'common/cards/base/types'
 import {getCardRank} from 'common/utils/ranks'
 import {WithoutFunctions} from 'common/types/server-requests'
 
@@ -30,7 +30,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 			<g>
 				<image className={css.star} href={`/images/star_white.svg`} x="-15" y="65" width="390" />
 				<image
-					className={css.icon}
+					className={classnames(css.icon, css[card.type])}
 					href={`/images/types/type-${card.type}.png`}
 					width="220"
 					height="220"

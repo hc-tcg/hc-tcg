@@ -1,24 +1,21 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Description, Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class SpeedrunnerRareItemCard extends Card {
-	props: Item = {
+class SpeedrunnerDoubleItem extends Card {
+	props: Item & Description = {
 		...item,
 		id: 'item_speedrunner_rare',
 		numericId: 66,
 		name: 'Speedrunner Item x2',
 		shortName: 'Speedrunner',
+		description: 'Counts as 2 Speedrunner Item cards.',
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'speedrunner',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type, this.props.type]
+		energy: ['speedrunner', 'speedrunner'],
 	}
 }
 
-export default SpeedrunnerRareItemCard
+export default SpeedrunnerDoubleItem

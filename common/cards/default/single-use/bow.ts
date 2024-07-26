@@ -1,17 +1,18 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance, RowState} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {RowEntity} from '../../../entities'
 
-class BowSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.opponent,
-		slot.hermitSlot,
-		slot.not(slot.empty),
-		slot.not(slot.activeRow)
+class Bow extends Card {
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.hermit,
+		query.not(query.slot.empty),
+		query.not(query.slot.active)
 	)
 
 	props: SingleUse = {
@@ -24,66 +25,49 @@ class BowSingleUseCard extends Card {
 		tokens: 1,
 		description: "Do 40hp damage to one of your opponent's AFK Hermits.",
 		hasAttack: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		let pickedRow: RowState | null = null
-		let pickedRowIndex: number | null = null
+		let pickedRow: RowEntity | null = null
 
-		player.hooks.getAttackRequests.add(instance, () => {
+		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					pickedRow = pickedSlot.row
-					pickedRowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.inRow()) return
+					pickedRow = pickedSlot.rowEntity
 				},
 			})
 		})
 
-		player.hooks.getAttack.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-
-			if (!pickedRow || !pickedRow.hermitCard || !pickedRowIndex) return null
-
-			const bowAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
-				attacker: activePos,
-				target: {
-					player: opponentPlayer,
-					rowIndex: pickedRowIndex,
-					row: pickedRow,
-				},
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-			}).addDamage(this.props.id, 40)
+		observer.subscribe(player.hooks.getAttack, () => {
+			const bowAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: pickedRow,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 40)
 
 			return bowAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId) return
-			applySingleUse(game)
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (attack.attacker?.entity !== component.entity) return
+			applySingleUse(game, component.slot)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default BowSingleUseCard
+export default Bow

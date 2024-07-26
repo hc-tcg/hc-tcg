@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class ShubbleYTRareHermitCard extends Card {
+class ShubbleYTRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'shubbleyt_rare',
@@ -31,11 +32,11 @@ class ShubbleYTRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
+	public override onAttach(game: GameModel, component: CardComponent): void {
+		const {player} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			if (attack.type !== 'secondary') return
 
 			game.addModalRequest({
@@ -72,11 +73,11 @@ class ShubbleYTRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
+	public override onDetach(game: GameModel, component: CardComponent): void {
+		const {player} = component
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default ShubbleYTRareHermitCard
+export default ShubbleYTRare

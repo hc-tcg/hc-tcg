@@ -1,9 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, DeckSlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import FletchingTable from './fletching-table'
 
-class DropperSingleUseCard extends Card {
+class Dropper extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'dropper',
@@ -16,25 +18,22 @@ class DropperSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent): void {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
-				opponentPlayer.pile.splice(
-					Math.round(Math.random() * opponentPlayer.pile.length),
-					0,
-					CardInstance.fromCardId('fletching_table')
-				)
+				let slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
+				game.components.new(CardComponent, FletchingTable, slot.entity)
 			}
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
+	public override onDetach(game: GameModel, component: CardComponent): void {
+		const {player} = component
 
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 
-export default DropperSingleUseCard
+export default Dropper

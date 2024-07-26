@@ -1,9 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
 
-class CurseOfBindingSingleUseCard extends Card {
+class CurseOfBinding extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'curse_of_binding',
@@ -12,26 +14,17 @@ class CurseOfBindingSingleUseCard extends Card {
 		expansion: 'default',
 		rarity: 'common',
 		tokens: 0,
+		showConfirmationModal: true,
 		description: 'Your opponent can not make their active Hermit go AFK on their next turn.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {opponentPlayer, player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				game.addBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT')
-
-				opponentPlayer.hooks.onTurnStart.remove(instance)
-			})
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components.new(StatusEffectComponent, CurseOfBindingEffect).apply(opponentPlayer.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default CurseOfBindingSingleUseCard
+export default CurseOfBinding

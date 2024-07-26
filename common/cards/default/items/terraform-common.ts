@@ -1,9 +1,8 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class TerraformCommonItemCard extends Card {
+class TerraformItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_terraform_common',
@@ -14,11 +13,8 @@ class TerraformCommonItemCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		type: 'terraform',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type]
+		energy: ['terraform'],
 	}
 }
 
-export default TerraformCommonItemCard
+export default TerraformItem

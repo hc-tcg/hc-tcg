@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Attach, attach} from '../../base/card'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class SlimeballEffectCard extends Card {
+class Slimeball extends Card {
 	props: Attach = {
 		...attach,
 		id: 'slimeball',
@@ -15,33 +16,33 @@ class SlimeballEffectCard extends Card {
 		expansion: 'advent_of_tcg',
 		description:
 			"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			slot.opponent,
-			slot.attachSlot,
+			slot.attach,
 			slot.empty,
-			slot.rowHasHermit,
+			slot.row(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
-			slot.not(slot.frozen)
+			query.not(slot.frozen)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		player.hooks.freezeSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(component, () => {
 			return slot.every(
 				slot.player,
 				slot.rowIndex(pos.rowIndex),
-				slot.not(slot.attachSlot),
+				slot.not(slot.attach),
 				slot.not(slot.empty)
 			)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		pos.player.hooks.freezeSlots.remove(instance)
-		pos.player.hooks.onDetach.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		pos.player.hooks.freezeSlots.remove(component)
+		pos.player.hooks.onDetach.remove(component)
 	}
 }
 
-export default SlimeballEffectCard
+export default Slimeball

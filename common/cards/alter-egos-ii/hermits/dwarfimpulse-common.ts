@@ -1,6 +1,8 @@
-import Card, {hermit, Hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class DwarfImpulseCommonHermitCard extends Card {
+class DwarfImpulseCommon extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'dwarfimpulse_common',
@@ -16,7 +18,7 @@ class DwarfImpulseCommonHermitCard extends Card {
 		health: 250,
 		primary: {
 			name: 'Beard Bash',
-			cost: ['farm'],
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
@@ -29,4 +31,4 @@ class DwarfImpulseCommonHermitCard extends Card {
 	}
 }
 
-export default DwarfImpulseCommonHermitCard
+export default DwarfImpulseCommon

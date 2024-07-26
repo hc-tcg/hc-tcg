@@ -1,24 +1,21 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Description, Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class RedstoneRareItemCard extends Card {
-	props: Item = {
+class RedstoneDoubleItem extends Card {
+	props: Item & Description = {
 		...item,
 		id: 'item_redstone_rare',
 		numericId: 64,
 		name: 'Redstone Item x2',
 		shortName: 'Redstone',
+		description: 'Counts as 2 Redstone Item cards.',
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'redstone',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type, this.props.type]
+		energy: ['redstone', 'redstone'],
 	}
 }
 
-export default RedstoneRareItemCard
+export default RedstoneDoubleItem

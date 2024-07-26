@@ -1,12 +1,16 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {getActiveRowPos} from '../../../utils/board'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/singleturn-attack-disabled'
 
-class EvilXisumaRareHermitCard extends Card {
+class EvilXisumaRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'evilxisuma_rare',
@@ -34,23 +38,31 @@ class EvilXisumaRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	opponentActiveHermitQuery = query.every(
+		query.card.opponentPlayer,
+		query.card.active,
+		query.card.isHermit
+	)
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
-			const attacker = attack.getAttacker()
-			if (attack.type !== 'secondary' || !attacker) return
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-			const opponentActiveRow = getActiveRowPos(opponentPlayer)
-			if (!opponentActiveRow) return
-			if (opponentActiveRow.row.health <= 0) return
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
+			if (!game.components.exists(CardComponent, this.opponentActiveHermitQuery)) {
+				blockedActions.push('SECONDARY_ATTACK')
+			}
+			return blockedActions
+		})
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] !== 'heads') return
 
-			let playerPick: any = null
+			let opponentActiveHermit = game.components.find(CardComponent, this.opponentActiveHermitQuery)
+			if (!opponentActiveHermit) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -59,41 +71,32 @@ class EvilXisumaRareHermitCard extends Card {
 					payload: {
 						modalName: 'Evil X: Disable an attack for 1 turn',
 						modalDescription: "Which of the opponent's attacks do you want to disable?",
-						hermitCard: opponentActiveRow.row.hermitCard.toLocalCardInstance(),
+						hermitCard: opponentActiveHermit.entity,
 					},
 				},
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
-					playerPick = modalResult.pick
+					const actionToBlock =
+						modalResult.pick === 'primary'
+							? PrimaryAttackDisabledEffect
+							: SecondaryAttackDisabledEffect
 
+					// This will add a blocked action for the duration of their turn
+					game.components
+						.new(StatusEffectComponent, actionToBlock)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
 					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
-					playerPick = 'secondary'
+					game.components
+						.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
+						.apply(opponentPlayer.getActiveHermit()?.entity)
 				},
-			})
-
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				const disable = playerPick
-
-				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null) return
-
-				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				// This will add a blocked action for the duration of their turn
-				game.addBlockedActions(this.props.id, actionToBlock)
-
-				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
-	}
 }
 
-export default EvilXisumaRareHermitCard
+export default EvilXisumaRare

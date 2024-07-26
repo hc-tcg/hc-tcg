@@ -16,8 +16,8 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const player = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)
 	const opponentActiveRow = yield* select(getOpponentActiveRow)
-	if (!player || !activeRow || !activeRow.hermitCard) return
-	if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
+	if (!player || !activeRow || !activeRow.hermit) return
+	if (!opponentActiveRow || !opponentActiveRow.hermit) return
 
 	const attackData: AttackActionData = {
 		type: actionType,

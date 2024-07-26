@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class EthosLabUltraRareHermitCard extends Card {
+class EthosLabUltraRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'ethoslab_ultra_rare',
@@ -29,25 +30,19 @@ class EthosLabUltraRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.attacker.slot.inRow()) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 3)
+			const coinFlip = flipCoin(player, attack.attacker, 3)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.addDamage(this.props.id, headsAmount * 20)
+			attack.addDamage(component.entity, headsAmount * 20)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default EthosLabUltraRareHermitCard
+export default EthosLabUltraRare

@@ -8,15 +8,15 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
+import {PlayerEntity, SlotEntity} from 'common/entities'
 
 type Props = {
-	onClick: (pickInfo: PickInfo) => void
+	onClick: (pickInfo: SlotInfo, player: PlayerEntity, row?: number, index?: number) => void
 	localGameState: LocalGameState
 }
 
-// TODO - Don't allow clicking on slots on the other side
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, localGameState}: Props) {
 	const settings = useSelector(getSettings)
@@ -28,37 +28,27 @@ function Board({onClick, localGameState}: Props) {
 	const rightPlayer = side === 'Right' ? player : opponent
 
 	const handleRowClick = (
-		playerId: string,
 		rowIndex: number,
+		player: PlayerEntity,
+		entity: SlotEntity,
+		slotType: SlotTypeT,
 		card: LocalCardInstance | null,
-		type: SlotTypeT,
 		index: number
 	) => {
-		onClick({
-			playerId,
-			rowIndex,
-			card,
-			type,
-			index,
-		})
+		onClick({slotEntity: entity, slotType: slotType, card: card}, player, rowIndex, index)
 	}
 
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
-		const rows = player.board.rows
-		const boardArray = new Array(rows.length).fill(null)
-
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
-				{boardArray.map((_, index) => {
-					if (!rows[index]) throw new Error('Rendering board row failed!')
+				{player.board.rows.map((row, rowIndex) => {
 					return (
 						<BoardRow
-							key={index}
-							rowIndex={index}
-							rowState={rows[index]}
-							active={index === player.board.activeRow}
-							playerId={player.id}
-							onClick={handleRowClick.bind(null, player.id, index)}
+							key={row.entity}
+							player={direction === 'left' ? leftPlayer.entity : rightPlayer.entity}
+							rowState={row}
+							active={row.entity === player.board.activeRow}
+							onClick={(...args) => handleRowClick(rowIndex, player.entity, ...args)}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
 						/>
@@ -78,11 +68,19 @@ function Board({onClick, localGameState}: Props) {
 
 			<div className={css.actualBoard}>
 				{PlayerBoard(leftPlayer, 'left')}
-				<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
+				<Actions
+					localGameState={localGameState}
+					onClick={(value) => onClick(value, player.entity)}
+					id={css.actions}
+				/>
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>
 
-			<MobileActions localGameState={localGameState} onClick={onClick} id={css.actions} />
+			<MobileActions
+				localGameState={localGameState}
+				onClick={(value) => onClick(value, player.entity)}
+				id={css.actions}
+			/>
 		</div>
 	)
 }

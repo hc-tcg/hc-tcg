@@ -24,7 +24,9 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 		limits.maxDuplicates &&
 		deckCards.some((card) => {
 			if (card.props.category === 'item') return false
-			const duplicates = deckCards.filter((filterCard) => filterCard.props.id === card.props.id)
+			const duplicates = deckCards.filter(
+				(filterCard) => filterCard.props.numericId === card.props.numericId
+			)
 			return duplicates.length > limits.maxDuplicates
 		})
 

@@ -1,12 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
+import {card, slot} from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import {discardFromHand} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class JinglerRareHermitCard extends Card {
+class JinglerRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'jingler_rare',
@@ -33,36 +33,29 @@ class JinglerRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
-			const attacker = attack.getAttacker()
-			if (attack.type !== 'secondary' || !attack.getTarget() || !attacker) return
-			if (!opponentPlayer.hand.length) return // Do not roll if player has no more cards in hand
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!game.components.exists(CardComponent, card.slot(slot.hand), card.opponentPlayer)) return // Do not roll if player has no more cards in hand
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
 				playerId: opponentPlayer.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick 1 card from your hand to discard',
 				canPick: slot.hand,
 				onResult(pickedSlot) {
-					discardFromHand(opponentPlayer, pickedSlot.card)
+					pickedSlot.getCard()?.discard()
 				},
 				onTimeout() {
-					discardFromHand(opponentPlayer, opponentPlayer.hand[0])
+					game.components.find(CardComponent, card.slot(slot.hand), card.opponentPlayer)?.discard()
 				},
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
-	}
 }
 
-export default JinglerRareHermitCard
+export default JinglerRare

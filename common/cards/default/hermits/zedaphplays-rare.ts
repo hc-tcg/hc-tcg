@@ -1,11 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance, CoinFlipT} from '../../../types/game-state'
-import {applyStatusEffect} from '../../../utils/board'
+import SheepStareEffect from '../../../status-effects/sheep-stare'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class ZedaphPlaysRareHermitCard extends Card {
+class ZedaphPlaysRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'zedaphplays_rare',
@@ -31,28 +32,18 @@ class ZedaphPlaysRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== instanceKey || attack.type !== 'primary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
 
-			const attackerHermit = attacker.row.hermitCard
-			const coinFlip = flipCoin(player, attackerHermit)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			applyStatusEffect(game, 'sheep-stare', attack.getTarget()?.row.hermitCard)
+			game.components.new(StatusEffectComponent, SheepStareEffect).apply(opponentPlayer.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default ZedaphPlaysRareHermitCard
+export default ZedaphPlaysRare

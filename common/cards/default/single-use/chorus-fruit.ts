@@ -1,11 +1,13 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRow} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import SleepingEffect from '../../../status-effects/sleeping'
 
-class ChorusFruitSingleUseCard extends Card {
+class ChorusFruit extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'chorus_fruit',
@@ -16,53 +18,56 @@ class ChorusFruitSingleUseCard extends Card {
 		tokens: 1,
 		description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.not(
-				slot.someSlotFulfills(
-					slot.every(slot.player, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
+			query.not(
+				query.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.slot.active,
+					query.slot.hasStatusEffect(SleepingEffect)
 				)
+			),
+			query.exists(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.slot(query.slot.hermit),
+				query.not(query.card.active)
 			)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		let removedBlock = false
+		let switchedActiveHermit = false
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			// Apply the card
-			applySingleUse(game)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			if (switchedActiveHermit) return
+			switchedActiveHermit = true
 
-			player.hooks.afterAttack.add(instance, (attack) => {
-				if (removedBlock) return
-				// Remove change active hermit from the blocked actions so it can be done once more
-				game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
-				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
-				removedBlock = true
-				// If another attack loop runs let the blocked action be removed again
-				player.hooks.beforeAttack.add(instance, (attack) => {
-					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
-					removedBlock = false
-					player.hooks.beforeAttack.remove(instance)
-				})
+			game.addPickRequest({
+				playerId: player.id,
+				id: component.entity,
+				message: 'Pick one of your Hermits to become the new active Hermit',
+				canPick: query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.empty)
+				),
+				onResult(pickedSlot) {
+					if (!pickedSlot.inRow()) return
+					if (pickedSlot.row.entity !== player.activeRowEntity) {
+						player.changeActiveRow(pickedSlot.row)
+						applySingleUse(game, component.slot)
+					} else {
+						switchedActiveHermit = false
+					}
+				},
 			})
-
-			player.hooks.onTurnEnd.add(instance, (attack) => {
-				player.hooks.beforeAttack.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
-			})
-
-			player.hooks.onAttack.remove(instance)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default ChorusFruitSingleUseCard
+export default ChorusFruit

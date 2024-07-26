@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class Docm77RareHermitCard extends Card {
+class Docm77Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'docm77_rare',
@@ -29,29 +30,22 @@ class Docm77RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(this.props.id, this.props.secondary.damage)
+				attack.addDamage(component.entity, this.props.secondary.damage)
 			} else {
-				attack.reduceDamage(this.props.id, this.props.secondary.damage / 2)
+				attack.reduceDamage(component.entity, this.props.secondary.damage / 2)
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
-	}
 }
 
-export default Docm77RareHermitCard
+export default Docm77Rare

@@ -1,10 +1,12 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import FortuneStatusEffect from '../../../status-effects/fortune'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
-class FortuneSingleUseCard extends Card {
+class Fortune extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fortune',
@@ -17,29 +19,13 @@ class FortuneSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			player.hooks.onCoinFlip.add(instance, (card, coinFlips) => {
-				for (let i = 0; i < coinFlips.length; i++) {
-					coinFlips[i] = 'heads'
-				}
-				return coinFlips
-			})
-
-			player.hooks.onTurnStart.add(instance, () => {
-				player.hooks.onTurnStart.remove(instance)
-				player.hooks.onCoinFlip.remove(instance)
-			})
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components.new(StatusEffectComponent, FortuneStatusEffect).apply(player.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default FortuneSingleUseCard
+export default Fortune

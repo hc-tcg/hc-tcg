@@ -1,12 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
-import {discardCard} from '../../../utils/movement'
-import Card, {attach, Attach} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class LightningRodEffectCard extends Card {
+class LightningRod extends Card {
 	props: Attach = {
 		...attach,
 		id: 'lightning_rod',
@@ -17,47 +16,39 @@ class LightningRodEffectCard extends Card {
 		tokens: 2,
 		description:
 			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			attach.attachCondition,
-			slot.not(
-				slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod')))
+			query.not(
+				query.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.attach,
+					query.slot.has(LightningRod)
+				)
 			)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row, rowIndex} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.isType('status-effect') || attack.isBacklash) return
-			if (!row || rowIndex === null || !row.hermitCard) return
+		let used = false
 
-			// Only on opponents turn
-			if (game.currentPlayerId !== opponentPlayer.id) return
+		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
+			if (!component.slot?.onBoard() || !component.slot.row) return
+			if (attack.type === 'status-effect' || attack.isBacklash) return
+			if (game.currentPlayer.entity !== opponentPlayer.entity) return
+			if (attack.target?.player.id !== player.id) return
 
-			// Attack already has to be targeting us
-			if (attack.getTarget()?.player.id !== player.id) return
-
-			attack.setTarget(this.props.id, {
-				player,
-				rowIndex,
-				row,
-			})
+			attack.redirect(component.entity, component.slot.row?.entity)
+			used = true
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos)) return
-			if (attack.calculateDamage() <= 0) return
-
-			discardCard(game, pos.card)
+		observer.subscribe(opponentPlayer.hooks.afterAttack, (_attack) => {
+			if (!used) return
+			component.discard()
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 
-export default LightningRodEffectCard
+export default LightningRod

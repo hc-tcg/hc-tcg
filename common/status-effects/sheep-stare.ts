@@ -1,61 +1,58 @@
-import StatusEffect, {
-	StatusEffectProps,
-	followActiveHermit,
-	systemStatusEffect,
-} from './status-effect'
+import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
+import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {removeStatusEffect} from '../utils/board'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 
-class SheepStareEffect extends StatusEffect {
+class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		id: 'sheep-stare',
+		icon: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:
-			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
+			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		let {player} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		let coinFlipResult: CoinFlipResult | null = null
+		const activeHermit = player.getActiveHermit()
+		const opponentActiveHermit = player.getActiveHermit()
 
-		let coinFlipResult: CoinFlipT | null = null
-
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-			if (!attack.getAttacker()) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!opponentActiveHermit) return
+			if (!attack.isAttacker(activeHermit?.entity)) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, instance.targetInstance)
+				if (!activeHermit) return
+				const coinFlip = flipCoin(player.opponentPlayer, opponentActiveHermit, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
+			if (!(attack.attacker instanceof CardComponent) || !attack.attacker.slot.inRow()) return
+
 			if (coinFlipResult === 'heads') {
-				attack.setTarget(this.props.id, attack.getAttacker())
+				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
 			}
 		})
 
-		player.hooks.afterAttack.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.afterAttack, () => {
+			if (coinFlipResult) effect.remove()
 		})
 
-		player.hooks.onTurnEnd.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			effect.remove()
 		})
-
-		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
-	}
-
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.onActiveRowChange.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 	}
 }
 

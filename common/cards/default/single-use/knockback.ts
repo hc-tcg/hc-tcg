@@ -1,16 +1,17 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRow} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class KnockbackSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.opponent,
-		slot.hermitSlot,
-		slot.not(slot.activeRow),
-		slot.not(slot.empty)
+class Knockback extends Card {
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.hermit,
+		query.not(query.slot.active),
+		query.not(query.slot.empty)
 	)
 
 	props: SingleUse = {
@@ -24,51 +25,44 @@ class KnockbackSingleUseCard extends Card {
 		description:
 			'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game)
-
 			// Only Apply this for the first attack
-			player.hooks.afterAttack.remove(instance)
+			observer.unsubscribe(player.hooks.afterAttack)
 		})
 
-		player.hooks.onApply.add(instance, () => {
-			const activeRow = getActiveRow(opponentPlayer)
+		observer.subscribe(player.hooks.onApply, () => {
+			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
+			let activeRow = opponentPlayer.activeRow
 			if (activeRow && activeRow.health) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
-					id: this.props.id,
+					id: component.entity,
 					message: 'Choose a new active Hermit from your AFK Hermits',
 					canPick: this.pickCondition,
 					onResult(pickedSlot) {
-						if (pickedSlot.rowIndex === null) return
-
-						game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
+						if (!pickedSlot.inRow()) return
+						opponentPlayer.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout: () => {
-						const row = game.filterSlots(this.pickCondition)[0]
-						if (row === undefined || row.rowIndex === null) return
-						game.changeActiveRow(game.opponentPlayer, row.rowIndex)
+						const slot = game.components.find(SlotComponent, this.pickCondition)
+						if (!slot?.inRow()) return
+						game.opponentPlayer.changeActiveRow(slot.row)
 					},
 				})
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.onApply.remove(instance)
-	}
 }
 
-export default KnockbackSingleUseCard
+export default Knockback

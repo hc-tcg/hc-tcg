@@ -1,11 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {discardFromHand, drawCards} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class FlintAndSteelSingleUseCard extends Card {
+class FlintAndSteel extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'flint_&_steel',
@@ -18,29 +17,16 @@ class FlintAndSteelSingleUseCard extends Card {
 			'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
-		attachCondition: slot.every(
-			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length > 3
-		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const hand = player.hand
-			for (const card of hand) {
-				discardFromHand(player, card)
-			}
-
-			drawCards(player, 3)
+		observer.subscribe(player.hooks.onApply, () => {
+			player.getHand().forEach((card) => card.discard())
+			player.draw(3)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default FlintAndSteelSingleUseCard
+export default FlintAndSteel

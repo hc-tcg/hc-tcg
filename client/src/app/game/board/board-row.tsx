@@ -5,42 +5,49 @@ import cn from 'classnames'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import HealthSlot from './board-health'
+import {PlayerEntity, SlotEntity} from 'common/entities'
+import StatusEffectContainer from './board-status-effects'
+import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {useSelector} from 'react-redux'
 
-const getCardBySlot = (
+const getSlotByLocation = (
 	slotType: SlotTypeT,
 	slotIndex: number,
-	row: LocalRowState | null
-): LocalCardInstance | null => {
-	if (!row) return null
-	if (slotType === 'hermit') return row.hermitCard || null
-	if (slotType === 'attach') return row.effectCard || null
-	if (slotType === 'item') return row.itemCards[slotIndex] || null
-	return null
+	row: LocalRowState
+): {slot: SlotEntity; card: LocalCardInstance | null} => {
+	if (slotType === 'hermit') return row.hermit
+	if (slotType === 'attach') return row.attach
+	if (slotType === 'item') return row.items[slotIndex]
+	throw new Error('Unexpected slot type')
 }
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	rowIndex: number
-	onClick: (card: LocalCardInstance | null, slot: SlotTypeT, index: number) => void
+	player: PlayerEntity
+	onClick: (
+		entity: SlotEntity,
+		type: SlotTypeT,
+		card: LocalCardInstance | null,
+		index: number
+	) => void
 	rowState: LocalRowState
 	active: boolean
-	playerId: string
 	statusEffects: Array<LocalStatusEffectInstance>
 }
 
-const BoardRow = ({
-	type,
-	rowIndex,
-	onClick,
-	rowState,
-	active,
-	playerId,
-	statusEffects,
-}: BoardRowProps) => {
-	const itemSlots = rowState.itemCards.length
+const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: BoardRowProps) => {
+	const localGameState = useSelector(getGameState)
+	const selectedCard = useSelector(getSelectedCard)
+
+	let shouldDim = !!(
+		(selectedCard || localGameState?.currentPickableSlots) &&
+		localGameState?.turn.currentPlayerId === localGameState?.playerId
+	)
+
+	const itemSlots = rowState.items.length
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit']
 	const slots = slotTypes.map((slotType, slotIndex) => {
-		const card = getCardBySlot(slotType, slotIndex, rowState)
+		const slot = getSlotByLocation(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
 
 		if (slotType === 'item' && itemSlots <= slotIndex)
@@ -54,18 +61,17 @@ const BoardRow = ({
 		return (
 			<Slot
 				cssId={cssId}
-				onClick={() => onClick(card, slotType, slotIndex)}
-				card={card}
+				onClick={() => onClick(slot.slot, slotType, slot.card, slotIndex)}
+				card={slot.card}
+				entity={slot.slot}
 				rowState={rowState}
 				active={active}
 				key={slotType + '-' + slotIndex}
 				type={slotType}
-				rowIndex={rowIndex}
-				index={slotIndex}
 				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.instance == card?.instance && slotType != 'hermit'
+					(a) =>
+						a.target.type === 'card' && a.target.card === slot.card?.entity && slotType != 'hermit'
 				)}
-				playerId={playerId}
 			/>
 		)
 	})
@@ -80,10 +86,25 @@ const BoardRow = ({
 			{slots}
 			<HealthSlot
 				rowState={rowState}
-				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.instance == rowState.hermitCard?.instance
+				shouldDim={shouldDim}
+				damageStatusEffect={statusEffects.find(
+					(a) =>
+						a.target.type === 'card' &&
+						a.target.card === rowState.hermit.card?.entity &&
+						a.props.type === 'damage'
 				)}
 			/>
+			<div className={cn(css.effect, css.slot)}>
+				<StatusEffectContainer
+					shouldDim={shouldDim}
+					forHermit={true}
+					statusEffects={statusEffects.filter(
+						(a) =>
+							(a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity) ||
+							(active && a.target.type === 'global' && a.target.player === player)
+					)}
+				/>
+			</div>
 		</div>
 	)
 }

@@ -1,14 +1,15 @@
 import {GameModel} from 'common/models/game-model'
-import {ActionResult, CardInstance} from 'common/types/game-state'
-import {PickInfo} from 'common/types/server-requests'
+import {ActionResult} from 'common/types/game-state'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {PlayerComponent, SlotComponent} from 'common/components'
+import {slot} from 'common/components/query'
+import {SlotEntity} from 'common/entities'
 
-function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
+function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<any, ActionResult> {
 	// First validate data sent from client
-	if (!pickResult || !pickResult.playerId) return 'FAILURE_INVALID_DATA'
-	if (pickResult.index === undefined || !pickResult.type) return 'FAILURE_INVALID_DATA'
+	if (!pickResult || !pickResult) return 'FAILURE_INVALID_DATA'
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
@@ -19,20 +20,8 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 	}
 
 	// Call the bound function with the pick result
-	let slotInfo = {
-		player: game.state.players[pickResult.playerId],
-		opponentPlayer: Object.values(game.state.players).filter(
-			(opponent) => opponent.id !== pickResult.playerId
-		)[0],
-		type: pickResult.type,
-		index: pickResult.index,
-		rowIndex: pickResult.rowIndex,
-		row:
-			pickResult.rowIndex !== null
-				? game.state.players[pickResult.playerId].board.rows[pickResult.rowIndex]
-				: null,
-		card: pickResult.card ? CardInstance.fromLocalCardInstance(pickResult.card) : null,
-	}
+	let slotInfo = game.components.find(SlotComponent, slot.entity(pickResult))
+	if (!slotInfo) return 'FAILURE_INVALID_DATA'
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
@@ -40,8 +29,17 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 		return 'FAILURE_INVALID_SLOT'
 	}
 
+	const card = slotInfo.getCard()
+
+	// Because Worm Man, all cards need to be flipped over to normal once they're picked
+	if (card) card.turnedOver = false
+
 	pickRequest.onResult(slotInfo)
-	game.state.players[pickRequest.playerId].pickableSlots = null
+	let player = game.components.find(
+		PlayerComponent,
+		(_game, player) => player.id === pickRequest.playerId
+	)
+	if (player) player.pickableSlots = null
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()
@@ -51,7 +49,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 			payload: {
-				playerId: game.currentPlayerId,
+				playerId: game.currentPlayer.id,
 			},
 		}
 		const attackResult = yield* call(attackSaga, game, turnAction, false)

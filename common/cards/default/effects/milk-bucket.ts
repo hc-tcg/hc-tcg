@@ -1,11 +1,19 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {applySingleUse} from '../../../utils/board'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {attach, singleUse} from '../../base/defaults'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import {Attach, SingleUse} from '../../base/types'
+import PoisonEffect from '../../../status-effects/poison'
+import BadOmenEffect from '../../../status-effects/badomen'
 
-class MilkBucketEffectCard extends Card {
+class MilkBucket extends Card {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,
@@ -18,7 +26,7 @@ class MilkBucketEffectCard extends Card {
 		tokens: 0,
 		description:
 			'Remove poison and bad omen from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
-		attachCondition: slot.some(attach.attachCondition, singleUse.attachCondition),
+		attachCondition: query.some(attach.attachCondition, singleUse.attachCondition),
 		log: (values) => {
 			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`
@@ -26,70 +34,52 @@ class MilkBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
-		if (pos.type === 'single_use') {
+	private static removeFireEffect(game: GameModel, slot: SlotComponent | null | undefined) {
+		if (!slot) return
+		game.components
+			.filter(
+				StatusEffectComponent,
+				query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
+				query.effect.is(PoisonEffect, BadOmenEffect)
+			)
+			.forEach((effect) => effect.remove())
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
+		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick one of your Hermits',
-				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
+				canPick: query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.empty)
+				),
 				onResult(pickedSlot) {
-					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-						return (
-							ail.targetInstance.instance === pickedSlot.card?.instance &&
-							(ail.props.id == 'poison' || ail.props.id == 'badomen')
-						)
-					})
-					statusEffectsToRemove.forEach((ail) => {
-						removeStatusEffect(game, pos, ail)
-					})
+					if (!pickedSlot.inRow()) return
+
+					MilkBucket.removeFireEffect(game, pickedSlot)
 
 					applySingleUse(game, pickedSlot)
 				},
 			})
-		} else if (pos.type === 'attach') {
-			// Straight away remove poison
-			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
-				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.props.id == 'poison'
-			})
-			if (poisonStatusEffect) {
-				removeStatusEffect(game, pos, poisonStatusEffect)
-			}
+		} else if (component.slot.type === 'attach') {
+			// Straight away remove fire
+			MilkBucket.removeFireEffect(game, component.slot)
 
-			player.hooks.onDefence.add(instance, (attack) => {
-				if (!row) return
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return (
-						ail.targetInstance.instance === row.hermitCard?.instance &&
-						(ail.props.id == 'poison' || ail.props.id == 'badomen')
-					)
-				})
-				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail)
-				})
+			observer.subscribe(player.hooks.onDefence, (_attack) => {
+				if (!component.slot.inRow()) return
+				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, () => {
-				if (!row) return
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return (
-						ail.targetInstance.instance === row.hermitCard?.instance &&
-						(ail.props.id == 'poison' || ail.props.id == 'badomen')
-					)
-				})
-				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail)
-				})
+			observer.subscribe(opponentPlayer.hooks.afterApply, () => {
+				if (!component.slot.inRow()) return
+				MilkBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		player.hooks.onDefence.remove(instance)
-		opponentPlayer.hooks.afterApply.remove(instance)
-	}
 }
 
-export default MilkBucketEffectCard
+export default MilkBucket

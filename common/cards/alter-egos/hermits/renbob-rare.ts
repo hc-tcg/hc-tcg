@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {row} from '../../../components/query'
 
-class RenbobRareHermitCard extends Card {
+class RenbobRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'renbob_rare',
@@ -31,34 +32,23 @@ class RenbobRareHermitCard extends Card {
 		},
 	}
 
-	override getAttack(
-		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const {opponentPlayer} = pos
-		let attack = super.getAttack(game, instance, pos, hermitAttackType)
-		if (!attack) return null
-		if (
-			attack.type === 'secondary' &&
-			pos.rowIndex !== null &&
-			opponentPlayer.board.rows.length !== 1 // Renbob should not retarget if opponent can only play one Hermit
-		) {
-			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
-			if (opponentPlayerRow.hermitCard) {
-				attack.setTarget(this.props.id, {
-					player: opponentPlayer,
-					rowIndex: pos.rowIndex,
-					row: opponentPlayerRow,
-				})
-			} else {
-				attack.setTarget(this.props.id, null)
-			}
-		}
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		return attack
+		// Renbob should not retarget if opponent can only play one Hermit
+		if (game.components.filter(RowComponent, row.player(player.opponentPlayer.entity)).length === 1)
+			return
+
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow()) return
+			attack.setTarget(
+				component.entity,
+				game.components.find(RowComponent, row.opponentPlayer, row.index(component.slot.row.index))
+					?.entity || null
+			)
+		})
 	}
 }
 
-export default RenbobRareHermitCard
+export default RenbobRare

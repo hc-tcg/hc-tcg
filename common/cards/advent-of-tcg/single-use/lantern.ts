@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class LanternSingleUseCard extends Card {
+class Lantern extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'lantern',
@@ -16,16 +17,16 @@ class LanternSingleUseCard extends Card {
 		description:
 			'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => pos.player.pile.length >= 4
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -49,7 +50,7 @@ class LanternSingleUseCard extends Card {
 					const cards = modalResult.cards
 
 					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.instance === d.instance)) {
+						if (cards.some((d) => c.id === d.component)) {
 							player.hand.push(c)
 							return false
 						}
@@ -88,10 +89,10 @@ class LanternSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onApply.remove(component)
 	}
 }
 
-export default LanternSingleUseCard
+export default Lantern

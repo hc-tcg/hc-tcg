@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {AussiePingEffect} from '../../../status-effects/aussie-ping'
 
-class PearlescentMoonRareHermitCard extends Card {
+class PearlescentMoonRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'pearlescentmoon_rare',
@@ -36,21 +37,14 @@ class PearlescentMoonRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
-				return
-			applyStatusEffect(game, 'aussie-ping', attack.getTarget()?.row.hermitCard)
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components.new(StatusEffectComponent, AussiePingEffect).apply(opponentPlayer.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default PearlescentMoonRareHermitCard
+export default PearlescentMoonRare

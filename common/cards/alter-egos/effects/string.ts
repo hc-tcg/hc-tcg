@@ -1,7 +1,9 @@
-import {slot} from '../../../slot'
-import Card, {Attach, attach} from '../../base/card'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class StringEffectCard extends Card {
+class String extends Card {
 	props: Attach = {
 		...attach,
 		id: 'string',
@@ -13,17 +15,17 @@ class StringEffectCard extends Card {
 		tokens: 2,
 		description:
 			"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
-		attachCondition: slot.every(
-			slot.opponent,
-			slot.rowHasHermit,
-			slot.empty,
-			slot.actionAvailable('PLAY_EFFECT_CARD'),
-			slot.some(slot.attachSlot, slot.itemSlot),
-			slot.not(slot.frozen)
+		attachCondition: query.every(
+			query.slot.opponent,
+			query.slot.empty,
+			query.slot.row(query.row.hasHermit),
+			query.actionAvailable('PLAY_EFFECT_CARD'),
+			query.some(query.slot.attach, query.slot.item),
+			query.not(query.slot.frozen)
 		),
 		log: (values) =>
-			`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
+			`$o{${values.opponent}|You}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`,
 	}
 }
 
-export default StringEffectCard
+export default String

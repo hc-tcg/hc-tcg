@@ -1,10 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class Biffa2001RareHermitCard extends Card {
+class Biffa2001Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'biffa2001_rare',
@@ -31,21 +31,21 @@ class Biffa2001RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player} = component
 
-		applyStatusEffect(game, 'museum-collection', instance)
+		applyStatusEffect(game, 'museum-collection', component)
 
-		player.hooks.onTurnStart.add(instance, () => {
-			applyStatusEffect(game, 'museum-collection', instance)
+		player.hooks.onTurnStart.add(component, () => {
+			applyStatusEffect(game, 'museum-collection', component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 
-export default Biffa2001RareHermitCard
+export default Biffa2001Rare

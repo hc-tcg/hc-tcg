@@ -1,13 +1,11 @@
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance, healHermit} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
-import Card, {hermit, Hermit} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class IskallmanRareHermitCard extends Card {
+class IskallmanRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'iskallman_rare',
@@ -17,7 +15,7 @@ class IskallmanRareHermitCard extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 0,
 		type: 'explorer',
 		health: 260,
 		primary: {
@@ -35,30 +33,28 @@ class IskallmanRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-		let pickedAfkHermit: SlotInfo | null = null
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+		const {player} = component
+		let pickedAfkHermit: SlotComponent | null = null
 
-		const pickCondition = slot.every(
-			slot.player,
-			slot.hermitSlot,
-			slot.not(slot.empty),
-			slot.not(slot.activeRow)
+		const pickCondition = query.every(
+			query.slot.currentPlayer,
+			query.slot.hermit,
+			query.not(query.slot.empty),
+			query.not(query.slot.active)
 		)
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			const activeRow = getActiveRow(player)
-
-			if (!activeRow || activeRow.health < 50) return
+			if (player.activeRow && player.activeRow.health && player.activeRow.health < 50) return
 
 			// Make sure there is something to select
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -84,12 +80,10 @@ class IskallmanRareHermitCard extends Card {
 					if (!modalResult.result) return 'SUCCESS'
 					game.addPickRequest({
 						playerId: player.id,
-						id: 'iskallman_rare',
+						id: component.entity,
 						message: 'Pick an AFK Hermit from either side of the board',
 						canPick: pickCondition,
 						onResult(pickedSlot) {
-							if (!pickedSlot.card) return
-							if (!pickedSlot.rowIndex) return
 							pickedAfkHermit = pickedSlot
 						},
 						onTimeout() {
@@ -106,49 +100,35 @@ class IskallmanRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-			const activeRow = getActiveRow(player)
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary' || attack.isBacklash)
+				return
+			if (!pickedAfkHermit?.inRow()) return
 
-			if (!activeRow) return
-			if (!pickedAfkHermit) return
-
-			const attacker = attack.getAttacker()
-			if (!attacker) return
-
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'selfAttack'),
-				attacker,
-				target: attacker,
+			const backlashAttack = game.newAttack({
+				attacker: component.entity,
+				target: player.activeRowEntity,
 				type: 'effect',
 				isBacklash: true,
 			})
-			backlashAttack.addDamage(this.props.id, 50)
-			backlashAttack.shouldIgnoreSlots.push(slot.anything)
+
+			backlashAttack.addDamage(component.entity, 50)
+			backlashAttack.shouldIgnoreCards.push(query.anything)
 			attack.addNewAttack(backlashAttack)
 
-			const attackerInfo = attacker.row.hermitCard.card
-			const hermitInfo = pickedAfkHermit.row?.hermitCard?.card
+			const hermitInfo = pickedAfkHermit.getCard()
 
 			if (hermitInfo) {
-				healHermit(pickedAfkHermit.row, 50)
+				pickedAfkHermit.row.heal(50)
 				game.battleLog.addEntry(
-					player.id,
-					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${
-						hermitInfo.props.name
-					} (${(pickedAfkHermit.rowIndex || 0) + 1})$ by $g50hp$`
+					player.entity,
+					`$p${component.props.name}$ took $b50hp$ damage, and healed $p${hermitInfo.props.name} (${
+						(pickedAfkHermit.row.index || 0) + 1
+					})$ by $g50hp$`
 				)
 			}
 		})
 	}
-
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
-	}
 }
 
-export default IskallmanRareHermitCard
+export default IskallmanRare

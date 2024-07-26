@@ -1,11 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
-import {applyStatusEffect} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import SlownessEffect from '../../../status-effects/slowness'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class PotionOfSlownessSingleUseCard extends Card {
+class PotionOfSlowness extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'potion_of_slowness',
@@ -19,20 +19,15 @@ class PotionOfSlownessSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard)
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, SlownessEffect)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default PotionOfSlownessSingleUseCard
+export default PotionOfSlowness

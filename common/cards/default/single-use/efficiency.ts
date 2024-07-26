@@ -1,9 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class EfficiencySingleUseCard extends Card {
+class Efficiency extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'efficiency',
@@ -17,33 +18,28 @@ class EfficiencySingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.add(instance, () => {
-			player.hooks.availableEnergy.add(instance, (availableEnergy) => {
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+		observer.subscribe(player.hooks.onApply, () => {
+			observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {
 				// Unliimited powwa
 				return ['any', 'any', 'any']
 			})
 
-			player.hooks.afterAttack.add(instance, (attack) => {
-				player.hooks.availableEnergy.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
+			observer.subscribe(player.hooks.afterAttack, (_attack) => {
+				observer.unsubscribe(player.hooks.availableEnergy)
+				observer.unsubscribe(player.hooks.afterAttack)
+				observer.unsubscribe(player.hooks.onTurnEnd)
 			})
 
 			// In case the player does not attack
-			player.hooks.onTurnEnd.add(instance, () => {
-				player.hooks.availableEnergy.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
+			observer.subscribe(player.hooks.onTurnEnd, () => {
+				observer.unsubscribe(player.hooks.availableEnergy)
+				observer.unsubscribe(player.hooks.afterAttack)
+				observer.unsubscribe(player.hooks.onTurnEnd)
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
 }
 
-export default EfficiencySingleUseCard
+export default Efficiency

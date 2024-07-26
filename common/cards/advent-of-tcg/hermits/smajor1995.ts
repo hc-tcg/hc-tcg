@@ -1,11 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {slot} from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class Smajor1995RareHermitCard extends Card {
+class Smajor1995Rare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'smajor1995_rare',
@@ -33,40 +33,40 @@ class Smajor1995RareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
+	public override onAttach(game: GameModel, component: CardComponent): void {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 
 			const pickCondition = slot.every(
 				slot.player,
-				slot.not(slot.activeRow),
+				slot.not(slot.active),
 				slot.not(slot.empty),
-				slot.hermitSlot
+				slot.hermit
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.instance,
+				id: component.entity,
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, 'dyed', pickedSlot.card)
+					applyStatusEffect(game, 'dyed', pickedSlot.cardId)
 				},
 			})
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
+	public override onDetach(game: GameModel, component: CardComponent): void {
+		const {player} = component
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default Smajor1995RareHermitCard
+export default Smajor1995Rare

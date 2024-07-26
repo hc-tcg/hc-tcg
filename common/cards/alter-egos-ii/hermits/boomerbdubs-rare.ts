@@ -1,11 +1,18 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import * as query from '../../../components/query'
+import FortuneEffect from '../../../status-effects/fortune'
 
-class BoomerBdubsRareHermitCard extends Card {
+class BoomerBdubsRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'boomerbdubs_rare',
@@ -34,20 +41,23 @@ class BoomerBdubsRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent
+	): void {
+		const {player} = component
 
 		let extraDamage = 0
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			const activeHermit = getActiveRow(player)?.hermitCard
+			const activeHermit = player.getActiveHermit()
 
 			if (!activeHermit) return
 
@@ -85,10 +95,14 @@ class BoomerBdubsRareHermitCard extends Card {
 
 					player.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
 
-					// This is sketchy AF but fortune needs to be removed after the first coin flip
-					// to prevent infinite flips from being easy.
-					const fortuneInstances = player.playerDeck.filter((card) => card.props.id === 'fortune')
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card))
+					// After the first coin flip we remove fortune to prevent infinite coin flips.
+					game.components.filter(
+						StatusEffectComponent<PlayerComponent>,
+						query.effect.is(FortuneEffect),
+						query.effect.targetIsPlayerAnd(
+							(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+						)
+					)
 
 					return 'SUCCESS'
 				},
@@ -96,25 +110,16 @@ class BoomerBdubsRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			if (extraDamage === 0) {
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return
 			}
 
-			attack.addDamage(this.props.id, extraDamage)
+			attack.addDamage(component.entity, extraDamage)
 		})
-	}
-
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
-
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 	}
 }
 
-export default BoomerBdubsRareHermitCard
+export default BoomerBdubsRare

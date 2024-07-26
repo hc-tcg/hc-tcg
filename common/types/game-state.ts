@@ -1,260 +1,51 @@
-import {CARDS} from '../cards'
-import Card, {
-	Attach,
-	CardProps,
-	HasHealth,
-	Hermit,
-	Item,
-	SingleUse,
-	isAttach,
-	isHealth,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from '../cards/base/card'
-import {AttackModel} from '../models/attack-model'
-import {BattleLogModel} from '../models/battle-log-model'
-import {SlotCondition} from '../slot'
-import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
-import {FormattedTextNode} from '../utils/formatting'
-import {HermitAttackType} from './attack'
-import {EnergyT} from './cards'
-import {GameHook, WaterfallHook} from './hooks'
-import {
+import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {BattleLogModel} from '../models/battle-log-model'
+import type {FormattedTextNode} from '../utils/formatting'
+import type {HermitAttackType} from './attack'
+import type {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
-	ModalData,
-	ModalRequest,
-	PickInfo,
+	LocalModalData,
 	PickRequest,
-	WithoutFunctions,
 } from './server-requests'
+import type {CardComponent} from '../components'
+import type {PlayerId} from '../models/player-model'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import {ModalRequest} from './modal-requests'
 
-export type PlayerId = string
-
-export class CardInstance<Props extends CardProps = CardProps> {
-	readonly card: Card<Props>
-	readonly instance: string
-
-	constructor(card: Card<Props>, instance: string) {
-		this.card = card
-		this.instance = instance
-	}
-
-	static fromCardId(cardId: string) {
-		return new CardInstance(CARDS[cardId], Math.random().toString())
-	}
-
-	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
-		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
-	}
-
-	public toLocalCardInstance(): LocalCardInstance<Props> {
-		return {
-			props: this.card.props as WithoutFunctions<Props>,
-			instance: this.instance,
-		}
-	}
-
-	public get props(): Props {
-		return this.card.props
-	}
-
-	public isItem(): this is CardInstance<Item> {
-		return isItem(this.props)
-	}
-	public isSingleUse(): this is CardInstance<SingleUse> {
-		return isSingleUse(this.props)
-	}
-	public isAttach(): this is CardInstance<Attach> {
-		return isAttach(this.props)
-	}
-	public isHealth(): this is CardInstance<HasHealth> {
-		return isHealth(this.props)
-	}
-	public isHermit(): this is CardInstance<Hermit> {
-		return isHermit(this.props)
-	}
-}
-
-export type RowStateWithHermit = {
-	hermitCard: CardInstance<HasHealth>
-	effectCard: CardInstance<Attach> | null
-	itemCards: Array<CardInstance<CardProps> | null>
-	health: number
-}
-
-export type RowStateWithoutHermit = {
-	hermitCard: null
-	effectCard: null
-	itemCards: Array<null>
-	health: null
-}
-
-export function healHermit(row: RowState | null, amount: number) {
-	if (!row || !row?.hermitCard) return
-
-	if (!isHealth(row.hermitCard.props)) {
-		return
-	}
-	row.health = Math.min(row.health + amount, row.hermitCard.props.health)
-}
-
-export type RowState = RowStateWithHermit | RowStateWithoutHermit
+type NewType = SlotEntity
 
 export type LocalRowState = {
-	hermitCard: LocalCardInstance<HasHealth> | null
-	effectCard: LocalCardInstance<Attach> | null
-	itemCards: Array<LocalCardInstance<CardProps> | null>
+	entity: RowEntity
+	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
+	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
 	health: number | null
 }
 
-export type CoinFlipT = 'heads' | 'tails'
+export type CoinFlipResult = 'heads' | 'tails'
 
-export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> {
-	readonly statusEffect: StatusEffect<Props>
-	readonly instance: string
-	public targetInstance: CardInstance
-	public counter: number | null
-
-	constructor(statusEffect: StatusEffect<Props>, instance: string, targetInstance: CardInstance) {
-		this.statusEffect = statusEffect
-		this.instance = instance
-		this.targetInstance = targetInstance
-		this.counter = null
-	}
-
-	public toLocalStatusEffectInstance(): LocalStatusEffectInstance {
-		return {
-			props: WithoutFunctions(this.props),
-			instance: this.instance,
-			targetInstance: this.targetInstance.toLocalCardInstance(),
-			counter: this.counter,
-		}
-	}
-
-	public get props(): Props {
-		return this.statusEffect.props
-	}
-
-	public isCounter(): this is StatusEffectInstance<Counter> {
-		return isCounter(this.statusEffect.props)
-	}
-}
-
-export type CurrentCoinFlipT = {
-	card: CardInstance
+export type CurrentCoinFlip = {
+	card: CardEntity
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipT>
+	tosses: Array<CoinFlipResult>
+	amount: number
+	delay: number
+}
+
+export type LocalCurrentCoinFlip = {
+	card: LocalCardInstance
+	opponentFlip: boolean
+	name: string
+	tosses: Array<CoinFlipResult>
 	amount: number
 	delay: number
 }
 
 export type BattleLogT = {
-	player: PlayerId
+	player: PlayerEntity
 	description: string
-}
-
-export type PlayerState = {
-	id: PlayerId
-	playerName: string
-	playerType: 'real' | 'virtual'
-	minecraftName: string
-	playerDeck: Array<CardInstance>
-	censoredPlayerName: string
-	coinFlips: Array<CurrentCoinFlipT>
-	hand: Array<CardInstance>
-	lives: number
-	pile: Array<CardInstance>
-	discarded: Array<CardInstance>
-	hasPlacedHermit: boolean
-
-	pickableSlots: Array<PickInfo> | null
-	cardsCanBePlacedIn: Array<[CardInstance, Array<PickInfo>]>
-
-	board: {
-		activeRow: number | null
-		singleUseCard: CardInstance<SingleUse> | null
-		singleUseCardUsed: boolean
-		rows: Array<RowState>
-	}
-
-	hooks: {
-		/** Hook that modifies and returns available energy from item cards */
-		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
-
-		/** Hook that modifies and returns blockedActions */
-		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
-
-		/** Hook called when a card is attached */
-		onAttach: GameHook<(instance: CardInstance) => void>
-		/** Hook called when a card is detached */
-		onDetach: GameHook<(instance: CardInstance) => void>
-
-		/** Hook called before a single use card is applied */
-		beforeApply: GameHook<() => void>
-		/** Hook called when a single use card is applied */
-		onApply: GameHook<() => void>
-		/** Hook called after a single use card is applied */
-		afterApply: GameHook<() => void>
-
-		/**
-		 * Hook called once before each attack loop.
-		 *
-		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
-		 */
-		getAttackRequests: GameHook<
-			(activeInstance: CardInstance, hermitAttackType: HermitAttackType) => void
-		>
-
-		/** Hook that returns attacks to execute */
-		getAttack: GameHook<() => AttackModel | null>
-		/** Hook called before the main attack loop, for every attack from our side of the board */
-		beforeAttack: GameHook<(attack: AttackModel) => void>
-		/** Hook called before the main attack loop, for every attack targeting our side of the board */
-		beforeDefence: GameHook<(attack: AttackModel) => void>
-		/** Hook called for every attack from our side of the board */
-		onAttack: GameHook<(attack: AttackModel) => void>
-		/** Hook called for every attack that targets our side of the board */
-		onDefence: GameHook<(attack: AttackModel) => void>
-		/**
-		 * Hook called after the main attack loop is completed, for every attack from our side of the board.
-		 * Attacks added from this hook will not be executed.
-		 *
-		 * This is called after actions are marked as completed and blocked
-		 */
-		afterAttack: GameHook<(attack: AttackModel) => void>
-		/**
-		 * Hook called after the main attack loop, for every attack targeting our side of the board
-		 *
-		 * This is called after actions are marked as completed and blocked
-		 */
-		afterDefence: GameHook<(attack: AttackModel) => void>
-
-		/**
-		 * Hook called at the start of the turn
-		 *
-		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
-		 */
-		onTurnStart: GameHook<() => void>
-		/** Hook called at the end of the turn */
-		onTurnEnd: GameHook<(drawCards: Array<CardInstance | null>) => void>
-
-		/** Hook called when the player flips a coin */
-		onCoinFlip: GameHook<(card: CardInstance, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
-
-		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
-		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
-		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
-		/** Hook called when the active row is changed. */
-		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		/** Hook called when the `slot.locked` combinator is called.
-		 * Returns a combinator that verifies if the slot is locked or not.
-		 * Locked slots cannot be chosen in some combinator expressions.
-		 */
-		freezeSlots: GameHook<() => SlotCondition>
-	}
 }
 
 export type GenericActionResult =
@@ -278,11 +69,10 @@ export type PickCardActionResult =
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
-export type {ModalData} from './server-requests'
+export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
-	currentPlayerId: string
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
@@ -294,15 +84,14 @@ export type TurnState = {
 
 export type LocalTurnState = {
 	turnNumber: number
-	currentPlayerId: string
+	currentPlayerId: PlayerId
+	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
 
 export type GameState = {
 	turn: TurnState
-	order: Array<PlayerId>
-	players: Record<string, PlayerState>
-	statusEffects: Array<StatusEffectInstance>
+	order: Array<PlayerEntity>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -368,14 +157,15 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
+	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
-	coinFlips: Array<CurrentCoinFlipT>
+	coinFlips: Array<LocalCurrentCoinFlip>
 	lives: number
 	board: {
-		activeRow: number | null
-		singleUseCard: LocalCardInstance | null
+		activeRow: RowEntity | null
+		singleUse: {slot: SlotEntity; card: LocalCardInstance | null}
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
 	}
@@ -383,7 +173,8 @@ export type LocalPlayerState = {
 
 export type LocalGameState = {
 	turn: LocalTurnState
-	order: Array<PlayerId>
+	order: Array<PlayerEntity>
+
 	statusEffects: Array<LocalStatusEffectInstance>
 
 	// personal data
@@ -394,18 +185,20 @@ export type LocalGameState = {
 	// ids
 	playerId: PlayerId
 	opponentPlayerId: PlayerId
+	playerEntity: PlayerEntity
+	opponentPlayerEntity: PlayerEntity
 
 	lastActionResult: {
 		action: TurnAction
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<PickInfo>]> | null
-	currentPickableSlots: Array<PickInfo> | null
+	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
+	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
-	currentModalData: ModalData | null
+	currentModalData: LocalModalData | null
 
-	players: Record<string, LocalPlayerState>
+	players: Record<PlayerId, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number
@@ -438,14 +231,41 @@ export type LocalGameRoot = {
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
-	currentCoinFlip: CurrentCoinFlipT | null
+	currentCoinFlip: CurrentCoinFlip | null
 	opponentConnected: boolean
 }
 
 export type GameLog = {
 	type: 'public' | 'private'
-	startHand1: Array<CardInstance>
-	startHand2: Array<CardInstance>
+	startHand1: Array<CardComponent>
+	startHand2: Array<CardComponent>
 	startTimestamp: number
 	startDeck: string
+}
+
+export abstract class DefaultDictionary<Keys, Type> {
+	default: () => Type
+	values: Record<string, Type> = {}
+
+	public constructor(defaultFactory: () => Type) {
+		this.default = defaultFactory
+	}
+
+	public abstract set(key: Keys, value: Type): void
+	protected setValue(stringKey: string, value: Type) {
+		this.values[stringKey] = value
+	}
+
+	public abstract get(key: Keys): Type
+	protected getValue(stringKey: string) {
+		if (stringKey in this.values) {
+			return this.values[stringKey]
+		}
+		return this.default()
+	}
+
+	public abstract clear(key: Keys): void
+	protected clearValue(stringKey: string) {
+		delete this.values[stringKey]
+	}
 }

@@ -1,12 +1,14 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
-import {slot} from '../../../slot'
-import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
-import {CopyAttack} from '../../../types/server-requests'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import * as query from '../../../components/query'
+import Card, {InstancedValue} from '../../base/card'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
+import ArmorStand from '../../alter-egos/effects/armor-stand'
+import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 
-class RendogRareHermitCard extends Card {
+class RendogRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'rendog_rare',
@@ -31,70 +33,55 @@ class RendogRareHermitCard extends Card {
 		},
 	}
 
-	pickCondition = slot.every(
-		slot.opponent,
-		slot.hermitSlot,
-		slot.not(slot.empty),
-		slot.not(slot.hasId(this.props.id)),
-		slot.not(slot.hasId('armor_stand'))
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.hermit,
+		query.not(query.slot.empty),
+		query.not(query.slot.has(ArmorStand))
 	)
 
-	imitatingCard = new InstancedValue<CardInstance | null>(() => null)
-	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
+	mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 
 	override getAttack(
 		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
+		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	) {
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
+		if (hermitAttackType !== 'secondary') return super.getAttack(game, component, hermitAttackType)
 
-		if (!attack || attack.type !== 'secondary') return attack
-		if (attack.id !== this.getInstanceKey(instance)) return attack
+		const mockedAttack = this.mockedAttacks.get(component)
+		if (!mockedAttack) return null
 
-		const imitatingCard = this.imitatingCard.get(instance)
-		const pickedAttack = this.pickedAttack.get(instance)
-
-		if (!imitatingCard) return attack
-		if (!imitatingCard.isHermit()) return null
-
-		if (!pickedAttack) return null
-
-		// Return the attack we picked from the card we picked
-		const newAttack = imitatingCard.card.getAttack(game, imitatingCard, pos, pickedAttack)
+		let newAttack = mockedAttack.getAttack()
 		if (!newAttack) return null
 
-		const attackName =
-			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+		const attackName = mockedAttack.attackName
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with $v${imitatingCard?.props.name}'s ${attackName}$ for ${values.damage} damage`
+				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
 		)
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.entity !== component.entity) return
 			// Only activate power on secondary attack
 			if (hermitAttackType !== 'secondary') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
 				onResult: (pickedSlot) => {
-					if (!pickedSlot.card) return
-					let pickedCard = pickedSlot.card
+					let pickedCard = pickedSlot.getCard() as CardComponent<Hermit>
+					if (!pickedCard) return
 
 					game.addModalRequest({
 						playerId: player.id,
@@ -103,7 +90,7 @@ class RendogRareHermitCard extends Card {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								hermitCard: pickedCard.toLocalCardInstance(),
+								hermitCard: pickedCard.entity,
 							},
 						},
 						onResult: (modalResult) => {
@@ -114,29 +101,20 @@ class RendogRareHermitCard extends Card {
 								game.cancelPickRequests()
 								return 'SUCCESS'
 							}
-							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
-							const attack: HermitAttackType = modalResult.pick
 
 							// Store the chosen attack to copy
-							this.pickedAttack.set(instance, attack)
-
-							// Replace the hooks of the card we're imitating only if it changed
-							let imitatingCard = this.imitatingCard.get(instance)
-							if (!imitatingCard || pickedCard.props.id !== imitatingCard.props.id) {
-								if (imitatingCard) {
-									imitatingCard.card.onDetach(game, imitatingCard, pos)
-								}
-
-								this.imitatingCard.set(instance, pickedCard)
-								pickedCard.card.onAttach(game, pickedCard, pos)
-								player.hooks.getAttackRequests.call(pickedCard, modalResult.pick)
-							}
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, modalResult.pick)
+							)
 
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
-							this.imitatingCard.set(instance, pickedCard)
-							this.pickedAttack.set(instance, 'primary')
+							this.mockedAttacks.set(
+								component,
+								setupMockCard(game, component, pickedCard, 'primary')
+							)
 						},
 					})
 				},
@@ -146,42 +124,17 @@ class RendogRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (pos.rowIndex === oldRow) {
-				// We switched away from ren, delete the imitating card
-				const imitatingCard = this.imitatingCard.get(instance)
-				if (imitatingCard) {
-					// Detach the old card
-					imitatingCard.card.onDetach(game, imitatingCard, pos)
-				}
-			}
-		})
-
-		player.hooks.blockedActions.add(instance, (blockedActions) => {
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			if (!game.someSlotFulfills(slot.every(slot.activeRow, slot.hasInstance(instance))))
-				return blockedActions
-			if (!game.someSlotFulfills(this.pickCondition)) blockedActions.push('SECONDARY_ATTACK')
+			if (!game.components.exists(SlotComponent, this.pickCondition))
+				blockedActions.push('SECONDARY_ATTACK')
 			return blockedActions
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		// If the card we are imitating is still attached, detach it
-		const imitatingCard = this.imitatingCard.get(instance)
-		if (imitatingCard) {
-			imitatingCard.card.onDetach(game, imitatingCard, pos)
-		}
-
-		// Remove hooks and custom data
-		this.imitatingCard.clear(instance)
-		this.pickedAttack.clear(instance)
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onActiveRowChange.remove(instance)
-		player.hooks.blockedActions.remove(instance)
+	override onDetach(_game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		this.mockedAttacks.clear(component)
 	}
 }
 
-export default RendogRareHermitCard
+export default RendogRare

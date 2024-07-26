@@ -1,8 +1,21 @@
-import {CardProps} from '../cards/base/card'
-import {SlotCondition} from '../slot'
+import type {CardProps} from '../cards/base/types'
+import type {ComponentQuery} from '../components/query'
+import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'
-import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult} from './game-state'
+import {SlotTypeT} from './cards'
+import {PlayerDeckT} from './deck'
+import {PlayerId} from '../models/player-model'
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {TurnActions} from './game-state'
+
+export type PlayerInfo = {
+	playerName: string
+	censoredPlayerName: string
+	minecraftName: string
+	playerId: string
+	playerSecret: string
+	playerDeck: PlayerDeckT
+}
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
@@ -15,58 +28,53 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
-	readonly instance: string
+	readonly entity: CardEntity
+	readonly slot: SlotEntity | null
+	turnedOver: boolean
 }
 
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
-	readonly targetInstance: LocalCardInstance
+	readonly target:
+		| {
+				type: 'card'
+				card: CardEntity
+		  }
+		| {
+				type: 'global'
+				player: PlayerEntity
+		  }
 	readonly counter: number | null
 }
 
-export type PickedSlotType = SlotTypeT | 'hand'
-
-export type PickInfo = {
-	playerId: string
-	rowIndex: number | null // This will be null for the hand
+export type SlotInfo = {
+	slotEntity: SlotEntity
+	slotType: SlotTypeT
 	card: LocalCardInstance | null
-	type: SlotTypeT
-	index: number | null
 }
 
 export type PickRequest = {
 	/** The id of the player to request the pick from */
-	playerId: string
+	playerId: PlayerId
 	/** The id of the card that called the pick request */
-	id: string
+	id: Entity<CardComponent | StatusEffectComponent>
 	/** The message to display to the player */
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
-	canPick: SlotCondition
-	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
-	onResult: (pickedSlot: SlotInfo) => void //
+	canPick: ComponentQuery<SlotComponent>
+	/** The function that will be called when we receive a pick result */
+	onResult: (pickedSlot: SlotComponent) => void
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
 	onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */
 	onTimeout?: () => void
 }
 
-export type ModalRequest = SelectCards.Request | CopyAttack.Request
-export type ModalData = SelectCards.Data | CopyAttack.Data
-export type ModalResult = SelectCards.Result | CopyAttack.Result
+export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
+export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
 
-export namespace SelectCards {
-	export type Request = {
-		/** The id of the player to request the pick from */
-		playerId: string
-		data: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
-		/** Called when the modal request times out before being resolved successfully */
-		onTimeout: () => void
-	}
-
+export namespace LocalSelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
@@ -90,7 +98,7 @@ export namespace SelectCards {
 	export type Result =
 		| {
 				result: true
-				cards: null | LocalCardInstance[]
+				cards: null | Array<CardEntity>
 		  }
 		| {
 				result: false
@@ -98,23 +106,14 @@ export namespace SelectCards {
 		  }
 }
 
-export namespace CopyAttack {
-	export type Request = {
-		/** The id of the player to request the pick from */
-		playerId: string
-		data: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
-		/** Called when the modal request times out before being resolved successfully */
-		onTimeout: () => void
-	}
-
+export namespace LocalCopyAttack {
 	export type Data = {
 		modalId: 'copyAttack'
 		payload: {
 			modalName: string
 			modalDescription: string
 			hermitCard: LocalCardInstance
+			blockedActions: TurnActions
 		}
 	}
 

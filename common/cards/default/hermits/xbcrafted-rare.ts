@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import * as query from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent} from '../../../components'
 
-class XBCraftedRareHermitCard extends Card {
+class XBCraftedRare extends Card {
 	props: Hermit = {
 		...hermit,
 		id: 'xbcrafted_rare',
@@ -30,23 +31,21 @@ class XBCraftedRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		observer.subscribeBefore(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
-			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
+			attack.shouldIgnoreCards.push(
+				query.every(
+					query.card.opponentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.attach)
+				)
+			)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-
-		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
 	}
 }
 
-export default XBCraftedRareHermitCard
+export default XBCraftedRare

@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import * as query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class EmeraldSingleUseCard extends Card {
+class Emerald extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'emerald',
@@ -15,38 +16,49 @@ class EmeraldSingleUseCard extends Card {
 		tokens: 2,
 		description: "Steal or swap the attached effect card of your opponent's active Hermit.",
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(
-				slot.every(slot.player, slot.activeRow, slot.attachSlot, slot.not(slot.frozen))
+			query.exists(
+				SlotComponent,
+				query.every(
+					query.slot.currentPlayer,
+					query.slot.active,
+					query.slot.attach,
+					query.not(query.slot.frozen)
+				)
 			),
-			slot.someSlotFulfills(
-				slot.every(
-					slot.opponent,
-					slot.activeRow,
-					slot.attachSlot,
-					slot.not(slot.empty),
-					slot.not(slot.frozen)
+			query.exists(
+				SlotComponent,
+				query.every(
+					query.slot.opponent,
+					query.slot.active,
+					query.slot.attach,
+					query.not(query.slot.frozen)
 				)
 			)
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			const playerSlot = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
-			const opponentSlot = game.findSlot(slot.opponent, slot.activeRow, slot.attachSlot)
+		observer.subscribe(player.hooks.onApply, () => {
+			const playerSlot = game.components.find(
+				SlotComponent,
+				query.slot.currentPlayer,
+				query.slot.active,
+				query.slot.attach
+			)
+			const opponentSlot = game.components.find(
+				SlotComponent,
+				query.slot.opponent,
+				query.slot.active,
+				query.slot.attach
+			)
 
 			game.swapSlots(playerSlot, opponentSlot)
 		})
 	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
 }
 
-export default EmeraldSingleUseCard
+export default Emerald

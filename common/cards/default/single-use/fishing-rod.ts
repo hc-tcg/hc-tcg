@@ -1,11 +1,10 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
-import {CardInstance} from '../../../types/game-state'
-import {drawCards} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class FishingRodSingleUseCard extends Card {
+class FishingRod extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fishing_rod',
@@ -17,25 +16,16 @@ class FishingRodSingleUseCard extends Card {
 		description: 'Draw 2 cards.',
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
-		attachCondition: slot.every(
-			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length > 2
-		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
-			drawCards(player, 2)
-			player.hooks.onApply.remove(instance)
+		observer.subscribe(player.hooks.onApply, () => {
+			player.draw(2)
+			observer.unsubscribe(player.hooks.onApply)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default FishingRodSingleUseCard
+export default FishingRod

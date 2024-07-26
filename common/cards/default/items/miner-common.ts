@@ -1,9 +1,8 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class MinerCommonItemCard extends Card {
+class MinerItem extends Card {
 	props: Item = {
 		...item,
 		id: 'item_miner_common',
@@ -14,11 +13,8 @@ class MinerCommonItemCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		type: 'miner',
-	}
-
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		return [this.props.type]
+		energy: ['miner'],
 	}
 }
 
-export default MinerCommonItemCard
+export default MinerItem

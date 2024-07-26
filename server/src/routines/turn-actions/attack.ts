@@ -1,34 +1,25 @@
-import {call} from 'typed-redux-saga'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
-import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
-import {getActiveRow} from 'common/utils/board'
 import {executeAttacks} from 'common/utils/attacks'
+import {card, slot} from 'common/components/query'
+import {CardComponent} from 'common/components'
 
 function getAttack(
 	game: GameModel,
-	attackPos: CardPosModel,
+	creator: CardComponent,
 	hermitAttackType: HermitAttackType
 ): Array<AttackModel> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
 
-	if (!attackPos.row || !attackPos.row.hermitCard) return []
-
 	// hermit attacks
-	const hermitCard = attackPos.row.hermitCard
-	if (!hermitCard.card.isHermit()) return []
+	if (!creator.card.isHermit()) return []
 
-	const nextAttack = hermitCard.card.getAttack(
-		game,
-		attackPos.row.hermitCard,
-		attackPos,
-		hermitAttackType
-	)
+	const nextAttack = creator.card.getAttack(game, creator, hermitAttackType)
 
 	if (nextAttack) attacks.push(nextAttack)
 
@@ -57,8 +48,13 @@ function* attackSaga(
 	}
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
-	const {currentPlayer, opponentPlayer, state} = game
-	const activeInstance = getActiveRow(currentPlayer)?.hermitCard
+	const {currentPlayer, state} = game
+	const activeInstance = game.components.find(
+		CardComponent,
+		card.currentPlayer,
+		card.isHermit,
+		card.active
+	)
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (checkForRequests) {
@@ -74,28 +70,10 @@ function* attackSaga(
 		}
 	}
 
-	// Attacker
-	const playerBoard = currentPlayer.board
-	const attackIndex = playerBoard.activeRow
-	if (attackIndex === null) return 'FAILURE_CANNOT_COMPLETE'
-
-	const attackRow = playerBoard.rows[attackIndex]
-	if (!attackRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
-	const attackPos = getCardPos(game, attackRow.hermitCard)
-	if (!attackPos) return 'FAILURE_UNKNOWN_ERROR'
-
-	// Defender
-	const opponentBoard = opponentPlayer.board
-	const defenceIndex = opponentBoard.activeRow
-	if (defenceIndex === null) return 'FAILURE_CANNOT_COMPLETE'
-
-	const defenceRow = opponentBoard.rows[defenceIndex]
-	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
-
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttack(game, attackPos, hermitAttackType)
+	let attacks: Array<AttackModel> = getAttack(game, activeInstance, hermitAttackType)
 
-	const thisAttackSU = game.currentPlayer.board.singleUseCard
+	const thisAttackSU = game.components.find(CardComponent, card.slot(slot.singleUse))
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

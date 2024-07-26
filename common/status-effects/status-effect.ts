@@ -1,24 +1,31 @@
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectInstance} from '../types/game-state'
-import {SlotCondition, slot} from '../slot'
-import {SlotInfo} from '../types/cards'
+import {ComponentQuery} from '../components/query'
+import * as query from '../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 
 export type StatusEffectLog = {
 	/** The status effect target */
 	target: string
+	/** The verb to use for the status effect. Either "was" or "were" depending on subject */
+	verb: string
 	/** The status effect name */
 	statusEffect: string
 }
 
 export type StatusEffectProps = {
-	id: string
+	/** The icon of the status effect, not including the file extension */
+	icon: string
 	name: string
 	description: string
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
-	applyCondition: SlotCondition
+	applyCondition: ComponentQuery<CardComponent | PlayerComponent>
 }
 
 export type Counter = StatusEffectProps & {
@@ -28,33 +35,37 @@ export type Counter = StatusEffectProps & {
 
 export const statusEffect = {
 	type: 'normal' as StatusEffectProps['type'],
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
-		`${values.target} was inflicted with ${values.statusEffect}`,
+		`${values.target} ${values.verb} inflicted with ${values.statusEffect}`,
 	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
 }
 
 export const systemStatusEffect = {
 	type: 'system' as StatusEffectProps['type'],
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const hiddenStatusEffect = {
 	type: 'hiddenSystem' as StatusEffectProps['type'],
+	icon: '',
 	name: '',
 	description: '',
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const damageEffect = {
 	type: 'damage' as StatusEffectProps['type'],
-	applyCondition: (game: GameModel, pos: SlotInfo) =>
-		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.type === 'damage'
+	applyCondition: (game: GameModel, target: CardComponent | PlayerComponent) =>
+		target instanceof CardComponent &&
+		!game.components.exists(
+			StatusEffectComponent,
+			query.effect.targetEntity(target.entity),
+			query.effect.type('damage')
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
@@ -65,41 +76,89 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 	return props !== null && 'counter' in props
 }
 
-/** Returns a function that can be hooked to onActiveRowChange. */
-export function followActiveHermit(game: GameModel, instance: StatusEffectInstance) {
-	return (_: number | null, newRow: number | null) => {
-		if (newRow === null) return
-		let newHermit = game.currentPlayer.board.rows[newRow].hermitCard
-		if (!newHermit) return
-
-		instance.targetInstance = newHermit
-	}
-}
-
-abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps> {
+export abstract class StatusEffect<
+	T = CardComponent | PlayerComponent,
+	Props extends StatusEffectProps = StatusEffectProps
+> {
 	public abstract props: Props
 
-	public getKey(keyName: string) {
-		return this.props.id + ':' + keyName
-	}
-
-	public getInstanceKey(instance: StatusEffectInstance, keyName: string = '') {
-		return this.props.id + ':' + instance.instance + ':' + keyName
-	}
-
 	/**
-	 * Called when this statusEffect is applied
+	 * Called when this statusEffect has its target set
 	 */
-	public onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	public onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: T,
+		observer: ObserverComponent
+	) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
-	public onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	public onRemoval(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: T,
+		observer: ObserverComponent
+	) {
 		// default is do nothing
 	}
 }
 
-export default StatusEffect
+/** A status effect with a card as the target. You should create a card status effect if the effect only
+ * effects one card on the game board */
+export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
+	/**
+	 * Called when this statusEffect has its target set
+	 */
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent<CardComponent>,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called when the statusEffect is removed, from either timeout or other means
+	 */
+	override onRemoval(
+		game: GameModel,
+		effect: StatusEffectComponent<CardComponent>,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+}
+
+/** A status effect effect with the player as the target. You should create a player status effect if the
+ * effect effects all cards on the board */
+export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
+	/**
+	 * Called when this statusEffect has its target set
+	 */
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent<PlayerComponent>,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called when the statusEffect is removed, from either timeout or other means
+	 */
+	override onRemoval(
+		game: GameModel,
+		effect: StatusEffectComponent<PlayerComponent>,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		// default is do nothing
+	}
+}
