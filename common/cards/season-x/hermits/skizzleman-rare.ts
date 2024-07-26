@@ -44,7 +44,7 @@ class SkizzlemanRare extends Card {
 				usedSecondary = true
 			}
 
-			// Status effect attacks have a special case because they happen at the end of the turn already
+			// Status effect attacks have a special case because they happen at the end of the turn
 			if (attack.type === 'status-effect') {
 				if (attack.targetEntity && attackedEntities.has(attack.targetEntity)) return
 				attack.addDamage(component.entity, 20)

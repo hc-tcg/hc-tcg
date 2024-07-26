@@ -54,13 +54,12 @@ class PoePoeSkizzRare extends Card {
 						RowComponent,
 						query.row.opponentPlayer,
 						query.row.index(component.slot.row.index)
-					)?.entity
-
-					console.log(jumpscareTarget)
+					)
+					if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
 
 					const jumpscareAttack = game.newAttack({
 						attacker: component.entity,
-						target: jumpscareTarget,
+						target: jumpscareTarget.entity,
 						type: 'secondary',
 						log: (values) => ` and dealt ${values.damage} to ${values.target}`,
 					})
