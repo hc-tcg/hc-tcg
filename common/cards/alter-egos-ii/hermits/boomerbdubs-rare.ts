@@ -37,7 +37,7 @@ class BoomerBdubsRare extends Card {
 			cost: ['redstone', 'redstone'],
 			damage: 80,
 			power:
-				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.',
+				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage. When this attack is used with Fortune, only the first coinflip will be affected.',
 		},
 	}
 
@@ -96,13 +96,15 @@ class BoomerBdubsRare extends Card {
 					player.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
 
 					// After the first coin flip we remove fortune to prevent infinite coin flips.
-					game.components.filter(
-						StatusEffectComponent<PlayerComponent>,
-						query.effect.is(FortuneEffect),
-						query.effect.targetIsPlayerAnd(
-							(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+					game.components
+						.find(
+							StatusEffectComponent<PlayerComponent>,
+							query.effect.is(FortuneEffect),
+							query.effect.targetIsPlayerAnd(
+								(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+							)
 						)
-					)
+						?.remove()
 
 					return 'SUCCESS'
 				},
