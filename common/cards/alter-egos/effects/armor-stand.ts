@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-mport Card from '../../base/card'
+import Card from '../../base/card'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach, HasHealth} from '../../base/types'
 import {attach, hermit} from '../../base/defaults'
