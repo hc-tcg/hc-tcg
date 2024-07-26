@@ -14,7 +14,6 @@ class SkizzlemanRare extends Card {
 		numericId: 172,
 		name: 'Skizz',
 		expansion: 'season_x',
-		background: 'alter_egos',
 		rarity: 'rare',
 		tokens: 2,
 		type: 'builder',
@@ -38,8 +37,20 @@ class SkizzlemanRare extends Card {
 		const {player} = component
 
 		let attackedEntities = new Set<RowEntity>()
+		let usedSecondary = false
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (attack.isAttacker(component.entity) && attack.type === 'secondary') {
+				usedSecondary = true
+			}
+
+			// Status effect attacks have a special case because they happen at the end of the turn
+			if (attack.type === 'status-effect') {
+				if (attack.targetEntity && attackedEntities.has(attack.targetEntity)) return
+				attack.addDamage(component.entity, 20)
+				return
+			}
+
 			if (!attack.targetEntity) return
 			if (
 				!game.components.exists(
@@ -48,14 +59,14 @@ class SkizzlemanRare extends Card {
 					query.row.opponentPlayer,
 					query.not(query.row.active)
 				)
-			)
+			) {
 				return
+			}
+
 			attackedEntities.add(attack.targetEntity)
 		})
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			let extraAttacks = [...attackedEntities.values()].map((entity) => {
 				console.log(entity)
 				let attack = game
@@ -71,10 +82,9 @@ class SkizzlemanRare extends Card {
 			})
 
 			executeExtraAttacks(game, extraAttacks)
-		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
 			attackedEntities = new Set()
+			usedSecondary = false
 		})
 	}
 }
