@@ -18,8 +18,8 @@ function TooltipsItem() {
 			className={css.item}
 			title={
 				settings.showAdvancedTooltips === 'on'
-					? 'Hide detailed tooltips (H)'
-					: 'Show detailed tooltips (H)'
+					? 'Hide detailed tooltips (T)'
+					: 'Show detailed tooltips (T)'
 			}
 			onClick={handleTooltips}
 		>

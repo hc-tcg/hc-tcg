@@ -173,7 +173,7 @@ function Game() {
 			if (e.key === 'm' || e.key === 'M') {
 				dispatch(setSetting('muted', !settings.muted))
 			}
-			if (e.key === 'h' || e.key === 'H') {
+			if (e.key === 't' || e.key === 'T') {
 				dispatch(
 					setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
 				)
