@@ -25,7 +25,7 @@ class SplashPotionOfHealingII extends Card {
 		observer.subscribe(player.hooks.onApply, () =>
 			game.components
 				.filter(RowComponent, query.row.player(player?.entity))
-				.forEach((row) => row.heal(20))
+				.forEach((row) => row.heal(30))
 		)
 	}
 }
