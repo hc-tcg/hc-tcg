@@ -1,4 +1,4 @@
-import {useDeferredValue, useRef, useState} from 'react'
+import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {cardGroupHeader} from './deck'
@@ -199,6 +199,25 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 
+	useEffect(() => {
+		window.addEventListener('keydown', handleTooltipKey)
+		return () => {
+			window.removeEventListener('keydown', handleTooltipKey)
+		}
+	}, [handleTooltipKey])
+
+	function handleTooltipKey(e: any) {
+		if (e.key === 't' || e.key == 'T') {
+			toggleTooltips()
+		}
+	}
+
+	function toggleTooltips() {
+		dispatch(
+			setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+		)
+	}
+
 	//MISC
 	const initialDeckState = deck
 
@@ -384,17 +403,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								className={css.dropdownButton}
 								title={
 									settings.showAdvancedTooltips === 'on'
-										? 'Hide detailed tooltips'
-										: 'Show detailed tooltips'
+										? 'Hide detailed tooltips (T)'
+										: 'Show detailed tooltips (T)'
 								}
-								onClick={() =>
-									dispatch(
-										setSetting(
-											'showAdvancedTooltips',
-											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
-										)
-									)
-								}
+								onClick={toggleTooltips}
 							>
 								<img
 									src={

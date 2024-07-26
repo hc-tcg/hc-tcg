@@ -1,6 +1,30 @@
-.name {
+.nameDesktop {
 	text-align: center;
 	margin-bottom: 10px;
+}
+
+.nameMobile {
+	margin-right: 10px;
+}
+
+@media (orientation: portrait) {
+	.coinFlip {
+		display: flex;
+		flex-direction: row;
+		text-align: center;
+		vertical-align: center;
+		align-items: center;
+	}
+
+	.nameDesktop {
+		display: none;
+	}
+}
+
+@media (orientation: landscape) {
+	.nameMobile {
+		display: none;
+	}
 }
 
 .coins {
@@ -11,9 +35,12 @@
 	justify-content: center;
 }
 
-.coin {
-	$size: 60px;
+$size: 60px;
+@media (orientation: portrait) {
+	$size: 50px;
+}
 
+.coin {
 	position: relative;
 	width: $size;
 	height: $size;
