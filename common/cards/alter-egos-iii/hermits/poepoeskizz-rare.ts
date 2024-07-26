@@ -4,6 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import * as query from '../../../components/query'
+import {executeExtraAttacks} from '../../../utils/attacks'
 
 class PoePoeSkizzRare extends Card {
 	props: Hermit = {
@@ -29,7 +30,7 @@ class PoePoeSkizzRare extends Card {
 			cost: ['pvp', 'pvp', 'any'],
 			damage: 90,
 			power:
-				'After using this attack, move to any place on the board and do an additional 20hp damage to the Hermit directly opposite to you.',
+				'After using this attack, move to any row on the board, then do an additional 20hp damage to the Hermit directly opposite to you.',
 		},
 	}
 
@@ -42,25 +43,30 @@ class PoePoeSkizzRare extends Card {
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: 'Pick an empty hermit slot',
+				message: 'Pick an empty Hermit slot',
 				canPick: query.every(query.slot.hermit, query.slot.currentPlayer, query.slot.empty),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow() || !component.slot.inRow()) return
 
 					game.swapRows(pickedSlot.row, component.slot.row)
 
+					const jumpscareTarget = game.components.find(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.row.index(component.slot.row.index)
+					)?.entity
+
+					console.log(jumpscareTarget)
+
 					const jumpscareAttack = game.newAttack({
 						attacker: component.entity,
-						target:
-							game.components.find(
-								RowComponent,
-								query.row.opponentPlayer,
-								query.row.index(pickedSlot.row.index)
-							)?.entity || null,
+						target: jumpscareTarget,
 						type: 'secondary',
 						log: (values) => ` and dealt ${values.damage} to ${values.target}`,
 					})
-					attack.addNewAttack(jumpscareAttack)
+					jumpscareAttack.addDamage(component.entity, 20)
+					jumpscareAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+					executeExtraAttacks(game, [jumpscareAttack])
 				},
 			})
 		})

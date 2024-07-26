@@ -29,7 +29,7 @@ class SmallishbeansRare extends Card {
 			cost: ['explorer', 'explorer', 'any'],
 			damage: 90,
 			power:
-				'For each of your AFK Joels or King Joels on the game board, do an additional 10hp damage',
+				'For each of your AFK Joels or King Joels on the game board, do an additional 10hp damage.',
 		},
 	}
 
