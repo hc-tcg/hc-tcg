@@ -50,6 +50,7 @@ class PoePoeSkizzRare extends Card {
 
 					game.swapRows(pickedSlot.row, component.slot.row)
 
+					// TODO: Let Jumpscare always damage boss if boss has only a single row, this attack will likely be refactored soon for normal play
 					const jumpscareTarget = game.components.find(
 						RowComponent,
 						query.row.opponentPlayer,

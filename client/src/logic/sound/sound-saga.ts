@@ -2,7 +2,7 @@ import {SagaIterator} from 'redux-saga'
 import {call, takeLatest, takeEvery} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
-import {SectionChangeT, PlaySoundT, QueueVoiceT, VoiceTestControlT} from './sound-actions'
+import {SectionChangeT, PlaySoundT, QueueVoiceT, VoiceTestT} from './sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 const audioCtx = new AudioContext()
@@ -98,19 +98,20 @@ function* playVoiceSaga(action: QueueVoiceT) {
 	}
 }
 
-function* playVoiceTest(action: VoiceTestControlT) {
-	if (action.payload === 'PLAY') {
-		if (!voiceAudio.paused) return
-		voiceAudio.src = '/voice/TEST.ogg'
-		voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
-		voiceSourceNode.connect(voiceGainNode)
-		voiceAudio.play()
-	} else {
-		if (voiceAudio.paused) return
-		voiceAudio.pause()
-		voiceAudio.currentTime = 0
-		voiceSourceNode.disconnect(voiceGainNode)
-	}
+function* playVoiceTest(_action: VoiceTestT) {
+	if (!voiceAudio.paused) return
+	voiceAudio.src = '/voice/TEST.ogg'
+	voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
+	voiceSourceNode.connect(voiceGainNode)
+	voiceAudio.play()
+}
+
+function* stopVoiceChannel(action: SectionChangeT) {
+	if (voiceAudio.paused || action.payload === 'game') return
+	voiceAudio.pause()
+	voiceAudio.currentTime = 0
+	voiceSourceNode.disconnect(voiceGainNode)
+	while (voiceLineQueue.pop() !== undefined);
 }
 
 function* settingSaga(): SagaIterator {
@@ -137,7 +138,8 @@ function* soundSaga(): SagaIterator {
 	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
 	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
 	yield takeEvery('@sound/QUEUE_VOICE', playVoiceSaga)
-	yield takeLatest('VOICE_TEST', playVoiceTest)
+	yield takeLatest('PLAY_VOICE_TEST', playVoiceTest)
+	yield takeLatest('@sound/SECTION_CHANGE', stopVoiceChannel)
 	document.addEventListener(
 		'click',
 		() => {

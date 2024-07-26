@@ -16,8 +16,7 @@ export const queueVoice = (lines: string[]) => ({
 })
 export type QueueVoiceT = ReturnType<typeof queueVoice>
 
-export const controlVoiceTest = (payload: 'PLAY' | 'STOP') => ({
-	type: 'VOICE_TEST' as const,
-	payload,
+export const playVoiceTest = () => ({
+	type: 'PLAY_VOICE_TEST' as const,
 })
-export type VoiceTestControlT = ReturnType<typeof controlVoiceTest>
+export type VoiceTestT = ReturnType<typeof playVoiceTest>

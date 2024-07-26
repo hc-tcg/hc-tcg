@@ -54,11 +54,7 @@ function BossLanding({setMenuSection}: Props) {
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
-	const directlyOppositeCards = [
-		'anvil',
-		'renbob_rare',
-		//'poe_poe_skizz'
-	]
+	const directlyOppositeCards = ['anvil', 'renbob_rare', 'poepoeskizz_rare']
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
@@ -86,7 +82,7 @@ function BossLanding({setMenuSection}: Props) {
 				</p>
 				{directlyOppositeCards.length
 					? [
-							<p>EX is always directly opposite your active hermit for the purposes of:</p>,
+							<p>EX is always directly opposite your active Hermit for the purposes of:</p>,
 							<div>
 								<CardList cards={directlyOppositeCards} wrap={true} />
 							</div>,
