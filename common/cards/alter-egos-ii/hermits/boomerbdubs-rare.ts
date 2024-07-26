@@ -49,6 +49,12 @@ class BoomerBdubsRare extends Card {
 		const {player} = component
 
 		let extraDamage = 0
+		let flippedTails = false
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			extraDamage = 0
+			flippedTails = false
+		})
 
 		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -87,7 +93,7 @@ class BoomerBdubsRare extends Card {
 					const flip = flipCoin(player, activeHermit)[0]
 
 					if (flip === 'tails') {
-						extraDamage = 0
+						flippedTails = true
 						return 'SUCCESS'
 					}
 
@@ -114,7 +120,7 @@ class BoomerBdubsRare extends Card {
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			if (extraDamage === 0) {
+			if (flippedTails === true) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return
 			}
