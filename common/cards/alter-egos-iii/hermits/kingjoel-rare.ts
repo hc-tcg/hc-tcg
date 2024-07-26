@@ -16,7 +16,7 @@ class KingJoelRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 2,
+		tokens: 1,
 		type: 'builder',
 		health: 280,
 		primary: {

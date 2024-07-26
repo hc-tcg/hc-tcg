@@ -9,5 +9,5 @@
 		"dream": "Dream",
 		"boss": "Boss"
 	},
-	"disabled": ["advent_of_tcg", "dream", "boss", "season_x"]
+	"disabled": ["advent_of_tcg", "dream", "boss"]
 }

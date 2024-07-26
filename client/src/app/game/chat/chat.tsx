@@ -1,4 +1,4 @@
-import {SyntheticEvent, useState} from 'react'
+import {SyntheticEvent, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
@@ -25,9 +25,20 @@ function Chat() {
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
 
+	const viewingFromMobile = window.innerHeight > window.innerWidth
+
+	// If the chat menu was opened previously, lets make sure it is off at the start of the game.
+	useEffect(() => {
+		dispatch(setSetting('showChat', 'off'))
+	}, [])
+
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
 	const bindChatPos = useDrag((params: any) => {
+		// When on mobile the chat uses a different size. Dragging it causes the mobile size to saved
+		// which feels buggy.
+		if (viewingFromMobile) return
+
 		const {innerWidth: width, innerHeight: height} = window
 		let [x, y] = params.movement
 
@@ -71,15 +82,25 @@ function Chat() {
 	}
 
 	// @TODO: Repopulate chat messages after reconnecting
+
+	let style = {
+		top: chatPos.y + chatPosSetting.y,
+		left: chatPos.x + chatPosSetting.x,
+		width: chatSize.w !== 0 ? chatSize.w : '94vw',
+		height: chatSize.h !== 0 ? chatSize.h : '50vh',
+	}
+
+	if (viewingFromMobile) {
+		style.top = 0
+		style.left = 0
+		style.width = '100%'
+		style.height = '100%'
+	}
+
 	return (
 		<div
 			className={css.chat}
-			style={{
-				top: chatPos.y + chatPosSetting.y,
-				left: chatPos.x + chatPosSetting.x,
-				width: chatSize.w !== 0 ? chatSize.w : '94vw',
-				height: chatSize.h !== 0 ? chatSize.h : '50vh',
-			}}
+			style={style}
 			onClick={(e) => {
 				dispatch(
 					setSetting('chatSize', {

@@ -5,10 +5,10 @@ import SmallishbeansCommon from './smallishbeans-common'
 import SmallishbeansRare from './smallishbeans-rare'
 
 const hermitCardClasses: Array<CardClass> = [
-	// SkizzlemanCommon,
-	// SkizzlemanRare,
-	// SmallishbeansCommon,
-	// SmallishbeansRare,
+	SkizzlemanCommon,
+	SkizzlemanRare,
+	SmallishbeansCommon,
+	SmallishbeansRare,
 ]
 
 export default hermitCardClasses

@@ -29,9 +29,8 @@ function Settings({setMenuSection}: Props) {
 		dispatch(setSetting('voiceVolume', ev.currentTarget.value))
 		dispatch(controlVoiceTest('PLAY'))
 	}
-	const changeMenuSection = (section: string) => {
-		dispatch(controlVoiceTest('STOP'))
-		setMenuSection(section)
+	const handleMuteSound = () => {
+		dispatch(setSetting('muted', !settings.muted))
 	}
 
 	const handlePanoramaToggle = () => {
@@ -44,10 +43,10 @@ function Settings({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
-	const handleGameSettings = () => changeMenuSection('game-settings')
-	const handleDataSettings = () => changeMenuSection('data-settings')
+	const handleGameSettings = () => setMenuSection('game-settings')
+	const handleDataSettings = () => setMenuSection('data-settings')
 
-	const handleCredits = () => changeMenuSection('credits')
+	const handleCredits = () => setMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
 	const handleUpdates = () => {
@@ -62,7 +61,7 @@ function Settings({setMenuSection}: Props) {
 				<></>
 			)}
 			<MenuLayout
-				back={() => changeMenuSection('mainmenu')}
+				back={() => setMenuSection('mainmenu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -77,6 +76,9 @@ function Settings({setMenuSection}: Props) {
 					<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
 						Voice: {getPercDescriptor(settings.voiceVolume)}
 					</Slider>
+					<Button variant="stone" onClick={handleMuteSound}>
+						Muted: {getBoolDescriptor(settings.muted)}
+					</Button>
 					<Button variant="stone" onClick={handlePanoramaToggle}>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
 					</Button>

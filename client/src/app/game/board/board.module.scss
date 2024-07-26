@@ -10,10 +10,15 @@ $grid-size: 25px;
 	justify-content: center;
 	gap: 16px;
 	overflow: hidden;
+
+	@media (orientation: portrait) {
+		gap: 8px;
+	}
 }
 
 .playerInfoSection {
 	display: flex;
+	margin-top: 10px;
 	gap: 10px;
 }
 

@@ -1,4 +1,4 @@
-import {useDeferredValue, useRef, useState} from 'react'
+import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {cardGroupHeader} from './deck'
@@ -144,12 +144,23 @@ export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInsta
 			a.props.type !== b.props.type
 		) {
 			return a.props.name.localeCompare(b.props.name)
-		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
-			// then by expansion if they are both hermits
-			return a.props.expansion.localeCompare(a.props.expansion)
 		} else if (cardCostA !== cardCostB) {
 			// order by ranks
 			return cardCostA - cardCostB
+		} else if (
+			isHermit(a.props) &&
+			isHermit(b.props) &&
+			a.props.secondary.cost.length !== b.props.secondary.cost.length
+		) {
+			return a.props.secondary.cost.length - b.props.secondary.cost.length
+		} else if (
+			isHermit(a.props) &&
+			isHermit(b.props) &&
+			a.props.primary.cost.length !== b.props.primary.cost.length
+		) {
+			return a.props.primary.cost.length - b.props.primary.cost.length
+		} else if (isHermit(a.props) && isHermit(b.props) && a.props.health !== b.props.health) {
+			return a.props.health - b.props.health
 		} else if (a.props.name !== b.props.name) {
 			return a.props.name.localeCompare(b.props.name)
 		}
@@ -187,6 +198,25 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleTooltipKey)
+		return () => {
+			window.removeEventListener('keydown', handleTooltipKey)
+		}
+	}, [handleTooltipKey])
+
+	function handleTooltipKey(e: any) {
+		if (e.key === 't' || e.key == 'T') {
+			toggleTooltips()
+		}
+	}
+
+	function toggleTooltips() {
+		dispatch(
+			setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+		)
+	}
 
 	//MISC
 	const initialDeckState = deck
@@ -373,17 +403,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								className={css.dropdownButton}
 								title={
 									settings.showAdvancedTooltips === 'on'
-										? 'Hide detailed tooltips'
-										: 'Show detailed tooltips'
+										? 'Hide detailed tooltips (T)'
+										: 'Show detailed tooltips (T)'
 								}
-								onClick={() =>
-									dispatch(
-										setSetting(
-											'showAdvancedTooltips',
-											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
-										)
-									)
-								}
+								onClick={toggleTooltips}
 							>
 								<img
 									src={
