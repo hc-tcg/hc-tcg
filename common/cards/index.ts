@@ -13,12 +13,14 @@ import alterEgosSingleUseCards from './alter-egos/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits'
 import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
 import alterEgosIIIItemCards from './alter-egos-iii/items'
+import alterEgosIIIIEffectards from './alter-egos-iii/effects'
 import seasonXHermitCards from './season-x/hermits'
 import {CardClass} from './base/card'
 
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
 	...alterEgoEffectCards,
+	...alterEgosIIIIEffectards,
 	// ...adventOfTcgEffectCards,
 ]
 
