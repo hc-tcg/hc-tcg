@@ -19,14 +19,18 @@ class Anvil extends Card {
 		description:
 			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
-		attackPreview: (game) =>
-			`$A30$ + 10 x ${this.getTargetHermis(game, game.currentPlayer).length}`,
+		attackPreview: (game) => {
+			const targetAmount = this.getTargetHermis(game, game.currentPlayer).length - 1
+			if (targetAmount === 0) return '$A30$'
+			return `$A30$ + $A10$ x ${targetAmount}`
+		},
 	}
 
 	getTargetHermis(game: GameModel, player: PlayerComponent) {
 		return game.components.filter(
 			RowComponent,
 			row.opponentPlayer,
+			row.hasHermit,
 			(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
 		)
 	}
