@@ -43,8 +43,7 @@ const Attack = ({
 					</span>
 					{singleUseDamage && (
 						<span>
-							+{<img src={singleUseIcon} className={css.singleUseIcon} />}
-							<span className={css.singleUseMove}>{singleUseDamage}</span>
+							+ <span className={css.singleUseMove}>{singleUseDamage}</span>
 						</span>
 					)}
 				</p>
