@@ -1,8 +1,7 @@
 import type Card from '../../cards/base/card'
-import * as query from '.'
+import query from '.'
 import {ComponentQuery} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
-import {slot as slotCombinators} from '.'
 import {TypeT} from '../../types/cards'
 import {CardClass} from '../../cards/base/card'
 import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../../entities'
@@ -75,14 +74,14 @@ export function entity(cardEntity: CardEntity): ComponentQuery<CardComponent> {
 }
 
 /** Return true if this card is on the active row */
-export const active: ComponentQuery<CardComponent> = slot(slotCombinators.active)
+export const active: ComponentQuery<CardComponent> = slot(query.slot.active)
 
 export const onBoard: ComponentQuery<CardComponent> = (_game, card) => card.slot.onBoard()
 
 /** Return true if this card is not on the active row */
 export const afk: ComponentQuery<CardComponent> = query.every(
 	attached,
-	query.not(slot(slotCombinators.active))
+	query.not(slot(query.slot.active))
 )
 
 export const hasStatusEffect = (
