@@ -28,7 +28,7 @@ class KingJoelRare extends Card {
 		secondary: {
 			name: 'Steal',
 			cost: ['builder', 'builder'],
-			damage: 90,
+			damage: 80,
 			power:
 				"Flip a coin. If heads, choose an item card attached to one of your opponent's AFK hermits to attach to one of your AFK Hermits.",
 		},

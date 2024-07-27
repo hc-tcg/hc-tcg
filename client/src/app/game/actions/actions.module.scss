@@ -147,6 +147,17 @@
 	}
 }
 
+.turnSkipMessageContainer {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 50%;
+}
+
+.turnSkipEndTurnButton {
+	display: flex;
+	width: 100%;
+}
+
 @media (orientation: landscape) {
 	.mobile {
 		display: none;

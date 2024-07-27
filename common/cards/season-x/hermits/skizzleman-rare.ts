@@ -1,11 +1,10 @@
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {GameModel} from '../../../models/game-model'
-import {executeExtraAttacks} from '../../../utils/attacks'
 import * as query from '../../../components/query'
-import {RowEntity} from '../../../entities'
+import {GasLightEffect} from '../../../status-effects/gas-light'
 
 class SkizzlemanRare extends Card {
 	props: Hermit = {
@@ -36,55 +35,13 @@ class SkizzlemanRare extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		let attackedEntities = new Set<RowEntity>()
-		let usedSecondary = false
-
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity) && attack.type === 'secondary') {
-				usedSecondary = true
-			}
-
-			// Status effect attacks have a special case because they happen at the end of the turn
-			if (attack.type === 'status-effect') {
-				if (attack.targetEntity && attackedEntities.has(attack.targetEntity)) return
-				attack.addDamage(component.entity, 20)
-				return
-			}
-
-			if (!attack.targetEntity) return
-			if (
-				!game.components.exists(
-					RowComponent,
-					query.row.entity(attack.targetEntity),
-					query.row.opponentPlayer,
-					query.not(query.row.active)
-				)
-			) {
-				return
-			}
-
-			attackedEntities.add(attack.targetEntity)
-		})
-
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			let extraAttacks = [...attackedEntities.values()].map((entity) => {
-				console.log(entity)
-				let attack = game
-					.newAttack({
-						attacker: component.entity,
-						target: entity,
-						type: 'secondary',
-						log: (values) => `${values.target} took ${values.damage} damage from $vGas Light$`,
-					})
-					.addDamage(component.entity, 20)
-				attack.shouldIgnoreCards.push(query.card.entity(component.entity))
-				return attack
-			})
-
-			executeExtraAttacks(game, extraAttacks)
-
-			attackedEntities = new Set()
-			usedSecondary = false
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components
+				.filter(CardComponent, query.card.opponentPlayer, query.card.afk)
+				.map((card) => {
+					game.components.new(StatusEffectComponent, GasLightEffect).apply(card.entity)
+				})
 		})
 	}
 }
