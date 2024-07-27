@@ -33,7 +33,6 @@ class Emerald extends Card {
 					query.slot.opponent,
 					query.slot.active,
 					query.slot.attach,
-					query.not(query.slot.empty),
 					query.not(query.slot.frozen)
 				)
 			)

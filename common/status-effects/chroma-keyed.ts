@@ -7,7 +7,7 @@ class ChromaKeyedEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		icon: 'chroma-keyed',
-		name: 'Chroma keyed',
+		name: 'Chroma Keyed',
 		description: 'You deal 10hp less damage for each level of this status effect.',
 		counter: 1,
 		counterType: 'number',

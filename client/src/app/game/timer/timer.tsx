@@ -16,6 +16,8 @@ function Timer() {
 		Math.min(__LIMITS__.maxTurnTime, gameState.timer.turnRemaining)
 	)
 
+	let remainingSeconds = Math.floor(remainingTime / 1000)
+
 	// Count down timer
 	useEffect(() => {
 		if (currentCoinflip !== null) return
@@ -31,17 +33,17 @@ function Timer() {
 
 	// Last 10 seconds sfx
 	useEffect(() => {
-		if (remainingTime < 10 && gameState.turn.currentPlayerEntity === gameState.playerEntity) {
+		if (remainingTime <= 10 && gameState.turn.currentPlayerEntity === gameState.playerEntity) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [remainingTime])
+	}, [remainingSeconds])
 
 	// Format time as M:SS
 	const timeInfo = new Date(remainingTime)
 
 	return (
 		<div className={cn(css.timer, css.white)}>
-			<p>Time Left:</p>
+			<p className={css.timeLeft}>Time Left:</p>
 			<span>
 				{timeInfo.getMinutes()}:{timeInfo.getSeconds().toString().padStart(2, '0')}
 			</span>

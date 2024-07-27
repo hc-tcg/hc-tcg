@@ -1,11 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -16,8 +10,6 @@ import {
 } from '../../../status-effects/invisibility-potion'
 
 class InvisibilityPotion extends Card {
-	applyTo = query.every(query.slot.opponent, query.slot.active, query.slot.hermit)
-
 	props: SingleUse = {
 		...singleUse,
 		id: 'invisibility_potion',
@@ -35,10 +27,6 @@ class InvisibilityPotion extends Card {
 				name: 'missed',
 			},
 		],
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.applyTo)
-		),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 

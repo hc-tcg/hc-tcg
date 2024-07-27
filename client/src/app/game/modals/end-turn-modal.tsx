@@ -28,8 +28,10 @@ type Props = {
 	closeModal: () => void
 }
 
-export function endTurnModalEmpty(actions: Array<TurnAction>): boolean {
-	return actions.every((action) => ActionMap[action] === null)
+export function shouldShowEndTurnModal(actions: Array<TurnAction>, settings: any): boolean {
+	return (
+		actions.some((action) => ActionMap[action] !== null) && settings.confirmationDialogs === 'on'
+	)
 }
 
 function EndTurnModal({closeModal}: Props) {

@@ -20,7 +20,7 @@ class EvilXisumaRare extends Card {
 		expansion: 'alter_egos',
 		palette: 'alter_egos',
 		background: 'alter_egos',
-		tokens: 4,
+		tokens: 3,
 		type: 'balanced',
 		health: 280,
 		primary: {

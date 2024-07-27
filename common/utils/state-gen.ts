@@ -103,7 +103,11 @@ function setupEcsForPlayer(
 }
 
 export function getGameState(game: GameModel): GameState {
-	const playerEntities = game.components.filter(PlayerComponent).sort(() => Math.random())
+	const playerEntities = game.components.filter(PlayerComponent)
+
+	if (Math.random() >= 0.5) {
+		playerEntities.reverse()
+	}
 
 	const gameState: GameState = {
 		turn: {

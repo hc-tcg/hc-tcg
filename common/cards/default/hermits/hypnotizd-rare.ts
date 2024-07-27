@@ -6,6 +6,8 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import BetrayedEffect from '../../../status-effects/betrayed'
+import {AttackModel} from '../../../models/attack-model'
+import {HermitAttackType} from '../../../types/attack'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)

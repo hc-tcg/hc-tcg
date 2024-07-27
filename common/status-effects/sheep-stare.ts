@@ -19,14 +19,14 @@ class SheepStareEffect extends PlayerStatusEffect {
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 		const activeHermit = player.getActiveHermit()
-		const opponentActiveHermit = player.getActiveHermit()
+		const opponentActiveHermit = player.opponentPlayer.getActiveHermit()
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!opponentActiveHermit) return

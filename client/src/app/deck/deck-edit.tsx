@@ -1,4 +1,4 @@
-import {useDeferredValue, useRef, useState} from 'react'
+import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {cardGroupHeader} from './deck'
@@ -122,43 +122,38 @@ const TYPE_ORDER = {
 	health: 4,
 }
 
+// We want to fix UR with Rare to place all cards with abilities in the proper order.
+const RARITY_ORDER = {
+	common: 0,
+	rare: 1,
+	ultra_rare: 1,
+}
+
 export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInstance> {
 	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
-		const cardCostA = a.props.tokens
-		const cardCostB = b.props.tokens
-
-		if (a.props.category !== b.props.category) {
-			// seperate by types first
-			return TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category]
-		} else if (
-			// then by hermit types
-			isHermit(a.props) &&
-			isHermit(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.type.localeCompare(b.props.type)
-		} else if (
-			// then by item types
-			isItem(a.props) &&
-			isItem(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.name.localeCompare(b.props.name)
-		} else if (isHermit(a.props) && isHermit(b.props) && a.props.expansion !== b.props.expansion) {
-			// then by expansion if they are both hermits
-			return a.props.expansion.localeCompare(a.props.expansion)
-		} else if (cardCostA !== cardCostB) {
-			// order by ranks
-			return cardCostA - cardCostB
-		} else if (a.props.name !== b.props.name) {
-			return a.props.name.localeCompare(b.props.name)
-		}
-
-		// rarity is our last hope
-		const rarities = ['common', 'rare', 'ultra_rare']
-		const rarityValueA = rarities.findIndex((s) => s === a.props.rarity) + 1
-		const rarityValueB = rarities.findIndex((s) => s === b.props.rarity) + 1
-		return rarityValueA - rarityValueB
+		return (
+			[
+				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
+				isHermit(a.props) && isHermit(b.props) && a.props.type.localeCompare(b.props.type),
+				isItem(a.props) && isItem(b.props) && a.props.name.localeCompare(b.props.name),
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					RARITY_ORDER[a.props.rarity] - RARITY_ORDER[b.props.rarity],
+				a.props.tokens - b.props.tokens,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.cost.length - b.props.secondary.cost.length,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.damage - b.props.secondary.damage,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.primary.cost.length - b.props.primary.cost.length,
+				isHermit(a.props) && isHermit(b.props) && a.props.primary.damage - b.props.primary.damage,
+				isHermit(a.props) && isHermit(b.props) && a.props.health - b.props.health,
+				a.props.name.localeCompare(b.props.name),
+			].find(Boolean) || 0
+		)
 	})
 }
 
@@ -187,6 +182,25 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleTooltipKey)
+		return () => {
+			window.removeEventListener('keydown', handleTooltipKey)
+		}
+	}, [handleTooltipKey])
+
+	function handleTooltipKey(e: any) {
+		if (e.key === 't' || e.key == 'T') {
+			toggleTooltips()
+		}
+	}
+
+	function toggleTooltips() {
+		dispatch(
+			setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+		)
+	}
 
 	//MISC
 	const initialDeckState = deck
@@ -373,17 +387,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								className={css.dropdownButton}
 								title={
 									settings.showAdvancedTooltips === 'on'
-										? 'Hide detailed tooltips'
-										: 'Show detailed tooltips'
+										? 'Hide detailed tooltips (T)'
+										: 'Show detailed tooltips (T)'
 								}
-								onClick={() =>
-									dispatch(
-										setSetting(
-											'showAdvancedTooltips',
-											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
-										)
-									)
-								}
+								onClick={toggleTooltips}
 							>
 								<img
 									src={

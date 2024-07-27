@@ -53,7 +53,8 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 
 	return (
 		<div className={css.coinFlip}>
-			<div className={css.name}>{name}</div>
+			<div className={css.nameDesktop}>{name}</div>
+			<div className={css.nameMobile}>{name}:</div>
 			<div className={css.coins}>{coins}</div>
 		</div>
 	)

@@ -10,7 +10,7 @@ class KeralisCommon extends Card {
 		name: 'Keralis',
 		expansion: 'default',
 		rarity: 'common',
-		tokens: 1,
+		tokens: 0,
 		type: 'builder',
 		health: 270,
 		primary: {

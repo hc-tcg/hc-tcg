@@ -9,7 +9,6 @@ class SkizzlemanCommon extends Card {
 		numericId: 171,
 		name: 'Skizz',
 		expansion: 'season_x',
-		background: 'alter_egos',
 		rarity: 'common',
 		tokens: 0,
 		type: 'explorer',
