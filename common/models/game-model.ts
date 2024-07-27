@@ -17,10 +17,8 @@ import {AttackModel} from './attack-model'
 import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
-<<<<<<< HEAD
 import {ViewerComponent} from '../components/viewer-component'
 import {broadcast} from '../../server/src/utils/comm'
-=======
 import {Hook} from '../types/hooks'
 
 /** Type that allows for additional data about a game to be shared between components */
@@ -40,7 +38,6 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 		this.clearValue(game.id)
 	}
 }
->>>>>>> upstream/master
 
 export class GameModel {
 	private internalCreatedTime: number
