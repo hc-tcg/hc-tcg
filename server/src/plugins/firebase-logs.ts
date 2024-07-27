@@ -6,7 +6,7 @@ import {CONFIG} from 'common/config'
 import {ServiceAccount} from 'firebase-admin/app'
 import {RootModel} from 'common/models/root-model'
 import {PlayerComponent} from 'common/components'
-import { ViewerComponent } from 'common/components/viewer-component'
+import {ViewerComponent} from 'common/components/viewer-component'
 
 export class FirebaseLogs {
 	public id: string = 'firebase_logs'
@@ -63,7 +63,7 @@ export class FirebaseLogs {
 
 		root.hooks.gameRemoved.add(this.id, (game) => {
 			try {
-				const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
+				const viewers = game.components.filter(ViewerComponent)
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 
@@ -86,14 +86,14 @@ export class FirebaseLogs {
 					ref = `/private-logs/${game.code}`
 				}
 
-				let pid0 = playerStates[0].id
+				let pid0 = viewers[0].playerId
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid0,
 				})
 				summaryObj.deck1 = root.players[pid0]?.deck
 
-				let pid1 = playerStates[1].id
+				let pid1 = viewers[1].playerId
 				root.players[pid1]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
