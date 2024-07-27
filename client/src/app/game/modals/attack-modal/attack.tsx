@@ -1,6 +1,8 @@
 import cn from 'classnames'
 import {HermitAttackInfo} from 'common/types/cards'
 import css from '../game-modals.module.scss'
+import {formatText} from 'common/utils/formatting'
+import {FormattedText} from 'components/formatting/formatting'
 
 type SingleUseAttackInfo = {
 	description: string
@@ -33,18 +35,12 @@ const Attack = ({
 		attackDescription = (
 			<div className={css.info}>
 				<p className={css.name}>
-					{name} -{' '}
-					<span
-						className={cn(css.damage, {
-							[css.specialMove]: !!attackInfo?.power,
-						})}
-					>
-						{attackInfo?.damage}{' '}
-					</span>
-					{singleUseDamage && (
-						<span>
-							+ <span className={css.singleUseMove}>{singleUseDamage}</span>
-						</span>
+					{FormattedText(
+						formatText(
+							`${name} - $${attackInfo.power ? 'S' : 'A'}${attackInfo.damage}$ ${
+								singleUseDamage ? '+ ' + singleUseDamage : ''
+							}`
+						)
 					)}
 				</p>
 				{attackInfo?.power && <p>{attackInfo?.power}</p>}{' '}
@@ -55,13 +51,7 @@ const Attack = ({
 		attackDescription = (
 			<div className={css.info}>
 				<p className={css.name}>
-					{name}{' '}
-					{singleUseDamage && (
-						<span>
-							{' '}
-							{' - '} <span className={css.singleUseMove}> {singleUseDamage} </span>{' '}
-						</span>
-					)}
+					{FormattedText(formatText(`${name} ${singleUseDamage ? '- ' + singleUseDamage : ''}`))}
 				</p>
 				{attackInfo.description}
 			</div>

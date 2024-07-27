@@ -22,7 +22,7 @@ class Crossbow extends Card {
 		tokens: 1,
 		description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
 		hasAttack: true,
-		attackPreview: (game) => `20 x ${this.getTotalTargets(game)}`,
+		attackPreview: (game) => `$A20$ x ${this.getTotalTargets(game)}`,
 	}
 
 	getTotalTargets(game: GameModel) {

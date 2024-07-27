@@ -20,7 +20,7 @@ class GoldenAxe extends Card {
 		description:
 			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
 		hasAttack: true,
-		attackPreview: (_game) => '40',
+		attackPreview: (_game) => '$A40$',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
