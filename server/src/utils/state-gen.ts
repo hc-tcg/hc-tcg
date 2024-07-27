@@ -10,7 +10,7 @@ import {
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
-import {card, row, slot} from 'common/components/query'
+import query from 'common/components/query'
 import {
 	LocalCardInstance,
 	LocalModalData,
@@ -222,8 +222,8 @@ function getLocalCoinFlip(game: GameModel, coinFlip: CurrentCoinFlip): LocalCurr
 }
 
 function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): LocalPlayerState {
-	let singleUseSlot = game.components.find(SlotComponent, slot.singleUse)?.entity
-	let singleUseCard = game.components.find(CardComponent, card.slotEntity(singleUseSlot))
+	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)?.entity
+	let singleUseCard = game.components.find(CardComponent, query.card.slotEntity(singleUseSlot))
 
 	if (!singleUseSlot) {
 		throw new Error('Slot is missing when generating local game state.')
@@ -231,14 +231,18 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 
 	let board = {
 		activeRow:
-			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
+			game.components.findEntity(
+				RowComponent,
+				query.row.active,
+				query.row.player(playerState.entity)
+			) || null,
 		singleUse: {
 			slot: singleUseSlot,
 			card: singleUseCard ? getLocalCard(game, singleUseCard) : null,
 		},
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components
-			.filter(RowComponent, row.player(playerState.entity))
+			.filter(RowComponent, query.row.player(playerState.entity))
 			.map((row) => {
 				const hermitCard = row.getHermit()
 				const hermitSlot = row.getHermitSlot()
@@ -246,7 +250,7 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 				const attachSlot = row.getAttachSlot()
 
 				const items = row.getItemSlots().map((itemSlot) => {
-					let itemCard = game.components.find(CardComponent, card.slotEntity(itemSlot.entity))
+					let itemCard = game.components.find(CardComponent, query.card.slotEntity(itemSlot.entity))
 					return {
 						slot: itemSlot.entity,
 						card: itemCard ? getLocalCard(game, itemCard) : null,
@@ -357,15 +361,21 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.components
-			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.hand))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.hand)
+			)
 			.sort(CardComponent.compareOrder)
 			.map((card) => getLocalCard(game, card)),
 		pileCount: game.components.filter(
 			CardComponent,
-			card.slot(slot.player(playerState.entity), slot.deck)
+			query.card.slot(query.slot.player(playerState.entity), query.slot.deck)
 		).length,
 		discarded: game.components
-			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.discardPile))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.discardPile)
+			)
 			.map((card) => getLocalCard(game, card)),
 
 		// ids

@@ -4,7 +4,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class Loyalty extends Card {
 	props: Attach = {

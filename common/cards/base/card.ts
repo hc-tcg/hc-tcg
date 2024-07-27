@@ -1,7 +1,7 @@
-import {PlayCardLog, TypeT} from '../../types/cards'
+import {PlayCardLog} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {row} from '../../components/query'
+import query from '../../components/query'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {CardComponent, ObserverComponent, RowComponent} from '../../components'
@@ -95,7 +95,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.components.findEntity(RowComponent, row.opponentPlayer, row.active),
+			target: game.components.findEntity(RowComponent, query.row.opponentPlayer, query.row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>

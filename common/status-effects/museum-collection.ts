@@ -2,7 +2,7 @@ import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './stat
 import {GameModel} from '../models/game-model'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
-import {slot} from '../components/query'
+import query from '../components/query'
 
 class MuseumCollectionEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {

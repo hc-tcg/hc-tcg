@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import SmallishbeansCommon from './smallishbeans-common'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 

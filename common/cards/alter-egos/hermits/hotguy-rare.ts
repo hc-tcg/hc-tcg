@@ -1,5 +1,4 @@
 import {CardComponent, ObserverComponent} from '../../../components'
-import {card} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'

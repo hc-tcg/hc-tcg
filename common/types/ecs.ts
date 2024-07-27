@@ -56,7 +56,7 @@ export default class ComponentTable {
 
 	/** Filter all entities in the game by a given predicate
 	 * ```ts
-	 * import * as query from 'common/components/query'
+	 * import query from 'common/components/query'
 	 * // Get all slots for the current player.
 	 * game.components.filter(SlotComponent, query.slot.currentPlayer)
 	 * ```

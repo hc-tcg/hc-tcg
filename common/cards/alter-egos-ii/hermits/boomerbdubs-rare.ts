@@ -9,7 +9,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import FortuneEffect from '../../../status-effects/fortune'
 
 class BoomerBdubsRare extends Card {
