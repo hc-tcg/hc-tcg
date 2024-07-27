@@ -30,7 +30,7 @@ class EvilJevinRare extends Card {
 			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
 			power:
-				'Flip a coin. If heads, choose one Hermit card from your discard pile and return it to your hand.',
+				'Flip a coin.\nIf heads, choose one Hermit card from your discard pile and return it to your hand.',
 		},
 	}
 

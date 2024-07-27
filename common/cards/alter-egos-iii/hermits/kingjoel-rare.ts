@@ -30,7 +30,7 @@ class KingJoelRare extends Card {
 			cost: ['builder', 'builder'],
 			damage: 80,
 			power:
-				"Flip a coin. If heads, choose an item card attached to one of your opponent's AFK hermits to attach to one of your AFK Hermits.",
+				"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
 		},
 	}
 
