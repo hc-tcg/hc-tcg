@@ -6,6 +6,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import NetheriteBoots from '../../alter-egos-iii/effects/netherite-boots'
 
 class Egg extends Card {
 	pickCondition = query.every(
@@ -61,6 +62,16 @@ class Egg extends Card {
 
 			// Do not apply single use more than once
 			observer.unsubscribe(player.hooks.onAttack)
+
+			if (
+				game.components.exists(
+					CardComponent,
+					query.card.active,
+					query.card.slot(query.slot.attach),
+					query.card.is(NetheriteBoots)
+				)
+			)
+				return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {

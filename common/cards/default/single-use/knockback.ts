@@ -5,6 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import NetheriteBoots from '../../alter-egos-iii/effects/netherite-boots'
 
 class Knockback extends Card {
 	pickCondition = query.every(
@@ -42,6 +43,16 @@ class Knockback extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
+
+			if (
+				game.components.exists(
+					CardComponent,
+					query.card.active,
+					query.card.slot(query.slot.attach),
+					query.card.is(NetheriteBoots)
+				)
+			)
+				return
 
 			let activeRow = opponentPlayer.activeRow
 			if (activeRow && activeRow.health) {
