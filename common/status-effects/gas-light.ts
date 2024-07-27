@@ -59,7 +59,7 @@ export class GasLightTriggeredEffect extends CardStatusEffect {
 		...systemStatusEffect,
 		icon: 'gas-light',
 		name: 'Gas Light',
-		description: 'This hermit will take 20 damage at the end of this turn.',
+		description: 'This hermit will take 20 damage at the end of your turn.',
 	}
 
 	override onApply(
