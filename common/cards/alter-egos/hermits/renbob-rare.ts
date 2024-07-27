@@ -40,8 +40,11 @@ class RenbobRare extends Card {
 			if (!component.slot.inRow()) return
 			attack.setTarget(
 				component.entity,
-				game.components.find(RowComponent, query.row.opponentPlayer, query.row.index(component.slot.row.index))
-					?.entity || null
+				game.components.find(
+					RowComponent,
+					query.row.opponentPlayer,
+					query.row.index(component.slot.row.index)
+				)?.entity || null
 			)
 		})
 	}

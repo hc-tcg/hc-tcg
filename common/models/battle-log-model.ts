@@ -292,7 +292,11 @@ export class BattleLogModel {
 	}
 
 	public addDeathEntry(playerEntity: PlayerEntity, row: RowEntity) {
-		const hermitCard = this.game.components.find(CardComponent, query.card.isHermit, query.card.rowEntity(row))
+		const hermitCard = this.game.components.find(
+			CardComponent,
+			query.card.isHermit,
+			query.card.rowEntity(row)
+		)
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
 		let player = this.game.components.get(playerEntity)
