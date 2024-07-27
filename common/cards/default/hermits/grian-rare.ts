@@ -48,10 +48,6 @@ class GrianRare extends Card {
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
 
-			const coinFlip = flipCoin(player, component)
-
-			if (coinFlip[0] === 'tails') return
-
 			const opponentAttachCard = game.components.find(
 				CardComponent,
 				query.card.opponentPlayer,
@@ -59,6 +55,10 @@ class GrianRare extends Card {
 				query.card.slot(query.slot.attach)
 			)
 			if (!opponentAttachCard) return
+
+			const coinFlip = flipCoin(player, component)
+
+			if (coinFlip[0] === 'tails') return
 
 			const attachSlot = game.components.find(
 				SlotComponent,
