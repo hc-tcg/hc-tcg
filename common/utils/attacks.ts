@@ -281,7 +281,7 @@ export function setupMockCard(
 			attackType === 'primary' ? mocking.props.primary.name : mocking.props.secondary.name,
 		getAttack: () => {
 			let attack = mocking.card.getAttack(game, component, attackType)
-			observer.subscribe(component.player.hooks.afterAttack, () => {
+			observer.subscribe(component.player.hooks.onTurnEnd, () => {
 				mocking.card.onDetach(game, component, observer)
 				observer.unsubscribeFromEverything()
 			})

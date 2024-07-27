@@ -5,7 +5,13 @@ import {GameModel} from './game-model'
 import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
-import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 import {card, slot} from '../components/query'
 import {CardEntity, PlayerEntity, RowEntity, StatusEffectEntity} from '../entities'
 
@@ -170,26 +176,42 @@ export class BattleLogModel {
 
 			if (subAttack.getDamage() === 0) return reducer
 
-			const attackingHermitInfo = attack.attacker
+			const attackerInfo = attack.attacker
 			const targetHermitInfo = attack.target.getHermit()
 
 			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
 
 			const rowNumberString = `(${attack.target.index + 1})`
 
-			if (!(attackingHermitInfo instanceof CardComponent)) return reducer
+			if (attackerInfo instanceof StatusEffectComponent) {
+				const logMessage = subAttack.getLog({
+					attacker: `$p${attackerInfo.props.name}$`,
+					player: attack.player.playerName,
+					opponent: attack.target.player.playerName,
+					target: `$${targetFormatting}${targetHermitInfo?.props?.name} ${rowNumberString}$`,
+					attackName: 'INVALID',
+					damage: `$b${subAttack.calculateDamage()}hp$`,
+					defaultLog: this.generateEffectEntryHeader(singleUse),
+					coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
+				})
+
+				reducer += logMessage
+
+				return reducer
+			}
+
 			let attackName
-			if (attackingHermitInfo.isHermit()) {
+			if (attackerInfo.isHermit()) {
 				attackName =
 					subAttack.type === 'primary'
-						? attackingHermitInfo.props.primary.name
-						: attackingHermitInfo.props.secondary.name
+						? attackerInfo.props.primary.name
+						: attackerInfo.props.secondary.name
 			} else {
 				attackName = singleUse?.props.name || '$eINVALID$'
 			}
 
 			const logMessage = subAttack.getLog({
-				attacker: `$p${attackingHermitInfo.props.name}$`,
+				attacker: `$p${attackerInfo.props.name}$`,
 				player: attack.player.playerName,
 				opponent: attack.target.player.playerName,
 				target: `$${targetFormatting}${targetHermitInfo?.props?.name} ${rowNumberString}$`,

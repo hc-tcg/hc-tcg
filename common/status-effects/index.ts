@@ -38,6 +38,7 @@ import ChromaKeyedEffect from './chroma-keyed'
 import OriginalXbEffect from './original-xb'
 import RoyalProtectionEffect from './royal-protection'
 import {TargetBlockEffect} from './target-block'
+import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
 
 const effectClasses: Array<new () => StatusEffect> = [
 	/* Regualr status effects */
@@ -75,6 +76,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	OriginalXbEffect,
 	RoyalProtectionEffect,
 	TargetBlockEffect,
+	GasLightEffect,
+	GasLightTriggeredEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
