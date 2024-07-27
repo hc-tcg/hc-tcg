@@ -4,7 +4,7 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 } from '../components'
-import {card, slot} from '../components/query'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
 import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
@@ -27,7 +27,7 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 		const flippingHermit = game.currentPlayer.getActiveHermit()
 
 		observer.subscribe(player.hooks.onApply, () => {
-			let singleUseCard = game.components.find(CardComponent, card.slot(slot.singleUse))
+			let singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 			if (!singleUseCard) return
 			if (!flippingHermit) return
 

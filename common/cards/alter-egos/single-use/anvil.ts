@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {AttackModel} from '../../../models/attack-model'
-import {row} from '../../../components/query'
+import query from '../../../components/query'
 
 class Anvil extends Card {
 	props: SingleUse = {
@@ -28,7 +28,7 @@ class Anvil extends Card {
 			return game.components
 				.filter(
 					RowComponent,
-					row.opponentPlayer,
+					query.row.opponentPlayer,
 					(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
 				)
 				.reduce((attacks: null | AttackModel, row) => {

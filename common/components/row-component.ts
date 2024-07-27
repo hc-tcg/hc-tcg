@@ -2,7 +2,7 @@ import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardComponent} from './card-component'
 import {PlayerComponent} from './player-component'
-import {card, slot} from './query'
+import query from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
 
 export class RowComponent {
@@ -28,48 +28,48 @@ export class RowComponent {
 	public getHermitSlot() {
 		return this.game.components.find(
 			SlotComponent,
-			slot.hermit,
-			slot.rowIs(this.entity)
+			query.slot.hermit,
+			query.slot.rowIs(this.entity)
 		) as BoardSlotComponent
 	}
 
 	public getAttachSlot() {
 		return this.game.components.find(
 			SlotComponent,
-			slot.attach,
-			slot.rowIs(this.entity)
+			query.slot.attach,
+			query.slot.rowIs(this.entity)
 		) as BoardSlotComponent
 	}
 
 	public getItemSlots() {
 		return this.game.components.filter(
 			SlotComponent,
-			slot.item,
-			slot.rowIs(this.entity)
+			query.slot.item,
+			query.slot.rowIs(this.entity)
 		) as Array<BoardSlotComponent>
 	}
 
 	public getHermit() {
 		return this.game.components.find(
 			CardComponent,
-			card.slot(slot.hermit),
-			card.rowEntity(this.entity)
+			query.card.slot(query.slot.hermit),
+			query.card.rowEntity(this.entity)
 		)
 	}
 
 	public getAttach() {
 		return this.game.components.find(
 			CardComponent,
-			card.slot(slot.attach),
-			card.rowEntity(this.entity)
+			query.card.slot(query.slot.attach),
+			query.card.rowEntity(this.entity)
 		)
 	}
 
 	public getItems() {
 		return this.game.components.filter(
 			CardComponent,
-			card.slot(slot.item),
-			card.rowEntity(this.entity)
+			query.card.slot(query.slot.item),
+			query.card.rowEntity(this.entity)
 		)
 	}
 
@@ -83,8 +83,8 @@ export class RowComponent {
 	public heal(amount: number) {
 		let hermit = this.game.components.find(
 			CardComponent,
-			card.isHermit,
-			card.rowEntity(this.entity)
+			query.card.isHermit,
+			query.card.rowEntity(this.entity)
 		)
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return

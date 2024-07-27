@@ -17,7 +17,7 @@ import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import * as query from 'common/components/query'
+import query from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,

@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, RowComponent} from '../../../component
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class SplashPotionOfHealingII extends Card {
 	props: SingleUse = {

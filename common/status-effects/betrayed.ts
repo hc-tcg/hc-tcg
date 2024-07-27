@@ -1,6 +1,6 @@
 import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import * as query from '../components/query'
+import query from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {
 	ObserverComponent,

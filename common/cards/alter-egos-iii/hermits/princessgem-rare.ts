@@ -9,7 +9,7 @@ import Card, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class PrincessGemRare extends Card {
 	props: Hermit = {

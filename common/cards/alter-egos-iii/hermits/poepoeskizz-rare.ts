@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, RowComponent} from '../../../component
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {executeAttacks} from '../../../utils/attacks'
 
 class PoePoeSkizzRare extends Card {

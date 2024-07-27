@@ -3,7 +3,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {GasLightEffect} from '../../../status-effects/gas-light'
 
 class SkizzlemanRare extends Card {

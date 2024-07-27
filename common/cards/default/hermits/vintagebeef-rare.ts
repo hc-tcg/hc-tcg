@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class VintageBeefRare extends Card {
 	props: Hermit = {

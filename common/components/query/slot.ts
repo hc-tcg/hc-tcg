@@ -2,7 +2,7 @@ import {ComponentQuery} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {CardClass} from '../../cards/base/card'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
-import * as query from '.'
+import query from '.'
 import {StatusEffect} from '../../status-effects/status-effect'
 
 /** Return true if the card is attached to the player's side. */
