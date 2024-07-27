@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
-import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -26,6 +25,16 @@ class Mace extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
+			let itemNumber = game.components
+				.filter(CardComponent, query.card.active, query.card.isItem)
+				.map((item) => {
+					if (item.isItem()) {
+						item.props.energy
+					} else {
+						return []
+					}
+				}).length
+
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
@@ -35,18 +44,9 @@ class Mace extends Card {
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 				})
 				.addDamage(component.entity, 40)
+				.addDamage(component.entity, Math.min(itemNumber * 20, 80))
 
 			return axeAttack
-		})
-
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity)) {
-				applySingleUse(game)
-			}
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(query.every(query.slot.opponent, query.slot.attach, query.slot.active))
-			)
 		})
 	}
 }
