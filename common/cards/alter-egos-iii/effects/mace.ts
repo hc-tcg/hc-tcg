@@ -27,13 +27,13 @@ class Mace extends Card {
 		observer.subscribe(player.hooks.getAttack, () => {
 			let itemNumber = game.components
 				.filter(CardComponent, query.card.active, query.card.isItem)
-				.map((item) => {
+				.reduce((sum, item) => {
 					if (item.isItem()) {
-						item.props.energy
+						return sum + item.props.energy.length
 					} else {
-						return []
+						return 1
 					}
-				}).length
+				}, 0)
 
 			const axeAttack = game
 				.newAttack({
