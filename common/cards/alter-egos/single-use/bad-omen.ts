@@ -3,7 +3,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import BadOmenEffect from '../../../status-effects/badomen'
 
 class BadOmen extends Card {

@@ -1,6 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {ComponentQuery} from '../components/query'
-import * as query from '../components/query'
+import query from '../components/query'
 import {
 	CardComponent,
 	ObserverComponent,

@@ -1,4 +1,4 @@
-import {card, row, slot} from '../../../components/query'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
@@ -38,8 +38,8 @@ class Shield extends Card {
 				component.discard()
 				const hermitName = game.components.find(
 					CardComponent,
-					card.slot(slot.hermit),
-					card.row(row.entity(attack.target?.entity))
+					query.card.slot(query.slot.hermit),
+					query.card.row(query.row.entity(attack.target?.entity))
 				)
 				game.battleLog.addEntry(player.entity, `$p${hermitName}'s$ $eShield$ was broken`)
 			}

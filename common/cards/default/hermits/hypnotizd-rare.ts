@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {PickRequest} from '../../../types/server-requests'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'

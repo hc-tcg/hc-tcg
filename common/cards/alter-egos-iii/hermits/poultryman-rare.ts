@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Egg from '../../alter-egos/single-use/egg'
 
 class PoultryManRare extends Card {

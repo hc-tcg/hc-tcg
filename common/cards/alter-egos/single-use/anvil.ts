@@ -5,7 +5,7 @@ import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {AttackModel} from '../../../models/attack-model'
-import {row} from '../../../components/query'
+import query from '../../../components/query'
 
 class Anvil extends Card {
 	props: SingleUse = {
@@ -29,8 +29,8 @@ class Anvil extends Card {
 	getTargetHermis(game: GameModel, player: PlayerComponent) {
 		return game.components.filter(
 			RowComponent,
-			row.opponentPlayer,
-			row.hasHermit,
+			query.row.opponentPlayer,
+			query.row.hasHermit,
 			(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
 		)
 	}
