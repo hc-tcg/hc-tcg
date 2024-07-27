@@ -163,6 +163,7 @@ const ALL_CARDS = sortCards(
 			props: WithoutFunctions(card.props),
 			entity: newEntity('deck_editor_card'),
 			slot: null,
+			attackHint: null,
 			turnedOver: false,
 		})
 	)
@@ -244,6 +245,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					entity: newEntity('card-entity') as CardEntity,
 					slot: null,
 					turnedOver: false,
+					attackHint: null,
 				},
 			],
 		}))

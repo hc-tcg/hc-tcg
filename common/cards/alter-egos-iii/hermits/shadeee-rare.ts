@@ -28,7 +28,7 @@ class ShadeEERare extends Card {
 			name: 'Scale Of Ethics',
 			cost: ['redstone', 'redstone'],
 			damage: 80,
-			power: 'If you have less AFK Hermits than your opponent, deal an additional 40hp damage.',
+			power: 'If you have fewer AFK Hermits than your opponent, deal an additional 40hp damage.',
 		},
 	}
 

@@ -74,15 +74,14 @@ export function entity(cardEntity: CardEntity): ComponentQuery<CardComponent> {
 }
 
 /** Return true if this card is on the active row */
-export const active: ComponentQuery<CardComponent> = (game, card) => slot(query.slot.active)(game, card)
+export const active: ComponentQuery<CardComponent> = (game, card) =>
+	slot(query.slot.active)(game, card)
 
 export const onBoard: ComponentQuery<CardComponent> = (_game, card) => card.slot.onBoard()
 
 /** Return true if this card is not on the active row */
-export const afk: ComponentQuery<CardComponent> = (game, card) => query.every(
-	attached,
-	query.not(slot(query.slot.active))
-)(game, card)
+export const afk: ComponentQuery<CardComponent> = (game, card) =>
+	query.every(attached, query.not(slot(query.slot.active)))(game, card)
 
 export const hasStatusEffect = (
 	statusEffect: new () => CardStatusEffect

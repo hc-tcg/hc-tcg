@@ -28,7 +28,7 @@ class SkizzlemanRare extends Card {
 			cost: ['builder', 'builder'],
 			damage: 70,
 			power:
-				"At the end of your turn, deal 20hp damage to each of your opponent's AFK hermits that took damage this turn.",
+				"After your attack, deal an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
 		},
 	}
 

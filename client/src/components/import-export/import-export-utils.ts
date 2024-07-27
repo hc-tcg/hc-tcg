@@ -20,6 +20,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 			entity: Math.random().toString() as CardEntity,
 			slot: null,
 			turnedOver: false,
+			attackHint: null,
 		})
 	}
 	return deck

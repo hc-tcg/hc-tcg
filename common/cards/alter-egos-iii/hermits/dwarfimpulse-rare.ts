@@ -33,7 +33,7 @@ class DwarfImpulseRare extends Card {
 			cost: ['miner', 'miner'],
 			damage: 80,
 			power:
-				"When played with Golden Axe, Golden Axe ignores all opponent's attached effect cards and redirects it's damage to one of your opponent's AFK Hermits.",
+				"When used with a Golden Axe effect card, all effect cards attached to your opponent's Hermits are ignored, and you can choose one of your opponent's AFK Hermits to take all damage from Golden Axe.",
 		},
 	}
 

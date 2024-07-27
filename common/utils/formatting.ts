@@ -19,6 +19,8 @@ export type Format =
 	| 'italic'
 	| 'bold'
 	| 'keyword'
+	| 'attackDamage'
+	| 'specialMove'
 
 export type FormattedTextNode =
 	| ListNode
@@ -83,6 +85,8 @@ const formatDict: Record<string, Format> = {
 	g: 'good',
 	b: 'bad',
 	k: 'keyword',
+	A: 'attackDamage',
+	S: 'specialMove',
 }
 export function formatNodefromShorthand(
 	formatShorthand: string,
@@ -517,6 +521,8 @@ function parseSingleNode(text: string, config: Config): [FormattedTextNode, stri
  * $b Bad (damage, tails)
  * $i Image
  * $k Keyword
+ * $A Attack damage (in attack modal)
+ * $S Special move (in attack modal)
  *
  * All symbols can be escaped with backslash.
  *

@@ -402,15 +402,6 @@ function* turnActionsSaga(game: GameModel) {
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
 
-			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
-			if (
-				(availableActions.includes('PRIMARY_ATTACK') ||
-					availableActions.includes('SECONDARY_ATTACK')) &&
-				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
-			) {
-				blockedActions.push('SINGLE_USE_ATTACK')
-			}
-
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
 

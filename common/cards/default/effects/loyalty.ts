@@ -16,7 +16,7 @@ class Loyalty extends Card {
 		rarity: 'rare',
 		tokens: 0,
 		description:
-			'When the Hermit that this card is attached to is knocked out, all attached item cards are returned to your hand.',
+			'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

@@ -30,7 +30,7 @@ class PoePoeSkizzRare extends Card {
 			cost: ['pvp', 'pvp', 'any'],
 			damage: 90,
 			power:
-				'After using this attack, move to any row on the board, then do an additional 20hp damage to the Hermit directly opposite to you.',
+				'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
 		},
 	}
 

@@ -17,6 +17,7 @@ class TNT extends Card {
 		description:
 			"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
 		hasAttack: true,
+		attackPreview: (_game) => '$A60$',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

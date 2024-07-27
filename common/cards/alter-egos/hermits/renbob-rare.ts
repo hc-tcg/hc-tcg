@@ -28,7 +28,7 @@ class RenbobRare extends Card {
 			name: 'Hyperspace',
 			cost: ['explorer', 'explorer'],
 			damage: 80,
-			power: 'Attack the Hermit card directly opposite this card on the game board.',
+			power: 'Attack the Hermit directly opposite your active Hermit on the game board.',
 		},
 	}
 

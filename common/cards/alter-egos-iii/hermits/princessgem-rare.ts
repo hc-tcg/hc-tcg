@@ -35,8 +35,14 @@ class PrincessGemRare extends Card {
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"After your attack, choose an AFK Hermit. Until the end of your opponent's next turn, any damage done to that Hermit is prevented.",
+				"After your attack, grant Royal Protection to one of your AFK Hermits until the end of your opponent's next turn.",
 		},
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'royal_protection',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

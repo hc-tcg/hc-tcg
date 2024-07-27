@@ -16,6 +16,7 @@ class IronSword extends Card {
 		tokens: 0,
 		description: "Do 20hp damage to your opponent's active Hermit.",
 		hasAttack: true,
+		attackPreview: (_game) => '$A20$',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
