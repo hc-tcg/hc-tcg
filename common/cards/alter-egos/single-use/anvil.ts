@@ -17,7 +17,7 @@ class Anvil extends Card {
 		rarity: 'rare',
 		tokens: 0,
 		description:
-			'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
+			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
 	}
 

@@ -29,7 +29,7 @@ class HotguyRare extends Card {
 			name: 'Hawkeye',
 			cost: ['explorer', 'explorer'],
 			damage: 80,
-			power: 'When used with a bow effect card, bow damage doubles.',
+			power: 'When used with a Bow effect card, Bow damage doubles.',
 		},
 	}
 

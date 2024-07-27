@@ -31,7 +31,7 @@ class MumboJumboRare extends Card {
 			cost: ['prankster', 'prankster'],
 			damage: 40,
 			power:
-				'Flip a coin twice. Do an additional 20hp damage for every heads. Total attack damage doubles if you have at least one other AFK Prankster.',
+				'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster on the game board.',
 		},
 	}
 

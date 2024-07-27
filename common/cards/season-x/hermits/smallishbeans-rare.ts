@@ -28,8 +28,7 @@ class SmallishbeansRare extends Card {
 			name: 'Obsess',
 			cost: ['explorer', 'explorer', 'any'],
 			damage: 90,
-			power:
-				'For each of your AFK Joels or King Joels on the game board, do an additional 10hp damage.',
+			power: 'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
 		},
 	}
 
@@ -41,7 +40,6 @@ class SmallishbeansRare extends Card {
 
 			const joelQuantity = game.components.filter(
 				CardComponent,
-				query.card.currentPlayer,
 				query.card.attached,
 				query.card.is(SmallishbeansCommon, SmallishbeansRare, KingJoelCommon, KingJoelCommon),
 				query.not(query.card.active)
