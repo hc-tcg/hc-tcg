@@ -79,13 +79,23 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? sortedCards.length : 7
 
+	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+		const id = DEBUG_CONFIG.extraStartingCards[i]
+		let slot = components.new(HandSlotComponent, playerEntity)
+		components.new(CardComponent, id, slot.entity)
+	}
+
 	sortedCards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
 }
 
 export function getGameState(game: GameModel): GameState {
-	const playerEntities = game.components.filter(PlayerComponent).sort(() => Math.random())
+	const playerEntities = game.components.filter(PlayerComponent)
+
+	if (Math.random() >= 0.5) {
+		playerEntities.reverse()
+	}
 
 	const gameState: GameState = {
 		turn: {

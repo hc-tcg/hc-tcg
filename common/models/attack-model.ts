@@ -84,8 +84,10 @@ export class AttackModel {
 	}
 
 	/** Returns true if one of the passed in types are this attacks type */
-	public isType(...types: Array<AttackType>) {
-		return types.includes(this.type)
+	public isType<This extends {type: AttackType}, T extends AttackType>(
+		...types: Array<T>
+	): this is This & {type: T} {
+		return (types as Array<AttackType>).includes(this.type)
 	}
 
 	/** Return the player that created this attack. For cards, this is the player who owns the card.
@@ -182,10 +184,18 @@ export class AttackModel {
 		this.addHistory(attacker, 'set_attacker', attacker)
 		return this
 	}
-	/** Sets the target for this attack */
+
+	/** Sets the target for this attack. Unlike redirect, this does not trigger Chainmail Armor. */
 	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.targetEntity = target
 		this.addHistory(sourceId, 'set_target', target)
+		return this
+	}
+
+	/** Redirect the attack to another hermit. Unlike setTarget, this will trigger Chainmail Armor. */
+	public redirect(sourceId: AttackerEntity, target: RowEntity | null) {
+		this.targetEntity = target
+		this.addHistory(sourceId, 'redirect', target)
 		return this
 	}
 

@@ -5,7 +5,6 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import endTurnSaga from './turn-actions/end-turn'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
@@ -174,19 +173,16 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 				if (pickableSlots.length === 0) return reducer
 
-				if (card.card.props.category === 'hermit' && !reducer.includes('PLAY_HERMIT_CARD')) {
+				if (card.card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
 					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-				if (card.card.props.category === 'attach' && !reducer.includes('PLAY_EFFECT_CARD')) {
+				if (card.card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
 					return [...reducer, 'PLAY_EFFECT_CARD']
 				}
-				if (card.card.props.category === 'item' && !reducer.includes('PLAY_ITEM_CARD')) {
+				if (card.card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
 					return [...reducer, 'PLAY_ITEM_CARD']
 				}
-				if (
-					card.card.props.category === 'single_use' &&
-					!reducer.includes('PLAY_SINGLE_USE_CARD')
-				) {
+				if (card.card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
 					return [...reducer, 'PLAY_SINGLE_USE_CARD']
 				}
 				return reducer
@@ -272,7 +268,7 @@ function* checkHermitHealth(game: GameModel) {
 			CardComponent,
 			query.card.player(playerState.entity),
 			query.card.attached,
-			query.card.isHermit
+			query.card.slot(query.slot.hermit)
 		)
 		if (isDead || noHermitsLeft) {
 			deadPlayers.push(playerState)
@@ -345,7 +341,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
-			result = yield* call(endTurnSaga, game)
 			break
 		default:
 			// Unknown action type, ignore it completely
@@ -443,7 +438,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			const graceTime = 1000
-			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
 
 			yield* call(sendGameState, game)
 			game.battleLog.sendLogs()
@@ -541,16 +536,18 @@ function* turnActionsSaga(game: GameModel) {
 }
 
 function* turnSaga(game: GameModel) {
-	const {currentPlayer} = game
+	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state
 	game.state.turn.availableActions = []
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
+	currentPlayer.singleUseCardUsed = false
+	opponentPlayer.singleUseCardUsed = false
 
 	game.state.timer.turnStartTime = Date.now()
-	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime * 1000
 
 	// Call turn start hooks
 
@@ -609,7 +606,7 @@ function* turnSaga(game: GameModel) {
 	// otherwise move it to discarded pile
 	const singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 	if (singleUseCard) {
-		if (currentPlayer.singleUseCardUsed) {
+		if (!currentPlayer.singleUseCardUsed) {
 			singleUseCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
 		} else {
 			singleUseCard.attach(game.components.new(DiscardSlotComponent, currentPlayer.entity))

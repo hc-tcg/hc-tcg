@@ -8,7 +8,7 @@ import * as query from '../../../components/query'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from '../../../status-effects/derp-coin'
+} from '../../../status-effects/singleturn-attack-disabled'
 
 class EvilXisumaRare extends Card {
 	props: Hermit = {
@@ -20,7 +20,7 @@ class EvilXisumaRare extends Card {
 		expansion: 'alter_egos',
 		palette: 'alter_egos',
 		background: 'alter_egos',
-		tokens: 4,
+		tokens: 3,
 		type: 'balanced',
 		health: 280,
 		primary: {

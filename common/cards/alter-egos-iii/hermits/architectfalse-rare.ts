@@ -1,13 +1,25 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import {GameModel} from '../../../models/game-model'
-import {AmnesiaEffect} from '../../../status-effects/amnesia'
 import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from '../../../status-effects/multiturn-attack-disabled'
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import {PlayerEntity} from '../../../entities'
+import {GameModel, GameValue} from '../../../models/game-model'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/singleturn-attack-disabled'
+import {HermitAttackType} from '../../../types/attack'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+
+type AttackInfo = {
+	attacker: CardComponent
+	attackType: HermitAttackType
+	turn: number
+}
 
 class ArchitectFalseRare extends Card {
 	props: Hermit = {
@@ -37,15 +49,52 @@ class ArchitectFalseRare extends Card {
 		},
 	}
 
+	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
+		return {}
+	})
+
+	override onCreate(game: GameModel, component: CardComponent) {
+		if (Object.hasOwn(this.lastAttackInfo.values, game.id)) return
+		this.lastAttackInfo.set(game, {})
+
+		const newObserver = game.components.new(ObserverComponent, component.entity)
+
+		game.components.filter(PlayerComponent).forEach((player) =>
+			newObserver.subscribe(player.hooks.onAttack, (attack) => {
+				if (!(attack.attacker instanceof CardComponent)) return
+				if (!attack.isType('primary', 'secondary')) return
+				this.lastAttackInfo.get(game)[player.entity] = {
+					attacker: attack.attacker,
+					attackType: attack.type,
+					turn: game.state.turn.turnNumber,
+				}
+			})
+		)
+	}
+
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (
+				!attack.isAttacker(component.entity) ||
+				attack.type !== 'secondary' ||
+				attack.target === null
+			)
+				return
 
-			const opponentActiveHermit = opponentPlayer.activeRow?.getHermit()?.entity
+			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
+			if (!lastAttackInfo || lastAttackInfo.turn !== game.state.turn.turnNumber - 1) return
 
-			game.components.new(StatusEffectComponent, AmnesiaEffect).apply(opponentActiveHermit)
+			if (lastAttackInfo.attackType === 'primary') {
+				game.components
+					.new(StatusEffectComponent, PrimaryAttackDisabledEffect)
+					.apply(lastAttackInfo.attacker.entity)
+			} else if (lastAttackInfo.attackType === 'secondary') {
+				game.components
+					.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
+					.apply(lastAttackInfo.attacker.entity)
+			}
 		})
 	}
 }

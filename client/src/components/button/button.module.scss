@@ -122,6 +122,13 @@
 	padding-left: 0.5rem;
 	padding-right: 0.5rem;
 	padding-bottom: 0.05rem;
+
+	@media (orientation: portrait) {
+		// Accodinging to MDN web docs, buttons that should be clicked with fingers should be a
+		// minimum of 44x44 css pixels
+		min-height: 44px;
+		min-width: 44px;
+	}
 }
 
 .medium {

@@ -41,8 +41,12 @@
 		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 20ch;
+		width: 80ch;
 		overflow: hidden;
+
+		@media (orientation: portrait) {
+			width: 15ch;
+		}
 	}
 
 	> p {

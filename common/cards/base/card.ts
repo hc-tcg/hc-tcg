@@ -18,6 +18,7 @@ import {
 	isItem,
 	isSingleUse,
 } from './types'
+import {DefaultDictionary} from '../../types/game-state'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -29,27 +30,17 @@ export type CanAttachError =
 export type CanAttachResult = Array<CanAttachError>
 
 /** Type that allows multiple functions in a card to share values. */
-export class InstancedValue<T> {
-	default: () => T
-	values: Record<string, T> = {}
-
-	public constructor(defaultFactory: () => T) {
-		this.default = defaultFactory
-	}
-
+export class InstancedValue<T> extends DefaultDictionary<CardComponent, T> {
 	public set(component: CardComponent, value: T) {
-		this.values[component.entity] = value
+		this.setValue(component.entity, value)
 	}
 
 	public get(component: CardComponent): T {
-		if (component.entity in this.values) {
-			return this.values[component.entity]
-		}
-		return this.default()
+		return this.getValue(component.entity)
 	}
 
 	public clear(component: CardComponent) {
-		delete this.values[component.entity]
+		this.clearValue(component.entity)
 	}
 }
 
@@ -61,6 +52,13 @@ abstract class Card<Props extends CardProps = CardProps> {
 
 	constructor(cardClass: CardClass) {
 		this.cardClass = cardClass
+	}
+
+	/**
+	 * Called when a component of this card is created
+	 */
+	public onCreate(game: GameModel, component: CardComponent) {
+		// default is do nothing
 	}
 
 	/**

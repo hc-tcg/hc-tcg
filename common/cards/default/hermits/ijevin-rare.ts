@@ -40,6 +40,7 @@ class IJevinRare extends Card {
 			const pickCondition = query.every(
 				query.not(query.slot.active),
 				query.not(query.slot.empty),
+				query.slot.opponent,
 				query.slot.hermit
 			)
 

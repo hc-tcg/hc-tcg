@@ -34,25 +34,33 @@ class Anvil extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			return this.getTargetHermis(game, player).reduce((attacks: null | AttackModel, row) => {
-				const newAttack = game
-					.newAttack({
-						attacker: component.entity,
-						target: row.entity,
-						type: 'effect',
-						log: (values) =>
-							row.index === player.activeRow?.index
-								? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-								: `, ${values.target} for ${values.damage} damage`,
-					})
-					.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
-				if (attacks === null) {
-					return newAttack
-				} else {
-					attacks.addNewAttack(newAttack)
-					return attacks
-				}
-			}, null)
+			return game.components
+				.filter(
+					RowComponent,
+					row.opponentPlayer,
+					(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
+				)
+				.reduce((attacks: null | AttackModel, row) => {
+					if (!row.getHermit()) return attacks
+
+					const newAttack = game
+						.newAttack({
+							attacker: component.entity,
+							target: row.entity,
+							type: 'effect',
+							log: (values) =>
+								row.index === player.activeRow?.index
+									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+									: `, ${values.target} for ${values.damage} damage`,
+						})
+						.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
+					if (attacks === null) {
+						return newAttack
+					} else {
+						attacks.addNewAttack(newAttack)
+						return attacks
+					}
+				}, null)
 		})
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {

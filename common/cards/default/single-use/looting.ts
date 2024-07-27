@@ -1,11 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {
-	CardComponent,
-	HandSlotComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -38,7 +33,7 @@ class Looting extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const coinFlip = flipCoin(player, component)
@@ -53,7 +48,7 @@ class Looting extends Card {
 				onResult(pickedSlot) {
 					const card = pickedSlot.getCard()
 					if (!card) return
-					card.attach(card.game.components.new(HandSlotComponent, opponentPlayer.entity))
+					card.draw(player.entity)
 				},
 			})
 		})

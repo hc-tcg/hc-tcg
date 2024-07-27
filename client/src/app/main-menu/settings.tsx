@@ -24,6 +24,9 @@ function Settings({setMenuSection}: Props) {
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
+	const handleMuteSound = () => {
+		dispatch(setSetting('muted', !settings.muted))
+	}
 
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
@@ -65,6 +68,9 @@ function Settings({setMenuSection}: Props) {
 					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 						Sounds: {getPercDescriptor(settings.soundVolume)}
 					</Slider>
+					<Button variant="stone" onClick={handleMuteSound}>
+						Muted: {getBoolDescriptor(settings.muted)}
+					</Button>
 					<Button variant="stone" onClick={handlePanoramaToggle}>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
 					</Button>

@@ -14,6 +14,7 @@ class CurseOfBinding extends Card {
 		expansion: 'default',
 		rarity: 'common',
 		tokens: 0,
+		showConfirmationModal: true,
 		description: 'Your opponent can not make their active Hermit go AFK on their next turn.',
 	}
 

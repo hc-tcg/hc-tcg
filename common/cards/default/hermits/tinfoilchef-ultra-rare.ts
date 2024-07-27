@@ -38,36 +38,26 @@ class TinFoilChefUltraRare extends Card {
 
 		let hasDiscardedFrom = new Set<RowEntity>()
 
+		let targetCardQuery = query.every(
+			query.card.active,
+			query.card.opponentPlayer,
+			query.card.slot(query.slot.attach, query.not(query.slot.frozen))
+		)
+
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			if (opponentPlayer.activeRow === null) return
-			if (
-				!game.components.exists(
-					SlotComponent,
-					query.slot.opponent,
-					query.slot.attach,
-					query.not(query.slot.frozen)
-				)
-			)
-				return
-
 			// Can't discard two effect cards on the same hermit
 			if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
+			if (!game.components.exists(CardComponent, targetCardQuery)) return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
 			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
 
-			game.components
-				.find(
-					CardComponent,
-					query.card.active,
-					query.card.opponentPlayer,
-					query.card.slot(query.slot.attach, query.not(query.slot.frozen))
-				)
-				?.discard()
+			game.components.find(CardComponent, targetCardQuery)?.discard()
 		})
 	}
 }

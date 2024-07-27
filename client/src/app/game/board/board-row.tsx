@@ -92,7 +92,7 @@ const BoardRow = ({type, player, onClick, rowState, active, statusEffects}: Boar
 					statusEffects={statusEffects.filter(
 						(a) =>
 							(a.target.type === 'card' && a.target.card == rowState.hermit?.card?.entity) ||
-							(active && a.target.type === 'player' && a.target.player === player)
+							(active && a.target.type === 'global' && a.target.player === player)
 					)}
 				/>
 			</div>

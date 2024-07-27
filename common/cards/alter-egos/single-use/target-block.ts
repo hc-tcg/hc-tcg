@@ -1,10 +1,16 @@
 import {GameModel} from '../../../models/game-model'
 import * as query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {TargetBlockEffect} from '../../../status-effects/target-block'
 
 class TargetBlock extends Card {
 	pickCondition = query.every(
@@ -30,7 +36,7 @@ class TargetBlock extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 
 		game.addPickRequest({
@@ -42,13 +48,9 @@ class TargetBlock extends Card {
 				if (!pickedSlot.inRow()) return
 				// Apply the card
 				applySingleUse(game, pickedSlot)
-
-				// Redirect all future attacks this turn
-				observer.subscribe(player.hooks.beforeAttack, (attack) => {
-					if (attack.isType('status-effect') || attack.isBacklash) return
-
-					attack.setTarget(this.id, pickedSlot.row.entity)
-				})
+				game.components
+					.new(StatusEffectComponent, TargetBlockEffect)
+					.apply(pickedSlot.getCard()?.entity)
 			},
 		})
 	}

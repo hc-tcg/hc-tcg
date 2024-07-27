@@ -7,7 +7,6 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
-import {getPlayerId} from 'logic/session/session-selectors'
 
 function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)
@@ -20,9 +19,11 @@ function ChatItem() {
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
 	const dispatch = useDispatch()
 
-	const toggleChat = () => {
+	if (settings.showChat === 'on' && lastSeen !== latestOpponentMessageTime) {
 		setLastSeen(latestOpponentMessageTime)
+	}
 
+	const toggleChat = () => {
 		settings.showChat === 'on'
 			? dispatch(setSetting('showChat', 'off'))
 			: dispatch(setSetting('showChat', 'on'))
@@ -38,7 +39,7 @@ function ChatItem() {
 			className={classnames(css.item, css.clickable, {
 				[css.newMessage]: newMessage,
 			})}
-			title="Chat"
+			title="Chat (C)"
 			onClick={toggleChat}
 		>
 			{newMessage ? <ChatIconNotify /> : <ChatIcon />}

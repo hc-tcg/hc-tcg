@@ -43,7 +43,7 @@ export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEf
 				card: CardEntity
 		  }
 		| {
-				type: 'player'
+				type: 'global'
 				player: PlayerEntity
 		  }
 	readonly counter: number | null
