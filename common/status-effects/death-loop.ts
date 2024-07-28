@@ -54,7 +54,7 @@ export class DeathloopReady extends CardStatusEffect {
 			)
 
 			game.components
-				.new(StatusEffectComponent, RevivedByDeathloopEffect)
+				.new(StatusEffectComponent, RevivedByDeathloopEffect, effect.creator.entity)
 				.apply(targetHermit.entity)
 			effect.remove()
 		})

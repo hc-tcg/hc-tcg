@@ -40,7 +40,9 @@ class SkizzlemanRare extends Card {
 			game.components
 				.filter(CardComponent, query.card.opponentPlayer, query.card.afk)
 				.map((card) => {
-					game.components.new(StatusEffectComponent, GasLightEffect).apply(card.entity)
+					game.components
+						.new(StatusEffectComponent, GasLightEffect, component.entity)
+						.apply(card.entity)
 				})
 		})
 	}

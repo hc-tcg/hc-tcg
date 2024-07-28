@@ -5,7 +5,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import Card, {InstancedValue} from '../../base/card'
+import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
@@ -68,7 +68,7 @@ class PrincessGemRare extends Card {
 				canPick: pickCondition,
 				onResult: (pickedSlot) => {
 					game.components
-						.new(StatusEffectComponent, RoyalProtectionEffect)
+						.new(StatusEffectComponent, RoyalProtectionEffect, component.entity)
 						.apply(pickedSlot.getCard()?.entity)
 				},
 			})

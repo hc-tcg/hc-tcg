@@ -47,8 +47,12 @@ class Clock extends Card {
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
 		observer.subscribe(player.hooks.onApply, () => {
-			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
+			game.components
+				.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
+				.apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, UsedClockEffect, component.entity)
+				.apply(player.entity)
 		})
 	}
 }

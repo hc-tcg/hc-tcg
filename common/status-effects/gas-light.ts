@@ -44,7 +44,9 @@ export class GasLightEffect extends CardStatusEffect {
 				return
 			}
 
-			game.components.new(StatusEffectComponent, GasLightTriggeredEffect).apply(target.entity)
+			game.components
+				.new(StatusEffectComponent, GasLightTriggeredEffect, effect.creator.entity)
+				.apply(target.entity)
 			effect.remove()
 		})
 
