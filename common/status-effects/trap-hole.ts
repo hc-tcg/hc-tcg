@@ -24,23 +24,20 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 		player: PlayerComponent,
 		observer: ObserverComponent
 	) {
-		const flippingHermit = game.currentPlayer.getActiveHermit()
-
 		observer.subscribe(player.hooks.onApply, () => {
 			let singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 			if (!singleUseCard) return
-			if (!flippingHermit) return
 
-			const coinFlip = flipCoin(player.opponentPlayer, flippingHermit, 1, player)
+			const coinFlip = flipCoin(player.opponentPlayer, effect.creator, 1, player)
 
 			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
 					player.entity,
-					`$p${flippingHermit.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
+					`$p${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`
 				)
 				singleUseCard.draw(player.opponentPlayer.entity)
 			} else {
-				game.battleLog.addEntry(player.entity, `$p${flippingHermit.props.name}$ flipped $btails$b`)
+				game.battleLog.addEntry(player.entity, `$p${effect.creator.props.name}$ flipped $btails$b`)
 			}
 		})
 		observer.subscribe(player.hooks.onTurnEnd, () => {
