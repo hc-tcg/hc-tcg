@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 $gap: 0;
 $speed: 200ms;
 $card-size: 118px;
@@ -21,7 +23,13 @@ $card-size: 118px;
 .autoscale {
 	@for $i from 1 through 20 {
 		@container cardList (width > calc(#{$i} * #{$card-size})) {
-			width: calc(100% / #{$i});
+			@if $i > 3 {
+				width: calc(100% / #{$i});
+			} @else if $i == 2 {
+				width: 33%;
+			} @else if $i == 1 {
+				width: 50%;
+			}
 		}
 	}
 }
