@@ -44,9 +44,7 @@ const Card = (props: CardReactProps) => {
 				})}
 				onClick={unpickable ? () => {} : onClick}
 			>
-				<div className={css.noPointerEvents}>
-				{card}
-				</div>
+				<div className={css.noPointerEvents}>{card}</div>
 			</button>
 		</Tooltip>
 	)
