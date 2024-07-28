@@ -42,7 +42,9 @@ class BdoubleO100Rare extends Card {
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			game.components.new(StatusEffectComponent, SleepingEffect).apply(component.entity)
+			game.components
+				.new(StatusEffectComponent, SleepingEffect, component.entity)
+				.apply(component.entity)
 		})
 	}
 }
