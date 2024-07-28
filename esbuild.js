@@ -1,4 +1,4 @@
-import {build, transform} from 'esbuild'
+import {build} from 'esbuild'
 import {copy} from 'esbuild-plugin-copy'
 import {getAppVersion} from './version.js'
 
@@ -22,9 +22,6 @@ await build({
 	define: {
 		__APP_VERSION__: `'${getAppVersion()}'`,
 	},
-	drop: ['debugger'],
-	treeShaking: true,
-	minify: true,
 })
 
 console.log('Build complete')
