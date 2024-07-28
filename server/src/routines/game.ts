@@ -292,18 +292,7 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
-
-	const availableActions =
-		turnAction.playerId === currentPlayer.id
-			? game.state.turn.availableActions
-			: game.state.turn.opponentAvailableActions
-
-	if (!availableActions.includes(actionType)) {
-		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
-		return
-	}
 
 	let endTurn = false
 
