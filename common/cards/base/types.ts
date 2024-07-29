@@ -5,6 +5,7 @@ import type {
 	ExpansionT,
 	HermitAttackInfo,
 	PlayCardLog,
+	TokenCostT,
 	TypeT,
 } from '../../types/cards'
 import type {SlotComponent} from '../../components'
@@ -19,7 +20,7 @@ export type CardProps = {
 	name: string
 	shortName?: string
 	rarity: CardRarityT
-	tokens: 0 | 1 | 2 | 3 | 4 | 5 | 'wild'
+	tokens: TokenCostT
 	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */

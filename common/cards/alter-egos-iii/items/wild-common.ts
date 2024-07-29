@@ -9,7 +9,7 @@ class WildItem extends Card {
 		numericId: 185,
 		name: 'Wild Item',
 		description:
-			'Counts as any single Item card. 3 wild cards cost one token.',
+			'Counts as any single Item card. The first 3 wild cards in your deck cost 0 tokens.',
 		shortName: 'Wild',
 		expansion: 'alter_egos_iii',
 		rarity: 'common',
