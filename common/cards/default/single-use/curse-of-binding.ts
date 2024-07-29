@@ -22,7 +22,9 @@ class CurseOfBinding extends Card {
 		const {opponentPlayer, player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			game.components.new(StatusEffectComponent, CurseOfBindingEffect).apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, CurseOfBindingEffect, component.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }

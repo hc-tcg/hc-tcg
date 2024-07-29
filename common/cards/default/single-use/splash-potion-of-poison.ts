@@ -31,7 +31,7 @@ class SplashPotionOfPoison extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, PoisonEffect)
+				.new(StatusEffectComponent, PoisonEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

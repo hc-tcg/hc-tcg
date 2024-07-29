@@ -41,7 +41,9 @@ class Bed extends Card {
 			)
 		}
 
-		game.components.new(StatusEffectComponent, SleepingEffect).apply(hermitCard()?.entity)
+		game.components
+			.new(StatusEffectComponent, SleepingEffect, component.entity)
+			.apply(hermitCard()?.entity)
 
 		// Knockback/Tango/Jevin/etc
 		observer.subscribe(player.hooks.onTurnStart, () => {

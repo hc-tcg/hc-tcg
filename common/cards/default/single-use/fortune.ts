@@ -23,7 +23,9 @@ class Fortune extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			game.components.new(StatusEffectComponent, FortuneStatusEffect).apply(player.entity)
+			game.components
+				.new(StatusEffectComponent, FortuneStatusEffect, component.entity)
+				.apply(player.entity)
 		})
 	}
 }
