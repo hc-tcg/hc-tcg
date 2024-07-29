@@ -94,6 +94,8 @@ export class PlayerComponent {
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
 		 */
 		onTurnStart: GameHook<() => void>
+		/** Hook called before the turn ends and cards are drawn. */
+		beforeTurnEnd: GameHook<() => void>
 		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
 
@@ -150,6 +152,7 @@ export class PlayerComponent {
 			afterAttack: new GameHook(),
 			afterDefence: new GameHook(),
 			onTurnStart: new GameHook(),
+			beforeTurnEnd: new GameHook(),
 			onTurnEnd: new GameHook(),
 			onCoinFlip: new GameHook(),
 			beforeActiveRowChange: new GameHook(),

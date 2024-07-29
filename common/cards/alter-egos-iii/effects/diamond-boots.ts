@@ -14,7 +14,7 @@ class DiamondBoots extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Additonally, any damage from effect cards and any damage redirected by effect cards is prevented.',
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn. Opponent can not make this Hermit go AFK..',
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {

@@ -555,6 +555,8 @@ function* turnSaga(game: GameModel) {
 	const result = yield* call(turnActionsSaga, game)
 	if (result === 'GAME_END') return 'GAME_END'
 
+	currentPlayer.hooks.beforeTurnEnd.call()
+
 	// Draw a card from deck when turn ends
 	let drawCards = currentPlayer.draw(1)
 
