@@ -48,7 +48,7 @@ class XisumavoidRare extends Card {
 			if (coinFlip[0] !== 'heads') return
 
 			game.components
-				.new(StatusEffectComponent, PoisonEffect)
+				.new(StatusEffectComponent, PoisonEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

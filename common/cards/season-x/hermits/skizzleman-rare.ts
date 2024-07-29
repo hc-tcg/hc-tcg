@@ -38,9 +38,16 @@ class SkizzlemanRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			game.components
-				.filter(CardComponent, query.card.opponentPlayer, query.card.afk)
+				.filter(
+					CardComponent,
+					query.card.opponentPlayer,
+					query.card.afk,
+					query.card.slot(query.slot.hermit)
+				)
 				.map((card) => {
-					game.components.new(StatusEffectComponent, GasLightEffect).apply(card.entity)
+					game.components
+						.new(StatusEffectComponent, GasLightEffect, component.entity)
+						.apply(card.entity)
 				})
 		})
 	}

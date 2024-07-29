@@ -38,7 +38,7 @@ class BadOmen extends Card {
 				query.card.row(query.row.active)
 			)
 			if (!target) return
-			game.components.new(StatusEffectComponent, BadOmenEffect).apply(target)
+			game.components.new(StatusEffectComponent, BadOmenEffect, component.entity).apply(target)
 		})
 	}
 }

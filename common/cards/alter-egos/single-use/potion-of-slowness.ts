@@ -24,7 +24,7 @@ class PotionOfSlowness extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, SlownessEffect)
+				.new(StatusEffectComponent, SlownessEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

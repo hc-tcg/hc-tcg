@@ -38,7 +38,9 @@ class OriginalXBRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			game.components.new(StatusEffectComponent, OriginalXBEffect).apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, OriginalXBEffect, component.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }

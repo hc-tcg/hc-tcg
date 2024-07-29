@@ -26,16 +26,14 @@ class SheepStareEffect extends PlayerStatusEffect {
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 		const activeHermit = player.getActiveHermit()
-		const opponentActiveHermit = player.opponentPlayer.getActiveHermit()
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!opponentActiveHermit) return
 			if (!attack.isAttacker(activeHermit?.entity)) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
 				if (!activeHermit) return
-				const coinFlip = flipCoin(player.opponentPlayer, opponentActiveHermit, 1, player)
+				const coinFlip = flipCoin(player.opponentPlayer, effect.creator, 1, player)
 				coinFlipResult = coinFlip[0]
 			}
 
