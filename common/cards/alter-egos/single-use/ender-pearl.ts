@@ -56,7 +56,7 @@ class EnderPearl extends Card {
 						isBacklash: true,
 					})
 					.addDamage(this.id, 10)
-				executeAttacks(game, [attack], true)
+				executeAttacks(game, [attack])
 			},
 		})
 	}

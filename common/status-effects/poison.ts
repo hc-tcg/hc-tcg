@@ -39,7 +39,7 @@ class PoisonEffect extends CardStatusEffect {
 			}
 			statusEffectAttack.addDamage(effect.entity, damage)
 
-			executeExtraAttacks(game, [statusEffectAttack], true)
+			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
