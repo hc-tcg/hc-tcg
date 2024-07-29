@@ -106,7 +106,7 @@ const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 }
 
 const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	return <span className={css.rarity}> {RARITY_DISPLAY_TEXT[card.rarity]} </span>
+	return <span className={css.rarity}>■ {RARITY_DISPLAY_TEXT[card.rarity]} ■</span>
 }
 
 const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
