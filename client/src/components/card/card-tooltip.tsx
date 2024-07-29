@@ -1,5 +1,5 @@
 import React from 'react'
-import {TypeT} from 'common/types/cards'
+import {CardRarityT, TypeT} from 'common/types/cards'
 import {
 	CardProps,
 	hasDescription,
@@ -99,14 +99,14 @@ const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return <div className={css.name}>{card.name}</div>
 }
 
-const getRank = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	const name = getCardRank(card.tokens)
-	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
-	return (
-		<div className={classNames(css.rank, css[name])}>
-			{highlight} {name.charAt(0).toUpperCase() + name.slice(1)} Rank {highlight}
-		</div>
-	)
+const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
+	common: 'Common',
+	rare: 'Rare',
+	ultra_rare: 'Ultra Rare',
+}
+
+const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+	return <span className={css.rarity}> {RARITY_DISPLAY_TEXT[card.rarity]} </span>
 }
 
 const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
@@ -180,12 +180,12 @@ const CardInstanceTooltip = ({card}: Props) => {
 				<div className={css.topLine}>
 					{getName(card)}
 					{gettype(card)}
+					{getRarity(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
 				</div>
 				<div className={css.description}>
 					{getExpansion(card)}
-					{getRank(card)}
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
