@@ -14,7 +14,17 @@ class NetheriteBoots extends Card {
 		rarity: 'ultra_rare',
 		tokens: 3,
 		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Also any damage from effect cards and any damage redirected by effect cards. Opponent can not make this Hermit go AFK.',
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Also prevents any damage from Poison and Burn. Opponent can not make this Hermit go AFK.',
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'fire',
+			},
+			{
+				type: 'statusEffect',
+				name: 'poison',
+			},
+		],
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
