@@ -2,11 +2,12 @@ import {useSelector, useDispatch} from 'react-redux'
 import {useState} from 'react'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
-import {CardT, ModalData} from 'common/types/game-state'
+import {ModalData} from 'common/types/game-state'
 import css from './game-modals.module.scss'
 import {modalRequest} from 'logic/game/game-actions'
 import Button from 'components/button'
 import {getGameState} from 'logic/game/game-selectors'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 type Props = {
 	closeModal: () => void
@@ -16,20 +17,21 @@ function SelectCardsModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const modalData: ModalData | null | undefined = useSelector(getGameState)?.currentModalData
-	if (!modalData) return null
-	const [selected, setSelected] = useState<Array<CardT>>([])
-	const cards: Array<CardT> = modalData.payload.cards
+	if (!modalData || modalData.modalId !== 'selectCards') return null
+	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
+	const cards: Array<LocalCardInstance> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
+	const primaryButton = modalData.payload.primaryButton
 	const secondaryButton = modalData.payload.secondaryButton
 
-	const handleSelection = (newSelected: CardT) => {
+	const handleSelection = (newSelected: LocalCardInstance) => {
 		if (selectionSize === 0) return
 
 		setSelected((current) => {
 			const newSelection = [...current]
 			// Remove a card if it is clicked on when selected
 			if (selected.includes(newSelected)) {
-				return newSelection.filter((card) => card !== newSelected)
+				return newSelection.filter((card) => card.entity !== newSelected.entity)
 			}
 			// If a new card is selected then remove the first one
 			if (newSelection.length >= selectionSize) {
@@ -48,7 +50,9 @@ function SelectCardsModal({closeModal}: Props) {
 			return
 		}
 		if (selected.length <= selectionSize) {
-			dispatch(modalRequest({modalResult: {result: true, cards: selected}}))
+			dispatch(
+				modalRequest({modalResult: {result: true, cards: selected.map((card) => card.entity)}})
+			)
 			closeModal()
 		}
 	}
@@ -63,13 +67,16 @@ function SelectCardsModal({closeModal}: Props) {
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				<div className={css.cards}>
-					<CardList
-						onClick={handleSelection}
-						cards={cards}
-						selected={selected}
-						wrap
-						tooltipAboveModal
-					/>
+					<div className={css.cardsListContainer}>
+						<CardList
+							onClick={handleSelection}
+							cards={cards}
+							selected={selected}
+							wrap={true}
+							tooltipAboveModal
+							disableAnimations
+						/>
+					</div>
 				</div>
 			</div>
 			<div className={css.options}>
@@ -78,13 +85,11 @@ function SelectCardsModal({closeModal}: Props) {
 						{secondaryButton.text}
 					</Button>
 				)}
-				<Button
-					variant={modalData.payload.primaryButton.variant}
-					size="medium"
-					onClick={handlePrimary}
-				>
-					{modalData.payload.primaryButton.text}
-				</Button>
+				{primaryButton && (
+					<Button variant={primaryButton.variant} size="medium" onClick={handlePrimary}>
+						{primaryButton.text}
+					</Button>
+				)}
 			</div>
 		</Modal>
 	)

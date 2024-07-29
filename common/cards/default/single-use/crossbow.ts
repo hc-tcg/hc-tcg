@@ -1,138 +1,108 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {PickRequest} from '../../../types/server-requests'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {RowEntity} from '../../../entities'
 
-class CrossbowSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'crossbow',
-			numericId: 8,
-			name: 'Crossbow',
-			rarity: 'rare',
-			description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
-		})
+class Crossbow extends Card {
+	pickCondition = query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty))
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'crossbow',
+		numericId: 8,
+		name: 'Crossbow',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
+		hasAttack: true,
+		attackPreview: (game) => `$A20$ x ${this.getTotalTargets(game)}`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		const remainingKey = this.getInstanceKey(instance, 'remaining')
+	getTotalTargets(game: GameModel) {
+		return Math.min(3, game.components.filter(SlotComponent, this.pickCondition).length)
+	}
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			// Rather than allowing you to choose to damage less we will make you pick the most you can
-			const pickAmount = Math.min(3, getNonEmptyRows(opponentPlayer).length)
-			player.custom[targetsKey] = []
-			player.custom[remainingKey] = pickAmount
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-			const pickRequest: PickRequest = {
+		let targets = new Set<RowEntity>()
+
+		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, _hermitAttackType) => {
+			let totalTargets = this.getTotalTargets(game)
+			let targetsRemaining = totalTargets
+
+			const pickRequest = {
 				playerId: player.id,
-				id: this.id,
-				message: "Pick {?} of your opponent's Hermits",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+				id: component.entity,
+				onResult(pickedSlot: SlotComponent) {
+					if (!pickedSlot.inRow()) return
+					targets.add(pickedSlot.row.entity)
+					targetsRemaining--
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					// If we already picked the row
-					if (player.custom[targetsKey].includes(rowIndex)) return 'FAILURE_WRONG_PICK'
-
-					// Add the row to the chosen list
-					player.custom[targetsKey].push(rowIndex)
-
-					player.custom[remainingKey]--
-					const newRemaining = player.custom[remainingKey]
-					if (player.custom[remainingKey] > 0) {
-						addPickRequest(newRemaining)
-					} else {
-						delete player.custom[remainingKey]
+					if (targetsRemaining > 0) {
+						addPickRequest()
 					}
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing
 				},
 			}
 
-			function addPickRequest(newRemaining: number) {
-				let remaining = newRemaining.toString()
-				if (newRemaining != pickAmount) remaining += ' more'
+			let addPickRequest = () => {
+				let remaining = targetsRemaining.toString()
+				if (totalTargets != totalTargets) remaining += ' more'
 				const request: PickRequest = {
 					...pickRequest,
-					message: pickRequest.message.replace('{?}', remaining),
+					canPick: query.every(
+						this.pickCondition,
+						...Array.from(targets).map((row) => query.not(query.slot.rowIs(row)))
+					),
+					message: `Pick ${remaining} of your opponent's Hermits`,
 				}
 				game.addPickRequest(request)
 			}
 
-			addPickRequest(pickAmount)
+			addPickRequest()
 		})
 
-		player.hooks.getAttacks.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
-
-			const attacks = []
-			const targets: Array<number> = player.custom[targetsKey]
-			if (targets === undefined) return []
-
-			for (const target of targets) {
-				const row = opponentPlayer.board.rows[target]
-				if (!row || !row.hermitCard) continue
-
-				attacks.push(
-					new AttackModel({
-						id: this.getInstanceKey(instance),
-						attacker: activePos,
-						target: {
-							player: opponentPlayer,
-							rowIndex: target,
-							row,
-						},
+		observer.subscribe(player.hooks.getAttack, () => {
+			const attack = Array.from(targets).reduce((r: null | AttackModel, target, i) => {
+				const newAttack = game
+					.newAttack({
+						attacker: component.entity,
+						target: target,
 						type: 'effect',
-					}).addDamage(this.id, 20)
-				)
-			}
-			player.custom[targetsKey] = attacks.length
-			return attacks
+						log: (values) =>
+							i === 0
+								? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+								: `, ${values.target} for ${values.damage} damage`,
+					})
+					.addDamage(component.entity, 20)
+
+				if (r) return r.addNewAttack(newAttack)
+
+				return newAttack
+			}, null)
+
+			return attack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
-			delete player.custom[targetsKey]
+			applySingleUse(game)
 
 			// Do not apply single use more than once
-			player.hooks.onAttack.remove(instance)
+			observer.unsubscribe(player.hooks.onAttack)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttacks.remove(instance)
-		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		const remainingKey = this.getInstanceKey(instance, 'remaining')
-		delete player.custom[targetsKey]
-		delete player.custom[remainingKey]
-	}
-
-	override canAttack() {
-		return true
 	}
 }
 
-export default CrossbowSingleUseCard
+export default Crossbow

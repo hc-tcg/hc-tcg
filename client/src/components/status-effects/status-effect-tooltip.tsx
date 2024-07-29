@@ -1,28 +1,37 @@
-import StatusEffect from 'common/status-effects/status-effect'
+import {isCounter} from 'common/status-effects/status-effect'
 import css from './status-effect-tooltip.module.scss'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
+import classnames from 'classnames'
 
 type Props = {
-	statusEffect: StatusEffect
-	duration?: number | undefined
+	statusEffect: LocalStatusEffectInstance
+	counter: number | null
 }
 
-const StatusEffectTooltip = ({statusEffect, duration}: Props) => {
+const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
+	let targetClass = statusEffect.target.type === 'global' ? css.player : css.card
+
 	return (
 		<div className={css.statusEffectTooltip}>
 			<div className={css.topLine}>
-				<div className={css.name}>{statusEffect.name}</div>
+				<div className={css.name}>{statusEffect.props.name} </div>
+				<div className={classnames(css.tooltip, targetClass)}>
+					{statusEffect.target.type === 'card' ? 'Hermit' : 'Global'}
+				</div>
 			</div>
-			<div className={css.description}>{statusEffect.description}</div>
-			{duration !== undefined && statusEffect.counter && (
+			<div className={css.description}>{statusEffect.props.description}</div>
+			{isCounter(statusEffect.props) && statusEffect.props.counterType === 'number' && (
 				<div className={css.turnsRemaining}>
-					Number: <span className={css.duration}>{duration}</span>
+					Number: <span className={css.counter}>{counter}</span>
 				</div>
 			)}
-			{duration !== undefined && !statusEffect.counter && (
-				<div className={css.turnsRemaining}>
-					Turns remaining: <span className={css.duration}>{duration}</span>
-				</div>
-			)}
+			{isCounter(statusEffect.props) &&
+				statusEffect.props.counterType === 'turns' &&
+				statusEffect.props.counter > 1 && (
+					<div className={css.turnsRemaining}>
+						Turns remaining: <span className={css.counter}>{counter}</span>
+					</div>
+				)}
 		</div>
 	)
 }

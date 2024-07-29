@@ -1,12 +1,10 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
 import {
 	AttackModal,
-	BorrowModal,
 	ChangeHermitModal,
 	ConfirmModal,
 	EndTurnModal,
@@ -25,13 +23,24 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 	getAvailableActions,
+	getPickRequestPickableSlots,
 } from 'logic/game/game-selectors'
-import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {
+	endTurn,
+	endTurnAction,
+	setOpenedModal,
+	setSelectedCard,
+	slotPicked,
+} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
-import {PickCardActionData} from 'common/types/action-data'
+import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import {PlayerEntity} from 'common/entities'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -42,7 +51,6 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	'unmet-condition': UnmetConditionModal,
 
 	// Custom modals
-	borrow: BorrowModal,
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
 }
@@ -65,7 +73,8 @@ function Game() {
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
-	// const settings = useSelector(getSettings)
+	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const [filter, setFilter] = useState<string>('')
@@ -73,44 +82,57 @@ function Game() {
 	if (!gameState || !playerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
 	const filteredCards = DEBUG_CONFIG.unlimitedCards
-		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
+		? gameState.hand.filter((c) => c.props.name.toLowerCase().includes(filter.toLowerCase()))
 		: gameState.hand
 
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
 
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeys)
+		return () => {
+			window.removeEventListener('keydown', handleKeys)
+		}
+	}, [handleKeys])
+
 	const handleOpenModal = (id: string | null) => {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickInfo: PickInfo) => {
+	const handleBoardClick = (
+		pickInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number
+	) => {
 		console.log('Slot selected: ', pickInfo)
-		dispatch(slotPicked(pickInfo))
+
+		// This is a hack to make picked cards appear
+		dispatch(slotPicked(pickInfo, player, row, index))
 	}
 
-	const selectCard = (card: CardT) => {
+	const selectCard = (card: LocalCardInstance) => {
 		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
+			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-			const actionData: PickCardActionData = {
+			const actionData: PickSlotActionData = {
 				type: 'PICK_REQUEST',
 				payload: {
-					pickResult: {
-						playerId: gameState.playerId,
-						card: card,
-						slot: {
-							type: 'hand',
-							index,
-						},
-					},
+					entity: card.slot,
 				},
 			}
 
 			dispatch(actionData)
 		} else {
-			dispatch(setSelectedCard(card))
+			if (equalCard(card, selectedCard)) {
+				dispatch(setSelectedCard(null))
+			} else {
+				console.log('Selecting card:', card)
+				dispatch(setSelectedCard(card))
+			}
 		}
 	}
 
@@ -118,28 +140,46 @@ function Game() {
 		dispatch(setSelectedCard(null))
 	}
 
-	// TODO: handleKeys is disabled due to eventListeners not able to use state
-	// function handleKeys(e: any) {
-	// 	// const chatIsClosed = settings.showChat === 'off'
-	// 	const chatIsClosed = false
+	function handleKeys(e: any) {
+		const chatIsClosed = settings.showChat === 'off'
 
-	// 	if (e.key === 'Escape') {
-	// 		dispatch(setSetting('showChat', 'off'))
-	// 	}
+		if (e.key === 'Escape') {
+			dispatch(setSetting('showChat', 'off'))
+		}
 
-	// 	if (chatIsClosed) {
-	// 		e.key === '/' && dispatch(setSetting('showChat', 'on'))
-	// 		if (e.key === 'a' || e.key === 'A') {
-	// 			dispatch(setOpenedModal('attack'))
-	// 		}
-	// 		if (e.key === 'e' || e.key === 'E') {
-	// 			dispatch(setOpenedModal('end-turn'))
-	// 		}
-	// 		if (e.key === 'm' || e.key === 'M') {
-	// 			console.log('Mute!')
-	// 		}
-	// 	}
-	// }
+		if (e.key === 'c' || e.key === 'C') {
+			// We do not do anything if the chat is opened because then you couldn't type the C key.
+			// Users can still use ESC to close the window.
+			if (chatIsClosed) {
+				e.stopImmediatePropagation()
+				e.preventDefault()
+				dispatch(setSetting('showChat', 'on'))
+			}
+		}
+
+		if (chatIsClosed) {
+			if (e.key === 'a' || e.key === 'A') {
+				dispatch(setOpenedModal('attack'))
+			}
+			if (e.key === 'e' || e.key === 'E') {
+				if (availableActions.includes('END_TURN')) {
+					if (shouldShowEndTurnModal(availableActions, settings)) {
+						dispatch(endTurnAction())
+					} else {
+						dispatch(endTurn())
+					}
+				}
+			}
+			if (e.key === 'm' || e.key === 'M') {
+				dispatch(setSetting('muted', !settings.muted))
+			}
+			if (e.key === 't' || e.key === 'T') {
+				dispatch(
+					setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+				)
+			}
+		}
+	}
 
 	function handleResize() {
 		if (!gameWrapperRef.current || !gameRef.current) return
@@ -164,9 +204,9 @@ function Game() {
 		}
 	}
 
-	// Play SFX on turn start
+	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
-		if (gameState.turn.currentPlayerId === gameState.playerId) {
+		if (gameState.turn.turnNumber === 1 || gameState.turn.currentPlayerId === gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.turn.currentPlayerId])
@@ -209,6 +249,15 @@ function Game() {
 		return null
 	}
 
+	let unpickableCards: Array<LocalCardInstance> = []
+	const pickableCards = pickRequestPickableSlots
+
+	if (pickableCards != undefined) {
+		for (let card of filteredCards) {
+			if (card.slot && !pickableCards.includes(card.slot)) unpickableCards.push(card)
+		}
+	}
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -225,8 +274,9 @@ function Game() {
 					<CardList
 						wrap={false}
 						cards={filteredCards}
-						onClick={(card: CardT) => selectCard(card)}
+						onClick={(card: LocalCardInstance) => selectCard(card)}
 						selected={[selectedCard]}
+						unpickable={unpickableCards}
 					/>
 				</div>
 			</div>

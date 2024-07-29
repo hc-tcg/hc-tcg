@@ -1,40 +1,35 @@
 import {getStarterPack} from '../../server/src/utils/state-gen'
-import profanityFilter from '../utils/profanity'
-import {CardT} from '../../common/types/game-state'
 import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
+import {censorString} from '../utils/formatting'
+import {PlayerInfo} from '../types/server-requests'
+
+export type PlayerId = string & {__player_id: never}
 
 export class PlayerModel {
-	private internalId: string
+	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: {
-		name: string
-		icon: string
-		cards: Array<CardT>
-	}
-
+	private internalDeck: PlayerDeckT
 	public name: string
 	public minecraftName: string
 	public censoredName: string
 	public socket: Socket
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
-		this.internalId = Math.random().toString()
+		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
 		// Always generate a starter deck as the default
 		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
-			cards: getStarterPack().map((id) => {
-				return {cardId: id, cardInstance: Math.random().toString()}
-			}),
+			cards: getStarterPack(),
 		}
 
 		this.name = playerName
 		this.minecraftName = minecraftName
-		this.censoredName = profanityFilter(playerName)
+		this.censoredName = censorString(playerName)
 		this.socket = socket
 	}
 
@@ -48,7 +43,7 @@ export class PlayerModel {
 		return this.internalDeck
 	}
 
-	getPlayerInfo() {
+	getPlayerInfo(): PlayerInfo {
 		return {
 			playerId: this.id,
 			playerSecret: this.secret,
@@ -61,9 +56,13 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
+		const validationMessage = validateDeck(newDeck.cards)
 		if (validationMessage) return
-		this.internalDeck = newDeck
+		this.internalDeck = {
+			name: newDeck.name,
+			icon: newDeck.icon,
+			cards: newDeck.cards,
+		}
 	}
 
 	setMinecraftName(name: string) {

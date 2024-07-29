@@ -1,89 +1,54 @@
-import {SINGLE_USE_CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import Bow from '../../default/single-use/bow'
 
-class HotguyRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'hotguy_rare',
-			numericId: 131,
-			name: 'Hotguy',
-			rarity: 'rare',
-			hermitType: 'explorer',
-			health: 280,
-			primary: {
-				name: 'Velocité',
-				cost: ['explorer'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Hawkeye',
-				cost: ['explorer', 'explorer'],
-				damage: 80,
-				power: 'When used with a bow effect card, bow damage doubles.',
-			},
+class HotguyRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'hotguy_rare',
+		numericId: 131,
+		name: 'Hotguy',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'explorer',
+		health: 280,
+		primary: {
+			name: 'Velocité',
+			cost: ['explorer'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Hawkeye',
+			cost: ['explorer', 'explorer'],
+			damage: 80,
+			power: 'When used with a Bow effect card, Bow damage doubles.',
+		},
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+
+		let usingSecondaryAttack = false
+
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
+			usingSecondaryAttack = attack.type === 'secondary'
 		})
-	}
 
-	override getAttacks(
-		game: GameModel,
-		instance: string,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
-		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
-
-		return attacks
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		// How do I avoid using the cardId here? | Impossible so long as this is about a specific card - sense
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const singleUseCard = player.board.singleUseCard
-			if (
-				!singleUseCard ||
-				singleUseCard.cardId !== 'bow' ||
-				!player.custom[this.getInstanceKey(instance)]
-			)
-				return
-
-			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.cardInstance)
-			if (attack.id === bowId) {
-				attack.addDamage(this.id, attack.getDamage())
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!usingSecondaryAttack) return
+			if (attack.attacker instanceof CardComponent && attack.attacker.card instanceof Bow) {
+				attack.addDamage(attack.attacker.entity, attack.getDamage())
 			}
 		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[this.getInstanceKey(instance)]
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
-	}
-
-	override getPalette() {
-		return 'alter_egos'
-	}
-
-	override getBackground() {
-		return 'alter_egos_background'
 	}
 }
 
-export default HotguyRareHermitCard
+export default HotguyRare

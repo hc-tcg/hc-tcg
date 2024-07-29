@@ -1,84 +1,62 @@
-import Card from './base/card'
-import EffectCard from './base/effect-card'
-import HermitCard from './base/hermit-card'
-import ItemCard from './base/item-card'
-import SingleUseCard from './base/single-use-card'
+import type Card from './base/card'
+
 import defaultEffectCards from './default/effects'
-import alterEgosEffectCards from './alter-egos/effects'
-import adventOfTcgEffectCards from './advent-of-tcg/effects'
+import alterEgoEffectCards from './alter-egos/effects'
+// import adventOfTcgEffectCards from './advent-of-tcg/effects'
 import defaultHermitCards from './default/hermits'
 import alterEgosHermitCards from './alter-egos/hermits'
-import adventOfTcgHermitCards from './advent-of-tcg/hermits'
+// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
 import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
-import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
+// import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
+import alterEgosIIHermitCards from './alter-egos-ii/hermits'
+import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
+import alterEgosIIIItemCards from './alter-egos-iii/items'
+import seasonXHermitCards from './season-x/hermits'
+import {CardClass} from './base/card'
 
-const effectCardClasses: Array<EffectCard> = [
+const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
-	...alterEgosEffectCards,
-	...adventOfTcgEffectCards,
+	...alterEgoEffectCards,
+	// ...adventOfTcgEffectCards,
 ]
 
-const hermitCardClasses: Array<HermitCard> = [
+const hermitCardClasses: Array<CardClass> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
-	...adventOfTcgHermitCards,
+	// ...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
+	...seasonXHermitCards,
+	...alterEgosIIIHermitCards,
 ]
 
-const itemCardClasses: Array<ItemCard> = [...defaultItemCards]
+const itemCardClasses: Array<CardClass> = [...defaultItemCards, ...alterEgosIIIItemCards]
 
-const singleUseCardClasses: Array<SingleUseCard> = [
+const singleUseCardClasses: Array<CardClass> = [
 	...defaultSingleUseCards,
 	...alterEgosSingleUseCards,
-	...adventOfTcgSingleUseCards,
+	// ...adventOfTcgSingleUseCards,
 ]
 
-const allCardClasses: Array<Card> = [
+const allCardClasses: Array<CardClass> = [
 	...effectCardClasses,
 	...hermitCardClasses,
 	...itemCardClasses,
 	...singleUseCardClasses,
 ]
 
-export const CARDS: Record<string, Card> = allCardClasses.reduce(
-	(result: Record<string, Card>, card) => {
-		result[card.id] = card
+export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
+	(result: Record<string | string, Card>, cardClass) => {
+		let card = new cardClass(cardClass)
+		result[cardClass.name] = card
+		result[card.props.numericId] = card
+		// To maintain compatability with the deck saving system, we need to be able to look up
+		// cards by their id.
+		result[card.props.id] = card
 		return result
 	},
 	{}
 )
 
-export const EFFECT_CARDS: Record<string, EffectCard> = effectCardClasses.reduce(
-	(result: Record<string, EffectCard>, card) => {
-		result[card.id] = card
-		return result
-	},
-	{}
-)
-
-export const HERMIT_CARDS: Record<string, HermitCard> = hermitCardClasses.reduce(
-	(result: Record<string, HermitCard>, card) => {
-		result[card.id] = card
-		return result
-	},
-	{}
-)
-
-export const ITEM_CARDS: Record<string, ItemCard> = itemCardClasses.reduce(
-	(result: Record<string, ItemCard>, card) => {
-		result[card.id] = card
-		return result
-	},
-	{}
-)
-
-export const SINGLE_USE_CARDS: Record<string, SingleUseCard> = singleUseCardClasses.reduce(
-	(result: Record<string, SingleUseCard>, card) => {
-		result[card.id] = card
-		return result
-	},
-	{}
-)
+export const CARDS_LIST = allCardClasses.map((card) => new card(card))

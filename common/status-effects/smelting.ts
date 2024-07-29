@@ -1,45 +1,38 @@
-import StatusEffect from './status-effect'
+import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
-import {StatusEffectT} from '../types/game-state'
-import {discardCard} from '../utils/movement'
 
-class SmeltingStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'smelting',
-			name: 'Smelting',
-			description:
-				'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
-			duration: 4,
-			counter: true,
-			damageEffect: false,
-			visible: true,
-		})
+class SmeltingEffect extends CardStatusEffect {
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		icon: 'smelting',
+		name: 'Smelting',
+		description:
+			'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
+		counter: 4,
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
-		const {player} = pos
+	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	// 	const {player} = component
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			if (statusEffectInfo.duration === undefined) return
-			statusEffectInfo.duration -= 1
-			if (statusEffectInfo.duration === 0) {
-				discardCard(game, pos.card)
-				pos.row?.itemCards.forEach((card) => {
-					if (!card) return
-					card.cardId = card.cardId.replace('common', 'rare')
-				})
-			}
-		})
-	}
+	// 	player.hooks.onTurnStart.add(instance, () => {
+	// 		if (instance.counter === null) return
+	// 		instance.counter -= 1
+	// 		if (instance.counter === 0) {
+	// 			discardCard(game, pos.cardId)
+	// 			pos.rowId?.itemCards.forEach((card) => {
+	// 				if (!card) return
+	// 				card.card.props.numericId = card.card.props.numericId.replace('common', 'rare')
+	// 			})
+	// 		}
+	// 	})
+	// }
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player} = pos
+	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	// 	const {player} = component
 
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-	}
+	// 	player.hooks.onTurnStart.remove(instance)
+	// }
 }
 
-export default SmeltingStatusEffect
+export default SmeltingEffect

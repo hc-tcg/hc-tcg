@@ -1,7 +1,24 @@
-import {CardRarityT, CardTypeT} from '../../types/cards'
+import {PlayCardLog} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
+import query from '../../components/query'
+import {HermitAttackType} from '../../types/attack'
+import {AttackModel} from '../../models/attack-model'
+import {CardComponent, ObserverComponent, RowComponent} from '../../components'
+import {
+	Attach,
+	CardProps,
+	HasHealth,
+	Hermit,
+	Item,
+	SingleUse,
+	isAttach,
+	isHealth,
+	isHermit,
+	isItem,
+	isSingleUse,
+} from './types'
+import {DefaultDictionary} from '../../types/game-state'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -12,105 +29,110 @@ export type CanAttachError =
 
 export type CanAttachResult = Array<CanAttachError>
 
-type CardDefs = {
-	type: CardTypeT
-	id: string
-	numericId: number
-	name: string
-	rarity: CardRarityT
+/** Type that allows multiple functions in a card to share values. */
+export class InstancedValue<T> extends DefaultDictionary<CardComponent, T> {
+	public set(component: CardComponent, value: T) {
+		this.setValue(component.entity, value)
+	}
+
+	public get(component: CardComponent): T {
+		return this.getValue(component.entity)
+	}
+
+	public clear(component: CardComponent) {
+		this.clearValue(component.entity)
+	}
 }
 
-abstract class Card {
-	public type: CardTypeT
-	public id: string
-	public numericId: number
-	public name: string
-	public rarity: CardRarityT
+export type CardClass = new (cardClass: CardClass) => Card
 
-	constructor(defs: CardDefs) {
-		this.type = defs.type
-		this.id = defs.id
-		this.numericId = defs.numericId
-		this.name = defs.name
-		this.rarity = defs.rarity
-	}
+abstract class Card<Props extends CardProps = CardProps> {
+	public abstract props: Props
+	public cardClass: CardClass
 
-	public getKey(keyName: string) {
-		return this.id + ':' + keyName
-	}
-	public getInstanceKey(instance: string, keyName: string = '') {
-		return this.id + ':' + instance + ':' + keyName
+	constructor(cardClass: CardClass) {
+		this.cardClass = cardClass
 	}
 
 	/**
-	 * If the specified slot is empty, can this card be attached there
-	 *
-	 * Returns an array of any of the problems there are with attaching, if any
+	 * Called when a component of this card is created
 	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
-
-	/**
-	 * Called when an instance of this card is attached to the board
-	 */
-	public onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	public onCreate(game: GameModel, component: CardComponent) {
 		// default is do nothing
 	}
 
 	/**
-	 * Called when an instance of this card is removed from the board
+	 * Called when a component of this card is attached to the board
 	 */
-	public onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	public onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		// default is do nothing
 	}
 
 	/**
-	 * Returns the expansion this card is a part of
+	 * Called when a compoent of this card is removed from the board
 	 */
-	public getExpansion(): string {
-		return 'default'
+	public onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		// default is do nothing
 	}
 
-	/**
-	 * Returns the palette to use for this card
-	 */
-	public getPalette(): string {
-		return 'default'
+	public isItem(): this is Card<CardProps & Item> {
+		return isItem(this.props)
 	}
 
-	/**
-	 * Returns the shortened name to use for this card
-	 */
-	public getShortName(): string {
-		return this.name
+	public isHealth(): this is Card<CardProps & HasHealth> {
+		return isHealth(this.props)
 	}
 
-	/**
-	 * Returns whether to show *Attach* on the card tooltip
-	 */
-	public showAttachTooltip(): boolean {
-		return false
+	public isHermit(): this is Card<CardProps & Hermit> {
+		return isHermit(this.props)
 	}
 
-	/**
-	 * Returns whether to show *Single Use* on the card tooltip
-	 */
-	public showSingleUseTooltip(): boolean {
-		return false
+	public getAttack(
+		this: Card<Hermit>,
+		game: GameModel,
+		component: CardComponent,
+		hermitAttackType: HermitAttackType
+	): AttackModel | null {
+		const attack = game.newAttack({
+			attacker: component.entity,
+			target: game.components.findEntity(RowComponent, query.row.opponentPlayer, query.row.active),
+			type: hermitAttackType,
+			createWeakness: 'ifWeak',
+			log: (values) =>
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+					values.target
+				} with ${values.attackName} for ${values.damage} damage`,
+		})
+
+		if (attack.type === 'primary') {
+			attack.addDamage(component.entity, this.props.primary.damage)
+		} else if (attack.type === 'secondary') {
+			attack.addDamage(component.entity, this.props.secondary.damage)
+		}
+
+		return attack
 	}
 
-	/**
-	 * Returns the actions this card makes available when in the hand
-	 */
-	public getActions(game: GameModel): TurnActions {
-		// default is to return nothing
-		return []
+	public hasAttacks(this: Card<HasHealth>): this is Card<Props & Hermit> {
+		return 'primary' in this.props && 'secondary' in this.props
 	}
 
-	/**
-	 * Returns the sidebar descriptions for this card
-	 */
-	public sidebarDescriptions(): Array<Record<string, string>> {
-		return []
+	public isAttach(): this is Card<CardProps & Attach> {
+		return isAttach(this.props)
+	}
+
+	public isSingleUse(): this is Card<CardProps & SingleUse> {
+		return isSingleUse(this.props)
+	}
+
+	public getFormattedDescription(this: Card<Attach | SingleUse>): FormattedTextNode {
+		return formatText(this.props.description)
+	}
+
+	/** Gets the log entry for this attack*/
+	public getLog(values: PlayCardLog) {
+		if (!this.props.log) return ''
+		return this.props.log(values)
 	}
 }
 

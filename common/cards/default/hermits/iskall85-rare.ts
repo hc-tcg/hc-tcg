@@ -1,55 +1,47 @@
-import {HERMIT_CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import HermitCard from '../../base/hermit-card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class Iskall85RareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'iskall85_rare',
-			numericId: 48,
-			name: 'Iskall',
-			rarity: 'rare',
-			hermitType: 'farm',
-			health: 290,
-			primary: {
-				name: 'Of Doom',
-				cost: ['farm'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Bird Poop',
-				cost: ['farm', 'farm'],
-				damage: 80,
-				power: 'Attack damage doubles versus Builder types.',
-			},
-		})
+class Iskall85Rare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'iskall85_rare',
+		numericId: 48,
+		name: 'Iskall',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 0,
+		type: 'farm',
+		health: 290,
+		primary: {
+			name: 'Of Doom',
+			cost: ['farm'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Bird Poop',
+			cost: ['farm', 'farm'],
+			damage: 80,
+			power: 'Attack damage doubles versus Builder types.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const target = attack.getTarget()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const isBuilder =
-				target.row.hermitCard &&
-				HERMIT_CARDS[target.row.hermitCard.cardId]?.hermitType === 'builder'
-					? 2
-					: 1
+			const hermit = attack.target?.getHermit()
+			if (!hermit) return
+			if (!hermit.isHermit() || hermit.props.type !== 'builder') return
 
-			attack.multiplyDamage(this.id, isBuilder)
+			attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
 	}
 }
 
-export default Iskall85RareHermitCard
+export default Iskall85Rare

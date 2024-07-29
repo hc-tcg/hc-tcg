@@ -1,62 +1,50 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import SingleUseCard from '../../base/single-use-card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {
+	InvisibilityPotionHeadsEffect,
+	InvisibilityPotionTailsEffect,
+} from '../../../status-effects/invisibility-potion'
 
-class InvisibilityPotionSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'invisibility_potion',
-			numericId: 44,
-			name: 'Invisibility Potion',
-			rarity: 'rare',
-			description:
-				"Flip a coin.\n\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
-		})
-	}
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const usedKey = this.getInstanceKey(instance, 'used')
-
-		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, {cardId: this.id, cardInstance: instance})
-			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
-
-			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('weakness', 'effect', 'status-effect')) return
-
-				player.custom[usedKey] = true
-				attack.multiplyDamage(this.id, multiplier)
-			})
-
-			opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-				if (!player.custom[usedKey]) return
-				delete player.custom[usedKey]
-
-				opponentPlayer.hooks.afterAttack.remove(instance)
-				opponentPlayer.hooks.beforeAttack.remove(instance)
-			})
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
-
-	override sidebarDescriptions() {
-		return [
+class InvisibilityPotion extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'invisibility_potion',
+		numericId: 44,
+		name: 'Invisibility Potion',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			"Flip a coin.\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
+		showConfirmationModal: true,
+		sidebarDescriptions: [
 			{
 				type: 'glossary',
 				name: 'missed',
 			},
-		]
+		],
+		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+
+		observer.subscribe(player.hooks.onApply, () => {
+			if (flipCoin(player, component)[0] === 'heads') {
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionHeadsEffect, component.entity)
+					.apply(player.entity)
+			} else {
+				game.components
+					.new(StatusEffectComponent, InvisibilityPotionTailsEffect, component.entity)
+					.apply(player.entity)
+			}
+		})
 	}
 }
 
-export default InvisibilityPotionSingleUseCard
+export default InvisibilityPotion

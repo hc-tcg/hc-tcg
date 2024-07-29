@@ -19,7 +19,6 @@ import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
-import battleLogSaga from './tasks/battle-log-saga'
 import {
 	localGameState,
 	gameStart,
@@ -31,6 +30,12 @@ import {
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
 import actionModalsSaga from './tasks/action-modals-saga'
+import {
+	localApplyEffect,
+	localChangeActiveHermit,
+	localEndTurn,
+	localRemoveEffect,
+} from './local-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -50,10 +55,13 @@ function* actionSaga(): SagaIterator {
 	})
 
 	if (turnAction.playCard) {
+		// This is updated for the client in slot-saga
 		yield call(sendMsg, turnAction.playCard.type, turnAction.playCard.payload)
 	} else if (turnAction.applyEffect) {
+		yield* localApplyEffect()
 		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
 	} else if (turnAction.removeEffect) {
+		yield* localRemoveEffect()
 		yield call(sendMsg, 'REMOVE_EFFECT')
 	} else if (turnAction.pickCard) {
 		yield call(sendMsg, 'PICK_REQUEST', turnAction.pickCard.payload)
@@ -62,8 +70,10 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.attack) {
 		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
+		yield* localEndTurn()
 		yield call(sendMsg, 'END_TURN')
 	} else if (turnAction.changeActiveHermit) {
+		yield* localChangeActiveHermit(turnAction.changeActiveHermit)
 		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
 	}
 }
@@ -125,11 +135,7 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
-	const backgroundTasks = yield all([
-		fork(opponentConnectionSaga),
-		fork(chatSaga),
-		fork(battleLogSaga),
-	])
+	const backgroundTasks = yield all([fork(opponentConnectionSaga), fork(chatSaga)])
 	try {
 		yield put(gameStart())
 		const result = yield race({

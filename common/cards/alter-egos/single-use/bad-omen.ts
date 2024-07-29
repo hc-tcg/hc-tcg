@@ -1,65 +1,46 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import SingleUseCard from '../../base/single-use-card'
-import {applyStatusEffect} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import query from '../../../components/query'
+import BadOmenEffect from '../../../status-effects/badomen'
 
-class BadOmenSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'bad_omen',
-			numericId: 139,
-			name: 'Bad Omen',
-			rarity: 'rare',
-			description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
-		})
-	}
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return
-
-		player.hooks.onApply.add(instance, () => {
-			applyStatusEffect(
-				game,
-				'badomen',
-				opponentPlayer.board.rows[activeRow].hermitCard?.cardInstance
-			)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {opponentPlayer} = pos
-
-		const result = super.canAttach(game, pos)
-
-		if (!hasActive(opponentPlayer)) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
-	}
-
-	override sidebarDescriptions() {
-		return [
+class BadOmen extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'bad_omen',
+		numericId: 139,
+		name: 'Bad Omen',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 1,
+		description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
+		showConfirmationModal: true,
+		sidebarDescriptions: [
 			{
 				type: 'statusEffect',
 				name: 'badomen',
 			},
-		]
+		],
+		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+
+		// BadOmenEffect must be applied before TrapHoleEffect flips a coin
+		observer.subscribeBefore(player.hooks.onApply, () => {
+			let target = game.components.findEntity(
+				CardComponent,
+				query.card.opponentPlayer,
+				query.card.isHermit,
+				query.card.row(query.row.active)
+			)
+			if (!target) return
+			game.components.new(StatusEffectComponent, BadOmenEffect, component.entity).apply(target)
+		})
 	}
 }
 
-export default BadOmenSingleUseCard
+export default BadOmen

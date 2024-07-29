@@ -1,49 +1,51 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import HermitCard from '../../base/hermit-card'
-import {flipCoin} from '../../../utils/coinFlips'
 import {AttackModel} from '../../../models/attack-model'
 import {executeAttacks} from '../../../utils/attacks'
-import {getActiveRow} from '../../../utils/board'
-import {RowPos} from '../../../types/cards'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class BigBSt4tzRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'bigbst4tz2_rare',
-			numericId: 207,
-			name: 'BigB',
-			rarity: 'rare',
-			hermitType: 'speedrunner',
-			health: 270,
-			primary: {
-				name: 'Terry',
-				cost: ['speedrunner'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Soulmate',
-				cost: ['speedrunner', 'speedrunner'],
-				damage: 80,
-				power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
-			},
-		})
+class BigBSt4tzRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'bigbst4tz2_rare',
+		numericId: 207,
+		name: 'BigB',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'speedrunner',
+		health: 270,
+		primary: {
+			name: 'Terry',
+			cost: ['speedrunner'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Soulmate',
+			cost: ['speedrunner', 'speedrunner'],
+			damage: 80,
+			power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
-		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player, opponentPlayer, rowId: row} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		let dealDamageNextTurn = false
 
-			player.custom[dealDamageNextTurn] = true
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			dealDamageNextTurn = true
 		})
 
 		// Add before so health can be checked reliably
-		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
-			if (player.custom[dealDamageNextTurn]) {
+		opponentPlayer.hooks.afterAttack.addBefore(component, () => {
+			if (dealDamageNextTurn) {
 				if (!row || row.health === null || row.health > 0) return
 
 				const activeRowIndex = player.board.activeRow
@@ -67,44 +69,30 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 				}
 
 				const statusEffectAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: sourceRow,
 					target: targetRow,
 					type: 'status-effect',
 				})
-				statusEffectAttack.addDamage(this.id, 140)
+				statusEffectAttack.addDamage(this.props.id, 140)
 
-				opponentPlayer.hooks.afterAttack.remove(instance)
+				opponentPlayer.hooks.afterAttack.remove(component)
 				executeAttacks(game, [statusEffectAttack], true)
 			}
 		})
 
-		player.hooks.onTurnStart.add(instance, () => {
-			delete player.custom[dealDamageNextTurn]
+		player.hooks.onTurnStart.add(component, () => {
+			dealDamageNextTurn = false
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
-		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
 
-		player.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[dealDamageNextTurn]
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
+		player.hooks.onAttack.remove(component)
+		opponentPlayer.hooks.onAttack.remove(component)
+		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 
-export default BigBSt4tzRareHermitCard
+export default BigBSt4tzRare

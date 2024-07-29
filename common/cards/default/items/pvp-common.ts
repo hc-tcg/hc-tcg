@@ -1,21 +1,20 @@
-import ItemCard from '../../base/item-card'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class PvPCommonItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_pvp_common',
-			numericId: 61,
-			name: 'PvP',
-			rarity: 'common',
-			hermitType: 'pvp',
-		})
-	}
-
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+class PvPItem extends Card {
+	props: Item = {
+		...item,
+		id: 'item_pvp_common',
+		numericId: 61,
+		name: 'PvP Item',
+		shortName: 'PvP',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'pvp',
+		energy: ['pvp'],
 	}
 }
 
-export default PvPCommonItemCard
+export default PvPItem

@@ -1,14 +1,12 @@
-import {useDeferredValue, useRef, useState} from 'react'
+import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
-import {sortCards, cardGroupHeader} from './deck'
+import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {CARDS} from 'common/cards'
-import HermitCard from 'common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
+import {CARDS_LIST} from 'common/cards'
 import Card from 'common/cards/base/card'
-import {CardT} from 'common/types/game-state'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
 import Accordion from 'components/accordion'
@@ -16,15 +14,16 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG, RANKS, EXPANSIONS} from '../../../../common/config'
+import {CONFIG, EXPANSIONS} from '../../../../common/config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
-import {getCardExpansion} from 'common/utils/cards'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {CardEntity, newEntity} from 'common/entities'
+import {isHermit, isItem} from 'common/cards/base/types'
 
-const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
+const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
 	'any',
 	'balanced',
@@ -42,8 +41,8 @@ const DECK_ICONS = [
 const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
-		return Object.values(CARDS).some(
-			(card) => card.getExpansion() === expansion && !EXPANSIONS.disabled.includes(expansion)
+		return CARDS_LIST.some(
+			(card) => card.props.expansion === expansion && !EXPANSIONS.disabled.includes(expansion)
 		)
 	}),
 ]
@@ -98,7 +97,6 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				placeholder="Enter Deck Name..."
 				className={css.input}
 				required={true}
-				pattern={`^[a-zA-Z0-9 ]*$`}
 				onBlur={() => handleBlur()}
 				data-focused={inputIsFocused}
 			/>
@@ -116,6 +114,61 @@ type Props = {
 	deck: PlayerDeckT
 }
 
+const TYPE_ORDER = {
+	hermit: 0,
+	attach: 1,
+	single_use: 2,
+	item: 3,
+	health: 4,
+}
+
+// We want to fix UR with Rare to place all cards with abilities in the proper order.
+const RARITY_ORDER = {
+	common: 0,
+	rare: 1,
+	ultra_rare: 1,
+}
+
+export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInstance> {
+	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
+		return (
+			[
+				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
+				isHermit(a.props) && isHermit(b.props) && a.props.type.localeCompare(b.props.type),
+				isItem(a.props) && isItem(b.props) && a.props.name.localeCompare(b.props.name),
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					RARITY_ORDER[a.props.rarity] - RARITY_ORDER[b.props.rarity],
+				a.props.tokens !== 'wild' && b.props.tokens !== 'wild' && a.props.tokens - b.props.tokens,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.cost.length - b.props.secondary.cost.length,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.damage - b.props.secondary.damage,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.primary.cost.length - b.props.primary.cost.length,
+				isHermit(a.props) && isHermit(b.props) && a.props.primary.damage - b.props.primary.damage,
+				isHermit(a.props) && isHermit(b.props) && a.props.health - b.props.health,
+				a.props.name.localeCompare(b.props.name),
+			].find(Boolean) || 0
+		)
+	})
+}
+
+const ALL_CARDS = sortCards(
+	CARDS_LIST.map(
+		(card: Card): LocalCardInstance => ({
+			props: WithoutFunctions(card.props),
+			entity: newEntity('deck_editor_card'),
+			slot: null,
+			attackHint: null,
+			turnedOver: false,
+		})
+	)
+)
+
 function EditDeck({back, title, saveDeck, deck}: Props) {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
@@ -131,56 +184,77 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 
+	useEffect(() => {
+		window.addEventListener('keydown', handleTooltipKey)
+		return () => {
+			window.removeEventListener('keydown', handleTooltipKey)
+		}
+	}, [handleTooltipKey])
+
+	function handleTooltipKey(e: any) {
+		if (e.key === 't' || e.key == 'T') {
+			toggleTooltips()
+		}
+	}
+
+	function toggleTooltips() {
+		dispatch(
+			setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
+		)
+	}
+
 	//MISC
 	const initialDeckState = deck
-	const TYPED_CARDS = CARDS as Record<string, Card>
-	const HTYPE_CARDS = CARDS as Record<string, HermitCard | ItemCard>
-	const allCards = Object.values(TYPED_CARDS).map(
-		(card: Card): CardT => ({
-			cardId: card.id,
-			cardInstance: card.id,
-		})
+
+	const filteredCards: LocalCardInstance[] = sortCards(
+		ALL_CARDS.filter(
+			(card) =>
+				// Card Name Filter
+				card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
+				// Card Rarity Filter
+				(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
+				// Card Type Filter
+				(typeQuery === '' ||
+					!(isHermit(card.props) || isItem(card.props)) ||
+					((isHermit(card.props) || isItem(card.props)) && card.props.type.includes(typeQuery))) &&
+				// Card Expansion Filter
+				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
+				// Don't show disabled cards
+				!EXPANSIONS.disabled.includes(card.props.expansion)
+		)
 	)
-	const filteredCards: CardT[] = allCards.filter(
-		(card) =>
-			// Card Name Filter
-			TYPED_CARDS[card.cardId].name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
-			// Card Type Filter
-			(HTYPE_CARDS[card.cardId].hermitType === undefined
-				? TYPED_CARDS[card.cardId]
-				: HTYPE_CARDS[card.cardId].hermitType.includes(typeQuery)) &&
-			// Card Rarity Filter
-			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
-			// Card Expansion Filter
-			(expansionQuery === '' || getCardExpansion(card.cardId) === expansionQuery) &&
-			// Don't show disabled cards
-			!EXPANSIONS.disabled.includes(getCardExpansion(card.cardId))
-	)
+
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'hermit'),
-		items: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'item'),
-		attachableEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'effect'
-		),
-		singleUseEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'single_use'
-		),
+		hermits: loadedDeck.cards.filter((card) => card.props.category === 'hermit'),
+		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
+		attachableEffects: loadedDeck.cards.filter((card) => card.props.category === 'attach'),
+		singleUseEffects: loadedDeck.cards.filter((card) => card.props.category === 'single_use'),
 	}
 
 	//CARD LOGIC
 	const clearDeck = () => {
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
-	const addCard = (card: CardT) => {
+	const addCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: [...loadedDeck.cards, {cardId: card.cardId, cardInstance: Math.random().toString()}],
+			cards: [
+				...loadedDeck.cards,
+				{
+					props: card.props,
+					entity: newEntity('card-entity') as CardEntity,
+					slot: null,
+					turnedOver: false,
+					attackHint: null,
+				},
+			],
 		}))
 	}
-	const removeCard = (card: CardT) => {
+
+	const removeCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.cardInstance !== card.cardInstance),
+			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.entity !== card.entity),
 		}))
 	}
 
@@ -243,7 +317,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		})
 		back()
 	}
-	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
+	const validationMessage = validateDeck(loadedDeck.cards)
 
 	return (
 		<>
@@ -315,17 +389,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								className={css.dropdownButton}
 								title={
 									settings.showAdvancedTooltips === 'on'
-										? 'Hide detailed tooltips'
-										: 'Show detailed tooltips'
+										? 'Hide detailed tooltips (T)'
+										: 'Show detailed tooltips (T)'
 								}
-								onClick={() =>
-									dispatch(
-										setSetting(
-											'showAdvancedTooltips',
-											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
-										)
-									)
-								}
+								onClick={toggleTooltips}
 							>
 								<img
 									src={
@@ -349,36 +416,32 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				>
 					<Accordion header={'Hermits'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'hermit'
-							)}
+							cards={filteredCards.filter((card) => card.props.category === 'hermit')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'effect'
-							)}
+							cards={filteredCards.filter((card) => card.props.category === 'attach')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Single Use Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'single_use'
-							)}
+							cards={filteredCards.filter((card) => card.props.category === 'single_use')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
 					<Accordion header={'Items'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'item'
-							)}
+							cards={filteredCards.filter((card) => card.props.category === 'item')}
+							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -396,8 +459,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
 								<div className={classNames(css.cardCount, css.dark, css.tokens)}>
-									{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
-									{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
+									{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>
 						</>

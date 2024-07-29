@@ -1,74 +1,58 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, isRowEmpty} from '../../../utils/board'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import {moveCardToHand} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
-import SingleUseCard from '../../base/single-use-card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class LootingSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'looting',
-			numericId: 76,
-			name: 'Looting',
-			rarity: 'rare',
-			description:
-				"Flip a coin.\n\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
-		})
+class Looting extends Card {
+	pickCondition = query.every(
+		query.slot.opponent,
+		query.slot.active,
+		query.slot.item,
+		query.not(query.slot.empty)
+	)
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'looting',
+		numericId: 76,
+		name: 'Looting',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			"Flip a coin.\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
+		showConfirmationModal: true,
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.exists(SlotComponent, this.pickCondition)
+		),
+		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override canApply() {
-		return true
-	}
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (!opponentActiveRow || isRowEmpty(opponentActiveRow)) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, {
-				cardId: this.id,
-				cardInstance: instance,
-			})
+		observer.subscribe(player.hooks.onApply, () => {
+			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: component.entity,
 				message: 'Pick an item card to add to your hand',
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
-					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'FAILURE_INVALID_SLOT'
-					moveCardToHand(game, pickResult.card, player)
-
-					return 'SUCCESS'
+				canPick: this.pickCondition,
+				onResult(pickedSlot) {
+					const card = pickedSlot.getCard()
+					if (!card) return
+					card.draw(player.entity)
 				},
 			})
 		})
 	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
 }
 
-export default LootingSingleUseCard
+export default Looting

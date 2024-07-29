@@ -19,6 +19,12 @@
 	}
 }
 
+.noPointerEvents {
+	@media (orientation: portrait) {
+		pointer-events: none;
+	}
+}
+
 .selected {
 	&:not(:disabled) {
 		outline: 3px solid hsl(192deg, 56%, 58%);
@@ -29,6 +35,11 @@
 
 .picked {
 	outline: 3px dashed hsla(192deg, 56%, 58%, 70%);
+}
+
+.unpickable {
+	filter: brightness(0.6);
+	cursor: pointer;
 }
 
 @keyframes selectedCard {

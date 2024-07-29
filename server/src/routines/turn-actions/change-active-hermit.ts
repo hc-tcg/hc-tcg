@@ -1,7 +1,8 @@
+import {SlotComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
-import {call} from 'typed-redux-saga'
 
 function* changeActiveHermit(
 	game: GameModel,
@@ -10,16 +11,18 @@ function* changeActiveHermit(
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
-	const rowIndex = turnAction?.payload?.pickInfo?.rowIndex
-	if (rowIndex === undefined) return 'FAILURE_INVALID_DATA'
-	if (turnAction.payload.pickInfo.playerId !== currentPlayer.id) {
-		return 'FAILURE_CANNOT_COMPLETE'
-	}
+	const pickedSlot = game.components.find(
+		SlotComponent,
+		query.slot.entity(turnAction?.payload?.entity)
+	)
+	if (!pickedSlot?.onBoard()) return 'FAILURE_INVALID_DATA'
+	const row = pickedSlot.row
+	if (!row) return 'FAILURE_INVALID_DATA'
 
-	const hadActiveHermit = currentPlayer.board.activeRow !== null
+	const hadActiveHermit = currentPlayer.activeRowEntity !== null
 
 	// Change row
-	const result = game.changeActiveRow(currentPlayer, rowIndex)
+	const result = currentPlayer.changeActiveRow(row)
 	if (!result) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (hadActiveHermit) {

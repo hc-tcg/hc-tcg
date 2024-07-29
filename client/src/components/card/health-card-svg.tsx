@@ -1,11 +1,6 @@
-import HealthCard from 'common/cards/base/health-card'
-import {useState, useRef, useMemo, useEffect} from 'react'
+import {useState, useRef, useMemo, useEffect, memo} from 'react'
 import css from './health-card-svg.module.scss'
 import classnames from 'classnames'
-
-export type HealthCardProps = {
-	card: HealthCard
-}
 
 function useCountdownAnimation(value: number, duration = 500) {
 	const [displayValue, setDisplayValue] = useState(value)
@@ -43,15 +38,16 @@ function useCountdownAnimation(value: number, duration = 500) {
 	return Math.round(displayValue)
 }
 
-const HealthCardModule = ({card}: HealthCardProps) => {
-	const displayHealth = useCountdownAnimation(card.health)
+const HealthDisplayModule = memo(({health}: {health: number | null}) => {
+	const displayHealth = health !== null ? useCountdownAnimation(health) : '???'
 
 	return (
 		<svg
 			className={classnames(css.card, {
-				[css.healthy]: displayHealth >= 200,
-				[css.damaged]: displayHealth < 200 && displayHealth >= 100,
-				[css.dying]: displayHealth < 100,
+				[css.mystery]: displayHealth === '???',
+				[css.healthy]: displayHealth !== '???' && displayHealth >= 200,
+				[css.damaged]: displayHealth !== '???' && displayHealth < 200 && displayHealth >= 100,
+				[css.dying]: displayHealth !== '???' && displayHealth < 100,
 			})}
 			width="100%"
 			height="100%"
@@ -94,6 +90,6 @@ const HealthCardModule = ({card}: HealthCardProps) => {
 			</g>
 		</svg>
 	)
-}
+})
 
-export default HealthCardModule
+export default HealthDisplayModule

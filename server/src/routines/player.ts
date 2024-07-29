@@ -55,7 +55,7 @@ function* playerDisconnectedSaga(action: any) {
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
-			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.playerId === playerId
+			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId
 		),
 	})
 
@@ -94,6 +94,11 @@ function* updateMinecraftNameSaga(action: any) {
 function* loadUpdatesSaga(action: any) {
 	const {playerId} = action
 	const player = root.players[playerId]
+
+	if (!player) {
+		console.error('Found undefined player with id:', player)
+		return
+	}
 
 	player.socket?.emit('LOAD_UPDATES', {
 		type: 'LOAD_UPDATES',

@@ -1,21 +1,20 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import ItemCard from '../../base/item-card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class ExplorerCommonItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_explorer_common',
-			numericId: 53,
-			name: 'Explorer',
-			rarity: 'common',
-			hermitType: 'explorer',
-		})
-	}
-
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+class ExplorerItem extends Card {
+	props: Item = {
+		...item,
+		id: 'item_explorer_common',
+		numericId: 53,
+		name: 'Explorer Item',
+		shortName: 'Explorer',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'explorer',
+		energy: ['explorer'],
 	}
 }
 
-export default ExplorerCommonItemCard
+export default ExplorerItem

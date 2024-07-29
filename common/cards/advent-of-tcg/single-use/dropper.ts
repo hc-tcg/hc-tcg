@@ -1,49 +1,39 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent, DeckSlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import FletchingTable from './fletching-table'
 
-class DropperSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'dropper',
-			numericId: 222,
-			name: 'Dropper',
-			rarity: 'rare',
-			description: "Shuffle 2 fletching tables into your opponent's deck",
-		})
+class Dropper extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'dropper',
+		numericId: 222,
+		name: 'Dropper',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 0,
+		description: "Shuffle 2 fletching tables into your opponent's deck",
+		showConfirmationModal: true,
 	}
 
-	public override canApply(): boolean {
-		return true
-	}
+	override onAttach(game: GameModel, component: CardComponent): void {
+		const {player, opponentPlayer} = component
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
-				const cardInfo = {
-					cardId: 'fletching_table',
-					cardInstance: Math.random().toString(),
-				}
-				opponentPlayer.pile.splice(
-					Math.round(Math.random() * opponentPlayer.pile.length),
-					0,
-					cardInfo
-				)
+				let slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
+				game.components.new(CardComponent, FletchingTable, slot.entity)
 			}
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player} = pos
+	public override onDetach(game: GameModel, component: CardComponent): void {
+		const {player} = component
 
-		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
+		player.hooks.onApply.remove(component)
 	}
 }
 
-export default DropperSingleUseCard
+export default Dropper

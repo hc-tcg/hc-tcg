@@ -1,28 +1,27 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardT} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class GlowstoneSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'glowstone',
-			numericId: 224,
-			name: 'Glowstone',
-			rarity: 'rare',
-			description:
-				'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
-		})
+class Glowstone extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'glowstone',
+		numericId: 224,
+		name: 'Glowstone',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 2,
+		description:
+			'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
+		showConfirmationModal: true,
 	}
 
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -30,7 +29,7 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 					payload: {
 						modalName: 'Glowstone: Choose the card for your opponent to draw.',
 						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
-						cards: opponentPlayer.pile.slice(0, 3),
+						cards: opponentPlayer.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
 						selectionSize: 1,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -43,10 +42,14 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 
-					const cards: Array<CardT> = modalResult.cards
-					const bottomCards: Array<CardT> = opponentPlayer.pile.slice(0, 3).filter((c) => {
-						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
-						return true
+					const card = modalResult.cards[0]
+
+					const cards: Array<CardComponent> = []
+					const bottomCards: Array<CardComponent> = []
+
+					opponentPlayer.pile.slice(0, 3).forEach((c) => {
+						if (card.component === c.id) cards.push(c)
+						else bottomCards.push(c)
 					})
 
 					opponentPlayer.pile = opponentPlayer.pile.slice(3)
@@ -63,14 +66,10 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onApply.remove(component)
 	}
 }
 
-export default GlowstoneSingleUseCard
+export default Glowstone

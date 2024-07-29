@@ -1,96 +1,77 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
-import HermitCard from '../../base/hermit-card'
-import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {slot} from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class MonkeyfarmRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'monkeyfarm_rare',
-			numericId: 212,
-			name: 'Monkeyfarm',
-			rarity: 'rare',
-			hermitType: 'farm',
-			health: 250,
-			primary: {
-				name: 'Skull',
-				cost: ['farm'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: 'Monkeystep',
-				cost: ['farm', 'farm'],
-				damage: 80,
-				power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
-			},
-		})
+class MonkeyfarmRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'monkeyfarm_rare',
+		numericId: 212,
+		name: 'Monkeyfarm',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'farm',
+		health: 250,
+		primary: {
+			name: 'Skull',
+			cost: ['farm'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: 'Monkeystep',
+			cost: ['farm', 'farm'],
+			damage: 80,
+			power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
 				return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
-			const emptyRows = getNonEmptyRows(opponentPlayer, true, true)
-			const opponentItemCards = emptyRows.reduce(
-				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length,
-				0
-			)
+			const pickCondition = slot.every(slot.opponent, slot.item, slot.not(slot.empty))
 
-			if (opponentItemCards == 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.cardId || rowIndex === null) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
-					if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+					if (!row.hermitCard) return
 
 					// Apply the card
-					discardCard(game, pickResult.card)
-
-					return 'SUCCESS'
+					discardCard(game, pickedSlot.cardId)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		// Remove hooks
-		player.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default MonkeyfarmRareHermitCard
+export default MonkeyfarmRare

@@ -1,80 +1,82 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG, EXPANSIONS} from 'common/config'
 import {
-	TurnActions,
-	CardT,
-	CoinFlipT,
+	CurrentCoinFlip,
+	LocalCurrentCoinFlip,
 	LocalGameState,
 	LocalPlayerState,
-	PlayerState,
-	RowState,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
-import {EnergyT, SlotPos} from 'common/types/cards'
-import {AttackModel} from 'common/models/attack-model'
-import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card, {CanAttachResult} from 'common/cards/base/card'
-import HermitCard from 'common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
-import EffectCard from 'common/cards/base/effect-card'
-import {CardPosModel} from 'common/models/card-pos-model'
-import {getCardCost, getCardRank} from 'common/utils/ranks'
-import {HermitAttackType} from 'common/types/attack'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
+import Card from 'common/cards/base/card'
+import query from 'common/components/query'
+import {
+	LocalCardInstance,
+	LocalModalData,
+	LocalStatusEffectInstance,
+	WithoutFunctions,
+} from 'common/types/server-requests'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
+import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
+import {CardEntity, newEntity} from 'common/entities'
+import {ModalData} from 'common/types/modal-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
+// Dear Reader,
+// On 07/17/23, This still has not been sorted out properly. I think I might have
+// even made it worse.
+// Sincerely, Lunarmagpie
+
 function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const isHermitOrItem: (cardInfo: Card) => cardInfo is HermitCard | ItemCard = (
-	cardInfo
-): cardInfo is HermitCard | ItemCard => ['hermit', 'item'].includes(cardInfo.type)
-
-const isHermit: (cardInfo: Card) => cardInfo is HermitCard = (cardInfo): cardInfo is HermitCard =>
-	cardInfo.type === 'hermit'
-
-const isEffect: (cardInfo: Card) => cardInfo is EffectCard = (cardInfo): cardInfo is EffectCard =>
-	['effect', 'single_use'].includes(cardInfo.type)
-
-export function getStarterPack() {
+export function getStarterPack(): Array<LocalCardInstance> {
 	const limits = CONFIG.limits
 
 	// only allow some starting types
 	const startingTypes = ['balanced', 'builder', 'farm', 'miner', 'redstone']
-	const hermitTypesCount = randomBetween(2, 3)
-	const hermitTypes = Object.keys(STRENGTHS)
+	const typesCount = randomBetween(2, 3)
+	const types = Object.keys(STRENGTHS)
 		.filter((type) => startingTypes.includes(type))
 		.sort(() => 0.5 - Math.random())
-		.slice(0, hermitTypesCount)
+		.slice(0, typesCount)
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			(!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)) &&
-			!EXPANSIONS.disabled.includes(cardInfo.getExpansion())
+			!cardInfo.isHermit() ||
+			!cardInfo.isItem() ||
+			(types.includes(cardInfo.props.type) &&
+				!EXPANSIONS.disabled.includes(cardInfo.props.expansion))
 	)
 
-	const effectCards = cards.filter(isEffect)
-	const hermitCount = hermitTypesCount === 2 ? 8 : 10
+	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttach())
+	const hermitCount = typesCount === 2 ? 8 : 10
 
 	const deck: Array<Card> = []
 
 	let itemCounts = {
-		[hermitTypes[0]]: {
+		[types[0]]: {
 			items: 0,
 			tokens: 0,
 		},
-		[hermitTypes[1]]: {
+		[types[1]]: {
 			items: 0,
 			tokens: 0,
 		},
 	}
-	if (hermitTypes[2]) {
-		itemCounts[hermitTypes[2]] = {
+	if (types[2]) {
+		itemCounts[types[2]] = {
 			items: 0,
 			tokens: 0,
 		}
@@ -82,50 +84,53 @@ export function getStarterPack() {
 	let tokens = 0
 
 	// hermits, but not diamond ones
-	let hermitCards = cards.filter(isHermit).filter((card) => getCardRank(card.id).name !== 'diamond')
+	let hermitCards = cards
+		.filter((card) => card.isHermit())
+		.filter((card) => !isHermit(card.props) || types.includes(card.props.type))
+		.filter((card) => card.props.name !== 'diamond') as Array<Card<Hermit>>
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
 		const hermitCard = hermitCards[randomIndex]
 
 		// remove this option
-		hermitCards = hermitCards.filter((card, index) => index !== randomIndex)
+		hermitCards = hermitCards.filter((_card, index) => index !== randomIndex)
 
 		// add 1 - 3 of this hermit
 		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
 
-		tokens += getCardCost(hermitCard) * hermitAmount
+		tokens += (hermitCard.props.tokens !== 'wild' ? hermitCard.props.tokens : 1) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.hermitType].items += 2
+			itemCounts[hermitCard.props.type].items += 2
 		}
 	}
 
 	// items
-	for (let hermitType in itemCounts) {
-		let counts = itemCounts[hermitType]
+	for (let type in itemCounts) {
+		let counts = itemCounts[type]
 
 		for (let i = 0; i < counts.items; i++) {
-			deck.push(CARDS[`item_${hermitType}_common`])
+			deck.push(CARDS[`item_${type}_common`])
 		}
 	}
 
 	let loopBreaker = 0
 	// effects
-	while (deck.length < limits.maxCards) {
+	while (deck.length < limits.maxCards && deck.length < effectCards.length) {
 		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
-		const duplicates = deck.filter((card) => card.id === effectCard.id)
+		const duplicates = deck.filter((card) => card.props.numericId === effectCard.props.numericId)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
-		const tokenCost = getCardCost(effectCard)
+		const tokenCost = effectCard.props.tokens !== 'wild' ? effectCard.props.tokens : 1
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue
 		} else {
 			loopBreaker = 0
 		}
-		if (loopBreaker >= 10000) {
+		if (loopBreaker >= 100) {
 			const err = new Error()
 			console.log('Broke out of loop while generating starter deck!', err.stack)
 			break
@@ -135,193 +140,256 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	const deckIds: Array<string> = deck.map((card) => card.id)
-	return deckIds
-}
-
-export function getEmptyRow(): RowState {
-	const MAX_ITEMS = 3
-
-	const rowState: RowState = {
-		hermitCard: null,
-		effectCard: null,
-		itemCards: new Array(MAX_ITEMS).fill(null),
-		health: null,
-	}
-	return rowState
-}
-
-export function getPlayerState(player: PlayerModel): PlayerState {
-	const allCards = Object.values(CARDS).map(
-		(card: Card): CardT => ({
-			cardId: card.id,
-			cardInstance: card.id,
-		})
-	)
-	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.deck.cards
-
-	// shuffle cards
-	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
-
-	// randomize instances
-	pack = pack.map((card) => {
+	return deck.map((card) => {
 		return {
-			cardId: card.cardId,
-			cardInstance: Math.random().toString(),
+			props: WithoutFunctions(CARDS[card.props.numericId].props),
+			entity: newEntity('card-entity') as CardEntity,
+			slot: null,
+			turnedOver: false,
+			attackHint: null,
 		}
 	})
+}
 
-	// ensure a hermit in first 5 cards
-	const hermitIndex = pack.findIndex((card) => {
-		return CARDS[card.cardId].type === 'hermit'
-	})
-	if (hermitIndex > 5) {
-		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+function getLocalStatusEffect(effect: StatusEffectComponent) {
+	if (!effect.target) {
+		return null
 	}
-
-	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
-	const hand = pack.slice(0, amountOfStartingCards)
-
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
-		const card = CARDS[id]
-		if (!card) {
-			console.log('Invalid extra starting card in debug config:', id)
-			continue
-		}
-
-		const cardInfo = {
-			cardId: id,
-			cardInstance: Math.random().toString(),
-		}
-		pack.push(cardInfo)
-		hand.unshift(cardInfo)
-	}
-
-	const TOTAL_ROWS = 5
 	return {
-		id: player.id,
-		playerName: player.name,
-		minecraftName: player.minecraftName,
-		playerDeck: pack,
-		censoredPlayerName: player.censoredName,
-		coinFlips: [],
-		lives: 3,
-		hand,
-		discarded: [],
-		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
-		custom: {},
-		board: {
-			activeRow: null,
-			singleUseCard: null,
-			singleUseCardUsed: false,
-			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
-		},
-
-		hooks: {
-			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
-			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-
-			canAttach: new GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>(),
-			onAttach: new GameHook<(instance: string) => void>(),
-			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<() => void>(),
-			onApply: new GameHook<() => void>(),
-			afterApply: new GameHook<() => void>(),
-			getAttackRequests: new GameHook<
-				(activeInstance: string, hermitAttackType: HermitAttackType) => void
-			>(),
-			getAttacks: new GameHook<() => Array<AttackModel>>(),
-			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
-			onAttack: new GameHook<(attack: AttackModel) => void>(),
-			onDefence: new GameHook<(attack: AttackModel) => void>(),
-			afterAttack: new GameHook<(attack: AttackModel) => void>(),
-			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onCoinFlip: new GameHook<(card: CardT, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			beforeActiveRowChange: new GameHook<
-				(oldRow: number | null, newRow: number | null) => boolean
-			>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
-		},
+		props: WithoutFunctions(effect.props),
+		instance: effect.entity,
+		target:
+			effect.target instanceof CardComponent
+				? {type: 'card', card: effect.target.entity}
+				: {type: 'global', player: effect.target.entity},
+		counter: effect.counter,
 	}
 }
 
-export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
+function getLocalCard<Props extends CardProps>(
+	game: GameModel,
+	card: CardComponent<Props>
+): LocalCardInstance<Props> {
+	let attackPreview = null
+	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+		attackPreview = card.props.attackPreview(game)
+	}
+
+	return {
+		props: card.card.props as WithoutFunctions<Props>,
+		entity: card.entity,
+		slot: card.slotEntity,
+		turnedOver: card.turnedOver,
+		attackHint: attackPreview,
+	}
+}
+
+function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModalData['payload'] {
+	if (modal.modalId == 'selectCards') {
+		return {
+			...modal.payload,
+			cards: modal.payload.cards.map((entity) => getLocalCard(game, game.components.get(entity)!)),
+		}
+	} else if (modal.modalId === 'copyAttack') {
+		let hermitCard = game.components.get(modal.payload.hermitCard)!
+		let blockedActions = hermitCard.player.hooks.blockedActions.callSome([[]], (observerEntity) => {
+			let observer = game.components.get(observerEntity)
+			return observer?.wrappingEntity === hermitCard.entity
+		})
+
+		return {
+			...modal.payload,
+			hermitCard: getLocalCard(game, hermitCard),
+			blockedActions: blockedActions,
+		}
+	}
+
+	throw new Error('Uknown modal type')
+}
+
+function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
+	return {
+		modalId: modal.modalId,
+		payload: getLocalModalDataPayload(game, modal),
+	} as LocalModalData
+}
+
+function getLocalCoinFlip(game: GameModel, coinFlip: CurrentCoinFlip): LocalCurrentCoinFlip {
+	return {
+		...coinFlip,
+		card: getLocalCard(game, game.components.get(coinFlip.card)!),
+	}
+}
+
+function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): LocalPlayerState {
+	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)?.entity
+	let singleUseCard = game.components.find(CardComponent, query.card.slotEntity(singleUseSlot))
+
+	if (!singleUseSlot) {
+		throw new Error('Slot is missing when generating local game state.')
+	}
+
+	let board = {
+		activeRow:
+			game.components.findEntity(
+				RowComponent,
+				query.row.active,
+				query.row.player(playerState.entity)
+			) || null,
+		singleUse: {
+			slot: singleUseSlot,
+			card: singleUseCard ? getLocalCard(game, singleUseCard) : null,
+		},
+		singleUseCardUsed: playerState.singleUseCardUsed,
+		rows: game.components
+			.filter(RowComponent, query.row.player(playerState.entity))
+			.map((row) => {
+				const hermitCard = row.getHermit()
+				const hermitSlot = row.getHermitSlot()
+				const attachCard = row.getAttach()
+				const attachSlot = row.getAttachSlot()
+
+				const items = row.getItemSlots().map((itemSlot) => {
+					let itemCard = game.components.find(CardComponent, query.card.slotEntity(itemSlot.entity))
+					return {
+						slot: itemSlot.entity,
+						card: itemCard ? getLocalCard(game, itemCard) : null,
+					}
+				})
+
+				if (!hermitSlot || !attachSlot)
+					throw new Error('Slot is missing when generating local game state.')
+
+				return [
+					row.index,
+					{
+						entity: row.entity,
+						hermit: {
+							slot: hermitSlot.entity,
+							card: hermitCard ? (getLocalCard(game, hermitCard) as any) : null,
+						},
+						attach: {
+							slot: attachSlot.entity,
+							card: attachCard ? (getLocalCard(game, attachCard) as any) : null,
+						},
+						items: items,
+						health: row.health,
+					},
+				] as const
+			})
+			.sort(([rowIndexA, _rowA], [rowIndexB, _rowB]) => rowIndexA - rowIndexB)
+			.map(([_, row]) => row),
+	}
+
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
+		entity: playerState.entity,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
-		coinFlips: playerState.coinFlips,
-		custom: playerState.custom,
+		coinFlips: playerState.coinFlips.map((flip) => getLocalCoinFlip(game, flip)),
 		lives: playerState.lives,
-		board: playerState.board,
+		board: board,
 	}
 	return localPlayerState
 }
 
 export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
-	if (!opponentPlayerId) {
-		return null
-	}
+	const playerState = game.components.find(
+		PlayerComponent,
+		(_game, playerState) => playerState.id == player.id
+	)
 
-	const playerState = game.state.players[player.id]
-	const opponentState = game.state.players[opponentPlayerId]
+	if (!playerState) throw new Error('Player should be added to ECS before fetching local state')
+
+	const opponentState = playerState.opponentPlayer
+
+	const isCurrentPlayer = game.currentPlayer.id === player.id
 	const turnState = game.state.turn
-	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
 	// convert player states
-	const players: Record<string, LocalPlayerState> = {}
-	players[player.id] = getLocalPlayerState(playerState)
-	players[opponentPlayerId] = getLocalPlayerState(opponentState)
+	const players: Record<PlayerId, LocalPlayerState> = {}
+	players[player.id] = getLocalPlayerState(game, playerState)
+	players[opponentState.id] = getLocalPlayerState(game, opponentState)
 
 	// Pick message or modal id
+	playerState.pickableSlots = null
 	let currentPickMessage = null
 	let currentModalData = null
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
+
 	if (currentModalRequest?.playerId === player.id) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
-		currentModalData = currentModalRequest.data
+		currentModalData = getLocalModalData(game, currentModalRequest.data)
 	} else if (currentPickRequest?.playerId === player.id) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
-		const cardInfo = CARDS[currentPickRequest.id]
-		if (cardInfo) {
-			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
+		const pickRequestCreator = game.components.get(currentPickRequest.id)
+		if (pickRequestCreator) {
+			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
+		}
+		// We also want to highlight the slots for the player that must select a slot
+		if (currentPickRequest.playerId == player.id) {
+			playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
+		}
+		// We also want to highlight the slots for the player that must select a slot
+		if (currentPickRequest.playerId == player.id) {
+			playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
 		}
 	}
+
+	let currentPickableSlots = playerState.pickableSlots
 
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
-			currentPlayerId: turnState.currentPlayerId,
+			currentPlayerId: game.currentPlayer.id,
+			currentPlayerEntity: game.currentPlayer.entity,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		statusEffects: game.state.statusEffects,
+		statusEffects: game.components
+			.filter(StatusEffectComponent)
+			.sort((a, b) => a.order - b.order)
+			.map(getLocalStatusEffect)
+			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
 
 		// personal info
-		hand: playerState.hand,
-		pileCount: playerState.pile.length,
-		discarded: playerState.discarded,
+		hand: game.components
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.hand)
+			)
+			.sort(CardComponent.compareOrder)
+			.map((card) => getLocalCard(game, card)),
+		pileCount: game.components.filter(
+			CardComponent,
+			query.card.slot(query.slot.player(playerState.entity), query.slot.deck)
+		).length,
+		discarded: game.components
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.discardPile)
+			)
+			.map((card) => getLocalCard(game, card)),
 
 		// ids
 		playerId: player.id,
-		opponentPlayerId: opponentPlayerId,
+		opponentPlayerId: opponentState.id,
+		playerEntity: players[player.id].entity,
+		opponentPlayerEntity: players[opponentState.id].entity,
 
 		lastActionResult: game.state.lastActionResult,
 
+		currentCardsCanBePlacedIn: playerState
+			.getCardsCanBePlacedIn()
+			.map(([card, place]) => [getLocalCard(game, card), place]),
+		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,
 

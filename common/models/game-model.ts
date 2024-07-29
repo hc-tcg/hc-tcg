@@ -1,28 +1,57 @@
-import {PlayerModel} from './player-model'
+import {PlayerId, PlayerModel} from './player-model'
 import {
 	TurnAction,
 	GameState,
 	ActionResult,
 	TurnActions,
-	BattleLogT,
-	PlayerState,
+	Message,
+	DefaultDictionary,
 } from '../types/game-state'
-import {MessageInfoT} from '../types/chat'
-import {getGameState} from '../utils/state-gen'
-import {ModalRequest, PickRequest} from '../types/server-requests'
+import {getGameState, setupComponents} from '../utils/state-gen'
+import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {getSlotPos} from '../utils/board'
+import query, {ComponentQuery} from '../components/query'
+import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
+import {AttackDefs} from '../types/attack'
+import {AttackModel} from './attack-model'
+import ComponentTable from '../types/ecs'
+import {PlayerEntity, SlotEntity} from '../entities'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {Hook} from '../types/hooks'
+
+/** Type that allows for additional data about a game to be shared between components */
+export class GameValue<T> extends DefaultDictionary<GameModel, T> {
+	public set(game: GameModel, value: T) {
+		if (!Object.hasOwn(this.values, game.id)) {
+			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+		}
+		this.setValue(game.id, value)
+	}
+
+	public get(game: GameModel): T {
+		return this.getValue(game.id)
+	}
+
+	public clear(game: GameModel) {
+		this.clearValue(game.id)
+	}
+}
 
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
 	private internalCode: string | null
 
-	public chat: Array<MessageInfoT>
+	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public players: Record<string, PlayerModel>
+	public players: Record<PlayerId, PlayerModel>
 	public task: any
 	public state: GameState
+
+	/** The objects used in the game. */
+	public components: ComponentTable
+	/** Hook for when the game ends and references needs to be disposed */
+	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -52,37 +81,31 @@ export class GameModel {
 			[player2.id]: player2,
 		}
 
+		this.components = new ComponentTable(this)
+		this.afterGameEnd = new Hook<string, () => void>()
+		setupComponents(this.components, player1, player2)
+
 		this.state = getGameState(this)
 	}
 
-	public get currentPlayerId() {
+	public get currentPlayerEntity() {
 		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
 
-	public get opponentPlayerId() {
+	public get opponentPlayerEntity() {
 		return this.state.order[this.state.turn.turnNumber % 2]
 	}
 
-	public get currentPlayer() {
-		return this.state.players[this.currentPlayerId]
+	public get currentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.currentPlayerEntity)
 	}
 
-	public get opponentPlayer() {
-		return this.state.players[this.opponentPlayerId]
-	}
-
-	public get activeRow() {
-		const player = this.currentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
-	}
-
-	public get opponentActiveRow() {
-		const player = this.opponentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
+	public get opponentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
 	public getPlayerIds() {
-		return Object.keys(this.players)
+		return Object.keys(this.players) as Array<PlayerId>
 	}
 
 	public getPlayers() {
@@ -101,6 +124,16 @@ export class GameModel {
 		return this.internalCode
 	}
 
+	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
+		const otherPlayer = this.components.findEntity(
+			PlayerComponent,
+			(_game, otherPlayer) => player !== otherPlayer.entity
+		)
+		if (!otherPlayer)
+			throw new Error('Can not query for other before because both player components are created')
+		return otherPlayer
+	}
+
 	// Functions
 
 	/** Set actions as completed so they cannot be done again this turn */
@@ -112,6 +145,7 @@ export class GameModel {
 			}
 		}
 	}
+
 	/** Remove action from the completed list so they can be done again this turn */
 	public removeCompletedActions(...actions: TurnActions) {
 		for (let i = 0; i < actions.length; i++) {
@@ -204,7 +238,7 @@ export class GameModel {
 		}
 	}
 	public cancelPickRequests() {
-		if (this.state.pickRequests[0]?.playerId === this.currentPlayerId) {
+		if (this.state.pickRequests[0]?.playerId === this.currentPlayer.id) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
 				this.state.pickRequests[i].onCancel?.()
@@ -213,6 +247,8 @@ export class GameModel {
 		}
 	}
 
+	public addModalRequest(newRequest: SelectCards.Request, before?: boolean): void
+	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)
@@ -229,52 +265,41 @@ export class GameModel {
 		}
 	}
 
+	public newAttack(defs: AttackDefs): AttackModel {
+		return new AttackModel(this, defs)
+	}
+
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
 	}
 
-	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
-		const currentActiveRow = player.board.activeRow
-
-		// Can't change to existing active row
-		if (newRow === currentActiveRow) return false
-
-		// Call before active row change hooks - if any of the results are false do not change
-		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
-		if (results.includes(false)) return false
-
-		// Create battle log entry
-		if (newRow && currentActiveRow) {
-			const oldHermit = player.board.rows[currentActiveRow]?.hermitCard
-			const newHermit = player.board.rows[newRow].hermitCard
-
-			this.battleLog.addChangeHermitEntry(oldHermit, newHermit)
-		}
-
-		// Change the active row
-		player.board.activeRow = newRow
-
-		// Call on active row change hooks
-		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
-
-		return true
+	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
+	public swapRows(oldRow: RowComponent, newRow: RowComponent) {
+		let oldIndex = oldRow.index
+		oldRow.index = newRow.index
+		newRow.index = oldIndex
 	}
 
-	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-		const oldSlotPos = getSlotPos(player, oldRow, 'hermit')
+	/**
+	 * Swaps the positions of two cards on the board.
+	 * This function does not check whether the cards can be placed in the other card's slot.
+	 * If one of the slots is undefined, do not swap the slots.
+	 */
+	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
+		if (!slotA || !slotB) return
 
-		const results = player.hooks.onSlotChange.call(oldSlotPos)
-		if (results.includes(false)) return false
+		const slotACards = this.components.filter(CardComponent, query.card.slotEntity(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, query.card.slotEntity(slotB.entity))
 
-		const activeRowChanged = this.changeActiveRow(player, newRow)
-		if (!activeRowChanged) return false
+		slotACards.forEach((card) => {
+			card.attach(slotB)
+		})
+		slotBCards.forEach((card) => {
+			card.attach(slotA)
+		})
+	}
 
-		const oldRowState = player.board.rows[oldRow]
-		player.board.rows[oldRow] = player.board.rows[newRow]
-		player.board.rows[newRow] = oldRowState
-
-		return true
+	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
+		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
 	}
 }

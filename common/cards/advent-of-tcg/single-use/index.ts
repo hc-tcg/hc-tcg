@@ -1,19 +1,19 @@
-import DropperSingleUseCard from './dropper'
-import SplashPotionOfHarmingSingleUseCard from './splash-potion-of-harming'
-import BrushSingleUseCard from './brush'
-import GlowstoneSingleUseCard from './glowstone'
-import LanternSingleUseCard from './lantern'
-import FletchingTableSingleUseCard from './fletching-table'
-import SingleUseCard from '../../base/single-use-card'
+import Dropper from './dropper'
+import SplashPotionOfHarming from './splash-potion-of-harming'
+import Brush from './brush'
+import Glowstone from './glowstone'
+import Lantern from './lantern'
+import FletchingTable from './fletching-table'
+import Card from '../../base/card'
 
-const singleUseCardClasses: Array<SingleUseCard> = [
+const singleUseCardClasses: Array<new () => Card> = [
 	// Advent calendar cards
-	new DropperSingleUseCard(),
-	new FletchingTableSingleUseCard(),
-	new BrushSingleUseCard(),
-	new GlowstoneSingleUseCard(),
-	new LanternSingleUseCard(),
-	new SplashPotionOfHarmingSingleUseCard(),
+	Dropper,
+	FletchingTable,
+	Brush,
+	Glowstone,
+	Lantern,
+	SplashPotionOfHarming,
 ]
 
 export default singleUseCardClasses

@@ -1,96 +1,65 @@
-import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
-import {HERMIT_CARDS} from '../..'
-import {discardCard} from '../../../utils/movement'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {applyStatusEffect} from '../../../utils/board'
+import query from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import SleepingEffect from '../../../status-effects/sleeping'
 
-class BedEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'bed',
-			numericId: 2,
-			name: 'Bed',
-			rarity: 'ultra_rare',
-			description:
-				'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
-		})
-	}
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
+// @todo Figure out how ladder is supposed to work
 
-		// bed addition - hermit must also be active to attach
-		if (!(player.board.activeRow === pos.rowIndex)) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		// Give the current row sleeping for 3 turns
-		const {player, row} = pos
-		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
-
-		if (row && row.hermitCard) {
-			applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
-		}
-
-		// Knockback/Tango/Jevin/etc
-		player.hooks.onTurnStart.add(instance, () => {
-			const isSleeping = game.state.statusEffects.some(
-				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
-			)
-			if (!isSleeping) {
-				discardCard(game, row?.effectCard || null)
-				return
-			}
-		})
-
-		player.hooks.beforeApply.add(instance, () => {
-			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
-		})
-
-		//Ladder
-		player.hooks.afterApply.add(instance, () => {
-			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
-				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
-
-				// Add new sleeping statusEffect
-				applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
-			}
-			delete player.custom[hermitSlot]
-		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			const isSleeping = game.state.statusEffects.some(
-				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
-			)
-
-			// if sleeping has worn off, discard the bed
-			if (!isSleeping) {
-				discardCard(game, row?.effectCard || null)
-				player.hooks.onTurnEnd.remove(instance)
-			}
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		player.hooks.beforeApply.remove(instance)
-		player.hooks.afterApply.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'hermitSlot')]
-	}
-
-	override sidebarDescriptions() {
-		return [
+class Bed extends Card {
+	props: Attach = {
+		...attach,
+		id: 'bed',
+		numericId: 2,
+		expansion: 'default',
+		name: 'Bed',
+		rarity: 'ultra_rare',
+		tokens: 2,
+		description:
+			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+		sidebarDescriptions: [
 			{
 				type: 'statusEffect',
 				name: 'sleeping',
 			},
-		]
+		],
+		attachCondition: query.every(attach.attachCondition, query.slot.active),
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		// Give the current row sleeping for 3 turns
+		const {player} = component
+
+		let hermitCard = () => {
+			if (!component.slot.inRow()) return
+			return game.components.find(
+				CardComponent,
+				query.card.rowEntity(component.slot.row.entity),
+				query.card.slot(query.slot.hermit)
+			)
+		}
+
+		game.components
+			.new(StatusEffectComponent, SleepingEffect, component.entity)
+			.apply(hermitCard()?.entity)
+
+		// Knockback/Tango/Jevin/etc
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (!hermitCard()?.hasStatusEffect(SleepingEffect)) {
+				component.discard()
+			}
+		})
+
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			// if sleeping has worn off, discard the bed
+			if (!hermitCard()?.hasStatusEffect(SleepingEffect)) {
+				component.discard()
+				observer.unsubscribe(player.hooks.onTurnEnd)
+			}
+		})
 	}
 }
 
-export default BedEffectCard
+export default Bed

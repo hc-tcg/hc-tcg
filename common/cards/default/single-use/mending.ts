@@ -1,104 +1,73 @@
-import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
-import {canAttachToSlot, discardSingleUse, getSlotCard, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
-import singleUseCard from '../../base/single-use-card'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class MendingSingleUseCard extends singleUseCard {
-	constructor() {
-		super({
-			id: 'mending',
-			numericId: 78,
-			name: 'Mending',
-			rarity: 'ultra_rare',
-			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
-		})
+class Mending extends Card {
+	pickCondition = query.every(
+		query.slot.currentPlayer,
+		query.slot.attach,
+		query.slot.empty,
+		query.slot.row(query.row.hasHermit),
+		query.not(query.slot.frozen),
+		query.not(query.slot.active)
+	)
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'mending',
+		numericId: 78,
+		name: 'Mending',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 1,
+		description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.exists(SlotComponent, this.pickCondition),
+			query.exists(
+				SlotComponent,
+				query.every(
+					query.slot.active,
+					query.slot.attach,
+					query.not(query.slot.frozen),
+					query.not(query.slot.empty)
+				)
+			)
+		),
+		log: (values) =>
+			`${values.defaultLog} to move $e${
+				values.game.currentPlayer.activeRow?.getAttach()?.props.name
+			}$ to $p${values.pick.hermitCard}$`,
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {player} = pos
-
-		const result = super.canAttach(game, pos)
-
-		const effectCard = getActiveRow(player)?.effectCard
-		if (effectCard && isRemovable(effectCard)) {
-			// check if there is an empty slot available to move the effect card to
-			const inactiveRows = getNonEmptyRows(player, true)
-			for (const rowPos of inactiveRows) {
-				if (rowPos.row.effectCard) continue
-				const slotPos = getSlotPos(player, rowPos.rowIndex, 'effect')
-				const canAttach = canAttachToSlot(game, slotPos, effectCard, true)
-
-				if (canAttach.length > 0) continue
-
-				return result
-			}
-		}
-
-		return [...result, 'UNMET_CONDITION']
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		const activeRowIndex = player.board.activeRow
-		if (activeRowIndex === null) {
-			discardSingleUse(game, player)
-			return
-		}
-
-		const activeRow = getActiveRow(player)
-		if (!activeRow) {
-			discardSingleUse(game, player)
-			return
-		}
-		const effectCard = activeRow.effectCard
-		if (!effectCard) {
-			discardSingleUse(game, player)
-			return
-		}
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.id,
-			message: 'Pick an empty effect slot from one of your afk Hermits',
-			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'effect') return 'FAILURE_INVALID_SLOT'
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-				const row = player.board.rows[rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-				// Make sure we can attach the item
-				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
-				const targetPos = getSlotPos(player, rowIndex, 'effect')
-				const effectCard = getSlotCard(sourcePos)!
-				if (canAttachToSlot(game, targetPos, effectCard, true).length > 0) {
-					return 'FAILURE_INVALID_SLOT'
-				}
+			id: component.entity,
+			message: 'Pick an empty effect slot from one of your AFK Hermits',
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				const hermitActive = game.components.find(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.active,
+					query.slot.attach
+				)
 
 				// Apply the mending card
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[`${CARDS[effectCard.cardId].name} `, 'player'],
-				])
+				applySingleUse(game, component.slot)
 
 				// Move the effect card
-				swapSlots(game, sourcePos, targetPos)
-
-				return 'SUCCESS'
+				game.swapSlots(hermitActive, pickedSlot)
 			},
 		})
 	}
 }
 
-export default MendingSingleUseCard
+export default Mending

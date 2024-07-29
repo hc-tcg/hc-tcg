@@ -1,149 +1,82 @@
-import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {
-	applySingleUse,
-	getActiveRow,
-	getActiveRowPos,
-	getNonEmptyRows,
-	getSlotPos,
-	rowHasEmptyItemSlot,
-	rowHasItem,
-} from '../../../utils/board'
-import {canAttachToSlot, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
-import SingleUseCard from '../../base/single-use-card'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {attach, item, singleUse} from '../../base/defaults'
+import {opponent} from '../../../components/query/slot'
 
-class LeadSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'lead',
-			numericId: 75,
-			name: 'Lead',
-			rarity: 'common',
-			description:
-				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
-		})
+class Lead extends Card {
+	firstPickCondition = query.every(
+		query.slot.opponent,
+		query.slot.item,
+		query.not(query.slot.empty),
+		query.slot.active,
+		query.not(query.slot.frozen)
+	)
+	secondPickCondition = query.every(
+		query.slot.opponent,
+		query.slot.item,
+		query.slot.empty,
+		query.slot.row(query.row.hasHermit),
+		query.not(query.slot.active),
+		query.not(query.slot.frozen)
+	)
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'lead',
+		numericId: 75,
+		name: 'Lead',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 1,
+		description:
+			"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.exists(SlotComponent, this.firstPickCondition),
+			query.exists(SlotComponent, this.secondPickCondition)
+		),
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
-
-		const activeRow = getActiveRow(opponentPlayer)
-		if (!activeRow || !rowHasItem(activeRow)) return [...result, 'UNMET_CONDITION']
-
-		const afkRows = getNonEmptyRows(opponentPlayer, true)
-
-		const items = activeRow.itemCards
-		// Check all afk rows for each item card against all empty slots on that row
-		for (let index = 0; index < afkRows.length; index++) {
-			const rowPos = afkRows[index]
-			if (!rowHasEmptyItemSlot(rowPos.row)) continue
-
-			for (const item of items) {
-				if (!item) continue
-
-				for (let i = 0; i < 3; i++) {
-					const targetSlot = getSlotPos(opponentPlayer, rowPos.rowIndex, 'item', i)
-
-					if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
-
-					// We're good to place
-					return result
-				}
-			}
-		}
-
-		return [...result, 'UNMET_CONDITION']
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		const {player} = component
+		let itemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.id,
+			id: component.entity,
 			message: "Pick an item card attached to your opponent's active Hermit",
-			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickResult.slot.index
-
-				return 'SUCCESS'
+			canPick: this.firstPickCondition,
+			onResult(pickedSlot) {
+				itemSlot = pickedSlot
 			},
 		})
+
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.id,
+			id: component.entity,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
-			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+			canPick: this.secondPickCondition,
+			onResult(pickedSlot) {
+				if (!itemSlot || !pickedSlot.inRow()) return
+				applySingleUse(game)
 
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				// Slot must be empty
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-				// Get the index of the chosen item
-				const itemIndex: number | undefined = player.custom[itemIndexKey]
-
-				const opponentActivePos = getActiveRowPos(opponentPlayer)
-
-				if (itemIndex === undefined || !opponentActivePos) {
-					// Something went wrong, just return success
-					// To clarify, the problem here is that if itemIndex is null this pick request will never be able to succeed if we don't do this
-					// @TODO is a better failsafe mechanism needed for 2 picks in a row?
-					return 'SUCCESS'
-				}
-
-				// Make sure we can attach the item
-				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
-				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
-				const itemCard = opponentActivePos.row.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
-					return 'FAILURE_INVALID_SLOT'
-				}
+				// A custom entry is needed here because the battle log can't support doing this type of entry automatically at the moment
+				game.battleLog.addEntry(
+					player.entity,
+					`$p{You|${player.playerName}}$ used $eLead$ to move $m${
+						itemSlot.getCard()?.props.name
+					}$ to $o${pickedSlot.row.getHermit()?.props.name} (${pickedSlot.row.index})$`
+				)
 
 				// Move the item
-				swapSlots(game, itemPos, targetPos)
-
-				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[
-						`${cardInfo.name}${
-							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-						} `,
-						'opponent',
-					],
-				])
-				delete player.custom[itemIndexKey]
-
-				return 'SUCCESS'
+				game.swapSlots(itemSlot, pickedSlot)
 			},
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
-		delete player.custom[itemIndexKey]
 	}
 }
 
-export default LeadSingleUseCard
+export default Lead

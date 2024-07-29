@@ -1,69 +1,46 @@
-import {CARDS} from '../..'
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class DiamondSwordSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'diamond_sword',
-			numericId: 14,
-			name: 'Diamond Sword',
-			rarity: 'rare',
-			description: "Do 40hp damage to your opponent's active Hermit.",
-		})
+class DiamondSword extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'diamond_sword',
+		numericId: 14,
+		name: 'Diamond Sword',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		description: "Do 40hp damage to your opponent's active Hermit.",
+		hasAttack: true,
+		attackPreview: (_game) => '$A40$',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.getAttacks.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+		observer.subscribe(player.hooks.getAttack, () => {
+			const swordAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 40)
 
-			const opponentIndex = opponentPlayer.board.activeRow
-			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
-
-			const swordAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
-				attacker: activePos,
-				target: {
-					player: opponentPlayer,
-					rowIndex: opponentIndex,
-					row: opponentRow,
-				},
-				type: 'effect',
-			}).addDamage(this.id, 40)
-
-			return [swordAttack]
+			return swordAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attack.id !== attackId) return
-
-			// We've executed our attack, apply effect
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
-			])
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
+			applySingleUse(game)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttacks.remove(instance)
-		player.hooks.onAttack.remove(instance)
-	}
-
-	override canAttack() {
-		return true
 	}
 }
 
-export default DiamondSwordSingleUseCard
+export default DiamondSword

@@ -1,54 +1,70 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import HermitCard from '../../base/hermit-card'
-class VintageBeefUltraRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'vintagebeef_ultra_rare',
-			numericId: 104,
-			name: 'Beef',
-			rarity: 'ultra_rare',
-			hermitType: 'explorer',
-			health: 280,
-			primary: {
-				name: 'Back in Action',
-				cost: ['any'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: 'N.H.O',
-				cost: ['explorer', 'explorer', 'explorer'],
-				damage: 100,
-				power: 'If you have AFK Docm77, Bdubs AND Etho on the game board, attack damage doubles.',
-			},
-		})
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import query from '../../../components/query'
+import BdoubleO100Common from './bdoubleo100-common'
+import BdoubleO100Rare from './bdoubleo100-rare'
+import Docm77Common from './docm77-common'
+import Docm77Rare from './docm77-rare'
+import EthosLabCommon from './ethoslab-common'
+import EthosLabRare from './ethoslab-rare'
+import EthosLabUltraRare from './ethoslab-ultra-rare'
+
+class VintageBeefUltraRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'vintagebeef_ultra_rare',
+		numericId: 104,
+		name: 'Beef',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 2,
+		type: 'explorer',
+		health: 280,
+		primary: {
+			name: 'Back in Action',
+			cost: ['any'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: 'N.H.O',
+			cost: ['explorer', 'explorer', 'explorer'],
+			damage: 100,
+			power: 'If you have AFK Docm77, Bdubs AND Etho on the game board, attack damage doubles.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const hasBdubs = player.board.rows.some((row) =>
-				row.hermitCard?.cardId?.startsWith('bdoubleo100')
+			const hasBdubs = game.components.exists(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.is(BdoubleO100Common, BdoubleO100Rare),
+				query.card.attached
 			)
-			const hasDoc = player.board.rows.some((row) => row.hermitCard?.cardId?.startsWith('docm77'))
-			const hasEtho = player.board.rows.some((row) =>
-				row.hermitCard?.cardId?.startsWith('ethoslab')
+			const hasDoc = game.components.exists(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.is(Docm77Common, Docm77Rare),
+				query.card.attached
+			)
+			const hasEtho = game.components.exists(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare),
+				query.card.attached
 			)
 
-			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(this.id, attack.getDamage())
+			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default VintageBeefUltraRareHermitCard
+export default VintageBeefUltraRare

@@ -1,58 +1,58 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect, getNonEmptyRows, removeStatusEffect} from '../../../utils/board'
-import HermitCard from '../../base/hermit-card'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class OrionSoundRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'orionsound_rare',
-			numericId: 213,
-			name: 'Oli',
-			rarity: 'rare',
-			hermitType: 'speedrunner',
-			health: 280,
-			primary: {
-				name: 'Melody',
-				cost: ['speedrunner'],
-				damage: 60,
-				power:
-					'Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Oli is knocked out.',
-			},
-			secondary: {
-				name: 'Concert',
-				cost: ['speedrunner', 'speedrunner'],
-				damage: 80,
-				power: null,
-			},
-		})
+class OrionSoundRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'orionsound_rare',
+		numericId: 213,
+		name: 'Oli',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'speedrunner',
+		health: 280,
+		primary: {
+			name: 'Melody',
+			cost: ['speedrunner'],
+			damage: 60,
+			power:
+				'Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Oli is knocked out.',
+		},
+		secondary: {
+			name: 'Concert',
+			cost: ['speedrunner', 'speedrunner'],
+			damage: 80,
+			power: null,
+		},
 	}
 
-	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
-		player.custom[instanceKey] = []
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
+		let cardsWithStatusEffects: Array<string> = []
+
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance,
+				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+				canPick: slot.every(slot.not(slot.empty), slot.hermit),
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.cardId || rowIndex === null) return
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					applyStatusEffect(game, 'melody', pickResult.card.cardInstance)
-					player.custom[instanceKey].push(pickResult.card.cardInstance)
-
-					return 'SUCCESS'
+					applyStatusEffect(game, 'melody', pickedSlot.cardId)
+					cardsWithStatusEffects.push(pickedSlot.cardId.component)
 				},
 			})
 		})
@@ -62,41 +62,28 @@ class OrionSoundRareHermitCard extends HermitCard {
 			if (!attackTarget || attackTarget.row.health > 0) return
 			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 				return (
-					player.custom[instanceKey].includes(ail.targetInstance) && ail.statusEffectId == 'melody'
+					cardsWithStatusEffects.includes(ail.targetInstance.component) && ail.props.id == 'melody'
 				)
 			})
 			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+				removeStatusEffect(game, pos, ail)
 			})
 		}
 
-		player.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
+		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		delete player.custom[instanceKey]
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
+		player.hooks.onAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 
-export default OrionSoundRareHermitCard
+export default OrionSoundRare

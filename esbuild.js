@@ -1,5 +1,6 @@
 import {build} from 'esbuild'
 import {copy} from 'esbuild-plugin-copy'
+import {getAppVersion} from './version.js'
 
 await build({
 	entryPoints: ['./server/src'],
@@ -18,6 +19,9 @@ await build({
 			],
 		}),
 	],
+	define: {
+		__APP_VERSION__: `'${getAppVersion()}'`,
+	},
 })
 
 console.log('Build complete')

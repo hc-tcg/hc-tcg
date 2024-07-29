@@ -1,106 +1,85 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {TurnActions} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import query from '../../../components/query'
+import UsedClockEffect from '../../../status-effects/used-clock'
+import TurnSkippedEffect from '../../../status-effects/turn-skipped'
+import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/multiturn-attack-disabled'
 
-class JoeHillsRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'joehills_rare',
-			numericId: 70,
-			name: 'Joe',
-			rarity: 'rare',
-			hermitType: 'farm',
-			health: 270,
-			primary: {
-				name: 'Grow Hills',
-				cost: ['farm'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Time Skip',
-				cost: ['farm', 'farm', 'any'],
-				damage: 90,
-				power:
-					'Flip a coin.\n\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
-			},
-		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		// null | card instance
-		const skippedKey = this.getInstanceKey(instance, 'skipped')
-		player.custom[skippedKey] = null
-
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
-			const attacker = attack.getAttacker()
-			if (!attacker || attack.type !== 'secondary') return
-
-			if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
-				return
-			}
-
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 1)
-			if (coinFlip[0] !== 'heads') return
-
-			// This will tell us to block actions at the start of our next turn
-			// Storing the cardInstance of the card that attacked
-			player.custom[skippedKey] = attacker.row.hermitCard.cardInstance
-
-			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.cardInstance)
-
-			// Block all actions of opponent for one turn
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				game.addBlockedActions(
-					this.id,
-					'APPLY_EFFECT',
-					'REMOVE_EFFECT',
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD'
-				)
-				opponentPlayer.hooks.onTurnStart.remove(instance)
-			})
-		})
-
-		// Block secondary attack if we skipped
-		player.hooks.onTurnStart.add(instance, () => {
-			const sameActive = game.activeRow?.hermitCard?.cardInstance === player.custom[skippedKey]
-			if (player.custom[skippedKey] && sameActive) {
-				// We skipped last turn and we are still the active hermit, block secondary attacks
-				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
-			}
-
-			player.custom[skippedKey] = null
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		const skippedKey = this.getInstanceKey(instance, 'skipped')
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[skippedKey]
-	}
-
-	override sidebarDescriptions() {
-		return [
+class JoeHillsRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'joehills_rare',
+		numericId: 70,
+		name: 'Joe',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 3,
+		type: 'farm',
+		health: 270,
+		primary: {
+			name: 'Grow Hills',
+			cost: ['farm'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Time Skip',
+			cost: ['farm', 'farm', 'any'],
+			damage: 90,
+			power:
+				'Flip a coin.\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
+		},
+		sidebarDescriptions: [
 			{
 				type: 'glossary',
 				name: 'turnSkip',
 			},
-		]
+		],
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
+
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			if (
+				game.components.exists(
+					StatusEffectComponent,
+					query.effect.is(UsedClockEffect),
+					query.effect.targetEntity(component.entity)
+				)
+			) {
+				return
+			}
+
+			const coinFlip = flipCoin(player, component)
+			if (coinFlip[0] !== 'heads') return
+
+			attack.updateLog(
+				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
+			)
+
+			game.components
+				.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
+				.apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, UsedClockEffect, component.entity)
+				.apply(player.entity)
+
+			game.components
+				.filter(CardComponent, query.card.currentPlayer, query.card.is(JoeHillsRare))
+				.forEach((joe) =>
+					game.components
+						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect, component.entity)
+						.apply(joe.entity)
+				)
+		})
 	}
 }
 
-export default JoeHillsRareHermitCard
+export default JoeHillsRare

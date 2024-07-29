@@ -1,7 +1,7 @@
-import {BattleLogT, LocalGameState} from 'common/types/game-state'
-import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
-import {MessageInfoT} from 'common/types/chat'
-import {PickInfo} from 'common/types/server-requests'
+import {PlayerEntity} from 'common/entities'
+import {LocalCurrentCoinFlip, LocalGameState, Message} from 'common/types/game-state'
+import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlip} from 'common/types/game-state'
+import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -27,7 +27,7 @@ export const gameEnd = () => ({
 	type: 'GAME_END' as const,
 })
 
-export const setSelectedCard = (card: CardT | null) => ({
+export const setSelectedCard = (card: LocalCardInstance | null) => ({
 	type: 'SET_SELECTED_CARD' as const,
 	payload: card,
 })
@@ -37,9 +37,19 @@ export const setOpenedModal = (id: string | null, info: any = null) => ({
 	payload: id === null ? null : {id, info},
 })
 
-export const slotPicked = (pickInfo: PickInfo) => ({
+export const slotPicked = (
+	slotInfo: SlotInfo,
+	player: PlayerEntity,
+	row?: number,
+	index?: number
+) => ({
 	type: 'SLOT_PICKED' as const,
-	payload: {pickInfo},
+	payload: {
+		slot: slotInfo,
+		player: player,
+		row: row,
+		index: index,
+	},
 })
 
 export const forfeit = () => ({
@@ -64,13 +74,8 @@ export const showEndGameOverlay = (outcome: GameEndOutcomeT, reason: GameEndReas
 	},
 })
 
-export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
+export const setCoinFlip = (payload: LocalCurrentCoinFlip | null) => ({
 	type: 'SET_COIN_FLIP',
-	payload,
-})
-
-export const addBattleLogEntry = (payload: BattleLogT | null) => ({
-	type: 'ADD_BATTLE_LOG_ENTRY',
 	payload,
 })
 
@@ -81,7 +86,7 @@ export const setOpponentConnection = (payload: boolean) => ({
 
 // ---
 
-export const modalRequest = (payload: any) => ({
+export const modalRequest = (payload: {modalResult: LocalModalResult}) => ({
 	type: 'MODAL_REQUEST' as const,
 	payload,
 })
@@ -104,7 +109,7 @@ export const chatMessage = (message: string) => ({
 	payload: message,
 })
 
-export const chatUpdate = (messages: Array<MessageInfoT>) => ({
+export const chatUpdate = (messages: Array<Message>) => ({
 	type: 'CHAT_UPDATE',
 	payload: messages,
 })

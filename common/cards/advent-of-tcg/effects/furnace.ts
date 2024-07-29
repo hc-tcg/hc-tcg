@@ -1,35 +1,33 @@
-import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
-class FurnaceEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'furnace',
-			numericId: 203,
-			name: 'Furnace',
-			rarity: 'rare',
-			description:
-				'After 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
-		})
+class Furnace extends Card {
+	props: Attach = {
+		...attach,
+		id: 'furnace',
+		numericId: 203,
+		name: 'Furnace',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			'After 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		applyStatusEffect(game, 'smelting', instance)
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		applyStatusEffect(game, 'smelting', component)
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		game.state.statusEffects.forEach((ail) => {
-			if (ail.targetInstance === instance) {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+			if (ail.targetInstance === component) {
+				removeStatusEffect(game, pos, ail)
 			}
 		})
 	}
-
-	public override getExpansion(): string {
-		return 'advent_of_tcg'
-	}
 }
 
-export default FurnaceEffectCard
+export default Furnace

@@ -1,82 +1,44 @@
-import StatusEffect from './status-effect'
+import {CardStatusEffect, StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {RowPos} from '../types/cards'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
-import {AttackModel} from '../models/attack-model'
-import {getActiveRowPos, removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class FireStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'fire',
-			name: 'Burn',
-			description:
-				"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
-			duration: 0,
-			counter: false,
-			damageEffect: true,
-			visible: true,
-		})
+class FireEffect extends CardStatusEffect {
+	props: StatusEffectProps = {
+		...damageEffect,
+		icon: 'fire',
+		name: 'Burn',
+		description:
+			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
+		applyLog: (values) => `${values.target} was $eBurned$`,
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		const {player, opponentPlayer} = target
 
-		const hasDamageEffect = game.state.statusEffects.some(
-			(a) => a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
-		)
-
-		if (hasDamageEffect) return
-
-		game.state.statusEffects.push(statusEffectInfo)
-
-		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
-			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
-			if (!targetPos.row.hermitCard) return
-
-			const activeRowPos = getActiveRowPos(opponentPlayer)
-			const sourceRow: RowPos | null = activeRowPos
-				? {
-						player: activeRowPos.player,
-						rowIndex: activeRowPos.rowIndex,
-						row: activeRowPos.row,
-				  }
-				: null
-
-			const targetRow: RowPos = {
-				player: targetPos.player,
-				rowIndex: targetPos.rowIndex,
-				row: targetPos.row,
-			}
-
-			const statusEffectAttack = new AttackModel({
-				id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'statusEffectAttack'),
-				attacker: sourceRow,
-				target: targetRow,
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
+			if (!target.slot.inRow()) return
+			const statusEffectAttack = game.newAttack({
+				attacker: effect.entity,
+				target: target.slot.row.entity,
+				player: opponentPlayer.entity,
 				type: 'status-effect',
+				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
 			})
-			statusEffectAttack.addDamage(this.id, 20)
+			statusEffectAttack.addDamage(target.entity, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Burn', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
-			const attackTarget = attack.getTarget()
-			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
-			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+		observer.subscribe(player.hooks.afterDefence, (_attack) => {
+			if (!target.isAlive()) effect.remove()
 		})
-	}
-
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 
-export default FireStatusEffect
+export default FireEffect

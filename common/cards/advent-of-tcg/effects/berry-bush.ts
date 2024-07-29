@@ -1,58 +1,56 @@
-import EffectCard from '../../base/effect-card'
-import {isTargetingPos} from '../../../utils/attacks'
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
-import {TurnActions} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
-import {hasActive} from '../../../utils/game'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CARDS} from '../..'
+import {CardComponent} from '../../../components'
 
-class BerryBushEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'berry_bush',
-			numericId: 200,
-			name: 'Sweet Berry Bush',
-			rarity: 'ultra_rare',
-			description:
-				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
-		})
+class BerryBush extends Card {
+	props: Attach = {
+		...attach,
+		id: 'berry_bush',
+		numericId: 200,
+		name: 'Sweet Berry Bush',
+		expansion: 'advent_of_tcg',
+		rarity: 'ultra_rare',
+		tokens: 2,
+		description:
+			"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+		attachCondition: query.every(
+			slot.opponent,
+			slot.hermit,
+			slot.empty,
+			slot.playerHasActiveHermit,
+			slot.opponentHasActiveHermit,
+			query.not(slot.frozen)
+		),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+		const {player, opponentPlayer, rowId: row} = pos
 		if (!row) return
 
 		row.health = 30
 
-		player.hooks.afterAttack.add(instance, () => {
+		player.hooks.afterAttack.add(component, () => {
 			if (!row.health) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 			}
 		})
 
-		player.hooks.canAttach.add(instance, (result, pos) => {
-			if (pos.row?.hermitCard?.cardInstance !== instance) return
-			if (['item', 'effect'].includes(pos.slot.type)) result.push('UNMET_CONDITION_SILENT')
-		})
-
-		opponentPlayer.hooks.afterAttack.add(instance, () => {
+		opponentPlayer.hooks.afterAttack.add(component, () => {
 			if (!row.health) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
-					const cardInfo = {
-						cardId: 'instant_health_ii',
-						cardInstance: Math.random().toString(),
-					}
-					opponentPlayer.hand.push(cardInfo)
+					opponentPlayer.hand.push(CardComponent.fromCardId('instant_health_ii'))
 				}
 			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+		opponentPlayer.hooks.onTurnEnd.add(component, () => {
 			if (!row.health || row.health <= 10) {
 				discardCard(game, row.hermitCard)
 				return
@@ -61,53 +59,23 @@ class BerryBushEffectCard extends EffectCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {
-			game.changeActiveRow(player, null)
+			player.changeActiveRow(null)
 		}
 
-		if (slot && slot.type === 'hermit' && row) {
+		if (slot && type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
 			row.itemCards = []
 		}
 
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.canAttach.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {slot} = pos
-		const {currentPlayer, opponentPlayer} = game
-		const result: CanAttachResult = []
-
-		if (!slot || slot.type !== 'hermit') result.push('INVALID_SLOT')
-		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
-		if (!hasActive(opponentPlayer) || !hasActive(currentPlayer)) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {opponentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override showAttachTooltip() {
-		return false
+		player.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 
-export default BerryBushEffectCard
+export default BerryBush

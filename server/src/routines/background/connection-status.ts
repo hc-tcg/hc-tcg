@@ -5,9 +5,10 @@ import {CONFIG} from 'common/config'
 import {getLocalGameState} from '../../utils/state-gen'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
+import {PlayerModel} from 'common/models/player-model'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
-	const {playerId} = action.payload
+	const playerId = action.payload.internalId
 	const player = game.players[playerId]
 	const opponentId = getOpponentId(game, playerId)
 	const opponent = game.players[opponentId]
@@ -18,7 +19,7 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000
 		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 		const graceTime = 1000
-		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+		game.state.timer.turnRemaining = remainingTime + graceTime
 	}
 
 	const payload = {
@@ -30,8 +31,8 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 }
 
 function* statusChangedSaga(game: GameModel, action: AnyAction) {
-	const playerId = action.payload.playerId
-	const opponentId = getOpponentId(game, action.payload.playerId)
+	const playerId = (action.payload as PlayerModel).id
+	const opponentId = getOpponentId(game, playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
 	broadcast([game.players[opponentId]], 'OPPONENT_CONNECTION', connectionStatus)
 }
@@ -39,7 +40,7 @@ function* statusChangedSaga(game: GameModel, action: AnyAction) {
 function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
 		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' && !!game.players[action.payload.playerId],
+			action.type === 'PLAYER_RECONNECTED' && !!game.players[(action.payload as PlayerModel).id],
 		sendGameStateOnReconnect,
 		game
 	)
@@ -47,7 +48,7 @@ function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
 		(action: any) =>
 			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
-			!!game.players[action.payload.playerId],
+			!!game.players[(action.payload as PlayerModel).id],
 		statusChangedSaga,
 		game
 	)

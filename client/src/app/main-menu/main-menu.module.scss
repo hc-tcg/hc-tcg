@@ -236,6 +236,17 @@ nav {
 	gap: 1vh;
 }
 
+.resetModal {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+.resetModalButton {
+	margin: 1vh;
+	min-width: 45%;
+}
+
 /* DESKTOP */
 @media (min-width: 80vh) {
 	nav {

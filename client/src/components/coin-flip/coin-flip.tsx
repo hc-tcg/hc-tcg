@@ -1,10 +1,10 @@
 import css from './coin-flip.module.scss'
 import classnames from 'classnames'
-import {CoinFlipT} from 'common/types/game-state'
+import {CoinFlipResult} from 'common/types/game-state'
 
 export type Props = {
 	name: string
-	tosses: Array<CoinFlipT>
+	tosses: Array<CoinFlipResult>
 	amount: number
 }
 
@@ -53,7 +53,8 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 
 	return (
 		<div className={css.coinFlip}>
-			<div className={css.name}>{name}</div>
+			<div className={css.nameDesktop}>{name}</div>
+			<div className={css.nameMobile}>{name}:</div>
 			<div className={css.coins}>{coins}</div>
 		</div>
 	)

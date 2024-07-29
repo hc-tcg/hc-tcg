@@ -1,77 +1,55 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
-import {discardCard} from '../../../utils/movement'
-import EffectCard from '../../base/effect-card'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class TurtleShellEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'turtle_shell',
-			numericId: 125,
-			name: 'Turtle Shell',
-			rarity: 'rare',
-			description:
-				"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
-		})
+class TurtleShell extends Card {
+	props: Attach = {
+		...attach,
+		id: 'turtle_shell',
+		numericId: 125,
+		name: 'Turtle Shell',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
+		attachCondition: query.every(attach.attachCondition, query.not(query.slot.active)),
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+		let hasBeenActive = false
 
-		const result = super.canAttach(game, pos)
-
-		// turtle shell addition - hermit must be inactive to attach
-		if (!(player.board.activeRow !== pos.rowIndex)) result.push('INVALID_SLOT')
-
-		return result
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (player.board.activeRow === pos.rowIndex) {
-				player.custom[instanceKey] = true
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			if (!component.slot.inRow()) return
+			if (player.activeRowEntity === component.slot.row.entity) {
+				hasBeenActive = true
 			}
 		})
 
-		player.hooks.onTurnStart.add(instance, () => {
-			if (player.custom[instanceKey]) {
-				discardCard(game, pos.card)
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (hasBeenActive) {
+				component.discard()
 			}
 		})
 
-		player.hooks.onDefence.add(instance, (attack) => {
-			// Only block if just became active
-			if (!player.custom[instanceKey]) return
+		observer.subscribe(player.hooks.onDefence, (attack) => {
+			if (!component.slot.inRow()) return
 			// Only block damage when we are active
-			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !isTargetingPos(attack, pos)) return
+			const isActive = player.activeRowEntity === component.slot.row.entity
+			if (!isActive || !attack.isTargeting(component)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
-
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[instanceKey]
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
-	}
 }
 
-export default TurtleShellEffectCard
+export default TurtleShell

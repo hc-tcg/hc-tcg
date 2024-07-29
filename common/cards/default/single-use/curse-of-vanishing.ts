@@ -1,58 +1,44 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
-import {discardCard} from '../../../utils/movement'
-import SingleUseCard from '../../base/single-use-card'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class CurseOfVanishingSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'curse_of_vanishing',
-			numericId: 12,
-			name: 'Curse Of Vanishing',
-			rarity: 'common',
-			description: 'Your opponent must discard any effect card attached to their active Hermit.',
+class CurseOfVanishing extends Card {
+	discardCondition = query.every(
+		query.slot.opponent,
+		query.slot.active,
+		query.slot.attach,
+		query.not(query.slot.empty),
+		query.not(query.slot.frozen)
+	)
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'curse_of_vanishing',
+		numericId: 12,
+		name: 'Curse Of Vanishing',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 1,
+		description: 'Your opponent must discard any effect card attached to their active Hermit.',
+		showConfirmationModal: true,
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.exists(SlotComponent, this.discardCondition)
+		),
+	}
+
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.filter(SlotComponent, this.discardCondition)
+				.map((slot) => slot.getCard()?.discard())
 		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
-
-		player.hooks.onApply.add(instance, () => {
-			if (opponentPlayer.board.activeRow === null) return
-			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
-				discardCard(game, opponentActiveRow.effectCard)
-			}
-		})
-	}
-
-	override canApply() {
-		return true
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (
-			!opponentActiveRow ||
-			!opponentActiveRow.effectCard ||
-			!isRemovable(opponentActiveRow.effectCard)
-		) {
-			result.push('UNMET_CONDITION')
-		}
-
-		return result
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default CurseOfVanishingSingleUseCard
+export default CurseOfVanishing

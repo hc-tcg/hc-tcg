@@ -1,46 +1,69 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import query from '../../../components/query'
+import FortuneEffect from '../../../status-effects/fortune'
 
-class BoomerBdubsRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'boomerbdubs_rare',
-			numericId: 228,
-			name: 'Boomer Bdubs',
-			rarity: 'rare',
-			hermitType: 'redstone',
-			health: 290,
-			primary: {
-				name: 'Boom',
-				cost: ['any'],
-				damage: 30,
-				power: null,
-			},
-			secondary: {
-				name: 'Watch This',
-				cost: ['redstone', 'redstone'],
-				damage: 80,
-				power:
-					'Flip a coin as many times as you want.\n\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.',
-			},
-		})
+class BoomerBdubsRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'boomerbdubs_rare',
+		numericId: 228,
+		name: 'Boomer Bdubs',
+		shortName: 'Boomer B.',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'redstone',
+		health: 290,
+		primary: {
+			name: 'Boom',
+			cost: ['any'],
+			damage: 30,
+			power: null,
+		},
+		secondary: {
+			name: 'Watch This',
+			cost: ['redstone', 'redstone'],
+			damage: 80,
+			power:
+				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
+		},
 	}
 
-	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent
+	): void {
+		const {player} = component
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		let extraDamage = 0
+		let flippedTails = false
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			extraDamage = 0
+			flippedTails = false
+		})
+
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			const activeHermit = getActiveRow(player)?.hermitCard
+			const activeHermit = player.getActiveHermit()
 
 			if (!activeHermit) return
 
@@ -70,72 +93,41 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 					const flip = flipCoin(player, activeHermit)[0]
 
 					if (flip === 'tails') {
-						player.custom[instanceKey] = 0
+						flippedTails = true
 						return 'SUCCESS'
 					}
 
-					if (!player.custom[instanceKey]) {
-						player.custom[instanceKey] = 0
-					}
-
-					player.custom[instanceKey] += 20
+					extraDamage += 20
 
 					player.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
 
-					// This is sketchy AF but fortune needs to be removed after the first coin flip
-					// to prevent infinite flips from being easy.
-					const fortuneInstances = player.playerDeck.filter((card) => card.cardId === 'fortune')
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.cardInstance))
+					// After the first coin flip we remove fortune to prevent infinite coin flips.
+					game.components
+						.find(
+							StatusEffectComponent<PlayerComponent>,
+							query.effect.is(FortuneEffect),
+							query.effect.targetIsPlayerAnd(
+								(_game, targetPlayer: PlayerComponent) => targetPlayer.id === player.id
+							)
+						)
+						?.remove()
 
 					return 'SUCCESS'
 				},
-				onTimeout() {
-					return
-				},
+				onTimeout() {},
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (player.custom[instanceKey] === 0) {
-				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
+		observer.subscribe(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (flippedTails === true) {
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return
 			}
-			if (!player.custom[instanceKey]) return
 
-			attack.addDamage(this.id, player.custom[instanceKey])
+			attack.addDamage(component.entity, extraDamage)
 		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[instanceKey]
-		})
-	}
-
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
-		delete player.custom[instanceKey]
-
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos_ii'
-	}
-
-	override getPalette() {
-		return 'alter_egos'
-	}
-
-	override getBackground() {
-		return 'alter_egos_background'
-	}
-
-	override getShortName() {
-		return 'Boomer B.'
 	}
 }
 
-export default BoomerBdubsRareHermitCard
+export default BoomerBdubsRare

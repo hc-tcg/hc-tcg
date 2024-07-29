@@ -1,9 +1,7 @@
 import classNames from 'classnames'
 import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
-import {CARDS} from 'common/cards'
 import {validateDeck} from 'common/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
@@ -11,12 +9,12 @@ import DeckLayout from './layout'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PlayerDeckT} from 'common/types/deck'
-import EditDeck from './deck-edit'
+import EditDeck, {sortCards} from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
 import {CopyIcon, DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
-import {getCardCost, getDeckCost} from 'common/utils/ranks'
+import {getDeckCost} from 'common/utils/ranks'
 import {ImportModal, ExportModal} from 'components/import-export'
 import {CONFIG} from '../../../../common/config'
 import {
@@ -28,72 +26,16 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import HermitCard from '../../../../common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/types'
+import {LocalCardInstance} from 'common/types/server-requests'
 
-const TYPE_ORDER = {
-	hermit: 0,
-	effect: 1,
-	single_use: 2,
-	item: 3,
-	health: 4,
-}
-
-export const sortCards = (cards: Array<CardT>): Array<CardT> => {
-	return cards.slice().sort((a: CardT, b: CardT) => {
-		const cardInfoA = CARDS[a.cardId]
-		const cardInfoB = CARDS[b.cardId]
-		const cardCostA = getCardCost(cardInfoA)
-		const cardCostB = getCardCost(cardInfoB)
-
-		if (cardInfoA.type !== cardInfoB.type) {
-			// seperate by types first
-			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
-		} else if (
-			// then by hermit types
-			cardInfoA instanceof HermitCard &&
-			cardInfoB instanceof HermitCard &&
-			cardInfoA.hermitType !== cardInfoB.hermitType
-		) {
-			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
-		} else if (
-			// then by item types
-			cardInfoA instanceof ItemCard &&
-			cardInfoB instanceof ItemCard &&
-			cardInfoA.hermitType !== cardInfoB.hermitType
-		) {
-			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
-		} else if (
-			cardInfoA instanceof HermitCard &&
-			cardInfoB instanceof HermitCard &&
-			cardInfoA.getExpansion() !== cardInfoB.getExpansion()
-		) {
-			// then by expansion if they are both hermits
-			return cardInfoA.getExpansion().localeCompare(cardInfoA.getExpansion())
-		} else if (cardCostA !== cardCostB) {
-			// order by ranks
-			return cardCostA - cardCostB
-		} else if (cardInfoA.name !== cardInfoB.name) {
-			return cardInfoA.name.localeCompare(cardInfoB.name)
-		}
-
-		// rarity is our last hope
-		const rarities = ['common', 'rare', 'ultra_rare']
-		const rarityValueA = rarities.findIndex((s) => s === cardInfoA.rarity) + 1
-		const rarityValueB = rarities.findIndex((s) => s === cardInfoB.rarity) + 1
-		return rarityValueA - rarityValueB
-	})
-}
-
-export const cardGroupHeader = (title: string, cards: CardT[]) => (
+export const cardGroupHeader = (title: string, cards: Array<LocalCardInstance>) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
-		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.cardId))} tokens
-		</span>
+		<span className={classNames(css.tokens, css.tokenHeader)}>{getDeckCost(cards)} tokens</span>
 	</p>
 )
 
@@ -149,7 +91,7 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
+		if (validateDeck(loadedDeck.cards)) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -183,11 +125,9 @@ const Deck = ({setMenuSection}: Props) => {
 		const deck = getSavedDeck(deckName)
 		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
-		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
-
 		setLoadedDeck({
 			...deck,
-			cards: deckIds,
+			cards: deck.cards,
 		})
 	}
 	const importDeck = (deck: PlayerDeckT) => {
@@ -257,12 +197,12 @@ const Deck = ({setMenuSection}: Props) => {
 			</li>
 		)
 	})
-	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
+	const validationMessage = validateDeck(loadedDeck.cards)
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
-		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
-		attachableEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'effect'),
-		singleUseEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'single_use'),
+		hermits: loadedDeck.cards.filter((card) => card.props.category === 'hermit'),
+		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
+		attachableEffects: loadedDeck.cards.filter((card) => card.props.category === 'attach'),
+		singleUseEffects: loadedDeck.cards.filter((card) => card.props.category === 'single_use'),
 	}
 
 	//MISC
@@ -357,8 +297,8 @@ const Deck = ({setMenuSection}: Props) => {
 									</p>
 									<div className={css.cardCount}>
 										<p className={css.tokens}>
-											{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
-											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
+											{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+											<span className={css.hideOnMobile}>tokens</span>
 										</p>
 									</div>
 								</div>

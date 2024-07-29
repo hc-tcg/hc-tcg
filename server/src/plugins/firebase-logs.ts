@@ -1,10 +1,11 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
-import {CardT, GameLog, PlayerState} from 'common/types/game-state'
+import {GameLog} from 'common/types/game-state'
 import {Database} from 'firebase-admin/lib/database/database'
 import {CONFIG} from 'common/config'
 import {ServiceAccount} from 'firebase-admin/app'
 import {RootModel} from 'common/models/root-model'
+import {PlayerComponent} from 'common/components'
 
 export class FirebaseLogs {
 	public id: string = 'firebase_logs'
@@ -21,7 +22,7 @@ export class FirebaseLogs {
 		}
 
 		try {
-			const serviceAccount: ServiceAccount = require('./adminKey.json')
+			const serviceAccount: ServiceAccount = JSON.parse(process.env.FIREBASE_KEY || '')
 			const admin = require('firebase-admin')
 			admin.initializeApp({
 				credential: admin.credential.cert(serviceAccount),
@@ -44,10 +45,10 @@ export class FirebaseLogs {
 			}
 			const type = game.code ? 'private' : 'public'
 
-			const playerStates: Array<PlayerState> = Object.values(game.state.players)
+			const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
 
-			function getHand(pState: PlayerState) {
-				return pState.hand.map((card: CardT) => card.cardId)
+			function getHand(pState: PlayerComponent) {
+				return pState.getHand()
 			}
 
 			this.gameLogs[game.id] = {
@@ -61,7 +62,7 @@ export class FirebaseLogs {
 
 		root.hooks.gameRemoved.add(this.id, (game) => {
 			try {
-				const playerStates: Array<PlayerState> = Object.values(game.state.players)
+				const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 

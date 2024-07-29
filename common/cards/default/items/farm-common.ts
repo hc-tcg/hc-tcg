@@ -1,21 +1,20 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import ItemCard from '../../base/item-card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class FarmCommonItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_farm_common',
-			numericId: 55,
-			name: 'Farm',
-			rarity: 'common',
-			hermitType: 'farm',
-		})
-	}
-
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+class FarmItem extends Card {
+	props: Item = {
+		...item,
+		id: 'item_farm_common',
+		numericId: 55,
+		name: 'Farm Item',
+		shortName: 'Farm',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'farm',
+		energy: ['farm'],
 	}
 }
 
-export default FarmCommonItemCard
+export default FarmItem

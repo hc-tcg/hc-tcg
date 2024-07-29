@@ -1,26 +1,20 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CanAttachResult} from '../../base/card'
-import SingleUseCard from '../../base/single-use-card'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class FletchingTableSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'fletching_table',
-			numericId: 223,
-			name: 'Fletching table',
-			rarity: 'common',
-			description: 'Completely useless! Worth -1 tokens.',
-		})
-	}
-
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		return ['INVALID_SLOT']
-	}
-
-	public override getExpansion(): string {
-		return 'advent_of_tcg'
+class FletchingTable extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'fletching_table',
+		numericId: 223,
+		name: 'Fletching table',
+		expansion: 'advent_of_tcg',
+		rarity: 'common',
+		tokens: -1,
+		description: 'Completely useless! Worth -1 tokens.',
+		attachCondition: query.nothing,
 	}
 }
 
-export default FletchingTableSingleUseCard
+export default FletchingTable

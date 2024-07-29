@@ -1,6 +1,5 @@
 import {AnyAction} from 'redux'
 import {LocalGameRoot} from 'common/types/game-state'
-import {equalCard} from 'common/utils/cards'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -48,7 +47,7 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 		case 'SET_SELECTED_CARD':
 			return {
 				...state,
-				selectedCard: equalCard(action.payload, state.selectedCard) ? null : action.payload,
+				selectedCard: action.payload,
 			}
 		case 'SET_OPENED_MODAL':
 			return {
@@ -75,11 +74,13 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				...state,
 				currentCoinFlip: action.payload,
 			}
-		case 'ADD_BATTLE_LOG_ENTRY':
-			return {
-				...state,
-				battleLog: action.payload,
-			}
+		// Update the board for the current player. This is used to put cards on the board before the
+		// server sends the new state.
+		// This updates based on outside mutations because I am so confused by redux and I want to ship
+		// the release tomorrow.
+		case 'UPDATE_GAME':
+			return state
+
 		default:
 			return state
 	}

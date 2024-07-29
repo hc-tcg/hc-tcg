@@ -1,70 +1,85 @@
 import cn from 'classnames'
-import {CARDS} from 'common/cards'
-import {CardT} from 'common/types/game-state'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
-import Card from 'common/cards/base/card'
-import {equalCard} from 'common/utils/cards'
-import {forwardRef, useRef} from 'react'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 type CardListProps = {
-	cards: Array<CardT>
+	cards: Array<LocalCardInstance>
 	disabled?: Array<string>
-	selected?: Array<CardT | null>
-	picked?: Array<CardT>
-	onClick?: (card: CardT) => void
+	unpickable?: Array<LocalCardInstance>
+	selected?: Array<LocalCardInstance | null>
+	picked?: Array<LocalCardInstance>
+	onClick?: (card: LocalCardInstance) => void
 	wrap?: boolean
 	tooltipAboveModal?: boolean
+	disableAnimations?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, selected, picked} = props
+	const {wrap, onClick, cards, disabled, unpickable, selected, picked, disableAnimations} = props
 
 	const cardsOutput = cards.map((card) => {
-		const info = CARDS[card.cardId] as Card
-		if (!info) return null
 		const isSelected = selected
-			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
 			: false
-		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
-		const isDisabled = !!disabled?.find((id) => card.cardId === id)
+		const isPicked = !!picked?.find((pickedCard) => card.entity === pickedCard.entity)
+		const isDisabled = !!disabled?.find((id) => id == card.props.id)
+		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
 
-		return (
-			<CSSTransition
-				timeout={250}
-				key={card.cardInstance}
-				unmountOnExit={true}
-				classNames={{
-					enter: css.enter,
-					enterActive: css.enterActive,
-					enterDone: css.enterDone,
-					exit: css.exit,
-					exitActive: css.exitActive,
-				}}
-			>
-				<CardComponent
-					key={card.cardInstance}
-					className={cn(css.card, {
-						[css.clickable]: !!onClick && !isDisabled,
-					})}
-					onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
-					card={info}
-					disabled={isDisabled}
-					selected={isSelected}
-					picked={!!isPicked}
-					tooltipAboveModal={props.tooltipAboveModal}
-				/>
-			</CSSTransition>
+		let cardComponent = (
+			<CardComponent
+				className={cn(css.card, {
+					[css.clickable]: !!onClick && !isDisabled,
+				})}
+				onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
+				card={card.props}
+				unpickable={isUnpickable}
+				disabled={isDisabled}
+				selected={isSelected}
+				picked={isPicked}
+				tooltipAboveModal={props.tooltipAboveModal}
+			/>
 		)
+
+		if (!disableAnimations) {
+			return (
+				<CSSTransition
+					key={card.entity}
+					timeout={200}
+					unmountOnExit={true}
+					classNames={{
+						enter: css.enter,
+						enterActive: css.enterActive,
+						enterDone: css.enterDone,
+						exit: css.exit,
+						exitActive: css.exitActive,
+					}}
+				>
+					<div className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+						{cardComponent}
+					</div>
+				</CSSTransition>
+			)
+		} else {
+			return (
+				<div key={card.entity} className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+					{cardComponent}
+				</div>
+			)
+		}
 	})
 
-	return (
-		<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
-			{cardsOutput}
-		</TransitionGroup>
-	)
+	if (!disableAnimations) {
+		return (
+			<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
+				{cardsOutput}
+			</TransitionGroup>
+		)
+	} else {
+		return <div className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</div>
+	}
 }
 
 export default CardList

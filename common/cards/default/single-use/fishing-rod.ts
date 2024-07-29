@@ -1,45 +1,31 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {drawCards} from '../../../utils/movement'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class FishingRodSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'fishing_rod',
-			numericId: 24,
-			name: 'Fishing Rod',
-			rarity: 'ultra_rare',
-			description: 'Draw 2 cards.',
+class FishingRod extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'fishing_rod',
+		numericId: 24,
+		name: 'Fishing Rod',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 2,
+		description: 'Draw 2 cards.',
+		showConfirmationModal: true,
+		log: (values) => `${values.defaultLog} to draw 2 cards`,
+	}
+
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
+
+		observer.subscribe(player.hooks.onApply, () => {
+			player.draw(2)
+			observer.unsubscribe(player.hooks.onApply)
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		if (player.pile.length <= 2) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.add(instance, () => {
-			drawCards(player, 2)
-			player.hooks.onApply.remove(instance)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 
-export default FishingRodSingleUseCard
+export default FishingRod

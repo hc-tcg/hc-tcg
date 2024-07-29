@@ -1,42 +1,32 @@
-import StatusEffect from './status-effect'
+import {Counter, PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import JoeHillsRare from '../cards/default/hermits/joehills-rare'
 
-class UsedClockStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'used-clock',
-			name: 'Turn Skipped',
-			description: 'Turns can not be skipped consecutively.',
-			duration: 2,
-			counter: false,
-			damageEffect: false,
-			visible: false,
-		})
+class UsedClockEffect extends PlayerStatusEffect {
+	props: StatusEffectProps & Counter = {
+		...systemStatusEffect,
+		icon: 'used-clock',
+		name: 'Clocked Out',
+		description: "Your opponent's turns cannot be skipped consecutively.",
+		counter: 1,
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
-		const {player} = pos
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		player: PlayerComponent,
+		observer: ObserverComponent
+	) {
+		if (effect.counter === null) effect.counter = this.props.counter
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
-
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
-
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			if (effect.counter === null) return
+			if (effect.counter === 0) effect.remove()
+			effect.counter--
 		})
-	}
-
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 
-export default UsedClockStatusEffect
+export default UsedClockEffect

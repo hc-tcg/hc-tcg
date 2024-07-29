@@ -1,51 +1,30 @@
-import StatusEffect from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CardPosModel, getBasicCardPos, getCardPos} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {CardComponent} from '../components'
 
-class DyedStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'dyed',
-			name: 'Dyed',
-			description: 'Items attached to this Hermit become any type.',
-			duration: 0,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+class DyedEffect extends CardStatusEffect {
+	props: StatusEffectProps = {
+		...statusEffect,
+		icon: 'dyed',
+		name: 'Dyed',
+		description: 'Items attached to this Hermit become any type.',
+		applyCondition: (_game, card) =>
+			card instanceof CardComponent && !card.hasStatusEffect(DyedEffect),
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player} = pos
+	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	// 	target.player.hooks.availableEnergy.add(effect, (availableEnergy) => {
+	// 		if (!target.slot.inRow() || target.player.activeRowEntity !== target.slot.row.entity)
+	// 			return availableEnergy
+	// 		return availableEnergy.map(() => 'any')
+	// 	})
+	// }
 
-		const hasDyed = game.state.statusEffects.some(
-			(a) => a.targetInstance === pos.card?.cardInstance && a.statusEffectId === 'dyed'
-		)
+	// override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	// 	const {player, opponentPlayer} = target
 
-		if (hasDyed) return
-
-		game.state.statusEffects.push(statusEffectInfo)
-
-		player.hooks.availableEnergy.add(statusEffectInfo.statusEffectInstance, (availableEnergy) => {
-			if (player.board.activeRow === null) return availableEnergy
-
-			const activeRow = player.board.rows[player.board.activeRow]
-
-			if (statusEffectInfo.targetInstance !== activeRow.hermitCard?.cardInstance)
-				return availableEnergy
-
-			return availableEnergy.map(() => 'any')
-		})
-	}
-
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.availableEnergy.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-	}
+	// 	player.hooks.availableEnergy.remove(effect)
+	// 	opponentPlayer.hooks.onTurnEnd.remove(effect)
+	// }
 }
 
-export default DyedStatusEffect
+export default DyedEffect

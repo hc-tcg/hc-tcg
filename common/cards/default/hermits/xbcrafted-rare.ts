@@ -1,91 +1,51 @@
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
-import HermitCard from '../../base/hermit-card'
-import {isTargetingPos} from '../../../utils/attacks'
-import {getActiveRowPos} from '../../../utils/board'
-class XBCraftedRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'xbcrafted_rare',
-			numericId: 110,
-			name: 'XB',
-			rarity: 'rare',
-			hermitType: 'explorer',
-			health: 270,
-			primary: {
-				name: 'Giggle',
-				cost: ['explorer'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Noice!',
-				cost: ['explorer', 'any'],
-				damage: 70,
-				power:
-					"Any effect card attached to your opponent's active Hermit are ignored during this turn.",
-			},
-		})
+import query from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent, ObserverComponent} from '../../../components'
+
+class XBCraftedRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'xbcrafted_rare',
+		numericId: 110,
+		name: 'xB',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'explorer',
+		health: 270,
+		primary: {
+			name: 'Giggle',
+			cost: ['explorer'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Noice!',
+			cost: ['explorer', 'any'],
+			damage: 70,
+			power:
+				"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
+		},
 	}
 
-	override getAttacks(
-		game: GameModel,
-		instance: string,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		if (attacks[0].type === 'secondary') {
-			// Noice attack, set flag to ignore target effect card
-			pos.player.custom[this.getInstanceKey(instance, 'ignore')] = true
-		}
-
-		const newAttacks = [attacks[0]]
-
-		return newAttacks
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const ignoreKey = this.getInstanceKey(instance, 'ignore')
-
-		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			if (!player.custom[ignoreKey]) return
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return
-
+		observer.subscribeBefore(player.hooks.beforeAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
-			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !pos.row || !pos.row.effectCard) return false
-
-				// It's not the targets effect card, do not ignore it
-				if (pos.slot.type !== 'effect') return false
-
-				// Not attached to the opponent's active Hermit, do not ignore it
-				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
-
-				return true
-			})
+			attack.shouldIgnoreCards.push(
+				query.every(
+					query.card.opponentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.attach)
+				)
+			)
 		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			// Remove ignore flag
-			if (player.custom[ignoreKey]) {
-				delete player.custom[ignoreKey]
-			}
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
 	}
 }
 
-export default XBCraftedRareHermitCard
+export default XBCraftedRare

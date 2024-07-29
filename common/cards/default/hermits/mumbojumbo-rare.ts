@@ -1,64 +1,59 @@
-import {HERMIT_CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import query from '../../../components/query'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
 */
-class MumboJumboRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'mumbojumbo_rare',
-			numericId: 81,
-			name: 'Mumbo',
-			rarity: 'rare',
-			hermitType: 'prankster',
-			health: 290,
-			primary: {
-				name: 'Moustache',
-				cost: ['prankster'],
-				damage: 60,
-				power: null,
-			},
-			secondary: {
-				name: 'Quite Simple',
-				cost: ['prankster', 'prankster'],
-				damage: 40,
-				power:
-					'Flip a coin twice. Do an additional 20hp damage for every heads. Total attack damage doubles if you have at least one other AFK Prankster.',
-			},
-		})
+class MumboJumboRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'mumbojumbo_rare',
+		numericId: 81,
+		name: 'Mumbo',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 3,
+		type: 'prankster',
+		health: 290,
+		primary: {
+			name: 'Moustache',
+			cost: ['prankster'],
+			damage: 60,
+			power: null,
+		},
+		secondary: {
+			name: 'Quite Simple',
+			cost: ['prankster', 'prankster'],
+			damage: 40,
+			power:
+				'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster on the game board.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
-				return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
+			const coinFlip = flipCoin(player, component, 2)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			const pranksterAmount = player.board.rows.filter(
-				(row, index) =>
-					row.hermitCard &&
-					index !== player.board.activeRow &&
-					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
+			const pranksterAmount = game.components.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.afk,
+				query.card.type('prankster')
 			).length
 
-			attack.addDamage(this.id, headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(this.id, 2)
+			attack.addDamage(component.entity, headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default MumboJumboRareHermitCard
+export default MumboJumboRare

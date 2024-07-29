@@ -1,21 +1,21 @@
-import ItemCard from '../../base/item-card'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {Description, Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class PranksterRareItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_prankster_rare',
-			numericId: 60,
-			name: 'Prankster',
-			rarity: 'rare',
-			hermitType: 'prankster',
-		})
-	}
-
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType, this.hermitType]
+class PranksterDoubleItem extends Card {
+	props: Item & Description = {
+		...item,
+		id: 'item_prankster_rare',
+		numericId: 60,
+		name: 'Prankster Item x2',
+		shortName: 'Prankster',
+		description: 'Counts as 2 Prankster Item cards.',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'prankster',
+		energy: ['prankster', 'prankster'],
 	}
 }
 
-export default PranksterRareItemCard
+export default PranksterDoubleItem

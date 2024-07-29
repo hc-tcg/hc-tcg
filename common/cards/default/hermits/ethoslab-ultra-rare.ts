@@ -1,51 +1,48 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class EthosLabUltraRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'ethoslab_ultra_rare',
-			numericId: 21,
-			name: 'Etho',
-			rarity: 'ultra_rare',
-			hermitType: 'pvp',
-			health: 250,
-			primary: {
-				name: 'Ladders',
-				cost: ['any'],
-				damage: 30,
-				power: null,
-			},
-			secondary: {
-				name: 'Slab',
-				cost: ['any', 'any'],
-				damage: 70,
-				power: 'Flip a coin 3 times.\n\nDo an additional 20hp damage for every heads.',
-			},
-		})
+class EthosLabUltraRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'ethoslab_ultra_rare',
+		numericId: 21,
+		name: 'Etho',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 3,
+		type: 'pvp',
+		health: 250,
+		primary: {
+			name: 'Ladders',
+			cost: ['any'],
+			damage: 30,
+			power: null,
+		},
+		secondary: {
+			name: 'Slab',
+			cost: ['any', 'any'],
+			damage: 70,
+			power: 'Flip a coin 3 times.\nDo an additional 20hp damage for every heads.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.attacker.slot.inRow()) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 3)
+			const coinFlip = flipCoin(player, attack.attacker, 3)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.addDamage(this.id, headsAmount * 20)
+			attack.addDamage(component.entity, headsAmount * 20)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
 	}
 }
 
-export default EthosLabUltraRareHermitCard
+export default EthosLabUltraRare

@@ -1,10 +1,26 @@
 .statusEffect {
 	pointer-events: all;
+	width: 16px;
+	height: 16px;
 }
 
 .statusEffectImage {
-	width: 22px;
-	height: 22px;
+	width: 8px;
+	height: 8px;
+	image-rendering: crisp-edges;
+
+	filter: drop-shadow(0.5px 0px 0 white) drop-shadow(-0.5px 0px 0 white)
+		drop-shadow(0px 0.5px 0 white) drop-shadow(0px -0.5px 0 white);
+
+	@media (orientation: landscape) {
+		transform: translate(1px, -4px) scale(2);
+		transform-origin: top left;
+	}
+
+	@media (orientation: portrait) {
+		transform: translate(10px, 0px) scale(3);
+		transform-origin: top left;
+	}
 }
 
 .damageStatusEffectImage {
@@ -12,9 +28,15 @@
 	height: 75px;
 }
 
+.dimmed {
+	filter: brightness(70%);
+}
+
 .durationIndicator {
 	color: white;
 	font-family: MinecraftBold;
-	transform: translate(10px, -18px);
-	filter: drop-shadow(1px 1px 0 rgb(0, 0, 0));
+	font-size: 13px;
+	transform: translate(12px, -9px);
+	filter: drop-shadow(1px 0px 0 black) drop-shadow(-1px 0px 0 black) drop-shadow(0px 1px 0 black)
+		drop-shadow(0px -1px 0 black);
 }

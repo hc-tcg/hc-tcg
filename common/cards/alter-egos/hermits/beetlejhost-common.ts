@@ -1,40 +1,33 @@
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class BeetlejhostCommonHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'beetlejhost_common',
-			numericId: 126,
-			name: 'Beetlejhost',
-			rarity: 'common',
-			hermitType: 'speedrunner',
-			health: 290,
-			primary: {
-				name: 'Expand',
-				cost: ['speedrunner'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Chroma',
-				cost: ['speedrunner', 'speedrunner', 'speedrunner'],
-				damage: 100,
-				power: null,
-			},
-		})
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
-	}
-
-	override getPalette() {
-		return 'alter_egos'
-	}
-
-	override getBackground() {
-		return 'alter_egos_background'
+class BeetlejhostCommon extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'beetlejhost_common',
+		numericId: 126,
+		name: 'Beetlejhost',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
+		rarity: 'common',
+		tokens: 1,
+		type: 'speedrunner',
+		health: 290,
+		primary: {
+			name: 'Expand',
+			cost: ['speedrunner'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Chroma',
+			cost: ['speedrunner', 'speedrunner', 'speedrunner'],
+			damage: 100,
+			power: null,
+		},
 	}
 }
 
-export default BeetlejhostCommonHermitCard
+export default BeetlejhostCommon

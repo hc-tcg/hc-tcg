@@ -1,28 +1,10 @@
-import {RowStateWithHermit} from 'common/types/game-state'
-import {ITEM_CARDS} from 'common/cards'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
-import {getCardPos} from 'common/models/card-pos-model'
+import {CardComponent} from 'common/components'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.id !== playerId)[0]?.id
-}
-
-export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): number {
-	const itemCards = row.itemCards
-	let total = 0
-	for (const itemCard of itemCards) {
-		if (!itemCard) continue
-		const cardInfo = ITEM_CARDS[itemCard.cardId]
-		// String
-		if (!cardInfo) continue
-		const pos = getCardPos(game, itemCard.cardInstance)
-		if (!pos) continue
-		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos).length
-	}
-
-	return total
 }
 
 export function printHooksState(game: GameModel) {
@@ -33,8 +15,8 @@ export function printHooksState(game: GameModel) {
 
 	// First loop to populate cardsInfo
 	for (const player of [currentPlayer, opponentPlayer]) {
-		for (const card of player.playerDeck) {
-			cardsInfo[card.cardInstance] = {
+		for (const card of player.getDeck()) {
+			cardsInfo[card.entity] = {
 				card,
 				player: player,
 			}
@@ -45,20 +27,23 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			Object.keys(hookValue.listeners).forEach((instance, i) => {
-				const pos = getCardPos(game, instance)
+			hookValue.listeners.forEach(([observer, _], i) => {
+				let target = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+				if (!(target instanceof CardComponent)) return
+				const pos = target.slot
 				const inBoard = Boolean(pos)
-				const instanceEntry = instancesInfo[instance] || {
+				const instanceEntry = instancesInfo[target.entity] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance].card,
-					player: cardsInfo[instance].player,
-					slot: pos?.slot,
-					row: pos?.rowIndex,
+					card: cardsInfo[target.entity] && cardsInfo[target.entity].card,
+					player: cardsInfo[target.entity] && cardsInfo[target.entity].player,
+					type: pos?.type,
+					index: pos.inRow() && pos?.index,
+					row: pos.inRow() && pos?.row.index,
 				}
 
 				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
-				instancesInfo[instance] = instanceEntry
+				instancesInfo[target.entity] = instanceEntry
 			})
 		}
 
@@ -73,12 +58,6 @@ export function printHooksState(game: GameModel) {
 				return aRow - bRow
 			})
 		)
-
-		// Custom Values
-		for (const [instanceKey, custom] of Object.entries(player.custom)) {
-			const [id, instance, keyName] = instanceKey.split(':')
-			customValues[instance] = {id, value: custom, keyName}
-		}
 	}
 
 	// Helpers to print
@@ -139,12 +118,14 @@ export function printHooksState(game: GameModel) {
 		const slotType = slot?.type ? slot.type : ''
 		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
 
-		console.log(
-			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
-				info.card.cardId
-			} - ${attachedStatus}`
-		)
-		console.log(colorize(drawLine(60), 'white'))
+		if (info.player) {
+			console.log(
+				`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
+					info.card.cardId
+				} - ${attachedStatus}`
+			)
+			console.log(colorize(drawLine(60), 'white'))
+		}
 
 		for (const hook of info.hooks) {
 			console.log(colorize(hook, 'brightYellow'))

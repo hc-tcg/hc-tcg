@@ -1,17 +1,17 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors'
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
-import HermitSelector from './hermit-selector'
+import {SingleUse, isHermit} from 'common/cards/base/types'
 
 type Props = {
 	closeModal: () => void
 }
+
 function AttackModal({closeModal}: Props) {
 	// TODO - This whole file needs to be rafactored
 	const dispatch = useDispatch()
@@ -20,28 +20,22 @@ function AttackModal({closeModal}: Props) {
 	const availableActions = useSelector(getAvailableActions)
 	const playerId = useSelector(getPlayerId)
 	const playerState = useSelector(getPlayerStateById(playerId))
-	const singleUseCard = playerState?.board.singleUseCard
+	const singleUseCard = playerState?.board.singleUse.card
 
-	if (!activeRow || !playerState || !activeRow.hermitCard) return null
-	if (!opponentRow || !opponentRow.hermitCard) return null
+	if (!activeRow || !playerState || !activeRow.hermit) return null
+	if (!opponentRow || !opponentRow.hermit) return null
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
-	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
-	if (!playerHermitInfo) return null // Armor Stand
+	const playerHermitInfo = activeRow.hermit.card
+	if (!playerHermitInfo) return null
 
-	const hermitFullName = playerHermitInfo.id.split('_')[0]
-	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
+	if (!isHermit(playerHermitInfo.props)) return null
+
+	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
+	const singleUseInfo = singleUseCard ? singleUseCard : null
 
 	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))
-		closeModal()
-	}
-
-	const handleExtraAttack = (hermitExtra: any) => {
-		const extra = {
-			[playerHermitInfo.id]: hermitExtra,
-		}
-		dispatch(startAttack('secondary', extra))
 		closeModal()
 	}
 
@@ -49,14 +43,24 @@ function AttackModal({closeModal}: Props) {
 	const primaryAttack = () => handleAttack('primary')
 	const secondaryAttack = () => handleAttack('secondary')
 
+	let singleUseProps = singleUseInfo?.props as SingleUse | undefined
+	let singleUseIcon = singleUseProps?.hasAttack
+		? `/images/effects/${singleUseInfo?.props.id}.png`
+		: undefined
+
 	const attacks = []
+	let canUseHermitAttacks =
+		availableActions.includes('PRIMARY_ATTACK') || availableActions.includes('SECONDARY_ATTACK')
+
 	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
+		let namePrefix = canUseHermitAttacks ? 'Only use ' : ''
 		attacks.push(
 			<Attack
 				key="single-use"
-				name={singleUseInfo.name}
-				icon={`/images/effects/${singleUseInfo?.id}.png`}
-				attackInfo={null}
+				name={`${namePrefix}${singleUseInfo.props.name}`}
+				icon={`/images/effects/${singleUseInfo?.props.id}.png`}
+				attackInfo={{description: singleUseProps?.description || ''}}
+				singleUseDamage={singleUseInfo.attackHint || undefined}
 				onClick={effectAttack}
 			/>
 		)
@@ -66,40 +70,37 @@ function AttackModal({closeModal}: Props) {
 		attacks.push(
 			<Attack
 				key="primary"
-				name={playerHermitInfo.primary.name}
+				name={playerHermitInfo.props.primary.name}
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
-				attackInfo={playerHermitInfo.primary}
+				attackInfo={playerHermitInfo.props.primary}
+				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={primaryAttack}
 			/>
 		)
 	}
 
-	const extraAttacks = availableActions.filter((a) => a.includes(':'))
-
-	if (!extraAttacks.length && availableActions.includes('SECONDARY_ATTACK')) {
+	if (availableActions.includes('SECONDARY_ATTACK')) {
 		attacks.push(
 			<Attack
 				key="secondary"
-				name={playerHermitInfo.secondary.name}
+				name={playerHermitInfo.props.secondary.name}
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
-				attackInfo={playerHermitInfo.secondary}
+				attackInfo={playerHermitInfo.props.secondary}
+				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={secondaryAttack}
 			/>
 		)
 	}
 
-	if (extraAttacks.length) {
-		attacks.push(
-			<HermitSelector
-				key="hermit-selector"
-				extraAttacks={extraAttacks}
-				handleExtraAttack={handleExtraAttack}
-			/>
-		)
-	}
+	let title =
+		canUseHermitAttacks && singleUseProps?.hasAttack
+			? `Attack with ${playerHermitInfo.props.name} and use ${singleUseProps.name}`
+			: 'Attack'
 
 	return (
-		<Modal title="Attack" closeModal={closeModal} centered>
+		<Modal title={title} closeModal={closeModal} centered>
 			<div className={css.description}>
 				{attacks.length ? (
 					<>

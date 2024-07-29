@@ -1,34 +1,34 @@
-import HermitCard from '../../base/hermit-card'
-import ArchitectFalseCommonHermitCard from '../../alter-egos-ii/hermits/architectfalse-common'
-import BoomerBdubsRareHermitCard from '../../alter-egos-ii/hermits/boomerbdubs-rare'
-import DwarfImpulseCommonHermitCard from '../../alter-egos-ii/hermits/dwarfimpulse-common'
-import FiveAMPearlRareHermitCard from '../../alter-egos-ii/hermits/fiveampearl-rare'
-import FrenchKeralisCommonHermitCard from '../../alter-egos-ii/hermits/frenchkeralis-common'
-import HorseHeadHypnoCommonHermitCard from '../../alter-egos-ii/hermits/horseheadhypno-common'
-import IskallmanRareHermitCard from '../../alter-egos-ii/hermits/iskallman-rare'
-import OriginalXbCommonHermitCard from '../../alter-egos-ii/hermits/originalxb-common'
-import OverseerRareHermitCard from '../../alter-egos-ii/hermits/overseer-rare'
-import PrincessGemCommonHermitCard from '../../alter-egos-ii/hermits/princessgem-common'
-import ShadEECommonHermitCard from './shadee-common'
-import SpookyStressCommonHermitCard from '../../alter-egos-ii/hermits/spookystress-common'
-import SteampunkTangoCommonHermitCard from '../../alter-egos-ii/hermits/steampunktango-common'
-import WormManCommonHermitCard from '../../alter-egos-ii/hermits/wormman-common'
+import ArchitectFalseCommon from '../../alter-egos-ii/hermits/architectfalse-common'
+import BoomerBdubsRare from '../../alter-egos-ii/hermits/boomerbdubs-rare'
+import DwarfImpulseCommon from '../../alter-egos-ii/hermits/dwarfimpulse-common'
+import FiveAMPearlRare from '../../alter-egos-ii/hermits/fiveampearl-rare'
+import FrenchKeralisCommon from '../../alter-egos-ii/hermits/frenchkeralis-common'
+import HorseHeadHypnoCommon from '../../alter-egos-ii/hermits/horseheadhypno-common'
+import IskallmanRare from '../../alter-egos-ii/hermits/iskallman-rare'
+import OriginalXbCommon from '../../alter-egos-ii/hermits/originalxb-common'
+import OverseerRare from '../../alter-egos-ii/hermits/overseer-rare'
+import PrincessGemCommon from '../../alter-egos-ii/hermits/princessgem-common'
+import ShadEECommon from './shadee-common'
+import SpookyStressCommon from '../../alter-egos-ii/hermits/spookystress-common'
+import SteampunkTangoCommon from '../../alter-egos-ii/hermits/steampunktango-common'
+import WormManCommon from '../../alter-egos-ii/hermits/wormman-common'
+import {CardClass} from '../../base/card'
 
-const hermitCardClasses: Array<HermitCard> = [
-	new ArchitectFalseCommonHermitCard(),
-	new BoomerBdubsRareHermitCard(),
-	new DwarfImpulseCommonHermitCard(),
-	new FiveAMPearlRareHermitCard(),
-	new FrenchKeralisCommonHermitCard(),
-	new HorseHeadHypnoCommonHermitCard(),
-	new IskallmanRareHermitCard(),
-	new OriginalXbCommonHermitCard(),
-	new OverseerRareHermitCard(),
-	new PrincessGemCommonHermitCard(),
-	new ShadEECommonHermitCard(),
-	new SpookyStressCommonHermitCard(),
-	new SteampunkTangoCommonHermitCard(),
-	new WormManCommonHermitCard(),
+const hermitCardClasses: Array<CardClass> = [
+	ArchitectFalseCommon,
+	BoomerBdubsRare,
+	DwarfImpulseCommon,
+	FiveAMPearlRare,
+	FrenchKeralisCommon,
+	HorseHeadHypnoCommon,
+	IskallmanRare,
+	OriginalXbCommon,
+	OverseerRare,
+	PrincessGemCommon,
+	ShadEECommon,
+	SpookyStressCommon,
+	SteampunkTangoCommon,
+	WormManCommon,
 ]
 
 export default hermitCardClasses

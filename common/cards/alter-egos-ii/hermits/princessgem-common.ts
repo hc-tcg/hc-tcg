@@ -1,40 +1,33 @@
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class PrincessGemCommonHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'princessgem_common',
-			numericId: 236,
-			name: 'Princess Gem',
-			rarity: 'common',
-			hermitType: 'terraform',
-			health: 280,
-			primary: {
-				name: 'Monarch',
-				cost: ['any'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: 'Dawn',
-				cost: ['terraform', 'terraform', 'terraform'],
-				damage: 100,
-				power: null,
-			},
-		})
-	}
-
-	override getExpansion() {
-		return 'alter_egos_ii'
-	}
-
-	override getPalette() {
-		return 'alter_egos'
-	}
-
-	override getBackground() {
-		return 'alter_egos_background'
+class PrincessGemCommon extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'princessgem_common',
+		numericId: 236,
+		name: 'Princess Gem',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'common',
+		tokens: 1,
+		type: 'terraform',
+		health: 280,
+		primary: {
+			name: 'Monarch',
+			cost: ['any'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: 'Dawn',
+			cost: ['terraform', 'terraform', 'terraform'],
+			damage: 100,
+			power: null,
+		},
 	}
 }
 
-export default PrincessGemCommonHermitCard
+export default PrincessGemCommon

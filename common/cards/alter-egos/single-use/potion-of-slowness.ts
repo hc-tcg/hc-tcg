@@ -1,42 +1,33 @@
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
-import {applyStatusEffect} from '../../../utils/board'
+import SlownessEffect from '../../../status-effects/slowness'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class PotionOfSlownessSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'potion_of_slowness',
-			numericId: 145,
-			name: 'Potion of Slowness',
-			rarity: 'common',
-			description:
-				"Your opponent's active Hermit can only use their primary attack on their next turn.",
+class PotionOfSlowness extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'potion_of_slowness',
+		numericId: 145,
+		name: 'Potion of Slowness',
+		expansion: 'alter_egos',
+		rarity: 'common',
+		tokens: 2,
+		description:
+			"Your opponent's active Hermit can only use their primary attack on their next turn.",
+		showConfirmationModal: true,
+	}
+
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
+
+		observer.subscribe(player.hooks.onApply, () => {
+			game.components
+				.new(StatusEffectComponent, SlownessEffect, component.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
-
-		player.hooks.onApply.add(instance, () => {
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard?.cardInstance)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
-	override getExpansion() {
-		return 'alter_egos'
 	}
 }
 
-export default PotionOfSlownessSingleUseCard
+export default PotionOfSlowness

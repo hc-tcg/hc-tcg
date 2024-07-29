@@ -1,50 +1,43 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import EffectCard from '../../base/effect-card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-class CommandBlockEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'command_block',
-			numericId: 120,
-			name: 'Command Block',
-			rarity: 'rare',
-			description:
-				'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
-		})
+class CommandBlock extends Card {
+	props: Attach = {
+		...attach,
+		id: 'command_block',
+		numericId: 120,
+		name: 'Command Block',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
-			const {activeRow, rows} = player.board
-
-			// Make sure it's our row
-			if (activeRow === null) return availableEnergy
-			if (activeRow !== pos.rowIndex) return availableEnergy
-			const row = rows[activeRow]
-
-			// Make sure this row has our instance
-			if (row.effectCard?.cardInstance !== instance) return availableEnergy
+		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
+			if (!component.slot.inRow()) return availableEnergy
+			if (player.activeRowEntity !== component.slot.row.entity) return availableEnergy
 
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')
 		})
-	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.availableEnergy.remove(instance)
-	}
-
-	override getIsRemovable() {
-		return false
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
+		observer.subscribe(player.hooks.freezeSlots, () => {
+			if (!component.slot.inRow()) return query.nothing
+			return query.every(
+				query.slot.player(player.entity),
+				query.slot.rowIs(component.slot.row.entity),
+				query.slot.attach
+			)
+		})
 	}
 }
 
-export default CommandBlockEffectCard
+export default CommandBlock

@@ -1,73 +1,56 @@
-import {CARDS} from '../..'
-import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class TNTSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'tnt',
-			numericId: 100,
-			name: 'TNT',
-			rarity: 'common',
-			description:
-				"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
-		})
+class TNT extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'tnt',
+		numericId: 100,
+		name: 'TNT',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 2,
+		description:
+			"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
+		hasAttack: true,
+		attackPreview: (_game) => '$A60$',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.getAttacks.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+		observer.subscribe(player.hooks.getAttack, () => {
+			applySingleUse(game)
 
-			const tntAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
-				attacker: activePos,
-				target: opponentActivePos,
-				type: 'effect',
-			}).addDamage(this.id, 60)
+			const tntAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentPlayer.activeRowEntity,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
+				})
+				.addDamage(component.entity, 60)
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: activePos,
-				target: activePos,
-				type: 'effect',
-				isBacklash: true,
-			}).addDamage(this.id, 20)
+			const backlashAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: player.activeRowEntity,
+					type: 'effect',
+					isBacklash: true,
+					log: (values) => `and took ${values.damage} backlash damage`,
+				})
+				.addDamage(component.entity, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 
-			return [tntAttack]
+			return tntAttack
 		})
-
-		player.hooks.onAttack.add(instance, (attack) => {
-			const backlashId = this.getInstanceKey(instance, 'backlash')
-			if (attack.id !== backlashId) return
-
-			// We've executed our final attack, apply effect
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
-			])
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttacks.remove(instance)
-		player.hooks.onAttack.remove(instance)
-	}
-
-	override canAttack() {
-		return true
 	}
 }
 
-export default TNTSingleUseCard
+export default TNT

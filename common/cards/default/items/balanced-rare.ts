@@ -1,21 +1,21 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import ItemCard from '../../base/item-card'
+import Card from '../../base/card'
+import {Description, Item} from '../../base/types'
+import {item} from '../../base/defaults'
 
-class BalancedRareItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_balanced_rare',
-			numericId: 50,
-			name: 'Balanced',
-			rarity: 'rare',
-			hermitType: 'balanced',
-		})
-	}
-
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType, this.hermitType]
+class BalancedDoubleItem extends Card {
+	props: Item & Description = {
+		...item,
+		id: 'item_balanced_rare',
+		numericId: 50,
+		name: 'Balanced Item x2',
+		shortName: 'Balanced',
+		description: 'Counts as 2 Balanced Item cards.',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'balanced',
+		energy: ['balanced', 'balanced'],
 	}
 }
 
-export default BalancedRareItemCard
+export default BalancedDoubleItem

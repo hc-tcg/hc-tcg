@@ -1,105 +1,56 @@
-import SingleUseCard from '../../base/single-use-card'
-import {CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
-import {isRemovable} from '../../../utils/cards'
-import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
+import {getFormattedName} from '../../../utils/game'
+import query from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
-class FireChargeSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'fire_charge',
-			numericId: 142,
-			name: 'Fire Charge',
-			rarity: 'common',
-			description:
-				'Discard one attached item or effect card from any of your Hermits.\n\nYou can use another single use effect card this turn.',
-		})
+class FireCharge extends Card {
+	pickCondition = query.every(
+		query.slot.currentPlayer,
+		query.not(query.slot.frozen),
+		query.not(query.slot.empty),
+		query.some(query.slot.item, query.slot.attach)
+	)
+
+	props: SingleUse = {
+		...singleUse,
+		id: 'fire_charge',
+		numericId: 142,
+		name: 'Fire Charge',
+		expansion: 'alter_egos',
+		rarity: 'common',
+		tokens: 0,
+		description:
+			'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.exists(SlotComponent, this.pickCondition)
+		),
+		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {player} = pos
-
-		for (const row of player.board.rows) {
-			const cards = row.itemCards
-			let total = 0
-			// Should be able to remove string on the item slots
-			const validTypes = new Set(['effect', 'item'])
-
-			for (const card of cards) {
-				if (card && validTypes.has(CARDS[card.cardId]?.type)) {
-					total++
-				}
-			}
-
-			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0) return result
-		}
-
-		result.push('UNMET_CONDITION')
-		return result
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
-			id: this.id,
+			id: component.entity,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
-			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-				if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
-					return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-				if (pickResult.slot.type === 'effect' && !isRemovable(pickResult.card))
-					return 'FAILURE_CANNOT_COMPLETE'
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				applySingleUse(game, pickedSlot)
+				pickedSlot.getCard()?.discard()
 
-				const row = player.board.rows[pickResult.rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-				const pos = getCardPos(game, pickResult.card.cardInstance)
-				if (!pos) return 'FAILURE_CANNOT_COMPLETE'
-
-				// Discard the picked card and apply su card
-				discardCard(game, pickResult.card)
-				const cardInfo = CARDS[pickResult.card.cardId]
-				applySingleUse(game, [
-					[`to discard `, 'plain'],
-					[
-						`${cardInfo.name}${
-							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-						} `,
-						'player',
-					],
-				])
-
-				return 'SUCCESS'
+				if (component.slot.onBoard()) component.discard()
+				// Remove playing a single use from completed actions so it can be done again
+				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+				player.singleUseCardUsed = false
 			},
 		})
-
-		player.hooks.afterApply.add(instance, () => {
-			discardSingleUse(game, player)
-
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
-			player.hooks.afterApply.remove(instance)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.afterApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
 	}
 }
 
-export default FireChargeSingleUseCard
+export default FireCharge

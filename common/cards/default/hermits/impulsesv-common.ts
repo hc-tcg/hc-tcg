@@ -1,28 +1,31 @@
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class ImpulseSVCommonHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'impulsesv_common',
-			numericId: 40,
-			name: 'Impulse',
-			rarity: 'common',
-			hermitType: 'farm',
-			health: 270,
-			primary: {
-				name: 'Shovel Shuffle',
-				cost: ['any'],
-				damage: 30,
-				power: null,
-			},
-			secondary: {
-				name: 'iAttack',
-				cost: ['farm', 'any'],
-				damage: 70,
-				power: null,
-			},
-		})
+class ImpulseSVCommon extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'impulsesv_common',
+		numericId: 40,
+		name: 'Impulse',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'farm',
+		health: 270,
+		primary: {
+			name: 'Shovel Shuffle',
+			cost: ['any'],
+			damage: 30,
+			power: null,
+		},
+		secondary: {
+			name: 'iAttack',
+			cost: ['farm', 'any'],
+			damage: 70,
+			power: null,
+		},
 	}
 }
 
-export default ImpulseSVCommonHermitCard
+export default ImpulseSVCommon

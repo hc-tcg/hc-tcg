@@ -1,79 +1,80 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
-import HermitCard from '../../base/hermit-card'
+import {slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class LDShadowLadyRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'ldshadowlady_rare',
-			numericId: 211,
-			name: 'Lizzie',
-			rarity: 'rare',
-			hermitType: 'terraform',
-			health: 290,
-			primary: {
-				name: 'Fairy Fort',
-				cost: ['terraform'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Evict',
-				cost: ['terraform', 'terraform', 'any'],
-				damage: 90,
-				power:
-					"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
-			},
-		})
+class LDShadowLadyRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'ldshadowlady_rare',
+		numericId: 211,
+		name: 'Lizzie',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'terraform',
+		health: 290,
+		primary: {
+			name: 'Fairy Fort',
+			cost: ['terraform'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Evict',
+			cost: ['terraform', 'terraform', 'any'],
+			damage: 90,
+			power:
+				"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			if (
-				attack.id !== this.getInstanceKey(instance) ||
+				attack.id !== this.getInstanceKey(component) ||
 				attack.type !== 'secondary' ||
 				!attack.getTarget()
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermit, slot.active))) return
 
-			if (opponentInactiveRows.length === 4) return
-			if (opponentPlayer.board.activeRow === null) return
+			const pickCondition = slot.every(
+				slot.empty,
+				slot.hermit,
+				slot.opponent,
+				slot.not(slot.active)
+			)
 
-			// Make sure opponent Hermit isn't dead
-			if (getActiveRow(opponentPlayer)?.health === 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
-			// Add a new pick request to the opponent player
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: "Move your opponent's active Hermit to a new slot.",
-				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (pickResult.card !== null) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
-					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					if (pickedSlot.rowIndex === null) return
+					if (opponentPlayer.board.activeRow === null) return
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
-
-					return 'SUCCESS'
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedSlot.rowIndex)
 				},
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
-					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
+					const emptyHermitSlots = game.filterSlots(pickCondition)
 
-					if (emptyRows.length === 0) return
+					const pickedRowIndex =
+						emptyHermitSlots[Math.floor(Math.random() * emptyHermitSlots.length)].rowIndex
 
-					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
+					if (!pickedRowIndex) return
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},
@@ -81,23 +82,11 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
+		player.hooks.afterAttack.remove(component)
 	}
 }
 
-export default LDShadowLadyRareHermitCard
+export default LDShadowLadyRare

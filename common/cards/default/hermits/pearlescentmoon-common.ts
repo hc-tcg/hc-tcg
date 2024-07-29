@@ -1,28 +1,31 @@
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class PearlescentMoonCommonHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'pearlescentmoon_common',
-			numericId: 84,
-			name: 'Pearl',
-			rarity: 'common',
-			hermitType: 'builder',
-			health: 270,
-			primary: {
-				name: '5 AM',
-				cost: ['any'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: "What's This?",
-				cost: ['builder', 'builder', 'any'],
-				damage: 90,
-				power: null,
-			},
-		})
+class PearlescentMoonCommon extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'pearlescentmoon_common',
+		numericId: 84,
+		name: 'Pearl',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'builder',
+		health: 270,
+		primary: {
+			name: '5 AM',
+			cost: ['any'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: "What's This?",
+			cost: ['builder', 'builder', 'any'],
+			damage: 90,
+			power: null,
+		},
 	}
 }
 
-export default PearlescentMoonCommonHermitCard
+export default PearlescentMoonCommon

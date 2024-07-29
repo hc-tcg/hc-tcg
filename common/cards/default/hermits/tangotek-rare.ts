@@ -1,127 +1,108 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getNonEmptyRows} from '../../../utils/board'
-import HermitCard from '../../base/hermit-card'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
-class TangoTekRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'tangotek_rare',
-			numericId: 95,
-			name: 'Tango',
-			rarity: 'rare',
-			hermitType: 'farm',
-			health: 290,
-			primary: {
-				name: 'Skadoodle',
-				cost: ['farm'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Extra Flee',
-				cost: ['farm', 'farm', 'farm'],
-				damage: 100,
-				power:
-					'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\n\nYour opponent chooses their active Hermit first.',
-			},
-		})
+class TangoTekRare extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'tangotek_rare',
+		numericId: 95,
+		name: 'Tango',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'farm',
+		health: 290,
+		primary: {
+			name: 'Skadoodle',
+			cost: ['farm'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Extra Flee',
+			cost: ['farm', 'farm', 'farm'],
+			damage: 100,
+			power:
+				'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\nYour opponent chooses their active Hermit first.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary' ||
-				!attack.getTarget()
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			const opponentInactiveRowsPickCondition = query.every(
+				query.slot.opponent,
+				query.slot.hermit,
+				query.not(query.slot.active),
+				query.not(query.slot.empty)
 			)
-				return
-
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-			const playerInactiveRows = getNonEmptyRows(player, true, true)
+			const playerInactiveRowsPickCondition = query.every(
+				query.slot.currentPlayer,
+				query.slot.hermit,
+				query.not(query.slot.active),
+				query.not(query.slot.empty)
+			)
 
 			// Check if we are blocked from changing by anything other than the game
 			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
-			if (opponentInactiveRows.length > 0) {
-				// Add a new pick request to the opponent player
+			if (game.components.exists(SlotComponent, opponentInactiveRowsPickCondition)) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
-					id: this.id,
+					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
-					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
-
-						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
-
-						return 'SUCCESS'
+					canPick: opponentInactiveRowsPickCondition,
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						opponentPlayer.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== opponentPlayer.board.activeRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
-							}
-						}
+						let newActiveRow = game.components.find(
+							SlotComponent,
+							opponentInactiveRowsPickCondition
+						)
+						if (!newActiveRow?.inRow()) return
+						opponentPlayer.changeActiveRow(newActiveRow.row)
 					},
 				})
 			}
 
 			// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
-			const attacker = attack.getAttacker()
-			if (playerInactiveRows.length !== 0 && attacker && attacker.row.health > 0 && canChange) {
+			if (
+				game.components.exists(SlotComponent, playerInactiveRowsPickCondition) &&
+				component.slot.inRow() &&
+				component.slot.row.health &&
+				canChange
+			) {
 				game.addPickRequest({
 					playerId: player.id,
-					id: this.id,
+					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
-					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
-
-						game.changeActiveRow(player, pickResult.rowIndex)
-
-						return 'SUCCESS'
+					canPick: playerInactiveRowsPickCondition,
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						player.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout() {
-						const inactiveRows = getNonEmptyRows(player, true, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of inactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== player.board.activeRow
-							if (canBeActive) {
-								game.changeActiveRow(player, rowIndex)
-								break
-							}
-						}
+						let newActiveHermit = game.components.find(
+							SlotComponent,
+							playerInactiveRowsPickCondition
+						)
+						if (!newActiveHermit?.inRow()) return
+						player.changeActiveRow(newActiveHermit.row)
 					},
 				})
 			}
 		})
 	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.afterAttack.remove(instance)
-	}
 }
 
-export default TangoTekRareHermitCard
+export default TangoTekRare

@@ -15,24 +15,23 @@ import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
-import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {PickInfo} from 'common/types/server-requests'
+import {SlotInfo} from 'common/types/server-requests'
+import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 
 type Props = {
-	onClick: (pickInfo: PickInfo) => void
+	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, mobile, id}: Props) => {
+const Actions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerId = useSelector(getPlayerId)
 	const boardState = currentPlayer?.board
-	const singleUseCard = boardState?.singleUseCard || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
@@ -94,23 +93,21 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		const handleClick = () => {
 			isPlayable &&
+				boardState &&
 				onClick({
-					slot: {
-						type: 'single_use',
-						index: 0,
-					},
-					playerId: localGameState.turn.currentPlayerId,
-					card: singleUseCard,
+					slotType: 'single_use',
+					slotEntity: boardState.singleUse.slot,
+					card: boardState.singleUse.card,
 				})
 		}
 
 		return (
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
 				<Slot
-					card={singleUseCard}
+					card={boardState?.singleUse.card || null}
 					type={'single_use'}
+					entity={boardState?.singleUse.slot}
 					onClick={handleClick}
-					statusEffects={gameState.statusEffects}
 				/>
 			</div>
 		)
@@ -121,10 +118,10 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(attackAction())
 		}
 		function handleEndTurn() {
-			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
-				dispatch(endTurn())
-			} else {
+			if (shouldShowEndTurnModal(availableActions, settings)) {
 				dispatch(endTurnAction())
+			} else {
+				dispatch(endTurn())
 			}
 		}
 

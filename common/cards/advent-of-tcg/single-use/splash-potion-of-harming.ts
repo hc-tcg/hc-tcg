@@ -1,84 +1,72 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {RowStateWithHermit} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import {CardComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
-class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'splash_potion_of_harming',
-			numericId: 226,
-			name: 'Splash potion of harming',
-			rarity: 'common',
-			description:
-				"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
-		})
+class SplashPotionOfHarming extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'splash_potion_of_harming',
+		numericId: 226,
+		name: 'Splash potion of harming',
+		expansion: 'advent_of_tcg',
+		rarity: 'common',
+		tokens: 3,
+		description:
+			"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
+		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
 		const {opponentPlayer, player} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
+			if (!activePos) return null
+			const activeIndex = activePos.rowIndex
+			const opponentRows = opponentPlayer.board.rows
 
-			const attacks: Array<AttackModel> = []
-			for (let i = 0; i < opponentPlayer.board.rows.length; i++) {
-				if (!opponentPlayer.board.rows[i].hermitCard) continue
-				let damage = 20
-				if (i === opponentPlayer.board.activeRow) damage = 40
-				attacks.push(
-					new AttackModel({
-						id: this.getInstanceKey(instance),
-						attacker: activePos,
-						target: {
-							player: opponentPlayer,
-							rowIndex: i,
-							row: opponentPlayer.board.rows[i] as RowStateWithHermit,
-						},
-						type: 'effect',
-					}).addDamage(this.id, damage)
-				)
-			}
+			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
+					id: this.getInstanceKey(component),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: i,
+						row: row,
+					},
+					type: 'effect',
+					log: (values) =>
+						i === activeIndex
+							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
+				}).addDamage(this.props.id, 40)
+				if (r) return r.addNewAttack(newAttack)
+				return newAttack
+			}, null)
 
-			player.custom[targetsKey] = attacks.length
-
-			return attacks
+			return attack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
+			applySingleUse(game)
 
-			delete player.custom[targetsKey]
-
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.getAttacks.remove(instance)
-		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		delete player.custom[targetsKey]
-	}
-
-	override canAttack() {
-		return true
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
-export default SplashPotionOfHarmingSingleUseCard
+export default SplashPotionOfHarming
