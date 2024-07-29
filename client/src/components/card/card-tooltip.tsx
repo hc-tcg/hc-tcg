@@ -10,7 +10,6 @@ import {
 } from 'common/cards/base/types'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
-import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {STATUS_EFFECTS} from 'common/status-effects'
@@ -100,13 +99,13 @@ const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
-	common: 'Common',
-	rare: 'Rare',
-	ultra_rare: 'Ultra Rare',
+	common: '■ Common ■',
+	rare: '■  Rare ■',
+	ultra_rare: '★ Ultra Rare ★',
 }
 
 const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	return <span className={css.rarity}>■ {RARITY_DISPLAY_TEXT[card.rarity]} ■</span>
+	return <span className={css.rarity}> {RARITY_DISPLAY_TEXT[card.rarity]} </span>
 }
 
 const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
