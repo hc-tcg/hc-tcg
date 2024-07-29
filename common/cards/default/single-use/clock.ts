@@ -22,7 +22,7 @@ class Clock extends Card {
 		rarity: 'ultra_rare',
 		tokens: 4,
 		description:
-			'Your opponent skips their next turn.\nThis card can not be returned to your hand from your discard pile.',
+			'Your opponent skips their next turn.\nThis card must be discarded after use, and can not be returned to your hand from your discard pile.',
 		showConfirmationModal: true,
 		sidebarDescriptions: [
 			{

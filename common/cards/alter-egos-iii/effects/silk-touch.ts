@@ -16,7 +16,7 @@ class SilkTouch extends Card {
 		rarity: 'rare',
 		tokens: 0,
 		description:
-			"When one of your opponent's Hermit is knocked out by your Hermit that this card is attached to, pick 2 attached item cards from the opposing active Hermit and add them to your hand.",
+			'Attach to your active Hermit. If a single use effect card is used while this card is attached to your active Hermit, discard Silk Touch instead and shuffle the single use effect card back into your deck.',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
