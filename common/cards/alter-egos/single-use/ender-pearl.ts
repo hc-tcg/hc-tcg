@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
@@ -19,7 +19,7 @@ class EnderPearl extends Card {
 		rarity: 'common',
 		tokens: 0,
 		description:
-			'Before your attack, move your active Hermit and any attached cards to an open row on your board. This Hermit also takes 10hp damage.',
+			'Before your attack, move your active Hermit and any attached cards to any open row on the game board. Your active Hermit also takes 10hp damage.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.pickCondition)

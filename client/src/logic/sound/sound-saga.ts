@@ -4,9 +4,6 @@ import {select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
 import {SectionChangeT, PlaySoundT} from './sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {ToastT} from 'common/types/app'
-import {useDispatch} from 'react-redux'
-import {sendMsg} from 'logic/socket/socket-saga'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -69,8 +66,13 @@ function* playSoundSaga(action: PlaySoundT): SagaIterator {
 function* settingSaga(): SagaIterator {
 	try {
 		const settings = yield* select(getSettings)
-		musicGainNode.gain.value = Number(settings.musicVolume) / 100
-		soundGainNode.gain.value = Number(settings.soundVolume) / 100
+		if (settings.muted) {
+			musicGainNode.gain.value = 0
+			soundGainNode.gain.value = 0
+		} else {
+			musicGainNode.gain.value = Number(settings.musicVolume) / 100
+			soundGainNode.gain.value = Number(settings.soundVolume) / 100
+		}
 	} catch (err) {
 		console.error(err)
 	}

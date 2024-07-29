@@ -7,7 +7,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 		...statusEffect,
 		icon: 'royal_protection',
 		name: 'Royal Protection',
-		description: 'Any attacks targeting this hermit are prevented.',
+		description: 'Any attacks targeting a Hermit under Royal Protection are prevented.',
 		applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	}
 

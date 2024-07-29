@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {
 	CardComponent,
 	ObserverComponent,
-	SlotComponent,
+	PlayerComponent,
 	StatusEffectComponent,
 } from '../../../components'
 import {SingleUse} from '../../base/types'
@@ -34,9 +34,9 @@ class Clock extends Card {
 			singleUse.attachCondition,
 			query.not(
 				query.exists(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.slot.hasStatusEffect(UsedClockEffect)
+					PlayerComponent,
+					query.player.currentPlayer,
+					query.player.hasStatusEffect(UsedClockEffect)
 				)
 			),
 			(game, _pos) => game.state.turn.turnNumber !== 1

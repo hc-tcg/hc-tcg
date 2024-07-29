@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -22,7 +22,7 @@ class Chest extends Card {
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
-		description: 'Choose one card from your discard pile to return to your hand.',
+		description: 'Choose one card from your discard pile and return it to your hand.',
 		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
 			return game.components.exists(CardComponent, this.pickCondition)
 		}),

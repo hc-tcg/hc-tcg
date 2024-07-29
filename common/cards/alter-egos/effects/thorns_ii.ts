@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card} from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
@@ -54,7 +54,7 @@ class ThornsII extends Card {
 				.addDamage(component.entity, 30)
 
 			backlashAttack.shouldIgnoreCards.push(
-				card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
+				query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
 			)
 
 			executeExtraAttacks(game, [backlashAttack])

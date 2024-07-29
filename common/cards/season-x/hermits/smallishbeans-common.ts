@@ -9,7 +9,6 @@ class SmallishbeansCommon extends Card {
 		numericId: 160,
 		name: 'Joel',
 		expansion: 'season_x',
-		background: 'alter_egos',
 		rarity: 'common',
 		tokens: 0,
 		type: 'pvp',

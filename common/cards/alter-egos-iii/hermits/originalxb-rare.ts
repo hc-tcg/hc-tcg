@@ -28,7 +28,7 @@ class OriginalXBRare extends Card {
 			name: 'Get Good',
 			cost: ['miner', 'miner', 'any'],
 			damage: 90,
-			power: 'Opponent must draw an additional card from their deck on their next turn.',
+			power: 'Your opponent must draw an extra card at the end of their next turn.',
 		},
 	}
 

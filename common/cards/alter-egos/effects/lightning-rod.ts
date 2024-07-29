@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -40,7 +40,7 @@ class LightningRod extends Card {
 			if (game.currentPlayer.entity !== opponentPlayer.entity) return
 			if (attack.target?.player.id !== player.id) return
 
-			attack.setTarget(component.entity, component.slot.row?.entity)
+			attack.redirect(component.entity, component.slot.row?.entity)
 			used = true
 		})
 

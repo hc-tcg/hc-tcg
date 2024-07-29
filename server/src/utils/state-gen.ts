@@ -10,7 +10,7 @@ import {
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
-import {card, row, slot} from 'common/components/query'
+import query from 'common/components/query'
 import {
 	LocalCardInstance,
 	LocalModalData,
@@ -146,6 +146,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 			turnedOver: false,
+			attackHint: null,
 		}
 	})
 }
@@ -166,13 +167,20 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 }
 
 function getLocalCard<Props extends CardProps>(
+	game: GameModel,
 	card: CardComponent<Props>
 ): LocalCardInstance<Props> {
+	let attackPreview = null
+	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+		attackPreview = card.props.attackPreview(game)
+	}
+
 	return {
 		props: card.card.props as WithoutFunctions<Props>,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
+		attackHint: attackPreview,
 	}
 }
 
@@ -180,7 +188,7 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 	if (modal.modalId == 'selectCards') {
 		return {
 			...modal.payload,
-			cards: modal.payload.cards.map((entity) => getLocalCard(game.components.get(entity)!)),
+			cards: modal.payload.cards.map((entity) => getLocalCard(game, game.components.get(entity)!)),
 		}
 	} else if (modal.modalId === 'copyAttack') {
 		let hermitCard = game.components.get(modal.payload.hermitCard)!
@@ -191,7 +199,7 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 
 		return {
 			...modal.payload,
-			hermitCard: getLocalCard(hermitCard),
+			hermitCard: getLocalCard(game, hermitCard),
 			blockedActions: blockedActions,
 		}
 	}
@@ -209,13 +217,13 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 function getLocalCoinFlip(game: GameModel, coinFlip: CurrentCoinFlip): LocalCurrentCoinFlip {
 	return {
 		...coinFlip,
-		card: getLocalCard(game.components.get(coinFlip.card)!),
+		card: getLocalCard(game, game.components.get(coinFlip.card)!),
 	}
 }
 
 function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): LocalPlayerState {
-	let singleUseSlot = game.components.find(SlotComponent, slot.singleUse)?.entity
-	let singleUseCard = game.components.find(CardComponent, card.slotEntity(singleUseSlot))
+	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)?.entity
+	let singleUseCard = game.components.find(CardComponent, query.card.slotEntity(singleUseSlot))
 
 	if (!singleUseSlot) {
 		throw new Error('Slot is missing when generating local game state.')
@@ -223,11 +231,18 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 
 	let board = {
 		activeRow:
-			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
-		singleUse: {slot: singleUseSlot, card: singleUseCard ? getLocalCard(singleUseCard) : null},
+			game.components.findEntity(
+				RowComponent,
+				query.row.active,
+				query.row.player(playerState.entity)
+			) || null,
+		singleUse: {
+			slot: singleUseSlot,
+			card: singleUseCard ? getLocalCard(game, singleUseCard) : null,
+		},
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components
-			.filter(RowComponent, row.player(playerState.entity))
+			.filter(RowComponent, query.row.player(playerState.entity))
 			.map((row) => {
 				const hermitCard = row.getHermit()
 				const hermitSlot = row.getHermitSlot()
@@ -235,10 +250,10 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 				const attachSlot = row.getAttachSlot()
 
 				const items = row.getItemSlots().map((itemSlot) => {
-					let itemCard = game.components.find(CardComponent, card.slotEntity(itemSlot.entity))
+					let itemCard = game.components.find(CardComponent, query.card.slotEntity(itemSlot.entity))
 					return {
 						slot: itemSlot.entity,
-						card: itemCard ? getLocalCard(itemCard) : null,
+						card: itemCard ? getLocalCard(game, itemCard) : null,
 					}
 				})
 
@@ -251,11 +266,11 @@ function getLocalPlayerState(game: GameModel, playerState: PlayerComponent): Loc
 						entity: row.entity,
 						hermit: {
 							slot: hermitSlot.entity,
-							card: hermitCard ? (getLocalCard(hermitCard) as any) : null,
+							card: hermitCard ? (getLocalCard(game, hermitCard) as any) : null,
 						},
 						attach: {
 							slot: attachSlot.entity,
-							card: attachCard ? (getLocalCard(attachCard) as any) : null,
+							card: attachCard ? (getLocalCard(game, attachCard) as any) : null,
 						},
 						items: items,
 						health: row.health,
@@ -346,16 +361,22 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.components
-			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.hand))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.hand)
+			)
 			.sort(CardComponent.compareOrder)
-			.map(getLocalCard),
+			.map((card) => getLocalCard(game, card)),
 		pileCount: game.components.filter(
 			CardComponent,
-			card.slot(slot.player(playerState.entity), slot.deck)
+			query.card.slot(query.slot.player(playerState.entity), query.slot.deck)
 		).length,
 		discarded: game.components
-			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.discardPile))
-			.map(getLocalCard),
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.player(playerState.entity), query.slot.discardPile)
+			)
+			.map((card) => getLocalCard(game, card)),
 
 		// ids
 		playerId: player.id,
@@ -367,7 +388,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()
-			.map(([card, place]) => [getLocalCard(card), place]),
+			.map(([card, place]) => [getLocalCard(game, card), place]),
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,

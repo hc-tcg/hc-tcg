@@ -3,7 +3,7 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import * as query from '../components/query'
+import query from '../components/query'
 import {STRENGTHS} from '../const/strengths'
 import {CardComponent, ObserverComponent} from '../components'
 import {Hermit} from '../cards/base/types'
@@ -281,7 +281,7 @@ export function setupMockCard(
 			attackType === 'primary' ? mocking.props.primary.name : mocking.props.secondary.name,
 		getAttack: () => {
 			let attack = mocking.card.getAttack(game, component, attackType)
-			observer.subscribe(component.player.hooks.afterAttack, () => {
+			observer.subscribe(component.player.hooks.onTurnEnd, () => {
 				mocking.card.onDetach(game, component, observer)
 				observer.unsubscribeFromEverything()
 			})

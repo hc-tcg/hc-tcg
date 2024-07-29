@@ -63,6 +63,7 @@ export type AttackHistoryType =
 	| 'lock_damage'
 	| 'set_attacker'
 	| 'set_target'
+	| 'redirect'
 
 export type AttackHistory = {
 	source: AttackerEntity

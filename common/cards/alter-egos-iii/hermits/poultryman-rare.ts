@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Egg from '../../alter-egos/single-use/egg'
 
 class PoultryManRare extends Card {
@@ -16,7 +16,7 @@ class PoultryManRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 3,
 		type: 'farm',
 		health: 280,
 		primary: {

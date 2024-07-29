@@ -184,10 +184,18 @@ export class AttackModel {
 		this.addHistory(attacker, 'set_attacker', attacker)
 		return this
 	}
-	/** Sets the target for this attack */
+
+	/** Sets the target for this attack. Unlike redirect, this does not trigger Chainmail Armor. */
 	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.targetEntity = target
 		this.addHistory(sourceId, 'set_target', target)
+		return this
+	}
+
+	/** Redirect the attack to another hermit. Unlike setTarget, this will trigger Chainmail Armor. */
+	public redirect(sourceId: AttackerEntity, target: RowEntity | null) {
+		this.targetEntity = target
+		this.addHistory(sourceId, 'redirect', target)
 		return this
 	}
 

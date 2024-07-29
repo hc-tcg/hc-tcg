@@ -9,6 +9,7 @@ import type {
 } from '../../types/cards'
 import type {SlotComponent} from '../../components'
 import type {WithoutFunctions} from '../../types/server-requests'
+import {GameModel} from '../../models/game-model'
 
 export type CardProps = {
 	id: string
@@ -95,6 +96,7 @@ export type SingleUse = CardProps &
 		singleUse: null
 		showConfirmationModal: boolean
 		hasAttack: boolean
+		attackPreview?: (game: GameModel) => string
 	}
 
 export function isSingleUse(

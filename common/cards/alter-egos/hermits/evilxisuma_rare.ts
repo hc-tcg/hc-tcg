@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
@@ -20,7 +20,7 @@ class EvilXisumaRare extends Card {
 		expansion: 'alter_egos',
 		palette: 'alter_egos',
 		background: 'alter_egos',
-		tokens: 4,
+		tokens: 3,
 		type: 'balanced',
 		health: 280,
 		primary: {

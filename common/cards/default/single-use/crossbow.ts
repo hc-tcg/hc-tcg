@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
@@ -10,6 +10,8 @@ import {singleUse} from '../../base/defaults'
 import {RowEntity} from '../../../entities'
 
 class Crossbow extends Card {
+	pickCondition = query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty))
+
 	props: SingleUse = {
 		...singleUse,
 		id: 'crossbow',
@@ -20,21 +22,20 @@ class Crossbow extends Card {
 		tokens: 1,
 		description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
 		hasAttack: true,
+		attackPreview: (game) => `$A20$ x ${this.getTotalTargets(game)}`,
+	}
+
+	getTotalTargets(game: GameModel) {
+		return Math.min(3, game.components.filter(SlotComponent, this.pickCondition).length)
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		const pickCondition = query.every(
-			query.slot.opponent,
-			query.slot.hermit,
-			query.not(query.slot.empty)
-		)
 
 		let targets = new Set<RowEntity>()
 
 		observer.subscribe(player.hooks.getAttackRequests, (_activeInstance, _hermitAttackType) => {
-			// Rather than allowing you to choose to damage less we will make you pick the most you can
-			let totalTargets = Math.min(3, game.components.filter(SlotComponent, pickCondition).length)
+			let totalTargets = this.getTotalTargets(game)
 			let targetsRemaining = totalTargets
 
 			const pickRequest = {
@@ -54,13 +55,13 @@ class Crossbow extends Card {
 				},
 			}
 
-			function addPickRequest() {
+			let addPickRequest = () => {
 				let remaining = targetsRemaining.toString()
 				if (totalTargets != totalTargets) remaining += ' more'
 				const request: PickRequest = {
 					...pickRequest,
 					canPick: query.every(
-						pickCondition,
+						this.pickCondition,
 						...Array.from(targets).map((row) => query.not(query.slot.rowIs(row)))
 					),
 					message: `Pick ${remaining} of your opponent's Hermits`,

@@ -1,15 +1,41 @@
 import {PlayerId, PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions, Message} from '../types/game-state'
+import {
+	TurnAction,
+	GameState,
+	ActionResult,
+	TurnActions,
+	Message,
+	DefaultDictionary,
+} from '../types/game-state'
 import {getGameState, setupComponents} from '../utils/state-gen'
 import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {ComponentQuery, card} from '../components/query'
+import query, {ComponentQuery} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
 import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {Hook} from '../types/hooks'
+
+/** Type that allows for additional data about a game to be shared between components */
+export class GameValue<T> extends DefaultDictionary<GameModel, T> {
+	public set(game: GameModel, value: T) {
+		if (!Object.hasOwn(this.values, game.id)) {
+			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+		}
+		this.setValue(game.id, value)
+	}
+
+	public get(game: GameModel): T {
+		return this.getValue(game.id)
+	}
+
+	public clear(game: GameModel) {
+		this.clearValue(game.id)
+	}
+}
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -24,6 +50,8 @@ export class GameModel {
 
 	/** The objects used in the game. */
 	public components: ComponentTable
+	/** Hook for when the game ends and references needs to be disposed */
+	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -54,6 +82,7 @@ export class GameModel {
 		}
 
 		this.components = new ComponentTable(this)
+		this.afterGameEnd = new Hook<string, () => void>()
 		setupComponents(this.components, player1, player2)
 
 		this.state = getGameState(this)
@@ -259,8 +288,8 @@ export class GameModel {
 	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, card.slotEntity(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, card.slotEntity(slotB.entity))
+		const slotACards = this.components.filter(CardComponent, query.card.slotEntity(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, query.card.slotEntity(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.attach(slotB)

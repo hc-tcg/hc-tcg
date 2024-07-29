@@ -95,6 +95,11 @@ function* loadUpdatesSaga(action: any) {
 	const {playerId} = action
 	const player = root.players[playerId]
 
+	if (!player) {
+		console.error('Found undefined player with id:', player)
+		return
+	}
+
 	player.socket?.emit('LOAD_UPDATES', {
 		type: 'LOAD_UPDATES',
 		payload: root.updates,

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -33,7 +33,6 @@ class Emerald extends Card {
 					query.slot.opponent,
 					query.slot.active,
 					query.slot.attach,
-					query.not(query.slot.empty),
 					query.not(query.slot.frozen)
 				)
 			)

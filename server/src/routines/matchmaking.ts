@@ -68,6 +68,7 @@ function* gameManager(game: GameModel) {
 		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {
 		if (game.task) yield* cancel(game.task)
+		game.afterGameEnd.call()
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)

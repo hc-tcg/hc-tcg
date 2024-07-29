@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -20,6 +20,7 @@ class GoldenAxe extends Card {
 		description:
 			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
 		hasAttack: true,
+		attackPreview: (_game) => '$A40$',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
