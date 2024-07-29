@@ -14,7 +14,7 @@ class SilkTouch extends Card {
 		name: 'Silk Touch',
 		expansion: 'alter_egos_iii',
 		rarity: 'rare',
-		tokens: 0,
+		tokens: 1,
 		description:
 			'Attach to your active Hermit. If a single use effect card is used while this card is attached to your active Hermit, discard Silk Touch instead and shuffle the single use effect card back into your deck.',
 	}
