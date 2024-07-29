@@ -55,7 +55,9 @@ class EthosLabRare extends Card {
 				query.card.active,
 				query.card.slot(query.slot.hermit)
 			)
-			game.components.new(StatusEffectComponent, FireEffect).apply(opponentActiveHermit?.entity)
+			game.components
+				.new(StatusEffectComponent, FireEffect, component.entity)
+				.apply(opponentActiveHermit?.entity)
 		})
 	}
 }

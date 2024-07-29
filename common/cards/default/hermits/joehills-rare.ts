@@ -64,14 +64,18 @@ class JoeHillsRare extends Card {
 				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
 			)
 
-			game.components.new(StatusEffectComponent, TurnSkippedEffect).apply(opponentPlayer.entity)
-			game.components.new(StatusEffectComponent, UsedClockEffect).apply(player.entity)
+			game.components
+				.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
+				.apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, UsedClockEffect, component.entity)
+				.apply(player.entity)
 
 			game.components
 				.filter(CardComponent, query.card.currentPlayer, query.card.is(JoeHillsRare))
 				.forEach((joe) =>
 					game.components
-						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect)
+						.new(StatusEffectComponent, MultiturnSecondaryAttackDisabledEffect, component.entity)
 						.apply(joe.entity)
 				)
 		})

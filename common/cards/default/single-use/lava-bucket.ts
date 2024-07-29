@@ -31,7 +31,7 @@ class LavaBucket extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, FireEffect)
+				.new(StatusEffectComponent, FireEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

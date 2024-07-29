@@ -31,7 +31,7 @@ class PotionOfWeakness extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, WeaknessEffect)
+				.new(StatusEffectComponent, WeaknessEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

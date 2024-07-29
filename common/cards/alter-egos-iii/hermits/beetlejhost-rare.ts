@@ -45,7 +45,9 @@ class BeetlejhostRare extends Card {
 				query.effect.is(ChromaKeyedEffect)
 			)[0]
 			if (!chromakeyed) {
-				game.components.new(StatusEffectComponent, ChromaKeyedEffect).apply(component.entity)
+				game.components
+					.new(StatusEffectComponent, ChromaKeyedEffect, component.entity)
+					.apply(component.entity)
 			}
 		})
 	}

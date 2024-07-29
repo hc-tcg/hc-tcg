@@ -45,7 +45,9 @@ class SkizzlemanRare extends Card {
 					query.card.slot(query.slot.hermit)
 				)
 				.map((card) => {
-					game.components.new(StatusEffectComponent, GasLightEffect).apply(card.entity)
+					game.components
+						.new(StatusEffectComponent, GasLightEffect, component.entity)
+						.apply(card.entity)
 				})
 		})
 	}
