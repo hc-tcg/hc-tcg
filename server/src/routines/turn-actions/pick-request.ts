@@ -4,7 +4,7 @@ import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
 import {PlayerComponent, SlotComponent} from 'common/components'
-import {slot} from 'common/components/query'
+import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 
 function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<any, ActionResult> {
@@ -20,7 +20,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 	}
 
 	// Call the bound function with the pick result
-	let slotInfo = game.components.find(SlotComponent, slot.entity(pickResult))
+	let slotInfo = game.components.find(SlotComponent, query.slot.entity(pickResult))
 	if (!slotInfo) return 'FAILURE_INVALID_DATA'
 
 	const canPick = pickRequest.canPick(game, slotInfo)

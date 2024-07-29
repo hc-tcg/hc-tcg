@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -31,7 +31,7 @@ class PotionOfWeakness extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, WeaknessEffect)
+				.new(StatusEffectComponent, WeaknessEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

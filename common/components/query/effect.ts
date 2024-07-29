@@ -2,7 +2,7 @@ import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
 import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
 import {CardEntity, PlayerEntity} from '../../entities'
-import * as query from '.'
+import query from '.'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
 import('../../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))

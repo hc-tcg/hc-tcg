@@ -3,7 +3,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {GasLightEffect} from '../../../status-effects/gas-light'
 
 class SkizzlemanRare extends Card {
@@ -28,7 +28,7 @@ class SkizzlemanRare extends Card {
 			cost: ['builder', 'builder'],
 			damage: 70,
 			power:
-				"At the end of your turn, deal 20hp damage to each of your opponent's AFK hermits that took damage this turn.",
+				"After your attack, deal an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
 		},
 	}
 
@@ -38,9 +38,16 @@ class SkizzlemanRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			game.components
-				.filter(CardComponent, query.card.opponentPlayer, query.card.afk)
+				.filter(
+					CardComponent,
+					query.card.opponentPlayer,
+					query.card.afk,
+					query.card.slot(query.slot.hermit)
+				)
 				.map((card) => {
-					game.components.new(StatusEffectComponent, GasLightEffect).apply(card.entity)
+					game.components
+						.new(StatusEffectComponent, GasLightEffect, component.entity)
+						.apply(card.entity)
 				})
 		})
 	}

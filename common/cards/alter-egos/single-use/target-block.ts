@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -49,7 +49,7 @@ class TargetBlock extends Card {
 				// Apply the card
 				applySingleUse(game, pickedSlot)
 				game.components
-					.new(StatusEffectComponent, TargetBlockEffect)
+					.new(StatusEffectComponent, TargetBlockEffect, component.entity)
 					.apply(pickedSlot.getCard()?.entity)
 			},
 		})

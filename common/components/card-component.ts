@@ -23,7 +23,7 @@ import {
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
-import * as query from './query'
+import query from './query'
 import {CardStatusEffect} from '../status-effects/status-effect'
 
 let CARDS: Record<any, Card>

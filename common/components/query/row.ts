@@ -1,4 +1,4 @@
-import {ComponentQuery, card, slot} from '.'
+import query, {ComponentQuery} from '.'
 import {CardComponent, RowComponent} from '..'
 import {CardEntity, PlayerEntity, RowEntity} from '../../entities'
 
@@ -19,7 +19,11 @@ export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export const hasHermit: ComponentQuery<RowComponent> = (game, row) =>
-	game.components.exists(CardComponent, card.isHermit, card.slot(slot.rowIs(row.entity)))
+	game.components.exists(
+		CardComponent,
+		query.card.isHermit,
+		query.card.slot(query.slot.rowIs(row.entity))
+	)
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {

@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'

@@ -4,7 +4,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class Loyalty extends Card {
 	props: Attach = {
@@ -16,7 +16,7 @@ class Loyalty extends Card {
 		rarity: 'rare',
 		tokens: 0,
 		description:
-			'When the Hermit that this card is attached to is knocked out, all attached item cards are returned to your hand.',
+			'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

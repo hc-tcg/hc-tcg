@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
@@ -31,7 +31,7 @@ class LavaBucket extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, FireEffect)
+				.new(StatusEffectComponent, FireEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

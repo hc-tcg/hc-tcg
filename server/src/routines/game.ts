@@ -17,7 +17,7 @@ import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import * as query from 'common/components/query'
+import query from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -292,18 +292,7 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
-
-	const availableActions =
-		turnAction.playerId === currentPlayer.id
-			? game.state.turn.availableActions
-			: game.state.turn.opponentAvailableActions
-
-	if (!availableActions.includes(actionType)) {
-		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
-		return
-	}
 
 	let endTurn = false
 
@@ -401,15 +390,6 @@ function* turnActionsSaga(game: GameModel) {
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
-
-			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
-			if (
-				(availableActions.includes('PRIMARY_ATTACK') ||
-					availableActions.includes('SECONDARY_ATTACK')) &&
-				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
-			) {
-				blockedActions.push('SINGLE_USE_ATTACK')
-			}
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))

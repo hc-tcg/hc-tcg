@@ -45,7 +45,9 @@ class HumanCleoRare extends Card {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
-			game.components.new(StatusEffectComponent, BetrayedEffect).apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, BetrayedEffect, component.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }

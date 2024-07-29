@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -41,7 +41,9 @@ class Bed extends Card {
 			)
 		}
 
-		game.components.new(StatusEffectComponent, SleepingEffect).apply(hermitCard()?.entity)
+		game.components
+			.new(StatusEffectComponent, SleepingEffect, component.entity)
+			.apply(hermitCard()?.entity)
 
 		// Knockback/Tango/Jevin/etc
 		observer.subscribe(player.hooks.onTurnStart, () => {

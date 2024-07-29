@@ -12,7 +12,7 @@ class Iskall85Rare extends Card {
 		name: 'Iskall',
 		expansion: 'default',
 		rarity: 'rare',
-		tokens: 1,
+		tokens: 0,
 		type: 'farm',
 		health: 290,
 		primary: {

@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {flipCoin} from '../../../utils/coinFlips'
 
 class KingJoelRare extends Card {
@@ -30,7 +30,7 @@ class KingJoelRare extends Card {
 			cost: ['builder', 'builder'],
 			damage: 80,
 			power:
-				"Flip a coin. If heads, choose an item card attached to one of your opponent's AFK hermits to attach to one of your AFK Hermits.",
+				"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
 		},
 	}
 
