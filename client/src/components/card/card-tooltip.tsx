@@ -180,12 +180,12 @@ const CardInstanceTooltip = ({card}: Props) => {
 				<div className={css.topLine}>
 					{getName(card)}
 					{gettype(card)}
-					{getRarity(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
 				</div>
 				<div className={css.description}>
 					{getExpansion(card)}
+					{isHermit(card) && getRarity(card)}
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
