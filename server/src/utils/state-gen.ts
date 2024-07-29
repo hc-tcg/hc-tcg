@@ -99,7 +99,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		// add 1 - 3 of this hermit
 		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
 
-		tokens += hermitCard.props.tokens * hermitAmount
+		tokens += (hermitCard.props.tokens !== 'wild' ? hermitCard.props.tokens : 1) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
 			itemCounts[hermitCard.props.type].items += 2
@@ -123,7 +123,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		const duplicates = deck.filter((card) => card.props.numericId === effectCard.props.numericId)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
-		const tokenCost = effectCard.props.tokens
+		const tokenCost = effectCard.props.tokens !== 'wild' ? effectCard.props.tokens : 1
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue

@@ -139,7 +139,7 @@ export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInsta
 				isHermit(a.props) &&
 					isHermit(b.props) &&
 					RARITY_ORDER[a.props.rarity] - RARITY_ORDER[b.props.rarity],
-				a.props.tokens - b.props.tokens,
+				a.props.tokens !== 'wild' && b.props.tokens !== 'wild' && a.props.tokens - b.props.tokens,
 				isHermit(a.props) &&
 					isHermit(b.props) &&
 					a.props.secondary.cost.length - b.props.secondary.cost.length,
