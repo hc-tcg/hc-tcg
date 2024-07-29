@@ -88,6 +88,9 @@ function* attackSaga(
 		game.battleLog.sendLogs()
 	}
 
+	// Once we attack, we are not allowed to attack again.
+	game.addCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+
 	return 'SUCCESS'
 }
 
