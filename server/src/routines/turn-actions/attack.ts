@@ -88,6 +88,16 @@ function* attackSaga(
 		game.battleLog.sendLogs()
 	}
 
+	game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+	game.addBlockedActions(
+		'game',
+		'PLAY_HERMIT_CARD',
+		'PLAY_ITEM_CARD',
+		'PLAY_EFFECT_CARD',
+		'PLAY_SINGLE_USE_CARD',
+		'CHANGE_ACTIVE_HERMIT'
+	)
+
 	return 'SUCCESS'
 }
 

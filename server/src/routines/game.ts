@@ -296,6 +296,30 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 
 	let endTurn = false
 
+	const availableActions =
+		turnAction.playerId === game.currentPlayer.id
+			? game.state.turn.availableActions
+			: game.state.turn.opponentAvailableActions
+
+	// We don't check if slot actions are available because the playCardSaga will verify that.
+	if (
+		[
+			'SINGLE_USE_ATTACK',
+			'PRIMARY_ATTACK',
+			'SECONDARY_ATTACK',
+			'CHANGE_ACTIVE_HERMIT',
+			'APPLY_EFFECT',
+			'REMOVE_EFFECT',
+			'PICK_REQUEST',
+			'MODAL_REQUEST',
+			'END_TURN',
+		].includes(actionType) &&
+		!availableActions.includes(actionType)
+	) {
+		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
+		return
+	}
+
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 	switch (actionType) {
 		case 'PLAY_HERMIT_CARD':
