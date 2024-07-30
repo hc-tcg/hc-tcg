@@ -6,8 +6,6 @@ import {Attach} from '../../base/types'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import SleepingEffect from '../../../status-effects/sleeping'
 
-// @todo Figure out how ladder is supposed to work
-
 class Bed extends Card {
 	props: Attach = {
 		...attach,
@@ -49,7 +47,7 @@ class Bed extends Card {
 			let hermit = hermitCard()
 			if (!hermit) return
 
-			// If the player is moved by knockback, we want to remove sleep and discard the bed.
+			// If the player is moved by knockback or ladder, we want to remove sleep and discard the bed.
 			if (!hermit.slot.inRow() || hermit.slot.row.entity !== player.activeRowEntity) {
 				hermit.getStatusEffect(SleepingEffect)?.remove()
 				component.discard()
