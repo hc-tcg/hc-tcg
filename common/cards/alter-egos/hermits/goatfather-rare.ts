@@ -56,10 +56,11 @@ class GoatfatherRare extends Card {
 				.filter(
 					RowComponent,
 					query.row.opponentPlayer,
+					query.row.hasHermit,
 					(_game, row) =>
 						opponentActiveHermit !== null &&
 						opponentActiveHermit.slot.inRow() &&
-						row.index > opponentActiveHermit?.slot.row.index
+						row.index > opponentActiveHermit.slot.row.index
 				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({
