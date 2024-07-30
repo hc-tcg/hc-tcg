@@ -249,7 +249,7 @@ export function setupMockCard(
 
 	component.player.hooks.getAttackRequests.callSome(
 		[component, attackType],
-		(observerEntity) => observerEntity == observer.entity
+		(observerEntity) => observerEntity === observer.entity
 	)
 
 	return {
