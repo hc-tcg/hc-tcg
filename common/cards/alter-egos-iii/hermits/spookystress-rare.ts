@@ -55,7 +55,7 @@ class SpookyStressRare extends Card {
 					RowComponent,
 					query.row.opponentPlayer,
 					query.not(query.row.active),
-					query.row.hasHermit
+					query.row.hermitSlotOccupied
 				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({
