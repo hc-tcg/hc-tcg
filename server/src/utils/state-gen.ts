@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG} from 'common/config'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
@@ -27,6 +27,7 @@ import {
 import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
 import {CardEntity, newEntity} from 'common/entities'
 import {ModalData} from 'common/types/modal-requests'
+import {DISABLED_EXPANSIONS} from 'common/const/expansions'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -57,7 +58,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			!cardInfo.isHermit() ||
 			!cardInfo.isItem() ||
 			(types.includes(cardInfo.props.type) &&
-				!EXPANSIONS.disabled.includes(cardInfo.props.expansion))
+				!DISABLED_EXPANSIONS.includes(cardInfo.props.expansion))
 	)
 
 	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttach())

@@ -11,7 +11,6 @@ import {
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
-import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {STATUS_EFFECTS} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
@@ -20,6 +19,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {FormattedText} from 'components/formatting/formatting'
 import {EmptyNode, FormattedTextNode, formatText} from 'common/utils/formatting'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {EXPANSIONS} from 'common/const/expansions'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -114,7 +114,7 @@ const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 		const expansion = card.expansion as 'default' | 'alter_egos' | 'advent_of_tcg' | 'alter_egos_ii'
 		return (
 			<div className={classNames(css.expansion, css[expansion])}>
-				■ {EXPANSIONS.expansions[expansion]} Card ■
+				■ {EXPANSIONS[expansion].name} Card ■
 			</div>
 		)
 	}

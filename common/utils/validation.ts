@@ -1,6 +1,7 @@
-import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from '../config'
+import {CONFIG, DEBUG_CONFIG} from '../config'
 import {getDeckCost} from './ranks'
 import {LocalCardInstance} from '../types/server-requests'
+import {DISABLED_EXPANSIONS} from '../const/expansions'
 
 export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	if (DEBUG_CONFIG.disableDeckValidation) return
@@ -11,7 +12,7 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 
 	// Contains disabled cards
 	const hasDisabledCards = deckCards.some((card) =>
-		EXPANSIONS.disabled.includes(card.props.expansion)
+		DISABLED_EXPANSIONS.includes(card.props.expansion)
 	)
 	if (hasDisabledCards) return 'Deck must not include removed cards.'
 
