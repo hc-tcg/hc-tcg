@@ -99,13 +99,18 @@ const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
-	common: '■ Common ■',
-	rare: '■  Rare ■',
+	common: 'Common',
+	rare: '✦ Rare ✦',
 	ultra_rare: '★ Ultra Rare ★',
 }
 
 const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	return <span className={css.rarity}> {RARITY_DISPLAY_TEXT[card.rarity]} </span>
+	return (
+		<span className={classNames(css.rarity, css[card.rarity])}>
+			{' '}
+			{RARITY_DISPLAY_TEXT[card.rarity]}{' '}
+		</span>
+	)
 }
 
 const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
@@ -129,11 +134,11 @@ const getSingleUse = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return <div className={css.singleUse}>Single Use</div>
 }
 
-const gettype = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getType = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isHermit(card)) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>
-				{HERMIT_TYPES[card.type] || card.type} Type
+				{HERMIT_TYPES[card.type] || card.type}
 			</div>
 		)
 	}
@@ -178,13 +183,13 @@ const CardInstanceTooltip = ({card}: Props) => {
 			<div className={css.cardTooltip}>
 				<div className={css.topLine}>
 					{getName(card)}
-					{gettype(card)}
+					{isHermit(card) && getRarity(card)}
+					{getType(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
 				</div>
 				<div className={css.description}>
 					{getExpansion(card)}
-					{isHermit(card) && getRarity(card)}
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
