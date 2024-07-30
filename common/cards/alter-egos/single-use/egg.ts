@@ -62,8 +62,6 @@ class Egg extends Card {
 			// Do not apply single use more than once
 			observer.unsubscribe(player.hooks.onAttack)
 
-			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
-
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = game
@@ -78,6 +76,8 @@ class Egg extends Card {
 
 				attack.addNewAttack(eggAttack)
 			}
+
+			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
 
 			opponentPlayer.changeActiveRow(afkHermitSlot.row)
 		})

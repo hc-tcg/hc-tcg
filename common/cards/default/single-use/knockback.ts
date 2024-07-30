@@ -32,7 +32,7 @@ class Knockback extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game)
@@ -43,26 +43,8 @@ class Knockback extends Card {
 		observer.subscribe(player.hooks.onApply, () => {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
-			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
-
-			let activeRow = opponentPlayer.activeRow
-			if (activeRow && activeRow.health) {
-				game.addPickRequest({
-					playerId: opponentPlayer.id,
-					id: component.entity,
-					message: 'Choose a new active Hermit from your AFK Hermits',
-					canPick: this.pickCondition,
-					onResult(pickedSlot) {
-						if (!pickedSlot.inRow()) return
-						opponentPlayer.changeActiveRow(pickedSlot.row)
-					},
-					onTimeout: () => {
-						const slot = game.components.find(SlotComponent, this.pickCondition)
-						if (!slot?.inRow()) return
-						game.opponentPlayer.changeActiveRow(slot.row)
-					},
-				})
-			}
+			let knockbackRequest = player.createKnockbackPickRequest(component)
+			if (knockbackRequest) game.addPickRequest(knockbackRequest)
 		})
 	}
 }

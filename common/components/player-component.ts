@@ -14,6 +14,7 @@ import {HandSlotComponent, SlotComponent} from './slot-component'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import {StatusEffectComponent} from './status-effect-component'
 import {RowComponent} from './row-component'
+import {PickRequest} from '../types/server-requests'
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -285,6 +286,36 @@ export class PlayerComponent {
 		return true
 	}
 
+	/** Force the player to switch their active hermit due to knockback. If the hermit is immune to knockback, return null. */
+	public createKnockbackPickRequest(component: CardComponent): PickRequest | null {
+		const pickCondition = query.every(
+			query.not(query.slot.active),
+			query.not(query.slot.empty),
+			query.slot.opponent,
+			query.slot.hermit
+		)
+
+		if (!this.game.components.exists(SlotComponent, pickCondition)) return null
+
+		if (this.hooks.getImmuneToKnockback.call().some((x) => x === true)) return null
+
+		return {
+			playerId: this.opponentPlayer.id,
+			id: component.entity,
+			message: 'Choose a new active Hermit from your AFK Hermits.',
+			canPick: pickCondition,
+			onResult: (pickedSlot) => {
+				if (!pickedSlot.inRow()) return
+				this.opponentPlayer.changeActiveRow(pickedSlot.row)
+			},
+			onTimeout: () => {
+				let rowComponent = this.game.components.find(RowComponent, query.not(query.row.active))
+				if (!rowComponent) return
+				this.opponentPlayer.changeActiveRow(rowComponent)
+			},
+		}
+	}
+
 	/** Get an array of [card, slot the card can be placed in] for each card in the player's hand. */
 	public getCardsCanBePlacedIn() {
 		return this.game.components
@@ -293,7 +324,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>
+						Array<SlotEntity>,
 					]
 			)
 	}
