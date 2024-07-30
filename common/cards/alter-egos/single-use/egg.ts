@@ -6,7 +6,6 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import NetheriteBoots from '../../alter-egos-iii/effects/netherite-boots'
 
 class Egg extends Card {
 	pickCondition = query.every(
