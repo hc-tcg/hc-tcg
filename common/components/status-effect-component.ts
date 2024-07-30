@@ -19,7 +19,7 @@ export class StatusEffectComponent<
 	readonly creatorEntity: CardEntity
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
 	public counter: number | null
-	private observerEntity: ObserverEntity | null
+	public observerEntity: ObserverEntity | null
 
 	constructor(
 		game: GameModel,
