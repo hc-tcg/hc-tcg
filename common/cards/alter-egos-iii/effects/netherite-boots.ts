@@ -32,6 +32,10 @@ class NetheriteBoots extends Card {
 
 		let damageBlocked = 0
 
+		observer.subscribe(player.hooks.getImmuneToKnockback, () => {
+			return component.slot.inRow() && component.slot.rowEntity == player.activeRowEntity
+		})
+
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
 

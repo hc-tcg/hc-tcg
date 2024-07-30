@@ -77,6 +77,8 @@ export function entity(cardEntity: CardEntity): ComponentQuery<CardComponent> {
 export const active: ComponentQuery<CardComponent> = (game, card) =>
 	slot(query.slot.active)(game, card)
 
+export const canBeRecovered: ComponentQuery<CardComponent> = (game, card) => card.canBeRecovered
+
 export const onBoard: ComponentQuery<CardComponent> = (_game, card) => card.slot.onBoard()
 
 /** Return true if this card is not on the active row */

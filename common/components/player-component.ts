@@ -87,6 +87,8 @@ export class PlayerComponent {
 		 * This is called after actions are marked as completed and blocked
 		 */
 		afterDefence: GameHook<(attack: AttackModel) => void>
+		/** Hook called to check if the player can be knocked back */
+		getImmuneToKnockback: GameHook<() => boolean>
 
 		/**
 		 * Hook called at the start of the turn
@@ -151,6 +153,7 @@ export class PlayerComponent {
 			onDefence: new GameHook(),
 			afterAttack: new GameHook(),
 			afterDefence: new GameHook(),
+			getImmuneToKnockback: new GameHook(),
 			onTurnStart: new GameHook(),
 			beforeTurnEnd: new GameHook(),
 			onTurnEnd: new GameHook(),
@@ -290,7 +293,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>
+						Array<SlotEntity>,
 					]
 			)
 	}

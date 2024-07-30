@@ -37,7 +37,7 @@ export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
-	public call(...params: Parameters<Args>) {
+	public call(...params: Parameters<Args>): Array<ReturnType<Args>> {
 		return this.listeners.map(([_, listener]) => listener(...(params as Array<any>)))
 	}
 }
@@ -64,7 +64,7 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<ObserverE
  * Allows adding and removing listeners with the card instance as a reference, and calling all listeners while passing through the first parameter.
  */
 export class WaterfallHook<
-	Args extends (...args: any) => Parameters<Args>[0]
+	Args extends (...args: any) => Parameters<Args>[0],
 > extends GameHook<Args> {
 	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
 		return this.listeners.reduce((params, [_, listener]) => {

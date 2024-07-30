@@ -33,6 +33,7 @@ class SilkTouch extends Card {
 
 		observer.subscribe(player.hooks.beforeTurnEnd, () => {
 			if (!singleUseCard) return
+			if (!singleUseCard.canBeRecovered) return
 
 			singleUseCard.attach(
 				game.components.new(DeckSlotComponent, component.player.entity, {position: 'random'})

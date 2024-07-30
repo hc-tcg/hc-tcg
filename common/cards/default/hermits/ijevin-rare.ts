@@ -46,6 +46,8 @@ class IJevinRare extends Card {
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
+			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
+
 			game.addPickRequest({
 				playerId: opponentPlayer.id, // For opponent player to pick
 				id: component.entity,

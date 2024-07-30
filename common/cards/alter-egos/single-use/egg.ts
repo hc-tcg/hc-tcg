@@ -63,15 +63,7 @@ class Egg extends Card {
 			// Do not apply single use more than once
 			observer.unsubscribe(player.hooks.onAttack)
 
-			if (
-				game.components.exists(
-					CardComponent,
-					query.card.active,
-					query.card.slot(query.slot.attach),
-					query.card.is(NetheriteBoots)
-				)
-			)
-				return
+			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
