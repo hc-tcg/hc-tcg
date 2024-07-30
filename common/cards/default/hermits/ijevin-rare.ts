@@ -31,11 +31,11 @@ class IJevinRare extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player} = component
+		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			let knockbackRequest = player.createKnockbackPickRequest(component)
+			let knockbackRequest = opponentPlayer.createKnockbackPickRequest(component)
 			if (knockbackRequest) game.addPickRequest(knockbackRequest)
 		})
 	}

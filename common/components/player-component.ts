@@ -286,6 +286,10 @@ export class PlayerComponent {
 		return true
 	}
 
+	public canBeKnockedBack(): boolean {
+		return this.hooks.getImmuneToKnockback.call().every((x) => x === false)
+	}
+
 	/** Force the player to switch their active hermit due to knockback. If the hermit is immune to knockback, return null. */
 	public createKnockbackPickRequest(component: CardComponent): PickRequest | null {
 		const pickCondition = query.every(
@@ -297,21 +301,21 @@ export class PlayerComponent {
 
 		if (!this.game.components.exists(SlotComponent, pickCondition)) return null
 
-		if (this.hooks.getImmuneToKnockback.call().some((x) => x === true)) return null
+		if (!this.canBeKnockedBack()) return null
 
 		return {
-			playerId: this.opponentPlayer.id,
+			playerId: this.id,
 			id: component.entity,
 			message: 'Choose a new active Hermit from your AFK Hermits.',
 			canPick: pickCondition,
 			onResult: (pickedSlot) => {
 				if (!pickedSlot.inRow()) return
-				this.opponentPlayer.changeActiveRow(pickedSlot.row)
+				this.changeActiveRow(pickedSlot.row)
 			},
 			onTimeout: () => {
 				let rowComponent = this.game.components.find(RowComponent, query.not(query.row.active))
 				if (!rowComponent) return
-				this.opponentPlayer.changeActiveRow(rowComponent)
+				this.changeActiveRow(rowComponent)
 			},
 		}
 	}

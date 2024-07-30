@@ -77,9 +77,7 @@ class Egg extends Card {
 				attack.addNewAttack(eggAttack)
 			}
 
-			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
-
-			opponentPlayer.changeActiveRow(afkHermitSlot.row)
+			if (opponentPlayer.canBeKnockedBack()) opponentPlayer.changeActiveRow(afkHermitSlot.row)
 		})
 	}
 }

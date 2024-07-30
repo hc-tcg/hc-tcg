@@ -32,7 +32,7 @@ class Knockback extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
-		const {player} = component
+		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game)
@@ -43,7 +43,7 @@ class Knockback extends Card {
 		observer.subscribe(player.hooks.onApply, () => {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
-			let knockbackRequest = player.createKnockbackPickRequest(component)
+			let knockbackRequest = opponentPlayer.createKnockbackPickRequest(component)
 			if (knockbackRequest) game.addPickRequest(knockbackRequest)
 		})
 	}
