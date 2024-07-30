@@ -14,7 +14,7 @@ class DiamondBoots extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn. Opponent can not make this Hermit go AFK..',
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn. Opponent can not make this Hermit go AFK.',
 	}
 
 	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -35,8 +35,8 @@ class DiamondBoots extends Card {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 
-			if (damageBlocked < 20) {
-				const damageReduction = Math.min(attack.calculateDamage(), 20 - damageBlocked)
+			if (damageBlocked < 10) {
+				const damageReduction = Math.min(attack.calculateDamage(), 10 - damageBlocked)
 				damageBlocked += damageReduction
 				attack.reduceDamage(component.entity, damageReduction)
 			}
