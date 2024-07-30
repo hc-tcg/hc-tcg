@@ -44,7 +44,7 @@ class Knockback extends Card {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
 			if (player.hooks.getImmuneToKnockback.call().some((x) => x === true)) return
-			
+
 			let activeRow = opponentPlayer.activeRow
 			if (activeRow && activeRow.health) {
 				game.addPickRequest({
