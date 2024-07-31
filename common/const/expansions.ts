@@ -1,4 +1,4 @@
-type ExpansionInfo = {
+export type ExpansionInfo = {
 	name: string
 	disabled: boolean
 }
@@ -12,7 +12,7 @@ export type ExpansionT =
 	| 'advent_of_tcg'
 	| 'dream'
 
-type ExpansionDict = {
+export type ExpansionDict = {
 	readonly [Expansion in ExpansionT]: ExpansionInfo
 }
 

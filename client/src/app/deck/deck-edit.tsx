@@ -61,7 +61,7 @@ const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 }))
 
 const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
-	name: Object.keys(EXPANSIONS).includes(option) ? EXPANSIONS[option as ExpansionT].name : 'Any',
+	name: option in EXPANSIONS ? EXPANSIONS[option as ExpansionT].name : 'Any',
 	key: option,
 	icon: `/images/expansion-icons/${option}.png`,
 }))

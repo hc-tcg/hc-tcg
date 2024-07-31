@@ -15,7 +15,7 @@ export type EffectCardProps = {
 const EffectCardModule = memo(({card}: EffectCardProps) => {
 	const rank = getCardRank(card.tokens)
 	const showCost = !useSelector(getGameState)
-	const disabled = EXPANSIONS[card.expansion].disabled === false ? 'disabled' : 'enabled'
+	const disabled = EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
 		<svg
