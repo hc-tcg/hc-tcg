@@ -42,13 +42,13 @@ class NetheriteBoots extends Card {
 				return
 			}
 
-			let suRedirect = false
-
 			if (attack.attacker instanceof CardComponent) {
 				if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
 					attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				}
 			}
+
+			let suRedirect = false
 
 			const lastTargetChange = attack.getHistory('redirect').pop()
 			if (lastTargetChange) {

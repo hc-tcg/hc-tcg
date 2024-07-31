@@ -31,7 +31,7 @@ class DiamondBoots extends Card {
 				}
 			}
 
-			if (attack.getHistory('redirect')) {
+			if (attack.getHistory('redirect').pop()) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 
