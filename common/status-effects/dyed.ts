@@ -8,7 +8,7 @@ class DyedEffect extends CardStatusEffect {
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
 		applyCondition: (_game, card) =>
-			card instanceof CardComponent && !card.hasStatusEffect(DyedEffect),
+			card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
 	}
 
 	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
