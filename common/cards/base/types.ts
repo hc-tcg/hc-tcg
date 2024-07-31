@@ -2,7 +2,6 @@ import type {ComponentQuery} from '../../components/query'
 import type {
 	CardCategoryT,
 	CardRarityT,
-	ExpansionT,
 	HermitAttackInfo,
 	PlayCardLog,
 	TokenCostT,
@@ -11,6 +10,7 @@ import type {
 import type {SlotComponent} from '../../components'
 import type {WithoutFunctions} from '../../types/server-requests'
 import {GameModel} from '../../models/game-model'
+import {ExpansionT} from '../../const/expansions'
 
 export type CardProps = {
 	id: string

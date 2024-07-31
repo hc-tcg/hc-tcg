@@ -1,6 +1,6 @@
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
-import {EnergyT} from '../types/cards'
+import {TypeT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import query from '../components/query'
@@ -173,7 +173,7 @@ export function executeExtraAttacks(game: GameModel, attacks: Array<AttackModel>
 
 // Things not directly related to the attack loop
 
-export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
+export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
 	if (DEBUG_CONFIG.noItemRequirements) return true
 
 	const remainingEnergy = energy.slice()
