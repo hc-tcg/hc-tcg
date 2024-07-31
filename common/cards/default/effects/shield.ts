@@ -34,14 +34,18 @@ class Shield extends Card {
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (damageBlocked > 0) {
+			if (damageBlocked > 0 && attack.isTargeting(component)) {
+				// attack.isTargeting asserts `attack.target !== null` and `attack.targetEntity !== null`
 				component.discard()
 				const hermitName = game.components.find(
 					CardComponent,
 					query.card.slot(query.slot.hermit),
-					query.card.row(query.row.entity(attack.target?.entity))
+					query.card.row(query.row.entity(attack.targetEntity))
+				)?.props.name
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${hermitName}'s$ $eShield$ on row #${attack.target!.index + 1} was broken`
 				)
-				game.battleLog.addEntry(player.entity, `$p${hermitName}'s$ $eShield$ was broken`)
 			}
 		})
 	}
