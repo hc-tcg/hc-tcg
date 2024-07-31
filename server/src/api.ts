@@ -19,7 +19,7 @@ export function registerApis(app: import('express').Express) {
 	const env = process.env.NODE_ENV || 'development'
 	if (env == 'development') {
 		console.log('running in dev mode, not activating api')
-		return
+		//return
 	}
 
 	try {
@@ -45,7 +45,7 @@ export function registerApis(app: import('express').Express) {
 											censoredPlayerName: player.censoredPlayerName,
 											minecraftName: player.minecraftName,
 											lives: player.lives,
-											deck: player.getDeck(),
+											deck: player.getDeck().map((card) => card.props.id),
 										}
 									}),
 									state: g.state,
