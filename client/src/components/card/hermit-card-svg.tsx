@@ -3,10 +3,10 @@ import css from './hermit-card-svg.module.scss'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
-import {EXPANSIONS} from 'common/config'
 import {memo} from 'react'
 import {Hermit} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {EXPANSIONS} from 'common/const/expansions'
 
 export type HermitCardProps = {
 	card: WithoutFunctions<Hermit>
@@ -30,7 +30,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled =
-		EXPANSIONS.disabled.includes(card.expansion) && card.expansion !== 'boss'
+		EXPANSIONS[card.expansion].disabled === true && card.expansion !== 'boss'
 			? 'disabled'
 			: 'enabled'
 

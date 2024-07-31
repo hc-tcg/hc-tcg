@@ -36,7 +36,7 @@ const loadSession = (): PlayerInfo | null => {
 
 const saveSession = (playerInfo: PlayerInfo) => {
 	sessionStorage.setItem('playerName', playerInfo.playerName)
-	sessionStorage.setItem('censoredName', playerInfo.playerName)
+	sessionStorage.setItem('censoredPlayerName', playerInfo.playerName)
 	sessionStorage.setItem('minecraftName', playerInfo.minecraftName)
 	sessionStorage.setItem('playerId', playerInfo.playerId)
 	sessionStorage.setItem('playerSecret', playerInfo.playerSecret)
@@ -45,7 +45,7 @@ const saveSession = (playerInfo: PlayerInfo) => {
 
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
-	sessionStorage.removeItem('censoredName')
+	sessionStorage.removeItem('censoredPlayerName')
 	sessionStorage.removeItem('minecraftName')
 	sessionStorage.removeItem('playerId')
 	sessionStorage.removeItem('playerSecret')

@@ -107,11 +107,18 @@
 		border-bottom: 2px solid var(--gray-700);
 		background: var(--gray-100);
 
-		img {
-			flex: 0 0 auto;
+		.hermitImage {
+			display: absolute;
 			margin-top: 5px;
 			width: 85px;
 			height: auto;
+		}
+
+		.effectImage {
+			display: absolute;
+			margin-top: -2px;
+			width: $size;
+			height: $size;
 		}
 	}
 
@@ -122,20 +129,13 @@
 	.name {
 		font-weight: bold;
 		font-size: 1.2rem;
+		user-select: none;
 
 		.select {
 			font-size: 0.8rem;
 			font-weight: normal;
 			font-style: italic;
 			opacity: 0.9;
-		}
-
-		.damage {
-			color: hsl(0deg, 90%, 50%);
-		}
-
-		.specialMove {
-			color: hsl(220deg, 90%, 50%);
 		}
 	}
 
@@ -160,6 +160,13 @@
 		height: 32px;
 		width: 32px;
 	}
+}
+
+.singleUseIcon {
+	height: 1.8rem;
+	transform: translateY(0.45rem);
+	pointer-events: none;
+	margin-top: -0.6rem;
 }
 
 .hermitOptions {

@@ -6,7 +6,7 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
-import {card, slot} from '../components/query'
+import query from '../components/query'
 import {CardEntity, PlayerEntity, RowEntity, StatusEffectEntity} from '../entities'
 
 export class BattleLogModel {
@@ -86,31 +86,31 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
+	private genCardName(
+		player: PlayerComponent | undefined,
+		card: CardComponent | null | undefined,
+		row: RowComponent | null | undefined
+	) {
+		if (card == null) return '$bINVALID VALUE$'
+
+		if (
+			card.props.category === 'hermit' &&
+			player &&
+			player.activeRowEntity !== row?.entity &&
+			row?.index !== undefined
+		) {
+			return `${card.props.name} (${row?.index + 1})`
+		}
+
+		return `${card.props.name}`
+	}
+
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlip>,
 		pickedSlot: SlotComponent | null
 	) {
 		let {player, opponentPlayer} = card
-
-		const genCardName = (
-			player: PlayerComponent | undefined,
-			card: CardComponent | null | undefined,
-			row: RowComponent | null | undefined
-		) => {
-			if (card == null) return invalid
-
-			if (
-				card.props.category === 'hermit' &&
-				player &&
-				player.activeRowEntity !== row?.entity &&
-				row?.index
-			) {
-				return `${card.props.name} (${row?.index + 1})`
-			}
-
-			return `${card.props.name}`
-		}
 
 		const cardRow = card.slot.inRow() ? card.slot.row : null
 		const pickedRow = pickedSlot?.inRow() ? pickedSlot.row : null
@@ -127,15 +127,15 @@ export class BattleLogModel {
 			pos: {
 				rowIndex: cardRow ? `${cardRow.index + 1}` : invalid,
 				id: card.props.id,
-				name: genCardName(card.player, card, cardRow),
-				hermitCard: genCardName(card.player, cardRow?.getHermit(), cardRow),
+				name: this.genCardName(card.player, card, cardRow),
+				hermitCard: this.genCardName(card.player, cardRow?.getHermit(), cardRow),
 				slotType: card.slot.type,
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
 				id: pickedCard?.card.props.id || invalid,
-				name: pickedCard ? genCardName(pickedSlot?.player, pickedCard, pickedRow) : invalid,
-				hermitCard: genCardName(pickedSlot?.player, pickedRow?.getHermit(), pickedRow),
+				name: pickedCard ? this.genCardName(pickedSlot?.player, pickedCard, pickedRow) : invalid,
+				hermitCard: this.genCardName(pickedSlot?.player, pickedRow?.getHermit(), pickedRow),
 				slotType: pickedSlot?.type || invalid,
 			},
 			game: this.game,
@@ -166,35 +166,41 @@ export class BattleLogModel {
 				return reducer
 			}
 
-			if (!attack.attacker || !attack.target) return reducer
+			if (!attack.attacker || !subAttack.target) return reducer
 
 			if (subAttack.getDamage() === 0) return reducer
 
-			const attackingHermitInfo = attack.attacker
-			const targetHermitInfo = attack.target.getHermit()
+			const attackerInfo = attack.attacker
 
-			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
+			const targetFormatting = subAttack.target.player.id === attack.player.id ? 'p' : 'o'
 
-			const rowNumberString = `(${attack.target.index + 1})`
+			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
+			const weaknessDamage =
+				attack.isType('primary', 'secondary') && weaknessAttack
+					? weaknessAttack.calculateDamage()
+					: 0
 
-			if (!(attackingHermitInfo instanceof CardComponent)) return reducer
 			let attackName
-			if (attackingHermitInfo.isHermit()) {
+			if (attackerInfo instanceof CardComponent && attackerInfo.isHermit()) {
 				attackName =
 					subAttack.type === 'primary'
-						? attackingHermitInfo.props.primary.name
-						: attackingHermitInfo.props.secondary.name
+						? attackerInfo.props.primary.name
+						: attackerInfo.props.secondary.name
 			} else {
 				attackName = singleUse?.props.name || '$eINVALID$'
 			}
 
 			const logMessage = subAttack.getLog({
-				attacker: `$p${attackingHermitInfo.props.name}$`,
+				attacker: `$p${attackerInfo.props.name}$`,
 				player: attack.player.playerName,
-				opponent: attack.target.player.playerName,
-				target: `$${targetFormatting}${targetHermitInfo?.props?.name} ${rowNumberString}$`,
+				opponent: attack.player.opponentPlayer.playerName,
+				target: `$${targetFormatting}${this.genCardName(
+					subAttack.target.player,
+					subAttack.target.getHermit(),
+					subAttack.target
+				)}$`,
 				attackName: `$v${attackName}$`,
-				damage: `$b${subAttack.calculateDamage()}hp$`,
+				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
 			})
@@ -270,7 +276,11 @@ export class BattleLogModel {
 	}
 
 	public addDeathEntry(playerEntity: PlayerEntity, row: RowEntity) {
-		const hermitCard = this.game.components.find(CardComponent, card.isHermit, card.rowEntity(row))
+		const hermitCard = this.game.components.find(
+			CardComponent,
+			query.card.isHermit,
+			query.card.rowEntity(row)
+		)
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
 		let player = this.game.components.get(playerEntity)

@@ -1,5 +1,5 @@
 import {DEBUG_CONFIG} from '../config'
-import * as query from '../components/query'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {VirtualPlayerModel} from '../models/virtual-player-model'
@@ -92,7 +92,11 @@ function setupEcsForPlayer(
 }
 
 export function getGameState(game: GameModel): GameState {
-	const playerEntities = game.components.filter(PlayerComponent).sort(() => Math.random())
+	const playerEntities = game.components.filter(PlayerComponent)
+
+	if (Math.random() >= 0.5) {
+		playerEntities.reverse()
+	}
 
 	const gameState: GameState = {
 		turn: {

@@ -1,4 +1,4 @@
-import type {Entity, ObserverEntity, StatusEffectEntity} from '../entities'
+import type {CardEntity, Entity, ObserverEntity, StatusEffectEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
 import {CardComponent} from './card-component'
@@ -16,18 +16,21 @@ export class StatusEffectComponent<
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
 	readonly order: number
+	readonly creatorEntity: CardEntity
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
 	public counter: number | null
-	private observerEntity: ObserverEntity | null
+	public observerEntity: ObserverEntity | null
 
 	constructor(
 		game: GameModel,
 		entity: StatusEffectEntity,
-		statusEffect: new () => StatusEffect<TargetT>
+		statusEffect: new () => StatusEffect<TargetT>,
+		creator: CardEntity
 	) {
 		this.game = game
 		this.entity = entity
 		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<any, Props>
+		this.creatorEntity = creator
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
 		this.counter = null
@@ -36,6 +39,10 @@ export class StatusEffectComponent<
 
 	public get props(): Props {
 		return this.statusEffect.props as any
+	}
+
+	public get creator(): CardComponent {
+		return this.game.components.getOrError(this.creatorEntity)
 	}
 
 	public get target(): TargetT {

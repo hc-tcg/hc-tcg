@@ -1,11 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {CardComponent, ObserverComponent, PlayerComponent, RowComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 import {AttackModel} from '../../../models/attack-model'
-import {row} from '../../../components/query'
+import query from '../../../components/query'
 
 class Anvil extends Card {
 	props: SingleUse = {
@@ -17,8 +17,22 @@ class Anvil extends Card {
 		rarity: 'rare',
 		tokens: 0,
 		description:
-			'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
+			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
+		attackPreview: (game) => {
+			const targetAmount = this.getTargetHermits(game, game.currentPlayer).length - 1
+			if (targetAmount === 0) return '$A30$'
+			return `$A30$ + $A10$ x ${targetAmount}`
+		},
+	}
+
+	getTargetHermits(game: GameModel, player: PlayerComponent) {
+		return game.components.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.hermitSlotOccupied,
+			(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
+		)
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -26,15 +40,10 @@ class Anvil extends Card {
 
 		observer.subscribe(
 			player.hooks.getAttack,
-			game.components.filter(RowComponent, row.player(player.opponentPlayer.entity)).length > 1
+			game.components.filter(RowComponent, query.row.opponentPlayer).length > 1
 				? () => {
-						return game.components
-							.filter(
-								RowComponent,
-								row.opponentPlayer,
-								(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
-							)
-							.reduce((attacks: null | AttackModel, row) => {
+						return this.getTargetHermits(game, player).reduce(
+							(attacks: null | AttackModel, row) => {
 								const newAttack = game
 									.newAttack({
 										attacker: component.entity,
@@ -52,13 +61,15 @@ class Anvil extends Card {
 									attacks.addNewAttack(newAttack)
 									return attacks
 								}
-							}, null)
+							},
+							null
+						)
 				  }
 				: () =>
 						game
 							.newAttack({
 								attacker: component.entity,
-								target: game.components.findEntity(RowComponent, row.opponentPlayer),
+								target: game.components.findEntity(RowComponent, query.row.opponentPlayer),
 								type: 'effect',
 								log: (values) =>
 									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,

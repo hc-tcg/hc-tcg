@@ -1,9 +1,9 @@
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
-import {EnergyT} from '../types/cards'
+import {TypeT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import * as query from '../components/query'
+import query from '../components/query'
 import {STRENGTHS} from '../const/strengths'
 import {CardComponent, ObserverComponent} from '../components'
 import {Hermit} from '../cards/base/types'
@@ -136,11 +136,7 @@ function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: CardCo
 	return false
 }
 
-export function executeAttacks(
-	game: GameModel,
-	attacks: Array<AttackModel>,
-	withoutBlockingActions = false
-) {
+export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	// STEP 1 - Call before attack and defence for all attacks
 	runBeforeAttackHooks(game, attacks)
 	runBeforeDefenceHooks(game, attacks)
@@ -156,36 +152,17 @@ export function executeAttacks(
 		if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
 		if (attack.nextAttacks.length > 0) {
-			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
-			// Only want to block actions after first attack
-			withoutBlockingActions = true
+			executeAttacks(game, attack.nextAttacks)
 		}
 	})
-
-	if (!withoutBlockingActions) {
-		// STEP 5 - All attacks have been completed, mark actions appropriately
-		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-		game.addBlockedActions(
-			'game',
-			'PLAY_HERMIT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_SINGLE_USE_CARD',
-			'CHANGE_ACTIVE_HERMIT'
-		)
-	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(game, attacks)
 	runAfterDefenceHooks(game, attacks)
 }
 
-export function executeExtraAttacks(
-	game: GameModel,
-	attacks: Array<AttackModel>,
-	withoutBlockingActions = false
-) {
-	executeAttacks(game, attacks, withoutBlockingActions)
+export function executeExtraAttacks(game: GameModel, attacks: Array<AttackModel>) {
+	executeAttacks(game, attacks)
 
 	attacks.forEach((attack) => {
 		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, null)
@@ -196,7 +173,7 @@ export function executeExtraAttacks(
 
 // Things not directly related to the attack loop
 
-export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
+export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
 	if (DEBUG_CONFIG.noItemRequirements) return true
 
 	const remainingEnergy = energy.slice()
@@ -272,20 +249,20 @@ export function setupMockCard(
 
 	component.player.hooks.getAttackRequests.callSome(
 		[component, attackType],
-		(observerEntity) => observerEntity == observer.entity
+		(observerEntity) => observerEntity === observer.entity
 	)
+
+	observer.subscribe(component.player.hooks.onTurnEnd, () => {
+		mocking.card.onDetach(game, component, observer)
+		observer.unsubscribeFromEverything()
+	})
 
 	return {
 		hermitName: mocking.props.name,
 		attackName:
 			attackType === 'primary' ? mocking.props.primary.name : mocking.props.secondary.name,
 		getAttack: () => {
-			let attack = mocking.card.getAttack(game, component, attackType)
-			observer.subscribe(component.player.hooks.afterAttack, () => {
-				mocking.card.onDetach(game, component, observer)
-				observer.unsubscribeFromEverything()
-			})
-			return attack
+			return mocking.card.getAttack(game, component, attackType)
 		},
 	}
 }

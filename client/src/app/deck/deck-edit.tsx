@@ -14,7 +14,7 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG, EXPANSIONS} from '../../../../common/config'
+import {CONFIG} from '../../../../common/config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -22,6 +22,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {CardEntity, newEntity} from 'common/entities'
 import {isHermit, isItem} from 'common/cards/base/types'
+import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -40,9 +41,9 @@ const DECK_ICONS = [
 
 const EXPANSION_NAMES = [
 	'any',
-	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
+	...Object.keys(EXPANSIONS).filter((expansion) => {
 		return CARDS_LIST.some(
-			(card) => card.props.expansion === expansion && !EXPANSIONS.disabled.includes(expansion)
+			(card) => card.props.expansion === expansion && EXPANSIONS[expansion].disabled === false
 		)
 	}),
 ]
@@ -59,11 +60,8 @@ const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	icon: `/images/ranks/${option}.png`,
 }))
 
-interface ExpansionMap {
-	[key: string]: string
-}
 const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
-	name: (EXPANSIONS.expansions as ExpansionMap)[option] || 'Any',
+	name: option in EXPANSIONS ? EXPANSIONS[option as ExpansionT].name : 'Any',
 	key: option,
 	icon: `/images/expansion-icons/${option}.png`,
 }))
@@ -122,54 +120,38 @@ const TYPE_ORDER = {
 	health: 4,
 }
 
+// We want to fix UR with Rare to place all cards with abilities in the proper order.
+const RARITY_ORDER = {
+	common: 0,
+	rare: 1,
+	ultra_rare: 1,
+}
+
 export function sortCards(cards: Array<LocalCardInstance>): Array<LocalCardInstance> {
 	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
-		const cardCostA = a.props.tokens
-		const cardCostB = b.props.tokens
-
-		if (a.props.category !== b.props.category) {
-			// seperate by types first
-			return TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category]
-		} else if (
-			// then by hermit types
-			isHermit(a.props) &&
-			isHermit(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.type.localeCompare(b.props.type)
-		} else if (
-			// then by item types
-			isItem(a.props) &&
-			isItem(b.props) &&
-			a.props.type !== b.props.type
-		) {
-			return a.props.name.localeCompare(b.props.name)
-		} else if (cardCostA !== cardCostB) {
-			// order by ranks
-			return cardCostA - cardCostB
-		} else if (
-			isHermit(a.props) &&
-			isHermit(b.props) &&
-			a.props.secondary.cost.length !== b.props.secondary.cost.length
-		) {
-			return a.props.secondary.cost.length - b.props.secondary.cost.length
-		} else if (
-			isHermit(a.props) &&
-			isHermit(b.props) &&
-			a.props.primary.cost.length !== b.props.primary.cost.length
-		) {
-			return a.props.primary.cost.length - b.props.primary.cost.length
-		} else if (isHermit(a.props) && isHermit(b.props) && a.props.health !== b.props.health) {
-			return a.props.health - b.props.health
-		} else if (a.props.name !== b.props.name) {
-			return a.props.name.localeCompare(b.props.name)
-		}
-
-		// rarity is our last hope
-		const rarities = ['common', 'rare', 'ultra_rare']
-		const rarityValueA = rarities.findIndex((s) => s === a.props.rarity) + 1
-		const rarityValueB = rarities.findIndex((s) => s === b.props.rarity) + 1
-		return rarityValueA - rarityValueB
+		return (
+			[
+				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
+				isHermit(a.props) && isHermit(b.props) && a.props.type.localeCompare(b.props.type),
+				isItem(a.props) && isItem(b.props) && a.props.name.localeCompare(b.props.name),
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					RARITY_ORDER[a.props.rarity] - RARITY_ORDER[b.props.rarity],
+				a.props.tokens !== 'wild' && b.props.tokens !== 'wild' && a.props.tokens - b.props.tokens,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.cost.length - b.props.secondary.cost.length,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.damage - b.props.secondary.damage,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.primary.cost.length - b.props.primary.cost.length,
+				isHermit(a.props) && isHermit(b.props) && a.props.primary.damage - b.props.primary.damage,
+				isHermit(a.props) && isHermit(b.props) && a.props.health - b.props.health,
+				a.props.name.localeCompare(b.props.name),
+			].find(Boolean) || 0
+		)
 	})
 }
 
@@ -179,6 +161,7 @@ const ALL_CARDS = sortCards(
 			props: WithoutFunctions(card.props),
 			entity: newEntity('deck_editor_card'),
 			slot: null,
+			attackHint: null,
 			turnedOver: false,
 		})
 	)
@@ -235,7 +218,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				// Card Expansion Filter
 				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
 				// Don't show disabled cards
-				!EXPANSIONS.disabled.includes(card.props.expansion)
+				EXPANSIONS[card.props.expansion].disabled === false
 		)
 	)
 
@@ -260,6 +243,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					entity: newEntity('card-entity') as CardEntity,
 					slot: null,
 					turnedOver: false,
+					attackHint: null,
 				},
 			],
 		}))

@@ -16,6 +16,7 @@ class DiamondSword extends Card {
 		tokens: 1,
 		description: "Do 40hp damage to your opponent's active Hermit.",
 		hasAttack: true,
+		attackPreview: (_game) => '$A40$',
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {

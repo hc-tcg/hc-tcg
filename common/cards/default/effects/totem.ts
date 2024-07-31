@@ -4,7 +4,7 @@ import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import {effect} from '../../../components/query'
+import query from '../../../components/query'
 
 class Totem extends Card {
 	props: Attach = {
@@ -40,7 +40,7 @@ class Totem extends Card {
 			target.health = 10
 
 			game.components
-				.filter(StatusEffectComponent, effect.targetEntity(targetHermit?.entity))
+				.filter(StatusEffectComponent, query.effect.targetEntity(targetHermit?.entity))
 				.forEach((ail) => {
 					ail.remove()
 				})

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {PickRequest} from '../../../types/server-requests'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -64,6 +64,8 @@ class HypnotizdRare extends Card {
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
 			if (player.hasStatusEffect(BetrayedEffect)) return
+
+			if (!game.components.exists(CardComponent, query.card.opponentPlayer, query.card.afk)) return
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 

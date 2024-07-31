@@ -23,7 +23,7 @@ import {
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
-import * as query from './query'
+import query from './query'
 import {CardStatusEffect} from '../status-effects/status-effect'
 
 let CARDS: Record<any, Card>
@@ -165,7 +165,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
 	}
 
-	public hasStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
+	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),

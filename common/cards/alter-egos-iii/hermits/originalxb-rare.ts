@@ -28,7 +28,7 @@ class OriginalXBRare extends Card {
 			name: 'Get Good',
 			cost: ['miner', 'miner', 'any'],
 			damage: 90,
-			power: 'Opponent must draw an additional card from their deck on their next turn.',
+			power: 'Your opponent must draw an extra card at the end of their next turn.',
 		},
 	}
 
@@ -38,7 +38,9 @@ class OriginalXBRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			game.components.new(StatusEffectComponent, OriginalXBEffect).apply(opponentPlayer.entity)
+			game.components
+				.new(StatusEffectComponent, OriginalXBEffect, component.entity)
+				.apply(opponentPlayer.entity)
 		})
 	}
 }

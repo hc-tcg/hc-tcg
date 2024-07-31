@@ -1,5 +1,4 @@
 import {CardComponent, ObserverComponent} from '../../../components'
-import {card} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -29,7 +28,7 @@ class HotguyRare extends Card {
 			name: 'Hawkeye',
 			cost: ['explorer', 'explorer'],
 			damage: 80,
-			power: 'When used with a bow effect card, bow damage doubles.',
+			power: 'When used with a Bow effect card, Bow damage doubles.',
 		},
 	}
 

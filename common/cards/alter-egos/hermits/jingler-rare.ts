@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, slot} from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -46,12 +46,14 @@ class JinglerRare extends Card {
 				playerId: opponentPlayer.id,
 				id: component.entity,
 				message: 'Pick 1 card from your hand to discard',
-				canPick: slot.hand,
+				canPick: query.slot.hand,
 				onResult(pickedSlot) {
 					pickedSlot.getCard()?.discard()
 				},
 				onTimeout() {
-					game.components.find(CardComponent, card.slot(slot.hand), card.opponentPlayer)?.discard()
+					game.components
+						.find(CardComponent, query.card.slot(query.slot.hand), query.card.opponentPlayer)
+						?.discard()
 				},
 			})
 		})

@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class ShadeEERare extends Card {
 	props: Hermit = {
@@ -28,7 +28,7 @@ class ShadeEERare extends Card {
 			name: 'Scale Of Ethics',
 			cost: ['redstone', 'redstone'],
 			damage: 80,
-			power: 'If you have less AFK Hermits than your opponent, deal an additional 40hp damage.',
+			power: 'If you have fewer AFK Hermits than your opponent, deal an additional 40hp damage.',
 		},
 	}
 

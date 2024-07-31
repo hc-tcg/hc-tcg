@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {card} from '../../../components/query'
+import query from '../../../components/query'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
@@ -31,7 +31,7 @@ class MumboJumboRare extends Card {
 			cost: ['prankster', 'prankster'],
 			damage: 40,
 			power:
-				'Flip a coin twice. Do an additional 20hp damage for every heads. Total attack damage doubles if you have at least one other AFK Prankster.',
+				'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster on the game board.',
 		},
 	}
 
@@ -45,9 +45,9 @@ class MumboJumboRare extends Card {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			const pranksterAmount = game.components.filter(
 				CardComponent,
-				card.currentPlayer,
-				card.afk,
-				card.type('prankster')
+				query.card.currentPlayer,
+				query.card.afk,
+				query.card.type('prankster')
 			).length
 
 			attack.addDamage(component.entity, headsAmount * 20)

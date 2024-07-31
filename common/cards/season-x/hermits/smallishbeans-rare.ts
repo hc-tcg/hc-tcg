@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import SmallishbeansCommon from './smallishbeans-common'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 
@@ -28,8 +28,7 @@ class SmallishbeansRare extends Card {
 			name: 'Obsess',
 			cost: ['explorer', 'explorer', 'any'],
 			damage: 90,
-			power:
-				'For each of your AFK Joels or King Joels on the game board, do an additional 10hp damage.',
+			power: 'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
 		},
 	}
 
@@ -41,7 +40,6 @@ class SmallishbeansRare extends Card {
 
 			const joelQuantity = game.components.filter(
 				CardComponent,
-				query.card.currentPlayer,
 				query.card.attached,
 				query.card.is(SmallishbeansCommon, SmallishbeansRare, KingJoelCommon, KingJoelCommon),
 				query.not(query.card.active)

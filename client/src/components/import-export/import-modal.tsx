@@ -7,7 +7,7 @@ import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
 import {getDeckFromHash} from './import-export-utils'
-import {EnergyT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {LocalCardInstance} from 'common/types/server-requests'
 
@@ -73,7 +73,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 				importedSomething = true
 				saveDeck({
 					name: filteredName,
-					icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as EnergyT) : 'any',
+					icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as TypeT) : 'any',
 					cards: deck,
 				})
 			})

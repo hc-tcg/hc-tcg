@@ -5,7 +5,6 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import endTurnSaga from './turn-actions/end-turn'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
@@ -13,13 +12,13 @@ import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
 import {TurnActions, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {EnergyT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
 import {AI_CLASSES, virtualPlayerActionSaga} from './virtual'
-import * as query from 'common/components/query'
+import query from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -62,7 +61,7 @@ function getAvailableEnergy(game: GameModel) {
  * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
  * `state.turn.completedActions`.
  */
-function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
+function getAvailableActions(game: GameModel, availableEnergy: Array<TypeT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
@@ -175,19 +174,16 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 				if (pickableSlots.length === 0) return reducer
 
-				if (card.card.props.category === 'hermit' && !reducer.includes('PLAY_HERMIT_CARD')) {
+				if (card.card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
 					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-				if (card.card.props.category === 'attach' && !reducer.includes('PLAY_EFFECT_CARD')) {
+				if (card.card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
 					return [...reducer, 'PLAY_EFFECT_CARD']
 				}
-				if (card.card.props.category === 'item' && !reducer.includes('PLAY_ITEM_CARD')) {
+				if (card.card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
 					return [...reducer, 'PLAY_ITEM_CARD']
 				}
-				if (
-					card.card.props.category === 'single_use' &&
-					!reducer.includes('PLAY_SINGLE_USE_CARD')
-				) {
+				if (card.card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
 					return [...reducer, 'PLAY_SINGLE_USE_CARD']
 				}
 				return reducer
@@ -299,20 +295,33 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
 
+	let endTurn = false
+
 	const availableActions =
-		turnAction.playerId === currentPlayer.id
+		turnAction.playerId === game.currentPlayer.id
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
-	if (!availableActions.includes(actionType)) {
+	// We don't check if slot actions are available because the playCardSaga will verify that.
+	if (
+		[
+			'SINGLE_USE_ATTACK',
+			'PRIMARY_ATTACK',
+			'SECONDARY_ATTACK',
+			'CHANGE_ACTIVE_HERMIT',
+			'APPLY_EFFECT',
+			'REMOVE_EFFECT',
+			'PICK_REQUEST',
+			'MODAL_REQUEST',
+			'END_TURN',
+		].includes(actionType) &&
+		!availableActions.includes(actionType)
+	) {
 		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
 	}
-
-	let endTurn = false
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 	switch (actionType) {
@@ -348,7 +357,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
-			result = yield* call(endTurnSaga, game)
 			break
 		default:
 			// Unknown action type, ignore it completely
@@ -421,15 +429,6 @@ function* turnActionsSaga(game: GameModel) {
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
 
-			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
-			if (
-				(availableActions.includes('PRIMARY_ATTACK') ||
-					availableActions.includes('SECONDARY_ATTACK')) &&
-				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
-			) {
-				blockedActions.push('SINGLE_USE_ATTACK')
-			}
-
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
 
@@ -486,7 +485,6 @@ function* turnActionsSaga(game: GameModel) {
 			// Handle timeout
 			if (raceResult.timeout) {
 				// @TODO this works, but could be cleaned
-				yield* endTurnSaga(game)
 				const currentAttack = game.state.turn.currentAttack
 				let reset = false
 
@@ -568,13 +566,15 @@ function* turnActionsSaga(game: GameModel) {
 }
 
 function* turnSaga(game: GameModel) {
-	const {currentPlayer} = game
+	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state
 	game.state.turn.availableActions = []
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
+	currentPlayer.singleUseCardUsed = false
+	opponentPlayer.singleUseCardUsed = false
 
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime * 1000
@@ -636,7 +636,7 @@ function* turnSaga(game: GameModel) {
 	// otherwise move it to discarded pile
 	const singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 	if (singleUseCard) {
-		if (currentPlayer.singleUseCardUsed) {
+		if (!currentPlayer.singleUseCardUsed) {
 			singleUseCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
 		} else {
 			singleUseCard.attach(game.components.new(DiscardSlotComponent, currentPlayer.entity))

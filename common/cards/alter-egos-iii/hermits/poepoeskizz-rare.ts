@@ -3,8 +3,8 @@ import {CardComponent, ObserverComponent, RowComponent} from '../../../component
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
-import {executeExtraAttacks} from '../../../utils/attacks'
+import query from '../../../components/query'
+import {executeAttacks} from '../../../utils/attacks'
 
 class PoePoeSkizzRare extends Card {
 	props: Hermit = {
@@ -30,14 +30,14 @@ class PoePoeSkizzRare extends Card {
 			cost: ['pvp', 'pvp', 'any'],
 			damage: 90,
 			power:
-				'After using this attack, move to any row on the board, then do an additional 20hp damage to the Hermit directly opposite to you.',
+				'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
 		},
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
 			game.addPickRequest({
@@ -56,6 +56,7 @@ class PoePoeSkizzRare extends Card {
 						query.row.opponentPlayer,
 						query.row.index(component.slot.row.index)
 					)
+
 					if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
 
 					const jumpscareAttack = game.newAttack({
@@ -66,7 +67,7 @@ class PoePoeSkizzRare extends Card {
 					})
 					jumpscareAttack.addDamage(component.entity, 20)
 					jumpscareAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
-					executeExtraAttacks(game, [jumpscareAttack])
+					executeAttacks(game, [jumpscareAttack])
 				},
 			})
 		})

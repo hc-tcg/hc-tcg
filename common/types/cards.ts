@@ -1,7 +1,7 @@
-import {EXPANSIONS} from '../config'
 import {GameModel} from '../models/game-model'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
+export type TokenCostT = 0 | 1 | 2 | 3 | 4 | 5 | 'wild'
 
 export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
 
@@ -18,12 +18,9 @@ export type TypeT =
 	| 'explorer'
 	| 'any'
 
-export type EnergyT = TypeT | 'any'
-
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
 export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'deck' | 'discardPile'
-export type ExpansionT = keyof typeof EXPANSIONS.expansions
 
 export type DamageT = {
 	target?: number
@@ -34,7 +31,7 @@ export type DamageT = {
 export type HermitAttackInfo = {
 	name: string
 	shortName?: string
-	cost: Array<EnergyT>
+	cost: Array<TypeT>
 	damage: number
 	power: string | null
 	formattedPower?: Array<Node>

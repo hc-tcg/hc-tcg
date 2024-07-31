@@ -48,11 +48,23 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 		}
 	}
 
+	let endTurnButton = (
+		<Button
+			variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+			size="medium"
+			className={css.mobileButton}
+			onClick={handleEndTurn}
+			disabled={!availableActions.includes('END_TURN')}
+		>
+			End Turn
+		</Button>
+	)
+
 	const Status = () => {
 		const waitingForOpponent =
 			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
-		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
+		const endTurn = availableActions.includes('END_TURN')
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
@@ -68,7 +80,12 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 		} else if (changeHermit && availableActions.length === 1) {
 			message = 'Select a new active Hermit'
 		} else if (endTurn && changeHermit && availableActions.length === 2) {
-			message = 'Switch to a new Hermit or end your turn'
+			return (
+				<div className={css.turnSkipMessageContainer}>
+					<div>Switch to a new Hermit or end your turn</div>
+					<div className={css.turnSkipEndTurnButton}>{endTurnButton}</div>
+				</div>
+			)
 		}
 
 		if (message == '') return null
@@ -121,22 +138,14 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			<div className={css.buttons}>
 				<Button
 					variant="default"
-					size="small"
+					size="medium"
 					className={css.mobileButton}
 					onClick={handleAttack}
 					disabled={!attackOptions}
 				>
 					Attack
 				</Button>
-				<Button
-					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
-					size="small"
-					className={css.mobileButton}
-					onClick={handleEndTurn}
-					disabled={!availableActions.includes('END_TURN')}
-				>
-					End Turn
-				</Button>
+				{endTurnButton}
 			</div>
 		)
 	}

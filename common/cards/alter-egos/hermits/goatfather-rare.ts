@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {CardProps, Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class GoatfatherRare extends Card {
 	props: Hermit = {
@@ -56,10 +56,11 @@ class GoatfatherRare extends Card {
 				.filter(
 					RowComponent,
 					query.row.opponentPlayer,
+					query.row.hermitSlotOccupied,
 					(_game, row) =>
 						opponentActiveHermit !== null &&
 						opponentActiveHermit.slot.inRow() &&
-						row.index > opponentActiveHermit?.slot.row.index
+						row.index > opponentActiveHermit.slot.row.index
 				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({

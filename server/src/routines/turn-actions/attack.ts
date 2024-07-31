@@ -5,7 +5,7 @@ import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
-import {card, slot} from 'common/components/query'
+import query from 'common/components/query'
 import {CardComponent} from 'common/components'
 
 function getAttack(
@@ -51,9 +51,9 @@ function* attackSaga(
 	const {currentPlayer, state} = game
 	const activeInstance = game.components.find(
 		CardComponent,
-		card.currentPlayer,
-		card.isHermit,
-		card.active
+		query.card.currentPlayer,
+		query.card.isHermit,
+		query.card.active
 	)
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
@@ -73,7 +73,7 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttack(game, activeInstance, hermitAttackType)
 
-	const thisAttackSU = game.components.find(CardComponent, card.slot(slot.singleUse))
+	const thisAttackSU = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)
@@ -87,6 +87,16 @@ function* attackSaga(
 	if (currentPlayer.coinFlips.length === 0) {
 		game.battleLog.sendLogs()
 	}
+
+	game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+	game.addBlockedActions(
+		'game',
+		'PLAY_HERMIT_CARD',
+		'PLAY_ITEM_CARD',
+		'PLAY_EFFECT_CARD',
+		'PLAY_SINGLE_USE_CARD',
+		'CHANGE_ACTIVE_HERMIT'
+	)
 
 	return 'SUCCESS'
 }

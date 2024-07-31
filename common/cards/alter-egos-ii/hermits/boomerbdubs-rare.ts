@@ -9,7 +9,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import FortuneEffect from '../../../status-effects/fortune'
 
 class BoomerBdubsRare extends Card {
@@ -37,7 +37,7 @@ class BoomerBdubsRare extends Card {
 			cost: ['redstone', 'redstone'],
 			damage: 80,
 			power:
-				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage. When this attack is used with Fortune, only the first coinflip will be affected.',
+				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
 		},
 	}
 
@@ -49,6 +49,12 @@ class BoomerBdubsRare extends Card {
 		const {player} = component
 
 		let extraDamage = 0
+		let flippedTails = false
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			extraDamage = 0
+			flippedTails = false
+		})
 
 		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -87,7 +93,7 @@ class BoomerBdubsRare extends Card {
 					const flip = flipCoin(player, activeHermit)[0]
 
 					if (flip === 'tails') {
-						extraDamage = 0
+						flippedTails = true
 						return 'SUCCESS'
 					}
 
@@ -114,7 +120,7 @@ class BoomerBdubsRare extends Card {
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			if (extraDamage === 0) {
+			if (flippedTails === true) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 				return
 			}
