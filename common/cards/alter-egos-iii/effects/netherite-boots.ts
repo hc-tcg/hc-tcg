@@ -3,6 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import FireEffect from '../../../status-effects/fire'
 
 class NetheriteBoots extends Card {
 	props: Attach = {
@@ -14,7 +15,7 @@ class NetheriteBoots extends Card {
 		rarity: 'ultra_rare',
 		tokens: 3,
 		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Also prevents any damage from Burn. Opponent can not make this Hermit go AFK.',
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Also prevents any damage from effect cards and any damage redirected by effect cards, and any damage from Burn. Opponent can not make this Hermit go AFK.',
 		sidebarDescriptions: [
 			{
 				type: 'statusEffect',
@@ -33,7 +34,14 @@ class NetheriteBoots extends Card {
 		})
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect')) return
+			if (
+				!attack.isTargeting(component) ||
+				(attack.isType('status-effect') && !(attack.attacker instanceof FireEffect))
+			) {
+				return
+			}
+
+			let suRedirect = false
 
 			if (attack.attacker instanceof CardComponent) {
 				if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
@@ -41,7 +49,12 @@ class NetheriteBoots extends Card {
 				}
 			}
 
-			if (attack.getHistory('redirect')) {
+			const lastTargetChange = attack.getHistory('redirect').pop()
+			if (lastTargetChange) {
+				suRedirect = true
+			}
+
+			if (attack.isType('effect') || suRedirect) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 
