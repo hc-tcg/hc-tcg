@@ -1,4 +1,4 @@
-FROM debian:18.20-bookworm
+FROM node:18.20-bookworm
 
 ARG APP_VERSION
 ENV APP_VERSION $APP_VERSION
