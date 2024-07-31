@@ -22,6 +22,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {CardEntity, newEntity} from 'common/entities'
 import {isHermit, isItem} from 'common/cards/base/types'
+import { ExpansionT } from 'common/types/cards'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -38,7 +39,7 @@ const DECK_ICONS = [
 	'terraform',
 ]
 
-const EXPANSION_NAMES = [
+const EXPANSION_NAMES:Record<ExpansionT | 'any'> = [
 	'any',
 	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
 		return CARDS_LIST.some(
