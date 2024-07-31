@@ -12,7 +12,7 @@ class DiamondBoots extends Card {
 		name: 'Diamond Boots',
 		expansion: 'alter_egos_iii',
 		rarity: 'rare',
-		tokens: 2,
+		tokens: 1,
 		description:
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn. Opponent can not make this Hermit go AFK.',
 	}

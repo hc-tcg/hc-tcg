@@ -13,7 +13,7 @@ class NetheriteBoots extends Card {
 		name: 'Netherite Boots',
 		expansion: 'alter_egos_iii',
 		rarity: 'ultra_rare',
-		tokens: 3,
+		tokens: 4,
 		description:
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Also prevents any damage from effect cards and any damage redirected by effect cards, and any damage from Burn. Opponent can not make this Hermit go AFK.',
 		sidebarDescriptions: [
