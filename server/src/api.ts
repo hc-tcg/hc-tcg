@@ -40,9 +40,12 @@ export function registerApis(app: import('express').Express) {
 									code: g.code,
 									players: g.components.filter(PlayerComponent).map((player) => {
 										return {
-											id: player.id,
+											playerId: player.id,
 											playerName: player.playerName,
+											censoredPlayerName: player.censoredPlayerName,
+											minecraftName: player.minecraftName,
 											lives: player.lives,
+											deck: player.getDeck(),
 										}
 									}),
 									state: g.state,
