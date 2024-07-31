@@ -1,5 +1,5 @@
 import React from 'react'
-import {TypeT} from 'common/types/cards'
+import {CardRarityT, TypeT} from 'common/types/cards'
 import {
 	CardProps,
 	hasDescription,
@@ -10,7 +10,6 @@ import {
 } from 'common/cards/base/types'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
-import {getCardRank} from 'common/utils/ranks'
 import classNames from 'classnames'
 import {STATUS_EFFECTS} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
@@ -99,13 +98,18 @@ const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return <div className={css.name}>{card.name}</div>
 }
 
-const getRank = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	const name = getCardRank(card.tokens)
-	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
+const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
+	common: 'Common',
+	rare: '✦ Rare ✦',
+	ultra_rare: '★ Ultra Rare ★',
+}
+
+const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return (
-		<div className={classNames(css.rank, css[name])}>
-			{highlight} {name.charAt(0).toUpperCase() + name.slice(1)} Rank {highlight}
-		</div>
+		<span className={classNames(css.rarity, css[card.rarity])}>
+			{' '}
+			{RARITY_DISPLAY_TEXT[card.rarity]}{' '}
+		</span>
 	)
 }
 
@@ -130,11 +134,11 @@ const getSingleUse = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return <div className={css.singleUse}>Single Use</div>
 }
 
-const gettype = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getType = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isHermit(card)) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>
-				{HERMIT_TYPES[card.type] || card.type} Type
+				{HERMIT_TYPES[card.type] || card.type}
 			</div>
 		)
 	}
@@ -179,13 +183,13 @@ const CardInstanceTooltip = ({card}: Props) => {
 			<div className={css.cardTooltip}>
 				<div className={css.topLine}>
 					{getName(card)}
-					{gettype(card)}
+					{isHermit(card) && getRarity(card)}
+					{getType(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
 				</div>
 				<div className={css.description}>
 					{getExpansion(card)}
-					{getRank(card)}
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
