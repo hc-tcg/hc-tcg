@@ -168,7 +168,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
 	}
 
-	public hasStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
+	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),

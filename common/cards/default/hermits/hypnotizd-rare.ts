@@ -65,6 +65,8 @@ class HypnotizdRare extends Card {
 			// to make the game easier to follow.
 			if (player.hasStatusEffect(BetrayedEffect)) return
 
+			if (!game.components.exists(CardComponent, query.card.opponentPlayer, query.card.afk)) return
+
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			const itemRequest: PickRequest = {

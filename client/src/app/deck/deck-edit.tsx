@@ -14,7 +14,7 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG, EXPANSIONS} from '../../../../common/config'
+import {CONFIG} from '../../../../common/config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -22,7 +22,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {CardEntity, newEntity} from 'common/entities'
 import {isHermit, isItem} from 'common/cards/base/types'
-import { ExpansionT } from 'common/types/cards'
+import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -39,11 +39,11 @@ const DECK_ICONS = [
 	'terraform',
 ]
 
-const EXPANSION_NAMES:Record<ExpansionT | 'any'> = [
+const EXPANSION_NAMES = [
 	'any',
-	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
+	...Object.keys(EXPANSIONS).filter((expansion) => {
 		return CARDS_LIST.some(
-			(card) => card.props.expansion === expansion && !EXPANSIONS.disabled.includes(expansion)
+			(card) => card.props.expansion === expansion && EXPANSIONS[expansion].disabled === false
 		)
 	}),
 ]
@@ -60,11 +60,8 @@ const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	icon: `/images/ranks/${option}.png`,
 }))
 
-interface ExpansionMap {
-	[key: string]: string
-}
 const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
-	name: (EXPANSIONS.expansions as ExpansionMap)[option] || 'Any',
+	name: option in EXPANSIONS ? EXPANSIONS[option as ExpansionT].name : 'Any',
 	key: option,
 	icon: `/images/expansion-icons/${option}.png`,
 }))
@@ -221,7 +218,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				// Card Expansion Filter
 				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
 				// Don't show disabled cards
-				!EXPANSIONS.disabled.includes(card.props.expansion)
+				EXPANSIONS[card.props.expansion].disabled === false
 		)
 	)
 

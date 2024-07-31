@@ -1,7 +1,7 @@
 import type {GameModel} from '../models/game-model'
 import type {PlayerId, PlayerModel} from '../models/player-model'
 import type {CoinFlipResult, CurrentCoinFlip, TurnActions} from '../types/game-state'
-import type {EnergyT} from '../types/cards'
+import type {TypeT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
 import type {HermitAttackType} from '../types/attack'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
@@ -38,7 +38,7 @@ export class PlayerComponent {
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
-		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
+		availableEnergy: WaterfallHook<(availableEnergy: Array<TypeT>) => Array<TypeT>>
 
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>

@@ -47,6 +47,8 @@ class ChorusFruit extends Card {
 			if (switchedActiveHermit) return
 			switchedActiveHermit = true
 
+			applySingleUse(game, component.slot)
+
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
@@ -60,7 +62,6 @@ class ChorusFruit extends Card {
 					if (!pickedSlot.inRow()) return
 					if (pickedSlot.row.entity !== player.activeRowEntity) {
 						player.changeActiveRow(pickedSlot.row)
-						applySingleUse(game, component.slot)
 					} else {
 						switchedActiveHermit = false
 					}
