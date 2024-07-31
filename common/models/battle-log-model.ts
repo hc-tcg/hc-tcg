@@ -97,7 +97,7 @@ export class BattleLogModel {
 			card.props.category === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
-			row?.index
+			row?.index !== undefined
 		) {
 			return `${card.props.name} (${row?.index + 1})`
 		}
@@ -215,7 +215,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
