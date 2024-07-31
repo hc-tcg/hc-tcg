@@ -3,13 +3,6 @@ FROM node:18.20-bookworm
 ARG APP_VERSION
 ENV APP_VERSION $APP_VERSION
 
-RUN apt-get update
-RUN apt-get install -y \
-  curl \
-  python-is-python3 \
-  pkg-config \
-  build-essential
-
 #######################################################################
 
 RUN mkdir /app
