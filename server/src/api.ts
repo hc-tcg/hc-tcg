@@ -98,8 +98,16 @@ export function registerApis(app: import('express').Express) {
 						createdTime: game.createdTime,
 						id: game.id,
 						code: game.code,
-						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.name),
+						players: game.components.filter(PlayerComponent).map((player) => {
+							return {
+								playerId: player.id,
+								playerName: player.playerName,
+								censoredPlayerName: player.censoredPlayerName,
+								minecraftName: player.minecraftName,
+								lives: player.lives,
+								deck: player.getDeck().map((card) => card.props.id),
+							}
+						}),
 						state: game.state,
 					}),
 				})
@@ -121,9 +129,17 @@ export function registerApis(app: import('express').Express) {
 						endTime: Date.now(),
 						id: game.id,
 						code: game.code,
-						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.name),
-						endInfo: game.endInfo,
+						players: game.components.filter(PlayerComponent).map((player) => {
+							return {
+								playerId: player.id,
+								playerName: player.playerName,
+								censoredPlayerName: player.censoredPlayerName,
+								minecraftName: player.minecraftName,
+								lives: player.lives,
+								deck: player.getDeck().map((card) => card.props.id),
+							}
+						}),
+						state: game.state,
 					}),
 				})
 			} catch (e) {
