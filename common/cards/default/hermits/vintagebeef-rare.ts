@@ -38,16 +38,18 @@ class VintageBeefRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
+			let removeFrom = game.components.filter(
+				StatusEffectComponent,
+				query.effect.type('normal', 'damage'),
+				query.effect.targetIsCardAnd(query.card.currentPlayer, query.card.slot(query.slot.hermit))
+			)
+
+			if (removeFrom.length === 0) return
+
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
-			game.components
-				.filter(
-					StatusEffectComponent,
-					query.effect.type('normal', 'damage'),
-					query.effect.targetIsCardAnd(query.card.currentPlayer, query.card.slot(query.slot.hermit))
-				)
-				.forEach((effect) => effect.remove())
+			removeFrom.forEach((effect) => effect.remove())
 		})
 	}
 }
