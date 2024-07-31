@@ -139,6 +139,7 @@ export function registerApis(app: import('express').Express) {
 								deck: player.getDeck().map((card) => card.props.id),
 							}
 						}),
+						endInfo: game.endInfo,
 						state: game.state,
 					}),
 				})
