@@ -39,14 +39,20 @@ class PoePoeSkizzRare extends Card {
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!component.slot.inRow()) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: 'Pick an empty Hermit slot',
-				canPick: query.every(query.slot.hermit, query.slot.currentPlayer, query.slot.empty),
+				message: 'Pick an empty Hermit slot or your active Hermit.',
+				canPick: query.every(
+					query.slot.hermit,
+					query.slot.currentPlayer,
+					query.some(query.slot.empty, query.slot.rowIs(component.slot.rowEntity))
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow() || !component.slot.inRow()) return
+					if (pickedSlot.row.entity === component.slot.rowEntity) return
 
 					game.swapRows(pickedSlot.row, component.slot.row)
 
