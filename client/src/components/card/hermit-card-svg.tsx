@@ -6,7 +6,7 @@ import {getCardRank} from 'common/utils/ranks'
 import {memo} from 'react'
 import {Hermit} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {DISABLED_EXPANSIONS} from 'common/const/expansions'
+import {EXPANSIONS} from 'common/const/expansions'
 
 export type HermitCardProps = {
 	card: WithoutFunctions<Hermit>
@@ -29,7 +29,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
-	const disabled = DISABLED_EXPANSIONS.includes(card.expansion) ? 'disabled' : 'enabled'
+	const disabled = EXPANSIONS[card.expansion].disabled === false ? 'disabled' : 'enabled'
 
 	return (
 		<svg

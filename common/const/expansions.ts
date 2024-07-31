@@ -1,27 +1,27 @@
 type ExpansionInfo = {
 	name: string
+	disabled: boolean
 }
 
-type Expansions = {
-	readonly default: ExpansionInfo
-	readonly alter_egos: ExpansionInfo
-	readonly alter_egos_ii: ExpansionInfo
-	readonly season_x: ExpansionInfo
-	readonly alter_egos_iii: ExpansionInfo
-	readonly advent_of_tcg: ExpansionInfo
-	readonly dream: ExpansionInfo
+export type ExpansionT =
+	| 'default'
+	| 'alter_egos'
+	| 'alter_egos_ii'
+	| 'season_x'
+	| 'alter_egos_iii'
+	| 'advent_of_tcg'
+	| 'dream'
+
+type ExpansionDict = {
+	readonly [Expansion in ExpansionT]: ExpansionInfo
 }
 
-export const EXPANSIONS: Expansions = {
-	default: {name: 'Base Set'},
-	alter_egos: {name: 'Alter Egos'},
-	alter_egos_ii: {name: 'Alter Egos Pt. II'},
-	season_x: {name: 'HC Season X'},
-	alter_egos_iii: {name: 'Alter Egos Pt. III'},
-	advent_of_tcg: {name: 'Advent of TCG'},
-	dream: {name: 'Dream'},
+export const EXPANSIONS: ExpansionDict = {
+	default: {name: 'Base Set', disabled: false},
+	alter_egos: {name: 'Alter Egos', disabled: false},
+	alter_egos_ii: {name: 'Alter Egos Pt. II', disabled: false},
+	season_x: {name: 'HC Season X', disabled: false},
+	alter_egos_iii: {name: 'Alter Egos Pt. III', disabled: false},
+	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
+	dream: {name: 'Dream', disabled: true},
 }
-
-export type ExpansionT = keyof typeof EXPANSIONS
-
-export const DISABLED_EXPANSIONS: Array<ExpansionT> = ['advent_of_tcg', 'dream']

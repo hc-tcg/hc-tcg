@@ -27,7 +27,7 @@ import {
 import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
 import {CardEntity, newEntity} from 'common/entities'
 import {ModalData} from 'common/types/modal-requests'
-import {DISABLED_EXPANSIONS} from 'common/const/expansions'
+import {EXPANSIONS} from 'common/const/expansions'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -58,7 +58,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			!cardInfo.isHermit() ||
 			!cardInfo.isItem() ||
 			(types.includes(cardInfo.props.type) &&
-				!DISABLED_EXPANSIONS.includes(cardInfo.props.expansion))
+				EXPANSIONS[cardInfo.props.expansion].disabled === false)
 	)
 
 	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttach())

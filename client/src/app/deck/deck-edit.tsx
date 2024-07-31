@@ -22,7 +22,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {CardEntity, newEntity} from 'common/entities'
 import {isHermit, isItem} from 'common/cards/base/types'
-import {DISABLED_EXPANSIONS, EXPANSIONS, ExpansionT} from 'common/const/expansions'
+import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -43,7 +43,7 @@ const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS).filter((expansion) => {
 		return CARDS_LIST.some(
-			(card) => card.props.expansion === expansion && !DISABLED_EXPANSIONS.includes(expansion)
+			(card) => card.props.expansion === expansion && EXPANSIONS[expansion].disabled === false
 		)
 	}),
 ]
@@ -218,7 +218,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				// Card Expansion Filter
 				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
 				// Don't show disabled cards
-				!DISABLED_EXPANSIONS.includes(card.props.expansion)
+				EXPANSIONS[card.props.expansion].disabled === false
 		)
 	)
 

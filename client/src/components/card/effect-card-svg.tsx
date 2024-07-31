@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import {memo} from 'react'
 import {Attach, SingleUse} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {DISABLED_EXPANSIONS} from 'common/const/expansions'
+import {EXPANSIONS} from 'common/const/expansions'
 
 export type EffectCardProps = {
 	card: WithoutFunctions<Attach | SingleUse>
@@ -15,7 +15,7 @@ export type EffectCardProps = {
 const EffectCardModule = memo(({card}: EffectCardProps) => {
 	const rank = getCardRank(card.tokens)
 	const showCost = !useSelector(getGameState)
-	const disabled = DISABLED_EXPANSIONS.includes(card.expansion) ? 'disabled' : 'enabled'
+	const disabled = EXPANSIONS[card.expansion].disabled === false ? 'disabled' : 'enabled'
 
 	return (
 		<svg
