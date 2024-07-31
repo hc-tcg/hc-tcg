@@ -11,7 +11,7 @@ import {
 	PlayerComponent,
 	StatusEffectComponent,
 } from 'common/components'
-import * as query from 'common/components/query'
+import query from 'common/components/query'
 import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
 import {WithoutFunctions} from 'common/types/server-requests'
 
@@ -82,10 +82,11 @@ class ExBossAI implements VirtualAI {
 					payload: {
 						slot,
 						card: {
-							props: WithoutFunctions(bossCard.props),
+							props: WithoutFunctions(bossCard.card.props),
 							entity: bossCard.entity,
 							slot: bossCard.slotEntity,
 							turnedOver: false,
+							attackHint: null,
 						},
 					},
 					playerId: currentPlayer.id,

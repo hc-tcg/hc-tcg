@@ -57,6 +57,7 @@ export class VirtualPlayerModel {
 				entity: newEntity('card-entity') as CardEntity,
 				slot: null,
 				turnedOver: false,
+				attackHint: null,
 			})
 		}
 		return deck

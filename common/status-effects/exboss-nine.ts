@@ -2,7 +2,7 @@ import {GameModel} from '../models/game-model'
 import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
-import {card, not, slot, some} from '../components/query'
+import query from '../components/query'
 
 class ExBossNineStatusEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -40,7 +40,7 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard {their|your} hand and draw a new card`
 				)
 				game.components
-					.filter(CardComponent, card.slot(slot.hand), card.opponentPlayer)
+					.filter(CardComponent, query.card.slot(query.slot.hand), query.card.opponentPlayer)
 					.forEach((card) => card.discard())
 				opponentPlayer.draw(1)
 			} else {
@@ -53,9 +53,12 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 				game.components
 					.filter(
 						CardComponent,
-						card.active,
-						card.opponentPlayer,
-						some(card.slot(slot.attach, not(slot.frozen)), card.slot(slot.item))
+						query.card.active,
+						query.card.opponentPlayer,
+						query.some(
+							query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
+							query.card.slot(query.slot.item)
+						)
 					)
 					.forEach((card) => card.discard())
 			}

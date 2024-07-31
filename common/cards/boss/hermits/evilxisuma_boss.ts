@@ -5,7 +5,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ExBossNineStatusEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'
@@ -193,7 +193,9 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		}
 
 		// Apply an ailment to act on EX's ninth turn
-		game.components.new(StatusEffectComponent, ExBossNineStatusEffect).apply(component.entity)
+		game.components
+			.new(StatusEffectComponent, ExBossNineStatusEffect, component.entity)
+			.apply(component.entity)
 
 		const {player, opponentPlayer} = component
 
@@ -228,7 +230,9 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 							query.card.row(query.row.active)
 						)
 						if (opponentActiveHermit)
-							game.components.new(StatusEffectComponent, FireEffect).apply(opponentActiveHermit)
+							game.components
+								.new(StatusEffectComponent, FireEffect, component.entity)
+								.apply(opponentActiveHermit)
 						break
 				}
 			}

@@ -38,7 +38,14 @@ class JinglerRare extends Card {
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			if (!game.components.exists(CardComponent, card.slot(slot.hand), card.opponentPlayer)) return // Do not roll if player has no more cards in hand
+			if (
+				!game.components.exists(
+					CardComponent,
+					query.card.slot(query.slot.hand),
+					query.card.opponentPlayer
+				)
+			)
+				return // Do not roll if player has no more cards in hand
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 

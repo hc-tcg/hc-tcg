@@ -9,7 +9,7 @@ import root from '../serverRoot'
 import {VirtualPlayerModel} from 'common/models/virtual-player-model'
 import {CARDS} from 'common/cards'
 import {BoardSlotComponent, PlayerComponent, RowComponent} from 'common/components'
-import {not, row, slot} from 'common/components/query'
+import query from 'common/components/query'
 import {slotEntity} from 'common/components/query/card'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {CardEntity, newEntity} from 'common/entities'
@@ -218,6 +218,7 @@ function* createBossGame(msg: ClientMessage) {
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 			turnedOver: false,
+			attackHint: null,
 		},
 	]
 
@@ -229,22 +230,22 @@ function* createBossGame(msg: ClientMessage) {
 
 	function destroyRow(row: RowComponent) {
 		newBossGame.components
-			.filterEntities(BoardSlotComponent, slot.rowIs(row.entity))
+			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
 			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
 		newBossGame.components.delete(row.entity)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
 	newBossGame.components
-		.filter(RowComponent, row.opponentPlayer, (_game, row) => row.index > 2)
+		.filter(RowComponent, query.row.opponentPlayer, (_game, row) => row.index > 2)
 		.forEach(destroyRow)
 	// Remove boss' rows other than index 0
 	newBossGame.components
-		.filter(RowComponent, row.currentPlayer, not(row.index(0)))
+		.filter(RowComponent, query.row.currentPlayer, query.not(query.row.index(0)))
 		.forEach(destroyRow)
 	// Remove boss' item slots
 	newBossGame.components
-		.filterEntities(BoardSlotComponent, slot.currentPlayer, slot.item)
+		.filterEntities(BoardSlotComponent, query.slot.currentPlayer, query.slot.item)
 		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
 
 	newBossGame.rules = {

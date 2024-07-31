@@ -5,7 +5,7 @@ import Button from 'components/button'
 import {createBossGame} from 'logic/matchmaking/matchmaking-actions'
 import CardList from 'components/card-list'
 import {CARDS} from 'common/cards'
-import {EXPANSIONS} from 'common/config'
+import {EXPANSIONS} from 'common/const/expansions'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {CardEntity} from 'common/entities'
 
@@ -19,11 +19,12 @@ function createUICardInstance(cardId: string): LocalCardInstance {
 		entity: cardId as CardEntity,
 		slot: null,
 		turnedOver: false,
+		attackHint: null,
 	} as const
 }
 
 function removeDisabledExpansions(cardId: string) {
-	return !EXPANSIONS.disabled.includes(CARDS[cardId].props.expansion)
+	return !EXPANSIONS[CARDS[cardId].props.expansion].disabled
 }
 
 function BossLanding({setMenuSection}: Props) {
