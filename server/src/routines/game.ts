@@ -12,7 +12,7 @@ import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
 import {TurnActions, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {EnergyT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
@@ -60,7 +60,7 @@ function getAvailableEnergy(game: GameModel) {
  * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
  * `state.turn.completedActions`.
  */
-function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
+function getAvailableActions(game: GameModel, availableEnergy: Array<TypeT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
@@ -295,6 +295,30 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	const actionType = turnAction.type as TurnAction
 
 	let endTurn = false
+
+	const availableActions =
+		turnAction.playerId === game.currentPlayer.id
+			? game.state.turn.availableActions
+			: game.state.turn.opponentAvailableActions
+
+	// We don't check if slot actions are available because the playCardSaga will verify that.
+	if (
+		[
+			'SINGLE_USE_ATTACK',
+			'PRIMARY_ATTACK',
+			'SECONDARY_ATTACK',
+			'CHANGE_ACTIVE_HERMIT',
+			'APPLY_EFFECT',
+			'REMOVE_EFFECT',
+			'PICK_REQUEST',
+			'MODAL_REQUEST',
+			'END_TURN',
+		].includes(actionType) &&
+		!availableActions.includes(actionType)
+	) {
+		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
+		return
+	}
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 	switch (actionType) {
