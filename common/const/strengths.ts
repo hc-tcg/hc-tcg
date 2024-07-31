@@ -1,8 +1,12 @@
 import {TypeT} from '../../common/types/cards'
 
-export const STRENGTHS: Record<TypeT, Array<TypeT>> = {
-	balanced: [],
+type StrengthsDict = {
+	readonly [Type in TypeT]: Array<TypeT>
+}
+
+export const STRENGTHS: StrengthsDict = {
 	any: [],
+	balanced: [],
 	builder: ['terraform'],
 	explorer: ['builder'],
 	farm: ['explorer'],

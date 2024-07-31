@@ -166,13 +166,13 @@ export class BattleLogModel {
 				return reducer
 			}
 
-			if (!attack.attacker || !attack.target) return reducer
+			if (!attack.attacker || !subAttack.target) return reducer
 
 			if (subAttack.getDamage() === 0) return reducer
 
 			const attackerInfo = attack.attacker
 
-			const targetFormatting = attack.target.player.id === attack.player.id ? 'p' : 'o'
+			const targetFormatting = subAttack.target.player.id === attack.player.id ? 'p' : 'o'
 
 			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
 			const weaknessDamage =
@@ -193,11 +193,11 @@ export class BattleLogModel {
 			const logMessage = subAttack.getLog({
 				attacker: `$p${attackerInfo.props.name}$`,
 				player: attack.player.playerName,
-				opponent: attack.target.player.playerName,
+				opponent: attack.player.opponentPlayer.playerName,
 				target: `$${targetFormatting}${this.genCardName(
-					attack.target.player,
-					attack.target.getHermit(),
-					attack.target
+					subAttack.target.player,
+					subAttack.target.getHermit(),
+					subAttack.target
 				)}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,

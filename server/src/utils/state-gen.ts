@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG} from 'common/config'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
@@ -35,6 +35,7 @@ import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 } from 'common/status-effects/multiturn-attack-disabled'
+import {EXPANSIONS} from 'common/const/expansions'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -65,7 +66,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			!cardInfo.isHermit() ||
 			!cardInfo.isItem() ||
 			(types.includes(cardInfo.props.type) &&
-				!EXPANSIONS.disabled.includes(cardInfo.props.expansion))
+				EXPANSIONS[cardInfo.props.expansion].disabled === false)
 	)
 
 	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttach())

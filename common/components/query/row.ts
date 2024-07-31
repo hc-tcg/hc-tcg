@@ -18,12 +18,17 @@ export const currentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
+/** Check if a row has a Hermit card attached (effect cards do not count) */
 export const hasHermit: ComponentQuery<RowComponent> = (game, row) =>
 	game.components.exists(
 		CardComponent,
 		query.card.isHermit,
 		query.card.slot(query.slot.rowIs(row.entity))
 	)
+
+/** Check if a row has a card attached to its hermit slot */
+export const hermitSlotOccupied: ComponentQuery<RowComponent> = (game, row) =>
+	game.components.exists(CardComponent, query.card.slot(query.slot.rowIs(row.entity)))
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {

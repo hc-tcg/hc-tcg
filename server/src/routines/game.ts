@@ -12,7 +12,7 @@ import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
 import {TurnActions, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {EnergyT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
@@ -60,7 +60,7 @@ function getAvailableEnergy(game: GameModel) {
  * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
  * `state.turn.completedActions`.
  */
-function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
+function getAvailableActions(game: GameModel, availableEnergy: Array<TypeT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
