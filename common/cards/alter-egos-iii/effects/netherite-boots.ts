@@ -38,6 +38,7 @@ class NetheriteBoots extends Card {
 				!attack.isTargeting(component) ||
 				(attack.isType('status-effect') && !(attack.attacker instanceof FireEffect))
 			) {
+				attack.multiplyDamage(component.entity, 0)
 				return
 			}
 
