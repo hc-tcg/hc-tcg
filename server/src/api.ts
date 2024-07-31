@@ -3,9 +3,9 @@ import {GameModel} from 'common/models/game-model'
 import {createRequire} from 'module'
 import root from './serverRoot'
 import fetch from 'node-fetch'
-import { PlayerComponent } from 'common/components'
+import {PlayerComponent} from 'common/components'
 import query from 'common/components/query'
-import { PlayerInfo } from 'common/types/server-requests'
+import {PlayerInfo} from 'common/types/server-requests'
 const require = createRequire(import.meta.url)
 
 type PlayerStateT = PlayerInfo & {
@@ -18,8 +18,8 @@ export function registerApis(app: import('express').Express) {
 
 	const env = process.env.NODE_ENV || 'development'
 	if (env == 'development') {
-		//console.log('running in dev mode, not activating api')
-		//return
+		console.log('running in dev mode, not activating api')
+		return
 	}
 
 	try {
@@ -40,7 +40,10 @@ export function registerApis(app: import('express').Express) {
 									code: g.code,
 									players: g.getPlayers().map((p) => {
 										const playerState: PlayerStateT = p.getPlayerInfo() as PlayerStateT
-										playerState.lives = g.components.filter(PlayerComponent, query.player.id(p.id))[0].lives
+										playerState.lives = g.components.filter(
+											PlayerComponent,
+											query.player.id(p.id)
+										)[0].lives
 										return playerState
 									}),
 									state: g.state,
