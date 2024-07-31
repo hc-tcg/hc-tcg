@@ -27,6 +27,14 @@ import {
 import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
 import {CardEntity, newEntity} from 'common/entities'
 import {ModalData} from 'common/types/modal-requests'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from 'common/status-effects/singleturn-attack-disabled'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from 'common/status-effects/multiturn-attack-disabled'
 import {EXPANSIONS} from 'common/const/expansions'
 
 ////////////////////////////////////////
@@ -197,6 +205,29 @@ function getLocalModalDataPayload(game: GameModel, modal: ModalData): LocalModal
 			let observer = game.components.get(observerEntity)
 			return observer?.wrappingEntity === hermitCard.entity
 		})
+
+		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
+		 * blocked by status effects here.
+		 */
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(PrimaryAttackDisabledEffect, MultiturnPrimaryAttackDisabledEffect),
+				query.effect.targetEntity(hermitCard.entity)
+			)
+		) {
+			blockedActions.push('PRIMARY_ATTACK')
+		}
+
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(SecondaryAttackDisabledEffect, MultiturnSecondaryAttackDisabledEffect),
+				query.effect.targetEntity(hermitCard.entity)
+			)
+		) {
+			blockedActions.push('SECONDARY_ATTACK')
+		}
 
 		return {
 			...modal.payload,

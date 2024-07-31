@@ -249,20 +249,20 @@ export function setupMockCard(
 
 	component.player.hooks.getAttackRequests.callSome(
 		[component, attackType],
-		(observerEntity) => observerEntity == observer.entity
+		(observerEntity) => observerEntity === observer.entity
 	)
+
+	observer.subscribe(component.player.hooks.onTurnEnd, () => {
+		mocking.card.onDetach(game, component, observer)
+		observer.unsubscribeFromEverything()
+	})
 
 	return {
 		hermitName: mocking.props.name,
 		attackName:
 			attackType === 'primary' ? mocking.props.primary.name : mocking.props.secondary.name,
 		getAttack: () => {
-			let attack = mocking.card.getAttack(game, component, attackType)
-			observer.subscribe(component.player.hooks.onTurnEnd, () => {
-				mocking.card.onDetach(game, component, observer)
-				observer.unsubscribeFromEverything()
-			})
-			return attack
+			return mocking.card.getAttack(game, component, attackType)
 		},
 	}
 }
