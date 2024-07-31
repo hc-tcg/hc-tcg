@@ -38,13 +38,12 @@ export function registerApis(app: import('express').Express) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									players: g.getPlayers().map((p) => {
-										const playerState: PlayerStateT = p.getPlayerInfo() as PlayerStateT
-										playerState.lives = g.components.filter(
-											PlayerComponent,
-											query.player.id(p.id)
-										)[0].lives
-										return playerState
+									players: g.components.filter(PlayerComponent).map((player) => {
+										return {
+											id: player.id,
+											playerName: player.playerName,
+											lives: player.lives,
+										}
 									}),
 									state: g.state,
 								}

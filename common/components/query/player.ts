@@ -17,9 +17,3 @@ export function hasStatusEffect(
 		return !!player.hasStatusEffect(statusEffect)
 	}
 }
-
-export function id(id: string): ComponentQuery<PlayerComponent> {
-	return (_game, player) => {
-		return player.id === id
-	}
-}
