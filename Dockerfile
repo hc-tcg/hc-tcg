@@ -1,7 +1,7 @@
 FROM debian:bookworm
 
 ARG APP_VERSION
-ENV APP_VERSION=$APP_VERSION
+ENV APP_VERSION $APP_VERSION
 ARG NODE_VERSION=16.16.0
 
 RUN apt-get update
@@ -12,7 +12,6 @@ RUN apt-get install -y \
   build-essential
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
-RUN source ~/.bashrc
 RUN nvm install ${NODE_VERSION}
 
 #######################################################################
