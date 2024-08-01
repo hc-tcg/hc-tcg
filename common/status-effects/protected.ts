@@ -1,67 +1,69 @@
 import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import query from '../components/query'
 
 class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		icon: 'protected',
 		name: "Sheriff's Protection",
-		description: 'This Hermit does not take damage on their first active turn.',
+		description:
+			'This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
+		applyCondition: (_game, target) => {
+			return target instanceof CardComponent && !target.getStatusEffect(ProtectedEffect)
+		},
+		applyLog: (values) => `${values.target} ${values.verb} selected for ${values.statusEffect}`,
 	}
 
-	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent, ) {
-	// 	const {player} = component
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		const {player} = target
+		game.components
+			.filter(
+				StatusEffectComponent,
+				query.effect.is(ProtectedEffect),
+				query.effect.targetIsCardAnd(
+					query.card.player(player.entity),
+					query.not(query.card.entity(target.entity))
+				)
+			)
+			.forEach((effect) => effect.remove())
 
-	// 	let canBlock = true
+		let becameActive = false
 
-	// 	player.hooks.onTurnEnd.add(effect, () => {
-	// 		if (player.board.activeRow === target.rowIndex) {
-	// 			canBlock = false
-	// 		}
-	// 	})
+		observer.subscribe(player.hooks.onTurnEnd, () => {
+			if (target.slot.inRow() && player.activeRowEntity === target.slot.rowEntity) {
+				becameActive = true
+			}
+		})
 
-	// 	player.hooks.onTurnStart.add(effect, () => {
-	// 		if (!canBlock) {
-	// 			removeStatusEffect(game, target, effect)
-	// 		}
-	// 	})
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (becameActive) {
+				effect.remove()
+			}
+		})
 
-	// 	player.hooks.onDefence.add(effect, (attack) => {
-	// 		const targetPos = getCardPos(game, effect.target)
-	// 		if (!targetPos) return
-	// 		// Only block if just became active
-	// 		if (!canBlock) return
+		observer.subscribe(player.hooks.onDefence, (attack) => {
+			if (!becameActive || !attack.isTargeting(target)) return
+			// Do not block backlash attacks
+			if (attack.isBacklash) return
 
-	// 		// Only block damage when we are active
-	// 		const isActive = player.board.activeRow === target.rowIndex
-	// 		if (!isActive || !isTargeting(attack, targetPos)) return
-	// 		// Do not block backlash attacks
-	// 		if (attack.isBacklash) return
+			if (attack.getDamage() > 0) {
+				// Block all damage
+				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+			}
+		})
 
-	// 		if (attack.getDamage() > 0) {
-	// 			// Block all damage
-	// 			attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
-	// 		}
-	// 	})
-
-	// 	player.hooks.afterDefence.add(effect, (attack) => {
-	// 		const attackTarget = attack.getTarget()
-	// 		if (!attackTarget) return
-	// 		if (attackTarget.row.hermitCard.instance !== effect.target.entity) return
-	// 		if (attackTarget.row.health > 0) return
-	// 		removeStatusEffect(game, target, effect)
-	// 	})
-	// }
-
-	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-	// 	const {player} = component
-
-	// 	player.hooks.onDefence.remove(instance)
-	// 	player.hooks.onTurnEnd.remove(instance)
-	// 	player.hooks.onTurnStart.remove(instance)
-	// 	player.hooks.onDefence.remove(instance)
-	// }
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
+			if (!attack.isTargeting(target) || attack.target?.health) return
+			effect.remove()
+		})
+	}
 }
 
 export default ProtectedEffect

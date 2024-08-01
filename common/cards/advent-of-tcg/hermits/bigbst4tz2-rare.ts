@@ -1,10 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {AttackModel} from '../../../models/attack-model'
-import {executeAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import SoulmateEffect, {soulmateEffectDamage} from '../../../status-effects/soulmate'
 
 class BigBSt4tzRare extends Card {
 	props: Hermit = {
@@ -29,69 +28,19 @@ class BigBSt4tzRare extends Card {
 			name: 'Soulmate',
 			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
-			power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
+			power: `When BigB is knocked out, deal ${soulmateEffectDamage} damage to the opponent's active Hermit.`,
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer, rowId: row} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		let dealDamageNextTurn = false
-
-		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
-			dealDamageNextTurn = true
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			game.components
+				.new(StatusEffectComponent, SoulmateEffect, component.entity)
+				.apply(player.opponentPlayer.entity)
 		})
-
-		// Add before so health can be checked reliably
-		opponentPlayer.hooks.afterAttack.addBefore(component, () => {
-			if (dealDamageNextTurn) {
-				if (!row || row.health === null || row.health > 0) return
-
-				const activeRowIndex = player.board.activeRow
-				const opponentActiveRowIndex = opponentPlayer.board.activeRow
-
-				const activeRow = getActiveRow(player)
-				const opponentActiveRow = getActiveRow(opponentPlayer)
-				if (activeRowIndex === null || opponentActiveRowIndex === null) return
-				if (!activeRow || !opponentActiveRow) return
-
-				const sourceRow: RowPos = {
-					player: player,
-					rowIndex: activeRowIndex,
-					row: activeRow,
-				}
-
-				const targetRow: RowPos = {
-					player: opponentPlayer,
-					rowIndex: opponentActiveRowIndex,
-					row: opponentActiveRow,
-				}
-
-				const statusEffectAttack = new AttackModel({
-					id: this.getInstanceKey(component),
-					attacker: sourceRow,
-					target: targetRow,
-					type: 'status-effect',
-				})
-				statusEffectAttack.addDamage(this.props.id, 140)
-
-				opponentPlayer.hooks.afterAttack.remove(component)
-				executeAttacks(game, [statusEffectAttack], true)
-			}
-		})
-
-		player.hooks.onTurnStart.add(component, () => {
-			dealDamageNextTurn = false
-		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.onAttack.remove(component)
-		opponentPlayer.hooks.onAttack.remove(component)
-		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

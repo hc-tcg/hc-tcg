@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -19,14 +19,16 @@ class Lantern extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length >= 4
+			(_game, pos) => pos.player.getDeck().length >= 4
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
+			const topCards = player.getDeck().sort(CardComponent.compareOrder).slice(0, 4)
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -34,7 +36,7 @@ class Lantern extends Card {
 					payload: {
 						modalName: 'Lantern: Choose 2 cards to draw immediately.',
 						modalDescription: '',
-						cards: player.pile.slice(0, 4).map((card) => card.toLocalCardInstance()),
+						cards: topCards.map((card) => card.entity),
 						selectionSize: 2,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -47,14 +49,12 @@ class Lantern extends Card {
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 2) return 'FAILURE_INVALID_DATA'
 
-					const cards = modalResult.cards
+					const drawCards = modalResult.cards
 
-					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.id === d.component)) {
-							player.hand.push(c)
-							return false
+					topCards.forEach((card) => {
+						if (drawCards.some((c) => c.entity === card.entity)) {
+							card.draw()
 						}
-						return true
 					})
 
 					game.addModalRequest({
@@ -64,7 +64,7 @@ class Lantern extends Card {
 							payload: {
 								modalName: 'Lantern: Cards your opponent drew.',
 								modalDescription: '',
-								cards: modalResult.cards,
+								cards: modalResult.cards.map((card) => card.entity),
 								selectionSize: 0,
 								primaryButton: {
 									text: 'Close',
@@ -87,11 +87,6 @@ class Lantern extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

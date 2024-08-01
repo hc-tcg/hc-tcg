@@ -2,7 +2,8 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
 
 class Cat extends Card {
 	props: Attach = {
@@ -17,13 +18,19 @@ class Cat extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		player.hooks.afterAttack.add(component, (attack) => {
-			if (!pos.rowId || !pos.rowId.hermitCard) return
-			if (attack.id !== pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)) return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!component.slot.inRow()) return
+			if (!attack.isAttacker(component.slot.row.getHermit()?.entity)) return
 
-			if (player.pile.length === 0) return
+			if (
+				game.components.exists(
+					CardComponent,
+					query.card.slot(query.slot.currentPlayer, query.slot.deck)
+				)
+			)
+				return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -32,7 +39,7 @@ class Cat extends Card {
 					payload: {
 						modalName: 'Cat: Draw a card from the bottom of your deck?',
 						modalDescription: '',
-						cards: [player.pile[0].toLocalCardInstance()],
+						cards: [player.getDeck().sort(CardComponent.compareOrder)[0].entity],
 						selectionSize: 0,
 						primaryButton: {
 							text: 'Draw from Bottom',
@@ -48,9 +55,12 @@ class Cat extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					player.hooks.onTurnEnd.add(component, (drawCards) => {
-						player.hooks.onTurnEnd.remove(component)
-						return [player.pile[-1]]
+					observer.oneShot(player.hooks.onTurnEnd, (drawCards) => {
+						drawCards[0]?.attach(
+							game.components.new(DeckSlotComponent, player.entity, {position: 'front'})
+						)
+						drawCards[0] = player.getDeck().sort(CardComponent.compareOrder).at(-1) || null
+						drawCards[0]?.draw()
 					})
 
 					return 'SUCCESS'
@@ -58,11 +68,6 @@ class Cat extends Card {
 				onTimeout() {},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {AttackModel} from '../../../models/attack-model'
-import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {getFormattedName} from '../../../utils/game'
 
 class Trapdoor extends Card {
 	props: Attach = {
@@ -18,50 +19,55 @@ class Trapdoor extends Card {
 			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
 		let totalReduction = 0
 
-		player.hooks.onDefence.add(component, (attack) => {
-			const target = attack.getTarget()
-			if (target?.player.id !== player.id || attack.getAttacker()?.player.id !== opponentPlayer.id)
+		observer.subscribe(player.hooks.onDefence, (attack) => {
+			const target = attack.target
+			if (
+				target?.player.id !== player.id ||
+				!(attack.attacker instanceof CardComponent) ||
+				attack.attacker.player.id !== opponentPlayer.id
+			)
 				return
 			if (attack.isType('status-effect') || attack.isBacklash) return
-			if (pos.rowIndex === null) return
-			if (Math.abs(target.rowIndex - pos.rowIndex) !== 1) return
+			if (!component.slot.inRow()) return
+			if (!query.row.adjacent(query.row.entity(component.slot.rowEntity))(game, target)) return
 
 			if (totalReduction < 40) {
 				const damageReduction = Math.min(attack.calculateDamage(), 40 - totalReduction)
 				totalReduction += damageReduction
-				attack.reduceDamage(this.props.id, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 
-				const newAttack: AttackModel = new AttackModel({
-					id: this.getInstanceKey(component),
-					attacker: attack.getAttacker(),
-					target: {
-						player: player,
-						rowIndex: pos.rowIndex,
-						row: pos.rowId as RowStateWithHermit,
-					},
-					type: attack.type,
-					createWeakness: ['primary', 'secondary'].includes(attack.type) ? 'ifWeak' : 'never',
-				}).addDamage(this.props.id, damageReduction)
+				const newAttack = game
+					.newAttack({
+						attacker: attack.attacker.entity,
+						target: component.slot.rowEntity,
+						type: attack.type,
+						log: (values) =>
+							`(${values.damage} was intercepted by ${values.target} with ${getFormattedName(
+								component.props.id,
+								true
+							)})`,
+					})
+					.addDamage(component.entity, damageReduction)
+				// newAttack should not run extra hooks for attacker, or be redirected back to the original target
+				newAttack.shouldIgnoreCards.push(
+					query.every(
+						...attack.shouldIgnoreCards,
+						query.card.entity(attack.attacker.entity),
+						query.card.rowEntity(attack.targetEntity)
+					)
+				)
 				attack.addNewAttack(newAttack)
 			}
 		})
 
-		player.hooks.afterDefence.add(component, (attack) => {
-			const {player} = component
+		observer.subscribe(player.hooks.afterDefence, (_attack) => {
 			totalReduction = 0
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.onDefence.remove(component)
-		player.hooks.afterDefence.remove(component)
 	}
 }
 

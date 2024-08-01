@@ -9,6 +9,8 @@ import DyedEffect from './dyed'
 import MuseumCollectionEffect from './museum-collection'
 import SmeltingEffect from './smelting'
 import MelodyEffect from './melody'
+import SoulmateEffect from './soulmate'
+import NaughtyRegiftEffect from './naughty-regift'
 import UsedClockEffect from './used-clock'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import BetrayedEffect from './betrayed'
@@ -78,6 +80,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	SoulmateEffect,
+	NaughtyRegiftEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(

@@ -1,10 +1,16 @@
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
 
 class GrianchRare extends Card {
 	props: Hermit = {
@@ -34,50 +40,71 @@ class GrianchRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
-		const componentKey = this.getInstanceKey(component)
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			if (attack.type === 'primary') {
+				// Heals the afk hermit *before* we actually do damage
+				if (!pickedAfkSlot?.inRow()) return
+				pickedAfkSlot.row.heal(40)
+				let hermit = pickedAfkSlot.row.getHermit()
 
-			if (coinFlip[0] === 'tails') {
-				opponentPlayer.hooks.afterAttack.add(component, (attack) => {
-					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
-					opponentPlayer.hooks.afterAttack.remove(component)
-				})
-				return
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g40hp$ by $p${
+						component.card.props.name
+					}$`
+				)
+			} else if (attack.type === 'secondary') {
+				const coinFlip = flipCoin(player, component)
+
+				if (coinFlip[0] === 'tails') {
+					game.components
+						.new(StatusEffectComponent, NaughtyRegiftEffect, component.entity)
+						.apply(opponentPlayer.entity)
+					return
+				}
+
+				attack.multiplyDamage(component.entity, 2)
 			}
-
-			attack.addDamage(this.props.id, this.props.secondary.damage)
 		})
 
-		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== componentKey || attack.type !== 'primary') return
+		let pickedAfkSlot: SlotComponent | null = null
 
-			const pickCondition = slot.every(slot.not(slot.active), slot.not(slot.empty), slot.hermit)
+		// Pick the hermit to heal
+		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
+			// Make sure we are attacking
+			if (activeInstance.entity !== component.entity) return
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			// Only primary attack
+			if (hermitAttackType !== 'primary') return
+
+			const pickCondition = query.every(
+				query.not(query.slot.active),
+				query.not(query.slot.empty),
+				query.slot.hermit
+			)
+
+			// Make sure there is something to select
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					healHermit(pickedSlot.rowId, 40)
+					// Store the info to use later
+					pickedAfkSlot = pickedSlot
+				},
+				onTimeout() {
+					// We didn't pick anyone to heal, so heal no one
 				},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 
 class MonkeyfarmRare extends Card {
 	props: Hermit = {
@@ -33,44 +33,34 @@ class MonkeyfarmRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
-				return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const pickCondition = query.every(
+				query.slot.opponent,
+				query.slot.item,
+				query.not(query.slot.active),
+				query.not(query.slot.empty)
+			)
+
+			if (!game.components.exists(SlotComponent, pickCondition)) return
+
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
-
-			const pickCondition = slot.every(slot.opponent, slot.item, slot.not(slot.empty))
-
-			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.cardId || rowIndex === null) return
-
-					const row = opponentPlayer.board.rows[rowIndex]
-					if (!row.hermitCard) return
-
-					// Apply the card
-					discardCard(game, pickedSlot.cardId)
+					pickedSlot.getCard()?.discard()
 				},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

@@ -1,5 +1,6 @@
 import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
 class SmeltingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -12,27 +13,37 @@ class SmeltingEffect extends CardStatusEffect {
 		counterType: 'turns',
 	}
 
-	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-	// 	const {player} = component
+	override onApply(
+		game: GameModel,
+		effect: StatusEffectComponent<CardComponent>,
+		target: CardComponent,
+		observer: ObserverComponent
+	) {
+		const {player} = target
 
-	// 	player.hooks.onTurnStart.add(instance, () => {
-	// 		if (instance.counter === null) return
-	// 		instance.counter -= 1
-	// 		if (instance.counter === 0) {
-	// 			discardCard(game, pos.cardId)
-	// 			pos.rowId?.itemCards.forEach((card) => {
-	// 				if (!card) return
-	// 				card.card.props.numericId = card.card.props.numericId.replace('common', 'rare')
-	// 			})
-	// 		}
-	// 	})
-	// }
+		if (!effect.counter) effect.counter = this.props.counter
 
-	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-	// 	const {player} = component
-
-	// 	player.hooks.onTurnStart.remove(instance)
-	// }
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (effect.counter === null) return
+			effect.counter -= 1
+			if (effect.counter === 0) {
+				if (target.slot.inRow()) {
+					target.slot.row.getItems().forEach((item) => {
+						if (item.isItem() && item.props.id.includes('common')) {
+							// Create a new double item and delete the old single item
+							const doubleItem = game.components.new(
+								CardComponent,
+								item.props.id.replace('common', 'rare'),
+								item.slotEntity
+							)
+							game.components.delete(item.entity)
+						}
+					})
+				}
+				target.discard()
+			}
+		})
+	}
 }
 
 export default SmeltingEffect

@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -17,31 +17,26 @@ class Slimeball extends Card {
 		description:
 			"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
 		attachCondition: query.every(
-			slot.opponent,
-			slot.attach,
-			slot.empty,
-			slot.row(row.hasHermit),
-			slot.actionAvailable('PLAY_EFFECT_CARD'),
-			query.not(slot.frozen)
+			query.slot.attach,
+			query.slot.empty,
+			query.slot.row(query.row.hasHermit),
+			query.actionAvailable('PLAY_EFFECT_CARD'),
+			query.not(query.slot.frozen)
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.freezeSlots.add(component, () => {
-			return slot.every(
-				slot.player,
-				slot.rowIndex(pos.rowIndex),
-				slot.not(slot.attach),
-				slot.not(slot.empty)
+		observer.subscribe(player.hooks.freezeSlots, () => {
+			if (!component.slot.inRow()) return query.nothing
+			return query.every(
+				query.slot.player(player.entity),
+				query.slot.rowIs(component.slot.rowEntity),
+				query.not(query.slot.attach),
+				query.not(query.slot.empty)
 			)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		pos.player.hooks.freezeSlots.remove(component)
-		pos.player.hooks.onDetach.remove(component)
 	}
 }
 

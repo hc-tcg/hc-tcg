@@ -1,8 +1,13 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import query from '../../../components/query'
+import XisumavoidCommon from '../../default/hermits/xisumavoid-common'
+import XisumavoidRare from '../../default/hermits/xisumavoid-rare'
+import RendogCommon from '../../default/hermits/rendog-common'
+import RendogRare from '../../default/hermits/rendog-rare'
 
 class PythonGBRare extends Card {
 	props: Hermit = {
@@ -31,32 +36,22 @@ class PythonGBRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const activeRow = player.board.activeRow
-			if (activeRow === null) return
-
-			const logfellaAmount = player.board.rows.filter(
-				(row, index) =>
-					row.hermitCard &&
-					(index === activeRow - 1 || index === activeRow + 1) &&
-					['xisumavoid_common', 'xisumavoid_rare', 'rendog_common', 'rendog_rare'].includes(
-						row.hermitcard.props.numericId
-					)
+			const logfellaAmount = game.components.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.attached,
+				query.card.is(XisumavoidCommon, XisumavoidRare, RendogCommon, RendogRare),
+				query.card.row(query.row.adjacent(query.row.active))
 			).length
 
-			attack.multiplyDamage(this.props.id, Math.pow(2, logfellaAmount))
+			attack.multiplyDamage(component.entity, Math.pow(2, logfellaAmount))
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

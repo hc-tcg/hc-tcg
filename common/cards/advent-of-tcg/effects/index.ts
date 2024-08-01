@@ -4,9 +4,9 @@ import Slimeball from './slimeball'
 import Cat from './cat'
 import BerryBush from './berry-bush'
 import Trapdoor from './trapdoor'
-import Card from '../../base/card'
+import {CardClass} from '../../base/card'
 
-const effectCardClasses: Array<new () => Card> = [
+const effectCardClasses: Array<CardClass> = [
 	BrewingStand,
 	Furnace,
 	Slimeball,

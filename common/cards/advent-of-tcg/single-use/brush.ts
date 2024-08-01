@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import query from '../../../components/query'
+import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -19,14 +19,16 @@ class Brush extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length >= 3
+			(_game, pos) => pos.player.getDeck().length >= 3
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
+			const topCards = player.getDeck().sort(CardComponent.compareOrder).slice(0, 3)
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -34,7 +36,7 @@ class Brush extends Card {
 					payload: {
 						modalName: 'Brush: Choose cards to place on the top of your deck.',
 						modalDescription: 'Select cards you would like to draw sooner first.',
-						cards: player.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
+						cards: topCards.map((card) => card.entity),
 						selectionSize: 3,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -44,21 +46,14 @@ class Brush extends Card {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.cards) return 'SUCCESS'
+					if (!modalResult.result) return 'SUCCESS'
 
-					const cards = modalResult.cards
+					const cards = modalResult.cards || []
 
-					const topCards: Array<CardComponent> = []
-					const bottomCards: Array<CardComponent> = []
-
-					player.pile.slice(0, 3).forEach((c) => {
-						if (cards.some((d) => c.id === d.component)) topCards.push(c)
-						else bottomCards.push(c)
+					topCards.forEach((c) => {
+						if (cards.some((d) => d.entity === c.entity)) return // Leave selected cards "on top"
+						c.attach(game.components.new(DeckSlotComponent, player.entity, {position: 'back'}))
 					})
-
-					player.pile = player.pile.slice(3)
-					topCards.reverse().forEach((c) => player.pile.unshift(c))
-					bottomCards.forEach((c) => player.pile.push(c))
 
 					return 'SUCCESS'
 				},
@@ -67,11 +62,6 @@ class Brush extends Card {
 				},
 			})
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
 	}
 }
 

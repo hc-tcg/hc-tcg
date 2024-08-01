@@ -1,8 +1,9 @@
-import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {GameModel, GameValue} from '../../../models/game-model'
+import {CardComponent, ObserverComponent, PlayerComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {PlayerEntity} from '../../../entities'
 
 class PixlriffsRare extends Card {
 	props: Hermit = {
@@ -32,25 +33,42 @@ class PixlriffsRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = component
+	startingRow = new GameValue<Record<PlayerEntity, number | undefined>>(() => {
+		return {}
+	})
 
-		let startingRow = pos.rowId
+	public override onCreate(game: GameModel, component: CardComponent) {
+		if (Object.hasOwn(this.startingRow.values, game.id)) return
+		this.startingRow.set(game, {})
 
-		player.hooks.onTurnStart.add(component, () => {
-			startingRow = pos.rowId
-		})
+		const newObserver = game.components.new(ObserverComponent, component.entity)
 
-		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
-
-			if (startingRow !== player.board.activeRow) attack.addDamage(this.props.id, 40)
+		game.components.filter(PlayerComponent).forEach((player) => {
+			newObserver.subscribe(player.hooks.onTurnStart, () => {
+				const startingRowIndex = player.activeRow?.index
+				if (!startingRowIndex) {
+					newObserver.subscribe(player.hooks.onAttach, (_instance) => {
+						if (!player.activeRow) return
+						this.startingRow.get(game)[player.entity] = player.activeRow.index
+						newObserver.unsubscribe(player.hooks.onAttach)
+					})
+				}
+				this.startingRow.get(game)[player.entity] = startingRowIndex
+			})
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {player} = component
-		player.hooks.onAttack.remove(component)
+
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+
+			const startingRowIndex = this.startingRow.get(game)[player.entity]
+			// Attacker should only be able to change rows with Ender Pearl and Ladder after a knockout
+			if (startingRowIndex !== undefined && startingRowIndex !== player.activeRow?.index)
+				attack.addDamage(component.entity, 40)
+		})
 	}
 }
 

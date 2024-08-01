@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, DeckSlotComponent} from '../../../components'
+import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -18,21 +18,17 @@ class Dropper extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent): void {
+	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
 		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
+		observer.subscribe(player.hooks.onApply, () => {
 			for (let i = 0; i < 2; i++) {
-				let slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
+				let slot = game.components.new(DeckSlotComponent, opponentPlayer.entity, {
+					position: 'random',
+				})
 				game.components.new(CardComponent, FletchingTable, slot.entity)
 			}
 		})
-	}
-
-	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = component
-
-		player.hooks.onApply.remove(component)
 	}
 }
 

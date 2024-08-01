@@ -2,7 +2,9 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import query from '../../../components/query'
+import SmeltingEffect from '../../../status-effects/smelting'
 
 class Furnace extends Card {
 	props: Attach = {
@@ -17,16 +19,20 @@ class Furnace extends Card {
 			'After 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		applyStatusEffect(game, 'smelting', component)
+	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+		game.components
+			.new(StatusEffectComponent, SmeltingEffect, component.entity)
+			.apply(component.entity)
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		game.state.statusEffects.forEach((ail) => {
-			if (ail.targetInstance === component) {
-				removeStatusEffect(game, pos, ail)
-			}
-		})
+		game.components
+			.find(
+				StatusEffectComponent,
+				query.effect.is(SmeltingEffect),
+				query.effect.targetIsCardAnd(query.card.entity(component.entity))
+			)
+			?.remove()
 	}
 }
 

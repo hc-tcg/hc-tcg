@@ -1,9 +1,15 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import DyedEffect from '../../../status-effects/dyed'
 
 class Smajor1995Rare extends Card {
 	props: Hermit = {
@@ -28,25 +34,28 @@ class Smajor1995Rare extends Card {
 			name: 'To Dye For',
 			cost: ['any', 'any', 'any'],
 			damage: 70,
-			power:
-				'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
+			power: 'After your attack, select one of your AFK Hermits to use items of any type.',
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent
+	): void {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const pickCondition = slot.every(
-				slot.player,
-				slot.not(slot.active),
-				slot.not(slot.empty),
-				slot.hermit
+			const pickCondition = query.every(
+				query.slot.currentPlayer,
+				query.slot.hermit,
+				query.not(query.slot.active),
+				query.not(query.slot.empty)
 			)
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
@@ -54,18 +63,15 @@ class Smajor1995Rare extends Card {
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.cardId || rowIndex === null) return
+					const pickedCard = pickedSlot.getCard()
+					if (!pickedCard) return
 
-					applyStatusEffect(game, 'dyed', pickedSlot.cardId)
+					game.components
+						.new(StatusEffectComponent, DyedEffect, component.entity)
+						.apply(pickedCard.entity)
 				},
 			})
 		})
-	}
-
-	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
 	}
 }
 

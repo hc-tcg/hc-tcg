@@ -22,6 +22,6 @@ export const EXPANSIONS: ExpansionDict = {
 	alter_egos_ii: {name: 'Alter Egos Pt. II', disabled: false},
 	season_x: {name: 'HC Season X', disabled: false},
 	alter_egos_iii: {name: 'Alter Egos Pt. III', disabled: false},
-	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
+	advent_of_tcg: {name: 'Advent of TCG', disabled: false},
 	dream: {name: 'Dream', disabled: true},
 }

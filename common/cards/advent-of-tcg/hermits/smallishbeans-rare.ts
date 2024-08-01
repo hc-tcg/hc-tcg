@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -31,32 +31,21 @@ class SmallishbeansAdventRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, rowId: row} = pos
+	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const activeRow = getActiveRowPos(player)
+			const activeRow = component.slot.inRow() ? component.slot.row : null
 			if (!activeRow) return
 
-			let partialSum = 0
+			let total = activeRow.getItems().reduce((partialSum, item) => {
+				return partialSum + (item.isItem() ? item.props.energy.length : 1)
+			}, 0)
 
-			activeRow.row.itemCards.forEach((item) => {
-				if (!item || !item.props.id.includes('item')) return
-				if (item.props.rarity === 'rare') partialSum += 1
-				partialSum += 1
-			})
-
-			attack.addDamage(this.props.id, partialSum * 20)
+			attack.addDamage(component.entity, total * 20)
 		})
-	}
-
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
 	}
 }
 

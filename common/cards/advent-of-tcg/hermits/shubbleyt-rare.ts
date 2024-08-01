@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -32,12 +32,18 @@ class ShubbleYTRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent
+	): void {
 		const {player} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 			if (attack.type !== 'secondary') return
+			const topCard = player.getDeck().sort(CardComponent.compareOrder).at(0)
+			if (!topCard) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -46,7 +52,7 @@ class ShubbleYTRare extends Card {
 					payload: {
 						modalName: 'Shelby: Place your top card on bottom of deck?',
 						modalDescription: '',
-						cards: [player.pile[0].toLocalCardInstance()],
+						cards: [topCard.entity],
 						selectionSize: 0,
 						primaryButton: {
 							text: 'Place on Bottom',
@@ -62,21 +68,13 @@ class ShubbleYTRare extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					const topCard = player.pile.shift()
-					if (!topCard) return 'SUCCESS'
-					player.pile.push(topCard)
+					topCard.attach(game.components.new(DeckSlotComponent, player.entity, {position: 'back'}))
 
 					return 'SUCCESS'
 				},
 				onTimeout() {},
 			})
 		})
-	}
-
-	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = component
-
-		player.hooks.afterAttack.remove(component)
 	}
 }
 
