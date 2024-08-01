@@ -3,7 +3,7 @@ import {LocalRowState} from 'common/types/game-state'
 import Card from 'components/card'
 import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {
 	getCardsCanBePlacedIn,
 	getGameState,
@@ -13,6 +13,8 @@ import {
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
 import {SlotEntity} from 'common/entities'
+import {useEffect, useState} from 'react'
+import {playSound} from 'logic/sound/sound-actions'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -29,7 +31,24 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-	console.log('UPDATING SELF')
+	const [isMoutning, setIsMounting] = useState(true)
+	const dispatch = useDispatch()
+
+	useEffect(() => {
+		if (isMoutning) {
+			setIsMounting(false)
+			return
+		}
+		let sound: Array<string> = []
+		if (!card) {
+			if (type == 'hermit' || type == 'single_use') {
+				sound = ['/sfx/Item_Frame_remove_item1.ogg', '/sfx/Item_Frame_remove_item2.ogg']
+			}
+		} else {
+			sound = ['/sfx/Item_Frame_add_item1.ogg', '/sfx/Item_Frame_add_item2.ogg']
+		}
+		dispatch(playSound(sound[Math.floor(Math.random() * sound.length)]))
+	}, [card?.entity, active])
 
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
