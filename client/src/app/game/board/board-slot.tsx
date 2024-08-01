@@ -69,6 +69,7 @@ const Slot = ({
 	useEffect(() => {
 		if (!card) return
 		if (!hasEverHadCard) return
+		if (!active) return
 		if (muted) return
 
 		let sound = ['/sfx/Item_Frame_rotate_item1.ogg', '/sfx/Item_Frame_rotate_item2.ogg']

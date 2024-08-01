@@ -236,14 +236,6 @@ function Game() {
 		}
 	}, [])
 
-	useEffect(() => {
-		let sounds = ['/sfx/Weak_attack1.ogg']
-		dispatch(playSound(sounds[0]))
-	}, [
-		...playerState.board.rows.map((row) => row.health),
-		...opponentState!.board.rows.map((row) => row.health),
-	])
-
 	// Search for cards when debug.unlimitedCards is enabled
 	const Filter = () => {
 		if (DEBUG_CONFIG.unlimitedCards) {
