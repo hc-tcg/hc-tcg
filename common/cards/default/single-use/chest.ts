@@ -27,6 +27,7 @@ class Chest extends Card {
 			return game.components.exists(CardComponent, this.pickCondition)
 		}),
 	}
+
 	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
 		const {player} = component
 

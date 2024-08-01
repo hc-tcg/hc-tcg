@@ -97,7 +97,7 @@ export class BattleLogModel {
 			card.props.category === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
-			row?.index
+			row?.index !== undefined
 		) {
 			return `${card.props.name} (${row?.index + 1})`
 		}

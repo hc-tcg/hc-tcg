@@ -3,7 +3,14 @@ import {GameModel} from 'common/models/game-model'
 import {createRequire} from 'module'
 import root from './serverRoot'
 import fetch from 'node-fetch'
+import {PlayerComponent} from 'common/components'
+import query from 'common/components/query'
+import {PlayerInfo} from 'common/types/server-requests'
 const require = createRequire(import.meta.url)
+
+type PlayerStateT = PlayerInfo & {
+	lives: number
+}
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
@@ -12,19 +19,18 @@ export function registerApis(app: import('express').Express) {
 	const env = process.env.NODE_ENV || 'development'
 	if (env == 'development') {
 		console.log('running in dev mode, not activating api')
-		return
+		//return
 	}
 
 	try {
 		apiKeys = JSON.parse(process.env.API_KEYS || '')
 		botKey = process.env.BOT_KEY
-		console.log(apiKeys, botKey, process.env.BOT_URL)
 
 		// get info about games
 		app.get('/api/games', (req, res) => {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
-				if (apiKeys?.keys.includes(apiKey)) {
+				if (apiKeys.includes(apiKey)) {
 					res.status(201).send(
 						JSON.stringify(
 							root.getGames().map((g: GameModel) => {
@@ -32,8 +38,16 @@ export function registerApis(app: import('express').Express) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									playerIds: g.getPlayerIds(),
-									playerNames: g.getPlayers().map((p) => p.name),
+									players: g.components.filter(PlayerComponent).map((player) => {
+										return {
+											playerId: player.id,
+											playerName: player.playerName,
+											censoredPlayerName: player.censoredPlayerName,
+											minecraftName: player.minecraftName,
+											lives: player.lives,
+											deck: player.getDeck().map((card) => card.props.id),
+										}
+									}),
 									state: g.state,
 								}
 							})
@@ -50,7 +64,7 @@ export function registerApis(app: import('express').Express) {
 		app.post('/api/createGame', (req, res) => {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
-				if (apiKeys?.keys.includes(apiKey)) {
+				if (apiKeys.includes(apiKey)) {
 					const code = Math.floor(Math.random() * 10000000).toString(16)
 
 					// Add to private queue with code
@@ -78,14 +92,22 @@ export function registerApis(app: import('express').Express) {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
-						['api-key', apiKeys?.botKey],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						createdTime: game.createdTime,
 						id: game.id,
 						code: game.code,
-						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.name),
+						players: game.components.filter(PlayerComponent).map((player) => {
+							return {
+								playerId: player.id,
+								playerName: player.playerName,
+								censoredPlayerName: player.censoredPlayerName,
+								minecraftName: player.minecraftName,
+								lives: player.lives,
+								deck: player.getDeck().map((card) => card.props.id),
+							}
+						}),
 						state: game.state,
 					}),
 				})
@@ -100,16 +122,25 @@ export function registerApis(app: import('express').Express) {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
-						['api-key', apiKeys?.botKey],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						createdTime: game.createdTime,
 						endTime: Date.now(),
 						id: game.id,
 						code: game.code,
-						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.name),
+						players: game.components.filter(PlayerComponent).map((player) => {
+							return {
+								playerId: player.id,
+								playerName: player.playerName,
+								censoredPlayerName: player.censoredPlayerName,
+								minecraftName: player.minecraftName,
+								lives: player.lives,
+								deck: player.getDeck().map((card) => card.props.id),
+							}
+						}),
 						endInfo: game.endInfo,
+						state: game.state,
 					}),
 				})
 			} catch (e) {
@@ -119,11 +150,11 @@ export function registerApis(app: import('express').Express) {
 
 		root.hooks.privateCancelled.add('api', (code: string) => {
 			try {
-				fetch(`${apiKeys.botUrl}/admin/private_cancel`, {
+				fetch(`${process.env.BOT_URL}/admin/private_cancel`, {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
-						['api-key', apiKeys?.botKey],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						code: code,
