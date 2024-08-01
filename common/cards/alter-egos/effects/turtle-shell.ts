@@ -38,9 +38,9 @@ class TurtleShell extends Card {
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!component.slot.inRow()) return
-			// Only block damage when we are active
-			const isActive = player.activeRowEntity === component.slot.row.entity
-			if (!isActive || !attack.isTargeting(component)) return
+			if (!hasBeenActive) return
+
+			if (!attack.isTargeting(component)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 
