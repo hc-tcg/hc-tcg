@@ -23,7 +23,7 @@ class RoyalProtectionEffect extends CardStatusEffect {
 			attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
 		})
 
-		observer.subscribe(target.opponentPlayer.hooks.onTurnEnd, () => {
+		observer.subscribe(target.player.hooks.onTurnStart, () => {
 			effect.remove()
 		})
 	}
