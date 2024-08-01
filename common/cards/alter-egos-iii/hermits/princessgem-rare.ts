@@ -35,7 +35,7 @@ class PrincessGemRare extends Card {
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"After your attack, grant Royal Protection to one of your AFK Hermits until the end of your opponent's next turn.",
+				'After your attack, grant Royal Protection to one of your AFK Hermits until the start of your next turn.',
 		},
 		sidebarDescriptions: [
 			{
