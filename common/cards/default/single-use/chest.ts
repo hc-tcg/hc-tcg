@@ -5,13 +5,12 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import Clock from './clock'
 
 class Chest extends Card {
 	pickCondition = query.every(
 		query.card.currentPlayer,
 		query.card.slot(query.slot.discardPile),
-		query.not(query.card.is(Clock))
+		query.card.canBeRecovered
 	)
 
 	props: SingleUse = {

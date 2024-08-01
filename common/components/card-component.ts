@@ -39,6 +39,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	observerEntity: ObserverEntity | null
 
 	turnedOver: boolean
+	/** True if this card can be drawn from the discard pile */
+	canBeRecovered: boolean
 
 	constructor(
 		game: GameModel,
@@ -65,6 +67,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 
 		this.turnedOver = false
+		this.canBeRecovered = false
 
 		this.card.onCreate(this.game, this)
 	}

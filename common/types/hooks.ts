@@ -37,7 +37,7 @@ export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
-	public call(...params: Parameters<Args>) {
+	public call(...params: Parameters<Args>): Array<ReturnType<Args>> {
 		return this.listeners.map(([_, listener]) => listener(...(params as Array<any>)))
 	}
 }

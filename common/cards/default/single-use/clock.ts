@@ -44,6 +44,10 @@ class Clock extends Card {
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
+	override onCreate(game: GameModel, component: CardComponent) {
+		component.canBeRecovered = false
+	}
+
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
 		observer.subscribe(player.hooks.onApply, () => {
