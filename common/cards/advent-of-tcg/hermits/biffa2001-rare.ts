@@ -36,7 +36,8 @@ class Biffa2001Rare extends Card {
 			name: "Biffa's Museum",
 			cost: ['miner', 'any'],
 			damage: 70,
-			power: 'For each card you played or used this turn, this attack does 20 more damage.',
+			power:
+				'For each card you played or used this turn, this attack does 20 more damage.',
 		},
 	}
 

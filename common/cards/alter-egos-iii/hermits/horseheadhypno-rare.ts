@@ -1,10 +1,9 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import Clock from '../../default/single-use/clock'
 
 class HorseHeadHypnoRare extends Card {
 	props: Hermit = {
@@ -35,16 +34,21 @@ class HorseHeadHypnoRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const modalCondition = query.every(
 				query.card.currentPlayer,
 				query.card.slot(query.slot.discardPile),
-				query.card.isItem
+				query.card.isItem,
 			)
 
 			if (!game.components.exists(CardComponent, modalCondition)) return
@@ -54,9 +58,12 @@ class HorseHeadHypnoRare extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
+						modalName:
+							'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
 						modalDescription: '',
-						cards: game.components.filter(CardComponent, modalCondition).map((card) => card.entity),
+						cards: game.components
+							.filter(CardComponent, modalCondition)
+							.map((card) => card.entity),
 						selectionSize: 1,
 						primaryButton: {
 							text: 'Draw Card',

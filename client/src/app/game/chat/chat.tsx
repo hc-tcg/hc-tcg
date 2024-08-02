@@ -1,15 +1,15 @@
+import {useDrag} from '@use-gesture/react'
+import classNames from 'classnames'
+import Button from 'components/button'
+import {FormattedText} from 'components/formatting/formatting'
+import {chatMessage} from 'logic/game/game-actions'
+import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {getPlayerId} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
-import {chatMessage} from 'logic/game/game-actions'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.scss'
-import Button from 'components/button'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
-import {useDrag} from '@use-gesture/react'
-import {FormattedText} from 'components/formatting/formatting'
-import classNames from 'classnames'
 
 function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)
@@ -18,7 +18,8 @@ function clamp(n: number, min: number, max: number): number {
 function Chat() {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
-	const chatMessages = settings.disableChat === 'off' ? useSelector(getChatMessages) : []
+	const chatMessages =
+		settings.disableChat === 'off' ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
@@ -55,7 +56,7 @@ function Chat() {
 				setSetting('chatPosition', {
 					x: chatPosSetting.x + chatPos.x,
 					y: chatPosSetting.y + chatPos.y,
-				})
+				}),
 			)
 			setChatPos({
 				x: 0,
@@ -106,13 +107,16 @@ function Chat() {
 					setSetting('chatSize', {
 						w: e.currentTarget.offsetWidth,
 						h: e.currentTarget.offsetHeight,
-					})
+					}),
 				)
 			}}
 		>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponentName}</p>
-				<Button onClick={() => dispatch(setSetting('showBattleLogs', !showLog))} size="small">
+				<Button
+					onClick={() => dispatch(setSetting('showBattleLogs', !showLog))}
+					size="small"
+				>
 					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
 				</Button>
 				<button onClick={closeChat} className={css.close}>
@@ -123,7 +127,8 @@ function Chat() {
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
 					{chatMessages.slice().map((line) => {
-						if (line.systemMessage === true && showLog === false) return <span></span>
+						if (line.systemMessage === true && showLog === false)
+							return <span></span>
 						const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
@@ -134,7 +139,10 @@ function Chat() {
 							return (
 								<div className={css.message}>
 									<span className={css.turnTag}>
-										{isOpponent ? `${opponentName}'s`.toLocaleUpperCase() : 'YOUR'} TURN
+										{isOpponent
+											? `${opponentName}'s`.toLocaleUpperCase()
+											: 'YOUR'}{' '}
+										TURN
 									</span>
 									<span className={css.line}></span>
 								</div>
@@ -144,7 +152,11 @@ function Chat() {
 						return (
 							<div className={css.message}>
 								<span className={css.time}>{hmTime}</span>
-								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
+								<span
+									className={classNames(
+										line.systemMessage ? css.systemMessage : css.text,
+									)}
+								>
 									{FormattedText(line.message, {
 										isOpponent,
 										censorProfanity: settings.profanityFilter === 'on',

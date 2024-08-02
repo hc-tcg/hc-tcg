@@ -1,11 +1,11 @@
-import {takeEvery, delay} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
-import {getOpponentId} from '../../utils'
 import {CONFIG} from 'common/config'
-import {getLocalGameState} from '../../utils/state-gen'
 import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux'
 import {PlayerModel} from 'common/models/player-model'
+import {AnyAction} from 'redux'
+import {delay, takeEvery} from 'typed-redux-saga'
+import {getOpponentId} from '../../utils'
+import {broadcast} from '../../utils/comm'
+import {getLocalGameState} from '../../utils/state-gen'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
@@ -40,9 +40,10 @@ function* statusChangedSaga(game: GameModel, action: AnyAction) {
 function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
 		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' && !!game.players[(action.payload as PlayerModel).id],
+			action.type === 'PLAYER_RECONNECTED' &&
+			!!game.players[(action.payload as PlayerModel).id],
 		sendGameStateOnReconnect,
-		game
+		game,
 	)
 
 	yield* takeEvery(
@@ -50,7 +51,7 @@ function* connectionStatusSaga(game: GameModel) {
 			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
 			!!game.players[(action.payload as PlayerModel).id],
 		statusChangedSaga,
-		game
+		game,
 	)
 }
 

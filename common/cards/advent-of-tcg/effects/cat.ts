@@ -1,3 +1,4 @@
+import {CardComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'

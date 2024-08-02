@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
@@ -35,11 +35,16 @@ class MumboJumboRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const coinFlip = flipCoin(player, component, 2)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
@@ -47,7 +52,7 @@ class MumboJumboRare extends Card {
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.afk,
-				query.card.type('prankster')
+				query.card.type('prankster'),
 			).length
 
 			attack.addDamage(component.entity, headsAmount * 20)

@@ -1,23 +1,23 @@
-import css from './actions.module.scss'
 import cn from 'classnames'
-import Slot from '../board/board-slot'
-import {useSelector, useDispatch} from 'react-redux'
+import {LocalGameState} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import Button from 'components/button'
+import CoinFlip from 'components/coin-flip'
 import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
 import {
-	getPlayerStateById,
 	getAvailableActions,
 	getCurrentCoinFlip,
+	getCurrentPickMessage,
 	getGameState,
 	getPlayerState,
-	getCurrentPickMessage,
+	getPlayerStateById,
 } from 'logic/game/game-selectors'
-import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
-import CoinFlip from 'components/coin-flip'
-import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {SlotInfo} from 'common/types/server-requests'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
+import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -27,7 +27,9 @@ type Props = {
 }
 
 const Actions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
+	const currentPlayer = useSelector(
+		getPlayerStateById(localGameState.turn.currentPlayerId),
+	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerId = useSelector(getPlayerId)
@@ -45,7 +47,8 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 
 	const Status = () => {
 		const waitingForOpponent =
-			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') &&
+			availableActions.length === 1
 		let turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
 		if (pickMessage) turnMsg = 'Pick a card'
 		const endTurn = availableActions.includes('END_TURN')

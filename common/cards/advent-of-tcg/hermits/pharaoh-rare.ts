@@ -43,8 +43,8 @@ class PharaohRare extends Card {
 			// Make sure we are attacking
 			if (activeInstance.entity !== component.entity) return
 
-			// Only secondary attack
-			if (hermitAttackType !== 'secondary') return
+				// Only secondary attack
+				if (hermitAttackType !== 'secondary') return
 
 			const pickCondition = query.every(
 				query.slot.hermit,

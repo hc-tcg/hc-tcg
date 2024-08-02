@@ -1,11 +1,11 @@
-import {useState} from 'react'
-import css from './main-menu.module.scss'
-import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
-import {resetStats} from 'logic/fbdb/fbdb-actions'
-import {useDispatch} from 'react-redux'
-import {resetSetting} from 'logic/local-settings/local-settings-actions'
+import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
+import {resetStats} from 'logic/fbdb/fbdb-actions'
+import {resetSetting} from 'logic/local-settings/local-settings-actions'
+import {useState} from 'react'
+import {useDispatch} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -20,17 +20,25 @@ function DataSettings({setMenuSection}: Props) {
 		dispatch(resetSetting('chatSize'))
 	}
 
-	const handleReset = (prompt: string, whenDonePrompt: string, reset: () => void) => {
+	const handleReset = (
+		prompt: string,
+		whenDonePrompt: string,
+		reset: () => void,
+	) => {
 		const handleYes = () => {
 			reset()
 			setModal(
 				<Modal title={whenDonePrompt} closeModal={closeModal} centered>
 					<div className={css.resetModal}>
-						<Button className={css.resetModalButton} variant="stone" onClick={closeModal}>
+						<Button
+							className={css.resetModalButton}
+							variant="stone"
+							onClick={closeModal}
+						>
 							Ok
 						</Button>
 					</div>
-				</Modal>
+				</Modal>,
 			)
 		}
 
@@ -38,14 +46,22 @@ function DataSettings({setMenuSection}: Props) {
 			setModal(
 				<Modal title={prompt} closeModal={closeModal} centered>
 					<div className={css.resetModal}>
-						<Button className={css.resetModalButton} variant="stone" onClick={handleYes}>
+						<Button
+							className={css.resetModalButton}
+							variant="stone"
+							onClick={handleYes}
+						>
 							Yes
 						</Button>
-						<Button className={css.resetModalButton} variant="stone" onClick={() => setModal(null)}>
+						<Button
+							className={css.resetModalButton}
+							variant="stone"
+							onClick={() => setModal(null)}
+						>
 							No
 						</Button>
 					</div>
-				</Modal>
+				</Modal>,
 			)
 		}
 	}
@@ -69,7 +85,7 @@ function DataSettings({setMenuSection}: Props) {
 					onClick={handleReset(
 						'Are you sure you want to reset the chat window positioin?',
 						'The chat window has been reset.',
-						resetChatWindow
+						resetChatWindow,
 					)}
 				>
 					Reset Chat Window
@@ -79,7 +95,7 @@ function DataSettings({setMenuSection}: Props) {
 					onClick={handleReset(
 						'Are you sure you want to reset your stats?',
 						'Your stats have been reset.',
-						() => dispatch(resetStats())
+						() => dispatch(resetStats()),
 					)}
 				>
 					Reset Stats

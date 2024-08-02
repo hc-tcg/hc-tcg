@@ -1,13 +1,23 @@
-import {CurrentCoinFlip, BattleLogT} from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+} from '../components'
+import query from '../components/query'
+import {DEBUG_CONFIG} from '../config'
+import {
+	CardEntity,
+	PlayerEntity,
+	RowEntity,
+	StatusEffectEntity,
+} from '../entities'
+import {StatusEffectLog} from '../status-effects/status-effect'
+import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
+import {formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
-import {formatText} from '../utils/formatting'
-import {DEBUG_CONFIG} from '../config'
-import {StatusEffectLog} from '../status-effects/status-effect'
-import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
-import query from '../components/query'
-import {CardEntity, PlayerEntity, RowEntity, StatusEffectEntity} from '../entities'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -31,7 +41,7 @@ export class BattleLogModel {
 		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
 
 		if (coinFlip.tosses.length === 1) {
-			return heads > tails ? `flipped $gheads$` : `flipped $btails$`
+			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'
 		} else if (tails === 0) {
 			return `flipped $g${heads} heads$`
 		} else if (heads === 0) {
@@ -43,7 +53,7 @@ export class BattleLogModel {
 
 	private generateCoinFlipMessage(
 		attack: AttackModel,
-		coinFlips: Array<CurrentCoinFlip>
+		coinFlips: Array<CurrentCoinFlip>,
 	): string | null {
 		const entry = coinFlips.reduce((r: string | null, coinFlip) => {
 			const description = this.generateCoinFlipDescription(coinFlip)
@@ -79,8 +89,11 @@ export class BattleLogModel {
 		await new Promise((e) =>
 			setTimeout(
 				e,
-				this.game.currentPlayer.coinFlips.reduce((r, flip) => r + flip.delay, 0)
-			)
+				this.game.currentPlayer.coinFlips.reduce(
+					(r, flip) => r + flip.delay,
+					0,
+				),
+			),
 		)
 
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
@@ -89,7 +102,7 @@ export class BattleLogModel {
 	private genCardName(
 		player: PlayerComponent | undefined,
 		card: CardComponent | null | undefined,
-		row: RowComponent | null | undefined
+		row: RowComponent | null | undefined,
 	) {
 		if (card == null) return '$bINVALID VALUE$'
 
@@ -108,7 +121,7 @@ export class BattleLogModel {
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlip>,
-		pickedSlot: SlotComponent | null
+		pickedSlot: SlotComponent | null,
 	) {
 		let {player, opponentPlayer} = card
 
@@ -128,14 +141,24 @@ export class BattleLogModel {
 				rowIndex: cardRow ? `${cardRow.index + 1}` : invalid,
 				id: card.props.id,
 				name: this.genCardName(card.player, card, cardRow),
-				hermitCard: this.genCardName(card.player, cardRow?.getHermit(), cardRow),
+				hermitCard: this.genCardName(
+					card.player,
+					cardRow?.getHermit(),
+					cardRow,
+				),
 				slotType: card.slot.type,
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
 				id: pickedCard?.card.props.id || invalid,
-				name: pickedCard ? this.genCardName(pickedSlot?.player, pickedCard, pickedRow) : invalid,
-				hermitCard: this.genCardName(pickedSlot?.player, pickedRow?.getHermit(), pickedRow),
+				name: pickedCard
+					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
+					: invalid,
+				hermitCard: this.genCardName(
+					pickedSlot?.player,
+					pickedRow?.getHermit(),
+					pickedRow,
+				),
 				slotType: pickedSlot?.type || invalid,
 			},
 			game: this.game,
@@ -154,7 +177,7 @@ export class BattleLogModel {
 	public addAttackEntry(
 		attack: AttackModel,
 		coinFlips: Array<CurrentCoinFlip>,
-		singleUse: CardComponent | null
+		singleUse: CardComponent | null,
 	) {
 		if (!attack.attacker) return
 
@@ -172,7 +195,8 @@ export class BattleLogModel {
 
 			const attackerInfo = attack.attacker
 
-			const targetFormatting = subAttack.target.player.id === attack.player.id ? 'p' : 'o'
+			const targetFormatting =
+				subAttack.target.player.id === attack.player.id ? 'p' : 'o'
 
 			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
 			const weaknessDamage =
@@ -197,7 +221,7 @@ export class BattleLogModel {
 				target: `$${targetFormatting}${this.genCardName(
 					subAttack.target.player,
 					subAttack.target.getHermit(),
-					subAttack.target
+					subAttack.target,
 				)}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
@@ -215,7 +239,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
@@ -250,7 +274,7 @@ export class BattleLogModel {
 		player: PlayerComponent,
 		newRowEntity: RowEntity,
 		oldHermitEntity: CardEntity | null,
-		newHermitEntity: CardEntity | null
+		newHermitEntity: CardEntity | null,
 	) {
 		let newRow = this.game.components.get(newRowEntity)
 		let oldHermit = this.game.components.get(oldHermitEntity)
@@ -279,7 +303,7 @@ export class BattleLogModel {
 		const hermitCard = this.game.components.find(
 			CardComponent,
 			query.card.isHermit,
-			query.card.rowEntity(row)
+			query.card.rowEntity(row),
 		)
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
@@ -307,7 +331,7 @@ export class BattleLogModel {
 
 	public addStatusEffectEntry(
 		statusEffect: StatusEffectEntity,
-		log: (values: StatusEffectLog) => string
+		log: (values: StatusEffectLog) => string,
 	) {
 		const effect = this.game.components.get(statusEffect)
 		if (!effect) return
@@ -315,13 +339,15 @@ export class BattleLogModel {
 		if (!pos) return
 
 		if (pos instanceof CardComponent) {
-			const targetFormatting = pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
+			const targetFormatting =
+				pos.player.entity === this.game.currentPlayerEntity ? 'p' : 'o'
 			const rowNumberString =
-				(pos.slot.inRow() && (pos.slot.row.index + 1).toString()) || 'Unknown Row'
+				(pos.slot.inRow() && (pos.slot.row.index + 1).toString()) ||
+				'Unknown Row'
 
 			const logMessage = log({
 				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,
-				verb: `was`,
+				verb: 'was',
 				statusEffect: `$e${effect.props.name}$`,
 			})
 
@@ -330,11 +356,12 @@ export class BattleLogModel {
 				description: logMessage,
 			})
 		} else if (pos instanceof PlayerComponent) {
-			const targetFormatting = pos.entity === this.game.currentPlayerEntity ? 'p' : 'o'
+			const targetFormatting =
+				pos.entity === this.game.currentPlayerEntity ? 'p' : 'o'
 
 			const logMessage = log({
 				target: `$${targetFormatting}{You|${pos.playerName}}$`,
-				verb: `{were|was}`,
+				verb: '{were|was}',
 				statusEffect: `$e${effect.props.name}$`,
 			})
 

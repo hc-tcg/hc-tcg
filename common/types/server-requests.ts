@@ -1,11 +1,15 @@
 import type {CardProps} from '../cards/base/types'
+import type {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 import type {ComponentQuery} from '../components/query'
-import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
-import {PlayerId} from '../models/player-model'
-import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {TurnActions} from './game-state'
 
 export type PlayerInfo = {
@@ -19,7 +23,9 @@ export type PlayerInfo = {
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
-	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
+	[Property in keyof Type]: Type[Property] extends Function
+		? never
+		: Type[Property]
 }
 
 export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
@@ -34,7 +40,9 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	turnedOver: boolean
 }
 
-export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
+export type LocalStatusEffectInstance<
+	Props extends StatusEffectProps = StatusEffectProps,
+> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
 	readonly target:

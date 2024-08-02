@@ -1,4 +1,9 @@
-import {PlayerDeckT, SavedDeckT, deckToSavedDeck, loadSavedDeck} from 'common/types/deck'
+import {
+	PlayerDeckT,
+	SavedDeckT,
+	deckToSavedDeck,
+	loadSavedDeck,
+} from 'common/types/deck'
 import {validateDeck} from 'common/utils/validation'
 
 export const getActiveDeckName = () => {
@@ -83,7 +88,7 @@ export const convertLegacyDecks = (): number => {
 			localStorage.setItem(`Deck_${legacyName}`, JSON.stringify(convertedDeck))
 
 			localStorage.removeItem(lsKey)
-			console.log(`Converted deck:`, lsKey, legacyName)
+			console.log('Converted deck:', lsKey, legacyName)
 		}
 	}
 

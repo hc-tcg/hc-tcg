@@ -1,7 +1,7 @@
 import * as Toast from '@radix-ui/react-toast'
-import css from './toast.module.scss'
-import {useDispatch, useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './toast.module.scss'
 
 type Props = {
 	title: string
@@ -33,11 +33,18 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 
 	return (
 		<>
-			<Toast.Root open={setOpen} onOpenChange={handleClose} duration={5000} className={css.toast}>
+			<Toast.Root
+				open={setOpen}
+				onOpenChange={handleClose}
+				duration={5000}
+				className={css.toast}
+			>
 				{image && <img src={image} draggable={false} alt="icon" />}
 				<div className={css.content}>
 					<Toast.Title className={css.title}>{title}</Toast.Title>
-					<Toast.Description className={css.description}>{description}</Toast.Description>
+					<Toast.Description className={css.description}>
+						{description}
+					</Toast.Description>
 				</div>
 			</Toast.Root>
 		</>

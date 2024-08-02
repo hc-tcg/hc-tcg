@@ -1,3 +1,5 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import query from '../../../components/query'
@@ -29,7 +31,8 @@ class MonkeyfarmRare extends Card {
 			name: 'Monkeystep',
 			cost: ['farm', 'farm'],
 			damage: 80,
-			power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+			power:
+				"Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
 		},
 	}
 

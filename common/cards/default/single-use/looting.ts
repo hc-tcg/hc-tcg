@@ -1,17 +1,21 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Looting extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.active,
 		query.slot.item,
-		query.not(query.slot.empty)
+		query.not(query.slot.empty),
 	)
 
 	props: SingleUse = {
@@ -27,12 +31,16 @@ class Looting extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition),
 		),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {

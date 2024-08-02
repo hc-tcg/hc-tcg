@@ -1,21 +1,26 @@
-import {select} from 'typed-redux-saga'
-import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
-import {SagaIterator} from 'redux-saga'
 import {
 	ChangeActiveHermitActionData,
 	PickSlotActionData,
 	PlayCardActionData,
 	slotToPlayCardAction,
 } from 'common/types/action-data'
+import {LocalCardInstance} from 'common/types/server-requests'
+import {
+	removeEffect,
+	setOpenedModal,
+	setSelectedCard,
+	slotPicked,
+} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
-	getSelectedCard,
-	getPlayerState,
 	getCurrentPickMessage,
+	getPlayerState,
+	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {LocalCardInstance} from 'common/types/server-requests'
+import {SagaIterator} from 'redux-saga'
+import {call, put, putResolve, take, takeLeading} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
 import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
@@ -38,7 +43,7 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 
 function* pickWithSelectedSaga(
 	action: SlotPickedAction,
-	selectedCard: LocalCardInstance
+	selectedCard: LocalCardInstance,
 ): SagaIterator {
 	const pickInfo = action.payload.slot
 
@@ -70,7 +75,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const settings = yield* select(getSettings)
 
 	let hermitRow = playerState?.board.rows.find(
-		(row) => row.hermit.slot == action.payload.slot.slotEntity
+		(row) => row.hermit.slot == action.payload.slot.slotEntity,
 	)
 	if (!hermitRow) return
 
@@ -100,7 +105,10 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 
 	if (action.payload.slot.slotType === 'single_use') {
 		const playerState = yield* select(getPlayerState)
-		if (playerState?.board.singleUse.card && !playerState?.board.singleUseCardUsed) {
+		if (
+			playerState?.board.singleUse.card &&
+			!playerState?.board.singleUseCardUsed
+		) {
 			yield put(removeEffect())
 			return
 		}

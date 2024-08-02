@@ -1,12 +1,12 @@
 import classnames from 'classnames'
-import css from './hermit-card-svg.module.scss'
-import {useSelector} from 'react-redux'
-import {getGameState} from 'logic/game/game-selectors'
-import {getCardRank} from 'common/utils/ranks'
-import {memo} from 'react'
 import {Hermit} from 'common/cards/base/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {EXPANSIONS} from 'common/const/expansions'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {getCardRank} from 'common/utils/ranks'
+import {getGameState} from 'logic/game/game-selectors'
+import {memo} from 'react'
+import {useSelector} from 'react-redux'
+import css from './hermit-card-svg.module.scss'
 
 export type HermitCardProps = {
 	card: WithoutFunctions<Hermit>
@@ -29,7 +29,8 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
-	const disabled = EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
+	const disabled =
+		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -180,7 +181,9 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.secondary.shortName ? card.secondary.shortName : card.secondary.name}
+					{card.secondary.shortName
+						? card.secondary.shortName
+						: card.secondary.name}
 				</text>
 				<text
 					x="380"

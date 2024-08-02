@@ -1,14 +1,24 @@
-import {StatusEffectComponent, ObserverComponent, CardComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class ChromaKeyedEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		icon: 'chroma-keyed',
 		name: 'Chroma Keyed',
-		description: 'You deal 10hp less damage for each level of this status effect.',
+		description:
+			'You deal 10hp less damage for each level of this status effect.',
 		counter: 1,
 		counterType: 'number',
 	}
@@ -17,7 +27,7 @@ class ChromaKeyedEffect extends CardStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		if (!effect.counter) effect.counter = this.props.counter
 
@@ -27,7 +37,8 @@ class ChromaKeyedEffect extends CardStatusEffect {
 			if (
 				[
 					attack.isAttacker(target.entity) && attack.type === 'primary',
-					!attack.isAttacker(target.entity) && attack.isType('primary', 'secondary'),
+					!attack.isAttacker(target.entity) &&
+						attack.isType('primary', 'secondary'),
 				].some(Boolean)
 			) {
 				effect.remove()

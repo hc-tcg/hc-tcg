@@ -1,6 +1,14 @@
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class OriginalXbEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -14,7 +22,7 @@ class OriginalXbEffect extends PlayerStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		observer.oneShot(player.hooks.onTurnEnd, () => {
 			player.draw(1)

@@ -1,10 +1,15 @@
 import {CardComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {GenericActionResult} from 'common/types/game-state'
-import query from 'common/components/query'
 
-function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResult> {
-	let singleUseCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
+function* removeEffectSaga(
+	game: GameModel,
+): Generator<never, GenericActionResult> {
+	let singleUseCard = game.components.find(
+		CardComponent,
+		query.card.slot(query.slot.singleUse),
+	)
 
 	game.cancelPickRequests()
 

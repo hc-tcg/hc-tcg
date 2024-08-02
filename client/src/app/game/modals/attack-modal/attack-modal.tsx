@@ -1,12 +1,15 @@
-import Modal from 'components/modal'
-import {useSelector, useDispatch} from 'react-redux'
-import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
-import css from '../game-modals.module.scss'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors'
-import {startAttack} from 'logic/game/game-actions'
-import Attack from './attack'
 import {SingleUse, isHermit} from 'common/cards/base/types'
+import Modal from 'components/modal'
+import {startAttack} from 'logic/game/game-actions'
+import {
+	getAvailableActions,
+	getPlayerStateById,
+} from 'logic/game/game-selectors'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
+import css from '../game-modals.module.scss'
+import Attack from './attack'
 
 type Props = {
 	closeModal: () => void
@@ -50,7 +53,8 @@ function AttackModal({closeModal}: Props) {
 
 	const attacks = []
 	let canUseHermitAttacks =
-		availableActions.includes('PRIMARY_ATTACK') || availableActions.includes('SECONDARY_ATTACK')
+		availableActions.includes('PRIMARY_ATTACK') ||
+		availableActions.includes('SECONDARY_ATTACK')
 
 	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
 		let namePrefix = canUseHermitAttacks ? 'Only use ' : ''
@@ -62,7 +66,7 @@ function AttackModal({closeModal}: Props) {
 				attackInfo={{description: singleUseProps?.description || ''}}
 				singleUseDamage={singleUseInfo.attackHint || undefined}
 				onClick={effectAttack}
-			/>
+			/>,
 		)
 	}
 
@@ -76,7 +80,7 @@ function AttackModal({closeModal}: Props) {
 				singleUseIcon={singleUseIcon}
 				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={primaryAttack}
-			/>
+			/>,
 		)
 	}
 
@@ -90,7 +94,7 @@ function AttackModal({closeModal}: Props) {
 				singleUseIcon={singleUseIcon}
 				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={secondaryAttack}
-			/>
+			/>,
 		)
 	}
 
@@ -104,7 +108,9 @@ function AttackModal({closeModal}: Props) {
 			<div className={css.description}>
 				{attacks.length ? (
 					<>
-						<Modal.Notice icon={'!'}>Attacking will end your turn!</Modal.Notice>
+						<Modal.Notice icon={'!'}>
+							Attacking will end your turn!
+						</Modal.Notice>
 						{attacks}
 					</>
 				) : (

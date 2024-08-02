@@ -27,7 +27,8 @@ class SmallishbeansAdventRare extends Card {
 			name: 'Lore',
 			cost: ['pvp', 'pvp', 'any'],
 			damage: 30,
-			power: 'Deal 20 extra damage for each item attached. Double items count twice.',
+			power:
+				'Deal 20 extra damage for each item attached. Double items count twice.',
 		},
 	}
 

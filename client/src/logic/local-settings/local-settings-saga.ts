@@ -1,6 +1,6 @@
+import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
 import {takeEvery} from 'redux-saga/effects'
-import {AnyAction} from 'redux'
 
 function* setSettingSaga(action: AnyAction): SagaIterator {
 	const {key, value} = action.payload

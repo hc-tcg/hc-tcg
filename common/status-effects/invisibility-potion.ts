@@ -1,6 +1,14 @@
-import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -14,7 +22,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
@@ -36,7 +44,7 @@ export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return

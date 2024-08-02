@@ -1,3 +1,5 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import query from '../../../components/query'

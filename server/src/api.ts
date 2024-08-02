@@ -1,16 +1,7 @@
-import {CONFIG} from 'common/config'
-import {GameModel} from 'common/models/game-model'
-import {createRequire} from 'module'
-import root from './serverRoot'
-import fetch from 'node-fetch'
 import {PlayerComponent} from 'common/components'
-import query from 'common/components/query'
-import {PlayerInfo} from 'common/types/server-requests'
-const require = createRequire(import.meta.url)
-
-type PlayerStateT = PlayerInfo & {
-	lives: number
-}
+import {GameModel} from 'common/models/game-model'
+import fetch from 'node-fetch'
+import root from './serverRoot'
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
@@ -38,20 +29,22 @@ export function registerApis(app: import('express').Express) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									players: g.components.filter(PlayerComponent).map((player) => {
-										return {
-											playerId: player.id,
-											playerName: player.playerName,
-											censoredPlayerName: player.censoredPlayerName,
-											minecraftName: player.minecraftName,
-											lives: player.lives,
-											deck: player.getDeck().map((card) => card.props.id),
-										}
-									}),
+									players: g.components
+										.filter(PlayerComponent)
+										.map((player) => {
+											return {
+												playerId: player.id,
+												playerName: player.playerName,
+												censoredPlayerName: player.censoredPlayerName,
+												minecraftName: player.minecraftName,
+												lives: player.lives,
+												deck: player.getDeck().map((card) => card.props.id),
+											}
+										}),
 									state: g.state,
 								}
-							})
-						)
+							}),
+						),
 					)
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
@@ -73,7 +66,7 @@ export function registerApis(app: import('express').Express) {
 						playerId: null,
 					}
 
-					console.log(`Private game created via api.`, `Code: ${code}`)
+					console.log('Private game created via api.', `Code: ${code}`)
 
 					res.status(201).send({
 						code,
@@ -161,7 +154,9 @@ export function registerApis(app: import('express').Express) {
 					}),
 				})
 			} catch (e) {
-				console.log('Error notifying discord bot about cancelled private game: ' + e)
+				console.log(
+					'Error notifying discord bot about cancelled private game: ' + e,
+				)
 			}
 		})
 
@@ -174,7 +169,7 @@ export function registerApis(app: import('express').Express) {
 			.catch()
 
 		console.log('apis registered')
-	} catch (err) {
+	} catch (_err) {
 		console.log('no api keys found')
 	}
 }

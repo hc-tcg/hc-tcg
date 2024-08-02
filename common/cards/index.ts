@@ -16,6 +16,13 @@ import alterEgosIIIItemCards from './alter-egos-iii/items'
 import seasonXHermitCards from './season-x/hermits'
 import adventOfTcgItemCards from './advent-of-tcg/items'
 import {CardClass} from './base/card'
+import defaultEffectCards from './default/effects'
+// import adventOfTcgEffectCards from './advent-of-tcg/effects'
+import defaultHermitCards from './default/hermits'
+// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
+import defaultItemCards from './default/items'
+import defaultSingleUseCards from './default/single-use'
+import seasonXHermitCards from './season-x/hermits'
 
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
@@ -61,7 +68,7 @@ export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
 		result[card.props.id] = card
 		return result
 	},
-	{}
+	{},
 )
 
 export const CARDS_LIST = allCardClasses.map((card) => new card(card))

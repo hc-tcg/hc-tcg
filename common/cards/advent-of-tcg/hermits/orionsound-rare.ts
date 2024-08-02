@@ -1,3 +1,5 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'

@@ -1,23 +1,28 @@
-import {PlayerId, PlayerModel} from './player-model'
 import {
-	TurnAction,
-	GameState,
-	ActionResult,
-	TurnActions,
-	Message,
-	DefaultDictionary,
-} from '../types/game-state'
-import {getGameState, setupComponents} from '../utils/state-gen'
-import {PickRequest} from '../types/server-requests'
-import {BattleLogModel} from './battle-log-model'
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+} from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
-import {AttackDefs} from '../types/attack'
-import {AttackModel} from './attack-model'
-import ComponentTable from '../types/ecs'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {AttackDefs} from '../types/attack'
+import ComponentTable from '../types/ecs'
+import {
+	ActionResult,
+	DefaultDictionary,
+	GameState,
+	Message,
+	TurnAction,
+	TurnActions,
+} from '../types/game-state'
 import {Hook} from '../types/hooks'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {PickRequest} from '../types/server-requests'
+import {getGameState, setupComponents} from '../utils/state-gen'
+import {AttackModel} from './attack-model'
+import {BattleLogModel} from './battle-log-model'
+import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
@@ -60,7 +65,11 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
-	constructor(player1: PlayerModel, player2: PlayerModel, code: string | null = null) {
+	constructor(
+		player1: PlayerModel,
+		player2: PlayerModel,
+		code: string | null = null,
+	) {
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
@@ -127,10 +136,12 @@ export class GameModel {
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
 		const otherPlayer = this.components.findEntity(
 			PlayerComponent,
-			(_game, otherPlayer) => player !== otherPlayer.entity
+			(_game, otherPlayer) => player !== otherPlayer.entity,
 		)
 		if (!otherPlayer)
-			throw new Error('Can not query for other before because both player components are created')
+			throw new Error(
+				'Can not query for other before because both player components are created',
+			)
 		return otherPlayer
 	}
 
@@ -149,9 +160,10 @@ export class GameModel {
 	/** Remove action from the completed list so they can be done again this turn */
 	public removeCompletedActions(...actions: TurnActions) {
 		for (let i = 0; i < actions.length; i++) {
-			this.state.turn.completedActions = this.state.turn.completedActions.filter(
-				(action) => !actions.includes(action)
-			)
+			this.state.turn.completedActions =
+				this.state.turn.completedActions.filter(
+					(action) => !actions.includes(action),
+				)
 		}
 	}
 
@@ -178,7 +190,7 @@ export class GameModel {
 
 		for (let i = 0; i < actions.length; i++) {
 			turnState.blockedActions[key] = turnState.blockedActions[key].filter(
-				(action) => !actions.includes(action)
+				(action) => !actions.includes(action),
 			)
 		}
 
@@ -247,7 +259,10 @@ export class GameModel {
 		}
 	}
 
-	public addModalRequest(newRequest: SelectCards.Request, before?: boolean): void
+	public addModalRequest(
+		newRequest: SelectCards.Request,
+		before?: boolean,
+	): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
@@ -270,7 +285,9 @@ export class GameModel {
 	}
 
 	public hasActiveRequests(): boolean {
-		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+		return (
+			this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+		)
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
@@ -285,11 +302,20 @@ export class GameModel {
 	 * This function does not check whether the cards can be placed in the other card's slot.
 	 * If one of the slots is undefined, do not swap the slots.
 	 */
-	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
+	public swapSlots(
+		slotA: SlotComponent | null,
+		slotB: SlotComponent | null,
+	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, query.card.slotEntity(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, query.card.slotEntity(slotB.entity))
+		const slotACards = this.components.filter(
+			CardComponent,
+			query.card.slotEntity(slotA.entity),
+		)
+		const slotBCards = this.components.filter(
+			CardComponent,
+			query.card.slotEntity(slotB.entity),
+		)
 
 		slotACards.forEach((card) => {
 			card.attach(slotB)
@@ -299,7 +325,11 @@ export class GameModel {
 		})
 	}
 
-	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
-		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
+	public getPickableSlots(
+		predicate: ComponentQuery<SlotComponent>,
+	): Array<SlotEntity> {
+		return this.components
+			.filter(SlotComponent, predicate)
+			.map((slotInfo) => slotInfo.entity)
 	}
 }

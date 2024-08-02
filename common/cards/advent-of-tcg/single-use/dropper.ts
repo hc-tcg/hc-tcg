@@ -1,8 +1,8 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 import FletchingTable from './fletching-table'
 
 class Dropper extends Card {

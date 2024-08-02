@@ -2,8 +2,8 @@ import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'
 import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Brush extends Card {
 	props: SingleUse = {

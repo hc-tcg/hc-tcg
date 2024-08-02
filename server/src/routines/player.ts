@@ -1,5 +1,5 @@
-import {takeEvery, put, take, race, delay} from 'typed-redux-saga'
 import {PlayerModel} from 'common/models/player-model'
+import {delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import root from '../serverRoot'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
@@ -55,7 +55,8 @@ function* playerDisconnectedSaga(action: any) {
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
-			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId
+			(action: any) =>
+				action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId,
 		),
 	})
 

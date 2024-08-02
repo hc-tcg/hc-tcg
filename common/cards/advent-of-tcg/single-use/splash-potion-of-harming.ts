@@ -3,8 +3,8 @@ import {CardComponent, ObserverComponent, RowComponent} from '../../../component
 import query from '../../../components/query'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHarming extends Card {
 	props: SingleUse = {

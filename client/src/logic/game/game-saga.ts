@@ -1,41 +1,41 @@
-import {
-	all,
-	take,
-	takeEvery,
-	fork,
-	call,
-	put,
-	race,
-	takeLatest,
-	cancel,
-	putResolve,
-} from 'redux-saga/effects'
-import {select} from 'typed-redux-saga'
+import {LocalGameState} from 'common/types/game-state'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
-import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
-import slotSaga from './tasks/slot-saga'
-import actionLogicSaga from './tasks/action-logic-saga'
-import attackSaga from './tasks/attack-saga'
-import chatSaga from './tasks/chat-saga'
-import coinFlipSaga from './tasks/coin-flips-saga'
 import {
-	localGameState,
-	gameStart,
+	all,
+	call,
+	cancel,
+	fork,
+	put,
+	putResolve,
+	race,
+	take,
+	takeEvery,
+	takeLatest,
+} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
+import {
 	gameEnd,
-	showEndGameOverlay,
-	setOpponentConnection,
+	gameStart,
 	gameStateReceived,
+	localGameState,
+	setOpponentConnection,
+	showEndGameOverlay,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
-import {LocalGameState} from 'common/types/game-state'
-import actionModalsSaga from './tasks/action-modals-saga'
 import {
 	localApplyEffect,
 	localChangeActiveHermit,
 	localEndTurn,
 	localRemoveEffect,
 } from './local-state'
+import actionLogicSaga from './tasks/action-logic-saga'
+import actionModalsSaga from './tasks/action-modals-saga'
+import attackSaga from './tasks/attack-saga'
+import chatSaga from './tasks/chat-saga'
+import coinFlipSaga from './tasks/coin-flips-saga'
+import slotSaga from './tasks/slot-saga'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -74,7 +74,11 @@ function* actionSaga(): SagaIterator {
 		yield call(sendMsg, 'END_TURN')
 	} else if (turnAction.changeActiveHermit) {
 		yield* localChangeActiveHermit(turnAction.changeActiveHermit)
-		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
+		yield call(
+			sendMsg,
+			'CHANGE_ACTIVE_HERMIT',
+			turnAction.changeActiveHermit.payload,
+		)
 	}
 }
 
@@ -88,7 +92,8 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	yield put(localGameState(gameState))
 
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) return
+	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
+		return
 
 	const logic = yield all([
 		fork(actionModalsSaga),
@@ -135,7 +140,10 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
-	const backgroundTasks = yield all([fork(opponentConnectionSaga), fork(chatSaga)])
+	const backgroundTasks = yield all([
+		fork(opponentConnectionSaga),
+		fork(chatSaga),
+	])
 	try {
 		yield put(gameStart())
 		const result = yield race({
@@ -157,7 +165,7 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 					localGameState({
 						...newGameState,
 						availableActions: [],
-					})
+					}),
 				)
 			}
 			yield put(showEndGameOverlay(outcome, reason))

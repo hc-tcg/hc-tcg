@@ -1,5 +1,5 @@
-import config from './server-config.json'
 import debugConfig from './debug-config.json'
+import config from './server-config.json'
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string

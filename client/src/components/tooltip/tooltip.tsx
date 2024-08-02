@@ -1,19 +1,19 @@
-import css from './tooltip.module.scss'
-import React, {memo, useState} from 'react'
 import {
-	useFloating,
-	autoUpdate,
-	offset,
-	flip,
-	shift,
-	useHover,
-	useFocus,
-	useDismiss,
-	useRole,
-	useInteractions,
 	FloatingPortal,
+	autoUpdate,
+	flip,
+	offset,
+	shift,
+	useDismiss,
+	useFloating,
+	useFocus,
+	useHover,
+	useInteractions,
+	useRole,
 } from '@floating-ui/react'
 import classNames from 'classnames'
+import React, {memo, useState} from 'react'
+import css from './tooltip.module.scss'
 
 type Props = {
 	children: React.ReactElement
@@ -48,7 +48,12 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const role = useRole(context, {role: 'tooltip'})
 
 	// Merge all the interactions into prop getters
-	const {getReferenceProps, getFloatingProps} = useInteractions([hover, focus, dismiss, role])
+	const {getReferenceProps, getFloatingProps} = useInteractions([
+		hover,
+		focus,
+		dismiss,
+		role,
+	])
 
 	let floatingPortal = null
 
@@ -56,7 +61,10 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 		floatingPortal = (
 			<FloatingPortal>
 				<div
-					className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
+					className={classNames(
+						css.tooltip,
+						showAboveModal && css.showAboveModal,
+					)}
 					ref={refs.setFloating}
 					style={{
 						position: strategy,

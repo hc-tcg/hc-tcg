@@ -1,4 +1,9 @@
-import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
@@ -35,17 +40,22 @@ class SpookyStressRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const waterBucketAttached = game.components.exists(
 				SlotComponent,
 				query.slot.has(WaterBucket),
 				query.slot.active,
-				query.slot.currentPlayer
+				query.slot.currentPlayer,
 			)
 
 			if (!waterBucketAttached) return
@@ -55,7 +65,7 @@ class SpookyStressRare extends Card {
 					RowComponent,
 					query.row.opponentPlayer,
 					query.not(query.row.active),
-					query.row.hermitSlotOccupied
+					query.row.hermitSlotOccupied,
 				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({

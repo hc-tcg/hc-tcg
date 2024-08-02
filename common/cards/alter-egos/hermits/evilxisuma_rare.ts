@@ -1,14 +1,18 @@
-import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class EvilXisumaRare extends Card {
 	props: Hermit = {
@@ -41,27 +45,37 @@ class EvilXisumaRare extends Card {
 	opponentActiveHermitQuery = query.every(
 		query.card.opponentPlayer,
 		query.card.active,
-		query.card.isHermit
+		query.card.isHermit,
 	)
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			if (!game.components.exists(CardComponent, this.opponentActiveHermitQuery)) {
+			if (
+				!game.components.exists(CardComponent, this.opponentActiveHermitQuery)
+			) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 			return blockedActions
 		})
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] !== 'heads') return
 
-			let opponentActiveHermit = game.components.find(CardComponent, this.opponentActiveHermitQuery)
+			let opponentActiveHermit = game.components.find(
+				CardComponent,
+				this.opponentActiveHermitQuery,
+			)
 			if (!opponentActiveHermit) return
 
 			game.addModalRequest({
@@ -70,7 +84,8 @@ class EvilXisumaRare extends Card {
 					modalId: 'copyAttack',
 					payload: {
 						modalName: 'Evil X: Disable an attack for 1 turn',
-						modalDescription: "Which of the opponent's attacks do you want to disable?",
+						modalDescription:
+							"Which of the opponent's attacks do you want to disable?",
 						hermitCard: opponentActiveHermit.entity,
 					},
 				},
@@ -91,7 +106,11 @@ class EvilXisumaRare extends Card {
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
 					game.components
-						.new(StatusEffectComponent, SecondaryAttackDisabledEffect, component.entity)
+						.new(
+							StatusEffectComponent,
+							SecondaryAttackDisabledEffect,
+							component.entity,
+						)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
 				},
 			})

@@ -37,7 +37,10 @@ class Trapdoor extends Card {
 			if (!query.row.adjacent(query.row.entity(component.slot.rowEntity))(game, target)) return
 
 			if (totalReduction < 40) {
-				const damageReduction = Math.min(attack.calculateDamage(), 40 - totalReduction)
+				const damageReduction = Math.min(
+					attack.calculateDamage(),
+					40 - totalReduction,
+				)
 				totalReduction += damageReduction
 				attack.reduceDamage(component.entity, damageReduction)
 

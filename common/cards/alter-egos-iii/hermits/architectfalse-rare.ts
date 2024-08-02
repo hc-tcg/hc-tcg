@@ -45,13 +45,16 @@ class ArchitectFalseRare extends Card {
 			name: 'Amnesia',
 			cost: ['explorer', 'explorer', 'explorer'],
 			damage: 100,
-			power: 'Your opponent can not use the same attack they used on their previous turn.',
+			power:
+				'Your opponent can not use the same attack they used on their previous turn.',
 		},
 	}
 
-	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
-		return {}
-	})
+	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(
+		() => {
+			return {}
+		},
+	)
 
 	override onCreate(game: GameModel, component: CardComponent) {
 		if (Object.hasOwn(this.lastAttackInfo.values, game.id)) return
@@ -68,11 +71,15 @@ class ArchitectFalseRare extends Card {
 					attackType: attack.type,
 					turn: game.state.turn.turnNumber,
 				}
-			})
+			}),
 		)
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
@@ -83,16 +90,29 @@ class ArchitectFalseRare extends Card {
 			)
 				return
 
-			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
-			if (!lastAttackInfo || lastAttackInfo.turn !== game.state.turn.turnNumber - 1) return
+			const lastAttackInfo =
+				this.lastAttackInfo.get(game)[attack.target.playerId]
+			if (
+				!lastAttackInfo ||
+				lastAttackInfo.turn !== game.state.turn.turnNumber - 1
+			)
+				return
 
 			if (lastAttackInfo.attackType === 'primary') {
 				game.components
-					.new(StatusEffectComponent, PrimaryAttackDisabledEffect, component.entity)
+					.new(
+						StatusEffectComponent,
+						PrimaryAttackDisabledEffect,
+						component.entity,
+					)
 					.apply(lastAttackInfo.attacker.entity)
 			} else if (lastAttackInfo.attackType === 'secondary') {
 				game.components
-					.new(StatusEffectComponent, SecondaryAttackDisabledEffect, component.entity)
+					.new(
+						StatusEffectComponent,
+						SecondaryAttackDisabledEffect,
+						component.entity,
+					)
 					.apply(lastAttackInfo.attacker.entity)
 			}
 		})

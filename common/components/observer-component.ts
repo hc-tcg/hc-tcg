@@ -17,7 +17,7 @@ export class ObserverComponent {
 	constructor(
 		game: GameModel,
 		entity: ObserverEntity,
-		wrappingEntity: Entity<CardComponent | StatusEffectComponent>
+		wrappingEntity: Entity<CardComponent | StatusEffectComponent>,
 	) {
 		this.game = game
 		this.entity = entity
@@ -31,7 +31,10 @@ export class ObserverComponent {
 	 * If you are looking for a hook that will be called after the observer is destoryed (the card is removed
 	 * from the board), please use a status effect or `oneShot` instead.
 	 */
-	public subscribe<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
+	public subscribe<Args extends (...any: any) => any>(
+		hook: Hook<ObserverEntity, Args>,
+		fun: Args,
+	) {
 		hook.add(this.entity, fun)
 		this.hooks.push(hook)
 	}
@@ -41,7 +44,7 @@ export class ObserverComponent {
 	 */
 	public subscribeBefore<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args>,
-		fun: Args
+		fun: Args,
 	) {
 		hook.addBefore(this.entity, fun)
 		this.hooks.push(hook)
@@ -50,7 +53,10 @@ export class ObserverComponent {
 	/** Subscribe a specific hook and run the hook once. This hook is removed after it is called.
 	 * This hook is not removed when the observer is detached.
 	 */
-	public oneShot<Args extends (...any: any) => any>(hook: Hook<ObserverEntity, Args>, fun: Args) {
+	public oneShot<Args extends (...any: any) => any>(
+		hook: Hook<ObserverEntity, Args>,
+		fun: Args,
+	) {
 		// @ts-ignore
 		let proxy = hook.add(this.entity, (...args) => {
 			hook.removeByProxy(proxy)

@@ -1,11 +1,11 @@
+import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
 class Trident extends Card {
 	props: SingleUse = {
@@ -22,7 +22,11 @@ class Trident extends Card {
 		attackPreview: (_game) => '$A30$',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let coinflipResult: CoinFlipResult | null = null

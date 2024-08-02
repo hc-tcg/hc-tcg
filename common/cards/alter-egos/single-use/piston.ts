@@ -1,11 +1,15 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
 import {getFormattedName} from '../../../utils/game'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Piston extends Card {
 	firstPickCondition = query.every(
@@ -21,9 +25,9 @@ class Piston extends Card {
 				query.slot.row(query.row.hasHermit),
 				query.slot.item,
 				query.slot.empty,
-				query.not(query.slot.frozen)
-			)
-		)
+				query.not(query.slot.frozen),
+			),
+		),
 	)
 
 	props: SingleUse = {
@@ -38,12 +42,17 @@ class Piston extends Card {
 			'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.firstPickCondition)
+			query.exists(SlotComponent, this.firstPickCondition),
 		),
-		log: (values) => `${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
+		log: (values) =>
+			`${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let pickedItemSlot: SlotComponent | null = null
@@ -62,14 +71,17 @@ class Piston extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
+			message:
+				'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			canPick: query.every(
 				query.slot.currentPlayer,
 				query.slot.item,
 				query.slot.empty,
 				query.slot.row(query.row.hasHermit),
 				query.not(query.slot.frozen),
-				query.slot.adjacent((game, pos) => query.slot.entity(pickedItemSlot?.entity)(game, pos))
+				query.slot.adjacent((game, pos) =>
+					query.slot.entity(pickedItemSlot?.entity)(game, pos),
+				),
 			),
 			onResult(pickedSlot) {
 				// Move the card and apply su card

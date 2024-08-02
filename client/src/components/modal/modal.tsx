@@ -1,14 +1,14 @@
-import React, {ReactNode} from 'react'
-import css from './modal.module.scss'
 import {
 	Dialog,
-	DialogPortal,
-	DialogOverlay,
-	DialogContent,
-	DialogTitle,
 	DialogClose,
+	DialogContent,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
 } from '@radix-ui/react-dialog'
 import cn from 'classnames'
+import React, {ReactNode} from 'react'
+import css from './modal.module.scss'
 
 type Props = {
 	children: React.ReactNode

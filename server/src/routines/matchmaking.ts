@@ -1,11 +1,25 @@
-import {all, take, takeEvery, cancel, spawn, fork, race, delay, join} from 'typed-redux-saga'
-import {broadcast} from '../utils/comm'
-import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
-import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
-import {getLocalGameState} from '../utils/state-gen'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {
+	all,
+	cancel,
+	delay,
+	fork,
+	join,
+	race,
+	spawn,
+	take,
+	takeEvery,
+} from 'typed-redux-saga'
 import root from '../serverRoot'
+import {broadcast} from '../utils/comm'
+import {getLocalGameState} from '../utils/state-gen'
+import {
+	getGameOutcome,
+	getGamePlayerOutcome,
+	getWinner,
+} from '../utils/win-conditions'
+import gameSaga, {getTimerForSeconds} from './game'
 
 export type ClientMessage = {
 	type: string
@@ -25,7 +39,7 @@ function* gameManager(game: GameModel) {
 			`${gameType} game started.`,
 			`Players: ${players[0].name} + ${players[1].name}.`,
 			'Total games:',
-			root.getGameIds().length
+			root.getGameIds().length,
 		)
 
 		broadcast(players, 'GAME_START')
@@ -40,10 +54,13 @@ function* gameManager(game: GameModel) {
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
-				(action: any) => action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.id)
+				(action: any) =>
+					action.type === 'PLAYER_REMOVED' &&
+					playerIds.includes(action.payload.id),
 			),
 			forfeit: take(
-				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
+				(action: any) =>
+					action.type === 'FORFEIT' && playerIds.includes(action.playerId),
 			),
 		})
 
@@ -52,6 +69,13 @@ function* gameManager(game: GameModel) {
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
+				if (!game.endInfo.reason) {
+					// Remove coin flips from state if game was terminated before game end to prevent
+					// clients replaying animations after a forfeit, disconnect, or excessive game duration
+					playerIds.forEach(
+						(playerId) => (gameState.players[playerId].coinFlips = []),
+					)
+				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, player.id)
 			broadcast([player], 'GAME_END', {
@@ -71,7 +95,10 @@ function* gameManager(game: GameModel) {
 		game.afterGameEnd.call()
 
 		const gameType = game.code ? 'Private' : 'Public'
-		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
+		console.log(
+			`${gameType} game ended. Total games:`,
+			root.getGameIds().length - 1,
+		)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
@@ -122,7 +149,9 @@ function* randomMatchmakingSaga() {
 			}
 		}
 
-		root.queue = root.queue.filter((player) => !playersToRemove.includes(player))
+		root.queue = root.queue.filter(
+			(player) => !playersToRemove.includes(player),
+		)
 	}
 }
 
@@ -184,7 +213,10 @@ function* leaveQueue(msg: ClientMessage) {
 		console.log(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], 'LEAVE_QUEUE_FAILURE')
-		console.log('[Leave queue]: Player tried to leave queue when not there:', player.name)
+		console.log(
+			'[Leave queue]: Player tried to leave queue when not there:',
+			player.name,
+		)
 	}
 }
 
@@ -197,7 +229,10 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Create private game] Player is already in game or queue:', player.name)
+		console.log(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
 		broadcast([player], 'CREATE_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -224,7 +259,10 @@ function* joinPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join private game] Player is already in game or queue:', player.name)
+		console.log(
+			'[Join private game] Player is already in game or queue:',
+			player.name,
+		)
 		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -241,7 +279,10 @@ function* joinPrivateGame(msg: ClientMessage) {
 		// Create new game for these 2 players
 		const existingPlayer = root.players[info.playerId]
 		if (!existingPlayer) {
-			console.log('[Join private game]: Player waiting in queue no longer exists! Code: ' + code)
+			console.log(
+				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
+					code,
+			)
 			delete root.privateQueue[code]
 
 			broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
