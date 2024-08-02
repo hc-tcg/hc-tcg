@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 
 class BeetlejhostRare extends Card {
@@ -45,7 +45,9 @@ class BeetlejhostRare extends Card {
 				query.effect.is(ChromaKeyedEffect)
 			)[0]
 			if (!chromakeyed) {
-				game.components.new(StatusEffectComponent, ChromaKeyedEffect).apply(component.entity)
+				game.components
+					.new(StatusEffectComponent, ChromaKeyedEffect, component.entity)
+					.apply(component.entity)
 			}
 		})
 	}

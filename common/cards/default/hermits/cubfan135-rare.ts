@@ -3,7 +3,7 @@ import {CardComponent, ObserverComponent, SlotComponent} from '../../../componen
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {applySingleUse} from '../../../utils/board'
 
 class Cubfan135Rare extends Card {

@@ -1,5 +1,5 @@
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
-import * as query from '../../components/query'
+import query from '../../components/query'
 
 export const item = {
 	item: null,

@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import Card, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {ObserverEntity} from '../../../entities'
 
 class WormManRare extends Card {
@@ -31,7 +31,7 @@ class WormManRare extends Card {
 			cost: ['prankster', 'prankster', 'any'],
 			damage: 90,
 			power:
-				"At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. When either Worm Man is knocked out or it's info needs to be shown to the opponent, it is revealed.",
+				'At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. This card must be revealed when either player interacts with the card, or when this Worm Man is knocked out.',
 		},
 	}
 

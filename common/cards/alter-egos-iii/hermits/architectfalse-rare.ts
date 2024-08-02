@@ -88,11 +88,11 @@ class ArchitectFalseRare extends Card {
 
 			if (lastAttackInfo.attackType === 'primary') {
 				game.components
-					.new(StatusEffectComponent, PrimaryAttackDisabledEffect)
+					.new(StatusEffectComponent, PrimaryAttackDisabledEffect, component.entity)
 					.apply(lastAttackInfo.attacker.entity)
 			} else if (lastAttackInfo.attackType === 'secondary') {
 				game.components
-					.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
+					.new(StatusEffectComponent, SecondaryAttackDisabledEffect, component.entity)
 					.apply(lastAttackInfo.attacker.entity)
 			}
 		})

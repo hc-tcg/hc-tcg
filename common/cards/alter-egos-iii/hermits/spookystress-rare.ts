@@ -1,5 +1,5 @@
 import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -51,7 +51,12 @@ class SpookyStressRare extends Card {
 			if (!waterBucketAttached) return
 
 			game.components
-				.filter(RowComponent, query.not(query.row.active), query.row.opponentPlayer)
+				.filter(
+					RowComponent,
+					query.row.opponentPlayer,
+					query.not(query.row.active),
+					query.row.hermitSlotOccupied
+				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({
 						attacker: component.entity,

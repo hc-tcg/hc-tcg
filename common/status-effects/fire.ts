@@ -32,7 +32,7 @@ class FireEffect extends CardStatusEffect {
 			})
 			statusEffectAttack.addDamage(target.entity, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack], true)
+			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (_attack) => {

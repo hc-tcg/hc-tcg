@@ -6,6 +6,8 @@ $item: #c4c4c4;
 $good: #63b45c;
 $bad: #da5558;
 $keyword: var(--gray-200);
+$attackDamage: #e44649;
+$specialMove: rgb(74, 128, 255);
 
 .selectable {
 	user-select: all;
@@ -76,6 +78,14 @@ $keyword: var(--gray-200);
 	font-family: MinecraftItalic;
 	font-weight: 1000;
 	color: $keyword;
+}
+
+.attackDamage {
+	color: $attackDamage;
+}
+
+.specialMove {
+	color: $specialMove;
 }
 
 .tab {

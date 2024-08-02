@@ -9,8 +9,7 @@ import {
 } from 'logic/game/game-selectors'
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
-import HermitSelector from './hermit-selector'
-import {isHermit} from 'common/cards/base/types'
+import {SingleUse, isHermit} from 'common/cards/base/types'
 
 type Props = {
 	closeModal: () => void
@@ -43,26 +42,28 @@ function AttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
-	const handleExtraAttack = (hermitExtra: any) => {
-		const extra = {
-			[playerHermitInfo.props.id]: hermitExtra,
-		}
-		dispatch(startAttack('secondary', extra))
-		closeModal()
-	}
-
 	const effectAttack = () => handleAttack('single-use')
 	const primaryAttack = () => handleAttack('primary')
 	const secondaryAttack = () => handleAttack('secondary')
 
+	let singleUseProps = singleUseInfo?.props as SingleUse | undefined
+	let singleUseIcon = singleUseProps?.hasAttack
+		? `/images/effects/${singleUseInfo?.props.id}.png`
+		: undefined
+
 	const attacks = []
+	let canUseHermitAttacks =
+		availableActions.includes('PRIMARY_ATTACK') || availableActions.includes('SECONDARY_ATTACK')
+
 	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
+		let namePrefix = canUseHermitAttacks ? 'Only use ' : ''
 		attacks.push(
 			<Attack
 				key="single-use"
-				name={singleUseInfo.props.name}
+				name={`${namePrefix}${singleUseInfo.props.name}`}
 				icon={`/images/effects/${singleUseInfo?.props.id}.png`}
-				attackInfo={null}
+				attackInfo={{description: singleUseProps?.description || ''}}
+				singleUseDamage={singleUseInfo.attackHint || undefined}
 				onClick={effectAttack}
 			/>
 		)
@@ -75,37 +76,34 @@ function AttackModal({closeModal}: Props) {
 				name={playerHermitInfo.props.primary.name}
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
 				attackInfo={playerHermitInfo.props.primary}
+				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={primaryAttack}
 			/>
 		)
 	}
 
-	const extraAttacks = availableActions.filter((a) => a.includes(':'))
-
-	if (!extraAttacks.length && availableActions.includes('SECONDARY_ATTACK')) {
+	if (availableActions.includes('SECONDARY_ATTACK')) {
 		attacks.push(
 			<Attack
 				key="secondary"
 				name={playerHermitInfo.props.secondary.name}
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
 				attackInfo={playerHermitInfo.props.secondary}
+				singleUseIcon={singleUseIcon}
+				singleUseDamage={singleUseInfo?.attackHint || undefined}
 				onClick={secondaryAttack}
 			/>
 		)
 	}
 
-	if (extraAttacks.length) {
-		attacks.push(
-			<HermitSelector
-				key="hermit-selector"
-				extraAttacks={extraAttacks}
-				handleExtraAttack={handleExtraAttack}
-			/>
-		)
-	}
+	let title =
+		canUseHermitAttacks && singleUseProps?.hasAttack
+			? `Attack with ${playerHermitInfo.props.name} and use ${singleUseProps.name}`
+			: 'Attack'
 
 	return (
-		<Modal title="Attack" closeModal={closeModal} centered>
+		<Modal title={title} closeModal={closeModal} centered>
 			<div className={css.description}>
 				{attacks.length ? (
 					<>

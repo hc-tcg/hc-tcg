@@ -2,7 +2,7 @@ import {CardProps} from '../cards/base/types'
 import {StatusEffectComponent, CardComponent, ObserverComponent} from '../components'
 import {GameModel} from '../models/game-model'
 import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
-import * as query from '../components/query'
+import query from '../components/query'
 
 export class DeathloopReady extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -54,7 +54,7 @@ export class DeathloopReady extends CardStatusEffect {
 			)
 
 			game.components
-				.new(StatusEffectComponent, RevivedByDeathloopEffect)
+				.new(StatusEffectComponent, RevivedByDeathloopEffect, effect.creator.entity)
 				.apply(targetHermit.entity)
 			effect.remove()
 		})

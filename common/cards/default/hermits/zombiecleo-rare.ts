@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import Card, {InstancedValue} from '../../base/card'

@@ -10,7 +10,7 @@ import {
 import {getGameState, setupComponents} from '../utils/state-gen'
 import {PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {ComponentQuery, card} from '../components/query'
+import query, {ComponentQuery} from '../components/query'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
@@ -302,8 +302,8 @@ export class GameModel {
 	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, card.slotEntity(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, card.slotEntity(slotB.entity))
+		const slotACards = this.components.filter(CardComponent, query.card.slotEntity(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, query.card.slotEntity(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.attach(slotB)

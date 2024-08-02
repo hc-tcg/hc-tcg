@@ -1,4 +1,4 @@
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -38,9 +38,9 @@ class TurtleShell extends Card {
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!component.slot.inRow()) return
-			// Only block damage when we are active
-			const isActive = player.activeRowEntity === component.slot.row.entity
-			if (!isActive || !attack.isTargeting(component)) return
+			if (!hasBeenActive) return
+
+			if (!attack.isTargeting(component)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 

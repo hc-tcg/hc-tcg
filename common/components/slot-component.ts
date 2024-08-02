@@ -2,7 +2,7 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {SlotTypeT} from '../types/cards'
 import {CardComponent} from './card-component'
-import {card, slot} from './query'
+import query from './query'
 import {RowComponent} from './row-component'
 
 type BoardSlotDefs =
@@ -74,7 +74,7 @@ export class SlotComponent {
 	}
 
 	public getCard() {
-		return this.game.components.find(CardComponent, card.slotEntity(this.entity))
+		return this.game.components.find(CardComponent, query.card.slotEntity(this.entity))
 	}
 }
 
@@ -130,7 +130,7 @@ type DeckPosition =
 
 function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckPosition): number {
 	let deckPositionsWithCards = game.components
-		.filter(CardComponent, card.slot(slot.deck, slot.player(player)))
+		.filter(CardComponent, query.card.slot(query.slot.deck, query.slot.player(player)))
 		.map((card) => card.slot as DeckSlotComponent)
 		.sort((a, b) => a.order - b.order)
 

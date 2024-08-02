@@ -5,11 +5,11 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import Card, {InstancedValue} from '../../base/card'
+import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 
 class PrincessGemRare extends Card {
 	props: Hermit = {
@@ -21,7 +21,7 @@ class PrincessGemRare extends Card {
 		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
-		tokens: 2,
+		tokens: 1,
 		type: 'speedrunner',
 		health: 270,
 		primary: {
@@ -35,8 +35,14 @@ class PrincessGemRare extends Card {
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"After your attack, choose an AFK Hermit. Until the end of your opponent's next turn, any damage done to that Hermit is prevented.",
+				'After your attack, grant Royal Protection to one of your AFK Hermits until the start of your next turn.',
 		},
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'royal_protection',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
@@ -62,7 +68,7 @@ class PrincessGemRare extends Card {
 				canPick: pickCondition,
 				onResult: (pickedSlot) => {
 					game.components
-						.new(StatusEffectComponent, RoyalProtectionEffect)
+						.new(StatusEffectComponent, RoyalProtectionEffect, component.entity)
 						.apply(pickedSlot.getCard()?.entity)
 				},
 			})

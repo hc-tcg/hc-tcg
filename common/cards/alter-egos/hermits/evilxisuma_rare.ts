@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
@@ -84,14 +84,14 @@ class EvilXisumaRare extends Card {
 
 					// This will add a blocked action for the duration of their turn
 					game.components
-						.new(StatusEffectComponent, actionToBlock)
+						.new(StatusEffectComponent, actionToBlock, component.entity)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
 					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
 					game.components
-						.new(StatusEffectComponent, SecondaryAttackDisabledEffect)
+						.new(StatusEffectComponent, SecondaryAttackDisabledEffect, component.entity)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
 				},
 			})

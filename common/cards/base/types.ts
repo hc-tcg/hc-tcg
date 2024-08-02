@@ -2,13 +2,15 @@ import type {ComponentQuery} from '../../components/query'
 import type {
 	CardCategoryT,
 	CardRarityT,
-	ExpansionT,
 	HermitAttackInfo,
 	PlayCardLog,
+	TokenCostT,
 	TypeT,
 } from '../../types/cards'
 import type {SlotComponent} from '../../components'
 import type {WithoutFunctions} from '../../types/server-requests'
+import {GameModel} from '../../models/game-model'
+import {ExpansionT} from '../../const/expansions'
 
 export type CardProps = {
 	id: string
@@ -18,7 +20,7 @@ export type CardProps = {
 	name: string
 	shortName?: string
 	rarity: CardRarityT
-	tokens: number
+	tokens: TokenCostT
 	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
@@ -95,6 +97,7 @@ export type SingleUse = CardProps &
 		singleUse: null
 		showConfirmationModal: boolean
 		hasAttack: boolean
+		attackPreview?: (game: GameModel) => string
 	}
 
 export function isSingleUse(

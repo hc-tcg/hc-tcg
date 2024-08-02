@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -31,7 +31,7 @@ class SplashPotionOfPoison extends Card {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
-				.new(StatusEffectComponent, PoisonEffect)
+				.new(StatusEffectComponent, PoisonEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
 	}

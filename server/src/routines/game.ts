@@ -12,12 +12,12 @@ import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
 import {TurnActions, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {EnergyT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import * as query from 'common/components/query'
+import query from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -62,7 +62,7 @@ function getAvailableEnergy(game: GameModel) {
  * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
  * `state.turn.completedActions`.
  */
-function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
+function getAvailableActions(game: GameModel, availableEnergy: Array<TypeT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
@@ -294,25 +294,38 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
 
 	let currentPlayerView = game.components.find(
 		ViewerComponent,
-		(_game, viewer) => viewer.playerOnLeft.entity === currentPlayer.entity
+		(_game, viewer) => viewer.playerOnLeft.entity === game.currentPlayer.entity
 	)
 
+	let endTurn = false
+
 	const availableActions =
-		turnAction.playerId === currentPlayerView?.playerId
+		turnAction.playerId === currentPlayerView?.playerOnLeft.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
-	if (!availableActions.includes(actionType)) {
+	// We don't check if slot actions are available because the playCardSaga will verify that.
+	if (
+		[
+			'SINGLE_USE_ATTACK',
+			'PRIMARY_ATTACK',
+			'SECONDARY_ATTACK',
+			'CHANGE_ACTIVE_HERMIT',
+			'APPLY_EFFECT',
+			'REMOVE_EFFECT',
+			'PICK_REQUEST',
+			'MODAL_REQUEST',
+			'END_TURN',
+		].includes(actionType) &&
+		!availableActions.includes(actionType)
+	) {
 		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
 	}
-
-	let endTurn = false
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 	switch (actionType) {
@@ -421,15 +434,6 @@ function* turnActionsSaga(game: GameModel) {
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
-
-			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
-			if (
-				(availableActions.includes('PRIMARY_ATTACK') ||
-					availableActions.includes('SECONDARY_ATTACK')) &&
-				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
-			) {
-				blockedActions.push('SINGLE_USE_ATTACK')
-			}
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))

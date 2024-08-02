@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card} from '../../../components/query'
+import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
@@ -38,15 +38,15 @@ class ThornsII extends Card {
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (!(attack.attacker instanceof CardComponent)) return
-			if (!attack.attacker.slot.inRow()) return
+			let opponentActiveHermit = opponentPlayer.getActiveHermit()
+			if (!opponentActiveHermit?.slot.inRow()) return
 
 			hasTriggered = true
 
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					target: attack.attacker.slot.rowEntity,
+					target: opponentActiveHermit.slot.rowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
@@ -54,7 +54,7 @@ class ThornsII extends Card {
 				.addDamage(component.entity, 30)
 
 			backlashAttack.shouldIgnoreCards.push(
-				card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
+				query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
 			)
 
 			executeExtraAttacks(game, [backlashAttack])

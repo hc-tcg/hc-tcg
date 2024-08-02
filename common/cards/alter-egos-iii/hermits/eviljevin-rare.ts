@@ -1,5 +1,5 @@
 import Card from '../../base/card'
-import * as query from '../../../components/query'
+import query from '../../../components/query'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent} from '../../../components'
@@ -30,7 +30,7 @@ class EvilJevinRare extends Card {
 			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
 			power:
-				'Flip a coin. If heads, choose one Hermit card from your discard pile and return it to your hand.',
+				'Flip a coin.\nIf heads, choose one Hermit card from your discard pile and return it to your hand.',
 		},
 	}
 

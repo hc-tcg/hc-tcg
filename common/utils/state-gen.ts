@@ -1,5 +1,5 @@
 import {DEBUG_CONFIG} from '../config'
-import * as query from '../components/query'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {

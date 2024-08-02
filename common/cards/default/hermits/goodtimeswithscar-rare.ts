@@ -43,9 +43,11 @@ class GoodTimesWithScarRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 			// If this component is not blocked from reviving, make possible next turn
-			if (component.hasStatusEffect(DeathloopReady, RevivedByDeathloopEffect)) return
+			if (component.getStatusEffect(DeathloopReady, RevivedByDeathloopEffect)) return
 
-			game.components.new(StatusEffectComponent, DeathloopReady).apply(component.entity)
+			game.components
+				.new(StatusEffectComponent, DeathloopReady, component.entity)
+				.apply(component.entity)
 		})
 	}
 }
