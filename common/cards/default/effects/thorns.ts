@@ -1,29 +1,33 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import {executeExtraAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
-import {Attach} from '../../base/types'
-import {attach} from '../../base/defaults'
-import {CardComponent, ObserverComponent} from '../../../components'
-import GoldArmor from './gold-armor'
-import IronArmor from './iron-armor'
-import DiamondArmor from './diamond-armor'
-import NetheriteArmor from './netherite-armor'
+import {CardComponent, ObserverComponent} from "../../../components"
+import query from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import {executeExtraAttacks} from "../../../utils/attacks"
+import Card from "../../base/card"
+import {attach} from "../../base/defaults"
+import {Attach} from "../../base/types"
+import DiamondArmor from "./diamond-armor"
+import GoldArmor from "./gold-armor"
+import IronArmor from "./iron-armor"
+import NetheriteArmor from "./netherite-armor"
 
 class Thorns extends Card {
 	props: Attach = {
 		...attach,
-		id: 'thorns',
+		id: "thorns",
 		numericId: 96,
-		name: 'Thorns',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Thorns",
+		expansion: "default",
+		rarity: "common",
 		tokens: 2,
 		description:
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 20hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {opponentPlayer} = component
 		let hasTriggered = false
 
@@ -34,7 +38,8 @@ class Thorns extends Card {
 			if (!component.slot.inRow()) return
 			if (!attack.isTargeting(component)) return
 
-			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
+			if (!attack.isType("primary", "secondary", "effect") || attack.isBacklash)
+				return
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
@@ -47,14 +52,15 @@ class Thorns extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentActiveHermit.slot.rowEntity,
-					type: 'effect',
+					type: "effect",
 					isBacklash: true,
-					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $eThorns$`,
 				})
 				.addDamage(component.entity, 20)
 
 			backlashAttack.shouldIgnoreCards.push(
-				query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor)
+				query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor),
 			)
 
 			executeExtraAttacks(game, [backlashAttack])

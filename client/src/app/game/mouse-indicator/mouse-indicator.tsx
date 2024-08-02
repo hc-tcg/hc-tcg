@@ -1,15 +1,15 @@
-import {useRef, useEffect, useState} from 'react'
-import css from './mouse-indicator.module.css'
+import {useEffect, useRef, useState} from "react"
+import css from "./mouse-indicator.module.css"
 
 let globalClientX = -100
 let globalClientY = -100
 document.addEventListener(
-	'mousemove',
+	"mousemove",
 	(ev: MouseEvent) => {
 		globalClientX = ev.clientX
 		globalClientY = ev.clientY
 	},
-	{passive: true}
+	{passive: true},
 )
 
 type Props = {
@@ -22,18 +22,18 @@ function MouseIndicator({message}: Props) {
 	useEffect(() => {
 		const moveListener = (ev: MouseEvent) => {
 			if (!elRef.current) return
-			elRef.current.style.left = ev.clientX + 'px'
-			elRef.current.style.top = ev.clientY + 'px'
+			elRef.current.style.left = ev.clientX + "px"
+			elRef.current.style.top = ev.clientY + "px"
 		}
 		const outListener = () => setMouseOut(true)
 		const overListener = () => setMouseOut(false)
-		document.addEventListener('mousemove', moveListener, {passive: true})
-		window.addEventListener('mouseout', outListener, {passive: true})
-		window.addEventListener('mouseover', overListener, {passive: true})
+		document.addEventListener("mousemove", moveListener, {passive: true})
+		window.addEventListener("mouseout", outListener, {passive: true})
+		window.addEventListener("mouseover", overListener, {passive: true})
 		return () => {
-			document.removeEventListener('mousemove', moveListener)
-			window.addEventListener('mouseout', outListener, {passive: true})
-			window.addEventListener('mouseover', overListener, {passive: true})
+			document.removeEventListener("mousemove", moveListener)
+			window.addEventListener("mouseout", outListener, {passive: true})
+			window.addEventListener("mouseover", overListener, {passive: true})
 		}
 	}, [])
 
@@ -42,9 +42,9 @@ function MouseIndicator({message}: Props) {
 			ref={elRef}
 			className={css.mouseIndicator}
 			style={{
-				display: mouseOut ? 'none' : 'block',
-				left: globalClientX + 'px',
-				top: globalClientY + 'px',
+				display: mouseOut ? "none" : "block",
+				left: globalClientX + "px",
+				top: globalClientY + "px",
 			}}
 		>
 			{message}

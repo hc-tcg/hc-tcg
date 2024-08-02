@@ -1,32 +1,41 @@
-import {GameModel} from 'common/models/game-model'
-import {ActionResult} from 'common/types/game-state'
-import attackSaga from './attack'
-import {call} from 'typed-redux-saga'
-import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
-import {PlayerComponent, SlotComponent} from 'common/components'
-import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
+import {PlayerComponent, SlotComponent} from "common/components"
+import query from "common/components/query"
+import {SlotEntity} from "common/entities"
+import {GameModel} from "common/models/game-model"
+import {AttackActionData, attackToAttackAction} from "common/types/action-data"
+import {ActionResult} from "common/types/game-state"
+import {call} from "typed-redux-saga"
+import attackSaga from "./attack"
 
-function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<any, ActionResult> {
+function* pickRequestSaga(
+	game: GameModel,
+	pickResult?: SlotEntity,
+): Generator<any, ActionResult> {
 	// First validate data sent from client
-	if (!pickResult || !pickResult) return 'FAILURE_INVALID_DATA'
+	if (!pickResult || !pickResult) return "FAILURE_INVALID_DATA"
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
 	if (!pickRequest) {
 		// There's no pick request active.
-		console.log('Client sent pick result without request! Pick info:', pickResult)
-		return 'FAILURE_NOT_APPLICABLE'
+		console.log(
+			"Client sent pick result without request! Pick info:",
+			pickResult,
+		)
+		return "FAILURE_NOT_APPLICABLE"
 	}
 
 	// Call the bound function with the pick result
-	let slotInfo = game.components.find(SlotComponent, query.slot.entity(pickResult))
-	if (!slotInfo) return 'FAILURE_INVALID_DATA'
+	let slotInfo = game.components.find(
+		SlotComponent,
+		query.slot.entity(pickResult),
+	)
+	if (!slotInfo) return "FAILURE_INVALID_DATA"
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
 	if (!canPick) {
-		return 'FAILURE_INVALID_SLOT'
+		return "FAILURE_INVALID_SLOT"
 	}
 
 	const card = slotInfo.getCard()
@@ -37,7 +46,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 	pickRequest.onResult(slotInfo)
 	let player = game.components.find(
 		PlayerComponent,
-		(_game, player) => player.id === pickRequest.playerId
+		(_game, player) => player.id === pickRequest.playerId,
 	)
 	if (player) player.pickableSlots = null
 
@@ -59,7 +68,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: SlotEntity): Generator<a
 		return attackResult
 	}
 
-	return 'SUCCESS'
+	return "SUCCESS"
 }
 
 export default pickRequestSaga

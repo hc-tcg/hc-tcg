@@ -1,29 +1,29 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class PotatoBoyCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'potatoboy_common',
+		id: "potatoboy_common",
 		numericId: 177,
-		name: 'Potatoboy',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "Potatoboy",
+		expansion: "alter_egos_iii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 0,
-		type: 'terraform',
+		type: "terraform",
 		health: 300,
 		primary: {
-			name: 'Fast',
-			cost: ['terraform'],
+			name: "Fast",
+			cost: ["terraform"],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: 'Furihorse',
-			cost: ['terraform', 'terraform'],
+			name: "Furihorse",
+			cost: ["terraform", "terraform"],
 			damage: 80,
 			power: null,
 		},

@@ -1,19 +1,32 @@
-import {call, cancelled, fork, put, putResolve, race, take, takeEvery} from 'typed-redux-saga'
-import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
-import gameSaga from 'logic/game/game-saga'
-import {gameEnd} from 'logic/game/game-actions'
-import {codeReceived, invalidCode, waitingForPlayer, clearMatchmaking} from './matchmaking-actions'
+import {gameEnd} from "logic/game/game-actions"
+import gameSaga from "logic/game/game-saga"
+import {receiveMsg, sendMsg} from "logic/socket/socket-saga"
+import {
+	call,
+	cancelled,
+	fork,
+	put,
+	race,
+	take,
+	takeEvery,
+} from "typed-redux-saga"
+import {
+	clearMatchmaking,
+	codeReceived,
+	invalidCode,
+	waitingForPlayer,
+} from "./matchmaking-actions"
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
 		try {
 			// Send message to server to create the game
-			yield* call(sendMsg, 'CREATE_PRIVATE_GAME')
+			yield* call(sendMsg, "CREATE_PRIVATE_GAME")
 
 			// Wait for response
 			const createGameResponse = yield* race({
-				success: call(receiveMsg, 'CREATE_PRIVATE_GAME_SUCCESS'),
-				failure: call(receiveMsg, 'CREATE_PRIVATE_GAME_FAILURE'),
+				success: call(receiveMsg, "CREATE_PRIVATE_GAME_SUCCESS"),
+				failure: call(receiveMsg, "CREATE_PRIVATE_GAME_FAILURE"),
 			})
 
 			if (createGameResponse.success) {
@@ -27,15 +40,15 @@ function* createPrivateGameSaga() {
 
 			// Wait for game start or timeout
 			const queueResponse = yield* race({
-				gameStart: call(receiveMsg, 'GAME_START'),
-				timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
+				gameStart: call(receiveMsg, "GAME_START"),
+				timeout: call(receiveMsg, "PRIVATE_GAME_TIMEOUT"),
 			})
 
 			if (queueResponse.gameStart) {
 				yield* call(gameSaga)
 			}
 		} catch (err) {
-			console.error('Game crashed: ', err)
+			console.error("Game crashed: ", err)
 		} finally {
 			if (yield* cancelled()) {
 				yield* put(clearMatchmaking())
@@ -45,7 +58,7 @@ function* createPrivateGameSaga() {
 	}
 
 	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		cancel: take("LEAVE_MATCHMAKING"), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 
@@ -53,7 +66,7 @@ function* createPrivateGameSaga() {
 
 	if (result.cancel) {
 		// Tell the server the private game is cancelled
-		yield* call(sendMsg, 'CANCEL_PRIVATE_GAME')
+		yield* call(sendMsg, "CANCEL_PRIVATE_GAME")
 	}
 }
 
@@ -61,15 +74,15 @@ function* joinPrivateGameSaga() {
 	function* matchmaking() {
 		try {
 			while (true) {
-				const {payload: gameCode} = yield take('SET_MATCHMAKING_CODE')
-				yield* call(sendMsg, 'JOIN_PRIVATE_GAME', gameCode)
+				const {payload: gameCode} = yield take("SET_MATCHMAKING_CODE")
+				yield* call(sendMsg, "JOIN_PRIVATE_GAME", gameCode)
 
 				const result = yield* race({
-					failure: call(receiveMsg, 'JOIN_PRIVATE_GAME_FAILURE'),
-					success: call(receiveMsg, 'JOIN_PRIVATE_GAME_SUCCESS'),
-					invalidCode: call(receiveMsg, 'INVALID_CODE'),
-					waitingForPlayer: call(receiveMsg, 'WAITING_FOR_PLAYER'),
-					timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
+					failure: call(receiveMsg, "JOIN_PRIVATE_GAME_FAILURE"),
+					success: call(receiveMsg, "JOIN_PRIVATE_GAME_SUCCESS"),
+					invalidCode: call(receiveMsg, "INVALID_CODE"),
+					waitingForPlayer: call(receiveMsg, "WAITING_FOR_PLAYER"),
+					timeout: call(receiveMsg, "PRIVATE_GAME_TIMEOUT"),
 				})
 
 				if (result.invalidCode) {
@@ -87,8 +100,8 @@ function* joinPrivateGameSaga() {
 
 					// Private game joined successfully - wait for game start or timeout
 					const queueResponse = yield* race({
-						gameStart: call(receiveMsg, 'GAME_START'),
-						timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
+						gameStart: call(receiveMsg, "GAME_START"),
+						timeout: call(receiveMsg, "PRIVATE_GAME_TIMEOUT"),
 					})
 
 					if (queueResponse.gameStart) {
@@ -102,7 +115,7 @@ function* joinPrivateGameSaga() {
 				break
 			}
 		} catch (err) {
-			console.error('Game crashed: ', err)
+			console.error("Game crashed: ", err)
 		} finally {
 			if (yield* cancelled()) {
 				yield put(gameEnd())
@@ -112,7 +125,7 @@ function* joinPrivateGameSaga() {
 	}
 
 	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		cancel: take("LEAVE_MATCHMAKING"), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 
@@ -120,7 +133,7 @@ function* joinPrivateGameSaga() {
 
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
-		yield* call(sendMsg, 'CANCEL_PRIVATE_GAME')
+		yield* call(sendMsg, "CANCEL_PRIVATE_GAME")
 	}
 }
 
@@ -128,12 +141,12 @@ function* joinQueueSaga() {
 	function* matchmaking() {
 		try {
 			// Send message to server to join the queue
-			yield* call(sendMsg, 'JOIN_QUEUE')
+			yield* call(sendMsg, "JOIN_QUEUE")
 
 			// Wait for response
 			const joinResponse = yield* race({
-				success: call(receiveMsg, 'JOIN_QUEUE_SUCCESS'),
-				failure: call(receiveMsg, 'JOIN_QUEUE_FAILURE'),
+				success: call(receiveMsg, "JOIN_QUEUE_SUCCESS"),
+				failure: call(receiveMsg, "JOIN_QUEUE_FAILURE"),
 			})
 
 			if (joinResponse.failure) {
@@ -143,11 +156,11 @@ function* joinQueueSaga() {
 			}
 
 			// We have joined the queue, wait for game start
-			yield* call(receiveMsg, 'GAME_START')
+			yield* call(receiveMsg, "GAME_START")
 			yield* call(gameSaga)
-			console.log('end game sagas')
+			console.log("end game sagas")
 		} catch (err) {
-			console.error('Game crashed: ', err)
+			console.error("Game crashed: ", err)
 		} finally {
 			if (yield* cancelled()) {
 				// Clear state and back to menu
@@ -158,7 +171,7 @@ function* joinQueueSaga() {
 	}
 
 	const result = yield* race({
-		leave: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		leave: take("LEAVE_MATCHMAKING"), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 
@@ -166,23 +179,23 @@ function* joinQueueSaga() {
 
 	if (result.leave) {
 		// Tell the server we left the queue
-		yield* call(sendMsg, 'LEAVE_QUEUE')
+		yield* call(sendMsg, "LEAVE_QUEUE")
 	} else {
 		yield* put(clearMatchmaking())
 	}
 }
 
 function* reconnectSaga() {
-	const reconnectState = yield* call(receiveMsg, 'GAME_STATE_ON_RECONNECT')
+	const reconnectState = yield* call(receiveMsg, "GAME_STATE_ON_RECONNECT")
 	yield* put(clearMatchmaking())
 	yield* call(gameSaga, reconnectState.payload.localGameState)
 	yield* put(clearMatchmaking())
 }
 
 function* matchmakingSaga() {
-	yield* takeEvery('JOIN_QUEUE', joinQueueSaga)
-	yield* takeEvery('CREATE_PRIVATE_GAME', createPrivateGameSaga)
-	yield* takeEvery('JOIN_PRIVATE_GAME', joinPrivateGameSaga)
+	yield* takeEvery("JOIN_QUEUE", joinQueueSaga)
+	yield* takeEvery("CREATE_PRIVATE_GAME", createPrivateGameSaga)
+	yield* takeEvery("JOIN_PRIVATE_GAME", joinPrivateGameSaga)
 	yield* fork(reconnectSaga)
 }
 

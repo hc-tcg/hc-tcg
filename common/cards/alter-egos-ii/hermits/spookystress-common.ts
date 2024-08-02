@@ -1,30 +1,30 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class SpookyStressCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'spookystress_common',
+		id: "spookystress_common",
 		numericId: 238,
-		name: 'Spooky Stress',
-		shortName: 'S. Stress',
-		expansion: 'alter_egos_ii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "Spooky Stress",
+		shortName: "S. Stress",
+		expansion: "alter_egos_ii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 0,
-		type: 'pvp',
+		type: "pvp",
 		health: 260,
 		primary: {
-			name: 'Giggle',
-			cost: ['pvp'],
+			name: "Giggle",
+			cost: ["pvp"],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: 'Mingin',
-			cost: ['pvp', 'pvp', 'any'],
+			name: "Mingin",
+			cost: ["pvp", "pvp", "any"],
 			damage: 90,
 			power: null,
 		},

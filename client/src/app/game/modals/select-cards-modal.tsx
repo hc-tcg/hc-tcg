@@ -1,13 +1,13 @@
-import {useSelector, useDispatch} from 'react-redux'
-import {useState} from 'react'
-import Modal from 'components/modal'
-import CardList from 'components/card-list'
-import {ModalData} from 'common/types/game-state'
-import css from './game-modals.module.scss'
-import {modalRequest} from 'logic/game/game-actions'
-import Button from 'components/button'
-import {getGameState} from 'logic/game/game-selectors'
-import {LocalCardInstance} from 'common/types/server-requests'
+import {ModalData} from "common/types/game-state"
+import {LocalCardInstance} from "common/types/server-requests"
+import Button from "components/button"
+import CardList from "components/card-list"
+import Modal from "components/modal"
+import {modalRequest} from "logic/game/game-actions"
+import {getGameState} from "logic/game/game-selectors"
+import {useState} from "react"
+import {useDispatch, useSelector} from "react-redux"
+import css from "./game-modals.module.scss"
 
 type Props = {
 	closeModal: () => void
@@ -16,8 +16,9 @@ type Props = {
 function SelectCardsModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
-	const modalData: ModalData | null | undefined = useSelector(getGameState)?.currentModalData
-	if (!modalData || modalData.modalId !== 'selectCards') return null
+	const modalData: ModalData | null | undefined =
+		useSelector(getGameState)?.currentModalData
+	if (!modalData || modalData.modalId !== "selectCards") return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
 	const cards: Array<LocalCardInstance> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
@@ -51,7 +52,12 @@ function SelectCardsModal({closeModal}: Props) {
 		}
 		if (selected.length <= selectionSize) {
 			dispatch(
-				modalRequest({modalResult: {result: true, cards: selected.map((card) => card.entity)}})
+				modalRequest({
+					modalResult: {
+						result: true,
+						cards: selected.map((card) => card.entity),
+					},
+				}),
 			)
 			closeModal()
 		}
@@ -81,12 +87,20 @@ function SelectCardsModal({closeModal}: Props) {
 			</div>
 			<div className={css.options}>
 				{secondaryButton && (
-					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
+					<Button
+						variant={secondaryButton.variant}
+						size="medium"
+						onClick={handleClose}
+					>
 						{secondaryButton.text}
 					</Button>
 				)}
 				{primaryButton && (
-					<Button variant={primaryButton.variant} size="medium" onClick={handlePrimary}>
+					<Button
+						variant={primaryButton.variant}
+						size="medium"
+						onClick={handlePrimary}
+					>
 						{primaryButton.text}
 					</Button>
 				)}

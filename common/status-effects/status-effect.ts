@@ -1,12 +1,12 @@
-import {GameModel} from '../models/game-model'
-import {ComponentQuery} from '../components/query'
-import query from '../components/query'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from '../components'
+} from "../components"
+import {ComponentQuery} from "../components/query"
+import query from "../components/query"
+import {GameModel} from "../models/game-model"
 
 export type StatusEffectLog = {
 	/** The status effect target */
@@ -22,7 +22,7 @@ export type StatusEffectProps = {
 	icon: string
 	name: string
 	description: string
-	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
+	type: "normal" | "damage" | "system" | "hiddenSystem"
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
 	applyCondition: ComponentQuery<CardComponent | PlayerComponent>
@@ -30,55 +30,57 @@ export type StatusEffectProps = {
 
 export type Counter = StatusEffectProps & {
 	counter: number
-	counterType: 'turns' | 'number'
+	counterType: "turns" | "number"
 }
 
 export const statusEffect = {
-	type: 'normal' as StatusEffectProps['type'],
+	type: "normal" as StatusEffectProps["type"],
 	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} ${values.verb} inflicted with ${values.statusEffect}`,
-	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
+	removeLog: (values: StatusEffectLog) =>
+		`${values.statusEffect} on ${values.target} wore off`,
 }
 
 export const systemStatusEffect = {
-	type: 'system' as StatusEffectProps['type'],
+	type: "system" as StatusEffectProps["type"],
 	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const hiddenStatusEffect = {
-	type: 'hiddenSystem' as StatusEffectProps['type'],
-	icon: '',
-	name: '',
-	description: '',
+	type: "hiddenSystem" as StatusEffectProps["type"],
+	icon: "",
+	name: "",
+	description: "",
 	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const damageEffect = {
-	type: 'damage' as StatusEffectProps['type'],
+	type: "damage" as StatusEffectProps["type"],
 	applyCondition: (game: GameModel, target: CardComponent | PlayerComponent) =>
 		target instanceof CardComponent &&
 		!game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetEntity(target.entity),
-			query.effect.type('damage')
+			query.effect.type("damage"),
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
-	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
+	removeLog: (values: StatusEffectLog) =>
+		`${values.statusEffect} on ${values.target} wore off`,
 }
 
 export function isCounter(props: StatusEffectProps | null): props is Counter {
-	return props !== null && 'counter' in props
+	return props !== null && "counter" in props
 }
 
 export abstract class StatusEffect<
 	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps
+	Props extends StatusEffectProps = StatusEffectProps,
 > {
 	public abstract props: Props
 
@@ -89,7 +91,7 @@ export abstract class StatusEffect<
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: T,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -101,7 +103,7 @@ export abstract class StatusEffect<
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: T,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -117,7 +119,7 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -129,7 +131,7 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -145,7 +147,7 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -157,7 +159,7 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}

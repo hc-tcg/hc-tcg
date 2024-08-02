@@ -1,12 +1,12 @@
-import classNames from 'classnames'
-import css from './button.module.scss'
-import {ReactNode, forwardRef} from 'react'
-import React from 'react'
+import classNames from "classnames"
+import {ReactNode, forwardRef} from "react"
+import React from "react"
+import css from "./button.module.scss"
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	ref?: any
-	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
-	size?: 'small' | 'medium' | 'large'
+	variant?: "default" | "primary" | "secondary" | "error" | "stone"
+	size?: "small" | "medium" | "large"
 	emphasis?: boolean
 	leftSlot?: ReactNode
 	rightSlot?: ReactNode
@@ -33,7 +33,7 @@ const Button = ({
 				variant && css[variant],
 				size && css[size],
 				emphasis && css.emphasis,
-				props.className
+				props.className,
 			)}
 			onClick={onClick}
 		>
@@ -45,8 +45,17 @@ const Button = ({
 }
 
 const RefButton = forwardRef(function TestButton(
-	{variant, size, emphasis, leftSlot, rightSlot, children, onClick, ...props}: ButtonProps,
-	ref: React.ForwardedRef<any>
+	{
+		variant,
+		size,
+		emphasis,
+		leftSlot,
+		rightSlot,
+		children,
+		onClick,
+		...props
+	}: ButtonProps,
+	ref: React.ForwardedRef<any>,
 ) {
 	return (
 		<button
@@ -57,7 +66,7 @@ const RefButton = forwardRef(function TestButton(
 				variant && css[variant],
 				size && css[size],
 				emphasis && css.emphasis,
-				props.className
+				props.className,
 			)}
 			onClick={onClick}
 		>
@@ -68,7 +77,7 @@ const RefButton = forwardRef(function TestButton(
 	)
 })
 
-interface SplitButtonT extends React.ComponentPropsWithRef<'div'> {
+interface SplitButtonT extends React.ComponentPropsWithRef<"div"> {
 	children: ReactNode
 	props?: React.HTMLAttributes<HTMLDivElement>
 }

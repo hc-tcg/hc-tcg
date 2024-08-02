@@ -1,12 +1,12 @@
-import 'dotenv/config'
-import express from 'express'
-import path from 'path'
-import {fileURLToPath} from 'url'
-import {createServer} from 'http'
-import cors from 'cors'
-import {CONFIG} from 'common/config'
-import startSocketIO from './sockets'
-import {registerApis} from './api'
+import "dotenv/config"
+import {createServer} from "http"
+import path from "path"
+import {fileURLToPath} from "url"
+import {CONFIG} from "common/config"
+import cors from "cors"
+import express from "express"
+import {registerApis} from "./api"
+import startSocketIO from "./sockets"
 
 const port = process.env.PORT || CONFIG.port || 9000
 
@@ -26,7 +26,7 @@ app.use(cors({origin: CONFIG.cors}))
 
 // @TODO Hardcoded redirect to the new site, for now
 app.use((req, res, next) => {
-	if (req.hostname === 'hc-tcg.fly.dev') {
+	if (req.hostname === "hc-tcg.fly.dev") {
 		res.redirect(301, `https://hc-tcg.online`)
 	} else {
 		next()
@@ -34,13 +34,13 @@ app.use((req, res, next) => {
 })
 
 app.use(
-	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
+	express.static(path.join(__dirname, "../..", CONFIG.clientPath), {
 		maxAge: 1000 * 60 * 60,
-	})
+	}),
 )
 
-app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
+app.get("/", (req, res) => {
+	res.sendFile(path.join(__dirname, "../..", CONFIG.clientPath, "index.html"))
 })
 
 server.listen(port, () => {

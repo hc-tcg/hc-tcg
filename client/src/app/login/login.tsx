@@ -1,23 +1,23 @@
-import React from 'react'
-import {useSelector, useDispatch} from 'react-redux'
-import {getConnecting, getErrorType} from 'logic/session/session-selectors'
-import {login} from 'logic/session/session-actions'
-import css from './login.module.scss'
-import TcgLogo from 'components/tcg-logo'
-import {VersionLinks} from 'components/link-container'
-import Button from 'components/button'
-import Spinner from 'components/spinner'
-import ErrorBanner from 'components/error-banner'
-import Beef from 'components/beef'
+import Beef from "components/beef"
+import Button from "components/button"
+import ErrorBanner from "components/error-banner"
+import {VersionLinks} from "components/link-container"
+import Spinner from "components/spinner"
+import TcgLogo from "components/tcg-logo"
+import {login} from "logic/session/session-actions"
+import {getConnecting, getErrorType} from "logic/session/session-selectors"
+import React from "react"
+import {useDispatch, useSelector} from "react-redux"
+import css from "./login.module.scss"
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
-	if (errorType === 'session_expired') return 'Your session has expired.'
-	if (errorType === 'timeout') return 'Connection attempt took too long.'
-	if (errorType === 'invalid_name') return 'Your name is not valid.'
-	if (errorType === 'invalid_version')
-		return 'There has been a game update. Please refresh the website.'
-	if (errorType === 'xhr poll error') return "Can't reach the server."
+	if (errorType === "session_expired") return "Your session has expired."
+	if (errorType === "timeout") return "Connection attempt took too long."
+	if (errorType === "invalid_name") return "Your name is not valid."
+	if (errorType === "invalid_version")
+		return "There has been a game update. Please refresh the website."
+	if (errorType === "xhr poll error") return "Can't reach the server."
 	return errorType.substring(0, 150)
 }
 

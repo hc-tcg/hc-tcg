@@ -1,30 +1,42 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from "../components"
+import {GameModel} from "../models/game-model"
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	statusEffect,
+} from "./status-effect"
 
 class SlownessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		icon: 'slowness',
-		name: 'Slowness',
-		description: 'This Hermit can only use their primary attack.',
+		icon: "slowness",
+		name: "Slowness",
+		description: "This Hermit can only use their primary attack.",
 		counter: 1,
-		counterType: 'turns',
+		counterType: "turns",
 	}
 
 	override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
 		if (!effect.counter) effect.counter = this.props.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (target.slot?.onBoard() && player.activeRowEntity === target.slot.row?.entity)
-				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
+			if (
+				target.slot?.onBoard() &&
+				player.activeRowEntity === target.slot.row?.entity
+			)
+				game.addBlockedActions(this.props.icon, "SECONDARY_ATTACK")
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
@@ -38,7 +50,11 @@ class SlownessEffect extends CardStatusEffect {
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!target.slot?.onBoard() || attack.target?.entity !== target.slot.row?.entity) return
+			if (
+				!target.slot?.onBoard() ||
+				attack.target?.entity !== target.slot.row?.entity
+			)
+				return
 			if (target.slot.row?.health) return
 			effect.remove()
 		})

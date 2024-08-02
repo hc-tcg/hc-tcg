@@ -1,10 +1,14 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from "../../../components"
+import query from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import {flipCoin} from "../../../utils/coinFlips"
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
 
@@ -19,52 +23,57 @@ Some assumptions that make sense to me:
 class GrianRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'grian_rare',
+		id: "grian_rare",
 		numericId: 35,
-		name: 'Grian',
-		expansion: 'default',
-		rarity: 'rare',
+		name: "Grian",
+		expansion: "default",
+		rarity: "rare",
 		tokens: 2,
-		type: 'prankster',
+		type: "prankster",
 		health: 300,
 		primary: {
-			name: 'Borrow',
-			cost: ['prankster', 'prankster'],
+			name: "Borrow",
+			cost: ["prankster", "prankster"],
 			damage: 50,
 			power:
 				"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
 		},
 		secondary: {
-			name: 'Start a War',
-			cost: ['prankster', 'prankster', 'prankster'],
+			name: "Start a War",
+			cost: ["prankster", "prankster", "prankster"],
 			damage: 100,
 			power: null,
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== "primary")
+				return
 
 			const opponentAttachCard = game.components.find(
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.active,
-				query.card.slot(query.slot.attach)
+				query.card.slot(query.slot.attach),
 			)
 			if (!opponentAttachCard) return
 
 			const coinFlip = flipCoin(player, component)
 
-			if (coinFlip[0] === 'tails') return
+			if (coinFlip[0] === "tails") return
 
 			const attachSlot = game.components.find(
 				SlotComponent,
 				query.slot.currentPlayer,
 				query.slot.active,
-				query.slot.attach
+				query.slot.attach,
 			)
 			const canAttach = game.components.find(
 				SlotComponent,
@@ -72,32 +81,33 @@ class GrianRare extends Card {
 				query.not(query.slot.frozen),
 				query.slot.attach,
 				query.slot.active,
-				query.slot.empty
+				query.slot.empty,
 			)
 
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
-					modalId: 'selectCards',
+					modalId: "selectCards",
 					payload: {
-						modalName: 'Grian - Borrow',
+						modalName: "Grian - Borrow",
 						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
 						cards: [opponentAttachCard.entity],
 						selectionSize: 0,
 						primaryButton: canAttach
 							? {
-									text: 'Attach',
-									variant: 'default',
-							  }
+									text: "Attach",
+									variant: "default",
+								}
 							: null,
 						secondaryButton: {
-							text: 'Discard',
-							variant: 'default',
+							text: "Discard",
+							variant: "default",
 						},
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || modalResult.result === undefined)
+						return "FAILURE_INVALID_DATA"
 
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
@@ -105,7 +115,7 @@ class GrianRare extends Card {
 						opponentAttachCard.discard(component.player.entity)
 					}
 
-					return 'SUCCESS'
+					return "SUCCESS"
 				},
 				onTimeout() {
 					opponentAttachCard.discard(component.player.entity)

@@ -1,13 +1,13 @@
-import React, {useState} from 'react'
-import css from './main-menu.module.scss'
-import {useSelector, useDispatch} from 'react-redux'
-import Slider from 'components/slider'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {getStats} from 'logic/fbdb/fbdb-selectors'
-import MenuLayout from 'components/menu-layout'
-import Button from 'components/button'
-import UpdatesModal from 'components/updates'
+import Button from "components/button"
+import MenuLayout from "components/menu-layout"
+import Slider from "components/slider"
+import UpdatesModal from "components/updates"
+import {getStats} from "logic/fbdb/fbdb-selectors"
+import {setSetting} from "logic/local-settings/local-settings-actions"
+import {getSettings} from "logic/local-settings/local-settings-selectors"
+import React, {useState} from "react"
+import {useDispatch, useSelector} from "react-redux"
+import css from "./main-menu.module.scss"
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -19,29 +19,29 @@ function Settings({setMenuSection}: Props) {
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+		dispatch(setSetting("soundVolume", ev.currentTarget.value))
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('musicVolume', ev.currentTarget.value))
+		dispatch(setSetting("musicVolume", ev.currentTarget.value))
 	}
 	const handleMuteSound = () => {
-		dispatch(setSetting('muted', !settings.muted))
+		dispatch(setSetting("muted", !settings.muted))
 	}
 
 	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+		dispatch(setSetting("panoramaEnabled", !settings.panoramaEnabled))
 	}
 	const getBoolDescriptor = (value?: boolean) => {
-		return value ? 'Enabled' : 'Disabled'
+		return value ? "Enabled" : "Disabled"
 	}
 	const getPercDescriptor = (value?: string) => {
-		if (value !== '0') return `${value}%`
-		return 'Disabled'
+		if (value !== "0") return `${value}%`
+		return "Disabled"
 	}
-	const handleGameSettings = () => setMenuSection('game-settings')
-	const handleDataSettings = () => setMenuSection('data-settings')
+	const handleGameSettings = () => setMenuSection("game-settings")
+	const handleDataSettings = () => setMenuSection("data-settings")
 
-	const handleCredits = () => setMenuSection('credits')
+	const handleCredits = () => setMenuSection("credits")
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
 	const handleUpdates = () => {
@@ -51,12 +51,15 @@ function Settings({setMenuSection}: Props) {
 	return (
 		<>
 			{updatesOpen ? (
-				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
+				<UpdatesModal
+					updatesOpen={updatesOpen}
+					setUpdatesOpen={setUpdatesOpen}
+				/>
 			) : (
 				<></>
 			)}
 			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
+				back={() => setMenuSection("mainmenu")}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}

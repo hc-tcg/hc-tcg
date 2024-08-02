@@ -1,26 +1,30 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import {executeExtraAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
-import {attach} from '../../base/defaults'
-import {CardComponent, ObserverComponent} from '../../../components'
-import {Attach} from '../../base/types'
+import {CardComponent, ObserverComponent} from "../../../components"
+import query from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import {executeExtraAttacks} from "../../../utils/attacks"
+import Card from "../../base/card"
+import {attach} from "../../base/defaults"
+import {Attach} from "../../base/types"
 
 class Wolf extends Card {
 	props: Attach = {
 		...attach,
-		id: 'wolf',
+		id: "wolf",
 		numericId: 108,
-		name: 'Wolf',
-		expansion: 'default',
-		rarity: 'rare',
+		name: "Wolf",
+		expansion: "default",
+		rarity: "rare",
 		tokens: 1,
 		description:
 			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
 		attachCondition: query.every(attach.attachCondition, query.slot.active),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 		let activated = false
 
@@ -30,7 +34,7 @@ class Wolf extends Card {
 		})
 
 		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => {
-			if (attack.isType('status-effect') || attack.isBacklash) return
+			if (attack.isType("status-effect") || attack.isBacklash) return
 			// Only on opponents turn
 			if (game.currentPlayerEntity !== opponentPlayer.entity) return
 
@@ -47,9 +51,10 @@ class Wolf extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentPlayer.activeRowEntity,
-					type: 'effect',
+					type: "effect",
 					isBacklash: true,
-					log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $eWolf$`,
 				})
 				.addDamage(component.entity, 20)
 

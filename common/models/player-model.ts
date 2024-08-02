@@ -1,9 +1,9 @@
-import {getStarterPack} from '../../server/src/utils/state-gen'
-import {PlayerDeckT} from '../../common/types/deck'
-import {Socket} from 'socket.io'
-import {validateDeck} from '../utils/validation'
-import {censorString} from '../utils/formatting'
-import {PlayerInfo} from '../types/server-requests'
+import {Socket} from "socket.io"
+import {PlayerDeckT} from "../../common/types/deck"
+import {getStarterPack} from "../../server/src/utils/state-gen"
+import {PlayerInfo} from "../types/server-requests"
+import {censorString} from "../utils/formatting"
+import {validateDeck} from "../utils/validation"
 
 export type PlayerId = string & {__player_id: never}
 
@@ -22,8 +22,8 @@ export class PlayerModel {
 
 		// Always generate a starter deck as the default
 		this.internalDeck = {
-			name: 'Starter Deck',
-			icon: 'any',
+			name: "Starter Deck",
+			icon: "any",
 			cards: getStarterPack(),
 		}
 

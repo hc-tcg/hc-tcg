@@ -1,27 +1,27 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class WelsknightCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'welsknight_common',
+		id: "welsknight_common",
 		numericId: 106,
-		name: 'Wels',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Wels",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
-		type: 'builder',
+		type: "builder",
 		health: 300,
 		primary: {
-			name: 'Chivalry',
-			cost: ['any'],
+			name: "Chivalry",
+			cost: ["any"],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: 'Judgement',
-			cost: ['builder', 'builder', 'any'],
+			name: "Judgement",
+			cost: ["builder", "builder", "any"],
 			damage: 90,
 			power: null,
 		},

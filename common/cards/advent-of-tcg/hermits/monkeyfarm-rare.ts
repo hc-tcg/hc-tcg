@@ -1,50 +1,63 @@
-import {GameModel} from '../../../models/game-model'
-import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent} from "../../../components"
+import {slot} from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import {flipCoin} from "../../../utils/coinFlips"
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class MonkeyfarmRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'monkeyfarm_rare',
+		id: "monkeyfarm_rare",
 		numericId: 212,
-		name: 'Monkeyfarm',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
+		name: "Monkeyfarm",
+		expansion: "advent_of_tcg",
+		palette: "advent_of_tcg",
+		background: "advent_of_tcg",
+		rarity: "rare",
 		tokens: 1,
-		type: 'farm',
+		type: "farm",
 		health: 250,
 		primary: {
-			name: 'Skull',
-			cost: ['farm'],
+			name: "Skull",
+			cost: ["farm"],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: 'Monkeystep',
-			cost: ['farm', 'farm'],
+			name: "Monkeystep",
+			cost: ["farm", "farm"],
 			damage: 80,
-			power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+			power:
+				"Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== "secondary" ||
+				!attacker
+			)
 				return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
-			if (coinFlip[0] !== 'heads') return
+			if (coinFlip[0] !== "heads") return
 
-			const pickCondition = slot.every(slot.opponent, slot.item, slot.not(slot.empty))
+			const pickCondition = slot.every(
+				slot.opponent,
+				slot.item,
+				slot.not(slot.empty),
+			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 

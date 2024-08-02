@@ -1,19 +1,19 @@
-import Card from '../../base/card'
-import {Item} from '../../base/types'
-import {item} from '../../base/defaults'
+import Card from "../../base/card"
+import {item} from "../../base/defaults"
+import {Item} from "../../base/types"
 
 class PranksterItem extends Card {
 	props: Item = {
 		...item,
-		id: 'item_prankster_common',
+		id: "item_prankster_common",
 		numericId: 59,
-		name: 'Prankster Item',
-		shortName: 'Prankster',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Prankster Item",
+		shortName: "Prankster",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
-		type: 'prankster',
-		energy: ['prankster'],
+		type: "prankster",
+		energy: ["prankster"],
 	}
 }
 

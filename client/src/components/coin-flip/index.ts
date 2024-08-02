@@ -1,1 +1,1 @@
-export {default} from './coin-flip'
+export {default} from "./coin-flip"

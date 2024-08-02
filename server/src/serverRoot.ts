@@ -1,5 +1,5 @@
-import {RootModel} from 'common/models/root-model'
-import {plugins} from './plugins'
+import {RootModel} from "common/models/root-model"
+import {plugins} from "./plugins"
 
 // Create root and register plugins
 
@@ -9,7 +9,7 @@ const root = new RootModel()
 // initialize plugins
 plugins.forEach((plugin) => {
 	const result = plugin.register(root)
-	if (result) console.log('plugin registered: ' + plugin.id)
+	if (result) console.log("plugin registered: " + plugin.id)
 })
 
 export default root

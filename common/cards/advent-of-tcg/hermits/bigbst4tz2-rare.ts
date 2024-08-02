@@ -1,45 +1,54 @@
-import {GameModel} from '../../../models/game-model'
-import {AttackModel} from '../../../models/attack-model'
-import {executeAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent} from "../../../components"
+import {AttackModel} from "../../../models/attack-model"
+import {GameModel} from "../../../models/game-model"
+import {executeAttacks} from "../../../utils/attacks"
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class BigBSt4tzRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'bigbst4tz2_rare',
+		id: "bigbst4tz2_rare",
 		numericId: 207,
-		name: 'BigB',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
+		name: "BigB",
+		expansion: "advent_of_tcg",
+		palette: "advent_of_tcg",
+		background: "advent_of_tcg",
+		rarity: "rare",
 		tokens: 2,
-		type: 'speedrunner',
+		type: "speedrunner",
 		health: 270,
 		primary: {
-			name: 'Terry',
-			cost: ['speedrunner'],
+			name: "Terry",
+			cost: ["speedrunner"],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: 'Soulmate',
-			cost: ['speedrunner', 'speedrunner'],
+			name: "Soulmate",
+			cost: ["speedrunner", "speedrunner"],
 			damage: 80,
-			power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
+			power:
+				"When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: Observer,
+	) {
 		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== "secondary"
+			)
+				return
 			dealDamageNextTurn = true
 		})
 
@@ -72,7 +81,7 @@ class BigBSt4tzRare extends Card {
 					id: this.getInstanceKey(component),
 					attacker: sourceRow,
 					target: targetRow,
-					type: 'status-effect',
+					type: "status-effect",
 				})
 				statusEffectAttack.addDamage(this.props.id, 140)
 

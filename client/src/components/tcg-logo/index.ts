@@ -1,1 +1,1 @@
-export {default} from './tcg-logo'
+export {default} from "./tcg-logo"

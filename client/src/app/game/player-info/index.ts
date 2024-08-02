@@ -1,1 +1,1 @@
-export {default} from './player-info'
+export {default} from "./player-info"

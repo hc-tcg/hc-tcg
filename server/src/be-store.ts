@@ -1,6 +1,6 @@
-import {createStore, applyMiddleware} from 'redux'
-import createSagaMiddleware from 'redux-saga'
-import rootSaga from './routines/root'
+import {applyMiddleware, createStore} from "redux"
+import createSagaMiddleware from "redux-saga"
+import rootSaga from "./routines/root"
 
 const sagaMiddleware = createSagaMiddleware()
 

@@ -1,4 +1,4 @@
-import css from './beef.module.scss'
+import css from "./beef.module.scss"
 
 const Beef = () => {
 	return (

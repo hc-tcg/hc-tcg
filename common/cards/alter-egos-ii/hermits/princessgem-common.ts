@@ -1,29 +1,29 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class PrincessGemCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'princessgem_common',
+		id: "princessgem_common",
 		numericId: 236,
-		name: 'Princess Gem',
-		expansion: 'alter_egos_ii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "Princess Gem",
+		expansion: "alter_egos_ii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 1,
-		type: 'terraform',
+		type: "terraform",
 		health: 280,
 		primary: {
-			name: 'Monarch',
-			cost: ['any'],
+			name: "Monarch",
+			cost: ["any"],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: 'Dawn',
-			cost: ['terraform', 'terraform', 'terraform'],
+			name: "Dawn",
+			cost: ["terraform", "terraform", "terraform"],
 			damage: 100,
 			power: null,
 		},

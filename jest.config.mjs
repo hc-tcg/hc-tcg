@@ -8,16 +8,16 @@ const config = {
 	// Automatically clear mock calls, instances, contexts and results before every test
 	clearMocks: true,
 
-	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'ts', 'json'],
+	moduleFileExtensions: ["js", "jsx", "ts", "tsx", "ts", "json"],
 
-	roots: ['tests'],
+	roots: ["tests"],
 
 	// A map from regular expressions to paths to transformers
 	transform: {
-		'^.+\\.tsx?$': [
-			'ts-jest',
+		"^.+\\.tsx?$": [
+			"ts-jest",
 			{
-				tsconfig: 'tests/tsconfig.json',
+				tsconfig: "tests/tsconfig.json",
 			},
 		],
 	},

@@ -1,44 +1,48 @@
-import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {CardComponent} from "../../../components"
+import {slot} from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class DungeonTangoRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'dungeontango_rare',
+		id: "dungeontango_rare",
 		numericId: 208,
-		name: 'DM tango',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
+		name: "DM tango",
+		expansion: "advent_of_tcg",
+		palette: "advent_of_tcg",
+		background: "advent_of_tcg",
+		rarity: "rare",
 		tokens: 2,
-		type: 'miner',
+		type: "miner",
 		health: 280,
 		primary: {
-			name: 'Lackey',
-			cost: ['any'],
+			name: "Lackey",
+			cost: ["any"],
 			damage: 40,
 			power:
-				'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
+				"Discard 1 attached item card. If you have one, draw a random hermit card from your deck.",
 		},
 		secondary: {
-			name: 'Ravager',
-			cost: ['miner', 'miner', 'any'],
+			name: "Ravager",
+			cost: ["miner", "miner", "any"],
 			damage: 90,
 			power: null,
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: Observer,
+	) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
 			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'primary') return
+			if (attack.id !== attackId || attack.type !== "primary") return
 
 			let i: number = 0
 			do {
@@ -53,8 +57,13 @@ class DungeonTangoRare extends Card {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.props.id,
-				message: 'Choose an item card to discard',
-				canPick: slot.every(slot.player, slot.item, slot.active, slot.not(slot.empty)),
+				message: "Choose an item card to discard",
+				canPick: slot.every(
+					slot.player,
+					slot.item,
+					slot.active,
+					slot.not(slot.empty),
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.cardId) return
 

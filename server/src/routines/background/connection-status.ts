@@ -1,11 +1,11 @@
-import {takeEvery, delay} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
-import {getOpponentId} from '../../utils'
-import {CONFIG} from 'common/config'
-import {getLocalGameState} from '../../utils/state-gen'
-import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux'
-import {PlayerModel} from 'common/models/player-model'
+import {CONFIG} from "common/config"
+import {GameModel} from "common/models/game-model"
+import {PlayerModel} from "common/models/player-model"
+import {AnyAction} from "redux"
+import {delay, takeEvery} from "typed-redux-saga"
+import {getOpponentId} from "../../utils"
+import {broadcast} from "../../utils/comm"
+import {getLocalGameState} from "../../utils/state-gen"
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
@@ -26,31 +26,32 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		localGameState: getLocalGameState(game, player),
 		order: game.getPlayerIds(),
 	}
-	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)
-	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)
+	broadcast([player], "GAME_STATE_ON_RECONNECT", payload)
+	broadcast([player], "OPPONENT_CONNECTION", !!opponent.socket?.connected)
 }
 
 function* statusChangedSaga(game: GameModel, action: AnyAction) {
 	const playerId = (action.payload as PlayerModel).id
 	const opponentId = getOpponentId(game, playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
-	broadcast([game.players[opponentId]], 'OPPONENT_CONNECTION', connectionStatus)
+	broadcast([game.players[opponentId]], "OPPONENT_CONNECTION", connectionStatus)
 }
 
 function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
 		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' && !!game.players[(action.payload as PlayerModel).id],
+			action.type === "PLAYER_RECONNECTED" &&
+			!!game.players[(action.payload as PlayerModel).id],
 		sendGameStateOnReconnect,
-		game
+		game,
 	)
 
 	yield* takeEvery(
 		(action: any) =>
-			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
+			["PLAYER_DISCONNECTED", "PLAYER_RECONNECTED"].includes(action.type) &&
 			!!game.players[(action.payload as PlayerModel).id],
 		statusChangedSaga,
-		game
+		game,
 	)
 }
 

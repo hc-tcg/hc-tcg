@@ -1,29 +1,29 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class HelsknightCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'helsknight_common',
+		id: "helsknight_common",
 		numericId: 157,
-		name: 'Helsknight',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "Helsknight",
+		expansion: "alter_egos_iii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 0,
-		type: 'miner',
+		type: "miner",
 		health: 270,
 		primary: {
-			name: 'Slash',
-			cost: ['any'],
+			name: "Slash",
+			cost: ["any"],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: 'Diabolical',
-			cost: ['miner', 'miner'],
+			name: "Diabolical",
+			cost: ["miner", "miner"],
 			damage: 80,
 			power: null,
 		},

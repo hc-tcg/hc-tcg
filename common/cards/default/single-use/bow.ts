@@ -1,38 +1,46 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
-import {RowEntity} from '../../../entities'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from "../../../components"
+import query from "../../../components/query"
+import {RowEntity} from "../../../entities"
+import {GameModel} from "../../../models/game-model"
+import {applySingleUse} from "../../../utils/board"
+import Card from "../../base/card"
+import {singleUse} from "../../base/defaults"
+import {SingleUse} from "../../base/types"
 
 class Bow extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.hermit,
 		query.not(query.slot.empty),
-		query.not(query.slot.active)
+		query.not(query.slot.active),
 	)
 
 	props: SingleUse = {
 		...singleUse,
-		id: 'bow',
+		id: "bow",
 		numericId: 3,
-		name: 'Bow',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Bow",
+		expansion: "default",
+		rarity: "common",
 		tokens: 1,
 		description: "Do 40hp damage to one of your opponent's AFK Hermits.",
 		hasAttack: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition),
 		),
 		attackPreview: (_game) => `$A40$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let pickedRow: RowEntity | null = null
@@ -55,7 +63,7 @@ class Bow extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: pickedRow,
-					type: 'effect',
+					type: "effect",
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 				})

@@ -1,7 +1,7 @@
-import {SagaIterator} from 'redux-saga'
-import {delay, put} from 'redux-saga/effects'
-import {LocalGameState} from 'common/types/game-state'
-import {setCoinFlip} from '../game-actions'
+import {LocalGameState} from "common/types/game-state"
+import {SagaIterator} from "redux-saga"
+import {delay, put} from "redux-saga/effects"
+import {setCoinFlip} from "../game-actions"
 
 function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 	yield put(setCoinFlip(null))

@@ -1,3 +1,3 @@
-import {FirebaseLogs} from './firebase-logs'
+import {FirebaseLogs} from "./firebase-logs"
 
 export const plugins = [new FirebaseLogs()]

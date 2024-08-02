@@ -1,25 +1,29 @@
-import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent} from '../../../components'
-import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
+import {CardComponent, ObserverComponent} from "../../../components"
+import {GameModel} from "../../../models/game-model"
+import {applySingleUse} from "../../../utils/board"
+import Card from "../../base/card"
+import {singleUse} from "../../base/defaults"
+import {SingleUse} from "../../base/types"
 
 class IronSword extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: 'iron_sword',
+		id: "iron_sword",
 		numericId: 46,
-		name: 'Iron Sword',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Iron Sword",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
 		description: "Do 20hp damage to your opponent's active Hermit.",
 		hasAttack: true,
-		attackPreview: (_game) => '$A20$',
+		attackPreview: (_game) => "$A20$",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
@@ -27,7 +31,7 @@ class IronSword extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentPlayer.activeRowEntity,
-					type: 'effect',
+					type: "effect",
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 				})

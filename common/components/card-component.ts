@@ -5,9 +5,9 @@ import {
 	PlayerComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '.'
-import type Card from '../cards/base/card'
-import {CardClass} from '../cards/base/card'
+} from "."
+import type Card from "../cards/base/card"
+import {CardClass} from "../cards/base/card"
 import {
 	type Attach,
 	type CardProps,
@@ -15,19 +15,24 @@ import {
 	type Hermit,
 	type Item,
 	type SingleUse,
-	isItem,
-	isSingleUse,
 	isAttach,
 	isHealth,
 	isHermit,
-} from '../cards/base/types'
-import type {GameModel} from '../models/game-model'
-import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
-import query from './query'
-import {CardStatusEffect} from '../status-effects/status-effect'
+	isItem,
+	isSingleUse,
+} from "../cards/base/types"
+import type {
+	CardEntity,
+	ObserverEntity,
+	PlayerEntity,
+	SlotEntity,
+} from "../entities"
+import type {GameModel} from "../models/game-model"
+import {CardStatusEffect} from "../status-effects/status-effect"
+import query from "./query"
 
 let CARDS: Record<any, Card>
-import('../cards').then((mod) => (CARDS = mod.CARDS))
+import("../cards").then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<Props extends CardProps = CardProps> {
@@ -44,7 +49,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		game: GameModel,
 		entity: CardEntity,
 		card: number | string | CardClass,
-		slot: SlotEntity
+		slot: SlotEntity,
 	) {
 		this.game = game
 		this.entity = entity
@@ -80,7 +85,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	 * ```
 	 */
 	static compareOrder(a: CardComponent, b: CardComponent) {
-		if (!('order' in a.slot) || !('order' in b.slot)) return 0
+		if (!("order" in a.slot) || !("order" in b.slot)) return 0
 		return (a.slot.order as number) - (b.slot.order as number)
 	}
 
@@ -100,7 +105,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	/** Get the player who does not own the slot this card is in. */
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.getOrError(this.game.otherPlayerEntity(this.slot?.player.entity))
+		return this.game.components.getOrError(
+			this.game.otherPlayerEntity(this.slot?.player.entity),
+		)
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -129,13 +136,16 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public attach(component: SlotComponent) {
 		// Stores if the card is moving to the slot's player's board or leaving the slot's player's board.
 		let changingBoards =
-			this.slot.onBoard() !== component.onBoard() || this.player.entity !== component.player.entity
+			this.slot.onBoard() !== component.onBoard() ||
+			this.player.entity !== component.player.entity
 
 		if (this.slot.onBoard() && changingBoards) {
 			if (!this.observerEntity)
-				throw new Error('All cards attached to the board should have an observer')
+				throw new Error(
+					"All cards attached to the board should have an observer",
+				)
 			let observer = this.game.components.get(this.observerEntity)
-			if (!observer) throw new Error('Observer expected to be in ECS')
+			if (!observer) throw new Error("Observer expected to be in ECS")
 			observer.unsubscribeFromEverything()
 			this.card.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)
@@ -155,21 +165,31 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's hand if not specified.
 	 */
 	public draw(player?: PlayerEntity) {
-		this.attach(this.game.components.new(HandSlotComponent, player || this.slot.player.entity))
+		this.attach(
+			this.game.components.new(
+				HandSlotComponent,
+				player || this.slot.player.entity,
+			),
+		)
 	}
 
 	/** Move this card to the discard pile.
 	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's discard pile if not specified.
 	 */
 	public discard(player?: PlayerEntity) {
-		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
+		this.attach(
+			this.game.components.new(
+				DiscardSlotComponent,
+				player || this.slot.player.entity,
+			),
+		)
 	}
 
 	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),
-			query.effect.targetEntity(this.entity)
+			query.effect.targetEntity(this.entity),
 		)
 	}
 }

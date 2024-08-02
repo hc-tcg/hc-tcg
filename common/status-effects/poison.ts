@@ -1,13 +1,21 @@
-import {CardStatusEffect, StatusEffectProps, damageEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {executeExtraAttacks} from '../utils/attacks'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from "../components"
+import {GameModel} from "../models/game-model"
+import {executeExtraAttacks} from "../utils/attacks"
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	damageEffect,
+} from "./status-effect"
 
 class PoisonEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		icon: 'poison',
-		name: 'Poison',
+		icon: "poison",
+		name: "Poison",
 		description:
 			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 		applyLog: (values) => `${values.target} was $ePoisoned$`,
@@ -17,7 +25,7 @@ class PoisonEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = target
 
@@ -27,8 +35,9 @@ class PoisonEffect extends CardStatusEffect {
 				attacker: effect.entity,
 				target: target.slot.row.entity,
 				player: opponentPlayer.entity,
-				type: 'status-effect',
-				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
+				type: "status-effect",
+				log: (values) =>
+					`${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
 			let damage = 0

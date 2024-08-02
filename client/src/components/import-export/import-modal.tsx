@@ -1,15 +1,15 @@
-import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import {useState, useRef} from 'react'
-import Button from 'components/button'
-import {PlayerDeckT} from 'common/types/deck'
-import Dropdown from 'components/dropdown'
-import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
-import DropdownCSS from '../../app/deck/deck.module.scss'
-import css from './import-export.module.scss'
-import {getDeckFromHash} from './import-export-utils'
-import {TypeT} from 'common/types/cards'
-import {saveDeck} from 'logic/saved-decks/saved-decks'
-import {LocalCardInstance} from 'common/types/server-requests'
+import * as AlertDialog from "@radix-ui/react-alert-dialog"
+import {TypeT} from "common/types/cards"
+import {PlayerDeckT} from "common/types/deck"
+import {LocalCardInstance} from "common/types/server-requests"
+import ModalCSS from "components/alert-modal/alert-modal.module.scss"
+import Button from "components/button"
+import Dropdown from "components/dropdown"
+import {saveDeck} from "logic/saved-decks/saved-decks"
+import {useRef, useState} from "react"
+import DropdownCSS from "../../app/deck/deck.module.scss"
+import {getDeckFromHash} from "./import-export-utils"
+import css from "./import-export.module.scss"
 
 type Props = {
 	setOpen: boolean
@@ -18,10 +18,15 @@ type Props = {
 	handleMassImport: () => void
 }
 
-export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Props) => {
+export const ImportModal = ({
+	setOpen,
+	onClose,
+	importDeck,
+	handleMassImport,
+}: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
-	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
+	const [deckIcon, setDeckIcon] = useState<PlayerDeckT["icon"]>("any")
 
 	//IMPORT DECK FUNCTION
 	const importFromHash = () => {
@@ -31,7 +36,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 		try {
 			deck = getDeckFromHash(hashRef.current.value)
 		} catch {
-			console.log('Invalid deck to import: ' + hashRef.current.value)
+			console.log("Invalid deck to import: " + hashRef.current.value)
 		}
 
 		if (deck.length < 1) return null
@@ -39,7 +44,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 		if (!deck) return null
 
 		importDeck({
-			name: nameRef?.current?.value || 'Imported Deck',
+			name: nameRef?.current?.value || "Imported Deck",
 			icon: deckIcon,
 			cards: deck,
 		})
@@ -48,7 +53,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 	}
 	const selectFile = () => {
 		// Select a file by clicking on file input
-		document.getElementById('file-input')?.click()
+		document.getElementById("file-input")?.click()
 	}
 
 	const importFromFile = (file: File | undefined) => {
@@ -59,13 +64,15 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 		fileResult.then((newFileContent: string) => {
 			let importedSomething = false
 
-			newFileContent.split('\n').forEach((line: string) => {
-				const lineComponents: string[] = line.split(':')
+			newFileContent.split("\n").forEach((line: string) => {
+				const lineComponents: string[] = line.split(":")
 				if (lineComponents.length !== 3) return
-				const deck = getDeckFromHash(lineComponents[2].replace('\r', ''))
+				const deck = getDeckFromHash(lineComponents[2].replace("\r", ""))
 				if (deck.length === 0) return
 
-				const filteredName = lineComponents[0].match(`^[a-zA-Z0-9 ]*$`)?.toString()
+				const filteredName = lineComponents[0]
+					.match(`^[a-zA-Z0-9 ]*$`)
+					?.toString()
 				if (!filteredName) {
 					return
 				}
@@ -73,32 +80,34 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 				importedSomething = true
 				saveDeck({
 					name: filteredName,
-					icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as TypeT) : 'any',
+					icon: DECK_ICONS.includes(lineComponents[1])
+						? (lineComponents[1] as TypeT)
+						: "any",
 					cards: deck,
 				})
 			})
 
 			if (importedSomething) {
-				console.log('Successfully imported decks from file: ' + file.name)
+				console.log("Successfully imported decks from file: " + file.name)
 				handleMassImport()
 			} else {
-				console.log('Failed to import decks from file: ' + file.name)
+				console.log("Failed to import decks from file: " + file.name)
 			}
 		})
 	}
 
 	const DECK_ICONS = [
-		'any',
-		'balanced',
-		'builder',
-		'explorer',
-		'farm',
-		'miner',
-		'prankster',
-		'pvp',
-		'redstone',
-		'speedrunner',
-		'terraform',
+		"any",
+		"balanced",
+		"builder",
+		"explorer",
+		"farm",
+		"miner",
+		"prankster",
+		"pvp",
+		"redstone",
+		"speedrunner",
+		"terraform",
 	]
 
 	const iconDropdownOptions = DECK_ICONS.map((option) => ({
@@ -110,7 +119,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
-			<AlertDialog.Portal container={document.getElementById('modal')}>
+			<AlertDialog.Portal container={document.getElementById("modal")}>
 				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
 				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
 					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>
@@ -121,7 +130,10 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
+					<AlertDialog.Description
+						asChild
+						className={ModalCSS.AlertDialogDescription}
+					>
 						<div>
 							{/* IMPORT SECTION */}
 							<div>
@@ -172,8 +184,10 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 						<input
 							id="file-input"
 							type="file"
-							onChange={(e) => importFromFile(e.target.files ? e.target.files[0] : undefined)}
-							style={{display: 'none'}}
+							onChange={(e) =>
+								importFromFile(e.target.files ? e.target.files[0] : undefined)
+							}
+							style={{display: "none"}}
 						/>
 					</div>
 				</AlertDialog.Content>

@@ -1,20 +1,20 @@
-import Modal from 'components/modal'
-import {useSelector, useDispatch} from 'react-redux'
-import {getAvailableActions} from 'logic/game/game-selectors'
-import {endTurn} from 'logic/game/game-actions'
-import {TurnAction} from 'common/types/game-state'
-import css from './game-modals.module.scss'
-import Button from 'components/button'
+import {TurnAction} from "common/types/game-state"
+import Button from "components/button"
+import Modal from "components/modal"
+import {endTurn} from "logic/game/game-actions"
+import {getAvailableActions} from "logic/game/game-selectors"
+import {useDispatch, useSelector} from "react-redux"
+import css from "./game-modals.module.scss"
 
 const ActionMap: Record<TurnAction, string | null> = {
-	PLAY_ITEM_CARD: 'Playing an item card',
-	PLAY_SINGLE_USE_CARD: 'Playing a single use effect card',
-	PLAY_EFFECT_CARD: 'Playing an attach effect card',
-	PLAY_HERMIT_CARD: 'Playing a hermit card',
-	CHANGE_ACTIVE_HERMIT: 'Changing your active hermit',
-	SINGLE_USE_ATTACK: 'Attacking opponent with a single use effect',
-	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',
-	SECONDARY_ATTACK: 'Attacking opponent with a secondary attack',
+	PLAY_ITEM_CARD: "Playing an item card",
+	PLAY_SINGLE_USE_CARD: "Playing a single use effect card",
+	PLAY_EFFECT_CARD: "Playing an attach effect card",
+	PLAY_HERMIT_CARD: "Playing a hermit card",
+	CHANGE_ACTIVE_HERMIT: "Changing your active hermit",
+	SINGLE_USE_ATTACK: "Attacking opponent with a single use effect",
+	PRIMARY_ATTACK: "Attacking opponent with a primary attack",
+	SECONDARY_ATTACK: "Attacking opponent with a secondary attack",
 	WAIT_FOR_OPPONENT_ACTION: null,
 	PICK_REQUEST: null,
 	APPLY_EFFECT: null,
@@ -28,9 +28,13 @@ type Props = {
 	closeModal: () => void
 }
 
-export function shouldShowEndTurnModal(actions: Array<TurnAction>, settings: any): boolean {
+export function shouldShowEndTurnModal(
+	actions: Array<TurnAction>,
+	settings: any,
+): boolean {
 	return (
-		actions.some((action) => ActionMap[action] !== null) && settings.confirmationDialogs === 'on'
+		actions.some((action) => ActionMap[action] !== null) &&
+		settings.confirmationDialogs === "on"
 	)
 }
 
@@ -38,7 +42,7 @@ function EndTurnModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const availableActions = useSelector(getAvailableActions)
 
-	if (availableActions.includes('WAIT_FOR_TURN')) return null
+	if (availableActions.includes("WAIT_FOR_TURN")) return null
 
 	const handleEndTurn = () => {
 		dispatch(endTurn())
@@ -52,7 +56,10 @@ function EndTurnModal({closeModal}: Props) {
 	return (
 		<Modal title="End Turn" closeModal={handleCancel}>
 			<div className={css.description}>
-				<p>Are you sure you want to end your turn? These actions are still available:</p>
+				<p>
+					Are you sure you want to end your turn? These actions are still
+					available:
+				</p>
 				<hr />
 				<ul className={css.availableActions}>
 					{availableActions.map((action) => {

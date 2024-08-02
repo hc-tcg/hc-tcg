@@ -1,7 +1,7 @@
-import {RootState} from 'store'
-import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {PlayerId} from 'common/models/player-model'
+import {PlayerId} from "common/models/player-model"
+import {LocalGameState} from "common/types/game-state"
+import {getPlayerId} from "logic/session/session-selectors"
+import {RootState} from "store"
 
 export const getGame = (state: RootState) => {
 	return state.game
@@ -23,9 +23,10 @@ export const getPlayerStates = (state: RootState) => {
 	return getGameState(state)?.players || null
 }
 
-export const getPlayerStateById = (playerId: PlayerId) => (state: RootState) => {
-	return getPlayerStates(state)?.[playerId] || null
-}
+export const getPlayerStateById =
+	(playerId: PlayerId) => (state: RootState) => {
+		return getPlayerStates(state)?.[playerId] || null
+	}
 
 export const getPlayerState = (state: RootState) => {
 	const playerId = getPlayerId(state)
@@ -39,7 +40,7 @@ export const getOpponentName = (state: RootState) => {
 	const opponent = opponentId && gameState?.players[opponentId]
 
 	if (!opponent) return
-	if (settings.profanityFilter === 'off') return opponent.playerName
+	if (settings.profanityFilter === "off") return opponent.playerName
 	return opponent.censoredPlayerName
 }
 
@@ -58,9 +59,10 @@ export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
 	const currentPlayerId = gameState.turn.currentPlayerId
-	let inactivePlayerId = [gameState.playerId, gameState.opponentPlayerId].filter(
-		(id) => id != currentPlayerId
-	)[0]
+	let inactivePlayerId = [
+		gameState.playerId,
+		gameState.opponentPlayerId,
+	].filter((id) => id != currentPlayerId)[0]
 	return getPlayerStateById(inactivePlayerId)(state)
 }
 

@@ -1,12 +1,16 @@
-import type {CardProps} from '../cards/base/types'
-import type {ComponentQuery} from '../components/query'
-import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
-import {StatusEffectProps} from '../status-effects/status-effect'
-import {SlotTypeT} from './cards'
-import {PlayerDeckT} from './deck'
-import {PlayerId} from '../models/player-model'
-import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
-import {TurnActions} from './game-state'
+import type {CardProps} from "../cards/base/types"
+import type {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from "../components"
+import type {ComponentQuery} from "../components/query"
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from "../entities"
+import {PlayerId} from "../models/player-model"
+import {StatusEffectProps} from "../status-effects/status-effect"
+import {SlotTypeT} from "./cards"
+import {PlayerDeckT} from "./deck"
+import {TurnActions} from "./game-state"
 
 export type PlayerInfo = {
 	playerName: string
@@ -19,7 +23,9 @@ export type PlayerInfo = {
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
-	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
+	[Property in keyof Type]: Type[Property] extends Function
+		? never
+		: Type[Property]
 }
 
 export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
@@ -34,16 +40,18 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	turnedOver: boolean
 }
 
-export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
+export type LocalStatusEffectInstance<
+	Props extends StatusEffectProps = StatusEffectProps,
+> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
 	readonly target:
 		| {
-				type: 'card'
+				type: "card"
 				card: CardEntity
 		  }
 		| {
-				type: 'global'
+				type: "global"
 				player: PlayerEntity
 		  }
 	readonly counter: number | null
@@ -76,10 +84,10 @@ export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
 export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
 
 export namespace LocalSelectCards {
-	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+	type ButtonVariant = "default" | "primary" | "secondary" | "error" | "stone"
 
 	export type Data = {
-		modalId: 'selectCards'
+		modalId: "selectCards"
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -109,7 +117,7 @@ export namespace LocalSelectCards {
 
 export namespace LocalCopyAttack {
 	export type Data = {
-		modalId: 'copyAttack'
+		modalId: "copyAttack"
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -125,6 +133,6 @@ export namespace LocalCopyAttack {
 		  }
 		| {
 				cancel?: undefined
-				pick: 'primary' | 'secondary'
+				pick: "primary" | "secondary"
 		  }
 }

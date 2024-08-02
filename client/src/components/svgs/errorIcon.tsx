@@ -23,12 +23,48 @@ const errorIcon = () => {
 				transform="rotate(-90 14.2222 10.6667)"
 				fill="currentColor"
 			/>
-			<rect x="7.11111" y="3.55556" width="1.77778" height="5.33333" fill="currentColor" />
-			<rect x="7.11111" y="10.6667" width="1.77778" height="1.77778" fill="currentColor" />
-			<rect x="1.77778" y="1.77778" width="1.77778" height="1.77778" fill="currentColor" />
-			<rect x="12.4444" y="1.77778" width="1.77778" height="1.77778" fill="currentColor" />
-			<rect x="1.77778" y="10.6667" width="1.77778" height="1.77778" fill="currentColor" />
-			<rect x="12.4444" y="10.6667" width="1.77778" height="1.77778" fill="currentColor" />
+			<rect
+				x="7.11111"
+				y="3.55556"
+				width="1.77778"
+				height="5.33333"
+				fill="currentColor"
+			/>
+			<rect
+				x="7.11111"
+				y="10.6667"
+				width="1.77778"
+				height="1.77778"
+				fill="currentColor"
+			/>
+			<rect
+				x="1.77778"
+				y="1.77778"
+				width="1.77778"
+				height="1.77778"
+				fill="currentColor"
+			/>
+			<rect
+				x="12.4444"
+				y="1.77778"
+				width="1.77778"
+				height="1.77778"
+				fill="currentColor"
+			/>
+			<rect
+				x="1.77778"
+				y="10.6667"
+				width="1.77778"
+				height="1.77778"
+				fill="currentColor"
+			/>
+			<rect
+				x="12.4444"
+				y="10.6667"
+				width="1.77778"
+				height="1.77778"
+				fill="currentColor"
+			/>
 		</svg>
 	)
 }

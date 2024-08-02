@@ -1,2 +1,2 @@
-export {default} from './link-container'
-export {VersionLinks} from './link-container'
+export {default} from "./link-container"
+export {VersionLinks} from "./link-container"

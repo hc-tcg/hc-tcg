@@ -1,6 +1,6 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import {ReactNode} from 'react'
-import css from './dropdown.module.scss'
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
+import {ReactNode} from "react"
+import css from "./dropdown.module.scss"
 
 type DropdownOptions = {
 	name: string
@@ -20,9 +20,15 @@ const Dropdown = ({button, label, options, action}: Props) => {
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild>{button}</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
-				<DropdownMenu.Content className={css.DropdownMenuContent} sideOffset={0} align="start">
+				<DropdownMenu.Content
+					className={css.DropdownMenuContent}
+					sideOffset={0}
+					align="start"
+				>
 					<DropdownMenu.Arrow className={css.DropdownMenuArrow} />
-					<DropdownMenu.Label className={css.DropdownMenuLabel}>{label}</DropdownMenu.Label>
+					<DropdownMenu.Label className={css.DropdownMenuLabel}>
+						{label}
+					</DropdownMenu.Label>
 					{options.map((option) => (
 						<DropdownMenu.RadioItem
 							value={option.name}
@@ -33,7 +39,7 @@ const Dropdown = ({button, label, options, action}: Props) => {
 							{option.icon && (
 								<img
 									src={option.icon}
-									style={{height: '1.5rem', width: '1.5rem'}}
+									style={{height: "1.5rem", width: "1.5rem"}}
 									alt={option.icon}
 								/>
 							)}

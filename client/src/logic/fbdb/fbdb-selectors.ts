@@ -1,4 +1,4 @@
-import {RootState} from 'store'
+import {RootState} from "store"
 
 export const getFbdb = (state: RootState) => {
 	return state.fbdb

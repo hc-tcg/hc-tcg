@@ -1,16 +1,21 @@
 import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	StatusEffectComponent,
+} from "../components"
+import {ComponentQuery} from "../components/query"
+import {PlayerEntity, RowEntity} from "../entities"
+import {
+	AttackDefs,
 	AttackHistory,
 	AttackHistoryType,
-	AttackDefs,
-	AttackType,
-	WeaknessType,
 	AttackLog,
+	AttackType,
 	AttackerEntity,
-} from '../types/attack'
-import {CardComponent, PlayerComponent, RowComponent, StatusEffectComponent} from '../components'
-import {GameModel} from './game-model'
-import {ComponentQuery} from '../components/query'
-import {PlayerEntity, RowEntity} from '../entities'
+	WeaknessType,
+} from "../types/attack"
+import {GameModel} from "./game-model"
 
 export class AttackModel {
 	private readonly game: GameModel
@@ -59,9 +64,9 @@ export class AttackModel {
 		this.attackerEntity = defs.attacker || null
 		this.targetEntity = defs.target || null
 		this.shouldIgnoreCards = defs.shouldIgnoreSlots || []
-		this.createWeakness = defs.createWeakness || 'never'
+		this.createWeakness = defs.createWeakness || "never"
 
-		if ('player' in defs) {
+		if ("player" in defs) {
 			this.playerEntity = defs.player
 		} else {
 			this.playerEntity = null
@@ -75,7 +80,11 @@ export class AttackModel {
 	// Helpers
 
 	/** Adds a change to the attack's history */
-	private addHistory(source: AttackerEntity, type: AttackHistoryType, value?: any) {
+	private addHistory(
+		source: AttackerEntity,
+		type: AttackHistoryType,
+		value?: any,
+	) {
 		this.history.push({
 			source,
 			type,
@@ -96,7 +105,7 @@ export class AttackModel {
 	get player(): PlayerComponent {
 		if (this.playerEntity) {
 			return this.game.components.getOrError(this.playerEntity)
-		} else if (this.attackerEntity === 'debug') {
+		} else if (this.attackerEntity === "debug") {
 			return this.game.currentPlayer
 		} else {
 			let card = this.game.components.get(this.attackerEntity) as CardComponent
@@ -116,7 +125,10 @@ export class AttackModel {
 
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
-		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
+		return Math.max(
+			this.damage * this.damageMultiplier - this.damageReduction,
+			0,
+		)
 	}
 
 	/** Returns the damage this attack will do */
@@ -139,7 +151,7 @@ export class AttackModel {
 
 	/** Returns the current attacker for this attack */
 	get attacker(): CardComponent | StatusEffectComponent | null {
-		if (this.attackerEntity === 'debug') return null
+		if (this.attackerEntity === "debug") return null
 		return this.game.components.get(this.attackerEntity)
 	}
 
@@ -155,7 +167,7 @@ export class AttackModel {
 		if (this.damageLocked) return this
 		this.damage += amount
 
-		this.addHistory(source, 'add_damage', amount)
+		this.addHistory(source, "add_damage", amount)
 
 		return this
 	}
@@ -165,7 +177,7 @@ export class AttackModel {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.addHistory(source, 'reduce_damage', amount)
+		this.addHistory(source, "reduce_damage", amount)
 
 		return this
 	}
@@ -175,27 +187,27 @@ export class AttackModel {
 		if (this.damageLocked) return this
 		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
 
-		this.addHistory(source, 'multiply_damage', multiplier)
+		this.addHistory(source, "multiply_damage", multiplier)
 		return this
 	}
 
 	/** Sets the attacker for this attack */
 	public setAttacker(attacker: AttackerEntity) {
-		this.addHistory(attacker, 'set_attacker', attacker)
+		this.addHistory(attacker, "set_attacker", attacker)
 		return this
 	}
 
 	/** Sets the target for this attack. Unlike redirect, this does not trigger Chainmail Armor. */
 	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.targetEntity = target
-		this.addHistory(sourceId, 'set_target', target)
+		this.addHistory(sourceId, "set_target", target)
 		return this
 	}
 
 	/** Redirect the attack to another hermit. Unlike setTarget, this will trigger Chainmail Armor. */
 	public redirect(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.targetEntity = target
-		this.addHistory(sourceId, 'redirect', target)
+		this.addHistory(sourceId, "redirect", target)
 		return this
 	}
 
@@ -207,7 +219,7 @@ export class AttackModel {
 	public lockDamage(source: AttackerEntity) {
 		this.damageLocked = true
 
-		this.addHistory(source, 'lock_damage')
+		this.addHistory(source, "lock_damage")
 		return this
 	}
 
@@ -232,7 +244,7 @@ export class AttackModel {
 	/** Gets the log entry for this attack*/
 	public getLog(values: AttackLog) {
 		if (this.log.length === 0) {
-			return ''
+			return ""
 		}
 		return this.consolidateLogs(values, this.log.length - 1)
 	}

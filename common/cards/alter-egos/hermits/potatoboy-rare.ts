@@ -1,48 +1,57 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {Hermit} from '../../base/types'
-import {hermit} from '../../base/defaults'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from "../../../components"
+import query from "../../../components/query"
+import {GameModel} from "../../../models/game-model"
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class PotatoBoyRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'potatoboy_rare',
+		id: "potatoboy_rare",
 		numericId: 135,
-		name: 'Potato Boy',
-		expansion: 'alter_egos',
-		palette: 'alter_egos',
-		background: 'alter_egos',
-		rarity: 'rare',
+		name: "Potato Boy",
+		expansion: "alter_egos",
+		palette: "alter_egos",
+		background: "alter_egos",
+		rarity: "rare",
 		tokens: 1,
-		type: 'farm',
+		type: "farm",
 		health: 270,
 		primary: {
-			name: 'Peace & Love',
-			cost: ['farm'],
+			name: "Peace & Love",
+			cost: ["farm"],
 			damage: 0,
-			power: 'Heal all Hermits that are adjacent to your active Hermit 40hp.',
+			power: "Heal all Hermits that are adjacent to your active Hermit 40hp.",
 		},
 		secondary: {
-			name: 'Volcarbo',
-			cost: ['farm', 'farm', 'any'],
+			name: "Volcarbo",
+			cost: ["farm", "farm", "any"],
 			damage: 90,
 			power: null,
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+				return
 			game.components
 				.filter(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.adjacent(query.row.active),
-					query.row.hasHermit
+					query.row.hasHermit,
 				)
 				.forEach((row) => {
 					row.heal(40)
@@ -51,7 +60,7 @@ class PotatoBoyRare extends Card {
 						player.entity,
 						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
 							component.props.name
-						}$`
+						}$`,
 					)
 				})
 		})

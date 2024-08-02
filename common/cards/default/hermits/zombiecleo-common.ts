@@ -1,27 +1,27 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class ZombieCleoCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'zombiecleo_common',
+		id: "zombiecleo_common",
 		numericId: 115,
-		name: 'Cleo',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Cleo",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
-		type: 'builder',
+		type: "builder",
 		health: 260,
 		primary: {
 			name: "It's Fine",
-			cost: ['builder'],
+			cost: ["builder"],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: 'Revenge',
-			cost: ['builder', 'builder'],
+			name: "Revenge",
+			cost: ["builder", "builder"],
 			damage: 80,
 			power: null,
 		},

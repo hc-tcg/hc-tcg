@@ -1,4 +1,4 @@
-import {RootState} from 'store'
+import {RootState} from "store"
 
 export const getSession = (state: RootState) => {
 	return state.session

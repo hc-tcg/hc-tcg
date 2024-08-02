@@ -1,24 +1,27 @@
-import {LocalCardInstance} from 'common/types/server-requests'
-import {slotPicked} from './game-actions'
-import {put, select} from 'typed-redux-saga'
-import {getGameState, getPlayerState} from './game-selectors'
-import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
-import {ChangeActiveHermitActionData} from 'common/types/action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
+import {HasHealth, isHermit, isItem} from "common/cards/base/types"
+import {ChangeActiveHermitActionData} from "common/types/action-data"
+import {LocalCardInstance} from "common/types/server-requests"
+import {hasEnoughEnergy} from "common/utils/attacks"
+import {put, select} from "typed-redux-saga"
+import {slotPicked} from "./game-actions"
+import {getGameState, getPlayerState} from "./game-selectors"
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
 /** Make the client look like a card has been placed in a slot */
-export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: LocalCardInstance) {
+export function* localPutCardInSlot(
+	action: SlotPickedAction,
+	selectedCard: LocalCardInstance,
+) {
 	let gameState = yield* select(getGameState)
-	if (!gameState) throw new Error('Can not find game state')
+	if (!gameState) throw new Error("Can not find game state")
 
 	let playerState = Object.values(gameState?.players || {}).find(
-		(player) => player.entity === action.payload.player
+		(player) => player.entity === action.payload.player,
 	)
-	if (!playerState) throw new Error('Player state not found.')
+	if (!playerState) throw new Error("Player state not found.")
 
 	let board = playerState?.board
 	let slot = action.payload.slot
@@ -27,25 +30,30 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 	let row = action.payload.row
 	let index = action.payload.index
 
-	if (slot.slotType === 'single_use') {
+	if (slot.slotType === "single_use") {
 		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
 	}
-	if (slot.slotType === 'hermit' && row !== undefined) {
+	if (slot.slotType === "hermit" && row !== undefined) {
 		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-		board.rows[row].health = (selectedCard as LocalCardInstance<HasHealth>).props.health
+		board.rows[row].health = (
+			selectedCard as LocalCardInstance<HasHealth>
+		).props.health
 
 		if (!board.activeRow) {
 			board.activeRow = board.rows[row].entity
 		}
 
 		// If we couldn't before, we can always end our turn after playing a hermit
-		gameState.turn.availableActions.push('END_TURN')
+		gameState.turn.availableActions.push("END_TURN")
 	}
-	if (slot.slotType === 'attach' && row !== undefined) {
+	if (slot.slotType === "attach" && row !== undefined) {
 		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
 	}
-	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
-		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
+	if (slot.slotType === "item" && row !== undefined && index !== undefined) {
+		board.rows[row].items[index] = {
+			slot: slot.slotEntity,
+			card: selectedCard as any,
+		}
 
 		// When we place a item card, lets update the available actions to include what we have enough
 		// energy for.
@@ -54,17 +62,21 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 			if (!item.card || !isItem(item.card.props)) return []
 			return item.card.props.energy
 		})
-		if (hermit.card && isHermit(hermit.card.props) && isItem(selectedCard.props)) {
+		if (
+			hermit.card &&
+			isHermit(hermit.card.props) &&
+			isItem(selectedCard.props)
+		) {
 			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy)) {
-				gameState.turn.availableActions.push('PRIMARY_ATTACK')
+				gameState.turn.availableActions.push("PRIMARY_ATTACK")
 			}
 			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy)) {
-				gameState.turn.availableActions.push('SECONDARY_ATTACK')
+				gameState.turn.availableActions.push("SECONDARY_ATTACK")
 			}
 		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }
 
 /** Make the client look like a card has been removed from the hand. */
@@ -74,10 +86,10 @@ export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
 	if (!localPlayerState?.hand) return
 
 	localPlayerState.hand = localPlayerState.hand.filter(
-		(card) => card.entity !== selectedCard.entity
+		(card) => card.entity !== selectedCard.entity,
 	)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }
 
 export function* localApplyEffect() {
@@ -87,17 +99,20 @@ export function* localApplyEffect() {
 		playerState.board.singleUseCardUsed = true
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }
 
 export function* localRemoveEffect() {
 	let playerState = yield* select(getPlayerState)
 
 	if (playerState?.board) {
-		playerState.board.singleUse = {slot: playerState?.board.singleUse.slot, card: null}
+		playerState.board.singleUse = {
+			slot: playerState?.board.singleUse.slot,
+			card: null,
+		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }
 
 export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
@@ -118,24 +133,25 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 		gameState.turn.availableActions = gameState.turn.availableActions.filter(
 			(action) =>
 				![
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_EFFECT_CARD',
-					'PLAY_SINGLE_USE_CARD',
-				].includes(action)
+					"SINGLE_USE_ATTACK",
+					"PRIMARY_ATTACK",
+					"SECONDARY_ATTACK",
+					"PLAY_HERMIT_CARD",
+					"PLAY_ITEM_CARD",
+					"PLAY_EFFECT_CARD",
+					"PLAY_SINGLE_USE_CARD",
+				].includes(action),
 		)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }
 
 /** Make the client look like the turn has ended */
 export function* localEndTurn() {
 	let localPlayerState = yield* select(getGameState)
 	if (localPlayerState?.turn) {
-		localPlayerState.turn.currentPlayerEntity = localPlayerState?.opponentPlayerEntity
+		localPlayerState.turn.currentPlayerEntity =
+			localPlayerState?.opponentPlayerEntity
 		localPlayerState.turn.currentPlayerId = localPlayerState?.opponentPlayerId
 		localPlayerState.turn.turnNumber++
 	}
@@ -147,5 +163,5 @@ export function* localEndTurn() {
 	// Slots are cleared at the end of the turn
 	yield* localRemoveEffect()
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: "UPDATE_GAME"})
 }

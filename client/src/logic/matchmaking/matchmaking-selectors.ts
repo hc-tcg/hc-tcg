@@ -1,4 +1,4 @@
-import {RootState} from 'store'
+import {RootState} from "store"
 
 export const getMatchmaking = (state: RootState) => {
 	return state.matchmaking

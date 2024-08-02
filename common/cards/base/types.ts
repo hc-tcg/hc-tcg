@@ -1,4 +1,7 @@
-import type {ComponentQuery} from '../../components/query'
+import type {SlotComponent} from "../../components"
+import type {ComponentQuery} from "../../components/query"
+import {ExpansionT} from "../../const/expansions"
+import {GameModel} from "../../models/game-model"
 import type {
 	CardCategoryT,
 	CardRarityT,
@@ -6,11 +9,8 @@ import type {
 	PlayCardLog,
 	TokenCostT,
 	TypeT,
-} from '../../types/cards'
-import type {SlotComponent} from '../../components'
-import type {WithoutFunctions} from '../../types/server-requests'
-import {GameModel} from '../../models/game-model'
-import {ExpansionT} from '../../const/expansions'
+} from "../../types/cards"
+import type {WithoutFunctions} from "../../types/server-requests"
 
 export type CardProps = {
 	id: string
@@ -34,22 +34,28 @@ export type Item = CardProps & {
 	energy: Array<TypeT>
 }
 
-export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
+export function isItem(
+	props: WithoutFunctions<CardProps>,
+): props is WithoutFunctions<Item>
 export function isItem(props: CardProps): props is Item
-export function isItem(props: CardProps | WithoutFunctions<CardProps> | null): props is Item {
-	return props !== null && 'item' in props
+export function isItem(
+	props: CardProps | WithoutFunctions<CardProps> | null,
+): props is Item {
+	return props !== null && "item" in props
 }
 
 export type HasHealth = CardProps & {
 	health: number
 }
 
-export function isHealth(props: WithoutFunctions<CardProps>): props is WithoutFunctions<HasHealth>
+export function isHealth(
+	props: WithoutFunctions<CardProps>,
+): props is WithoutFunctions<HasHealth>
 export function isHealth(props: CardProps): props is HasHealth
 export function isHealth(
-	props: CardProps | WithoutFunctions<CardProps> | null
+	props: CardProps | WithoutFunctions<CardProps> | null,
 ): props is HasHealth {
-	return props !== null && 'health' in props
+	return props !== null && "health" in props
 }
 
 export type Description = CardProps & {
@@ -57,13 +63,13 @@ export type Description = CardProps & {
 }
 
 export function hasDescription(
-	props: WithoutFunctions<CardProps>
+	props: WithoutFunctions<CardProps>,
 ): props is WithoutFunctions<Description>
 export function hasDescription(props: CardProps): props is Description
 export function hasDescription(
-	props: CardProps | WithoutFunctions<CardProps> | null
+	props: CardProps | WithoutFunctions<CardProps> | null,
 ): props is Description {
-	return props !== null && 'description' in props
+	return props !== null && "description" in props
 }
 
 export type Hermit = HasHealth & {
@@ -71,14 +77,18 @@ export type Hermit = HasHealth & {
 	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharoah'
-	background?: 'alter_egos' | 'advent_of_tcg'
+	palette?: "alter_egos" | "advent_of_tcg" | "pharoah"
+	background?: "alter_egos" | "advent_of_tcg"
 }
 
-export function isHermit(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Hermit>
+export function isHermit(
+	props: WithoutFunctions<CardProps>,
+): props is WithoutFunctions<Hermit>
 export function isHermit(props: CardProps): props is Hermit
-export function isHermit(props: CardProps | WithoutFunctions<CardProps> | null): props is Hermit {
-	return props !== null && 'hermit' in props
+export function isHermit(
+	props: CardProps | WithoutFunctions<CardProps> | null,
+): props is Hermit {
+	return props !== null && "hermit" in props
 }
 
 export type Attach = CardProps &
@@ -86,10 +96,14 @@ export type Attach = CardProps &
 		attachable: null
 	}
 
-export function isAttach(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Attach>
+export function isAttach(
+	props: WithoutFunctions<CardProps>,
+): props is WithoutFunctions<Attach>
 export function isAttach(props: CardProps): props is Attach
-export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null): props is Attach {
-	return props !== null && 'attachable' in props
+export function isAttach(
+	props: CardProps | WithoutFunctions<CardProps> | null,
+): props is Attach {
+	return props !== null && "attachable" in props
 }
 
 export type SingleUse = CardProps &
@@ -101,11 +115,11 @@ export type SingleUse = CardProps &
 	}
 
 export function isSingleUse(
-	props: WithoutFunctions<CardProps>
+	props: WithoutFunctions<CardProps>,
 ): props is WithoutFunctions<SingleUse>
 export function isSingleUse(props: CardProps): props is SingleUse
 export function isSingleUse(
-	props: CardProps | WithoutFunctions<CardProps> | null
+	props: CardProps | WithoutFunctions<CardProps> | null,
 ): props is SingleUse {
-	return props !== null && 'singleUse' in props
+	return props !== null && "singleUse" in props
 }

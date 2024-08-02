@@ -1,29 +1,29 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class FiveAMPearlCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'fiveampearl_common',
+		id: "fiveampearl_common",
 		numericId: 182,
-		name: '5AM Pearl',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "5AM Pearl",
+		expansion: "alter_egos_iii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 0,
-		type: 'pvp',
+		type: "pvp",
 		health: 280,
 		primary: {
-			name: 'Frozen Tickle',
-			cost: ['pvp'],
+			name: "Frozen Tickle",
+			cost: ["pvp"],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: 'Unhinged',
-			cost: ['pvp', 'pvp', 'any'],
+			name: "Unhinged",
+			cost: ["pvp", "pvp", "any"],
 			damage: 90,
 			power: null,
 		},

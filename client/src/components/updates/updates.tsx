@@ -1,10 +1,10 @@
-import AlertModal from 'components/alert-modal'
-import {toHTML} from 'discord-markdown'
-import {getUpdates} from 'logic/session/session-selectors'
-import {useRef, useEffect} from 'react'
-import {useSelector} from 'react-redux'
-import sanitize from 'sanitize-html'
-import css from './updates.module.scss'
+import AlertModal from "components/alert-modal"
+import {toHTML} from "discord-markdown"
+import {getUpdates} from "logic/session/session-selectors"
+import {useEffect, useRef} from "react"
+import {useSelector} from "react-redux"
+import sanitize from "sanitize-html"
+import css from "./updates.module.scss"
 
 type UpdatesModalProps = {
 	updatesOpen: boolean
@@ -16,8 +16,8 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 	const latestUpdateElement = useRef<HTMLLIElement>(null)
 	useEffect(() => {
 		latestUpdateElement.current?.scrollIntoView({
-			behavior: 'instant',
-			block: 'start',
+			behavior: "instant",
+			block: "start",
 		})
 	})
 
@@ -26,15 +26,18 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 			setOpen={updatesOpen}
 			onClose={() => {
 				setUpdatesOpen(false)
-				localStorage.setItem('latestUpdateView', (new Date().valueOf() / 1000).toFixed())
+				localStorage.setItem(
+					"latestUpdateView",
+					(new Date().valueOf() / 1000).toFixed(),
+				)
 			}}
 			cancelText="Close"
 			title="Latest updates"
 			action={() => {}}
 			description={
 				<ul className={css.updatesList}>
-					{updates['updates'] ? (
-						updates['updates'].map((text, i) => {
+					{updates["updates"] ? (
+						updates["updates"].map((text, i) => {
 							return (
 								<>
 									<li

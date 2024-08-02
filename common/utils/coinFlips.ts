@@ -1,18 +1,20 @@
-import {CardComponent, PlayerComponent} from '../components'
-import {DEBUG_CONFIG} from '../config'
-import {CoinFlipResult} from '../types/game-state'
+import {CardComponent, PlayerComponent} from "../components"
+import {DEBUG_CONFIG} from "../config"
+import {CoinFlipResult} from "../types/game-state"
 
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
-	currentPlayer: PlayerComponent | null = null
+	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = playerTossingCoin.game.components.get(playerTossingCoin.activeRowEntity)
+	const activeRowIndex = playerTossingCoin.game.components.get(
+		playerTossingCoin.activeRowEntity,
+	)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`
+			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
 		)
 		return []
 	}
@@ -20,14 +22,15 @@ export function flipCoin(
 	let coinFlips: Array<CoinFlipResult> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			coinFlips.push('heads')
+			coinFlips.push("heads")
 		} else {
-			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? "heads" : "tails"
 			coinFlips.push(coinFlip)
 		}
 	}
 
-	const coinFlipAmount = Math.floor(Math.random() * (2 + (coinFlips.length >= 1 ? 1 : 0))) + 4
+	const coinFlipAmount =
+		Math.floor(Math.random() * (2 + (coinFlips.length >= 1 ? 1 : 0))) + 4
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
@@ -36,7 +39,7 @@ export function flipCoin(
 	player.coinFlips.push({
 		card: card.entity,
 		opponentFlip: currentPlayer !== null,
-		name: !currentPlayer ? name : 'Opponent ' + name,
+		name: !currentPlayer ? name : "Opponent " + name,
 		tosses: coinFlips,
 		amount: coinFlipAmount,
 		delay: coinFlipAmount * 350 + 1000,

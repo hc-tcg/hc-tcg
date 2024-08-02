@@ -1,29 +1,29 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class LlamadadCommmon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'llamadad_common',
+		id: "llamadad_common",
 		numericId: 176,
-		name: 'Llamadad',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'common',
+		name: "Llamadad",
+		expansion: "alter_egos_iii",
+		background: "alter_egos",
+		palette: "alter_egos",
+		rarity: "common",
 		tokens: 0,
-		type: 'prankster',
+		type: "prankster",
 		health: 280,
 		primary: {
-			name: 'Fairness',
-			cost: ['prankster'],
+			name: "Fairness",
+			cost: ["prankster"],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: 'Vengeance',
-			cost: ['prankster', 'prankster'],
+			name: "Vengeance",
+			cost: ["prankster", "prankster"],
 			damage: 80,
 			power: null,
 		},

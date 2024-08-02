@@ -1,14 +1,14 @@
-import React, {ReactNode} from 'react'
-import css from './modal.module.scss'
 import {
 	Dialog,
-	DialogPortal,
-	DialogOverlay,
-	DialogContent,
-	DialogTitle,
 	DialogClose,
-} from '@radix-ui/react-dialog'
-import cn from 'classnames'
+	DialogContent,
+	DialogOverlay,
+	DialogPortal,
+	DialogTitle,
+} from "@radix-ui/react-dialog"
+import cn from "classnames"
+import React, {ReactNode} from "react"
+import css from "./modal.module.scss"
 
 type Props = {
 	children: React.ReactNode
@@ -24,7 +24,7 @@ function Modal({children, description, closeModal, title, centered}: Props) {
 	}
 	return (
 		<Dialog onOpenChange={closeModal} defaultOpen>
-			<DialogPortal container={document.getElementById('modal')}>
+			<DialogPortal container={document.getElementById("modal")}>
 				<DialogOverlay className={css.overlay} />
 				<DialogContent
 					className={cn(css.modal, {[css.center]: centered})}
@@ -45,7 +45,7 @@ function Modal({children, description, closeModal, title, centered}: Props) {
 }
 
 type ETNProps = {
-	icon: '!' | 'i'
+	icon: "!" | "i"
 	children: ReactNode
 }
 

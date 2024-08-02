@@ -1,10 +1,11 @@
-import {PlayCardLog} from '../../types/cards'
-import {GameModel} from '../../models/game-model'
-import {FormattedTextNode, formatText} from '../../utils/formatting'
-import query from '../../components/query'
-import {HermitAttackType} from '../../types/attack'
-import {AttackModel} from '../../models/attack-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../components'
+import {CardComponent, ObserverComponent, RowComponent} from "../../components"
+import query from "../../components/query"
+import {AttackModel} from "../../models/attack-model"
+import {GameModel} from "../../models/game-model"
+import {HermitAttackType} from "../../types/attack"
+import {PlayCardLog} from "../../types/cards"
+import {DefaultDictionary} from "../../types/game-state"
+import {FormattedTextNode, formatText} from "../../utils/formatting"
 import {
 	Attach,
 	CardProps,
@@ -17,15 +18,14 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from './types'
-import {DefaultDictionary} from '../../types/game-state'
+} from "./types"
 
 export type CanAttachError =
-	| 'INVALID_PLAYER'
-	| 'INVALID_SLOT'
-	| 'UNMET_CONDITION'
-	| 'UNMET_CONDITION_SILENT'
-	| 'UNKNOWN_ERROR'
+	| "INVALID_PLAYER"
+	| "INVALID_SLOT"
+	| "UNMET_CONDITION"
+	| "UNMET_CONDITION_SILENT"
+	| "UNKNOWN_ERROR"
 
 export type CanAttachResult = Array<CanAttachError>
 
@@ -64,14 +64,22 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public onDetach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		// default is do nothing
 	}
 
@@ -91,22 +99,26 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this: Card<Hermit>,
 		game: GameModel,
 		component: CardComponent,
-		hermitAttackType: HermitAttackType
+		hermitAttackType: HermitAttackType,
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.components.findEntity(RowComponent, query.row.opponentPlayer, query.row.active),
+			target: game.components.findEntity(
+				RowComponent,
+				query.row.opponentPlayer,
+				query.row.active,
+			),
 			type: hermitAttackType,
-			createWeakness: 'ifWeak',
+			createWeakness: "ifWeak",
 			log: (values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ", then " : ""} attacked ${
 					values.target
 				} with ${values.attackName} for ${values.damage} damage`,
 		})
 
-		if (attack.type === 'primary') {
+		if (attack.type === "primary") {
 			attack.addDamage(component.entity, this.props.primary.damage)
-		} else if (attack.type === 'secondary') {
+		} else if (attack.type === "secondary") {
 			attack.addDamage(component.entity, this.props.secondary.damage)
 		}
 
@@ -114,7 +126,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	}
 
 	public hasAttacks(this: Card<HasHealth>): this is Card<Props & Hermit> {
-		return 'primary' in this.props && 'secondary' in this.props
+		return "primary" in this.props && "secondary" in this.props
 	}
 
 	public isAttach(): this is Card<CardProps & Attach> {
@@ -125,13 +137,15 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isSingleUse(this.props)
 	}
 
-	public getFormattedDescription(this: Card<Attach | SingleUse>): FormattedTextNode {
+	public getFormattedDescription(
+		this: Card<Attach | SingleUse>,
+	): FormattedTextNode {
 		return formatText(this.props.description)
 	}
 
 	/** Gets the log entry for this attack*/
 	public getLog(values: PlayCardLog) {
-		if (!this.props.log) return ''
+		if (!this.props.log) return ""
 		return this.props.log(values)
 	}
 }

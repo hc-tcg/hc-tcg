@@ -1,12 +1,16 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
-import {CardComponent} from '../components'
+import {CardComponent} from "../components"
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from "./status-effect"
 
 class DyedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		icon: 'dyed',
-		name: 'Dyed',
-		description: 'Items attached to this Hermit become any type.',
+		icon: "dyed",
+		name: "Dyed",
+		description: "Items attached to this Hermit become any type.",
 		applyCondition: (_game, card) =>
 			card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
 	}

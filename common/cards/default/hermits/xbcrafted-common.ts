@@ -1,27 +1,27 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class XBCraftedCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'xbcrafted_common',
+		id: "xbcrafted_common",
 		numericId: 109,
-		name: 'xB',
-		expansion: 'default',
-		rarity: 'common',
+		name: "xB",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
-		type: 'pvp',
+		type: "pvp",
 		health: 270,
 		primary: {
-			name: 'Aww Yeah',
-			cost: ['pvp'],
+			name: "Aww Yeah",
+			cost: ["pvp"],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: 'Blam!',
-			cost: ['pvp', 'pvp'],
+			name: "Blam!",
+			cost: ["pvp", "pvp"],
 			damage: 80,
 			power: null,
 		},

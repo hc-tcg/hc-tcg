@@ -1,6 +1,6 @@
-import {ComponentQuery} from '../components/query'
-import {Entity, newEntity} from '../entities'
-import {GameModel} from '../models/game-model'
+import {ComponentQuery} from "../components/query"
+import {Entity, newEntity} from "../entities"
+import {GameModel} from "../models/game-model"
 
 export type Component = {
 	entity: Entity<any>
@@ -46,10 +46,14 @@ export default class ComponentTable {
 
 	/** Add a entity linked to a component and return the ID of the value */
 	public new<T extends Component, Args extends Array<any>>(
-		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
+		newValue: new (game: GameModel, id: T["entity"], ...args: Args) => T,
 		...args: Args
 	): T {
-		const value = new newValue(this.game, newEntity<T['entity']>(newValue.name), ...args)
+		const value = new newValue(
+			this.game,
+			newEntity<T["entity"]>(newValue.name),
+			...args,
+		)
 		this.data[value.entity] = value
 		return value
 	}
@@ -67,13 +71,15 @@ export default class ComponentTable {
 	): Array<T> {
 		return Object.values(this.data)
 			.filter((x) => x instanceof type)
-			.filter((value) => predicates.every((predicate) => predicate(this.game, value as T))) as any
+			.filter((value) =>
+				predicates.every((predicate) => predicate(this.game, value as T)),
+			) as any
 	}
 
 	public filterEntities<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
-	): Array<T['entity']> {
+	): Array<T["entity"]> {
 		return this.filter(type, ...predicates)?.map((x) => x.entity)
 	}
 
@@ -91,7 +97,7 @@ export default class ComponentTable {
 	public findEntity<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
-	): T['entity'] | null {
+	): T["entity"] | null {
 		return this.find(type, ...predicates)?.entity || null
 	}
 

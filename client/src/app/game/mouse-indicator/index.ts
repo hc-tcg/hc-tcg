@@ -1,1 +1,1 @@
-export {default} from './mouse-indicator'
+export {default} from "./mouse-indicator"

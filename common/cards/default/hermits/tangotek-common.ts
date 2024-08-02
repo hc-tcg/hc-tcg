@@ -1,27 +1,27 @@
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import Card from "../../base/card"
+import {hermit} from "../../base/defaults"
+import {Hermit} from "../../base/types"
 
 class TangoTekCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: 'tangotek_common',
+		id: "tangotek_common",
 		numericId: 94,
-		name: 'Tango',
-		expansion: 'default',
-		rarity: 'common',
+		name: "Tango",
+		expansion: "default",
+		rarity: "common",
 		tokens: 0,
-		type: 'redstone',
+		type: "redstone",
 		health: 300,
 		primary: {
-			name: 'Thing-ificator',
-			cost: ['redstone'],
+			name: "Thing-ificator",
+			cost: ["redstone"],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: 'Hat Trick',
-			cost: ['redstone', 'any'],
+			name: "Hat Trick",
+			cost: ["redstone", "any"],
 			damage: 70,
 			power: null,
 		},
