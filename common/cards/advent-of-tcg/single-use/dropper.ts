@@ -19,7 +19,7 @@ class Dropper extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent): void {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {

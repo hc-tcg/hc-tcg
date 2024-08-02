@@ -40,6 +40,19 @@ class ArmorStand extends Card {
 				query.slot.rowIs(component.slot.row?.entity),
 			)
 		})
+
+		observer.subscribe(component.hooks.onChangeSlot, (slot) => {
+			if (!slot.inRow()) return
+			game.components
+				.filter(
+					CardComponent,
+					query.card.slot(query.some(query.slot.item, query.slot.attach)),
+					query.card.rowEntity(slot.row.entity),
+				)
+				.forEach((card) => {
+					card.discard()
+				})
+		})
 	}
 }
 

@@ -45,6 +45,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	turnedOver: boolean
 
+	hooks: {
+		onChangeSlot: GameHook<(slot: SlotComponent) => void>
+	}
+
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
@@ -70,6 +74,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 
 		this.turnedOver = false
+
+		this.hooks = {
+			onChangeSlot: new GameHook(),
+		}
 
 		this.card.onCreate(this.game, this)
 	}
@@ -159,6 +167,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.card.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
+
+		this.hooks.onChangeSlot.call(component)
 	}
 
 	/** Move this card to the hand

@@ -19,7 +19,7 @@ class LightningRod extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
+			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after use. Only one of these cards can be attached to your Hermits at a time.",
 		attachCondition: query.every(
 			attach.attachCondition,
 			query.not(
@@ -52,7 +52,7 @@ class LightningRod extends Card {
 			used = true
 		})
 
-		observer.subscribe(opponentPlayer.hooks.afterAttack, (_attack) => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (!used) return
 			component.discard()
 		})
