@@ -30,6 +30,12 @@ function* playCardSaga(
 		)
 	}
 
+	// You are not supposed to be able to select a slot with a card in it, but network issues can allow
+	// this to happen.
+	if (pickedSlot.getCard()) {
+		return 'FAILURE_INVALID_DATA'
+	}
+
 	const row = pickedSlot.row
 	const rowIndex = pickedSlot.index
 	const player = pickedSlot.player
