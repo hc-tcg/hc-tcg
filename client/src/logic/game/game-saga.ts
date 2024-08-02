@@ -38,7 +38,7 @@ import {
 } from './local-state'
 import {PlayerEntity} from 'common/entities'
 
-function* sendGameMsg(type: string, entity: PlayerEntity, payload: any) {
+function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 	yield* sendMsg('TURN_ACTION', {
 		type,
 		playerEntity: entity,
@@ -65,26 +65,26 @@ function* actionSaga(playerEntity: PlayerEntity): SagaIterator {
 
 	if (turnAction.playCard) {
 		// This is updated for the client in slot-saga
-		yield call(sendGameMsg, turnAction.playCard.type, playerEntity, turnAction.playCard.payload)
+		yield call(sendTurnAction, turnAction.playCard.type, playerEntity, turnAction.playCard.payload)
 	} else if (turnAction.applyEffect) {
 		yield* localApplyEffect()
-		yield call(sendGameMsg, 'APPLY_EFFECT', playerEntity, turnAction.applyEffect.payload)
+		yield call(sendTurnAction, 'APPLY_EFFECT', playerEntity, turnAction.applyEffect.payload)
 	} else if (turnAction.removeEffect) {
 		yield* localRemoveEffect()
-		yield call(sendGameMsg, 'REMOVE_EFFECT', playerEntity, {})
+		yield call(sendTurnAction, 'REMOVE_EFFECT', playerEntity, {})
 	} else if (turnAction.pickCard) {
-		yield call(sendGameMsg, 'PICK_REQUEST', playerEntity, turnAction.pickCard.payload)
+		yield call(sendTurnAction, 'PICK_REQUEST', playerEntity, turnAction.pickCard.payload)
 	} else if (turnAction.customModal) {
-		yield call(sendGameMsg, 'MODAL_REQUEST', playerEntity, turnAction.customModal.payload)
+		yield call(sendTurnAction, 'MODAL_REQUEST', playerEntity, turnAction.customModal.payload)
 	} else if (turnAction.attack) {
-		yield call(sendGameMsg, turnAction.attack.type, playerEntity, turnAction.attack.payload)
+		yield call(sendTurnAction, turnAction.attack.type, playerEntity, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
 		yield* localEndTurn()
-		yield call(sendGameMsg, 'END_TURN', playerEntity, {})
+		yield call(sendTurnAction, 'END_TURN', playerEntity, {})
 	} else if (turnAction.changeActiveHermit) {
 		yield* localChangeActiveHermit(turnAction.changeActiveHermit)
 		yield call(
-			sendGameMsg,
+			sendTurnAction,
 			'CHANGE_ACTIVE_HERMIT',
 			playerEntity,
 			turnAction.changeActiveHermit.payload
