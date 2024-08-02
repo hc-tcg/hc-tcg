@@ -9,12 +9,12 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {STRENGTHS} from 'common/const/strengths'
-import {CardEntity, newEntity} from 'common/entities'
+import {CardEntity, PlayerEntity, newEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
@@ -354,7 +354,6 @@ function getLocalPlayerState(
 	}
 
 	const localPlayerState: LocalPlayerState = {
-		id: playerState.id,
 		entity: playerState.entity,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
@@ -370,11 +369,11 @@ function getLocalPlayerState(
 
 export function getLocalGameState(
 	game: GameModel,
-	player: PlayerModel,
+	viewer: ViewerComponent,
 ): LocalGameState | null {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(_game, playerState) => playerState.id == player.id,
+		(_game, player) => player.entity == viewer.playerOnLeft.entity,
 	)
 
 	if (!playerState)
@@ -382,13 +381,19 @@ export function getLocalGameState(
 
 	const opponentState = playerState.opponentPlayer
 
-	const isCurrentPlayer = game.currentPlayer.id === player.id
+	let isCurrentPlayer =
+		!viewer.spectator &&
+		viewer.playerOnLeft.entity === game.currentPlayer.entity
+
 	const turnState = game.state.turn
 
 	// convert player states
-	const players: Record<PlayerId, LocalPlayerState> = {}
-	players[player.id] = getLocalPlayerState(game, playerState)
-	players[opponentState.id] = getLocalPlayerState(game, opponentState)
+	const players: Record<PlayerEntity, LocalPlayerState> = {}
+	players[viewer.playerOnLeft.entity] = getLocalPlayerState(game, playerState)
+	players[viewer.playerOnRight.entity] = getLocalPlayerState(
+		game,
+		opponentState,
+	)
 
 	// Pick message or modal id
 	playerState.pickableSlots = null
@@ -398,10 +403,10 @@ export function getLocalGameState(
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
 
-	if (currentModalRequest?.playerId === player.id) {
+	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
 		currentModalData = getLocalModalData(game, currentModalRequest.data)
-	} else if (currentPickRequest?.playerId === player.id) {
+	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
@@ -410,13 +415,13 @@ export function getLocalGameState(
 			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
-		if (currentPickRequest.playerId == player.id) {
+		if (currentPickRequest.player == viewer.playerOnLeft.entity) {
 			playerState.pickableSlots = game.getPickableSlots(
 				currentPickRequest.canPick,
 			)
 		}
 		// We also want to highlight the slots for the player that must select a slot
-		if (currentPickRequest.playerId == player.id) {
+		if (currentPickRequest.player == viewer.playerOnLeft.entity) {
 			playerState.pickableSlots = game.getPickableSlots(
 				currentPickRequest.canPick,
 			)
@@ -428,7 +433,6 @@ export function getLocalGameState(
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
-			currentPlayerId: game.currentPlayer.id,
 			currentPlayerEntity: game.currentPlayer.entity,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
@@ -463,11 +467,10 @@ export function getLocalGameState(
 			)
 			.map((card) => getLocalCard(game, card)),
 
-		// ids
-		playerId: player.id,
-		opponentPlayerId: opponentState.id,
-		playerEntity: players[player.id].entity,
-		opponentPlayerEntity: players[opponentState.id].entity,
+		// The entity of the player on the left of the screen
+		playerEntity: players[viewer.playerOnLeft.entity].entity,
+		// The entity for the player on the the right of the screen
+		opponentPlayerEntity: players[viewer.playerOnRight.entity].entity,
 
 		lastActionResult: game.state.lastActionResult,
 

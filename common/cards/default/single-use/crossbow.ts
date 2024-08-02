@@ -57,7 +57,7 @@ class Crossbow extends Card {
 				let targetsRemaining = totalTargets
 
 				const pickRequest = {
-					playerId: player.id,
+					player: player.entity,
 					id: component.entity,
 					onResult(pickedSlot: SlotComponent) {
 						if (!pickedSlot.inRow()) return

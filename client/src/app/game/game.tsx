@@ -214,17 +214,20 @@ function Game() {
 	useEffect(() => {
 		if (
 			gameState.turn.turnNumber === 1 ||
-			gameState.turn.currentPlayerId === gameState.playerId
+			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.turn.currentPlayerId])
+	}, [gameState.turn.currentPlayerEntity])
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
 		const someCustom =
 			gameState.currentPickMessage || gameState.currentModalData
-		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
+		if (
+			someCustom &&
+			gameState.turn.currentPlayerEntity !== gameState.playerEntity
+		) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])

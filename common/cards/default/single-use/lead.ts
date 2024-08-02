@@ -53,7 +53,7 @@ class Lead extends Card {
 		let itemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
@@ -63,7 +63,7 @@ class Lead extends Card {
 		})
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			canPick: this.secondPickCondition,

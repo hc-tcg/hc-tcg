@@ -87,7 +87,6 @@ export type TurnState = {
 
 export type LocalTurnState = {
 	turnNumber: number
-	currentPlayerId: PlayerId
 	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
@@ -157,7 +156,6 @@ export type GameEndOutcomeT =
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
-	id: PlayerId
 	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
@@ -184,8 +182,6 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerId
-	opponentPlayerId: PlayerId
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
@@ -201,7 +197,7 @@ export type LocalGameState = {
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
 
-	players: Record<PlayerId, LocalPlayerState>
+	players: Record<PlayerEntity, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number
@@ -210,7 +206,10 @@ export type LocalGameState = {
 }
 
 export type Message = {
-	sender: PlayerId
+	/** Chat messages are tied to the player id, while battle log messages are tied to entity.
+	 * This allows us to seperate the concept of players and viewers.
+	 */
+	sender: PlayerId | PlayerEntity
 	systemMessage: boolean
 	message: FormattedTextNode
 	createdAt: number

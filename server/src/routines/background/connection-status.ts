@@ -1,3 +1,4 @@
+import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
@@ -22,8 +23,18 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		game.state.timer.turnRemaining = remainingTime + graceTime
 	}
 
+	let viewer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) => viewer.playerId === player.id,
+	)
+
+	if (!viewer) {
+		console.error('Player tried to connect with invalid player id')
+		return
+	}
+
 	const payload = {
-		localGameState: getLocalGameState(game, player),
+		localGameState: getLocalGameState(game, viewer),
 		order: game.getPlayerIds(),
 	}
 	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)

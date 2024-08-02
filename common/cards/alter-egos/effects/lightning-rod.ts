@@ -46,7 +46,7 @@ class LightningRod extends Card {
 			if (!component.slot?.onBoard() || !component.slot.row) return
 			if (attack.type === 'status-effect' || attack.isBacklash) return
 			if (game.currentPlayer.entity !== opponentPlayer.entity) return
-			if (attack.target?.player.id !== player.id) return
+			if (attack.target?.player.entity !== player.entity) return
 
 			attack.redirect(component.entity, component.slot.row?.entity)
 			used = true

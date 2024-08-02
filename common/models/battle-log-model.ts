@@ -75,13 +75,14 @@ export class BattleLogModel {
 		while (this.logMessageQueue.length > 0) {
 			const firstEntry = this.logMessageQueue.shift()
 			if (!firstEntry) return
-			let playerId = this.game.components.get(firstEntry.player)?.id
-			if (!playerId) continue
+
+			let playerEntity = this.game.components.get(firstEntry.player)?.entity
+			if (!playerEntity) continue
 
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
-				sender: playerId,
+				sender: playerEntity,
 				systemMessage: true,
 			})
 		}
@@ -196,7 +197,7 @@ export class BattleLogModel {
 			const attackerInfo = attack.attacker
 
 			const targetFormatting =
-				subAttack.target.player.id === attack.player.id ? 'p' : 'o'
+				subAttack.target.player.entity === attack.player.entity ? 'p' : 'o'
 
 			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
 			const weaknessDamage =
@@ -322,7 +323,7 @@ export class BattleLogModel {
 		this.game.chat.push({
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.id,
+			sender: this.game.opponentPlayer.entity,
 			systemMessage: true,
 		})
 

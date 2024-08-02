@@ -55,7 +55,7 @@ class DungeonTangoRare extends Card {
 			if (i == player.pile.length) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: 'Choose an item card to discard',
 				canPick: slot.every(

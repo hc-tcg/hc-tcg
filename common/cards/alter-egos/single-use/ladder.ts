@@ -42,7 +42,7 @@ class Ladder extends Card {
 		const {player} = component
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			canPick: this.pickCondition,

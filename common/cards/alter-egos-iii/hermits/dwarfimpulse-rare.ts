@@ -75,7 +75,7 @@ class DwarfImpulseRare extends Card {
 				if (!goldenAxeEntity) return
 
 				game.addPickRequest({
-					playerId: player.id,
+					player: player.entity,
 					id: component.entity,
 					message:
 						"Pick one one of your opponent's AFK Hermits to target with Golden Axe",

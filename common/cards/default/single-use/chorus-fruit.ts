@@ -59,7 +59,7 @@ class ChorusFruit extends Card {
 			applySingleUse(game, component.slot)
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick one of your Hermits to become the new active Hermit',
 				canPick: query.every(

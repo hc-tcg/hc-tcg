@@ -2,8 +2,8 @@ import {PlayerEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
 import {useSelector} from 'react-redux'
 import Actions from '../actions/actions'
 import MobileActions from '../actions/mobile-actions'
@@ -25,9 +25,8 @@ type Props = {
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, localGameState}: Props) {
 	const settings = useSelector(getSettings)
-	const playerId = useSelector(getPlayerId)
-	const player = localGameState.players[playerId]
-	const opponent = localGameState.players[localGameState.opponentPlayerId]
+	const player = useSelector(getPlayerState)
+	const opponent = useSelector(getOpponentState)
 	const side = settings.gameSide
 	const leftPlayer = side === 'Left' ? player : opponent
 	const rightPlayer = side === 'Right' ? player : opponent
@@ -59,7 +58,7 @@ function Board({onClick, localGameState}: Props) {
 						<BoardRow
 							key={row.entity}
 							player={
-								direction === 'left' ? leftPlayer.entity : rightPlayer.entity
+								direction === 'left' ? leftPlayer?.entity : rightPlayer.entity
 							}
 							rowState={row}
 							active={row.entity === player.board.activeRow}

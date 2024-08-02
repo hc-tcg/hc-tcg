@@ -59,7 +59,7 @@ class WaterBucket extends Card {
 		const {player, opponentPlayer} = component
 		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick one of your Hermits',
 				canPick: query.every(

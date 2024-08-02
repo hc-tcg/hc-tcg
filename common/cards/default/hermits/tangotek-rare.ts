@@ -67,7 +67,7 @@ class TangoTekRare extends Card {
 				game.components.exists(SlotComponent, opponentInactiveRowsPickCondition)
 			) {
 				game.addPickRequest({
-					playerId: opponentPlayer.id,
+					player: opponentPlayer.entity,
 					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: opponentInactiveRowsPickCondition,
@@ -97,7 +97,7 @@ class TangoTekRare extends Card {
 				canChange
 			) {
 				game.addPickRequest({
-					playerId: player.id,
+					player: player.entity,
 					id: component.entity,
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: playerInactiveRowsPickCondition,

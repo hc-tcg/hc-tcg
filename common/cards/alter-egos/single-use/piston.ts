@@ -58,7 +58,7 @@ class Piston extends Card {
 		let pickedItemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: this.firstPickCondition,
@@ -69,7 +69,7 @@ class Piston extends Card {
 		})
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message:
 				'Pick an empty item slot on one of your adjacent active or AFK Hermits',

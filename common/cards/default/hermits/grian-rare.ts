@@ -85,7 +85,7 @@ class GrianRare extends Card {
 			)
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

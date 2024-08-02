@@ -11,7 +11,7 @@ import {
 	getCurrentPickMessage,
 	getGameState,
 	getPlayerState,
-	getPlayerStateById,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useDispatch, useSelector} from 'react-redux'
@@ -27,7 +27,7 @@ type Props = {
 
 const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(
-		getPlayerStateById(localGameState.turn.currentPlayerId),
+		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)

@@ -1,4 +1,4 @@
-import {PlayerComponent, SlotComponent} from 'common/components'
+import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
@@ -44,10 +44,7 @@ function* pickRequestSaga(
 	if (card) card.turnedOver = false
 
 	pickRequest.onResult(slotInfo)
-	let player = game.components.find(
-		PlayerComponent,
-		(_game, player) => player.id === pickRequest.playerId,
-	)
+	let player = game.components.get(pickRequest.player)
 	if (player) player.pickableSlots = null
 
 	// We completed this pick request, remove it
@@ -58,7 +55,7 @@ function* pickRequestSaga(
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 			payload: {
-				playerId: game.currentPlayer.id,
+				player: game.currentPlayer.entity,
 			},
 		}
 		const attackResult = yield* call(attackSaga, game, turnAction, false)

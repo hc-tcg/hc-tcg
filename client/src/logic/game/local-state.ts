@@ -152,7 +152,6 @@ export function* localEndTurn() {
 	if (localPlayerState?.turn) {
 		localPlayerState.turn.currentPlayerEntity =
 			localPlayerState?.opponentPlayerEntity
-		localPlayerState.turn.currentPlayerId = localPlayerState?.opponentPlayerId
 		localPlayerState.turn.turnNumber++
 	}
 

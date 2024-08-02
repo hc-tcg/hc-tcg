@@ -69,7 +69,7 @@ class SolidaritygamingRare extends Card {
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an AFK Hermit to protect',
 				canPick: pickCondition,

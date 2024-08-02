@@ -67,7 +67,7 @@ class PrincessGemRare extends Card {
 			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,
