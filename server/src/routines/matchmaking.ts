@@ -6,6 +6,7 @@ import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-cond
 import {getLocalGameState} from '../utils/state-gen'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
+import {PlayerComponent} from 'common/components'
 
 export type ClientMessage = {
 	type: string
@@ -55,7 +56,7 @@ function* gameManager(game: GameModel) {
 				if (!game.endInfo.reason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					playerIds.forEach((playerId) => (gameState.players[playerId].coinFlips = []))
+					game.components.filter(PlayerComponent).forEach((player) => (player.coinFlips = []))
 				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
