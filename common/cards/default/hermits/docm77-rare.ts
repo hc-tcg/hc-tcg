@@ -1,5 +1,5 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -26,15 +26,21 @@ class Docm77Rare extends Card {
 			name: 'World Eater',
 			cost: ['farm', 'farm'],
 			damage: 80,
-			power: 'Flip a coin.\nIf heads, attack damage doubles.\nIf tails, attack damage is halved.',
+			power:
+				'Flip a coin.\nIf heads, attack damage doubles.\nIf tails, attack damage is halved.',
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			if (!(attack.attacker instanceof CardComponent)) return
 
 			const coinFlip = flipCoin(player, attack.attacker)

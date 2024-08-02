@@ -1,17 +1,17 @@
-import {GameModel} from '../../../models/game-model'
-import {applySingleUse} from '../../../utils/board'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {attach, singleUse} from '../../base/defaults'
 import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import {Attach, SingleUse} from '../../base/types'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
+import {applySingleUse} from '../../../utils/board'
 import String from '../../alter-egos/effects/string'
+import Card from '../../base/card'
+import {attach, singleUse} from '../../base/defaults'
+import {Attach, SingleUse} from '../../base/types'
 
 class WaterBucket extends Card {
 	props: Attach & SingleUse = {
@@ -26,7 +26,10 @@ class WaterBucket extends Card {
 		tokens: 0,
 		description:
 			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
-		attachCondition: query.some(attach.attachCondition, singleUse.attachCondition),
+		attachCondition: query.some(
+			attach.attachCondition,
+			singleUse.attachCondition,
+		),
 		log: (values) => {
 			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`
@@ -34,18 +37,25 @@ class WaterBucket extends Card {
 		},
 	}
 
-	private static removeFireEffect(game: GameModel, slot: SlotComponent | null | undefined) {
+	private static removeFireEffect(
+		game: GameModel,
+		slot: SlotComponent | null | undefined,
+	) {
 		if (!slot) return
 		game.components
 			.filter(
 				StatusEffectComponent,
 				query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
-				query.effect.is(FireEffect)
+				query.effect.is(FireEffect),
 			)
 			.forEach((effect) => effect.remove())
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
@@ -55,7 +65,7 @@ class WaterBucket extends Card {
 				canPick: query.every(
 					query.slot.currentPlayer,
 					query.slot.hermit,
-					query.not(query.slot.empty)
+					query.not(query.slot.empty),
 				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
@@ -66,7 +76,7 @@ class WaterBucket extends Card {
 						.filter(
 							CardComponent,
 							query.card.slot(query.slot.rowIs(pickedSlot.row.entity)),
-							query.card.is(String)
+							query.card.is(String),
 						)
 						.forEach((card) => card.discard())
 

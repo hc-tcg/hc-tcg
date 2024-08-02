@@ -27,7 +27,7 @@ export type ViewerEntity = Entity<ViewerComponent>
 
 /** Create a new entity */
 export function newEntity<T>(entityName: string): Entity<T> {
-	return `${entityName}-${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(
-		16
-	)}` as Entity<T>
+	return `${entityName}-${Math.floor(
+		Math.random() * Number.MAX_SAFE_INTEGER,
+	).toString(16)}` as Entity<T>
 }

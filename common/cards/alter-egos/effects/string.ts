@@ -21,7 +21,7 @@ class String extends Card {
 			query.slot.row(query.row.hasHermit),
 			query.actionAvailable('PLAY_EFFECT_CARD'),
 			query.some(query.slot.attach, query.slot.item),
-			query.not(query.slot.frozen)
+			query.not(query.slot.frozen),
 		),
 		log: (values) =>
 			`$o{${values.opponent}|You}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`,

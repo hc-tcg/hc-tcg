@@ -1,11 +1,11 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {CardEntity, RowEntity} from '../../../entities'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
 import GoldenAxe from '../../default/single-use/golden-axe'
-import {CardEntity, RowEntity} from '../../../entities'
 
 class DwarfImpulseRare extends Card {
 	props: Hermit = {
@@ -37,44 +37,60 @@ class DwarfImpulseRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let goldenAxeRedirect: RowEntity | null = null
 		let goldenAxeEntity: CardEntity | null = null
 
-		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
-			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
-
-			if (
-				!game.components.exists(
-					CardComponent,
-					query.card.opponentPlayer,
-					query.card.slot(query.slot.hermit),
-					query.not(query.card.active)
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(activeInstance, hermitAttackType) => {
+				if (
+					activeInstance.entity !== component.entity ||
+					hermitAttackType !== 'secondary'
 				)
-			)
-				return
+					return
 
-			goldenAxeEntity = game.components.findEntity(
-				CardComponent,
-				query.card.slot(query.slot.singleUse),
-				query.card.is(GoldenAxe)
-			)
+				if (
+					!game.components.exists(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.slot(query.slot.hermit),
+						query.not(query.card.active),
+					)
+				)
+					return
 
-			if (!goldenAxeEntity) return
+				goldenAxeEntity = game.components.findEntity(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+					query.card.is(GoldenAxe),
+				)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Pick one one of your opponent's AFK Hermits to target with Golden Axe",
-				canPick: query.every(query.slot.opponent, query.slot.hermit, query.not(query.slot.empty)),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					goldenAxeRedirect = pickedSlot.rowEntity
-				},
-			})
-		})
+				if (!goldenAxeEntity) return
+
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message:
+						"Pick one one of your opponent's AFK Hermits to target with Golden Axe",
+					canPick: query.every(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						goldenAxeRedirect = pickedSlot.rowEntity
+					},
+				})
+			},
+		)
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!attack.isAttacker(goldenAxeEntity) || !goldenAxeRedirect) return
@@ -83,8 +99,12 @@ class DwarfImpulseRare extends Card {
 
 			attack.shouldIgnoreCards.push(
 				query.card.slot(
-					query.every(query.slot.opponent, query.slot.attach, query.not(query.slot.active))
-				)
+					query.every(
+						query.slot.opponent,
+						query.slot.attach,
+						query.not(query.slot.active),
+					),
+				),
 			)
 		})
 

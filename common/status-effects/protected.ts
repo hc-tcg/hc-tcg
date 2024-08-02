@@ -1,6 +1,8 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CardComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {

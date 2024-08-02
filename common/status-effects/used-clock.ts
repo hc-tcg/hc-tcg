@@ -1,7 +1,15 @@
-import {Counter, PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
-import JoeHillsRare from '../cards/default/hermits/joehills-rare'
+import {
+	Counter,
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class UsedClockEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -14,10 +22,10 @@ class UsedClockEffect extends PlayerStatusEffect {
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		if (effect.counter === null) effect.counter = this.props.counter
 

@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
 import SmallishbeansCommon from './smallishbeans-common'
-import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 
 class SmallishbeansRare extends Card {
 	props: Hermit = {
@@ -28,21 +28,32 @@ class SmallishbeansRare extends Card {
 			name: 'Obsess',
 			cost: ['explorer', 'explorer', 'any'],
 			damage: 90,
-			power: 'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
+			power:
+				'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const joelQuantity = game.components.filter(
 				CardComponent,
 				query.card.attached,
-				query.card.is(SmallishbeansCommon, SmallishbeansRare, KingJoelCommon, KingJoelCommon),
-				query.not(query.card.active)
+				query.card.is(
+					SmallishbeansCommon,
+					SmallishbeansRare,
+					KingJoelCommon,
+					KingJoelCommon,
+				),
+				query.not(query.card.active),
 			).length
 
 			attack.addDamage(component.entity, joelQuantity * 10)

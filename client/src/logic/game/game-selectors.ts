@@ -1,6 +1,6 @@
-import {RootState} from 'store'
-import {LocalGameState} from 'common/types/game-state'
 import {PlayerEntity} from 'common/entities'
+import {LocalGameState} from 'common/types/game-state'
+import {RootState} from 'store'
 
 export const getGame = (state: RootState) => {
 	return state.game
@@ -18,19 +18,22 @@ export const getPlayerStates = (state: RootState) => {
 	return getGameState(state)?.players || null
 }
 
-export const getPlayerStateByEntity = (player?: PlayerEntity) => (state: RootState) => {
-	let playerState = getGame(state).localGameState?.players
-	if (!player || !playerState) {
-		throw new Error('Attempted to get player before state is defined. This should be impossible.')
+export const getPlayerStateByEntity =
+	(player?: PlayerEntity) => (state: RootState) => {
+		let playerState = getGame(state).localGameState?.players
+		if (!player || !playerState) {
+			throw new Error(
+				'Attempted to get player before state is defined. This should be impossible.',
+			)
+		}
+		return playerState[player]
 	}
-	return playerState[player]
-}
 
 export const getPlayerEntity = (state: RootState) => {
 	let player = getGame(state).localGameState?.playerEntity
 	if (!player) {
 		throw new Error(
-			'Attempted to get player entity before state is defined. This should be impossible.'
+			'Attempted to get player entity before state is defined. This should be impossible.',
 		)
 	}
 	return player
@@ -71,9 +74,10 @@ export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
 	const currentPlayerEntity = gameState.turn.currentPlayerEntity
-	let inactivePlayerEntity = [gameState.playerEntity, gameState.opponentPlayerEntity].filter(
-		(id) => id != currentPlayerEntity
-	)[0]
+	let inactivePlayerEntity = [
+		gameState.playerEntity,
+		gameState.opponentPlayerEntity,
+	].filter((id) => id != currentPlayerEntity)[0]
 	return getPlayerStateByEntity(inactivePlayerEntity)(state)
 }
 

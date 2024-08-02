@@ -1,16 +1,5 @@
-import {take, takeEvery, put, call, race, delay} from 'redux-saga/effects'
-import {AnyAction} from 'redux'
-import {SagaIterator, eventChannel} from 'redux-saga'
-import socket from 'socket'
-import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
-import {socketConnecting} from 'logic/socket/socket-actions'
-import {
-	setPlayerInfo,
-	disconnect,
-	setNewDeck,
-	setMinecraftName,
-	loadUpdates,
-} from './session-actions'
+import {PlayerInfo} from 'common/types/server-requests'
+import {validateDeck} from 'common/utils/validation'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
 import {
 	getActiveDeckName,
@@ -18,9 +7,20 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import {validateDeck} from 'common/utils/validation'
+import {socketConnecting} from 'logic/socket/socket-actions'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {AnyAction} from 'redux'
+import {SagaIterator, eventChannel} from 'redux-saga'
+import {call, delay, put, race, take, takeEvery} from 'redux-saga/effects'
+import socket from 'socket'
 import {PlayerDeckT} from '../../../../common/types/deck'
-import {PlayerInfo} from 'common/types/server-requests'
+import {
+	disconnect,
+	loadUpdates,
+	setMinecraftName,
+	setNewDeck,
+	setPlayerInfo,
+} from './session-actions'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -29,9 +29,22 @@ const loadSession = (): PlayerInfo | null => {
 	const playerId = sessionStorage.getItem('playerId')
 	const playerSecret = sessionStorage.getItem('playerSecret')
 	const playerDeck = JSON.parse(sessionStorage.getItem('playerDeck') || '{}')
-	if (!playerName || !minecraftName || !censoredPlayerName || !playerId || !playerSecret)
+	if (
+		!playerName ||
+		!minecraftName ||
+		!censoredPlayerName ||
+		!playerId ||
+		!playerSecret
+	)
 		return null
-	return {playerName, minecraftName, censoredPlayerName, playerId, playerSecret, playerDeck}
+	return {
+		playerName,
+		minecraftName,
+		censoredPlayerName,
+		playerId,
+		playerSecret,
+		playerDeck,
+	}
 }
 
 const saveSession = (playerInfo: PlayerInfo) => {
@@ -54,7 +67,7 @@ const clearSession = () => {
 
 const getClientVersion = () => {
 	const scriptTag = document.querySelector(
-		'script[src^="/assets/index"][src$=".js"]'
+		'script[src^="/assets/index"][src$=".js"]',
 	) as HTMLScriptElement | null
 	if (!scriptTag) return null
 
@@ -107,7 +120,11 @@ export function* loginSaga(): SagaIterator {
 		timeout: delay(8000),
 	})
 
-	if (result.invalidPlayer || result.connectError || Object.hasOwn(result, 'timeout')) {
+	if (
+		result.invalidPlayer ||
+		result.connectError ||
+		Object.hasOwn(result, 'timeout')
+	) {
 		clearSession()
 		let errorType
 		if (result.invalidPlayer) errorType = 'session_expired'
@@ -123,7 +140,9 @@ export function* loginSaga(): SagaIterator {
 	if (result.playerReconnected) {
 		if (!session) return
 		console.log('User reconnected')
-		yield put(setPlayerInfo({...session, playerDeck: result.playerReconnected.payload}))
+		yield put(
+			setPlayerInfo({...session, playerDeck: result.playerReconnected.payload}),
+		)
 	}
 
 	if (result.playerInfo) {

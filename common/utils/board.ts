@@ -1,15 +1,18 @@
+import {CardComponent, SlotComponent} from '../components'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {GenericActionResult} from '../types/game-state'
-import query from '../components/query'
-import {CardComponent, SlotComponent} from '../components'
 
 export function applySingleUse(
 	game: GameModel,
-	slotInfo: SlotComponent | null = null
+	slotInfo: SlotComponent | null = null,
 ): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
+	const suCard = game.components.find(
+		CardComponent,
+		query.card.slot(query.slot.singleUse),
+	)
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 

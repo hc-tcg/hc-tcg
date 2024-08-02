@@ -1,10 +1,14 @@
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import {flipCoin} from '../../../utils/coinFlips'
 
 class KingJoelRare extends Card {
 	props: Hermit = {
@@ -34,14 +38,18 @@ class KingJoelRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		const firstPickCondition = query.every(
 			query.slot.opponent,
 			query.not(query.slot.active),
 			query.slot.item,
-			query.not(query.slot.empty)
+			query.not(query.slot.empty),
 		)
 
 		const secondPickCondition = query.every(
@@ -49,13 +57,14 @@ class KingJoelRare extends Card {
 			query.not(query.slot.active),
 			query.slot.item,
 			query.slot.empty,
-			query.slot.row(query.row.hasHermit)
+			query.slot.row(query.row.hasHermit),
 		)
 
 		let fistPickedCard: CardComponent | null = null
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			if (!game.components.exists(SlotComponent, firstPickCondition)) return
 			if (!game.components.exists(SlotComponent, secondPickCondition)) return
 

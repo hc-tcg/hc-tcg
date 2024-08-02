@@ -1,6 +1,6 @@
-import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,7 +33,11 @@ class LDShadowLadyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(component, (attack) => {
@@ -44,13 +48,18 @@ class LDShadowLadyRare extends Card {
 			)
 				return
 
-			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermit, slot.active))) return
+			if (
+				!game.someSlotFulfills(
+					slot.every(slot.opponent, slot.hermit, slot.active),
+				)
+			)
+				return
 
 			const pickCondition = slot.every(
 				slot.empty,
 				slot.hermit,
 				slot.opponent,
-				slot.not(slot.active)
+				slot.not(slot.active),
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
@@ -64,7 +73,11 @@ class LDShadowLadyRare extends Card {
 					if (pickedSlot.rowIndex === null) return
 					if (opponentPlayer.board.activeRow === null) return
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedSlot.rowIndex)
+					game.swapRows(
+						opponentPlayer,
+						opponentPlayer.board.activeRow,
+						pickedSlot.rowIndex,
+					)
 				},
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
@@ -72,17 +85,23 @@ class LDShadowLadyRare extends Card {
 					const emptyHermitSlots = game.filterSlots(pickCondition)
 
 					const pickedRowIndex =
-						emptyHermitSlots[Math.floor(Math.random() * emptyHermitSlots.length)].rowIndex
+						emptyHermitSlots[
+							Math.floor(Math.random() * emptyHermitSlots.length)
+						].rowIndex
 
 					if (!pickedRowIndex) return
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
+					game.swapRows(
+						opponentPlayer,
+						opponentPlayer.board.activeRow,
+						pickedRowIndex,
+					)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

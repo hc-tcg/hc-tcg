@@ -1,6 +1,6 @@
-import {call, put, takeEvery, takeLatest} from 'redux-saga/effects'
-import {SagaIterator, eventChannel} from 'redux-saga'
 import {receiveMsg} from 'logic/socket/socket-saga'
+import {SagaIterator, eventChannel} from 'redux-saga'
+import {call, put, takeEvery, takeLatest} from 'redux-saga/effects'
 import {authLogin, statsUpdate} from './fbdb-actions'
 
 const createAuthChannel = () => {

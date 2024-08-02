@@ -1,9 +1,14 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
 
 class IJevinRare extends Card {
 	props: Hermit = {
@@ -31,17 +36,22 @@ class IJevinRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const pickCondition = query.every(
 				query.not(query.slot.active),
 				query.not(query.slot.empty),
 				query.slot.opponent,
-				query.slot.hermit
+				query.slot.hermit,
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -56,7 +66,10 @@ class IJevinRare extends Card {
 					opponentPlayer.changeActiveRow(pickedSlot.row)
 				},
 				onTimeout() {
-					let rowComponent = game.components.find(RowComponent, query.not(query.row.active))
+					let rowComponent = game.components.find(
+						RowComponent,
+						query.not(query.row.active),
+					)
 					if (!rowComponent) return
 					opponentPlayer.changeActiveRow(rowComponent)
 				},

@@ -1,13 +1,13 @@
-import css from './toolbar.module.scss'
-import {useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
-import {getChatMessages} from 'logic/game/game-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
+import {getChatMessages} from 'logic/game/game-selectors'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
+import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './toolbar.module.scss'
 
 function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)

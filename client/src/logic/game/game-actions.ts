@@ -1,7 +1,15 @@
 import {PlayerEntity} from 'common/entities'
-import {LocalCurrentCoinFlip, LocalGameState, Message} from 'common/types/game-state'
+import {
+	LocalCurrentCoinFlip,
+	LocalGameState,
+	Message,
+} from 'common/types/game-state'
 import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
-import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
+import {
+	LocalCardInstance,
+	LocalModalResult,
+	SlotInfo,
+} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -41,7 +49,7 @@ export const slotPicked = (
 	slotInfo: SlotInfo,
 	player: PlayerEntity,
 	row?: number,
-	index?: number
+	index?: number,
 ) => ({
 	type: 'SLOT_PICKED' as const,
 	payload: {
@@ -60,13 +68,16 @@ type ExtraItemT = {hermitId: string; type: 'primary' | 'secondary'}
 
 export const startAttack = (
 	type: 'single-use' | 'primary' | 'secondary',
-	extra?: Record<string, ExtraItemT>
+	extra?: Record<string, ExtraItemT>,
 ) => ({
 	type: 'START_ATTACK' as const,
 	payload: {type, extra},
 })
 
-export const showEndGameOverlay = (outcome: GameEndOutcomeT, reason: GameEndReasonT = null) => ({
+export const showEndGameOverlay = (
+	outcome: GameEndOutcomeT,
+	reason: GameEndReasonT = null,
+) => ({
 	type: 'SHOW_END_GAME_OVERLAY' as const,
 	payload: {
 		outcome,

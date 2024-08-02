@@ -1,6 +1,6 @@
+import {CardComponent} from 'common/components'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
-import {CardComponent} from 'common/components'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
@@ -28,7 +28,9 @@ export function printHooksState(game: GameModel) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
 			hookValue.listeners.forEach(([observer, _], i) => {
-				let target = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+				let target = game.components.get(
+					game.components.get(observer)?.wrappingEntity || null,
+				)
 				if (!(target instanceof CardComponent)) return
 				const pos = target.slot
 				const inBoard = Boolean(pos)
@@ -56,7 +58,7 @@ export function printHooksState(game: GameModel) {
 				if (aRow === null) return -1
 				if (bRow === null) return 1
 				return aRow - bRow
-			})
+			}),
 		)
 	}
 
@@ -113,7 +115,8 @@ export function printHooksState(game: GameModel) {
 		const row = info.row
 		const attachedStatus = info.board
 			? colorize('ATTACHED', 'green')
-			: colorize('DETACHED', 'brightRed') + colorize(colorize('!', 'blink'), 'brightRed')
+			: colorize('DETACHED', 'brightRed') +
+				colorize(colorize('!', 'blink'), 'brightRed')
 		const slotIndex = slot?.type === 'item' ? ':' + slot.index : ''
 		const slotType = slot?.type ? slot.type : ''
 		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
@@ -122,7 +125,7 @@ export function printHooksState(game: GameModel) {
 			console.log(
 				`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
 					info.card.cardId
-				} - ${attachedStatus}`
+				} - ${attachedStatus}`,
 			)
 			console.log(colorize(drawLine(60), 'white'))
 		}

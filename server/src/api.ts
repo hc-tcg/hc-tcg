@@ -1,8 +1,7 @@
-import {GameModel} from 'common/models/game-model'
-import root from './serverRoot'
-import fetch from 'node-fetch'
-import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
+import fetch from 'node-fetch'
+import root from './serverRoot'
 
 function getPlayers(game: GameModel) {
 	return game.components.filter(ViewerComponent).flatMap((viewer) => {
@@ -50,8 +49,8 @@ export function registerApis(app: import('express').Express) {
 									players: getPlayers(g),
 									state: g.state,
 								}
-							})
-						)
+							}),
+						),
 					)
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
@@ -73,7 +72,7 @@ export function registerApis(app: import('express').Express) {
 						playerId: null,
 					}
 
-					console.log(`Private game created via api.`, `Code: ${code}`)
+					console.log('Private game created via api.', `Code: ${code}`)
 
 					res.status(201).send({
 						code,
@@ -143,7 +142,9 @@ export function registerApis(app: import('express').Express) {
 					}),
 				})
 			} catch (e) {
-				console.log('Error notifying discord bot about cancelled private game: ' + e)
+				console.log(
+					'Error notifying discord bot about cancelled private game: ' + e,
+				)
 			}
 		})
 
@@ -156,7 +157,7 @@ export function registerApis(app: import('express').Express) {
 			.catch()
 
 		console.log('apis registered')
-	} catch (err) {
+	} catch (_err) {
 		console.log('no api keys found')
 	}
 }

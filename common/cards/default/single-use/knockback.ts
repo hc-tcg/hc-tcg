@@ -1,17 +1,21 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Knockback extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.hermit,
 		query.not(query.slot.active),
-		query.not(query.slot.empty)
+		query.not(query.slot.empty),
 	)
 
 	props: SingleUse = {
@@ -27,11 +31,15 @@ class Knockback extends Card {
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {

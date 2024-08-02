@@ -1,12 +1,12 @@
 import {CardComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {PlayCardActionData} from 'common/types/action-data'
 import {ActionResult} from 'common/types/game-state'
-import query from 'common/components/query'
 
 function* playCardSaga(
 	game: GameModel,
-	turnAction: PlayCardActionData
+	turnAction: PlayCardActionData,
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.payload.slot
@@ -15,14 +15,19 @@ function* playCardSaga(
 		return 'FAILURE_INVALID_DATA'
 	}
 
-	const card = game.components.find(CardComponent, query.card.entity(localCard.entity))
+	const card = game.components.find(
+		CardComponent,
+		query.card.entity(localCard.entity),
+	)
 	if (!card) return 'FAILURE_INVALID_DATA'
 
 	const {currentPlayer} = game
 
 	const pickedSlot = game.components.get(slotEntity)
 	if (!pickedSlot || !pickedSlot.onBoard()) {
-		throw new Error('A slot that is not on the board can not be picked: ' + pickedSlot)
+		throw new Error(
+			'A slot that is not on the board can not be picked: ' + pickedSlot,
+		)
 	}
 
 	const row = pickedSlot.row
@@ -51,7 +56,7 @@ function* playCardSaga(
 				if (!card.isHealth())
 					throw Error(
 						'Attempted to add card that does not implement health to hermit slot: ' +
-							card.props.numericId
+							card.props.numericId,
 					)
 
 				card.attach(pickedSlot)
@@ -64,20 +69,24 @@ function* playCardSaga(
 				break
 			}
 			case 'item': {
-				if (card.props.category === 'item') game.addCompletedActions('PLAY_ITEM_CARD')
+				if (card.props.category === 'item')
+					game.addCompletedActions('PLAY_ITEM_CARD')
 				card.attach(pickedSlot)
 				break
 			}
 			case 'attach': {
 				if (!card.card.isAttach())
 					throw Error(
-						'Attempted to add card that implement attach to an attach slot: ' + card.props.numericId
+						'Attempted to add card that implement attach to an attach slot: ' +
+							card.props.numericId,
 					)
 				card.attach(pickedSlot)
 				break
 			}
 			default:
-				throw new Error('Unknown slot type when trying to play a card: ' + pickedSlot.type)
+				throw new Error(
+					'Unknown slot type when trying to play a card: ' + pickedSlot.type,
+				)
 		}
 	}
 

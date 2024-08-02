@@ -1,5 +1,5 @@
-import {AnyAction} from 'redux'
 import {LocalGameRoot} from 'common/types/game-state'
+import {AnyAction} from 'redux'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -14,7 +14,10 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => {
+const gameReducer = (
+	state = defaultState,
+	action: AnyAction,
+): LocalGameRoot => {
 	switch (action.type) {
 		case 'LOCAL_GAME_STATE':
 			const newGame: LocalGameRoot = {

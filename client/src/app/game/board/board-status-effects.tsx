@@ -1,9 +1,9 @@
-import css from './board.module.scss'
-import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
-import StatusEffect from 'components/status-effects/status-effect'
-import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import classNames from 'classnames'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
+import StatusEffect from 'components/status-effects/status-effect'
 import Tooltip from 'components/tooltip'
+import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
+import css from './board.module.scss'
 
 type ExpandStatusEffectProps = {
 	statusEffects: Array<any>
@@ -21,7 +21,10 @@ const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
 	return (
 		<Tooltip tooltip={tooltipWindow}>
 			<div className={statusEffectImageCss.statusEffect}>
-				<img src="images/status/expand.png" className={statusEffectImageCss.statusEffectImage} />
+				<img
+					src="images/status/expand.png"
+					className={statusEffectImageCss.statusEffectImage}
+				/>
 			</div>
 		</Tooltip>
 	)
@@ -34,7 +37,11 @@ type StatusEffectDisplayProps = {
 }
 
 /** An object to display status effect for a specific card */
-const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffectDisplayProps) => {
+const StatusEffectContainer = ({
+	shouldDim,
+	statusEffects,
+	forHermit,
+}: StatusEffectDisplayProps) => {
 	let classes
 	if (!forHermit) {
 		classes = classNames(css.statusEffectContainer)
@@ -48,8 +55,15 @@ const StatusEffectContainer = ({shouldDim, statusEffects, forHermit}: StatusEffe
 	statusEffects = [...statusEffects].reverse()
 
 	let sidebarStatusEffects = statusEffects.map((effect) => {
-		if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem') return
-		return <StatusEffect key={effect.instance} statusEffect={effect} counter={effect.counter} />
+		if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem')
+			return
+		return (
+			<StatusEffect
+				key={effect.instance}
+				statusEffect={effect}
+				counter={effect.counter}
+			/>
+		)
 	})
 
 	if (sidebarStatusEffects.length > 4) {

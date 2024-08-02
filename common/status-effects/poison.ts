@@ -1,7 +1,15 @@
-import {CardStatusEffect, StatusEffectProps, damageEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	damageEffect,
+} from './status-effect'
 
 class PoisonEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -17,7 +25,7 @@ class PoisonEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = target
 
@@ -28,7 +36,8 @@ class PoisonEffect extends CardStatusEffect {
 				target: target.slot.row.entity,
 				player: opponentPlayer.entity,
 				type: 'status-effect',
-				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
+				log: (values) =>
+					`${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
 			let damage = 0

@@ -6,13 +6,15 @@ export function flipCoin(
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
-	currentPlayer: PlayerComponent | null = null
+	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = playerTossingCoin.game.components.get(playerTossingCoin.activeRowEntity)
+	const activeRowIndex = playerTossingCoin.game.components.get(
+		playerTossingCoin.activeRowEntity,
+	)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`
+			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
 		)
 		return []
 	}
@@ -27,7 +29,8 @@ export function flipCoin(
 		}
 	}
 
-	const coinFlipAmount = Math.floor(Math.random() * (2 + (coinFlips.length >= 1 ? 1 : 0))) + 4
+	const coinFlipAmount =
+		Math.floor(Math.random() * (2 + (coinFlips.length >= 1 ? 1 : 0))) + 4
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 

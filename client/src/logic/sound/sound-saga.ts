@@ -1,9 +1,9 @@
-import {SagaIterator} from 'redux-saga'
-import {call, takeLatest, takeEvery} from 'redux-saga/effects'
-import {select} from 'typed-redux-saga'
-import {trackList} from './sound-config'
-import {SectionChangeT, PlaySoundT} from './sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {SagaIterator} from 'redux-saga'
+import {call, takeEvery, takeLatest} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
+import {PlaySoundT, SectionChangeT} from './sound-actions'
+import {trackList} from './sound-config'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -36,7 +36,8 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 		return
 	}
 
-	const musicFile = trackList.game[Math.floor(Math.random() * trackList.game.length)]
+	const musicFile =
+		trackList.game[Math.floor(Math.random() * trackList.game.length)]
 
 	const newPath = `/music/${musicFile.file}`
 	if (newPath !== bgMusic.getAttribute('src')) {
@@ -94,7 +95,7 @@ function* soundSaga(): SagaIterator {
 			}
 			interacted = true
 		},
-		{once: true}
+		{once: true},
 	)
 }
 
