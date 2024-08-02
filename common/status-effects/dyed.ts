@@ -1,14 +1,14 @@
 import {
-	CardStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
-import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class DyedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {

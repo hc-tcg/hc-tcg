@@ -1,13 +1,13 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {attach} from '../../base/defaults'
-import {Attach, HasHealth} from '../../base/types'
 import {
 	CardComponent,
 	HandSlotComponent,
 	ObserverComponent,
 } from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach, HasHealth} from '../../base/types'
 
 class BerryBush extends Card {
 	props: Attach & HasHealth = {

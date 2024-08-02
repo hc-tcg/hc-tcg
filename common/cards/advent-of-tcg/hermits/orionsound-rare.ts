@@ -1,17 +1,14 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
-import {AttackModel} from '../../../models/attack-model'
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import MelodyEffect from '../../../status-effects/melody'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import MelodyEffect from '../../../status-effects/melody'
 
 class OrionSoundRare extends Card {
 	props: Hermit = {

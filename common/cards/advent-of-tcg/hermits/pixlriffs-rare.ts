@@ -1,13 +1,13 @@
-import {GameModel, GameValue} from '../../../models/game-model'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 } from '../../../components'
+import {PlayerEntity} from '../../../entities'
+import {GameModel, GameValue} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {PlayerEntity} from '../../../entities'
 
 class PixlriffsRare extends Card {
 	props: Hermit = {

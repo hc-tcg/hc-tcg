@@ -1,15 +1,15 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import DyedEffect from '../../../status-effects/dyed'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class Smajor1995Rare extends Card {
 	props: Hermit = {

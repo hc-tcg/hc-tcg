@@ -1,15 +1,15 @@
 import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
+import {GameModel} from '../models/game-model'
+import {
 	CardStatusEffect,
 	Counter,
 	StatusEffectProps,
 	statusEffect,
 } from './status-effect'
-import {GameModel} from '../models/game-model'
-import {
-	CardComponent,
-	ObserverComponent,
-	StatusEffectComponent,
-} from '../components'
 
 class SmeltingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {

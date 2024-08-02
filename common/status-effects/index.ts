@@ -1,20 +1,3 @@
-import FireEffect from './fire'
-import PoisonEffect from './poison'
-import SleepingEffect from './sleeping'
-import BadOmenEffect from './badomen'
-import SlownessEffect from './slowness'
-import WeaknessEffect from './weakness'
-import ProtectedEffect from './protected'
-import DyedEffect from './dyed'
-import MuseumCollectionEffect from './museum-collection'
-import SmeltingEffect from './smelting'
-import MelodyEffect from './melody'
-import SoulmateEffect from './soulmate'
-import NaughtyRegiftEffect from './naughty-regift'
-import UsedClockEffect from './used-clock'
-import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
-import BetrayedEffect from './betrayed'
-import SheepStareEffect from './sheep-stare'
 import {
 	AussiePingEffect as AussiePingEffect,
 	AussiePingImmuneEffect as AussiePingImmuneEffect,
@@ -38,6 +21,7 @@ import {
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
+import NaughtyRegiftEffect from './naughty-regift'
 import OriginalXbEffect from './original-xb'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
@@ -50,6 +34,7 @@ import {
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SoulmateEffect from './soulmate'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import {TrapHoleEffect} from './trap-hole'

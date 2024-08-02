@@ -1,14 +1,14 @@
 import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import {GameModel} from '../models/game-model'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class NaughtyRegiftEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {

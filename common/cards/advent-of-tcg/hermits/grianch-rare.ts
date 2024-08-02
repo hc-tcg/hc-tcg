@@ -1,19 +1,17 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {flipCoin} from '../../../utils/coinFlips'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
+import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class GrianchRare extends Card {
 	props: Hermit = {

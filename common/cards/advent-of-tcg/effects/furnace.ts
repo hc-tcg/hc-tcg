@@ -1,15 +1,14 @@
-import {CardComponent} from '../../../components'
-import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import SmeltingEffect from '../../../status-effects/smelting'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class Furnace extends Card {
 	props: Attach = {

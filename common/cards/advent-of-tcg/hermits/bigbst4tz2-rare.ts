@@ -1,15 +1,15 @@
-import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import SoulmateEffect, {
 	soulmateEffectDamage,
 } from '../../../status-effects/soulmate'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class BigBSt4tzRare extends Card {
 	props: Hermit = {

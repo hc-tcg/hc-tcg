@@ -1,10 +1,10 @@
+import {PlayerComponent} from '../components'
 import {
 	Counter,
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
 } from './status-effect'
-import {PlayerComponent} from '../components'
 
 class MuseumCollectionEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {

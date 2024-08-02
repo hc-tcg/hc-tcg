@@ -1,6 +1,6 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'

@@ -1,15 +1,15 @@
 import {
-	CardStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
 import query from '../components/query'
+import {GameModel} from '../models/game-model'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {

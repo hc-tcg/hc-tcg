@@ -1,15 +1,15 @@
 import {
-	StatusEffectComponent,
 	ObserverComponent,
 	PlayerComponent,
+	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {executeExtraAttacks} from '../utils/attacks'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
 } from './status-effect'
-import {executeExtraAttacks} from '../utils/attacks'
 
 export const soulmateEffectDamage = 140
 

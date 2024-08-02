@@ -1,17 +1,17 @@
-import {GameModel, GameValue} from '../../../models/game-model'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import query from '../../../components/query'
+import {PlayerEntity} from '../../../entities'
+import {GameModel, GameValue} from '../../../models/game-model'
+import MuseumCollectionEffect from '../../../status-effects/museum-collection'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {PlayerEntity} from '../../../entities'
-import query from '../../../components/query'
-import MuseumCollectionEffect from '../../../status-effects/museum-collection'
-import {executeExtraAttacks} from '../../../utils/attacks'
 
 class Biffa2001Rare extends Card {
 	props: Hermit = {
