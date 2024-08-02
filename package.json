@@ -69,7 +69,7 @@
 		"client:dev": "vite client",
 		"client:preview": "vite preview --port 3002 client/",
 		"test": "jest",
-		"lint": "biome lint .",
+		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
 	},
