@@ -29,10 +29,10 @@ jobs:
       - name: Create debug config
         run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
 
-      - name: Check Types
-        run: npm run typecheck
+      - name: Run server tsc
+        run: npm run server:tsc
 
-      - name: Run Biome
+      - name: Run biome
         run: npx run check
 
   unittest:
