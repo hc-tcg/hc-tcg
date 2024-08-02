@@ -4,6 +4,7 @@ import Dropper from './dropper'
 import FletchingTable from './fletching-table'
 import Glowstone from './glowstone'
 import Lantern from './lantern'
+import SplashPotionOfHarming from './splash-potion-of-harming'
 
 const singleUseCardClasses: Array<CardClass> = [
 	// Advent calendar cards
