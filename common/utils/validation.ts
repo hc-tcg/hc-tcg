@@ -12,7 +12,7 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 
 	// Contains disabled cards
 	const hasDisabledCards = deckCards.some(
-		(card) => EXPANSIONS[card.props.expansion].disabled === false
+		(card) => EXPANSIONS[card.props.expansion].disabled === true
 	)
 	if (hasDisabledCards) return 'Deck must not include removed cards.'
 
