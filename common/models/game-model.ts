@@ -24,7 +24,7 @@ import {Hook} from '../types/hooks'
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
-		if (!Object.hasOwn(this.values, game.id)) {
+		if (game.id in this.values) {
 			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
