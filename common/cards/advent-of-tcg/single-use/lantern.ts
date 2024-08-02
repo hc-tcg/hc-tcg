@@ -19,14 +19,14 @@ class Lantern extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length >= 4,
+			(_game, pos) => pos.player.pile.length >= 4,
 		),
 	}
 
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player, opponentPlayer} = pos
 
@@ -95,7 +95,7 @@ class Lantern extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

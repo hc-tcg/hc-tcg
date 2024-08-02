@@ -33,9 +33,9 @@ class SmallishbeansAdventRare extends Card {
 	}
 
 	override onAttach(
-		game: GameModel,
+		_game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player, rowId: row} = pos
 
@@ -58,7 +58,7 @@ class SmallishbeansAdventRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

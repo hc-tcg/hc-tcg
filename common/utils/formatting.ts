@@ -455,7 +455,7 @@ function parseNodesWhile(
 			;[node, remaining] = parseSingleNode(remaining, config)
 			nodes.push(node)
 		}
-	} catch (e) {
+	} catch (_e) {
 		if (remaining.length != 0) {
 			nodes.push(TextNode(remaining))
 			remaining = ""
@@ -552,7 +552,7 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 
 	try {
 		return parseNodesUntilEmpty(text, config)
-	} catch (e) {
+	} catch (_e) {
 		return TextNode("There was a unrecoverable formatting error")
 	}
 }

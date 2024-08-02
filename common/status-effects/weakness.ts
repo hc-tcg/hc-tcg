@@ -22,7 +22,7 @@ class WeaknessEffect extends CardStatusEffect {
 	}
 
 	public override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent,

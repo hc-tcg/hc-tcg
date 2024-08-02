@@ -8,7 +8,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 		var b64 = decode(hash)
 			.split("")
 			.map((char) => char.charCodeAt(0))
-	} catch (err) {
+	} catch (_err) {
 		return []
 	}
 	const deck = []

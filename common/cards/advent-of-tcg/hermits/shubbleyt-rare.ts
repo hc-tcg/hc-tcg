@@ -73,7 +73,7 @@ class ShubbleYTRare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

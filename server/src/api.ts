@@ -4,7 +4,7 @@ import {GameModel} from "common/models/game-model"
 import {PlayerInfo} from "common/types/server-requests"
 import fetch from "node-fetch"
 import root from "./serverRoot"
-const require = createRequire(import.meta.url)
+const _require = createRequire(import.meta.url)
 
 type PlayerStateT = PlayerInfo & {
 	lives: number
@@ -73,7 +73,7 @@ export function registerApis(app: import("express").Express) {
 						playerId: null,
 					}
 
-					console.log(`Private game created via api.`, `Code: ${code}`)
+					console.log("Private game created via api.", `Code: ${code}`)
 
 					res.status(201).send({
 						code,
@@ -176,7 +176,7 @@ export function registerApis(app: import("express").Express) {
 			.catch()
 
 		console.log("apis registered")
-	} catch (err) {
+	} catch (_err) {
 		console.log("no api keys found")
 	}
 }

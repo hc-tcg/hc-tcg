@@ -22,24 +22,24 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 	}
 
 	const OUTCOME_MSG = {
-		client_crash: `Game client crashed`,
-		server_crash: `Server crashed`,
-		timeout: `Game exceeded time limit (60+ minutes)`,
-		forfeit_loss: `You forfeit the game`,
+		client_crash: "Game client crashed",
+		server_crash: "Server crashed",
+		timeout: "Game exceeded time limit (60+ minutes)",
+		forfeit_loss: "You forfeit the game",
 		forfeit_win: `${opponent} forfeit the game`,
 		leave_win: `${opponent} left the game`,
 		leave_loss: `You left the game. ${opponent} won.`,
 		tie: "It`s a tie",
-		unknown: `Game ended unexpectedly, please report this on discord`,
-		you_won: `You Won`,
-		you_lost: `You Lost`,
+		unknown: "Game ended unexpectedly, please report this on discord",
+		you_won: "You Won",
+		you_lost: "You Lost",
 	}
 
 	const REASON_MSG = {
-		hermits: `lost all hermits.`,
-		lives: `lost all lives.`,
-		cards: `ran out of cards.`,
-		time: `ran out of time without an active hermit.`,
+		hermits: "lost all hermits.",
+		lives: "lost all lives.",
+		cards: "ran out of cards.",
+		time: "ran out of time without an active hermit.",
 	}
 
 	switch (outcome) {

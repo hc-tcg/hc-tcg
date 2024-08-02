@@ -37,7 +37,7 @@ class GrianchRare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player, opponentPlayer} = pos
 		const componentKey = this.getInstanceKey(component)
@@ -54,7 +54,7 @@ class GrianchRare extends Card {
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === "tails") {
-				opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+				opponentPlayer.hooks.afterAttack.add(component, (_attack) => {
 					game.removeCompletedActions(
 						"PRIMARY_ATTACK",
 						"SECONDARY_ATTACK",
@@ -91,7 +91,7 @@ class GrianchRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 		player.hooks.afterAttack.remove(component)

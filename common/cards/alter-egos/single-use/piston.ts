@@ -51,7 +51,7 @@ class Piston extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent,
+		_observer: ObserverComponent,
 	) {
 		const {player} = component
 

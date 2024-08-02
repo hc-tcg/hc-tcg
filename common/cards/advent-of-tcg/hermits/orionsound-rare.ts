@@ -89,9 +89,9 @@ class OrionSoundRare extends Card {
 		)
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const componentKey = this.getInstanceKey(component)
+		const _componentKey = this.getInstanceKey(component)
 
 		player.hooks.onAttack.remove(component)
 		player.hooks.afterAttack.remove(component)

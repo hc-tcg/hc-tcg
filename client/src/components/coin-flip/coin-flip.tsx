@@ -39,7 +39,7 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 							}
 						: {
 								animationIterationCount: `${evenIterations}, 0, 0`,
-								animationDelay: `0s`,
+								animationDelay: "0s",
 							}
 				}
 			>

@@ -27,7 +27,7 @@ app.use(cors({origin: CONFIG.cors}))
 // @TODO Hardcoded redirect to the new site, for now
 app.use((req, res, next) => {
 	if (req.hostname === "hc-tcg.fly.dev") {
-		res.redirect(301, `https://hc-tcg.online`)
+		res.redirect(301, "https://hc-tcg.online")
 	} else {
 		next()
 	}
@@ -39,7 +39,7 @@ app.use(
 	}),
 )
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
 	res.sendFile(path.join(__dirname, "../..", CONFIG.clientPath, "index.html"))
 })
 

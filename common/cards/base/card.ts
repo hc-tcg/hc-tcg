@@ -57,7 +57,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when a component of this card is created
 	 */
-	public onCreate(game: GameModel, component: CardComponent) {
+	public onCreate(_game: GameModel, _component: CardComponent) {
 		// default is do nothing
 	}
 
@@ -65,9 +65,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 	 * Called when a component of this card is attached to the board
 	 */
 	public onAttach(
-		game: GameModel,
-		component: CardComponent,
-		observer: ObserverComponent,
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -76,9 +76,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 	 * Called when a compoent of this card is removed from the board
 	 */
 	public onDetach(
-		game: GameModel,
-		component: CardComponent,
-		observer: ObserverComponent,
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}

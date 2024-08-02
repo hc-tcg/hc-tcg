@@ -37,7 +37,7 @@ class PharaohRare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player} = component
 		let pickedRow: RowStateWithHermit | null = null
@@ -95,7 +95,7 @@ class PharaohRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.onAttack.remove(component)

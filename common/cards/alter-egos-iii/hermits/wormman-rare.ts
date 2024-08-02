@@ -64,7 +64,7 @@ class WormManRare extends Card {
 
 				newObserver.subscribe(
 					player.hooks.onActiveRowChange,
-					(oldActiveHermit, newActiveHermit) => {
+					(_oldActiveHermit, newActiveHermit) => {
 						if (newActiveHermit.entity !== attachedComponent.entity) return
 						attachedComponent.turnedOver = false
 						newObserver.unsubscribe(player.hooks.freezeSlots)
@@ -83,7 +83,7 @@ class WormManRare extends Card {
 	override onDetach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent,
+		_observer: ObserverComponent,
 	): void {
 		const {player} = component
 

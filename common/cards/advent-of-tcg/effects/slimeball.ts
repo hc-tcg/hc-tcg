@@ -27,9 +27,9 @@ class Slimeball extends Card {
 	}
 
 	override onAttach(
-		game: GameModel,
+		_game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player} = component
 
@@ -43,7 +43,7 @@ class Slimeball extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		pos.player.hooks.freezeSlots.remove(component)
 		pos.player.hooks.onDetach.remove(component)
 	}

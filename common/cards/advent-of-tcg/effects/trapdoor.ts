@@ -19,9 +19,9 @@ class Trapdoor extends Card {
 	}
 
 	override onAttach(
-		game: GameModel,
+		_game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player, opponentPlayer} = pos
 
@@ -63,13 +63,13 @@ class Trapdoor extends Card {
 			}
 		})
 
-		player.hooks.afterDefence.add(component, (attack) => {
+		player.hooks.afterDefence.add(component, (_attack) => {
 			const {player} = component
 			totalReduction = 0
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onDefence.remove(component)

@@ -88,7 +88,7 @@ export const convertLegacyDecks = (): number => {
 			localStorage.setItem(`Deck_${legacyName}`, JSON.stringify(convertedDeck))
 
 			localStorage.removeItem(lsKey)
-			console.log(`Converted deck:`, lsKey, legacyName)
+			console.log("Converted deck:", lsKey, legacyName)
 		}
 	}
 

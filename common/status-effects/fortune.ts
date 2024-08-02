@@ -19,7 +19,7 @@ export default class FortuneEffect extends PlayerStatusEffect {
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,

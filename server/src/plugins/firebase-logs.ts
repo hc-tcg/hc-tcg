@@ -31,7 +31,7 @@ export class FirebaseLogs {
 				databaseURL: "https://hc-tcg-leaderboard-default-rtdb.firebaseio.com",
 			})
 			this.db = admin.database()
-		} catch (err) {
+		} catch (_err) {
 			console.log("No valid firebase key. Statistics will not be stored.")
 			this.enabled = false
 		}

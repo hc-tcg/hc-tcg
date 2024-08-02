@@ -30,7 +30,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 			<g>
 				<image
 					className={css.star}
-					href={`/images/star_white.svg`}
+					href={"/images/star_white.svg"}
 					x="-15"
 					y="65"
 					width="390"

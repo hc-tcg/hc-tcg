@@ -32,7 +32,7 @@ class FrenchralisRare extends Card {
 	}
 
 	override onAttach(
-		game: GameModel,
+		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {

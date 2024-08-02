@@ -20,7 +20,7 @@ class Furnace extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		applyStatusEffect(game, "smelting", component)
 	}

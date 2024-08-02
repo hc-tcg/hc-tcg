@@ -47,7 +47,7 @@ function startSocketIO(server: any) {
 			type: "CLIENT_CONNECTED",
 			payload: {socket, ...socket.handshake.auth},
 		})
-		socket.onAny((event, message) => {
+		socket.onAny((_event, message) => {
 			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})

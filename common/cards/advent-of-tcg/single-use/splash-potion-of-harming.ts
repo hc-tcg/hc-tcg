@@ -23,7 +23,7 @@ class SplashPotionOfHarming extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {opponentPlayer, player} = pos
 
@@ -66,7 +66,7 @@ class SplashPotionOfHarming extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.getAttack.remove(component)
 		player.hooks.onAttack.remove(component)

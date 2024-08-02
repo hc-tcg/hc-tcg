@@ -24,7 +24,7 @@ class Composter extends Card {
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.getHand().length >= 2,
+			(_game, pos) => pos.player.getHand().length >= 2,
 		),
 	}
 

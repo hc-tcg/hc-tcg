@@ -35,7 +35,7 @@ class Biffa2001Rare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player} = component
 
@@ -46,7 +46,7 @@ class Biffa2001Rare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onTurnStart.remove(component)

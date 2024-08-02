@@ -32,7 +32,7 @@ class PixlriffsRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		let startingRow = pos.rowId
@@ -53,7 +53,7 @@ class PixlriffsRare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}

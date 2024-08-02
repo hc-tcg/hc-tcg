@@ -20,7 +20,7 @@ class Cat extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player} = component
 		player.hooks.afterAttack.add(component, (attack) => {
@@ -56,7 +56,7 @@ class Cat extends Card {
 					if (!modalResult) return "SUCCESS"
 					if (!modalResult.result) return "SUCCESS"
 
-					player.hooks.onTurnEnd.add(component, (drawCards) => {
+					player.hooks.onTurnEnd.add(component, (_drawCards) => {
 						player.hooks.onTurnEnd.remove(component)
 						return [player.pile[-1]]
 					})
@@ -68,7 +68,7 @@ class Cat extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}

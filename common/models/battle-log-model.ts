@@ -41,7 +41,7 @@ export class BattleLogModel {
 		const tails = coinFlip.tosses.filter((flip) => flip === "tails").length
 
 		if (coinFlip.tosses.length === 1) {
-			return heads > tails ? `flipped $gheads$` : `flipped $btails$`
+			return heads > tails ? "flipped $gheads$" : "flipped $btails$"
 		} else if (tails === 0) {
 			return `flipped $g${heads} heads$`
 		} else if (heads === 0) {
@@ -347,7 +347,7 @@ export class BattleLogModel {
 
 			const logMessage = log({
 				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,
-				verb: `was`,
+				verb: "was",
 				statusEffect: `$e${effect.props.name}$`,
 			})
 
@@ -361,7 +361,7 @@ export class BattleLogModel {
 
 			const logMessage = log({
 				target: `$${targetFormatting}{You|${pos.playerName}}$`,
-				verb: `{were|was}`,
+				verb: "{were|was}",
 				statusEffect: `$e${effect.props.name}$`,
 			})
 

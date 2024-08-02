@@ -37,7 +37,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 			<g>
 				<image
 					className={css.star}
-					href={`/images/star_color.svg`}
+					href={"/images/star_color.svg"}
 					x="-15"
 					y="65"
 					width="390"

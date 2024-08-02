@@ -36,7 +36,7 @@ class LDShadowLadyRare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: Observer,
+		_observer: Observer,
 	) {
 		const {player, opponentPlayer} = pos
 
@@ -101,7 +101,7 @@ class LDShadowLadyRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

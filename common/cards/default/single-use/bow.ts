@@ -33,7 +33,7 @@ class Bow extends Card {
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.pickCondition),
 		),
-		attackPreview: (_game) => `$A40$`,
+		attackPreview: (_game) => "$A40$",
 	}
 
 	override onAttach(

@@ -71,7 +71,7 @@ export const ImportModal = ({
 				if (deck.length === 0) return
 
 				const filteredName = lineComponents[0]
-					.match(`^[a-zA-Z0-9 ]*$`)
+					.match("^[a-zA-Z0-9 ]*$")
 					?.toString()
 				if (!filteredName) {
 					return
@@ -138,9 +138,11 @@ export const ImportModal = ({
 							{/* IMPORT SECTION */}
 							<div>
 								<div className={css.importControls}>
-									<p
-										className={css.instructions}
-									>{`To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.`}</p>
+									<p className={css.instructions}>
+										{
+											"To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import."
+										}
+									</p>
 									<div className={css.name}>
 										<Dropdown
 											button={
@@ -167,13 +169,17 @@ export const ImportModal = ({
 										style={{flexGrow: 1}}
 									/>
 
-									<p
-										className={css.instructions}
-									>{`Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.`}</p>
+									<p className={css.instructions}>
+										{
+											"Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash."
+										}
+									</p>
 
-									<p
-										className={css.warning}
-									>{`Note that this will overwrite any decks with the same name.`}</p>
+									<p className={css.warning}>
+										{
+											"Note that this will overwrite any decks with the same name."
+										}
+									</p>
 								</div>
 							</div>
 						</div>

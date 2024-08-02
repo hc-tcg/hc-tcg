@@ -63,12 +63,12 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 		 * https://modrinth.com/mod/swd-panorama
 		 */
 		const texture = loader.load([
-			`panorama_1.png`,
-			`panorama_3.png`,
-			`panorama_5.png`,
-			`panorama_4.png`,
-			`panorama_0.png`,
-			`panorama_2.png`,
+			"panorama_1.png",
+			"panorama_3.png",
+			"panorama_5.png",
+			"panorama_4.png",
+			"panorama_0.png",
+			"panorama_2.png",
 		])
 
 		texture.flipY = true

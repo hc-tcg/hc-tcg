@@ -454,8 +454,8 @@ function SelectDeck({
 													title: "Convert Legacy Decks",
 													description: conversionCount
 														? `Converted ${conversionCount} decks!`
-														: `No decks to convert!`,
-													image: `/images/card-icon.png`,
+														: "No decks to convert!",
+													image: "/images/card-icon.png",
 												},
 											})
 										}}
