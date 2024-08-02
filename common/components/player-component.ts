@@ -287,7 +287,7 @@ export class PlayerComponent {
 				(card) =>
 					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
 						CardComponent,
-						Array<SlotEntity>
+						Array<SlotEntity>,
 					]
 			)
 	}
