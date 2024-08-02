@@ -215,7 +215,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-				}, '')
+			  }, '')
 			: ''
 
 		this.logMessageQueue.push({

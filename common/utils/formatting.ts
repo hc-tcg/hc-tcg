@@ -171,7 +171,7 @@ const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 const messageParseOptions: Array<
 	[
 		(text: string, config: Config) => boolean,
-		(text: string, config: Config) => [FormattedTextNode, string],
+		(text: string, config: Config) => [FormattedTextNode, string]
 	]
 > = [
 	[
