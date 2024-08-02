@@ -89,8 +89,9 @@ const Slot = ({
 	}
 
 	return (
-		<div
+		<button
 			onClick={isClickable ? onClick : () => {}}
+			disabled={!isClickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable && somethingPickable,
@@ -114,7 +115,7 @@ const Slot = ({
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
 			<StatusEffectContainer statusEffects={statusEffects || []} />
-		</div>
+		</button>
 	)
 }
 
