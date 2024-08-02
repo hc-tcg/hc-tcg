@@ -29,6 +29,7 @@ import type {
 } from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardStatusEffect} from '../status-effects/status-effect'
+import {GameHook} from '../types/hooks'
 import query from './query'
 
 let CARDS: Record<any, Card>

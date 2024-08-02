@@ -28,7 +28,7 @@ class ArmorStand extends Card {
 	}
 
 	override onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
