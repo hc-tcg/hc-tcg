@@ -1,0 +1,36 @@
+{
+	"organizeImports": { "enabled": true },
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": false,
+			"style": {
+				"noUnusedTemplateLiteral": "error"
+			},
+			"correctness": {
+				"noUnusedPrivateClassMembers": "error",
+				"noUnusedVariables": "error",
+				"noUnusedImports": "error"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"arrowParentheses": "always",
+			"semicolons": "asNeeded",
+			"trailingCommas": "all",
+			"bracketSpacing": false,
+			"quoteStyle": "single"
+		}
+	},
+	"json": {
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		}
+	}
+}
