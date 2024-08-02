@@ -1,14 +1,7 @@
-import {createRequire} from 'module'
 import {PlayerComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
-import {PlayerInfo} from 'common/types/server-requests'
 import fetch from 'node-fetch'
 import root from './serverRoot'
-const _require = createRequire(import.meta.url)
-
-type PlayerStateT = PlayerInfo & {
-	lives: number
-}
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null

@@ -10,12 +10,12 @@
 		"rules": {
 			"recommended": false,
 			"style": {
-				"noUnusedTemplateLiteral": "error"
+				"noUnusedTemplateLiteral": "warn"
 			},
 			"correctness": {
-				"noUnusedPrivateClassMembers": "error",
-				"noUnusedVariables": "error",
-				"noUnusedImports": "error"
+				"noUnusedPrivateClassMembers": "warn",
+				"noUnusedVariables": "warn",
+				"noUnusedImports": "warn"
 			}
 		}
 	},

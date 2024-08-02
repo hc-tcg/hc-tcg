@@ -64,7 +64,6 @@ class Trapdoor extends Card {
 		})
 
 		player.hooks.afterDefence.add(component, (_attack) => {
-			const {player} = component
 			totalReduction = 0
 		})
 	}

@@ -20,7 +20,6 @@ type Props = {
 
 const Attack = ({
 	attackInfo,
-	singleUseIcon,
 	singleUseDamage,
 	onClick,
 	name,
