@@ -1,5 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -29,16 +33,22 @@ class SplashPotionOfHarming extends Card {
 		return game.components.filter(
 			RowComponent,
 			query.row.opponentPlayer,
-			query.row.hermitSlotOccupied
+			query.row.hermitSlotOccupied,
 		)
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {opponentPlayer, player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			const activeRow = opponentPlayer.activeRowEntity
-			const opponentRows = this.getTargetHermits(game).sort((a, b) => a.index - b.index)
+			const opponentRows = this.getTargetHermits(game).sort(
+				(a, b) => a.index - b.index,
+			)
 
 			const attack = game
 				.newAttack({
@@ -48,7 +58,10 @@ class SplashPotionOfHarming extends Card {
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 				})
-				.addDamage(component.entity, opponentRows[0].entity === activeRow ? 40 : 20)
+				.addDamage(
+					component.entity,
+					opponentRows[0].entity === activeRow ? 40 : 20,
+				)
 
 			opponentRows.slice(1).forEach((row) => {
 				const newAttack = game

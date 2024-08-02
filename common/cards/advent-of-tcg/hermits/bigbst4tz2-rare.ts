@@ -2,8 +2,14 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import SoulmateEffect, {soulmateEffectDamage} from '../../../status-effects/soulmate'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import SoulmateEffect, {
+	soulmateEffectDamage,
+} from '../../../status-effects/soulmate'
 
 class BigBSt4tzRare extends Card {
 	props: Hermit = {
@@ -32,11 +38,16 @@ class BigBSt4tzRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			game.components
 				.new(StatusEffectComponent, SoulmateEffect, component.entity)
 				.apply(player.opponentPlayer.entity)

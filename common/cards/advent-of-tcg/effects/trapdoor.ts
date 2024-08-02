@@ -19,7 +19,11 @@ class Trapdoor extends Card {
 			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let totalReduction = 0
@@ -34,7 +38,13 @@ class Trapdoor extends Card {
 				return
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (!component.slot.inRow()) return
-			if (!query.row.adjacent(query.row.entity(component.slot.rowEntity))(game, target)) return
+			if (
+				!query.row.adjacent(query.row.entity(component.slot.rowEntity))(
+					game,
+					target,
+				)
+			)
+				return
 
 			if (totalReduction < 40) {
 				const damageReduction = Math.min(
@@ -52,7 +62,7 @@ class Trapdoor extends Card {
 						log: (values) =>
 							`(${values.damage} was intercepted by ${values.target} with ${getFormattedName(
 								component.props.id,
-								true
+								true,
 							)})`,
 					})
 					.addDamage(component.entity, damageReduction)
@@ -61,8 +71,8 @@ class Trapdoor extends Card {
 					query.every(
 						...attack.shouldIgnoreCards,
 						query.card.entity(attack.attacker.entity),
-						query.card.rowEntity(attack.targetEntity)
-					)
+						query.card.rowEntity(attack.targetEntity),
+					),
 				)
 				attack.addNewAttack(newAttack)
 			}

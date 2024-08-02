@@ -21,11 +21,16 @@ class BrewingStand extends Card {
 			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!component.slot.inRow() || component.slot.row.getItems().length === 0) return
+			if (!component.slot.inRow() || component.slot.row.getItems().length === 0)
+				return
 
 			if (component.slot.row.entity !== player.activeRowEntity) return
 
@@ -40,7 +45,7 @@ class BrewingStand extends Card {
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.not(query.slot.empty),
-					query.slot.active
+					query.slot.active,
 				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return

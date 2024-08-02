@@ -1,4 +1,9 @@
-import {Counter, PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	Counter,
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 import {PlayerComponent} from '../components'
 
 class MuseumCollectionEffect extends PlayerStatusEffect {
@@ -11,7 +16,10 @@ class MuseumCollectionEffect extends PlayerStatusEffect {
 		counter: 0,
 		counterType: 'number',
 		applyCondition: (_game, value) => {
-			return value instanceof PlayerComponent && !value.hasStatusEffect(MuseumCollectionEffect)
+			return (
+				value instanceof PlayerComponent &&
+				!value.hasStatusEffect(MuseumCollectionEffect)
+			)
 		},
 	}
 }

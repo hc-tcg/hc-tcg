@@ -1,5 +1,13 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 
 class DyedEffect extends CardStatusEffect {
@@ -16,12 +24,15 @@ class DyedEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
-			if (!target.slot.inRow() || player.activeRowEntity !== target.slot.row.entity)
+			if (
+				!target.slot.inRow() ||
+				player.activeRowEntity !== target.slot.row.entity
+			)
 				return availableEnergy
 			return availableEnergy.map(() => 'any')
 		})

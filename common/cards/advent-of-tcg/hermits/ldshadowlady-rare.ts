@@ -1,6 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, RowComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,18 +38,23 @@ class LDShadowLadyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			if (
 				!game.components.exists(
 					SlotComponent,
 					query.slot.opponent,
 					query.slot.hermit,
-					query.slot.active
+					query.slot.active,
 				)
 			)
 				return
@@ -53,7 +63,7 @@ class LDShadowLadyRare extends Card {
 				query.slot.hermit,
 				query.slot.opponent,
 				query.slot.empty,
-				query.not(query.slot.active)
+				query.not(query.slot.active),
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -76,7 +86,7 @@ class LDShadowLadyRare extends Card {
 						RowComponent,
 						query.row.opponentPlayer,
 						query.not(query.row.active),
-						query.not(query.row.hasHermit)
+						query.not(query.row.hasHermit),
 					)
 
 					if (!emptyOpponentRow) return

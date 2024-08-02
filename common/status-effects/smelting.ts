@@ -1,6 +1,15 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 
 class SmeltingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -17,7 +26,7 @@ class SmeltingEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
@@ -34,7 +43,7 @@ class SmeltingEffect extends CardStatusEffect {
 							const doubleItem = game.components.new(
 								CardComponent,
 								item.props.id.replace('common', 'rare'),
-								item.slotEntity
+								item.slotEntity,
 							)
 							game.components.delete(item.entity)
 						}

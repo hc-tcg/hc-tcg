@@ -1,5 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
@@ -19,23 +23,33 @@ class Glowstone extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(_game, pos) => !!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3
+			(_game, pos) =>
+				!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const topCards = opponentPlayer.getDeck().sort(CardComponent.compareOrder).slice(0, 3)
+			const topCards = opponentPlayer
+				.getDeck()
+				.sort(CardComponent.compareOrder)
+				.slice(0, 3)
 
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Glowstone: Choose the card for your opponent to discard.',
-						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
+						modalName:
+							'Glowstone: Choose the card for your opponent to discard.',
+						modalDescription:
+							'The other two cards will be placed on the bottom of their deck.',
 						cards: topCards.map((card) => card.entity),
 						selectionSize: 1,
 						primaryButton: {
@@ -55,7 +69,9 @@ class Glowstone extends Card {
 						if (drawCard.entity === card.entity) card.discard()
 						else
 							card.attach(
-								game.components.new(DeckSlotComponent, opponentPlayer.entity, {position: 'back'})
+								game.components.new(DeckSlotComponent, opponentPlayer.entity, {
+									position: 'back',
+								}),
 							)
 					})
 

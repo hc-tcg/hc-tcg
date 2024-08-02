@@ -1,6 +1,14 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import query from '../components/query'
 
 class ProtectedEffect extends CardStatusEffect {
@@ -11,16 +19,20 @@ class ProtectedEffect extends CardStatusEffect {
 		description:
 			'This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
 		applyCondition: (_game, target) => {
-			return target instanceof CardComponent && !target.getStatusEffect(ProtectedEffect)
+			return (
+				target instanceof CardComponent &&
+				!target.getStatusEffect(ProtectedEffect)
+			)
 		},
-		applyLog: (values) => `${values.target} ${values.verb} selected for ${values.statusEffect}`,
+		applyLog: (values) =>
+			`${values.target} ${values.verb} selected for ${values.statusEffect}`,
 	}
 
 	override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 		game.components
@@ -29,15 +41,18 @@ class ProtectedEffect extends CardStatusEffect {
 				query.effect.is(ProtectedEffect),
 				query.effect.targetIsCardAnd(
 					query.card.player(player.entity),
-					query.not(query.card.entity(target.entity))
-				)
+					query.not(query.card.entity(target.entity)),
+				),
 			)
 			.forEach((effect) => effect.remove())
 
 		let becameActive = false
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (target.slot.inRow() && player.activeRowEntity === target.slot.rowEntity) {
+			if (
+				target.slot.inRow() &&
+				player.activeRowEntity === target.slot.rowEntity
+			) {
 				becameActive = true
 			}
 		})

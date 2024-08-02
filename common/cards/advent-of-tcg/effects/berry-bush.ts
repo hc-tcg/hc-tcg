@@ -3,7 +3,11 @@ import query from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
-import {CardComponent, HandSlotComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	HandSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 
 class BerryBush extends Card {
 	props: Attach & HasHealth = {
@@ -23,11 +27,15 @@ class BerryBush extends Card {
 			query.slot.empty,
 			query.slot.playerHasActiveHermit,
 			query.slot.opponentHasActiveHermit,
-			query.not(query.slot.frozen)
+			query.not(query.slot.frozen),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(opponentPlayer.hooks.afterAttack, () => {
@@ -36,20 +44,22 @@ class BerryBush extends Card {
 					game.components.new(
 						CardComponent,
 						'instant_health_ii',
-						game.components.new(HandSlotComponent, opponentPlayer.entity).entity
+						game.components.new(HandSlotComponent, opponentPlayer.entity)
+							.entity,
 					)
 				}
 			}
 		})
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (component.slot.inRow() && component.slot.row.health) component.slot.row.damage(10)
+			if (component.slot.inRow() && component.slot.row.health)
+				component.slot.row.damage(10)
 		})
 		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				query.slot.player(component.player.entity),
-				query.slot.rowIs(component.slot.row.entity)
+				query.slot.rowIs(component.slot.row.entity),
 			)
 		})
 	}

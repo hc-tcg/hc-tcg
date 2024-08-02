@@ -63,13 +63,13 @@ class Biffa2001Rare extends Card {
 					game.components.exists(
 						CardComponent,
 						query.card.is(Biffa2001Rare),
-						query.card.slot(query.slot.hermit)
+						query.card.slot(query.slot.hermit),
 					)
 				) {
 					museumEffect = game.components.new(
 						StatusEffectComponent,
 						MuseumCollectionEffect,
-						component.entity
+						component.entity,
 					)
 					museumEffect.counter = 0
 					museumEffect.apply(player.entity)
@@ -89,7 +89,7 @@ class Biffa2001Rare extends Card {
 					museumEffect = game.components.new(
 						StatusEffectComponent,
 						MuseumCollectionEffect,
-						component.entity
+						component.entity,
 					)
 					museumEffect.apply(player.entity)
 				}
@@ -109,11 +109,16 @@ class Biffa2001Rare extends Card {
 		})
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const counter = this.cardsPlayed.get(game)[player.entity]
 			if (counter === undefined) return
@@ -128,7 +133,9 @@ class Biffa2001Rare extends Card {
 							`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.props.secondary.name}$`,
 					})
 					.addDamage(component.entity, 20)
-				additionalAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+				additionalAttack.shouldIgnoreCards.push(
+					query.card.entity(component.entity),
+				)
 
 				executeExtraAttacks(game, [additionalAttack])
 			})

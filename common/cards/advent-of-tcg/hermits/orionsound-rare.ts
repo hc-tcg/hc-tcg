@@ -3,7 +3,11 @@ import {slot} from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -37,13 +41,18 @@ class OrionSoundRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let cardsWithStatusEffects: Array<string> = []
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+				return
 
 			game.addPickRequest({
 				playerId: player.id,

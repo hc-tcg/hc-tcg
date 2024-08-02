@@ -37,18 +37,28 @@ class PythonGBRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const logfellaAmount = game.components.filter(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.attached,
-				query.card.is(XisumavoidCommon, XisumavoidRare, RendogCommon, RendogRare),
-				query.card.row(query.row.adjacent(query.row.active))
+				query.card.is(
+					XisumavoidCommon,
+					XisumavoidRare,
+					RendogCommon,
+					RendogRare,
+				),
+				query.card.row(query.row.adjacent(query.row.active)),
 			).length
 
 			attack.multiplyDamage(component.entity, Math.pow(2, logfellaAmount))

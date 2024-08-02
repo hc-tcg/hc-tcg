@@ -1,6 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,39 +37,50 @@ class DungeonTangoRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
-			if (activeInstance.entity !== component.entity || hermitAttackType !== 'primary') return
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(activeInstance, hermitAttackType) => {
+				if (
+					activeInstance.entity !== component.entity ||
+					hermitAttackType !== 'primary'
+				)
+					return
 
-			const hermitCard = player.getDeck().find((card) => card.isHermit())
+				const hermitCard = player.getDeck().find((card) => card.isHermit())
 
-			const pickCondition = query.every(
-				query.slot.currentPlayer,
-				query.slot.item,
-				query.slot.active,
-				query.not(query.slot.empty),
-				query.not(query.slot.frozen)
-			)
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.item,
+					query.slot.active,
+					query.not(query.slot.empty),
+					query.not(query.slot.frozen),
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				playerId: player.id,
-				id: component.entity,
-				message: 'Choose an item card to discard',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					const pickedCard = pickedSlot.getCard()
-					if (!pickedCard || !hermitCard) return
+				game.addPickRequest({
+					playerId: player.id,
+					id: component.entity,
+					message: 'Choose an item card to discard',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const pickedCard = pickedSlot.getCard()
+						if (!pickedCard || !hermitCard) return
 
-					pickedCard.discard()
+						pickedCard.discard()
 
-					hermitCard.draw()
-				},
-			})
-		})
+						hermitCard.draw()
+					},
+				})
+			},
+		)
 	}
 }
 

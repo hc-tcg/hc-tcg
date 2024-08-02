@@ -1,6 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import query from '../../../components/query'
-import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -19,15 +23,22 @@ class Brush extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(_game, pos) => pos.player.getDeck().length >= 3
+			(_game, pos) => pos.player.getDeck().length >= 3,
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const topCards = player.getDeck().sort(CardComponent.compareOrder).slice(0, 3)
+			const topCards = player
+				.getDeck()
+				.sort(CardComponent.compareOrder)
+				.slice(0, 3)
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -35,7 +46,8 @@ class Brush extends Card {
 					modalId: 'selectCards',
 					payload: {
 						modalName: 'Brush: Choose cards to place on the top of your deck.',
-						modalDescription: 'Select cards you would like to draw sooner first.',
+						modalDescription:
+							'Select cards you would like to draw sooner first.',
 						cards: topCards.map((card) => card.entity),
 						selectionSize: 3,
 						primaryButton: {
@@ -52,7 +64,11 @@ class Brush extends Card {
 
 					topCards.forEach((c) => {
 						if (cards.some((d) => d.entity === c.entity)) return // Leave selected cards "on top"
-						c.attach(game.components.new(DeckSlotComponent, player.entity, {position: 'back'}))
+						c.attach(
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'back',
+							}),
+						)
 					})
 
 					return 'SUCCESS'

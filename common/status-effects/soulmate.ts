@@ -1,6 +1,14 @@
-import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
+import {
+	StatusEffectComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 import {executeExtraAttacks} from '../utils/attacks'
 
 export const soulmateEffectDamage = 140
@@ -12,7 +20,10 @@ class SoulmateEffect extends PlayerStatusEffect {
 		name: 'Soulmate',
 		description: `If you knock out %CREATOR%, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
 		applyCondition: (_game, value) => {
-			return value instanceof PlayerComponent && !value.hasStatusEffect(SoulmateEffect)
+			return (
+				value instanceof PlayerComponent &&
+				!value.hasStatusEffect(SoulmateEffect)
+			)
 		},
 	}
 
@@ -20,7 +31,7 @@ class SoulmateEffect extends PlayerStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {creator} = effect
 
@@ -31,7 +42,8 @@ class SoulmateEffect extends PlayerStatusEffect {
 				attacker: effect.creatorEntity,
 				target: player.activeRowEntity,
 				type: 'status-effect',
-				log: (values) => `${values.target} took ${values.damage} from $e${effect.props.name}$`,
+				log: (values) =>
+					`${values.target} took ${values.damage} from $e${effect.props.name}$`,
 			})
 			statusEffectAttack.addDamage(effect.entity, soulmateEffectDamage)
 

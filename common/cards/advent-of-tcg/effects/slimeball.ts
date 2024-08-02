@@ -21,11 +21,15 @@ class Slimeball extends Card {
 			query.slot.empty,
 			query.slot.row(query.row.hasHermit),
 			query.actionAvailable('PLAY_EFFECT_CARD'),
-			query.not(query.slot.frozen)
+			query.not(query.slot.frozen),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.freezeSlots, () => {
@@ -34,7 +38,7 @@ class Slimeball extends Card {
 				query.slot.player(player.entity),
 				query.slot.rowIs(component.slot.rowEntity),
 				query.not(query.slot.attach),
-				query.not(query.slot.empty)
+				query.not(query.slot.empty),
 			)
 		})
 	}

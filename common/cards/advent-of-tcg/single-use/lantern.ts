@@ -19,15 +19,22 @@ class Lantern extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(_game, pos) => pos.player.getDeck().length >= 4
+			(_game, pos) => pos.player.getDeck().length >= 4,
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const topCards = player.getDeck().sort(CardComponent.compareOrder).slice(0, 4)
+			const topCards = player
+				.getDeck()
+				.sort(CardComponent.compareOrder)
+				.slice(0, 4)
 
 			game.addModalRequest({
 				playerId: player.id,

@@ -34,25 +34,27 @@ class Smajor1995Rare extends Card {
 			name: 'To Dye For',
 			cost: ['any', 'any', 'any'],
 			damage: 70,
-			power: 'After your attack, select one of your AFK Hermits to use items of any type.',
+			power:
+				'After your attack, select one of your AFK Hermits to use items of any type.',
 		},
 	}
 
 	public override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const pickCondition = query.every(
 				query.slot.currentPlayer,
 				query.slot.hermit,
 				query.not(query.slot.active),
-				query.not(query.slot.empty)
+				query.not(query.slot.empty),
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return

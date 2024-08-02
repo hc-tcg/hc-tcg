@@ -6,7 +6,11 @@ import query from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 
 class MonkeyfarmRare extends Card {
 	props: Hermit = {
@@ -36,17 +40,22 @@ class MonkeyfarmRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const pickCondition = query.every(
 				query.slot.opponent,
 				query.slot.item,
 				query.not(query.slot.active),
-				query.not(query.slot.empty)
+				query.not(query.slot.empty),
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return

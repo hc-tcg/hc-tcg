@@ -3,7 +3,11 @@ import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 import query from '../../../components/query'
 
 class Cat extends Card {
@@ -19,7 +23,11 @@ class Cat extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!component.slot.inRow()) return
@@ -28,7 +36,7 @@ class Cat extends Card {
 			if (
 				game.components.exists(
 					CardComponent,
-					query.card.slot(query.slot.currentPlayer, query.slot.deck)
+					query.card.slot(query.slot.currentPlayer, query.slot.deck),
 				)
 			)
 				return
@@ -40,7 +48,9 @@ class Cat extends Card {
 					payload: {
 						modalName: 'Cat: Draw a card from the bottom of your deck?',
 						modalDescription: '',
-						cards: [player.getDeck().sort(CardComponent.compareOrder)[0].entity],
+						cards: [
+							player.getDeck().sort(CardComponent.compareOrder)[0].entity,
+						],
 						selectionSize: 0,
 						primaryButton: {
 							text: 'Draw from Bottom',
@@ -58,9 +68,12 @@ class Cat extends Card {
 
 					observer.oneShot(player.hooks.onTurnEnd, (drawCards) => {
 						drawCards[0]?.attach(
-							game.components.new(DeckSlotComponent, player.entity, {position: 'front'})
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'front',
+							}),
 						)
-						drawCards[0] = player.getDeck().sort(CardComponent.compareOrder).at(-1) || null
+						drawCards[0] =
+							player.getDeck().sort(CardComponent.compareOrder).at(-1) || null
 						drawCards[0]?.draw()
 					})
 

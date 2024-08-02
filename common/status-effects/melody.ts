@@ -1,5 +1,13 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 
 class MelodyEffect extends CardStatusEffect {
@@ -7,7 +15,8 @@ class MelodyEffect extends CardStatusEffect {
 		...statusEffect,
 		icon: 'melody',
 		name: "Ollie's Melody",
-		description: 'This Hermit heals 10hp every turn until %CREATOR% is knocked out.',
+		description:
+			'This Hermit heals 10hp every turn until %CREATOR% is knocked out.',
 		applyCondition: (_game, card) =>
 			card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
 	}
@@ -16,7 +25,7 @@ class MelodyEffect extends CardStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 

@@ -1,5 +1,9 @@
 import {GameModel, GameValue} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, PlayerComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -58,15 +62,23 @@ class PixlriffsRare extends Card {
 		})
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const startingRowIndex = this.startingRow.get(game)[player.entity]
 			// Attacker should only be able to change rows with Ender Pearl and Ladder after a knockout
-			if (startingRowIndex !== undefined && startingRowIndex !== player.activeRow?.index)
+			if (
+				startingRowIndex !== undefined &&
+				startingRowIndex !== player.activeRow?.index
+			)
 				attack.addDamage(component.entity, 40)
 		})
 	}

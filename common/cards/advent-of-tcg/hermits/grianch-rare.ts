@@ -43,7 +43,11 @@ class GrianchRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
@@ -59,7 +63,7 @@ class GrianchRare extends Card {
 					player.entity,
 					`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g40hp$ by $p${
 						component.card.props.name
-					}$`
+					}$`,
 				)
 			} else if (attack.type === 'secondary') {
 				const coinFlip = flipCoin(player, component)
@@ -75,48 +79,60 @@ class GrianchRare extends Card {
 					.find(
 						StatusEffectComponent,
 						query.effect.is(FortuneEffect),
-						query.effect.targetEntity(player.entity)
+						query.effect.targetEntity(player.entity),
 					)
 					?.remove()
 
-				game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
-				game.removeBlockedActions('game', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+				game.removeCompletedActions(
+					'PRIMARY_ATTACK',
+					'SECONDARY_ATTACK',
+					'SINGLE_USE_ATTACK',
+				)
+				game.removeBlockedActions(
+					'game',
+					'PRIMARY_ATTACK',
+					'SECONDARY_ATTACK',
+					'SINGLE_USE_ATTACK',
+				)
 			}
 		})
 
 		let pickedAfkSlot: SlotComponent | null = null
 
 		// Pick the hermit to heal
-		observer.subscribe(player.hooks.getAttackRequests, (activeInstance, hermitAttackType) => {
-			// Make sure we are attacking
-			if (activeInstance.entity !== component.entity) return
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(activeInstance, hermitAttackType) => {
+				// Make sure we are attacking
+				if (activeInstance.entity !== component.entity) return
 
-			// Only primary attack
-			if (hermitAttackType !== 'primary') return
+				// Only primary attack
+				if (hermitAttackType !== 'primary') return
 
-			const pickCondition = query.every(
-				query.not(query.slot.active),
-				query.not(query.slot.empty),
-				query.slot.hermit
-			)
+				const pickCondition = query.every(
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+					query.slot.hermit,
+				)
 
-			// Make sure there is something to select
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				// Make sure there is something to select
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				playerId: player.id,
-				id: component.entity,
-				message: 'Pick an AFK Hermit from either side of the board',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					// Store the info to use later
-					pickedAfkSlot = pickedSlot
-				},
-				onTimeout() {
-					// We didn't pick anyone to heal, so heal no one
-				},
-			})
-		})
+				game.addPickRequest({
+					playerId: player.id,
+					id: component.entity,
+					message: 'Pick an AFK Hermit from either side of the board',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						// Store the info to use later
+						pickedAfkSlot = pickedSlot
+					},
+					onTimeout() {
+						// We didn't pick anyone to heal, so heal no one
+					},
+				})
+			},
+		)
 	}
 }
 

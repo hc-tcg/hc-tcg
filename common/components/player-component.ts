@@ -123,7 +123,10 @@ export class PlayerComponent {
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent | null, newActiveHermit: CardComponent) => void
+			(
+				oldActiveHermit: CardComponent | null,
+				newActiveHermit: CardComponent,
+			) => void
 		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
@@ -303,7 +306,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!newHermit)
 				throw new Error(
-					'Should not be able to change from no active row to an active row with no hermit.'
+					'Should not be able to change from no active row to an active row with no hermit.',
 				)
 			this.hooks.onActiveRowChange.call(null, newHermit)
 		}

@@ -42,18 +42,19 @@ class SolidaritygamingRare extends Card {
 	public override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+				return
 
 			const pickCondition = query.every(
 				query.slot.currentPlayer,
 				query.slot.hermit,
 				query.not(query.slot.active),
-				query.not(query.slot.empty)
+				query.not(query.slot.empty),
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return

@@ -1,5 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, DeckSlotComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -35,7 +39,7 @@ class ShubbleYTRare extends Card {
 	public override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player} = component
 
@@ -68,7 +72,11 @@ class ShubbleYTRare extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					topCard.attach(game.components.new(DeckSlotComponent, player.entity, {position: 'back'}))
+					topCard.attach(
+						game.components.new(DeckSlotComponent, player.entity, {
+							position: 'back',
+						}),
+					)
 
 					return 'SUCCESS'
 				},
