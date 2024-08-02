@@ -1,6 +1,6 @@
-import classnames from "classnames"
-import React, {forwardRef} from "react"
-import css from "./slider.module.scss"
+import classnames from 'classnames'
+import React, {forwardRef} from 'react'
+import css from './slider.module.scss'
 
 type Props = React.HTMLProps<HTMLInputElement> & {
 	className?: string
@@ -16,7 +16,7 @@ const Slider = forwardRef(
 				<input
 					min="0"
 					max="100"
-					placeholder={typeof children === "string" ? children : ""}
+					placeholder={typeof children === 'string' ? children : ''}
 					{...otherProps}
 					ref={ref}
 					type="range"
@@ -27,5 +27,5 @@ const Slider = forwardRef(
 	},
 )
 
-Slider.displayName = "Slider"
+Slider.displayName = 'Slider'
 export default Slider

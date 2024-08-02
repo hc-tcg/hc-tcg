@@ -2,42 +2,42 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import FireEffect from "../../../status-effects/fire"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import FireEffect from '../../../status-effects/fire'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class EthosLabRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "ethoslab_rare",
+		id: 'ethoslab_rare',
 		numericId: 20,
-		name: "Etho",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Etho',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 3,
-		type: "redstone",
+		type: 'redstone',
 		health: 280,
 		primary: {
-			name: "Oh Snappers",
-			cost: ["redstone"],
+			name: 'Oh Snappers',
+			cost: ['redstone'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Blue Fire",
-			cost: ["redstone", "redstone"],
+			name: 'Blue Fire',
+			cost: ['redstone', 'redstone'],
 			damage: 80,
 			power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
 		},
 		sidebarDescriptions: [
 			{
-				type: "statusEffect",
-				name: "fire",
+				type: 'statusEffect',
+				name: 'fire',
 			},
 		],
 	}
@@ -50,13 +50,13 @@ class EthosLabRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 			if (!(attack.attacker instanceof CardComponent)) return
 
 			const coinFlip = flipCoin(player, attack.attacker)
 
-			if (coinFlip[0] !== "heads") return
+			if (coinFlip[0] !== 'heads') return
 
 			let opponentActiveHermit = game.components.find(
 				CardComponent,

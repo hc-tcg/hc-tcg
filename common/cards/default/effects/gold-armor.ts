@@ -1,20 +1,20 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {attach} from "../../base/defaults"
-import {Attach} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class GoldArmor extends Card {
 	props: Attach = {
 		...attach,
-		id: "gold_armor",
+		id: 'gold_armor',
 		numericId: 29,
-		name: "Gold Armour",
-		expansion: "default",
-		rarity: "common",
+		name: 'Gold Armour',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
 		description:
-			"When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.",
+			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 	}
 
 	override onAttach(
@@ -27,7 +27,7 @@ class GoldArmor extends Card {
 		let damageBlocked = 0
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargeting(component) || attack.isType("status-effect"))
+			if (!attack.isTargeting(component) || attack.isType('status-effect'))
 				return
 
 			if (damageBlocked < 10) {

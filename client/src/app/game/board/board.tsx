@@ -1,16 +1,16 @@
-import {PlayerEntity, SlotEntity} from "common/entities"
-import {SlotTypeT} from "common/types/cards"
-import {LocalGameState, LocalPlayerState} from "common/types/game-state"
-import {LocalCardInstance, SlotInfo} from "common/types/server-requests"
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import {getPlayerId} from "logic/session/session-selectors"
-import {useSelector} from "react-redux"
-import Actions from "../actions/actions"
-import MobileActions from "../actions/mobile-actions"
-import PlayerInfo from "../player-info"
-import Timer from "../timer"
-import BoardRow from "./board-row"
-import css from "./board.module.scss"
+import {PlayerEntity, SlotEntity} from 'common/entities'
+import {SlotTypeT} from 'common/types/cards'
+import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {useSelector} from 'react-redux'
+import Actions from '../actions/actions'
+import MobileActions from '../actions/mobile-actions'
+import PlayerInfo from '../player-info'
+import Timer from '../timer'
+import BoardRow from './board-row'
+import css from './board.module.scss'
 
 type Props = {
 	onClick: (
@@ -29,8 +29,8 @@ function Board({onClick, localGameState}: Props) {
 	const player = localGameState.players[playerId]
 	const opponent = localGameState.players[localGameState.opponentPlayerId]
 	const side = settings.gameSide
-	const leftPlayer = side === "Left" ? player : opponent
-	const rightPlayer = side === "Right" ? player : opponent
+	const leftPlayer = side === 'Left' ? player : opponent
+	const rightPlayer = side === 'Right' ? player : opponent
 
 	const handleRowClick = (
 		rowIndex: number,
@@ -50,7 +50,7 @@ function Board({onClick, localGameState}: Props) {
 
 	const PlayerBoard = (
 		player: LocalPlayerState,
-		direction: "left" | "right",
+		direction: 'left' | 'right',
 	) => {
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
@@ -59,7 +59,7 @@ function Board({onClick, localGameState}: Props) {
 						<BoardRow
 							key={row.entity}
 							player={
-								direction === "left" ? leftPlayer.entity : rightPlayer.entity
+								direction === 'left' ? leftPlayer.entity : rightPlayer.entity
 							}
 							rowState={row}
 							active={row.entity === player.board.activeRow}
@@ -84,13 +84,13 @@ function Board({onClick, localGameState}: Props) {
 			</div>
 
 			<div className={css.actualBoard}>
-				{PlayerBoard(leftPlayer, "left")}
+				{PlayerBoard(leftPlayer, 'left')}
 				<Actions
 					localGameState={localGameState}
 					onClick={(value) => onClick(value, player.entity)}
 					id={css.actions}
 				/>
-				{PlayerBoard(rightPlayer, "right")}
+				{PlayerBoard(rightPlayer, 'right')}
 			</div>
 
 			<MobileActions

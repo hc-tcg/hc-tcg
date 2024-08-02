@@ -10,10 +10,10 @@ import {
 	useHover,
 	useInteractions,
 	useRole,
-} from "@floating-ui/react"
-import classNames from "classnames"
-import React, {memo, useState} from "react"
-import css from "./tooltip.module.scss"
+} from '@floating-ui/react'
+import classNames from 'classnames'
+import React, {memo, useState} from 'react'
+import css from './tooltip.module.scss'
 
 type Props = {
 	children: React.ReactElement
@@ -27,14 +27,14 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const {x, y, refs, strategy, context} = useFloating({
 		open,
 		onOpenChange: setOpen,
-		placement: "top",
+		placement: 'top',
 		// Make sure the tooltip stays on the screen
 		whileElementsMounted: autoUpdate,
 		middleware: [
 			offset(5),
 			flip({
 				crossAxis: false,
-				fallbackAxisSideDirection: "start",
+				fallbackAxisSideDirection: 'start',
 			}),
 			shift(),
 		],
@@ -45,7 +45,7 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const focus = useFocus(context)
 	const dismiss = useDismiss(context)
 	// Role props for screen readers
-	const role = useRole(context, {role: "tooltip"})
+	const role = useRole(context, {role: 'tooltip'})
 
 	// Merge all the interactions into prop getters
 	const {getReferenceProps, getFloatingProps} = useInteractions([

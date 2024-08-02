@@ -2,20 +2,20 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
-import {executeExtraAttacks} from "../utils/attacks"
+} from '../components'
+import {GameModel} from '../models/game-model'
+import {executeExtraAttacks} from '../utils/attacks'
 import {
 	CardStatusEffect,
 	StatusEffectProps,
 	damageEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class FireEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		icon: "fire",
-		name: "Burn",
+		icon: 'fire',
+		name: 'Burn',
 		description:
 			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
 		applyLog: (values) => `${values.target} was $eBurned$`,
@@ -35,7 +35,7 @@ class FireEffect extends CardStatusEffect {
 				attacker: effect.entity,
 				target: target.slot.row.entity,
 				player: opponentPlayer.entity,
-				type: "status-effect",
+				type: 'status-effect',
 				log: (values) =>
 					`${values.target} took ${values.damage} damage from $bBurn$`,
 			})

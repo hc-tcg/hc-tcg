@@ -3,15 +3,15 @@ import type {
 	Entity,
 	ObserverEntity,
 	StatusEffectEntity,
-} from "../entities"
-import {GameModel} from "../models/game-model"
-import {StatusEffect, StatusEffectProps} from "../status-effects/status-effect"
-import {CardComponent} from "./card-component"
-import {ObserverComponent} from "./observer-component"
-import {PlayerComponent} from "./player-component"
+} from '../entities'
+import {GameModel} from '../models/game-model'
+import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
+import {CardComponent} from './card-component'
+import {ObserverComponent} from './observer-component'
+import {PlayerComponent} from './player-component'
 
 let STATUS_EFFECTS: Record<any, StatusEffect<any>>
-import("../status-effects").then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
+import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
 export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent =

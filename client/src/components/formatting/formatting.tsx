@@ -1,6 +1,6 @@
-import classNames from "classnames"
-import {FormattedTextNode, censorProfanityNode} from "common/utils/formatting"
-import css from "./formatting.module.scss"
+import classNames from 'classnames'
+import {FormattedTextNode, censorProfanityNode} from 'common/utils/formatting'
+import css from './formatting.module.scss'
 
 type DisplaySettings = {
 	isSelectable?: boolean
@@ -12,33 +12,33 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 	let textCssClasses = []
 
 	if (settings.isSelectable != false) {
-		textCssClasses.push(css["selectable"])
+		textCssClasses.push(css['selectable'])
 	}
 
-	if (node.TYPE == "ListNode") {
+	if (node.TYPE == 'ListNode') {
 		let html = []
 
 		for (let child of node.nodes) {
 			html.push(nodeToHtml(child, settings))
 		}
 		return <span>{html}</span>
-	} else if (node.TYPE == "EmptyNode") {
+	} else if (node.TYPE == 'EmptyNode') {
 		return <div />
-	} else if (node.TYPE == "TextNode") {
+	} else if (node.TYPE == 'TextNode') {
 		return <span className={classNames(...textCssClasses)}>{node.text}</span>
-	} else if (node.TYPE == "FormatNode") {
+	} else if (node.TYPE == 'FormatNode') {
 		return (
 			<span
 				className={classNames(
 					css[node.format],
-					settings.isOpponent ? css.viewedByOpponent : "",
+					settings.isOpponent ? css.viewedByOpponent : '',
 					...textCssClasses,
 				)}
 			>
 				{nodeToHtml(node.text, settings)}
 			</span>
 		)
-	} else if (node.TYPE == "DifferentTextNode") {
+	} else if (node.TYPE == 'DifferentTextNode') {
 		return (
 			<span className={classNames(...textCssClasses)}>
 				{settings.isOpponent
@@ -46,17 +46,17 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 					: nodeToHtml(node.playerText, settings)}
 			</span>
 		)
-	} else if (node.TYPE == "ProfanityNode") {
+	} else if (node.TYPE == 'ProfanityNode') {
 		if (settings.censorProfanity) {
 			return (
 				<span className={classNames(...textCssClasses)}>
-					{" "}
-					{censorProfanityNode(node)}{" "}
+					{' '}
+					{censorProfanityNode(node)}{' '}
 				</span>
 			)
 		}
 		return <span className={classNames(...textCssClasses)}>{node.text}</span>
-	} else if (node.TYPE == "EmojiNode") {
+	} else if (node.TYPE == 'EmojiNode') {
 		const link = `/images/hermits-emoji/${node.emoji.toLowerCase()}.png`
 		const alt = `:${node.emoji}:`
 
@@ -67,11 +67,11 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 				alt={alt}
 			/>
 		)
-	} else if (node.TYPE == "LineBreakNode") {
+	} else if (node.TYPE == 'LineBreakNode') {
 		return <br />
-	} else if (node.TYPE == "TabNode") {
+	} else if (node.TYPE == 'TabNode') {
 		return <span className={css.tab}></span>
-	} else if (node.TYPE == "LineNode") {
+	} else if (node.TYPE == 'LineNode') {
 		return <span className={css.line} />
 	}
 }

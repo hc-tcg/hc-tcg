@@ -1,20 +1,20 @@
-import type Card from "./base/card"
+import type Card from './base/card'
 
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import alterEgosIIHermitCards from "./alter-egos-ii/hermits"
-import alterEgosIIIHermitCards from "./alter-egos-iii/hermits"
-import alterEgosIIIItemCards from "./alter-egos-iii/items"
-import alterEgoEffectCards from "./alter-egos/effects"
-import alterEgosHermitCards from "./alter-egos/hermits"
-import alterEgosSingleUseCards from "./alter-egos/single-use"
-import {CardClass} from "./base/card"
-import defaultEffectCards from "./default/effects"
+import alterEgosIIHermitCards from './alter-egos-ii/hermits'
+import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
+import alterEgosIIIItemCards from './alter-egos-iii/items'
+import alterEgoEffectCards from './alter-egos/effects'
+import alterEgosHermitCards from './alter-egos/hermits'
+import alterEgosSingleUseCards from './alter-egos/single-use'
+import {CardClass} from './base/card'
+import defaultEffectCards from './default/effects'
 // import adventOfTcgEffectCards from './advent-of-tcg/effects'
-import defaultHermitCards from "./default/hermits"
+import defaultHermitCards from './default/hermits'
 // import adventOfTcgHermitCards from './advent-of-tcg/hermits'
-import defaultItemCards from "./default/items"
-import defaultSingleUseCards from "./default/single-use"
-import seasonXHermitCards from "./season-x/hermits"
+import defaultItemCards from './default/items'
+import defaultSingleUseCards from './default/single-use'
+import seasonXHermitCards from './season-x/hermits'
 
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,

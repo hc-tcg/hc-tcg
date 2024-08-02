@@ -1,6 +1,6 @@
-import {ErrorIcon} from "components/svgs"
-import {HTMLAttributes, ReactNode} from "react"
-import css from "./error-banner.module.scss"
+import {ErrorIcon} from 'components/svgs'
+import {HTMLAttributes, ReactNode} from 'react'
+import css from './error-banner.module.scss'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
 	children: ReactNode

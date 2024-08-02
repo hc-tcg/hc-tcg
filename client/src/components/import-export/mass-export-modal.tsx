@@ -1,10 +1,10 @@
-import * as AlertDialog from "@radix-ui/react-dialog"
-import {loadSavedDeck} from "common/types/deck"
-import ModalCSS from "components/alert-modal/alert-modal.module.scss"
-import Button from "components/button"
-import {getSavedDecks} from "logic/saved-decks/saved-decks"
-import {getHashFromDeck} from "./import-export-utils"
-import css from "./import-export.module.scss"
+import * as AlertDialog from '@radix-ui/react-dialog'
+import {loadSavedDeck} from 'common/types/deck'
+import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
+import Button from 'components/button'
+import {getSavedDecks} from 'logic/saved-decks/saved-decks'
+import {getHashFromDeck} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -22,11 +22,11 @@ export function MassExportModal({setOpen, onClose}: Props) {
 				)
 			}
 		})
-		const deckFile = new Blob(decks, {type: "text/plain"})
+		const deckFile = new Blob(decks, {type: 'text/plain'})
 
-		const downloadLink = document.createElement("a")
+		const downloadLink = document.createElement('a')
 		downloadLink.href = URL.createObjectURL(deckFile)
-		downloadLink.download = "decks.txt"
+		downloadLink.download = 'decks.txt'
 
 		document.body.appendChild(downloadLink)
 		downloadLink.click()
@@ -35,7 +35,7 @@ export function MassExportModal({setOpen, onClose}: Props) {
 
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => !e && onClose()}>
-			<AlertDialog.Portal container={document.getElementById("modal")}>
+			<AlertDialog.Portal container={document.getElementById('modal')}>
 				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
 				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
 					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>

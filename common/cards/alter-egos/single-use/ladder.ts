@@ -2,13 +2,13 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Ladder extends Card {
 	pickCondition = query.every(
@@ -20,14 +20,14 @@ class Ladder extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "ladder",
+		id: 'ladder',
 		numericId: 143,
-		name: "Ladder",
-		expansion: "alter_egos",
-		rarity: "ultra_rare",
+		name: 'Ladder',
+		expansion: 'alter_egos',
+		rarity: 'ultra_rare',
 		tokens: 2,
 		description:
-			"Before your attack, swap your active Hermit card with one of your adjacent AFK Hermit cards.\nAll cards attached to both Hermits, including health, remain in place. Your active Hermit remains active after swapping.",
+			'Before your attack, swap your active Hermit card with one of your adjacent AFK Hermit cards.\nAll cards attached to both Hermits, including health, remain in place. Your active Hermit remains active after swapping.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.pickCondition),
@@ -44,7 +44,7 @@ class Ladder extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick an AFK Hermit adjacent to your active Hermit",
+			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.onBoard() || !pickedSlot.row) return

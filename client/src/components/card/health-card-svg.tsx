@@ -1,6 +1,6 @@
-import classnames from "classnames"
-import {memo, useEffect, useMemo, useRef, useState} from "react"
-import css from "./health-card-svg.module.scss"
+import classnames from 'classnames'
+import {memo, useEffect, useMemo, useRef, useState} from 'react'
+import css from './health-card-svg.module.scss'
 
 function useCountdownAnimation(value: number, duration = 500) {
 	const [displayValue, setDisplayValue] = useState(value)
@@ -39,18 +39,18 @@ function useCountdownAnimation(value: number, duration = 500) {
 }
 
 const HealthDisplayModule = memo(({health}: {health: number | null}) => {
-	const displayHealth = health !== null ? useCountdownAnimation(health) : "???"
+	const displayHealth = health !== null ? useCountdownAnimation(health) : '???'
 
 	return (
 		<svg
 			className={classnames(css.card, {
-				[css.mystery]: displayHealth === "???",
-				[css.healthy]: displayHealth !== "???" && displayHealth >= 200,
+				[css.mystery]: displayHealth === '???',
+				[css.healthy]: displayHealth !== '???' && displayHealth >= 200,
 				[css.damaged]:
-					displayHealth !== "???" &&
+					displayHealth !== '???' &&
 					displayHealth < 200 &&
 					displayHealth >= 100,
-				[css.dying]: displayHealth !== "???" && displayHealth < 100,
+				[css.dying]: displayHealth !== '???' && displayHealth < 100,
 			})}
 			width="100%"
 			height="100%"

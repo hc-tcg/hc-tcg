@@ -1,35 +1,35 @@
-import {CardComponent} from "../../../components"
-import {slot} from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class Smajor1995Rare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "smajor1995_rare",
+		id: 'smajor1995_rare',
 		numericId: 218,
-		name: "Scott",
-		expansion: "advent_of_tcg",
-		palette: "advent_of_tcg",
-		background: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Scott',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 0,
-		type: "builder",
+		type: 'builder',
 		health: 270,
 		primary: {
-			name: "Color Splash",
-			cost: ["any"],
+			name: 'Color Splash',
+			cost: ['any'],
 			damage: 30,
 			power: null,
 		},
 		secondary: {
-			name: "To Dye For",
-			cost: ["any", "any", "any"],
+			name: 'To Dye For',
+			cost: ['any', 'any', 'any'],
 			damage: 70,
 			power:
-				"After your attack, select one of your Hermits. Items attached to this Hermit become any type.",
+				'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
 		},
 	}
 
@@ -39,7 +39,7 @@ class Smajor1995Rare extends Card {
 		player.hooks.onAttack.add(component, (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(component) ||
-				attack.type !== "secondary"
+				attack.type !== 'secondary'
 			)
 				return
 
@@ -55,13 +55,13 @@ class Smajor1995Rare extends Card {
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: "Choose an AFK Hermit to dye.",
+				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, "dyed", pickedSlot.cardId)
+					applyStatusEffect(game, 'dyed', pickedSlot.cardId)
 				},
 			})
 		})

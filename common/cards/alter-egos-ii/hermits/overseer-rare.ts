@@ -1,33 +1,33 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class OverseerRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "overseer_rare",
+		id: 'overseer_rare',
 		numericId: 235,
-		name: "Overseer",
-		expansion: "alter_egos_ii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Overseer',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 0,
-		type: "miner",
+		type: 'miner',
 		health: 250,
 		primary: {
-			name: "Testing",
-			cost: ["miner"],
+			name: 'Testing',
+			cost: ['miner'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Starched",
-			cost: ["miner", "miner"],
+			name: 'Starched',
+			cost: ['miner', 'miner'],
 			damage: 80,
-			power: "Attack damage doubles versus Farm types.",
+			power: 'Attack damage doubles versus Farm types.',
 		},
 	}
 
@@ -39,11 +39,11 @@ class OverseerRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const targetHermit = attack.target?.getHermit()
-			if (targetHermit?.isHermit() && targetHermit.props.type === "farm")
+			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
 				attack.multiplyDamage(component.entity, 2)
 		})
 	}

@@ -1,32 +1,32 @@
-import {createRequire} from "module"
-import {PlayerComponent} from "common/components"
-import {GameModel} from "common/models/game-model"
-import {PlayerInfo} from "common/types/server-requests"
-import fetch from "node-fetch"
-import root from "./serverRoot"
+import {createRequire} from 'module'
+import {PlayerComponent} from 'common/components'
+import {GameModel} from 'common/models/game-model'
+import {PlayerInfo} from 'common/types/server-requests'
+import fetch from 'node-fetch'
+import root from './serverRoot'
 const _require = createRequire(import.meta.url)
 
 type PlayerStateT = PlayerInfo & {
 	lives: number
 }
 
-export function registerApis(app: import("express").Express) {
+export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
 	let botKey: any = null
 
-	const env = process.env.NODE_ENV || "development"
-	if (env == "development") {
-		console.log("running in dev mode, not activating api")
+	const env = process.env.NODE_ENV || 'development'
+	if (env == 'development') {
+		console.log('running in dev mode, not activating api')
 		//return
 	}
 
 	try {
-		apiKeys = JSON.parse(process.env.API_KEYS || "")
+		apiKeys = JSON.parse(process.env.API_KEYS || '')
 		botKey = process.env.BOT_KEY
 
 		// get info about games
-		app.get("/api/games", (req, res) => {
-			const apiKey = req.header("api-key")
+		app.get('/api/games', (req, res) => {
+			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys.includes(apiKey)) {
 					res.status(201).send(
@@ -54,15 +54,15 @@ export function registerApis(app: import("express").Express) {
 						),
 					)
 				} else {
-					res.status(403).send("Access denied - Invalid API key")
+					res.status(403).send('Access denied - Invalid API key')
 				}
 			} else {
-				res.status(403).send("Access denied.")
+				res.status(403).send('Access denied.')
 			}
 		})
 
-		app.post("/api/createGame", (req, res) => {
-			const apiKey = req.header("api-key")
+		app.post('/api/createGame', (req, res) => {
+			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys.includes(apiKey)) {
 					const code = Math.floor(Math.random() * 10000000).toString(16)
@@ -73,26 +73,26 @@ export function registerApis(app: import("express").Express) {
 						playerId: null,
 					}
 
-					console.log("Private game created via api.", `Code: ${code}`)
+					console.log('Private game created via api.', `Code: ${code}`)
 
 					res.status(201).send({
 						code,
 					})
 				} else {
-					res.status(403).send("Access denied - Invalid API key")
+					res.status(403).send('Access denied - Invalid API key')
 				}
 			} else {
-				res.status(403).send("Access denied.")
+				res.status(403).send('Access denied.')
 			}
 		})
 
-		root.hooks.newGame.add("api", (game: GameModel) => {
+		root.hooks.newGame.add('api', (game: GameModel) => {
 			try {
 				fetch(`${process.env.BOT_URL}/admin/game_start`, {
-					method: "POST",
+					method: 'POST',
 					headers: [
-						["Content-type", "application/json"],
-						["api-key", botKey],
+						['Content-type', 'application/json'],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						createdTime: game.createdTime,
@@ -112,17 +112,17 @@ export function registerApis(app: import("express").Express) {
 					}),
 				})
 			} catch (e) {
-				console.log("Error notifying discord bot about game start: " + e)
+				console.log('Error notifying discord bot about game start: ' + e)
 			}
 		})
 
-		root.hooks.gameRemoved.add("api", (game: GameModel) => {
+		root.hooks.gameRemoved.add('api', (game: GameModel) => {
 			try {
 				fetch(`${process.env.BOT_URL}/admin/game_end`, {
-					method: "POST",
+					method: 'POST',
 					headers: [
-						["Content-type", "application/json"],
-						["api-key", botKey],
+						['Content-type', 'application/json'],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						createdTime: game.createdTime,
@@ -144,17 +144,17 @@ export function registerApis(app: import("express").Express) {
 					}),
 				})
 			} catch (e) {
-				console.log("Error notifying discord bot about game end: " + e)
+				console.log('Error notifying discord bot about game end: ' + e)
 			}
 		})
 
-		root.hooks.privateCancelled.add("api", (code: string) => {
+		root.hooks.privateCancelled.add('api', (code: string) => {
 			try {
 				fetch(`${process.env.BOT_URL}/admin/private_cancel`, {
-					method: "POST",
+					method: 'POST',
 					headers: [
-						["Content-type", "application/json"],
-						["api-key", botKey],
+						['Content-type', 'application/json'],
+						['api-key', botKey],
 					],
 					body: JSON.stringify({
 						code: code,
@@ -162,7 +162,7 @@ export function registerApis(app: import("express").Express) {
 				})
 			} catch (e) {
 				console.log(
-					"Error notifying discord bot about cancelled private game: " + e,
+					'Error notifying discord bot about cancelled private game: ' + e,
 				)
 			}
 		})
@@ -175,8 +175,8 @@ export function registerApis(app: import("express").Express) {
 			})
 			.catch()
 
-		console.log("apis registered")
+		console.log('apis registered')
 	} catch (_err) {
-		console.log("no api keys found")
+		console.log('no api keys found')
 	}
 }

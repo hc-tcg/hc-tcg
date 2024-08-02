@@ -1,13 +1,13 @@
-import {ModalData} from "common/types/game-state"
-import {LocalCardInstance} from "common/types/server-requests"
-import Button from "components/button"
-import CardList from "components/card-list"
-import Modal from "components/modal"
-import {modalRequest} from "logic/game/game-actions"
-import {getGameState} from "logic/game/game-selectors"
-import {useState} from "react"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./game-modals.module.scss"
+import {ModalData} from 'common/types/game-state'
+import {LocalCardInstance} from 'common/types/server-requests'
+import Button from 'components/button'
+import CardList from 'components/card-list'
+import Modal from 'components/modal'
+import {modalRequest} from 'logic/game/game-actions'
+import {getGameState} from 'logic/game/game-selectors'
+import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
@@ -18,7 +18,7 @@ function SelectCardsModal({closeModal}: Props) {
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
-	if (!modalData || modalData.modalId !== "selectCards") return null
+	if (!modalData || modalData.modalId !== 'selectCards') return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
 	const cards: Array<LocalCardInstance> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize

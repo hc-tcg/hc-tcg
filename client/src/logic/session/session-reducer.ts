@@ -1,7 +1,7 @@
-import {PlayerId} from "common/models/player-model"
-import {ToastT} from "common/types/app"
-import {PlayerDeckT} from "common/types/deck"
-import {AnyAction} from "redux"
+import {PlayerId} from 'common/models/player-model'
+import {ToastT} from 'common/types/app'
+import {PlayerDeckT} from 'common/types/deck'
+import {AnyAction} from 'redux'
 
 type SessionState = {
 	playerName: string
@@ -11,23 +11,23 @@ type SessionState = {
 	playerDeck: PlayerDeckT
 	connecting: boolean
 	errorType?:
-		| "invalid_name"
-		| "invalid_version"
-		| "session_expired"
-		| "timeout"
+		| 'invalid_name'
+		| 'invalid_version'
+		| 'session_expired'
+		| 'timeout'
 		| string
 	toast: ToastT
 	updates: Record<string, Array<string>>
 }
 
 const defaultState: SessionState = {
-	playerName: "",
-	minecraftName: "",
-	playerId: "" as PlayerId,
-	playerSecret: "",
-	playerDeck: {name: "", icon: "any", cards: []},
+	playerName: '',
+	minecraftName: '',
+	playerId: '' as PlayerId,
+	playerSecret: '',
+	playerDeck: {name: '', icon: 'any', cards: []},
 	connecting: false,
-	toast: {open: false, title: "", description: "", image: ""},
+	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
 }
 
@@ -36,42 +36,42 @@ const loginReducer = (
 	action: AnyAction,
 ): SessionState => {
 	switch (action.type) {
-		case "LOGIN":
+		case 'LOGIN':
 			return {...state, connecting: true, errorType: undefined}
-		case "DISCONNECT":
+		case 'DISCONNECT':
 			return {
 				...state,
 				connecting: false,
-				playerName: "",
-				minecraftName: "",
-				playerId: "" as PlayerId,
-				playerSecret: "",
+				playerName: '',
+				minecraftName: '',
+				playerId: '' as PlayerId,
+				playerSecret: '',
 				playerDeck: state.playerDeck,
 				errorType: action.payload,
 			}
-		case "SET_PLAYER_INFO":
+		case 'SET_PLAYER_INFO':
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
 				...action.payload,
 			}
-		case "LOAD_UPDATES":
+		case 'LOAD_UPDATES':
 			return {
 				...state,
 				...action.payload,
 			}
-		case "SET_NEW_DECK":
+		case 'SET_NEW_DECK':
 			return {
 				...state,
 				playerDeck: action.payload,
 			}
-		case "SET_TOAST":
+		case 'SET_TOAST':
 			return {
 				...state,
 				toast: action.payload,
 			}
-		case "CLOSE_TOAST":
+		case 'CLOSE_TOAST':
 			return {
 				...state,
 				toast: {
@@ -79,7 +79,7 @@ const loginReducer = (
 					open: false,
 				},
 			}
-		case "SET_MINECRAFT_NAME":
+		case 'SET_MINECRAFT_NAME':
 			return {
 				...state,
 				minecraftName: action.payload,

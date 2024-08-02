@@ -1,16 +1,16 @@
-import type {CardProps} from "../cards/base/types"
+import type {CardProps} from '../cards/base/types'
 import type {
 	CardComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "../components"
-import type {ComponentQuery} from "../components/query"
-import {CardEntity, Entity, PlayerEntity, SlotEntity} from "../entities"
-import {PlayerId} from "../models/player-model"
-import {StatusEffectProps} from "../status-effects/status-effect"
-import {SlotTypeT} from "./cards"
-import {PlayerDeckT} from "./deck"
-import {TurnActions} from "./game-state"
+} from '../components'
+import type {ComponentQuery} from '../components/query'
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
+import {StatusEffectProps} from '../status-effects/status-effect'
+import {SlotTypeT} from './cards'
+import {PlayerDeckT} from './deck'
+import {TurnActions} from './game-state'
 
 export type PlayerInfo = {
 	playerName: string
@@ -47,11 +47,11 @@ export type LocalStatusEffectInstance<
 	readonly instance: string
 	readonly target:
 		| {
-				type: "card"
+				type: 'card'
 				card: CardEntity
 		  }
 		| {
-				type: "global"
+				type: 'global'
 				player: PlayerEntity
 		  }
 	readonly counter: number | null
@@ -84,10 +84,10 @@ export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
 export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
 
 export namespace LocalSelectCards {
-	type ButtonVariant = "default" | "primary" | "secondary" | "error" | "stone"
+	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: "selectCards"
+		modalId: 'selectCards'
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -117,7 +117,7 @@ export namespace LocalSelectCards {
 
 export namespace LocalCopyAttack {
 	export type Data = {
-		modalId: "copyAttack"
+		modalId: 'copyAttack'
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -133,6 +133,6 @@ export namespace LocalCopyAttack {
 		  }
 		| {
 				cancel?: undefined
-				pick: "primary" | "secondary"
+				pick: 'primary' | 'secondary'
 		  }
 }

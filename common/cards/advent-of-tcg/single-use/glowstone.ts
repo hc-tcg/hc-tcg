@@ -1,20 +1,20 @@
-import {CardComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Glowstone extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "glowstone",
+		id: 'glowstone',
 		numericId: 224,
-		name: "Glowstone",
-		expansion: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Glowstone',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 2,
 		description:
-			"View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.",
+			'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
 		showConfirmationModal: true,
 	}
 
@@ -29,25 +29,25 @@ class Glowstone extends Card {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
-					modalId: "selectCards",
+					modalId: 'selectCards',
 					payload: {
-						modalName: "Glowstone: Choose the card for your opponent to draw.",
+						modalName: 'Glowstone: Choose the card for your opponent to draw.',
 						modalDescription:
-							"The other two cards will be placed on the bottom of their deck.",
+							'The other two cards will be placed on the bottom of their deck.',
 						cards: opponentPlayer.pile
 							.slice(0, 3)
 							.map((card) => card.toLocalCardInstance()),
 						selectionSize: 1,
 						primaryButton: {
-							text: "Confirm Selection",
-							variant: "default",
+							text: 'Confirm Selection',
+							variant: 'default',
 						},
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return "FAILURE_INVALID_DATA"
-					if (!modalResult.cards) return "FAILURE_INVALID_DATA"
-					if (modalResult.cards.length !== 1) return "FAILURE_INVALID_DATA"
+					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
+					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 
 					const card = modalResult.cards[0]
 
@@ -64,7 +64,7 @@ class Glowstone extends Card {
 
 					cards.forEach((c) => opponentPlayer.hand.push(c))
 
-					return "SUCCESS"
+					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Do nothing

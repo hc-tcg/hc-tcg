@@ -1,3 +1,3 @@
-import WildItem from "./wild-common"
+import WildItem from './wild-common'
 
 export default [WildItem]

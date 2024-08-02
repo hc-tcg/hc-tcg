@@ -1,6 +1,6 @@
-import {Hook} from "../../common/types/hooks"
-import {GameModel} from "./game-model"
-import {PlayerModel} from "./player-model"
+import {Hook} from '../../common/types/hooks'
+import {GameModel} from './game-model'
+import {PlayerModel} from './player-model'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}

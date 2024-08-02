@@ -1,17 +1,17 @@
-import type {Attach, CardProps, HasHealth} from "../cards/base/types"
-import type {CardComponent} from "../components"
-import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from "../entities"
-import type {BattleLogModel} from "../models/battle-log-model"
-import type {PlayerId} from "../models/player-model"
-import type {FormattedTextNode} from "../utils/formatting"
-import type {HermitAttackType} from "./attack"
-import {ModalRequest} from "./modal-requests"
+import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {CardComponent} from '../components'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {BattleLogModel} from '../models/battle-log-model'
+import type {PlayerId} from '../models/player-model'
+import type {FormattedTextNode} from '../utils/formatting'
+import type {HermitAttackType} from './attack'
+import {ModalRequest} from './modal-requests'
 import type {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
 	PickRequest,
-} from "./server-requests"
+} from './server-requests'
 
 type NewType = SlotEntity
 
@@ -23,7 +23,7 @@ export type LocalRowState = {
 	health: number | null
 }
 
-export type CoinFlipResult = "heads" | "tails"
+export type CoinFlipResult = 'heads' | 'tails'
 
 export type CurrentCoinFlip = {
 	card: CardEntity
@@ -49,30 +49,30 @@ export type BattleLogT = {
 }
 
 export type GenericActionResult =
-	| "SUCCESS"
-	| "FAILURE_INVALID_DATA"
-	| "FAILURE_NOT_APPLICABLE"
-	| "FAILURE_ACTION_NOT_AVAILABLE"
-	| "FAILURE_CANNOT_COMPLETE"
-	| "FAILURE_UNKNOWN_ERROR"
+	| 'SUCCESS'
+	| 'FAILURE_INVALID_DATA'
+	| 'FAILURE_NOT_APPLICABLE'
+	| 'FAILURE_ACTION_NOT_AVAILABLE'
+	| 'FAILURE_CANNOT_COMPLETE'
+	| 'FAILURE_UNKNOWN_ERROR'
 
 export type PlayCardActionResult =
-	| "FAILURE_INVALID_PLAYER"
-	| "FAILURE_INVALID_SLOT"
-	| "FAILURE_UNMET_CONDITION"
-	| "FAILURE_UNMET_CONDITION_SILENT"
+	| 'FAILURE_INVALID_PLAYER'
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_UNMET_CONDITION'
+	| 'FAILURE_UNMET_CONDITION_SILENT'
 
 export type PickCardActionResult =
-	| "FAILURE_INVALID_PLAYER"
-	| "FAILURE_INVALID_SLOT"
-	| "FAILURE_WRONG_PICK"
+	| 'FAILURE_INVALID_PLAYER'
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_WRONG_PICK'
 
 export type ActionResult =
 	| GenericActionResult
 	| PlayCardActionResult
 	| PickCardActionResult
 
-export type {LocalModalData as ModalData} from "./server-requests"
+export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
@@ -112,27 +112,27 @@ export type GameState = {
 }
 
 export type PlayCardAction =
-	| "PLAY_HERMIT_CARD"
-	| "PLAY_ITEM_CARD"
-	| "PLAY_SINGLE_USE_CARD"
-	| "PLAY_EFFECT_CARD"
+	| 'PLAY_HERMIT_CARD'
+	| 'PLAY_ITEM_CARD'
+	| 'PLAY_SINGLE_USE_CARD'
+	| 'PLAY_EFFECT_CARD'
 
 export type AttackAction =
-	| "SINGLE_USE_ATTACK"
-	| "PRIMARY_ATTACK"
-	| "SECONDARY_ATTACK"
+	| 'SINGLE_USE_ATTACK'
+	| 'PRIMARY_ATTACK'
+	| 'SECONDARY_ATTACK'
 
 export type TurnAction =
 	| PlayCardAction
 	| AttackAction
-	| "END_TURN"
-	| "APPLY_EFFECT"
-	| "REMOVE_EFFECT"
-	| "CHANGE_ACTIVE_HERMIT"
-	| "PICK_REQUEST"
-	| "MODAL_REQUEST"
-	| "WAIT_FOR_TURN"
-	| "WAIT_FOR_OPPONENT_ACTION"
+	| 'END_TURN'
+	| 'APPLY_EFFECT'
+	| 'REMOVE_EFFECT'
+	| 'CHANGE_ACTIVE_HERMIT'
+	| 'PICK_REQUEST'
+	| 'MODAL_REQUEST'
+	| 'WAIT_FOR_TURN'
+	| 'WAIT_FOR_OPPONENT_ACTION'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -141,20 +141,20 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
-	| "client_crash"
-	| "server_crash"
-	| "timeout"
-	| "forfeit_win"
-	| "forfeit_loss"
-	| "leave_win"
-	| "leave_loss"
-	| "tie"
-	| "unknown"
-	| "you_won"
-	| "you_lost"
+	| 'client_crash'
+	| 'server_crash'
+	| 'timeout'
+	| 'forfeit_win'
+	| 'forfeit_loss'
+	| 'leave_win'
+	| 'leave_loss'
+	| 'tie'
+	| 'unknown'
+	| 'you_won'
+	| 'you_lost'
 	| null
 
-export type GameEndReasonT = "hermits" | "lives" | "cards" | "time" | null
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
@@ -237,7 +237,7 @@ export type LocalGameRoot = {
 }
 
 export type GameLog = {
-	type: "public" | "private"
+	type: 'public' | 'private'
 	startHand1: Array<CardComponent>
 	startHand2: Array<CardComponent>
 	startTimestamp: number

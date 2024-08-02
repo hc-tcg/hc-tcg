@@ -1,5 +1,5 @@
-import debugConfig from "./debug-config.json"
-import config from "./server-config.json"
+import debugConfig from './debug-config.json'
+import config from './server-config.json'
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string
@@ -8,7 +8,7 @@ try {
 	appVersion = __APP_VERSION__
 } catch {
 	// We are running with tsx, so __APP_VERSION__ was not set.
-	appVersion = "unknown"
+	appVersion = 'unknown'
 }
 export const VERSION = appVersion
 

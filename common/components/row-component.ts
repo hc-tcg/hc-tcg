@@ -1,9 +1,9 @@
-import {PlayerEntity, RowEntity} from "../entities"
-import type {GameModel} from "../models/game-model"
-import {CardComponent} from "./card-component"
-import {PlayerComponent} from "./player-component"
-import query from "./query"
-import {BoardSlotComponent, SlotComponent} from "./slot-component"
+import {PlayerEntity, RowEntity} from '../entities'
+import type {GameModel} from '../models/game-model'
+import {CardComponent} from './card-component'
+import {PlayerComponent} from './player-component'
+import query from './query'
+import {BoardSlotComponent, SlotComponent} from './slot-component'
 
 export class RowComponent {
 	readonly game: GameModel

@@ -1,12 +1,12 @@
-import classnames from "classnames"
-import {Hermit} from "common/cards/base/types"
-import {EXPANSIONS} from "common/const/expansions"
-import {WithoutFunctions} from "common/types/server-requests"
-import {getCardRank} from "common/utils/ranks"
-import {getGameState} from "logic/game/game-selectors"
-import {memo} from "react"
-import {useSelector} from "react-redux"
-import css from "./hermit-card-svg.module.scss"
+import classnames from 'classnames'
+import {Hermit} from 'common/cards/base/types'
+import {EXPANSIONS} from 'common/const/expansions'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {getCardRank} from 'common/utils/ranks'
+import {getGameState} from 'logic/game/game-selectors'
+import {memo} from 'react'
+import {useSelector} from 'react-redux'
+import css from './hermit-card-svg.module.scss'
 
 export type HermitCardProps = {
 	card: WithoutFunctions<Hermit>
@@ -21,16 +21,16 @@ const COST_X = [
 ]
 
 const HermitCardModule = memo(({card}: HermitCardProps) => {
-	const hermitFullName = card.id.split("_")[0]
+	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.tokens)
-	const palette = card.palette || ""
+	const palette = card.palette || ''
 	const backgroundName = card.background || hermitFullName
 	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled =
-		EXPANSIONS[card.expansion].disabled === true ? "disabled" : "enabled"
+		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -56,7 +56,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 			<text
 				x="45"
 				y="20"
-				textLength={nameLength > 7 ? "180px" : ""}
+				textLength={nameLength > 7 ? '180px' : ''}
 				lengthAdjust="spacingAndGlyphs"
 				className={classnames(css.name, css[palette])}
 				dominantBaseline="hanging"
@@ -111,7 +111,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					className={css.type}
 				/>
 			</g>
-			{showCost && rank !== "stone" ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<image
 						x="68"
@@ -157,7 +157,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.primary.damage === 0 ? "00" : card.primary.damage}
+					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
 				{card.secondary.cost.map((type: string, i: number) => (
@@ -195,7 +195,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.secondary.damage === 0 ? "00" : card.secondary.damage}
+					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
 				</text>
 			</g>
 		</svg>

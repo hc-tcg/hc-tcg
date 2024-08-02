@@ -1,7 +1,7 @@
-import {getGameState} from "logic/game/game-selectors"
-import {getStatus} from "logic/matchmaking/matchmaking-selectors"
-import {getPlayerName} from "logic/session/session-selectors"
-import {useSelector} from "react-redux"
+import {getGameState} from 'logic/game/game-selectors'
+import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
+import {getPlayerName} from 'logic/session/session-selectors'
+import {useSelector} from 'react-redux'
 
 export const useRouter = () => {
 	const playerName = useSelector(getPlayerName)
@@ -9,11 +9,11 @@ export const useRouter = () => {
 	const gameState = useSelector(getGameState)
 
 	if (gameState) {
-		return "game"
+		return 'game'
 	} else if (matchmakingStatus) {
-		return "matchmaking"
+		return 'matchmaking'
 	} else if (playerName) {
-		return "menu"
+		return 'menu'
 	}
-	return "login"
+	return 'login'
 }

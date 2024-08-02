@@ -1,37 +1,37 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
-import BdoubleO100Common from "./bdoubleo100-common"
-import BdoubleO100Rare from "./bdoubleo100-rare"
-import TangoTekCommon from "./tangotek-common"
-import TangoTekRare from "./tangotek-rare"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import BdoubleO100Common from './bdoubleo100-common'
+import BdoubleO100Rare from './bdoubleo100-rare'
+import TangoTekCommon from './tangotek-common'
+import TangoTekRare from './tangotek-rare'
 
 class ImpulseSVRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "impulsesv_rare",
+		id: 'impulsesv_rare',
 		numericId: 41,
-		name: "Impulse",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Impulse',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 4,
-		type: "redstone",
+		type: 'redstone',
 		health: 250,
 		primary: {
-			name: "Bop",
-			cost: ["redstone"],
+			name: 'Bop',
+			cost: ['redstone'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Boomer",
-			cost: ["redstone", "any"],
+			name: 'Boomer',
+			cost: ['redstone', 'any'],
 			damage: 70,
 			power:
-				"For each of your AFK Bdubs or Tangos on the game board, do an additional 40hp damage, up to a maximum of 80hp additional damage.",
+				'For each of your AFK Bdubs or Tangos on the game board, do an additional 40hp damage, up to a maximum of 80hp additional damage.',
 		},
 	}
 
@@ -43,7 +43,7 @@ class ImpulseSVRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const boomerAmount = game.components.filter(

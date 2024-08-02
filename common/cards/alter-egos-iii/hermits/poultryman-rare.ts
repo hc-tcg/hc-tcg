@@ -1,37 +1,37 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Egg from "../../alter-egos/single-use/egg"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Egg from '../../alter-egos/single-use/egg'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PoultryManRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "poultryman_rare",
+		id: 'poultryman_rare',
 		numericId: 178,
-		name: "Poultry Man",
-		expansion: "alter_egos_iii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Poultry Man',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 3,
-		type: "farm",
+		type: 'farm',
 		health: 280,
 		primary: {
 			name: "It wasn't me",
-			cost: ["farm"],
+			cost: ['farm'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "It Was The Man In The Chicken Costume",
-			shortName: "Chicken C.",
-			cost: ["farm", "farm", "any"],
+			name: 'It Was The Man In The Chicken Costume',
+			shortName: 'Chicken C.',
+			cost: ['farm', 'farm', 'any'],
 			damage: 90,
 			power:
-				"When played with egg, egg is returned to your hand instead of being discarded.",
+				'When played with egg, egg is returned to your hand instead of being discarded.',
 		},
 	}
 
@@ -43,7 +43,7 @@ class PoultryManRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const singleUse = game.components.find(

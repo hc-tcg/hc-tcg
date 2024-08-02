@@ -1,1 +1,1 @@
-export {default} from "./timer"
+export {default} from './timer'

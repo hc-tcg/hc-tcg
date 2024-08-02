@@ -2,13 +2,13 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class GoldenApple extends Card {
 	pickCondition = query.every(
@@ -19,13 +19,13 @@ class GoldenApple extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "golden_apple",
+		id: 'golden_apple',
 		numericId: 30,
-		name: "Golden Apple",
-		expansion: "default",
-		rarity: "ultra_rare",
+		name: 'Golden Apple',
+		expansion: 'default',
+		rarity: 'ultra_rare',
 		tokens: 3,
-		description: "Heal one of your AFK Hermits 100hp.",
+		description: 'Heal one of your AFK Hermits 100hp.',
 		log: (values) =>
 			`${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
 		attachCondition: query.every(
@@ -45,11 +45,11 @@ class GoldenApple extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick one of your AFK Hermits",
+			message: 'Pick one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.onBoard())
-					throw new Error("Can not pick slot that is not on board")
+					throw new Error('Can not pick slot that is not on board')
 				// Apply
 				applySingleUse(game, pickedSlot)
 

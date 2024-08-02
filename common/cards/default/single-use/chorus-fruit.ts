@@ -2,26 +2,26 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import SleepingEffect from "../../../status-effects/sleeping"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import SleepingEffect from '../../../status-effects/sleeping'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class ChorusFruit extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "chorus_fruit",
+		id: 'chorus_fruit',
 		numericId: 5,
-		name: "Chorus Fruit",
-		expansion: "default",
-		rarity: "common",
+		name: 'Chorus Fruit',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 1,
 		description:
-			"After your attack, choose an AFK Hermit to set as your active Hermit.",
+			'After your attack, choose an AFK Hermit to set as your active Hermit.',
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
@@ -61,7 +61,7 @@ class ChorusFruit extends Card {
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: "Pick one of your Hermits to become the new active Hermit",
+				message: 'Pick one of your Hermits to become the new active Hermit',
 				canPick: query.every(
 					query.slot.currentPlayer,
 					query.slot.hermit,

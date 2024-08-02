@@ -1,7 +1,7 @@
-import {ReactNode} from "react"
-import css from "./deck-layout.module.scss"
-import DeckMain from "./deck-main"
-import DeckSidebar from "./deck-sidebar"
+import {ReactNode} from 'react'
+import css from './deck-layout.module.scss'
+import DeckMain from './deck-main'
+import DeckSidebar from './deck-sidebar'
 
 type Props = {
 	back: () => void

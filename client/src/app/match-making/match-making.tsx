@@ -1,16 +1,16 @@
-import Button from "components/button"
-import ErrorBanner from "components/error-banner"
-import Spinner from "components/spinner"
-import TcgLogo from "components/tcg-logo"
-import {leaveMatchmaking, setCode} from "logic/matchmaking/matchmaking-actions"
+import Button from 'components/button'
+import ErrorBanner from 'components/error-banner'
+import Spinner from 'components/spinner'
+import TcgLogo from 'components/tcg-logo'
+import {leaveMatchmaking, setCode} from 'logic/matchmaking/matchmaking-actions'
 import {
 	getCode,
 	getInvalidCode,
 	getStatus,
-} from "logic/matchmaking/matchmaking-selectors"
-import React from "react"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./match-making.module.scss"
+} from 'logic/matchmaking/matchmaking-selectors'
+import React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './match-making.module.scss'
 
 function MatchMaking() {
 	const dispatch = useDispatch()
@@ -36,7 +36,7 @@ function MatchMaking() {
 	const Status = () => {
 		switch (status) {
 			default:
-			case "random_waiting":
+			case 'random_waiting':
 				return (
 					<>
 						<Spinner />
@@ -46,14 +46,14 @@ function MatchMaking() {
 						</Button>
 					</>
 				)
-			case "loading":
+			case 'loading':
 				return (
 					<>
 						<Spinner />
 						<p>Loading</p>
 					</>
 				)
-			case "waiting_for_player":
+			case 'waiting_for_player':
 				return (
 					<>
 						<Spinner />
@@ -65,14 +65,14 @@ function MatchMaking() {
 						</div>
 					</>
 				)
-			case "starting":
+			case 'starting':
 				return (
 					<>
 						<Spinner />
 						<p>Starting Game</p>
 					</>
 				)
-			case "private_waiting":
+			case 'private_waiting':
 				return (
 					<>
 						<p>Waiting for opponent</p>
@@ -86,13 +86,13 @@ function MatchMaking() {
 						</div>
 					</>
 				)
-			case "private_code_needed":
+			case 'private_code_needed':
 				return (
 					<>
 						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
 							<label htmlFor="gameCode">Enter game code:</label>
 							<input
-								className={invalidCode ? css.invalidCode : ""}
+								className={invalidCode ? css.invalidCode : ''}
 								name="gameCode"
 								id="gameCode"
 								autoFocus

@@ -3,44 +3,44 @@ import {
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import RoyalProtectionEffect from "../../../status-effects/royal-protection"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import RoyalProtectionEffect from '../../../status-effects/royal-protection'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PrincessGemRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "princessgem_rare",
+		id: 'princessgem_rare',
 		numericId: 168,
-		name: "Princess Gem",
-		expansion: "alter_egos_iii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Princess Gem',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		type: "speedrunner",
+		type: 'speedrunner',
 		health: 270,
 		primary: {
-			name: "Sunny Days",
-			cost: ["any"],
+			name: 'Sunny Days',
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: "Empire",
-			cost: ["speedrunner", "speedrunner", "any"],
+			name: 'Empire',
+			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"After your attack, grant Royal Protection to one of your AFK Hermits until the start of your next turn.",
+				'After your attack, grant Royal Protection to one of your AFK Hermits until the start of your next turn.',
 		},
 		sidebarDescriptions: [
 			{
-				type: "statusEffect",
-				name: "royal_protection",
+				type: 'statusEffect',
+				name: 'royal_protection',
 			},
 		],
 	}
@@ -53,7 +53,7 @@ class PrincessGemRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const pickCondition = query.every(
@@ -69,7 +69,7 @@ class PrincessGemRare extends Card {
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: "Pick one of your AFK Hermits",
+				message: 'Pick one of your AFK Hermits',
 				canPick: pickCondition,
 				onResult: (pickedSlot) => {
 					game.components

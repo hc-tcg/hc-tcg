@@ -1,4 +1,4 @@
-import type {ObserverEntity} from "../entities"
+import type {ObserverEntity} from '../entities'
 
 export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args, string]> = []

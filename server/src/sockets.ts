@@ -1,7 +1,7 @@
-import {CONFIG} from "common/config"
-import {Server} from "socket.io"
-import store from "./be-store"
-import version from "./version"
+import {CONFIG} from 'common/config'
+import {Server} from 'socket.io'
+import store from './be-store'
+import version from './version'
 
 const isValidName = (name: string) => {
 	if (name.length < 1) return false
@@ -9,9 +9,9 @@ const isValidName = (name: string) => {
 	return true
 }
 
-const env = process.env.NODE_ENV || "development"
+const env = process.env.NODE_ENV || 'development'
 const isValidVersion = (clientVersion: string) => {
-	if (env === "development") {
+	if (env === 'development') {
 		return true
 	}
 	return version === clientVersion
@@ -21,39 +21,39 @@ function startSocketIO(server: any) {
 	const io = new Server(server, {
 		cors: {
 			origin: CONFIG.cors,
-			methods: ["GET", "POST"],
+			methods: ['GET', 'POST'],
 		},
 	})
 
 	io.use((socket, next) => {
-		const playerName = socket.handshake.auth?.playerName || ""
-		const clientVersion = socket.handshake.auth?.version || ""
+		const playerName = socket.handshake.auth?.playerName || ''
+		const clientVersion = socket.handshake.auth?.version || ''
 		if (!isValidName(playerName)) {
-			console.log("Invalid player name: ", playerName)
-			return next(new Error("invalid_name"))
+			console.log('Invalid player name: ', playerName)
+			return next(new Error('invalid_name'))
 		}
 		if (!isValidVersion(clientVersion)) {
-			console.log("Invalid version: ", clientVersion)
-			return next(new Error("invalid_version"))
+			console.log('Invalid version: ', clientVersion)
+			return next(new Error('invalid_version'))
 		}
 		next()
 	})
 
-	io.on("connection", (socket) => {
+	io.on('connection', (socket) => {
 		// TODO - use playerSecret to verify requests
 		// TODO - Validate json of all requests
 
 		store.dispatch({
-			type: "CLIENT_CONNECTED",
+			type: 'CLIENT_CONNECTED',
 			payload: {socket, ...socket.handshake.auth},
 		})
 		socket.onAny((_event, message) => {
 			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})
-		socket.on("disconnect", () => {
+		socket.on('disconnect', () => {
 			store.dispatch({
-				type: "CLIENT_DISCONNECTED",
+				type: 'CLIENT_DISCONNECTED',
 				payload: {socket},
 			})
 		})

@@ -1,5 +1,5 @@
-import {LocalGameRoot} from "common/types/game-state"
-import {AnyAction} from "redux"
+import {LocalGameRoot} from 'common/types/game-state'
+import {AnyAction} from 'redux'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -19,7 +19,7 @@ const gameReducer = (
 	action: AnyAction,
 ): LocalGameRoot => {
 	switch (action.type) {
-		case "LOCAL_GAME_STATE":
+		case 'LOCAL_GAME_STATE':
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.payload.localGameState,
@@ -32,8 +32,8 @@ const gameReducer = (
 			)
 				return newGame
 			return {...newGame}
-		case "GAME_START":
-		case "GAME_END":
+		case 'GAME_START':
+		case 'GAME_END':
 			return {
 				...state,
 				localGameState: null,
@@ -47,32 +47,32 @@ const gameReducer = (
 				opponentConnected: true,
 			}
 
-		case "SET_SELECTED_CARD":
+		case 'SET_SELECTED_CARD':
 			return {
 				...state,
 				selectedCard: action.payload,
 			}
-		case "SET_OPENED_MODAL":
+		case 'SET_OPENED_MODAL':
 			return {
 				...state,
 				openedModal: action.payload,
 			}
-		case "SHOW_END_GAME_OVERLAY":
+		case 'SHOW_END_GAME_OVERLAY':
 			return {
 				...state,
 				endGameOverlay: action.payload,
 			}
-		case "CHAT_UPDATE":
+		case 'CHAT_UPDATE':
 			return {
 				...state,
 				chat: action.payload,
 			}
-		case "SET_OPPONENT_CONNECTION":
+		case 'SET_OPPONENT_CONNECTION':
 			return {
 				...state,
 				opponentConnected: action.payload,
 			}
-		case "SET_COIN_FLIP":
+		case 'SET_COIN_FLIP':
 			return {
 				...state,
 				currentCoinFlip: action.payload,
@@ -81,7 +81,7 @@ const gameReducer = (
 		// server sends the new state.
 		// This updates based on outside mutations because I am so confused by redux and I want to ship
 		// the release tomorrow.
-		case "UPDATE_GAME":
+		case 'UPDATE_GAME':
 			return state
 
 		default:

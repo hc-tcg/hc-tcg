@@ -2,22 +2,22 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import FortuneStatusEffect from "../../../status-effects/fortune"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import FortuneStatusEffect from '../../../status-effects/fortune'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
 class Fortune extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "fortune",
+		id: 'fortune',
 		numericId: 26,
-		name: "Fortune",
-		expansion: "default",
-		rarity: "ultra_rare",
+		name: 'Fortune',
+		expansion: 'default',
+		rarity: 'ultra_rare',
 		tokens: 1,
 		description:
 			'Any coin flips on this turn are not required, as "heads" is assumed.',

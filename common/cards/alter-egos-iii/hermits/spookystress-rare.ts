@@ -3,40 +3,40 @@ import {
 	ObserverComponent,
 	RowComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
-import WaterBucket from "../../default/effects/water-bucket"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import WaterBucket from '../../default/effects/water-bucket'
 
 class SpookyStressRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "spookystress_rare",
+		id: 'spookystress_rare',
 		numericId: 173,
-		name: "Spooky Stress",
-		shortName: "S. Stress",
-		expansion: "alter_egos_iii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Spooky Stress',
+		shortName: 'S. Stress',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		type: "terraform",
+		type: 'terraform',
 		health: 260,
 		primary: {
-			name: "Meh",
-			cost: ["terraform"],
+			name: 'Meh',
+			cost: ['terraform'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
 			name: "Wa'a",
-			cost: ["terraform", "terraform", "any"],
+			cost: ['terraform', 'terraform', 'any'],
 			damage: 90,
 			power:
-				"If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits.",
+				'If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits.',
 		},
 	}
 
@@ -48,7 +48,7 @@ class SpookyStressRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const waterBucketAttached = game.components.exists(
@@ -71,7 +71,7 @@ class SpookyStressRare extends Card {
 					const newAttack = game.newAttack({
 						attacker: component.entity,
 						target: row.entity,
-						type: "secondary",
+						type: 'secondary',
 						log: (values) => `, ${values.target} for ${values.damage} damage`,
 					})
 					newAttack.addDamage(component.entity, 10)

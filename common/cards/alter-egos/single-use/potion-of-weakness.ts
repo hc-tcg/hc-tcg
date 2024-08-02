@@ -2,29 +2,29 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import WeaknessEffect from "../../../status-effects/weakness"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import WeaknessEffect from '../../../status-effects/weakness'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class PotionOfWeakness extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "potion_of_weakness",
+		id: 'potion_of_weakness',
 		numericId: 146,
-		name: "Potion of Weakness",
-		expansion: "alter_egos",
-		rarity: "common",
+		name: 'Potion of Weakness',
+		expansion: 'alter_egos',
+		rarity: 'common',
 		tokens: 2,
 		description:
 			"Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
 		sidebarDescriptions: [
 			{
-				type: "glossary",
-				name: "weak",
+				type: 'glossary',
+				name: 'weak',
 			},
 		],
 		showConfirmationModal: true,

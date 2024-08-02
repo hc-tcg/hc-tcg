@@ -1,35 +1,35 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class ShadeEERare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "shadee_rare",
+		id: 'shadee_rare',
 		numericId: 170,
-		name: "Shade-E-E",
-		expansion: "alter_egos_iii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Shade-E-E',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 2,
-		type: "redstone",
+		type: 'redstone',
 		health: 270,
 		primary: {
-			name: "Corrupt Contr.",
-			cost: ["redstone"],
+			name: 'Corrupt Contr.',
+			cost: ['redstone'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Scale Of Ethics",
-			cost: ["redstone", "redstone"],
+			name: 'Scale Of Ethics',
+			cost: ['redstone', 'redstone'],
 			damage: 80,
 			power:
-				"If you have fewer AFK Hermits than your opponent, deal an additional 40hp damage.",
+				'If you have fewer AFK Hermits than your opponent, deal an additional 40hp damage.',
 		},
 	}
 
@@ -41,7 +41,7 @@ class ShadeEERare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const playerAfkHermits = game.components.filter(

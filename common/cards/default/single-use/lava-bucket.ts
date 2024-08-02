@@ -2,22 +2,22 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import FireEffect from "../../../status-effects/fire"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import FireEffect from '../../../status-effects/fire'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class LavaBucket extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "lava_bucket",
+		id: 'lava_bucket',
 		numericId: 74,
-		name: "Lava Bucket",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Lava Bucket',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 3,
 		description: "Burn your opponent's active Hermit.",
 		showConfirmationModal: true,
@@ -27,8 +27,8 @@ class LavaBucket extends Card {
 		),
 		sidebarDescriptions: [
 			{
-				type: "statusEffect",
-				name: "fire",
+				type: 'statusEffect',
+				name: 'fire',
 			},
 		],
 	}

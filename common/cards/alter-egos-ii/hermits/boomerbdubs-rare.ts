@@ -3,41 +3,41 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import FortuneEffect from "../../../status-effects/fortune"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import FortuneEffect from '../../../status-effects/fortune'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class BoomerBdubsRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "boomerbdubs_rare",
+		id: 'boomerbdubs_rare',
 		numericId: 228,
-		name: "Boomer Bdubs",
-		shortName: "Boomer B.",
-		expansion: "alter_egos_ii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Boomer Bdubs',
+		shortName: 'Boomer B.',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		type: "redstone",
+		type: 'redstone',
 		health: 290,
 		primary: {
-			name: "Boom",
-			cost: ["any"],
+			name: 'Boom',
+			cost: ['any'],
 			damage: 30,
 			power: null,
 		},
 		secondary: {
-			name: "Watch This",
-			cost: ["redstone", "redstone"],
+			name: 'Watch This',
+			cost: ['redstone', 'redstone'],
 			damage: 80,
 			power:
-				"Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.",
+				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
 		},
 	}
 
@@ -63,7 +63,7 @@ class BoomerBdubsRare extends Card {
 				if (activeInstance.entity !== component.entity) return
 
 				// Only secondary attack
-				if (hermitAttackType !== "secondary") return
+				if (hermitAttackType !== 'secondary') return
 
 				const activeHermit = player.getActiveHermit()
 
@@ -72,31 +72,31 @@ class BoomerBdubsRare extends Card {
 				game.addModalRequest({
 					playerId: player.id,
 					data: {
-						modalId: "selectCards",
+						modalId: 'selectCards',
 						payload: {
-							modalName: "Boomer BDubs: Coin Flip",
-							modalDescription: "Do you want to flip a coin for your attack?",
+							modalName: 'Boomer BDubs: Coin Flip',
+							modalDescription: 'Do you want to flip a coin for your attack?',
 							cards: [],
 							selectionSize: 0,
 							primaryButton: {
-								text: "Yes",
-								variant: "default",
+								text: 'Yes',
+								variant: 'default',
 							},
 							secondaryButton: {
-								text: "No",
-								variant: "default",
+								text: 'No',
+								variant: 'default',
 							},
 						},
 					},
 					onResult(modalResult) {
-						if (!modalResult) return "SUCCESS"
-						if (!modalResult.result) return "SUCCESS"
+						if (!modalResult) return 'SUCCESS'
+						if (!modalResult.result) return 'SUCCESS'
 
 						const flip = flipCoin(player, activeHermit)[0]
 
-						if (flip === "tails") {
+						if (flip === 'tails') {
 							flippedTails = true
-							return "SUCCESS"
+							return 'SUCCESS'
 						}
 
 						extraDamage += 20
@@ -118,7 +118,7 @@ class BoomerBdubsRare extends Card {
 							)
 							?.remove()
 
-						return "SUCCESS"
+						return 'SUCCESS'
 					},
 					onTimeout() {},
 				})
@@ -126,7 +126,7 @@ class BoomerBdubsRare extends Card {
 		)
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 			if (flippedTails === true) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)

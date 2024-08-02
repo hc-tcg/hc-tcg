@@ -1,12 +1,12 @@
-import {CARDS} from "common/cards"
-import {CardEntity} from "common/entities"
-import {LocalCardInstance, WithoutFunctions} from "common/types/server-requests"
-import {decode, encode} from "js-base64"
+import {CARDS} from 'common/cards'
+import {CardEntity} from 'common/entities'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {decode, encode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
 		var b64 = decode(hash)
-			.split("")
+			.split('')
 			.map((char) => char.charCodeAt(0))
 	} catch (_err) {
 		return []
@@ -34,7 +34,7 @@ export const getHashFromDeck = (
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
 		if (!pickedCards[i].props) {
-			console.error("Error exporting: " + i)
+			console.error('Error exporting: ' + i)
 			continue
 		}
 		const id = pickedCards[i].props.numericId

@@ -1,1 +1,1 @@
-export {default} from "./credit"
+export {default} from './credit'

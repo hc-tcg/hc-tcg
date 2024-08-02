@@ -3,18 +3,18 @@ type Props = {
 }
 
 const SpeakerIcon = ({level}: Props) => {
-	let level1 = "transparent"
-	let level2 = "transparent"
-	let level3 = "transparent"
+	let level1 = 'transparent'
+	let level2 = 'transparent'
+	let level3 = 'transparent'
 
 	if (level > 0) {
-		level1 = "white"
+		level1 = 'white'
 	}
 	if (level >= 33) {
-		level2 = "white"
+		level2 = 'white'
 	}
 	if (level >= 66) {
-		level3 = "white"
+		level3 = 'white'
 	}
 
 	return (
@@ -41,7 +41,7 @@ const SpeakerIcon = ({level}: Props) => {
 					fill={level3}
 				/>
 			</g>
-			<g display={level > 0 ? "none" : "block"}>
+			<g display={level > 0 ? 'none' : 'block'}>
 				<path d="M7 3H8V4H7V3Z" fill="white" />
 				<path d="M9 5H8V4H9V5Z" fill="white" />
 				<path

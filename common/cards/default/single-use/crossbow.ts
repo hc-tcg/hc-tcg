@@ -2,16 +2,16 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {RowEntity} from "../../../entities"
-import {AttackModel} from "../../../models/attack-model"
-import {GameModel} from "../../../models/game-model"
-import {PickRequest} from "../../../types/server-requests"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {RowEntity} from '../../../entities'
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import {PickRequest} from '../../../types/server-requests'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Crossbow extends Card {
 	pickCondition = query.every(
@@ -22,11 +22,11 @@ class Crossbow extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "crossbow",
+		id: 'crossbow',
 		numericId: 8,
-		name: "Crossbow",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Crossbow',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 1,
 		description:
 			"Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
@@ -75,7 +75,7 @@ class Crossbow extends Card {
 
 				let addPickRequest = () => {
 					let remaining = targetsRemaining.toString()
-					if (totalTargets != totalTargets) remaining += " more"
+					if (totalTargets != totalTargets) remaining += ' more'
 					const request: PickRequest = {
 						...pickRequest,
 						canPick: query.every(
@@ -100,7 +100,7 @@ class Crossbow extends Card {
 						.newAttack({
 							attacker: component.entity,
 							target: target,
-							type: "effect",
+							type: 'effect',
 							log: (values) =>
 								i === 0
 									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`

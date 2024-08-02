@@ -1,23 +1,23 @@
-import {CardProps} from "../cards/base/types"
+import {CardProps} from '../cards/base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import query from "../components/query"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import query from '../components/query'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 export class DeathloopReady extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "deathloop-ready",
-		name: "Deathloop Ready",
-		description: "This hermit will be revived on death.",
+		icon: 'deathloop-ready',
+		name: 'Deathloop Ready',
+		description: 'This hermit will be revived on death.',
 	}
 
 	override onApply(
@@ -44,7 +44,7 @@ export class DeathloopReady extends CardStatusEffect {
 					StatusEffectComponent,
 					(_game, effect) =>
 						effect.target?.entity === targetHermit.entity &&
-						effect.statusEffect.props.icon === "revived_by_deathloop",
+						effect.statusEffect.props.icon === 'revived_by_deathloop',
 				)
 				.forEach((effect) => effect.remove())
 
@@ -52,7 +52,7 @@ export class DeathloopReady extends CardStatusEffect {
 				.filter(
 					StatusEffectComponent,
 					query.effect.targetEntity(target.entity),
-					query.effect.type("normal", "damage"),
+					query.effect.type('normal', 'damage'),
 				)
 				.forEach((effect) => effect.remove())
 
@@ -80,8 +80,8 @@ export class DeathloopReady extends CardStatusEffect {
 export class RevivedByDeathloopEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "revived-by-deathloop",
-		name: "Revived",
+		icon: 'revived-by-deathloop',
+		name: 'Revived',
 		description: "This hermit has been revived by Scar's deathloop attack.",
 	}
 }

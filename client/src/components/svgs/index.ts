@@ -1,8 +1,8 @@
-export {default as CopyIcon} from "./copyIcon"
-export {default as DeleteIcon} from "./deleteIcon"
-export {default as EditIcon} from "./editIcon"
-export {default as ErrorIcon} from "./errorIcon"
-export {default as KebabMenuIcon} from "./kebabMenuIcon"
-export {default as ExportIcon} from "./exportIcon"
-export {default as SpeakerIcon} from "./speakerIcon"
-export {default as QuestionMarkIcon} from "./questionMarkIcon"
+export {default as CopyIcon} from './copyIcon'
+export {default as DeleteIcon} from './deleteIcon'
+export {default as EditIcon} from './editIcon'
+export {default as ErrorIcon} from './errorIcon'
+export {default as KebabMenuIcon} from './kebabMenuIcon'
+export {default as ExportIcon} from './exportIcon'
+export {default as SpeakerIcon} from './speakerIcon'
+export {default as QuestionMarkIcon} from './questionMarkIcon'

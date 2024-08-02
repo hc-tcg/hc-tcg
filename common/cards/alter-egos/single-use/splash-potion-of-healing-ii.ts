@@ -2,23 +2,23 @@ import {
 	CardComponent,
 	ObserverComponent,
 	RowComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHealingII extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "splash_potion_of_healing_ii",
+		id: 'splash_potion_of_healing_ii',
 		numericId: 147,
-		name: "Splash Potion of Healing II",
-		expansion: "alter_egos",
-		rarity: "rare",
+		name: 'Splash Potion of Healing II',
+		expansion: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		description: "Heal all of your Hermits 30hp.",
+		description: 'Heal all of your Hermits 30hp.',
 		showConfirmationModal: true,
 		log: (values) =>
 			`${values.defaultLog} and healed all {your|their} Hermits $g30hp$`,

@@ -1,34 +1,34 @@
-import {CardComponent} from "../../../components"
-import {slot} from "../../../components/query"
-import {AttackModel} from "../../../models/attack-model"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class OrionSoundRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "orionsound_rare",
+		id: 'orionsound_rare',
 		numericId: 213,
-		name: "Oli",
-		expansion: "advent_of_tcg",
-		palette: "advent_of_tcg",
-		background: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Oli',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 1,
-		type: "speedrunner",
+		type: 'speedrunner',
 		health: 280,
 		primary: {
-			name: "Melody",
-			cost: ["speedrunner"],
+			name: 'Melody',
+			cost: ['speedrunner'],
 			damage: 60,
 			power:
-				"Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Oli is knocked out.",
+				'Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Oli is knocked out.',
 		},
 		secondary: {
-			name: "Concert",
-			cost: ["speedrunner", "speedrunner"],
+			name: 'Concert',
+			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
 			power: null,
 		},
@@ -42,20 +42,20 @@ class OrionSoundRare extends Card {
 		player.hooks.onAttack.add(component, (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(component) ||
-				attack.type !== "primary"
+				attack.type !== 'primary'
 			)
 				return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: "Choose an Active or AFK Hermit to heal.",
+				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermit),
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, "melody", pickedSlot.cardId)
+					applyStatusEffect(game, 'melody', pickedSlot.cardId)
 					cardsWithStatusEffects.push(pickedSlot.cardId.component)
 				},
 			})
@@ -74,7 +74,7 @@ class OrionSoundRare extends Card {
 				(ail) => {
 					return (
 						cardsWithStatusEffects.includes(ail.targetInstance.component) &&
-						ail.props.id == "melody"
+						ail.props.id == 'melody'
 					)
 				},
 			)

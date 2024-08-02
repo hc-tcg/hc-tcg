@@ -1,9 +1,9 @@
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import {SagaIterator} from "redux-saga"
-import {call, takeEvery, takeLatest} from "redux-saga/effects"
-import {select} from "typed-redux-saga"
-import {PlaySoundT, SectionChangeT} from "./sound-actions"
-import {trackList} from "./sound-config"
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {SagaIterator} from 'redux-saga'
+import {call, takeEvery, takeLatest} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
+import {PlaySoundT, SectionChangeT} from './sound-actions'
+import {trackList} from './sound-config'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -26,10 +26,10 @@ window.audioCtx = audioCtx
 function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	const section = action.payload
 
-	if (section !== "game") {
+	if (section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
-		bgMusic.src = ""
+		bgMusic.src = ''
 		if (interacted) {
 			audioCtx.resume()
 		}
@@ -40,7 +40,7 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 		trackList.game[Math.floor(Math.random() * trackList.game.length)]
 
 	const newPath = `/music/${musicFile.file}`
-	if (newPath !== bgMusic.getAttribute("src")) {
+	if (newPath !== bgMusic.getAttribute('src')) {
 		bgMusic.src = newPath
 		if (interacted) {
 			audioCtx.resume().then(() => bgMusic.play())
@@ -50,9 +50,9 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 
 function* playSoundSaga(action: PlaySoundT): SagaIterator {
 	try {
-		if (audioCtx.state !== "running") return
+		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
-		if (settings.soundVolume === "0") return
+		if (settings.soundVolume === '0') return
 
 		const sound = new Audio(action.payload)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
@@ -82,13 +82,13 @@ function* settingSaga(): SagaIterator {
 function* soundSaga(): SagaIterator {
 	// @ts-ignore
 	yield call(settingSaga)
-	yield takeEvery("SET_SETTING", settingSaga)
-	yield takeLatest("@sound/SECTION_CHANGE", backgroundMusic)
-	yield takeEvery("@sound/PLAY_SOUND", playSoundSaga)
+	yield takeEvery('SET_SETTING', settingSaga)
+	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
+	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
 	document.addEventListener(
-		"click",
+		'click',
 		() => {
-			if (bgMusic.getAttribute("src")) {
+			if (bgMusic.getAttribute('src')) {
 				audioCtx.resume().then(() => bgMusic.play())
 			} else {
 				audioCtx.resume()

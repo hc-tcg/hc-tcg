@@ -1,15 +1,15 @@
-import query from "../../components/query"
-import type {CardCategoryT, PlayCardLog} from "../../types/cards"
+import query from '../../components/query'
+import type {CardCategoryT, PlayCardLog} from '../../types/cards'
 
 export const item = {
 	item: null,
-	category: "item" as CardCategoryT,
+	category: 'item' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
 		query.slot.item,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
-		query.actionAvailable("PLAY_ITEM_CARD"),
+		query.actionAvailable('PLAY_ITEM_CARD'),
 		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
@@ -18,12 +18,12 @@ export const item = {
 
 export const hermit = {
 	hermit: null,
-	category: "hermit" as CardCategoryT,
+	category: 'hermit' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.hermit,
 		query.slot.currentPlayer,
 		query.slot.empty,
-		query.actionAvailable("PLAY_HERMIT_CARD"),
+		query.actionAvailable('PLAY_HERMIT_CARD'),
 		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
@@ -32,13 +32,13 @@ export const hermit = {
 
 export const attach = {
 	attachable: null,
-	category: "attach" as CardCategoryT,
+	category: 'attach' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
 		query.slot.attach,
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
-		query.actionAvailable("PLAY_EFFECT_CARD"),
+		query.actionAvailable('PLAY_EFFECT_CARD'),
 		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
@@ -49,10 +49,10 @@ export const singleUse = {
 	singleUse: null,
 	showConfirmationModal: false,
 	hasAttack: false,
-	category: "single_use" as CardCategoryT,
+	category: 'single_use' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,
-		query.actionAvailable("PLAY_SINGLE_USE_CARD"),
+		query.actionAvailable('PLAY_SINGLE_USE_CARD'),
 	),
 }

@@ -1,7 +1,7 @@
-import {CONFIG, DEBUG_CONFIG} from "../config"
-import {EXPANSIONS} from "../const/expansions"
-import {LocalCardInstance} from "../types/server-requests"
-import {getDeckCost} from "./ranks"
+import {CONFIG, DEBUG_CONFIG} from '../config'
+import {EXPANSIONS} from '../const/expansions'
+import {LocalCardInstance} from '../types/server-requests'
+import {getDeckCost} from './ranks'
 
 export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	if (DEBUG_CONFIG.disableDeckValidation) return
@@ -14,17 +14,17 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	const hasDisabledCards = deckCards.some(
 		(card) => EXPANSIONS[card.props.expansion].disabled === true,
 	)
-	if (hasDisabledCards) return "Deck must not include removed cards."
+	if (hasDisabledCards) return 'Deck must not include removed cards.'
 
 	// less than one hermit
-	const hasHermit = deckCards.some((card) => card.props.category === "hermit")
-	if (!hasHermit) return "Deck must have at least one Hermit."
+	const hasHermit = deckCards.some((card) => card.props.category === 'hermit')
+	if (!hasHermit) return 'Deck must have at least one Hermit.'
 
 	// more than max duplicates
 	const tooManyDuplicates =
 		limits.maxDuplicates &&
 		deckCards.some((card) => {
-			if (card.props.category === "item") return false
+			if (card.props.category === 'item') return false
 			const duplicates = deckCards.filter(
 				(filterCard) => filterCard.props.numericId === card.props.numericId,
 			)

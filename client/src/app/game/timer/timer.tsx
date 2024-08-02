@@ -1,14 +1,14 @@
-import cn from "classnames"
-import {LocalGameState} from "common/types/game-state"
+import cn from 'classnames'
+import {LocalGameState} from 'common/types/game-state'
 import {
 	getCurrentCoinFlip,
 	getGameState,
 	getTime,
-} from "logic/game/game-selectors"
-import {playSound} from "logic/sound/sound-actions"
-import {useEffect, useState} from "react"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./timer.module.scss"
+} from 'logic/game/game-selectors'
+import {playSound} from 'logic/sound/sound-actions'
+import {useEffect, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './timer.module.scss'
 
 function Timer() {
 	const dispatch = useDispatch()
@@ -46,7 +46,7 @@ function Timer() {
 			remainingSeconds <= 10 &&
 			gameState.turn.currentPlayerId === gameState.playerId
 		) {
-			dispatch(playSound("/sfx/Click.ogg"))
+			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [remainingSeconds])
 
@@ -58,7 +58,7 @@ function Timer() {
 			<p className={css.timeLeft}>Time Left:</p>
 			<span>
 				{timeInfo.getMinutes()}:
-				{timeInfo.getSeconds().toString().padStart(2, "0")}
+				{timeInfo.getSeconds().toString().padStart(2, '0')}
 			</span>
 		</div>
 	)

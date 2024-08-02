@@ -1,38 +1,38 @@
-import {createRequire} from "module"
+import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
-import {PlayerComponent} from "common/components"
-import {CONFIG} from "common/config"
-import {RootModel} from "common/models/root-model"
-import {GameLog} from "common/types/game-state"
-import {ServiceAccount} from "firebase-admin/app"
-import {Database} from "firebase-admin/lib/database/database"
+import {PlayerComponent} from 'common/components'
+import {CONFIG} from 'common/config'
+import {RootModel} from 'common/models/root-model'
+import {GameLog} from 'common/types/game-state'
+import {ServiceAccount} from 'firebase-admin/app'
+import {Database} from 'firebase-admin/lib/database/database'
 
 export class FirebaseLogs {
-	public id: string = "firebase_logs"
+	public id: string = 'firebase_logs'
 	public gameLogs: Record<string, GameLog> = {}
 	public enabled: boolean = true
 	public db: Database | undefined
 
 	constructor() {
-		const env = process.env.NODE_ENV || "development"
-		if (env == "development") {
-			console.log("firebase_logs: logging disabled for dev mode")
+		const env = process.env.NODE_ENV || 'development'
+		if (env == 'development') {
+			console.log('firebase_logs: logging disabled for dev mode')
 			this.enabled = false
 			return
 		}
 
 		try {
 			const serviceAccount: ServiceAccount = JSON.parse(
-				process.env.FIREBASE_KEY || "",
+				process.env.FIREBASE_KEY || '',
 			)
-			const admin = require("firebase-admin")
+			const admin = require('firebase-admin')
 			admin.initializeApp({
 				credential: admin.credential.cert(serviceAccount),
-				databaseURL: "https://hc-tcg-leaderboard-default-rtdb.firebaseio.com",
+				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
 			})
 			this.db = admin.database()
 		} catch (_err) {
-			console.log("No valid firebase key. Statistics will not be stored.")
+			console.log('No valid firebase key. Statistics will not be stored.')
 			this.enabled = false
 		}
 	}
@@ -45,7 +45,7 @@ export class FirebaseLogs {
 				// @TODO for now still don't log private games
 				return
 			}
-			const type = game.code ? "private" : "public"
+			const type = game.code ? 'private' : 'public'
 
 			const playerStates: Array<PlayerComponent> =
 				game.components.filter(PlayerComponent)
@@ -60,7 +60,7 @@ export class FirebaseLogs {
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
 				startDeck:
-					game.getPlayerIds()[0] == playerStates[0].id ? "deck1" : "deck2",
+					game.getPlayerIds()[0] == playerStates[0].id ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -73,13 +73,13 @@ export class FirebaseLogs {
 
 				if (
 					!game.endInfo.outcome ||
-					["error", "timeout"].includes(game.endInfo.outcome)
+					['error', 'timeout'].includes(game.endInfo.outcome)
 				) {
 					delete this.gameLogs[game.id]
 					return
 				}
 
-				let ref = "/logs"
+				let ref = '/logs'
 				let summaryObj: any = {
 					startHand1: gameLog.startHand1,
 					startHand2: gameLog.startHand2,
@@ -89,32 +89,32 @@ export class FirebaseLogs {
 					turns: game.state.turn.turnNumber,
 					world: CONFIG.world,
 				}
-				if (gameLog.type === "private") {
+				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
 				let pid0 = playerStates[0].id
-				root.players[pid0]?.socket.emit("gameoverstat", {
+				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid0,
 				})
 				summaryObj.deck1 = root.players[pid0]?.deck
 
 				let pid1 = playerStates[1].id
-				root.players[pid1]?.socket.emit("gameoverstat", {
+				root.players[pid1]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
 				})
 				summaryObj.deck2 = root.players[pid1]?.deck
 				if (game.endInfo.winner === pid0) {
-					summaryObj.outcome = "deck1win"
+					summaryObj.outcome = 'deck1win'
 				} else if (game.endInfo.winner === pid1) {
-					summaryObj.outcome = "deck2win"
+					summaryObj.outcome = 'deck2win'
 				} else {
-					summaryObj.outcome = "tie"
+					summaryObj.outcome = 'tie'
 				}
 				this.db?.ref(ref).push(summaryObj)
 			} catch (err) {
-				console.log("Firebase Error: " + err)
+				console.log('Firebase Error: ' + err)
 			} finally {
 				// game is over, delete log
 				delete this.gameLogs[game.id]

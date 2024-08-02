@@ -1,36 +1,36 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import {ObserverEntity} from "../../../entities"
-import {GameModel} from "../../../models/game-model"
-import Card, {InstancedValue} from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import {ObserverEntity} from '../../../entities'
+import {GameModel} from '../../../models/game-model'
+import Card, {InstancedValue} from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class WormManRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "wormman_rare",
+		id: 'wormman_rare',
 		numericId: 175,
-		name: "Worm Man",
-		expansion: "alter_egos_iii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'Worm Man',
+		expansion: 'alter_egos_iii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		type: "prankster",
+		type: 'prankster',
 		health: 260,
 		primary: {
-			name: "Side Kick",
-			cost: ["prankster"],
+			name: 'Side Kick',
+			cost: ['prankster'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Total Anonymity",
-			shortName: "T. Anonymity",
-			cost: ["prankster", "prankster", "any"],
+			name: 'Total Anonymity',
+			shortName: 'T. Anonymity',
+			cost: ['prankster', 'prankster', 'any'],
 			damage: 90,
 			power:
-				"At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. This card must be revealed when either player interacts with the card, or when this Worm Man is knocked out.",
+				'At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. This card must be revealed when either player interacts with the card, or when this Worm Man is knocked out.',
 		},
 	}
 
@@ -44,13 +44,13 @@ class WormManRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
-			game.removeBlockedActions("game", "PLAY_HERMIT_CARD")
+			game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
 
 			observer.subscribe(player.hooks.onAttach, (attachedComponent) => {
-				game.addBlockedActions(this.props.id, "PLAY_HERMIT_CARD")
+				game.addBlockedActions(this.props.id, 'PLAY_HERMIT_CARD')
 				attachedComponent.turnedOver = true
 
 				const newObserver = game.components.new(

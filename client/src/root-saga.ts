@@ -1,17 +1,17 @@
-import fbdbSaga from "logic/fbdb/fbdb-saga"
-import localSettingsSaga from "logic/local-settings/local-settings-saga"
-import matchmakingSaga from "logic/matchmaking/matchmaking-saga"
+import fbdbSaga from 'logic/fbdb/fbdb-saga'
+import localSettingsSaga from 'logic/local-settings/local-settings-saga'
+import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {
 	loginSaga,
 	logoutSaga,
 	minecraftNameSaga,
 	newDeckSaga,
 	updatesSaga,
-} from "logic/session/session-saga"
-import socketSaga from "logic/socket/socket-saga"
-import soundSaga from "logic/sound/sound-saga"
-import {SagaIterator} from "redux-saga"
-import {all, call, fork, race, take} from "redux-saga/effects"
+} from 'logic/session/session-saga'
+import socketSaga from 'logic/socket/socket-saga'
+import soundSaga from 'logic/sound/sound-saga'
+import {SagaIterator} from 'redux-saga'
+import {all, call, fork, race, take} from 'redux-saga/effects'
 
 function* appSaga(): SagaIterator {
 	yield call(loginSaga)
@@ -30,12 +30,12 @@ function* rootSaga(): SagaIterator {
 		fork(soundSaga),
 	])
 	while (true) {
-		console.log("Starting game loop")
+		console.log('Starting game loop')
 		const result = yield race({
-			disconnect: take("DISCONNECT"),
+			disconnect: take('DISCONNECT'),
 			app: call(appSaga),
 		})
-		console.log("Game loop end: ", result)
+		console.log('Game loop end: ', result)
 	}
 }
 

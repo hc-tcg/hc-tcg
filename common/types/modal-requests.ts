@@ -1,7 +1,7 @@
-import {CardComponent} from "../components"
-import {CardEntity} from "../entities"
-import {PlayerId} from "../models/player-model"
-import {ActionResult} from "./game-state"
+import {CardComponent} from '../components'
+import {CardEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
+import {ActionResult} from './game-state'
 
 export type ModalRequest = SelectCards.Request | CopyAttack.Request
 export type ModalData = SelectCards.Data | CopyAttack.Data
@@ -18,10 +18,10 @@ export namespace SelectCards {
 		onTimeout: () => void
 	}
 
-	type ButtonVariant = "default" | "primary" | "secondary" | "error" | "stone"
+	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: "selectCards"
+		modalId: 'selectCards'
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -61,7 +61,7 @@ export namespace CopyAttack {
 	}
 
 	export type Data = {
-		modalId: "copyAttack"
+		modalId: 'copyAttack'
 		payload: {
 			modalName: string
 			modalDescription: string
@@ -76,6 +76,6 @@ export namespace CopyAttack {
 		  }
 		| {
 				cancel?: undefined
-				pick: "primary" | "secondary"
+				pick: 'primary' | 'secondary'
 		  }
 }

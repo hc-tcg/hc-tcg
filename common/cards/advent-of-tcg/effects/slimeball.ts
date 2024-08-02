@@ -1,19 +1,19 @@
-import {CardComponent} from "../../../components"
-import {query, row, slot} from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {attach} from "../../base/defaults"
-import {Attach} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {query, row, slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class Slimeball extends Card {
 	props: Attach = {
 		...attach,
-		id: "slimeball",
+		id: 'slimeball',
 		numericId: 204,
-		name: "Slimeball",
-		rarity: "ultra_rare",
+		name: 'Slimeball',
+		rarity: 'ultra_rare',
 		tokens: 0,
-		expansion: "advent_of_tcg",
+		expansion: 'advent_of_tcg',
 		description:
 			"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
 		attachCondition: query.every(
@@ -21,7 +21,7 @@ class Slimeball extends Card {
 			slot.attach,
 			slot.empty,
 			slot.row(row.hasHermit),
-			slot.actionAvailable("PLAY_EFFECT_CARD"),
+			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			query.not(slot.frozen),
 		),
 	}

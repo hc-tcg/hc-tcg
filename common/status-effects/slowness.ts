@@ -2,23 +2,23 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
 	StatusEffectProps,
 	statusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class SlownessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		icon: "slowness",
-		name: "Slowness",
-		description: "This Hermit can only use their primary attack.",
+		icon: 'slowness',
+		name: 'Slowness',
+		description: 'This Hermit can only use their primary attack.',
 		counter: 1,
-		counterType: "turns",
+		counterType: 'turns',
 	}
 
 	override onApply(
@@ -36,7 +36,7 @@ class SlownessEffect extends CardStatusEffect {
 				target.slot?.onBoard() &&
 				player.activeRowEntity === target.slot.row?.entity
 			)
-				game.addBlockedActions(this.props.icon, "SECONDARY_ATTACK")
+				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {

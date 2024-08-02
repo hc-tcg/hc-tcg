@@ -5,7 +5,7 @@ import type {
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "./components"
+} from './components'
 
 /** A unique identifier for a component in the component table. This value is safe to
  *  be send to the client and should be used for that purpose.

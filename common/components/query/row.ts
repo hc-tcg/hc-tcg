@@ -1,6 +1,6 @@
-import query, {ComponentQuery} from "."
-import {CardComponent, RowComponent} from ".."
-import {CardEntity, PlayerEntity, RowEntity} from "../../entities"
+import query, {ComponentQuery} from '.'
+import {CardComponent, RowComponent} from '..'
+import {CardEntity, PlayerEntity, RowEntity} from '../../entities'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>
 	[

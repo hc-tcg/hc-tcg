@@ -1,14 +1,14 @@
-import {ComponentQuery} from "."
-import query from "."
+import {ComponentQuery} from '.'
+import query from '.'
 import {
 	CardComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from ".."
-import {CardClass} from "../../cards/base/card"
-import {PlayerEntity, RowEntity, SlotEntity} from "../../entities"
-import {StatusEffect} from "../../status-effects/status-effect"
+} from '..'
+import {CardClass} from '../../cards/base/card'
+import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
+import {StatusEffect} from '../../status-effects/status-effect'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: ComponentQuery<SlotComponent> = (game, pos) => {
@@ -41,22 +41,22 @@ export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
 
 /** Return true if the card is attached to a hermit slot. */
 export const hermit: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "hermit"
+	return pos.type === 'hermit'
 }
 
 /** Return true if the card is attached to an effect slot. */
 export const attach: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "attach"
+	return pos.type === 'attach'
 }
 
 /** Return true if this slot is the single use slot. */
 export const singleUse: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "single_use"
+	return pos.type === 'single_use'
 }
 
 /** Return true if the card is attached to an item slot. */
 export const item: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "item"
+	return pos.type === 'item'
 }
 
 /** Return true if the card is attached to the active row. */
@@ -66,17 +66,17 @@ export const active: ComponentQuery<SlotComponent> = (_game, pos) => {
 
 /* Return true if the slot is in a player's hand */
 export const hand: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "hand"
+	return pos.type === 'hand'
 }
 
 /* Return true if the slot is in a player's hand */
 export const deck: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "deck"
+	return pos.type === 'deck'
 }
 
 /* Return true if the slot is in a player's hand */
 export const discardPile: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.type === "discardPile"
+	return pos.type === 'discardPile'
 }
 
 export function row(

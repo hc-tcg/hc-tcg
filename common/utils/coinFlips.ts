@@ -1,6 +1,6 @@
-import {CardComponent, PlayerComponent} from "../components"
-import {DEBUG_CONFIG} from "../config"
-import {CoinFlipResult} from "../types/game-state"
+import {CardComponent, PlayerComponent} from '../components'
+import {DEBUG_CONFIG} from '../config'
+import {CoinFlipResult} from '../types/game-state'
 
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
@@ -22,9 +22,9 @@ export function flipCoin(
 	let coinFlips: Array<CoinFlipResult> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			coinFlips.push("heads")
+			coinFlips.push('heads')
 		} else {
-			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? "heads" : "tails"
+			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
 	}
@@ -39,7 +39,7 @@ export function flipCoin(
 	player.coinFlips.push({
 		card: card.entity,
 		opponentFlip: currentPlayer !== null,
-		name: !currentPlayer ? name : "Opponent " + name,
+		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,
 		amount: coinFlipAmount,
 		delay: coinFlipAmount * 350 + 1000,

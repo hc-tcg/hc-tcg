@@ -1,7 +1,7 @@
-import {ComponentQuery} from "."
-import {PlayerEntity} from "../../entities"
-import {StatusEffect} from "../../status-effects/status-effect"
-import {PlayerComponent} from "../player-component"
+import {ComponentQuery} from '.'
+import {PlayerEntity} from '../../entities'
+import {StatusEffect} from '../../status-effects/status-effect'
+import {PlayerComponent} from '../player-component'
 
 export function entity(entity: PlayerEntity): ComponentQuery<PlayerComponent> {
 	return (_game, player) => player.entity === entity

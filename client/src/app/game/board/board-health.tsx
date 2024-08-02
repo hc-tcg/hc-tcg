@@ -1,10 +1,10 @@
-import cn from "classnames"
-import {LocalRowState} from "common/types/game-state"
-import {LocalStatusEffectInstance} from "common/types/server-requests"
-import HealthDisplayModule from "components/card/health-card-svg"
-import StatusEffect from "components/status-effects/status-effect"
-import slotCss from "./board.module.scss"
-import cardCss from "./board.module.scss"
+import cn from 'classnames'
+import {LocalRowState} from 'common/types/game-state'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
+import HealthDisplayModule from 'components/card/health-card-svg'
+import StatusEffect from 'components/status-effects/status-effect'
+import slotCss from './board.module.scss'
+import cardCss from './board.module.scss'
 
 type HealthSlotProps = {
 	shouldDim: boolean

@@ -1,18 +1,18 @@
-import {SagaIterator} from "redux-saga"
-import {fork, put, take} from "redux-saga/effects"
-import {setOpenedModal} from "../game-actions"
+import {SagaIterator} from 'redux-saga'
+import {fork, put, take} from 'redux-saga/effects'
+import {setOpenedModal} from '../game-actions'
 
 function* attackActionSaga(): SagaIterator {
 	while (true) {
-		yield take("ATTACK_ACTION")
-		yield put(setOpenedModal("attack"))
+		yield take('ATTACK_ACTION')
+		yield put(setOpenedModal('attack'))
 	}
 }
 
 function* endTurnActionSaga(): SagaIterator {
 	while (true) {
-		yield take("END_TURN_ACTION")
-		yield put(setOpenedModal("end-turn"))
+		yield take('END_TURN_ACTION')
+		yield put(setOpenedModal('end-turn'))
 	}
 }
 

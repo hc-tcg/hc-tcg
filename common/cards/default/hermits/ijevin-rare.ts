@@ -3,36 +3,36 @@ import {
 	ObserverComponent,
 	RowComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class IJevinRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "ijevin_rare",
+		id: 'ijevin_rare',
 		numericId: 39,
-		name: "Jevin",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Jevin',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 1,
-		type: "speedrunner",
+		type: 'speedrunner',
 		health: 300,
 		primary: {
-			name: "Your Boi",
-			cost: ["any"],
+			name: 'Your Boi',
+			cost: ['any'],
 			damage: 30,
 			power: null,
 		},
 		secondary: {
-			name: "Peace Out",
-			cost: ["speedrunner", "speedrunner", "any"],
+			name: 'Peace Out',
+			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 90,
 			power:
-				"After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.",
+				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
 		},
 	}
 
@@ -44,7 +44,7 @@ class IJevinRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const pickCondition = query.every(
@@ -59,7 +59,7 @@ class IJevinRare extends Card {
 			game.addPickRequest({
 				playerId: opponentPlayer.id, // For opponent player to pick
 				id: component.entity,
-				message: "Choose a new active Hermit from your AFK Hermits.",
+				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return

@@ -1,1 +1,1 @@
-export {default} from "./updates"
+export {default} from './updates'

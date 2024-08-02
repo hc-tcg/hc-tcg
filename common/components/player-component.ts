@@ -1,22 +1,22 @@
-import type {PlayerEntity, RowEntity, SlotEntity} from "../entities"
-import type {AttackModel} from "../models/attack-model"
-import type {GameModel} from "../models/game-model"
-import type {PlayerId, PlayerModel} from "../models/player-model"
-import {PlayerStatusEffect} from "../status-effects/status-effect"
-import type {HermitAttackType} from "../types/attack"
-import type {TypeT} from "../types/cards"
+import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {AttackModel} from '../models/attack-model'
+import type {GameModel} from '../models/game-model'
+import type {PlayerId, PlayerModel} from '../models/player-model'
+import {PlayerStatusEffect} from '../status-effects/status-effect'
+import type {HermitAttackType} from '../types/attack'
+import type {TypeT} from '../types/cards'
 import type {
 	CoinFlipResult,
 	CurrentCoinFlip,
 	TurnActions,
-} from "../types/game-state"
-import {GameHook, WaterfallHook} from "../types/hooks"
-import {CardComponent} from "./card-component"
-import query from "./query"
-import {ComponentQuery} from "./query"
-import {RowComponent} from "./row-component"
-import {SlotComponent} from "./slot-component"
-import {StatusEffectComponent} from "./status-effect-component"
+} from '../types/game-state'
+import {GameHook, WaterfallHook} from '../types/hooks'
+import {CardComponent} from './card-component'
+import query from './query'
+import {ComponentQuery} from './query'
+import {RowComponent} from './row-component'
+import {SlotComponent} from './slot-component'
+import {StatusEffectComponent} from './status-effect-component'
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -183,7 +183,7 @@ export class PlayerComponent {
 		)
 		if (!player)
 			throw new Error(
-				"Both players should be added to ECS before fetching opponent.",
+				'Both players should be added to ECS before fetching opponent.',
 			)
 		return player
 	}
@@ -258,7 +258,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					"Should not be able to change from an active row with no hermits or to an active row with no hermits.",
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			const results = this.hooks.beforeActiveRowChange.call(
 				oldHermit,
@@ -296,7 +296,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					"Should not be able to change from an active row with no hermits or to an active row with no hermits.",
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
 		}

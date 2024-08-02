@@ -1,8 +1,8 @@
-import {Entity, ObserverEntity} from "../entities"
-import type {GameModel} from "../models/game-model"
-import type {Hook} from "../types/hooks"
-import type {CardComponent} from "./card-component"
-import type {StatusEffectComponent} from "./status-effect-component"
+import {Entity, ObserverEntity} from '../entities'
+import type {GameModel} from '../models/game-model'
+import type {Hook} from '../types/hooks'
+import type {CardComponent} from './card-component'
+import type {StatusEffectComponent} from './status-effect-component'
 
 /** Abstraction over Hook interface that allows hooks to be automatically removed. This
  * is used to remove hooks when cards are removed from the board and when status effect

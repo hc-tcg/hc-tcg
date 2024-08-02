@@ -3,11 +3,11 @@ import {
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
-} from "../components"
-import query, {ComponentQuery} from "../components/query"
-import {PlayerEntity, SlotEntity} from "../entities"
-import {AttackDefs} from "../types/attack"
-import ComponentTable from "../types/ecs"
+} from '../components'
+import query, {ComponentQuery} from '../components/query'
+import {PlayerEntity, SlotEntity} from '../entities'
+import {AttackDefs} from '../types/attack'
+import ComponentTable from '../types/ecs'
 import {
 	ActionResult,
 	DefaultDictionary,
@@ -15,20 +15,20 @@ import {
 	Message,
 	TurnAction,
 	TurnActions,
-} from "../types/game-state"
-import {Hook} from "../types/hooks"
-import {CopyAttack, ModalRequest, SelectCards} from "../types/modal-requests"
-import {PickRequest} from "../types/server-requests"
-import {getGameState, setupComponents} from "../utils/state-gen"
-import {AttackModel} from "./attack-model"
-import {BattleLogModel} from "./battle-log-model"
-import {PlayerId, PlayerModel} from "./player-model"
+} from '../types/game-state'
+import {Hook} from '../types/hooks'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {PickRequest} from '../types/server-requests'
+import {getGameState, setupComponents} from '../utils/state-gen'
+import {AttackModel} from './attack-model'
+import {BattleLogModel} from './battle-log-model'
+import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
 		if (!Object.hasOwn(this.values, game.id)) {
-			game.afterGameEnd.add("GameValue<T>", () => this.clear(game))
+			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
 	}
@@ -61,8 +61,8 @@ export class GameModel {
 	public endInfo: {
 		deadPlayerIds: Array<string>
 		winner: string | null
-		outcome: "timeout" | "forfeit" | "tie" | "player_won" | "error" | null
-		reason: "hermits" | "lives" | "cards" | "time" | null
+		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error' | null
+		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
 	constructor(
@@ -71,7 +71,7 @@ export class GameModel {
 		code: string | null = null,
 	) {
 		this.internalCreatedTime = Date.now()
-		this.internalId = "game_" + Math.random().toString()
+		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
@@ -140,7 +140,7 @@ export class GameModel {
 		)
 		if (!otherPlayer)
 			throw new Error(
-				"Can not query for other before because both player components are created",
+				'Can not query for other before because both player components are created',
 			)
 		return otherPlayer
 	}
@@ -214,7 +214,7 @@ export class GameModel {
 
 	/** Get all actions blocked with the source id. */
 	public getBlockedActions(sourceId: string) {
-		const key = sourceId || ""
+		const key = sourceId || ''
 		const turnState = this.state.turn
 		const blockedActions = turnState.blockedActions[key]
 		if (!blockedActions) return []

@@ -1,1 +1,1 @@
-export {default} from "./menu-layout"
+export {default} from './menu-layout'

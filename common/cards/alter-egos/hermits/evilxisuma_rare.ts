@@ -2,40 +2,40 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from "../../../status-effects/singleturn-attack-disabled"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../status-effects/singleturn-attack-disabled'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class EvilXisumaRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "evilxisuma_rare",
+		id: 'evilxisuma_rare',
 		numericId: 128,
-		name: "Evil X",
-		rarity: "rare",
-		expansion: "alter_egos",
-		palette: "alter_egos",
-		background: "alter_egos",
+		name: 'Evil X',
+		rarity: 'rare',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
 		tokens: 3,
-		type: "balanced",
+		type: 'balanced',
 		health: 280,
 		primary: {
-			name: "Evil Inside",
+			name: 'Evil Inside',
 			cost: [],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: "Derpcoin",
-			cost: ["balanced", "balanced"],
+			name: 'Derpcoin',
+			cost: ['balanced', 'balanced'],
 			damage: 80,
 			power:
 				"Flip a coin.\nIf heads, choose one attack of your opponent's current active Hermit to disable on their next turn.",
@@ -59,18 +59,18 @@ class EvilXisumaRare extends Card {
 			if (
 				!game.components.exists(CardComponent, this.opponentActiveHermitQuery)
 			) {
-				blockedActions.push("SECONDARY_ATTACK")
+				blockedActions.push('SECONDARY_ATTACK')
 			}
 			return blockedActions
 		})
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const coinFlip = flipCoin(player, component)
 
-			if (coinFlip[0] !== "heads") return
+			if (coinFlip[0] !== 'heads') return
 
 			let opponentActiveHermit = game.components.find(
 				CardComponent,
@@ -81,19 +81,19 @@ class EvilXisumaRare extends Card {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
-					modalId: "copyAttack",
+					modalId: 'copyAttack',
 					payload: {
-						modalName: "Evil X: Disable an attack for 1 turn",
+						modalName: 'Evil X: Disable an attack for 1 turn',
 						modalDescription:
 							"Which of the opponent's attacks do you want to disable?",
 						hermitCard: opponentActiveHermit.entity,
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.pick) return "FAILURE_INVALID_DATA"
+					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 					const actionToBlock =
-						modalResult.pick === "primary"
+						modalResult.pick === 'primary'
 							? PrimaryAttackDisabledEffect
 							: SecondaryAttackDisabledEffect
 
@@ -101,7 +101,7 @@ class EvilXisumaRare extends Card {
 					game.components
 						.new(StatusEffectComponent, actionToBlock, component.entity)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
-					return "SUCCESS"
+					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one

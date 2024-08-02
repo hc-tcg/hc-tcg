@@ -1,12 +1,12 @@
-import classNames from "classnames"
-import {ReactNode, forwardRef} from "react"
-import React from "react"
-import css from "./button.module.scss"
+import classNames from 'classnames'
+import {ReactNode, forwardRef} from 'react'
+import React from 'react'
+import css from './button.module.scss'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	ref?: any
-	variant?: "default" | "primary" | "secondary" | "error" | "stone"
-	size?: "small" | "medium" | "large"
+	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+	size?: 'small' | 'medium' | 'large'
 	emphasis?: boolean
 	leftSlot?: ReactNode
 	rightSlot?: ReactNode
@@ -77,7 +77,7 @@ const RefButton = forwardRef(function TestButton(
 	)
 })
 
-interface SplitButtonT extends React.ComponentPropsWithRef<"div"> {
+interface SplitButtonT extends React.ComponentPropsWithRef<'div'> {
 	children: ReactNode
 	props?: React.HTMLAttributes<HTMLDivElement>
 }

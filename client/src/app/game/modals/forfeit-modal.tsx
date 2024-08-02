@@ -1,8 +1,8 @@
-import Button from "components/button/button"
-import Modal from "components/modal"
-import {forfeit} from "logic/game/game-actions"
-import {useDispatch} from "react-redux"
-import css from "./game-modals.module.scss"
+import Button from 'components/button/button'
+import Modal from 'components/modal'
+import {forfeit} from 'logic/game/game-actions'
+import {useDispatch} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

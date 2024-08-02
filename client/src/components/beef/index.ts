@@ -1,1 +1,1 @@
-export {default} from "./beef"
+export {default} from './beef'

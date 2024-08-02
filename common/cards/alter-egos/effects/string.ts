@@ -1,17 +1,17 @@
-import query from "../../../components/query"
-import Card from "../../base/card"
-import {attach} from "../../base/defaults"
-import {Attach} from "../../base/types"
+import query from '../../../components/query'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class String extends Card {
 	props: Attach = {
 		...attach,
-		id: "string",
+		id: 'string',
 		numericId: 122,
-		name: "String",
-		expansion: "alter_egos",
-		category: "attach",
-		rarity: "rare",
+		name: 'String',
+		expansion: 'alter_egos',
+		category: 'attach',
+		rarity: 'rare',
 		tokens: 2,
 		description:
 			"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
@@ -19,7 +19,7 @@ class String extends Card {
 			query.slot.opponent,
 			query.slot.empty,
 			query.slot.row(query.row.hasHermit),
-			query.actionAvailable("PLAY_EFFECT_CARD"),
+			query.actionAvailable('PLAY_EFFECT_CARD'),
 			query.some(query.slot.attach, query.slot.item),
 			query.not(query.slot.frozen),
 		),

@@ -5,9 +5,9 @@ import {
 	PlayerComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "."
-import type Card from "../cards/base/card"
-import {CardClass} from "../cards/base/card"
+} from '.'
+import type Card from '../cards/base/card'
+import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
 	type CardProps,
@@ -20,19 +20,19 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from "../cards/base/types"
+} from '../cards/base/types'
 import type {
 	CardEntity,
 	ObserverEntity,
 	PlayerEntity,
 	SlotEntity,
-} from "../entities"
-import type {GameModel} from "../models/game-model"
-import {CardStatusEffect} from "../status-effects/status-effect"
-import query from "./query"
+} from '../entities'
+import type {GameModel} from '../models/game-model'
+import {CardStatusEffect} from '../status-effects/status-effect'
+import query from './query'
 
 let CARDS: Record<any, Card>
-import("../cards").then((mod) => (CARDS = mod.CARDS))
+import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<Props extends CardProps = CardProps> {
@@ -85,7 +85,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	 * ```
 	 */
 	static compareOrder(a: CardComponent, b: CardComponent) {
-		if (!("order" in a.slot) || !("order" in b.slot)) return 0
+		if (!('order' in a.slot) || !('order' in b.slot)) return 0
 		return (a.slot.order as number) - (b.slot.order as number)
 	}
 
@@ -142,10 +142,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (this.slot.onBoard() && changingBoards) {
 			if (!this.observerEntity)
 				throw new Error(
-					"All cards attached to the board should have an observer",
+					'All cards attached to the board should have an observer',
 				)
 			let observer = this.game.components.get(this.observerEntity)
-			if (!observer) throw new Error("Observer expected to be in ECS")
+			if (!observer) throw new Error('Observer expected to be in ECS')
 			observer.unsubscribeFromEverything()
 			this.card.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)

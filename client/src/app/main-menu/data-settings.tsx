@@ -1,11 +1,11 @@
-import Button from "components/button"
-import MenuLayout from "components/menu-layout"
-import Modal from "components/modal/modal"
-import {resetStats} from "logic/fbdb/fbdb-actions"
-import {resetSetting} from "logic/local-settings/local-settings-actions"
-import {useState} from "react"
-import {useDispatch} from "react-redux"
-import css from "./main-menu.module.scss"
+import Button from 'components/button'
+import MenuLayout from 'components/menu-layout'
+import Modal from 'components/modal/modal'
+import {resetStats} from 'logic/fbdb/fbdb-actions'
+import {resetSetting} from 'logic/local-settings/local-settings-actions'
+import {useState} from 'react'
+import {useDispatch} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,8 +16,8 @@ function DataSettings({setMenuSection}: Props) {
 	const [modal, setModal] = useState<any>(null)
 
 	const resetChatWindow = () => {
-		dispatch(resetSetting("chatPosition"))
-		dispatch(resetSetting("chatSize"))
+		dispatch(resetSetting('chatPosition'))
+		dispatch(resetSetting('chatSize'))
 	}
 
 	const handleReset = (
@@ -72,7 +72,7 @@ function DataSettings({setMenuSection}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection("settings")}
+			back={() => setMenuSection('settings')}
 			title="Data Management"
 			returnText="More"
 			className={css.settingsMenu}
@@ -83,8 +83,8 @@ function DataSettings({setMenuSection}: Props) {
 				<Button
 					variant="stone"
 					onClick={handleReset(
-						"Are you sure you want to reset the chat window positioin?",
-						"The chat window has been reset.",
+						'Are you sure you want to reset the chat window positioin?',
+						'The chat window has been reset.',
 						resetChatWindow,
 					)}
 				>
@@ -93,8 +93,8 @@ function DataSettings({setMenuSection}: Props) {
 				<Button
 					variant="stone"
 					onClick={handleReset(
-						"Are you sure you want to reset your stats?",
-						"Your stats have been reset.",
+						'Are you sure you want to reset your stats?',
+						'Your stats have been reset.',
 						() => dispatch(resetStats()),
 					)}
 				>

@@ -2,36 +2,36 @@ import {
 	CardComponent,
 	ObserverComponent,
 	RowComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {CardProps, Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {CardProps, Hermit} from '../../base/types'
 
 class GoatfatherRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "goatfather_rare",
+		id: 'goatfather_rare',
 		numericId: 129,
-		name: "Goatfather",
-		expansion: "alter_egos",
-		palette: "alter_egos",
-		background: "alter_egos",
-		rarity: "rare",
+		name: 'Goatfather',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
+		rarity: 'rare',
 		tokens: 2,
-		type: "prankster",
+		type: 'prankster',
 		health: 270,
 		primary: {
-			name: "Omerta",
-			cost: ["any"],
+			name: 'Omerta',
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: "Anvil Drop",
-			cost: ["prankster", "prankster"],
+			name: 'Anvil Drop',
+			cost: ['prankster', 'prankster'],
 			damage: 80,
 			power:
 				"Flip a coin.\nIf heads, do an additional 30hp damage to your opponent's active Hermit and 10hp damage to each Hermit below it on the game board.",
@@ -45,12 +45,12 @@ class GoatfatherRare extends Card {
 	): void {
 		const {player, opponentPlayer} = component
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			let coinFlip = flipCoin(player, component)[0]
 
-			if (coinFlip !== "heads") return
+			if (coinFlip !== 'heads') return
 
 			let opponentActiveHermit = opponentPlayer.getActiveHermit()
 			if (!opponentActiveHermit?.slot.inRow()) return
@@ -71,7 +71,7 @@ class GoatfatherRare extends Card {
 					const newAttack = game.newAttack({
 						attacker: component.entity,
 						target: row.entity,
-						type: "secondary",
+						type: 'secondary',
 						log: (values) => `, ${values.target} for ${values.damage} damage`,
 					})
 					newAttack.addDamage(component.entity, 10)

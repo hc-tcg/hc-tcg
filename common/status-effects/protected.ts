@@ -2,14 +2,14 @@ import {
 	CardStatusEffect,
 	StatusEffectProps,
 	statusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class ProtectedEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		icon: "protected",
+		icon: 'protected',
 		name: "Sheriff's Protection",
-		description: "This Hermit does not take damage on their first active turn.",
+		description: 'This Hermit does not take damage on their first active turn.',
 	}
 
 	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent, ) {

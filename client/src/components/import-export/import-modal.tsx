@@ -1,15 +1,15 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
-import {TypeT} from "common/types/cards"
-import {PlayerDeckT} from "common/types/deck"
-import {LocalCardInstance} from "common/types/server-requests"
-import ModalCSS from "components/alert-modal/alert-modal.module.scss"
-import Button from "components/button"
-import Dropdown from "components/dropdown"
-import {saveDeck} from "logic/saved-decks/saved-decks"
-import {useRef, useState} from "react"
-import DropdownCSS from "../../app/deck/deck.module.scss"
-import {getDeckFromHash} from "./import-export-utils"
-import css from "./import-export.module.scss"
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
+import {TypeT} from 'common/types/cards'
+import {PlayerDeckT} from 'common/types/deck'
+import {LocalCardInstance} from 'common/types/server-requests'
+import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
+import Button from 'components/button'
+import Dropdown from 'components/dropdown'
+import {saveDeck} from 'logic/saved-decks/saved-decks'
+import {useRef, useState} from 'react'
+import DropdownCSS from '../../app/deck/deck.module.scss'
+import {getDeckFromHash} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -26,7 +26,7 @@ export const ImportModal = ({
 }: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
-	const [deckIcon, setDeckIcon] = useState<PlayerDeckT["icon"]>("any")
+	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
 
 	//IMPORT DECK FUNCTION
 	const importFromHash = () => {
@@ -36,7 +36,7 @@ export const ImportModal = ({
 		try {
 			deck = getDeckFromHash(hashRef.current.value)
 		} catch {
-			console.log("Invalid deck to import: " + hashRef.current.value)
+			console.log('Invalid deck to import: ' + hashRef.current.value)
 		}
 
 		if (deck.length < 1) return null
@@ -44,7 +44,7 @@ export const ImportModal = ({
 		if (!deck) return null
 
 		importDeck({
-			name: nameRef?.current?.value || "Imported Deck",
+			name: nameRef?.current?.value || 'Imported Deck',
 			icon: deckIcon,
 			cards: deck,
 		})
@@ -53,7 +53,7 @@ export const ImportModal = ({
 	}
 	const selectFile = () => {
 		// Select a file by clicking on file input
-		document.getElementById("file-input")?.click()
+		document.getElementById('file-input')?.click()
 	}
 
 	const importFromFile = (file: File | undefined) => {
@@ -64,14 +64,14 @@ export const ImportModal = ({
 		fileResult.then((newFileContent: string) => {
 			let importedSomething = false
 
-			newFileContent.split("\n").forEach((line: string) => {
-				const lineComponents: string[] = line.split(":")
+			newFileContent.split('\n').forEach((line: string) => {
+				const lineComponents: string[] = line.split(':')
 				if (lineComponents.length !== 3) return
-				const deck = getDeckFromHash(lineComponents[2].replace("\r", ""))
+				const deck = getDeckFromHash(lineComponents[2].replace('\r', ''))
 				if (deck.length === 0) return
 
 				const filteredName = lineComponents[0]
-					.match("^[a-zA-Z0-9 ]*$")
+					.match('^[a-zA-Z0-9 ]*$')
 					?.toString()
 				if (!filteredName) {
 					return
@@ -82,32 +82,32 @@ export const ImportModal = ({
 					name: filteredName,
 					icon: DECK_ICONS.includes(lineComponents[1])
 						? (lineComponents[1] as TypeT)
-						: "any",
+						: 'any',
 					cards: deck,
 				})
 			})
 
 			if (importedSomething) {
-				console.log("Successfully imported decks from file: " + file.name)
+				console.log('Successfully imported decks from file: ' + file.name)
 				handleMassImport()
 			} else {
-				console.log("Failed to import decks from file: " + file.name)
+				console.log('Failed to import decks from file: ' + file.name)
 			}
 		})
 	}
 
 	const DECK_ICONS = [
-		"any",
-		"balanced",
-		"builder",
-		"explorer",
-		"farm",
-		"miner",
-		"prankster",
-		"pvp",
-		"redstone",
-		"speedrunner",
-		"terraform",
+		'any',
+		'balanced',
+		'builder',
+		'explorer',
+		'farm',
+		'miner',
+		'prankster',
+		'pvp',
+		'redstone',
+		'speedrunner',
+		'terraform',
 	]
 
 	const iconDropdownOptions = DECK_ICONS.map((option) => ({
@@ -119,7 +119,7 @@ export const ImportModal = ({
 	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
-			<AlertDialog.Portal container={document.getElementById("modal")}>
+			<AlertDialog.Portal container={document.getElementById('modal')}>
 				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
 				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
 					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>
@@ -140,7 +140,7 @@ export const ImportModal = ({
 								<div className={css.importControls}>
 									<p className={css.instructions}>
 										{
-											"To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import."
+											'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
 										}
 									</p>
 									<div className={css.name}>
@@ -171,13 +171,13 @@ export const ImportModal = ({
 
 									<p className={css.instructions}>
 										{
-											"Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash."
+											'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
 										}
 									</p>
 
 									<p className={css.warning}>
 										{
-											"Note that this will overwrite any decks with the same name."
+											'Note that this will overwrite any decks with the same name.'
 										}
 									</p>
 								</div>
@@ -193,7 +193,7 @@ export const ImportModal = ({
 							onChange={(e) =>
 								importFromFile(e.target.files ? e.target.files[0] : undefined)
 							}
-							style={{display: "none"}}
+							style={{display: 'none'}}
 						/>
 					</div>
 				</AlertDialog.Content>

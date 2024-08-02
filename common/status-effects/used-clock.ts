@@ -2,23 +2,23 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	Counter,
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class UsedClockEffect extends PlayerStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		icon: "used-clock",
-		name: "Clocked Out",
+		icon: 'used-clock',
+		name: 'Clocked Out',
 		description: "Your opponent's turns cannot be skipped consecutively.",
 		counter: 1,
-		counterType: "turns",
+		counterType: 'turns',
 	}
 
 	override onApply(

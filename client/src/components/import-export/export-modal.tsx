@@ -1,9 +1,9 @@
-import * as AlertDialog from "@radix-ui/react-alert-dialog"
-import {PlayerDeckT} from "common/types/deck"
-import ModalCSS from "components/alert-modal/alert-modal.module.scss"
-import {CopyIcon} from "components/svgs"
-import {getHashFromDeck} from "./import-export-utils"
-import css from "./import-export.module.scss"
+import * as AlertDialog from '@radix-ui/react-alert-dialog'
+import {PlayerDeckT} from 'common/types/deck'
+import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
+import {CopyIcon} from 'components/svgs'
+import {getHashFromDeck} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -20,7 +20,7 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
-			<AlertDialog.Portal container={document.getElementById("modal")}>
+			<AlertDialog.Portal container={document.getElementById('modal')}>
 				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
 				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
 					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>

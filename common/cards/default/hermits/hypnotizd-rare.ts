@@ -2,14 +2,14 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import BetrayedEffect from "../../../status-effects/betrayed"
-import {PickRequest} from "../../../types/server-requests"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import BetrayedEffect from '../../../status-effects/betrayed'
+import {PickRequest} from '../../../types/server-requests'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -19,23 +19,23 @@ import {Hermit} from "../../base/types"
 class HypnotizdRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "hypnotizd_rare",
+		id: 'hypnotizd_rare',
 		numericId: 37,
-		name: "Hypno",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Hypno',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 3,
-		type: "miner",
+		type: 'miner',
 		health: 270,
 		primary: {
-			name: "MmHmm",
-			cost: ["miner"],
+			name: 'MmHmm',
+			cost: ['miner'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
 			name: "Got 'Em",
-			cost: ["miner", "any"],
+			cost: ['miner', 'any'],
 			damage: 70,
 			power:
 				"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
@@ -51,7 +51,7 @@ class HypnotizdRare extends Card {
 		let target: SlotComponent | null = null
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 			if (!target?.inRow()) return
 			attack.setTarget(component.entity, target.row.entity)
@@ -63,7 +63,7 @@ class HypnotizdRare extends Card {
 			(activeInstance, hermitAttackType) => {
 				if (
 					activeInstance.entity !== component.entity ||
-					hermitAttackType !== "secondary"
+					hermitAttackType !== 'secondary'
 				)
 					return
 
@@ -92,7 +92,7 @@ class HypnotizdRare extends Card {
 				const itemRequest: PickRequest = {
 					playerId: player.id,
 					id: component.entity,
-					message: "Choose an item to discard from your active Hermit.",
+					message: 'Choose an item to discard from your active Hermit.',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
 						pickedSlot.getCard()?.discard()

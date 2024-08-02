@@ -1,27 +1,27 @@
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class JoeHillsCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "joehills_common",
+		id: 'joehills_common',
 		numericId: 69,
-		name: "Joe",
-		expansion: "default",
-		rarity: "common",
+		name: 'Joe',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
-		type: "explorer",
+		type: 'explorer',
 		health: 270,
 		primary: {
-			name: "Howdy",
-			cost: ["any"],
+			name: 'Howdy',
+			cost: ['any'],
 			damage: 30,
 			power: null,
 		},
 		secondary: {
-			name: "Haiku",
-			cost: ["explorer", "explorer", "any"],
+			name: 'Haiku',
+			cost: ['explorer', 'explorer', 'any'],
 			damage: 90,
 			power: null,
 		},

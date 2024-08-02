@@ -1,36 +1,36 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
-import Wolf from "../../default/effects/wolf"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import Wolf from '../../default/effects/wolf'
 
 class FiveAMPearlRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "fiveampearl_rare",
+		id: 'fiveampearl_rare',
 		numericId: 230,
-		name: "5AM Pearl",
-		expansion: "alter_egos_ii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: '5AM Pearl',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
-		type: "balanced",
+		type: 'balanced',
 		health: 270,
 		primary: {
-			name: "Wicked",
-			cost: ["balanced"],
+			name: 'Wicked',
+			cost: ['balanced'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Dogs of War",
-			cost: ["balanced", "balanced"],
+			name: 'Dogs of War',
+			cost: ['balanced', 'balanced'],
 			damage: 70,
 			power:
-				"If Wolf card is attached to this Hermit, do an additional 30hp damage.",
+				'If Wolf card is attached to this Hermit, do an additional 30hp damage.',
 		},
 	}
 
@@ -42,7 +42,7 @@ class FiveAMPearlRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			if (

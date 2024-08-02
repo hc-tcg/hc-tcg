@@ -2,35 +2,35 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class KeralisRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "keralis_rare",
+		id: 'keralis_rare',
 		numericId: 72,
-		name: "Keralis",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Keralis',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 1,
-		type: "terraform",
+		type: 'terraform',
 		health: 250,
 		primary: {
-			name: "Booshes",
-			cost: ["any"],
+			name: 'Booshes',
+			cost: ['any'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Sweet Face",
-			cost: ["terraform", "terraform", "any"],
+			name: 'Sweet Face',
+			cost: ['terraform', 'terraform', 'any'],
 			damage: 0,
-			power: "Heal any AFK Hermit 100hp.",
+			power: 'Heal any AFK Hermit 100hp.',
 		},
 	}
 
@@ -57,7 +57,7 @@ class KeralisRare extends Card {
 				if (activeInstance.entity !== component.entity) return
 
 				// Only secondary attack
-				if (hermitAttackType !== "secondary") return
+				if (hermitAttackType !== 'secondary') return
 
 				// Make sure there is something to select
 				if (!game.components.exists(SlotComponent, this.pickCondition)) return
@@ -65,7 +65,7 @@ class KeralisRare extends Card {
 				game.addPickRequest({
 					playerId: player.id,
 					id: component.entity,
-					message: "Pick an AFK Hermit from either side of the board",
+					message: 'Pick an AFK Hermit from either side of the board',
 					canPick: this.pickCondition,
 					onResult(pickedSlot) {
 						// Store the info to use later
@@ -80,7 +80,7 @@ class KeralisRare extends Card {
 
 		// Heals the afk hermit *before* we actually do damage
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			if (!pickedAfkSlot?.inRow()) return

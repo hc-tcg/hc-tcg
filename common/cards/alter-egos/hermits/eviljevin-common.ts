@@ -1,29 +1,29 @@
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class EvilJevinCommon extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "eviljevin_common",
+		id: 'eviljevin_common',
 		numericId: 127,
-		name: "Evil Jevin",
-		expansion: "alter_egos",
-		palette: "alter_egos",
-		background: "alter_egos",
-		rarity: "common",
+		name: 'Evil Jevin',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
+		rarity: 'common',
 		tokens: 0,
-		type: "miner",
+		type: 'miner',
 		health: 260,
 		primary: {
-			name: "Pickle",
-			cost: ["miner"],
+			name: 'Pickle',
+			cost: ['miner'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Slime",
-			cost: ["miner", "miner", "any"],
+			name: 'Slime',
+			cost: ['miner', 'miner', 'any'],
 			damage: 90,
 			power: null,
 		},

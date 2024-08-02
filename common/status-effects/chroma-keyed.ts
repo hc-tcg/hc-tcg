@@ -2,25 +2,25 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {AttackModel} from "../models/attack-model"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class ChromaKeyedEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		icon: "chroma-keyed",
-		name: "Chroma Keyed",
+		icon: 'chroma-keyed',
+		name: 'Chroma Keyed',
 		description:
-			"You deal 10hp less damage for each level of this status effect.",
+			'You deal 10hp less damage for each level of this status effect.',
 		counter: 1,
-		counterType: "number",
+		counterType: 'number',
 	}
 
 	public override onApply(
@@ -36,9 +36,9 @@ class ChromaKeyedEffect extends CardStatusEffect {
 		observer.subscribe(target.player.hooks.onAttack, (attack: AttackModel) => {
 			if (
 				[
-					attack.isAttacker(target.entity) && attack.type === "primary",
+					attack.isAttacker(target.entity) && attack.type === 'primary',
 					!attack.isAttacker(target.entity) &&
-						attack.isType("primary", "secondary"),
+						attack.isType('primary', 'secondary'),
 				].some(Boolean)
 			) {
 				effect.remove()
@@ -47,7 +47,7 @@ class ChromaKeyedEffect extends CardStatusEffect {
 
 			if (effect.counter === null) return
 
-			if (attack.isAttacker(target.entity) && attack.type === "secondary") {
+			if (attack.isAttacker(target.entity) && attack.type === 'secondary') {
 				attack.reduceDamage(effect.entity, effect.counter * 10)
 				effect.counter++
 				chromaUsedThisTurn = true

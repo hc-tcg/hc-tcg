@@ -6,8 +6,8 @@ valueModifiers.push((states: any, modifier: any) => {
 
 	const custom = opponentPlayer.custom
 
-	if (!custom["invisibility_potion"]) return
-	const multiplier = custom["invisibility_potion"] === "heads" ? 0 : 2
+	if (!custom['invisibility_potion']) return
+	const multiplier = custom['invisibility_potion'] === 'heads' ? 0 : 2
 	modifier.hermit.multiplier *= multiplier
 	modifier.weakness.multiplier *= multiplier
 })
@@ -18,8 +18,8 @@ valueModifiers.push((states: any, modifier: any) => {
 
 	const custom = opponentPlayer.custom
 
-	if (!custom["turtle_shell"]) return
-	if (singleUseInfo?.id === "golden_axe") return
+	if (!custom['turtle_shell']) return
+	if (singleUseInfo?.id === 'golden_axe') return
 	modifier.protection.min = -1
 	modifier.protection.max = -1
 })
@@ -28,7 +28,7 @@ valueModifiers.push((states: any, modifier: any) => {
 valueModifiers.push((states: any, modifier: any) => {
 	const {singleUseInfo} = states
 
-	if (singleUseInfo?.id !== "anvil") return
+	if (singleUseInfo?.id !== 'anvil') return
 	modifier.effect.min -= 80
 	modifier.effect.max += 0
 	modifier.afkEffect.min = 0
@@ -38,7 +38,7 @@ valueModifiers.push((states: any, modifier: any) => {
 valueModifiers.push((states: any, modifier: any) => {
 	const {singleUseInfo} = states
 
-	if (singleUseInfo?.id !== "golden_axe") return
+	if (singleUseInfo?.id !== 'golden_axe') return
 	modifier.protection.multiplier *= 0
 })
 

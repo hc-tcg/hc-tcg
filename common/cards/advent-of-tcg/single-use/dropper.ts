@@ -1,18 +1,18 @@
-import {CardComponent, DeckSlotComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
-import FletchingTable from "./fletching-table"
+import {CardComponent, DeckSlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
+import FletchingTable from './fletching-table'
 
 class Dropper extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "dropper",
+		id: 'dropper',
 		numericId: 222,
-		name: "Dropper",
-		expansion: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Dropper',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 0,
 		description: "Shuffle 2 fletching tables into your opponent's deck",
 		showConfirmationModal: true,
@@ -24,7 +24,7 @@ class Dropper extends Card {
 		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
 				let slot = game.components.new(DeckSlotComponent, player.entity, {
-					position: "random",
+					position: 'random',
 				})
 				game.components.new(CardComponent, FletchingTable, slot.entity)
 			}

@@ -2,20 +2,20 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
-import {executeExtraAttacks} from "../utils/attacks"
+} from '../components'
+import {GameModel} from '../models/game-model'
+import {executeExtraAttacks} from '../utils/attacks'
 import {
 	CardStatusEffect,
 	StatusEffectProps,
 	damageEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class PoisonEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...damageEffect,
-		icon: "poison",
-		name: "Poison",
+		icon: 'poison',
+		name: 'Poison',
 		description:
 			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 		applyLog: (values) => `${values.target} was $ePoisoned$`,
@@ -35,7 +35,7 @@ class PoisonEffect extends CardStatusEffect {
 				attacker: effect.entity,
 				target: target.slot.row.entity,
 				player: opponentPlayer.entity,
-				type: "status-effect",
+				type: 'status-effect',
 				log: (values) =>
 					`${values.target} took ${values.damage} damage from $bPoison$`,
 			})

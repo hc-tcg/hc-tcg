@@ -3,31 +3,31 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {AttackModel} from "../../../models/attack-model"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Anvil extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "anvil",
+		id: 'anvil',
 		numericId: 138,
-		name: "Anvil",
-		expansion: "alter_egos",
-		rarity: "rare",
+		name: 'Anvil',
+		expansion: 'alter_egos',
+		rarity: 'rare',
 		tokens: 0,
 		description:
-			"Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.",
+			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
 		attackPreview: (game) => {
 			const targetAmount =
 				this.getTargetHermits(game, game.currentPlayer).length - 1
-			if (targetAmount === 0) return "$A30$"
+			if (targetAmount === 0) return '$A30$'
 			return `$A30$ + $A10$ x ${targetAmount}`
 		},
 	}
@@ -58,7 +58,7 @@ class Anvil extends Card {
 						.newAttack({
 							attacker: component.entity,
 							target: row.entity,
-							type: "effect",
+							type: 'effect',
 							log: (values) =>
 								row.index === player.activeRow?.index
 									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`

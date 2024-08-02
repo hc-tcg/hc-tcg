@@ -2,25 +2,25 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import CurseOfBindingEffect from "../../../status-effects/curse-of-binding"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class CurseOfBinding extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "curse_of_binding",
+		id: 'curse_of_binding',
 		numericId: 11,
-		name: "Curse Of Binding",
-		expansion: "default",
-		rarity: "common",
+		name: 'Curse Of Binding',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
 		showConfirmationModal: true,
 		description:
-			"Your opponent can not make their active Hermit go AFK on their next turn.",
+			'Your opponent can not make their active Hermit go AFK on their next turn.',
 	}
 
 	override onAttach(

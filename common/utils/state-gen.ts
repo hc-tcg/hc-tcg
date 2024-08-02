@@ -5,14 +5,14 @@ import {
 	HandSlotComponent,
 	PlayerComponent,
 	RowComponent,
-} from "../components"
-import query from "../components/query"
-import {DEBUG_CONFIG} from "../config"
-import {PlayerEntity} from "../entities"
-import {GameModel} from "../models/game-model"
-import {PlayerModel} from "../models/player-model"
-import ComponentTable from "../types/ecs"
-import {GameState} from "../types/game-state"
+} from '../components'
+import query from '../components/query'
+import {DEBUG_CONFIG} from '../config'
+import {PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
+import {PlayerModel} from '../models/player-model'
+import ComponentTable from '../types/ecs'
+import {GameState} from '../types/game-state'
 
 /* Set up the components that will be referenced during the game. This includes:
  * - The player objects
@@ -29,7 +29,7 @@ export function setupComponents(
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)
-	components.new(BoardSlotComponent, {type: "single_use"}, null, null)
+	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
@@ -39,7 +39,7 @@ function setupEcsForPlayer(
 ) {
 	for (const card of playerModel.deck.cards) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: "random",
+			position: 'random',
 		})
 		components.new(CardComponent, card.props.numericId, slot.entity)
 	}
@@ -49,31 +49,31 @@ function setupEcsForPlayer(
 
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: "item"},
+			{player: playerEntity, type: 'item'},
 			0,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: "item"},
+			{player: playerEntity, type: 'item'},
 			1,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: "item"},
+			{player: playerEntity, type: 'item'},
 			2,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: "attach"},
+			{player: playerEntity, type: 'attach'},
 			3,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: "hermit"},
+			{player: playerEntity, type: 'hermit'},
 			4,
 			row.entity,
 		)

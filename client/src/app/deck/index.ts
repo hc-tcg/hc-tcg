@@ -1,1 +1,1 @@
-export {default} from "./deck"
+export {default} from './deck'

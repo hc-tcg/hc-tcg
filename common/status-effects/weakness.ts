@@ -2,23 +2,23 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
 	StatusEffectProps,
 	statusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class WeaknessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		icon: "weakness",
-		name: "Weakness",
+		icon: 'weakness',
+		name: 'Weakness',
 		description: "This Hermit is weak to the opponent's active Hermit's type.",
 		counter: 3,
-		counterType: "turns",
+		counterType: 'turns',
 	}
 
 	public override onApply(
@@ -42,10 +42,10 @@ class WeaknessEffect extends CardStatusEffect {
 			if (!target.slot.inRow()) return
 			if (
 				attack.targetEntity !== target.slot.rowEntity ||
-				attack.createWeakness === "never"
+				attack.createWeakness === 'never'
 			)
 				return
-			attack.createWeakness = "always"
+			attack.createWeakness = 'always'
 		})
 	}
 }

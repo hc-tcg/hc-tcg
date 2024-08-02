@@ -1,13 +1,13 @@
-import {PerspectiveCamera} from "@react-three/drei"
-import {Canvas, useFrame} from "@react-three/fiber"
-import cn from "classnames"
-import {getGameState} from "logic/game/game-selectors"
+import {PerspectiveCamera} from '@react-three/drei'
+import {Canvas, useFrame} from '@react-three/fiber'
+import cn from 'classnames'
+import {getGameState} from 'logic/game/game-selectors'
 /* eslint-disable react/no-unknown-property */
-import React from "react"
-import {useRef} from "react"
-import {useSelector} from "react-redux"
-import * as THREE from "three"
-import css from "./background.module.scss"
+import React from 'react'
+import {useRef} from 'react'
+import {useSelector} from 'react-redux'
+import * as THREE from 'three'
+import css from './background.module.scss'
 
 type Props = {
 	panorama: string
@@ -63,12 +63,12 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 		 * https://modrinth.com/mod/swd-panorama
 		 */
 		const texture = loader.load([
-			"panorama_1.png",
-			"panorama_3.png",
-			"panorama_5.png",
-			"panorama_4.png",
-			"panorama_0.png",
-			"panorama_2.png",
+			'panorama_1.png',
+			'panorama_3.png',
+			'panorama_5.png',
+			'panorama_4.png',
+			'panorama_0.png',
+			'panorama_2.png',
 		])
 
 		texture.flipY = true

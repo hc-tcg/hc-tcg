@@ -1,11 +1,11 @@
-import classnames from "classnames"
-import {Item} from "common/cards/base/types"
-import {WithoutFunctions} from "common/types/server-requests"
-import {getCardRank} from "common/utils/ranks"
-import {getGameState} from "logic/game/game-selectors"
-import {memo} from "react"
-import {useSelector} from "react-redux"
-import css from "./item-card-svg.module.scss"
+import classnames from 'classnames'
+import {Item} from 'common/cards/base/types'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {getCardRank} from 'common/utils/ranks'
+import {getGameState} from 'logic/game/game-selectors'
+import {memo} from 'react'
+import {useSelector} from 'react-redux'
+import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
 	card: WithoutFunctions<Item>
@@ -30,7 +30,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 			<g>
 				<image
 					className={css.star}
-					href={"/images/star_white.svg"}
+					href={'/images/star_white.svg'}
 					x="-15"
 					y="65"
 					width="390"
@@ -65,7 +65,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 					ITEM
 				</text>
 			</g>
-			{card.rarity === "rare" ? (
+			{card.rarity === 'rare' ? (
 				<g>
 					<rect
 						className={css.rarity}
@@ -90,7 +90,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 				</g>
 			) : null}
 
-			{showCost && rank !== "stone" ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}

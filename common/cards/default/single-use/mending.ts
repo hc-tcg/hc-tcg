@@ -2,13 +2,13 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Mending extends Card {
 	pickCondition = query.every(
@@ -22,11 +22,11 @@ class Mending extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "mending",
+		id: 'mending',
 		numericId: 78,
-		name: "Mending",
-		expansion: "default",
-		rarity: "ultra_rare",
+		name: 'Mending',
+		expansion: 'default',
+		rarity: 'ultra_rare',
 		tokens: 1,
 		description:
 			"Move your active Hermit's attached effect card to any of your AFK Hermits.",
@@ -59,7 +59,7 @@ class Mending extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick an empty effect slot from one of your AFK Hermits",
+			message: 'Pick an empty effect slot from one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				const hermitActive = game.components.find(

@@ -3,23 +3,23 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
-import {CoinFlipResult} from "../types/game-state"
-import {flipCoin} from "../utils/coinFlips"
+} from '../components'
+import {GameModel} from '../models/game-model'
+import {CoinFlipResult} from '../types/game-state'
+import {flipCoin} from '../utils/coinFlips'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "sheep-stare",
-		name: "Sheep Stare",
+		icon: 'sheep-stare',
+		name: 'Sheep Stare',
 		description:
-			"When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.",
+			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	}
 
 	override onApply(
@@ -52,7 +52,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 			)
 				return
 
-			if (coinFlipResult === "heads") {
+			if (coinFlipResult === 'heads') {
 				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
 			}
 		})

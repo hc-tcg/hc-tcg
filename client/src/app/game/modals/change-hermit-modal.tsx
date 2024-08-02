@@ -1,10 +1,10 @@
-import {SlotInfo} from "common/types/server-requests"
-import Button from "components/button"
-import Modal from "components/modal"
-import {getAvailableActions, getPlayerState} from "logic/game/game-selectors"
-import {getGameState} from "logic/game/game-selectors"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./game-modals.module.scss"
+import {SlotInfo} from 'common/types/server-requests'
+import Button from 'components/button'
+import Modal from 'components/modal'
+import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
+import {getGameState} from 'logic/game/game-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
@@ -17,32 +17,32 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const gameState = useSelector(getGameState)
 
 	if (
-		info.slotType !== "hermit" ||
+		info.slotType !== 'hermit' ||
 		!playerState ||
 		!gameState ||
 		info.slotEntity === null
 	) {
-		throw new Error("This should never happen")
+		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.props.name || ""
+	const hermitName = info.card?.props.name || ''
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const canChange =
-		!hasActiveHermit || availableActions.includes("CHANGE_ACTIVE_HERMIT")
+		!hasActiveHermit || availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (!canChange)
-		message = "You can not change your active hermit at this moment."
+		message = 'You can not change your active hermit at this moment.'
 
 	const lastAction = hasActiveHermit && canChange
 
 	const handleYes = () => {
-		dispatch({type: "CONFIRM_HERMIT_CHANGE", payload: true})
+		dispatch({type: 'CONFIRM_HERMIT_CHANGE', payload: true})
 		closeModal()
 	}
 
 	const handleNo = () => {
-		dispatch({type: "CONFIRM_HERMIT_CHANGE", payload: false})
+		dispatch({type: 'CONFIRM_HERMIT_CHANGE', payload: false})
 		closeModal()
 	}
 

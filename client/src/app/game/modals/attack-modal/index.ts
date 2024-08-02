@@ -1,1 +1,1 @@
-export {default} from "./attack-modal"
+export {default} from './attack-modal'

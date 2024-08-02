@@ -2,13 +2,13 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Lead extends Card {
 	firstPickCondition = query.every(
@@ -29,11 +29,11 @@ class Lead extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "lead",
+		id: 'lead',
 		numericId: 75,
-		name: "Lead",
-		expansion: "default",
-		rarity: "common",
+		name: 'Lead',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 1,
 		description:
 			"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",

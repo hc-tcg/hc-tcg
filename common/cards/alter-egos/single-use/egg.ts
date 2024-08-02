@@ -2,14 +2,14 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Egg extends Card {
 	pickCondition = query.every(
@@ -21,11 +21,11 @@ class Egg extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "egg",
+		id: 'egg',
 		numericId: 140,
-		name: "Egg",
-		expansion: "alter_egos",
-		rarity: "rare",
+		name: 'Egg',
+		expansion: 'alter_egos',
+		rarity: 'rare',
 		tokens: 1,
 		description:
 			"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
@@ -71,14 +71,14 @@ class Egg extends Card {
 			observer.unsubscribe(player.hooks.onAttack)
 
 			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === "heads") {
+			if (coinFlip[0] === 'heads') {
 				const eggAttack = game
 					.newAttack({
 						attacker: component.entity,
 						target: afkHermitSlot?.row.entity,
 						log: (values) =>
 							`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
-						type: "effect",
+						type: 'effect',
 					})
 					.addDamage(component.entity, 10)
 

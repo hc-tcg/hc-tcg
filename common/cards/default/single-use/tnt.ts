@@ -1,23 +1,23 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class TNT extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "tnt",
+		id: 'tnt',
 		numericId: 100,
-		name: "TNT",
-		expansion: "default",
-		rarity: "common",
+		name: 'TNT',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 2,
 		description:
 			"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
 		hasAttack: true,
-		attackPreview: (_game) => "$A60$",
+		attackPreview: (_game) => '$A60$',
 	}
 
 	override onAttach(
@@ -34,7 +34,7 @@ class TNT extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentPlayer.activeRowEntity,
-					type: "effect",
+					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
 				})
@@ -44,7 +44,7 @@ class TNT extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: player.activeRowEntity,
-					type: "effect",
+					type: 'effect',
 					isBacklash: true,
 					log: (values) => `and took ${values.damage} backlash damage`,
 				})

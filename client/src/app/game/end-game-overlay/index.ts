@@ -1,1 +1,1 @@
-export {default} from "./end-game-overlay"
+export {default} from './end-game-overlay'

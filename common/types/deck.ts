@@ -1,37 +1,37 @@
-import {CARDS} from "../cards"
-import {LocalCardInstance, WithoutFunctions} from "./server-requests"
+import {CARDS} from '../cards'
+import {LocalCardInstance, WithoutFunctions} from './server-requests'
 
 export type PlayerDeckT = {
 	name: string
 	icon:
-		| "any"
-		| "balanced"
-		| "builder"
-		| "explorer"
-		| "farm"
-		| "miner"
-		| "prankster"
-		| "pvp"
-		| "redstone"
-		| "speedrunner"
-		| "terraform"
+		| 'any'
+		| 'balanced'
+		| 'builder'
+		| 'explorer'
+		| 'farm'
+		| 'miner'
+		| 'prankster'
+		| 'pvp'
+		| 'redstone'
+		| 'speedrunner'
+		| 'terraform'
 	cards: Array<LocalCardInstance>
 }
 
 export type SavedDeckT = {
 	name: string
 	icon:
-		| "any"
-		| "balanced"
-		| "builder"
-		| "explorer"
-		| "farm"
-		| "miner"
-		| "prankster"
-		| "pvp"
-		| "redstone"
-		| "speedrunner"
-		| "terraform"
+		| 'any'
+		| 'balanced'
+		| 'builder'
+		| 'explorer'
+		| 'farm'
+		| 'miner'
+		| 'prankster'
+		| 'pvp'
+		| 'redstone'
+		| 'speedrunner'
+		| 'terraform'
 	// This type is used to ensure saving and loading compatibility with older versions of hc-tcg
 	cards: Array<{
 		cardId: string

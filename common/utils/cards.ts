@@ -1,5 +1,5 @@
-import {CardCategoryT} from "../types/cards"
-import {LocalCardInstance} from "../types/server-requests"
+import {CardCategoryT} from '../types/cards'
+import {LocalCardInstance} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal

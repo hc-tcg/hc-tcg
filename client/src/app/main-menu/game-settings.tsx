@@ -1,10 +1,10 @@
-import Button from "components/button"
-import MenuLayout from "components/menu-layout"
-import {setSetting} from "logic/local-settings/local-settings-actions"
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import React from "react"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./main-menu.module.scss"
+import Button from 'components/button'
+import MenuLayout from 'components/menu-layout'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,29 +16,29 @@ function GameSettings({setMenuSection}: Props) {
 	const handleDialogsChange = () => {
 		dispatch(
 			setSetting(
-				"confirmationDialogs",
-				settings.confirmationDialogs !== "off" ? "off" : "on",
+				'confirmationDialogs',
+				settings.confirmationDialogs !== 'off' ? 'off' : 'on',
 			),
 		)
 	}
 	const handleGameSideToggle = () => {
-		const gameSide = settings.gameSide === "Left" ? "Right" : "Left"
-		dispatch(setSetting("gameSide", gameSide))
+		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
+		dispatch(setSetting('gameSide', gameSide))
 	}
 	const getDescriptor = (value?: string) => {
-		if (value !== "off") return "Enabled"
-		return "Disabled"
+		if (value !== 'off') return 'Enabled'
+		return 'Disabled'
 	}
 	const handleChatChange = () => {
 		dispatch(
-			setSetting("disableChat", settings.disableChat !== "off" ? "off" : "on"),
+			setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'),
 		)
 	}
 	const handleProfanityChange = () => {
 		dispatch(
 			setSetting(
-				"profanityFilter",
-				settings.profanityFilter !== "off" ? "off" : "on",
+				'profanityFilter',
+				settings.profanityFilter !== 'off' ? 'off' : 'on',
 			),
 		)
 	}
@@ -47,17 +47,17 @@ function GameSettings({setMenuSection}: Props) {
 		const username = ev.currentTarget.minecraftName.value.trim()
 		if (username.length > 3) {
 			dispatch({
-				type: "UPDATE_MINECRAFT_NAME",
+				type: 'UPDATE_MINECRAFT_NAME',
 				payload: username,
 			})
-			dispatch(setSetting("minecraftName", username))
-			localStorage.setItem("minecraftName", username)
+			dispatch(setSetting('minecraftName', username))
+			localStorage.setItem('minecraftName', username)
 		}
 	}
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection("settings")}
+			back={() => setMenuSection('settings')}
 			title="Game Settings"
 			returnText="More"
 			className={css.settingsMenu}

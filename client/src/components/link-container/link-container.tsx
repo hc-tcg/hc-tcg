@@ -1,5 +1,5 @@
-import {VERSION} from "../../../../common/config"
-import css from "./link-container.module.scss"
+import {VERSION} from '../../../../common/config'
+import css from './link-container.module.scss'
 
 export function VersionLinks() {
 	return (

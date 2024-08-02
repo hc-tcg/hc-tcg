@@ -1,6 +1,6 @@
-import Credit from "components/credit"
-import MenuLayout from "components/menu-layout"
-import css from "./main-menu.module.scss"
+import Credit from 'components/credit'
+import MenuLayout from 'components/menu-layout'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -8,7 +8,7 @@ type Props = {
 function Credits({setMenuSection}: Props) {
 	return (
 		<MenuLayout
-			back={() => setMenuSection("settings")}
+			back={() => setMenuSection('settings')}
 			title="Credits"
 			returnText="Settings"
 			className={css.settingsMenu}

@@ -1,26 +1,26 @@
-import {CardProps} from "../cards/base/types"
+import {CardProps} from '../cards/base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
 export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		icon: "primary-attack-disabled",
+		icon: 'primary-attack-disabled',
 		counter: 1,
-		counterType: "turns",
-		name: "Primary Attack Disabled",
+		counterType: 'turns',
+		name: 'Primary Attack Disabled',
 		description: "This hermit's primary attack is disabled for this turn.",
 	}
 
@@ -41,7 +41,7 @@ export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (player.getActiveHermit()?.entity === target.entity) {
-				game.addBlockedActions(effect.entity, "PRIMARY_ATTACK")
+				game.addBlockedActions(effect.entity, 'PRIMARY_ATTACK')
 			}
 		})
 	}
@@ -50,10 +50,10 @@ export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 export class MultiturnSecondaryAttackDisabledEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
-		icon: "secondary-attack-disabled",
+		icon: 'secondary-attack-disabled',
 		counter: 1,
-		counterType: "turns",
-		name: "Secondary Attack Disabled",
+		counterType: 'turns',
+		name: 'Secondary Attack Disabled',
 		description: "This hermit's secondary attack is disabled for this turn.",
 	}
 
@@ -74,7 +74,7 @@ export class MultiturnSecondaryAttackDisabledEffect extends CardStatusEffect {
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (player.getActiveHermit()?.entity === target.entity) {
-				game.addBlockedActions(effect.entity, "SECONDARY_ATTACK")
+				game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 			}
 		})
 	}

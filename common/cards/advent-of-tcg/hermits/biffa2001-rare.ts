@@ -1,34 +1,34 @@
-import {CardComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class Biffa2001Rare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "biffa2001_rare",
+		id: 'biffa2001_rare',
 		numericId: 206,
-		name: "Biffa",
-		expansion: "advent_of_tcg",
-		palette: "advent_of_tcg",
-		background: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Biffa',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 3,
-		type: "miner",
+		type: 'miner',
 		health: 290,
 		primary: {
-			name: "O.H.O",
-			cost: ["miner"],
+			name: 'O.H.O',
+			cost: ['miner'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
 			name: "Biffa's Museum",
-			cost: ["miner", "any"],
+			cost: ['miner', 'any'],
 			damage: 70,
 			power:
-				"For each card you played or used this turn, this attack does 20 more damage.",
+				'For each card you played or used this turn, this attack does 20 more damage.',
 		},
 	}
 
@@ -39,10 +39,10 @@ class Biffa2001Rare extends Card {
 	) {
 		const {player} = component
 
-		applyStatusEffect(game, "museum-collection", component)
+		applyStatusEffect(game, 'museum-collection', component)
 
 		player.hooks.onTurnStart.add(component, () => {
-			applyStatusEffect(game, "museum-collection", component)
+			applyStatusEffect(game, 'museum-collection', component)
 		})
 	}
 

@@ -1,4 +1,4 @@
-import classNames from "classnames"
+import classNames from 'classnames'
 import {
 	CardProps,
 	hasDescription,
@@ -6,31 +6,31 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from "common/cards/base/types"
-import {EXPANSIONS} from "common/const/expansions"
-import {STRENGTHS} from "common/const/strengths"
-import {GLOSSARY} from "common/glossary"
-import {STATUS_EFFECTS} from "common/status-effects"
-import {CardRarityT, TypeT} from "common/types/cards"
-import {WithoutFunctions} from "common/types/server-requests"
-import {EmptyNode, FormattedTextNode, formatText} from "common/utils/formatting"
-import {FormattedText} from "components/formatting/formatting"
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import React from "react"
-import {useSelector} from "react-redux"
-import css from "./card-tooltip.module.scss"
+} from 'common/cards/base/types'
+import {EXPANSIONS} from 'common/const/expansions'
+import {STRENGTHS} from 'common/const/strengths'
+import {GLOSSARY} from 'common/glossary'
+import {STATUS_EFFECTS} from 'common/status-effects'
+import {CardRarityT, TypeT} from 'common/types/cards'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {EmptyNode, FormattedTextNode, formatText} from 'common/utils/formatting'
+import {FormattedText} from 'components/formatting/formatting'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import React from 'react'
+import {useSelector} from 'react-redux'
+import css from './card-tooltip.module.scss'
 
 const HERMIT_TYPES: Record<string, string> = {
-	balanced: "Balanced",
-	builder: "Builder",
-	speedrunner: "Speedrunner",
-	redstone: "Redstone",
-	farm: "Farm",
-	pvp: "PvP",
-	terraform: "Terraform",
-	prankster: "Prankster",
-	miner: "Miner",
-	explorer: "Explorer",
+	balanced: 'Balanced',
+	builder: 'Builder',
+	speedrunner: 'Speedrunner',
+	redstone: 'Redstone',
+	farm: 'Farm',
+	pvp: 'PvP',
+	terraform: 'Terraform',
+	prankster: 'Prankster',
+	miner: 'Miner',
+	explorer: 'Explorer',
 }
 
 type Props = {
@@ -43,10 +43,10 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 		text = formatText(
 			(card.primary.power
 				? `**${card.primary.name}**\n*${card.primary.power}*`
-				: "") +
+				: '') +
 				(card.secondary.power
 					? `**${card.secondary.name}**\n*${card.secondary.power}*`
-					: ""),
+					: ''),
 		)
 	} else if (hasDescription(card)) {
 		text = formatText(`*${card.description}*`)
@@ -57,7 +57,7 @@ const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 const joinJsx = (array: Array<React.ReactNode>) => {
 	if (array.length === 0) return <span>None</span>
 	if (array.length < 2) return array
-	return array.reduce((prev: any, curr: any): any => [prev, " ", curr])
+	return array.reduce((prev: any, curr: any): any => [prev, ' ', curr])
 }
 
 const getStrengthsAndWeaknesses = (
@@ -107,27 +107,27 @@ const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
-	common: "Common",
-	rare: "✦ Rare ✦",
-	ultra_rare: "★ Ultra Rare ★",
+	common: 'Common',
+	rare: '✦ Rare ✦',
+	ultra_rare: '★ Ultra Rare ★',
 }
 
 const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return (
 		<span className={classNames(css.rarity, css[card.rarity])}>
-			{" "}
-			{RARITY_DISPLAY_TEXT[card.rarity]}{" "}
+			{' '}
+			{RARITY_DISPLAY_TEXT[card.rarity]}{' '}
 		</span>
 	)
 }
 
 const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	if (card.expansion !== "default") {
+	if (card.expansion !== 'default') {
 		const expansion = card.expansion as
-			| "default"
-			| "alter_egos"
-			| "advent_of_tcg"
-			| "alter_egos_ii"
+			| 'default'
+			| 'alter_egos'
+			| 'advent_of_tcg'
+			| 'alter_egos_ii'
 		return (
 			<div className={classNames(css.expansion, css[expansion])}>
 				■ {EXPANSIONS[expansion].name} Card ■
@@ -161,7 +161,7 @@ const getSidebarDescriptions = (
 	card: WithoutFunctions<CardProps>,
 ): React.ReactNode => {
 	return (card.sidebarDescriptions || []).map((description, i) => {
-		if (description.type === "statusEffect") {
+		if (description.type === 'statusEffect') {
 			const statusEffect = description.name
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
@@ -172,7 +172,7 @@ const getSidebarDescriptions = (
 				</div>
 			)
 		}
-		if (description.type === "glossary") {
+		if (description.type === 'glossary') {
 			const glossaryItem = description.name
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
@@ -191,7 +191,7 @@ const CardInstanceTooltip = ({card}: Props) => {
 
 	return (
 		<div className={css.cardTooltipContainer}>
-			{settings.showAdvancedTooltips === "on" && (
+			{settings.showAdvancedTooltips === 'on' && (
 				<div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>
 			)}
 			<div className={css.cardTooltip}>

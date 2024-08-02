@@ -2,20 +2,20 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class OriginalXbEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "originalxb",
-		name: "Get Good",
-		description: "Draw an additional card at the end of your turn.",
+		icon: 'originalxb',
+		name: 'Get Good',
+		description: 'Draw an additional card at the end of your turn.',
 	}
 
 	override onApply(

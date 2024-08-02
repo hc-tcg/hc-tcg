@@ -1,7 +1,7 @@
-import * as Toast from "@radix-ui/react-toast"
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./toast.module.scss"
+import * as Toast from '@radix-ui/react-toast'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './toast.module.scss'
 
 type Props = {
 	title: string
@@ -14,22 +14,22 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
 
-	const playSFX = (sound: "in" | "out") => {
+	const playSFX = (sound: 'in' | 'out') => {
 		let audioFile
-		sound === "in" && (audioFile = "sfx/Toast_In.ogg")
-		sound === "out" && (audioFile = "sfx/Toast_Out.ogg")
+		sound === 'in' && (audioFile = 'sfx/Toast_In.ogg')
+		sound === 'out' && (audioFile = 'sfx/Toast_Out.ogg')
 		const sfx: any = new Audio(audioFile)
-		settings.soundOn === "on" && sfx.play()
+		settings.soundOn === 'on' && sfx.play()
 	}
 
 	const handleClose = () => {
-		playSFX("out")
+		playSFX('out')
 		setTimeout(() => {
-			dispatch({type: "CLOSE_TOAST"})
+			dispatch({type: 'CLOSE_TOAST'})
 		}, 250)
 	}
 
-	setOpen && playSFX("in")
+	setOpen && playSFX('in')
 
 	return (
 		<>

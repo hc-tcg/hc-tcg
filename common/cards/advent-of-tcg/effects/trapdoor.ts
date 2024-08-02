@@ -1,18 +1,18 @@
-import {AttackModel} from "../../../models/attack-model"
-import {GameModel} from "../../../models/game-model"
-import {CardComponent, RowStateWithHermit} from "../../../types/game-state"
-import Card from "../../base/card"
-import {attach} from "../../base/defaults"
-import {Attach} from "../../base/types"
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class Trapdoor extends Card {
 	props: Attach = {
 		...attach,
-		id: "trapdoor",
+		id: 'trapdoor',
 		numericId: 205,
-		name: "Trapdoor",
-		expansion: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Trapdoor',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 2,
 		description:
 			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
@@ -34,7 +34,7 @@ class Trapdoor extends Card {
 				attack.getAttacker()?.player.id !== opponentPlayer.id
 			)
 				return
-			if (attack.isType("status-effect") || attack.isBacklash) return
+			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (pos.rowIndex === null) return
 			if (Math.abs(target.rowIndex - pos.rowIndex) !== 1) return
 
@@ -55,9 +55,9 @@ class Trapdoor extends Card {
 						row: pos.rowId as RowStateWithHermit,
 					},
 					type: attack.type,
-					createWeakness: ["primary", "secondary"].includes(attack.type)
-						? "ifWeak"
-						: "never",
+					createWeakness: ['primary', 'secondary'].includes(attack.type)
+						? 'ifWeak'
+						: 'never',
 				}).addDamage(this.props.id, damageReduction)
 				attack.addNewAttack(newAttack)
 			}

@@ -1,8 +1,8 @@
-import cn from "classnames"
-import {HermitAttackInfo} from "common/types/cards"
-import {formatText} from "common/utils/formatting"
-import {FormattedText} from "components/formatting/formatting"
-import css from "../game-modals.module.scss"
+import cn from 'classnames'
+import {HermitAttackInfo} from 'common/types/cards'
+import {formatText} from 'common/utils/formatting'
+import {FormattedText} from 'components/formatting/formatting'
+import css from '../game-modals.module.scss'
 
 type SingleUseAttackInfo = {
 	description: string
@@ -30,20 +30,20 @@ const Attack = ({
 	let attackDescription
 	let imageClass
 
-	if ("damage" in attackInfo) {
+	if ('damage' in attackInfo) {
 		imageClass = css.hermitImage
 		attackDescription = (
 			<div className={css.info}>
 				<p className={css.name}>
 					{FormattedText(
 						formatText(
-							`${name} - $${attackInfo.power ? "S" : "A"}${attackInfo.damage}$ ${
-								singleUseDamage ? "+ " + singleUseDamage : ""
+							`${name} - $${attackInfo.power ? 'S' : 'A'}${attackInfo.damage}$ ${
+								singleUseDamage ? '+ ' + singleUseDamage : ''
 							}`,
 						),
 					)}
 				</p>
-				{attackInfo?.power && <p>{attackInfo?.power}</p>}{" "}
+				{attackInfo?.power && <p>{attackInfo?.power}</p>}{' '}
 			</div>
 		)
 	} else {
@@ -53,7 +53,7 @@ const Attack = ({
 				<p className={css.name}>
 					{FormattedText(
 						formatText(
-							`${name} ${singleUseDamage ? "- " + singleUseDamage : ""}`,
+							`${name} ${singleUseDamage ? '- ' + singleUseDamage : ''}`,
 						),
 					)}
 				</p>

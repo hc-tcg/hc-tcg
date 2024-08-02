@@ -1,15 +1,15 @@
-import {ComponentQuery} from "."
-import query from "."
-import {CardComponent, PlayerComponent, StatusEffectComponent} from ".."
-import {CardEntity, PlayerEntity} from "../../entities"
+import {ComponentQuery} from '.'
+import query from '.'
+import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
+import {CardEntity, PlayerEntity} from '../../entities'
 import {
 	CardStatusEffect,
 	StatusEffect,
 	StatusEffectProps,
-} from "../../status-effects/status-effect"
+} from '../../status-effects/status-effect'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
-import("../../status-effects").then(
+import('../../status-effects').then(
 	(mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS),
 )
 
@@ -55,7 +55,7 @@ export function targetEntity(
 }
 
 export function type(
-	...types: Array<StatusEffectProps["type"]>
+	...types: Array<StatusEffectProps['type']>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => types.includes(statusEffect.props.type)
 }

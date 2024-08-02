@@ -2,21 +2,21 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Emerald extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "emerald",
+		id: 'emerald',
 		numericId: 18,
-		name: "Emerald",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Emerald',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 2,
 		description:
 			"Steal or swap the attached effect card of your opponent's active Hermit.",

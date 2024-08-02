@@ -1,1 +1,1 @@
-export {default} from "./alert-modal"
+export {default} from './alert-modal'

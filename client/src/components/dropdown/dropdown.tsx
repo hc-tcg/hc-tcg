@@ -1,6 +1,6 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu"
-import {ReactNode} from "react"
-import css from "./dropdown.module.scss"
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import {ReactNode} from 'react'
+import css from './dropdown.module.scss'
 
 type DropdownOptions = {
 	name: string
@@ -39,7 +39,7 @@ const Dropdown = ({button, label, options, action}: Props) => {
 							{option.icon && (
 								<img
 									src={option.icon}
-									style={{height: "1.5rem", width: "1.5rem"}}
+									style={{height: '1.5rem', width: '1.5rem'}}
 									alt={option.icon}
 								/>
 							)}

@@ -3,23 +3,23 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../components"
-import query from "../components/query"
-import {GameModel} from "../models/game-model"
-import {flipCoin} from "../utils/coinFlips"
+} from '../components'
+import query from '../components/query'
+import {GameModel} from '../models/game-model'
+import {flipCoin} from '../utils/coinFlips'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 export class TrapHoleEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		name: "Trap Hole",
-		icon: "trap-hole",
+		name: 'Trap Hole',
+		icon: 'trap-hole',
 		description:
-			"When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.",
+			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
 	}
 
 	public override onApply(
@@ -42,7 +42,7 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 				player,
 			)
 
-			if (coinFlip[0] == "heads") {
+			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
 					player.entity,
 					`$p${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,

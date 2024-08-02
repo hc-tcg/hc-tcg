@@ -2,14 +2,14 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import {getFormattedName} from "../../../utils/game"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import {getFormattedName} from '../../../utils/game'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Piston extends Card {
 	firstPickCondition = query.every(
@@ -32,14 +32,14 @@ class Piston extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "piston",
+		id: 'piston',
 		numericId: 144,
-		name: "Piston",
-		expansion: "alter_egos",
-		rarity: "common",
+		name: 'Piston',
+		expansion: 'alter_egos',
+		rarity: 'common',
 		tokens: 0,
 		description:
-			"Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.",
+			'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.firstPickCondition),
@@ -60,7 +60,7 @@ class Piston extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick an item card from one of your active or AFK Hermits",
+			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: this.firstPickCondition,
 			onResult(pickResult) {
 				// Store the component of the chosen item
@@ -72,7 +72,7 @@ class Piston extends Card {
 			playerId: player.id,
 			id: component.entity,
 			message:
-				"Pick an empty item slot on one of your adjacent active or AFK Hermits",
+				'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			canPick: query.every(
 				query.slot.currentPlayer,
 				query.slot.item,
@@ -90,7 +90,7 @@ class Piston extends Card {
 
 				if (component.slot.onBoard()) component.discard()
 				// Remove playing a single use from completed actions so it can be done again
-				game.removeCompletedActions("PLAY_SINGLE_USE_CARD")
+				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false
 			},
 		})

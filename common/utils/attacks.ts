@@ -1,12 +1,12 @@
-import {Hermit} from "../cards/base/types"
-import {CardComponent, ObserverComponent} from "../components"
-import query from "../components/query"
-import {DEBUG_CONFIG} from "../config"
-import {WEAKNESS_DAMAGE} from "../const/damage"
-import {STRENGTHS} from "../const/strengths"
-import {AttackModel} from "../models/attack-model"
-import {GameModel} from "../models/game-model"
-import {TypeT} from "../types/cards"
+import {Hermit} from '../cards/base/types'
+import {CardComponent, ObserverComponent} from '../components'
+import query from '../components/query'
+import {DEBUG_CONFIG} from '../config'
+import {WEAKNESS_DAMAGE} from '../const/damage'
+import {STRENGTHS} from '../const/strengths'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {TypeT} from '../types/cards'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -20,7 +20,7 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const player = attack.player
 
 		if (DEBUG_CONFIG.disableDamage) {
-			attack.multiplyDamage("debug", 0).lockDamage("debug")
+			attack.multiplyDamage('debug', 0).lockDamage('debug')
 		}
 
 		// Call before attack hooks
@@ -203,8 +203,8 @@ export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
 
 	const remainingEnergy = energy.slice()
 
-	const specificCost = cost.filter((item) => item !== "any")
-	const anyCost = cost.filter((item) => item === "any")
+	const specificCost = cost.filter((item) => item !== 'any')
+	const anyCost = cost.filter((item) => item === 'any')
 	const hasEnoughSpecific = specificCost.every((costItem) => {
 		// First try find the exact card
 		let index = remainingEnergy.findIndex(
@@ -212,7 +212,7 @@ export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
 		)
 		if (index === -1) {
 			// Then try find an "any" card
-			index = remainingEnergy.findIndex((energyItem) => energyItem === "any")
+			index = remainingEnergy.findIndex((energyItem) => energyItem === 'any')
 			if (index === -1) return
 		}
 		remainingEnergy.splice(index, 1)
@@ -228,9 +228,9 @@ function createWeaknessAttack(
 	game: GameModel,
 	attack: AttackModel,
 ): AttackModel | null {
-	if (attack.createWeakness === "never") return null
+	if (attack.createWeakness === 'never') return null
 	// Only hermit attacks have extra weakness damage.
-	if (!["primary", "secondary"].includes(attack.type)) return null
+	if (!['primary', 'secondary'].includes(attack.type)) return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
 	let attacker = attack.attacker
@@ -246,7 +246,7 @@ function createWeaknessAttack(
 
 	const strength = STRENGTHS[attacker.props.type]
 	if (
-		attack.createWeakness !== "always" &&
+		attack.createWeakness !== 'always' &&
 		!strength.includes(targetCardInfo.props.type)
 	) {
 		return null
@@ -255,7 +255,7 @@ function createWeaknessAttack(
 	const weaknessAttack = game.newAttack({
 		attacker: attacker.entity,
 		target: attack.targetEntity,
-		type: "weakness",
+		type: 'weakness',
 	})
 
 	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE)
@@ -274,7 +274,7 @@ export function setupMockCard(
 	game: GameModel,
 	component: CardComponent,
 	mocking: CardComponent<Hermit>,
-	attackType: "primary" | "secondary",
+	attackType: 'primary' | 'secondary',
 ): MockedAttack {
 	let observer = game.components.new(ObserverComponent, component.entity)
 
@@ -293,7 +293,7 @@ export function setupMockCard(
 	return {
 		hermitName: mocking.props.name,
 		attackName:
-			attackType === "primary"
+			attackType === 'primary'
 				? mocking.props.primary.name
 				: mocking.props.secondary.name,
 		getAttack: () => {

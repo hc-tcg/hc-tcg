@@ -2,25 +2,25 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Composter extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "composter",
+		id: 'composter',
 		numericId: 7,
-		name: "Composter",
-		expansion: "default",
-		rarity: "common",
+		name: 'Composter',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
 		description:
-			"Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.",
+			'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
@@ -40,7 +40,7 @@ class Composter extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick 2 cards from your hand",
+			message: 'Pick 2 cards from your hand',
 			canPick: query.slot.hand,
 			onResult(pickedSlot) {
 				firstPickedSlot = pickedSlot
@@ -50,7 +50,7 @@ class Composter extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick 1 more card from your hand",
+			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
 				if (firstPickedSlot === null) return false
 				return query.every(

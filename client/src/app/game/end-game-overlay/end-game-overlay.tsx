@@ -1,11 +1,11 @@
-import * as Dialog from "@radix-ui/react-dialog"
-import cn from "classnames"
-import {GameEndOutcomeT, GameEndReasonT} from "common/types/game-state"
-import Button from "components/button"
-import {showEndGameOverlay} from "logic/game/game-actions"
-import {getOpponentName} from "logic/game/game-selectors"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./end-game-overlay.module.scss"
+import * as Dialog from '@radix-ui/react-dialog'
+import cn from 'classnames'
+import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
+import Button from 'components/button'
+import {showEndGameOverlay} from 'logic/game/game-actions'
+import {getOpponentName} from 'logic/game/game-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './end-game-overlay.module.scss'
 
 type Props = {
 	outcome?: GameEndOutcomeT
@@ -22,40 +22,40 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 	}
 
 	const OUTCOME_MSG = {
-		client_crash: "Game client crashed",
-		server_crash: "Server crashed",
-		timeout: "Game exceeded time limit (60+ minutes)",
-		forfeit_loss: "You forfeit the game",
+		client_crash: 'Game client crashed',
+		server_crash: 'Server crashed',
+		timeout: 'Game exceeded time limit (60+ minutes)',
+		forfeit_loss: 'You forfeit the game',
 		forfeit_win: `${opponent} forfeit the game`,
 		leave_win: `${opponent} left the game`,
 		leave_loss: `You left the game. ${opponent} won.`,
-		tie: "It`s a tie",
-		unknown: "Game ended unexpectedly, please report this on discord",
-		you_won: "You Won",
-		you_lost: "You Lost",
+		tie: 'It`s a tie',
+		unknown: 'Game ended unexpectedly, please report this on discord',
+		you_won: 'You Won',
+		you_lost: 'You Lost',
 	}
 
 	const REASON_MSG = {
-		hermits: "lost all hermits.",
-		lives: "lost all lives.",
-		cards: "ran out of cards.",
-		time: "ran out of time without an active hermit.",
+		hermits: 'lost all hermits.',
+		lives: 'lost all lives.',
+		cards: 'ran out of cards.',
+		time: 'ran out of time without an active hermit.',
 	}
 
 	switch (outcome) {
-		case "you_won":
-		case "leave_win":
-		case "forfeit_win":
-			animation = "/images/animations/victory.gif"
+		case 'you_won':
+		case 'leave_win':
+		case 'forfeit_win':
+			animation = '/images/animations/victory.gif'
 			winCondition = true
 			break
-		case "you_lost":
-		case "leave_loss":
-		case "forfeit_loss":
-			animation = "/images/animations/defeat.gif"
+		case 'you_lost':
+		case 'leave_loss':
+		case 'forfeit_loss':
+			animation = '/images/animations/defeat.gif'
 			break
 		default:
-			animation = "/images/animations/draw.gif"
+			animation = '/images/animations/draw.gif'
 	}
 
 	function pointerDownHandler(event: any) {
@@ -64,7 +64,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 
 	return (
 		<Dialog.Root open={!!outcome} onOpenChange={closeModal}>
-			<Dialog.Portal container={document.getElementById("modal")}>
+			<Dialog.Portal container={document.getElementById('modal')}>
 				<Dialog.Overlay
 					className={cn(css.overlay, {
 						[css.win]: winCondition,
@@ -89,11 +89,11 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 					>
 						{reason && (
 							<span>
-								{winCondition ? opponent : "You"} {REASON_MSG[reason]}
+								{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
 							</span>
 						)}
 
-						{!reason || (outcome && !["you_won", "you_lost"].includes(outcome))
+						{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
 							? outcome && OUTCOME_MSG[outcome]
 							: null}
 						<Dialog.Close asChild>

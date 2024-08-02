@@ -2,12 +2,12 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SweepingEdge extends Card {
 	discardCondition = query.every(
@@ -23,14 +23,14 @@ class SweepingEdge extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "sweeping_edge",
+		id: 'sweeping_edge',
 		numericId: 148,
-		name: "Sweeping Edge",
-		expansion: "alter_egos",
-		rarity: "ultra_rare",
+		name: 'Sweeping Edge',
+		expansion: 'alter_egos',
+		rarity: 'ultra_rare',
 		tokens: 2,
 		description:
-			"Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.",
+			'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,

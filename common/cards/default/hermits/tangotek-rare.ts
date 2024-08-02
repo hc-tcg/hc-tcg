@@ -2,36 +2,36 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class TangoTekRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "tangotek_rare",
+		id: 'tangotek_rare',
 		numericId: 95,
-		name: "Tango",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Tango',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 1,
-		type: "farm",
+		type: 'farm',
 		health: 290,
 		primary: {
-			name: "Skadoodle",
-			cost: ["farm"],
+			name: 'Skadoodle',
+			cost: ['farm'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Extra Flee",
-			cost: ["farm", "farm", "farm"],
+			name: 'Extra Flee',
+			cost: ['farm', 'farm', 'farm'],
 			damage: 100,
 			power:
-				"After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\nYour opponent chooses their active Hermit first.",
+				'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\nYour opponent chooses their active Hermit first.',
 		},
 	}
 
@@ -43,7 +43,7 @@ class TangoTekRare extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const opponentInactiveRowsPickCondition = query.every(
@@ -60,7 +60,7 @@ class TangoTekRare extends Card {
 			)
 
 			// Check if we are blocked from changing by anything other than the game
-			const canChange = !game.isActionBlocked("CHANGE_ACTIVE_HERMIT", ["game"])
+			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (
@@ -69,7 +69,7 @@ class TangoTekRare extends Card {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: component.entity,
-					message: "Pick a new active Hermit from your afk hermits",
+					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: opponentInactiveRowsPickCondition,
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
@@ -99,7 +99,7 @@ class TangoTekRare extends Card {
 				game.addPickRequest({
 					playerId: player.id,
 					id: component.entity,
-					message: "Pick a new active Hermit from your afk hermits",
+					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: playerInactiveRowsPickCondition,
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return

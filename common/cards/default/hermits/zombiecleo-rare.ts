@@ -2,38 +2,38 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {HermitAttackType} from "../../../types/attack"
-import {MockedAttack, setupMockCard} from "../../../utils/attacks"
-import ArmorStand from "../../alter-egos/effects/armor-stand"
-import Card, {InstancedValue} from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {HermitAttackType} from '../../../types/attack'
+import {MockedAttack, setupMockCard} from '../../../utils/attacks'
+import ArmorStand from '../../alter-egos/effects/armor-stand'
+import Card, {InstancedValue} from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class ZombieCleoRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "zombiecleo_rare",
+		id: 'zombiecleo_rare',
 		numericId: 116,
-		name: "Cleo",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Cleo',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 3,
-		type: "pvp",
+		type: 'pvp',
 		health: 290,
 		primary: {
-			name: "Dismissed",
-			cost: ["pvp"],
+			name: 'Dismissed',
+			cost: ['pvp'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Puppetry",
-			cost: ["pvp", "pvp", "pvp"],
+			name: 'Puppetry',
+			cost: ['pvp', 'pvp', 'pvp'],
 			damage: 0,
-			power: "Use an attack from any of your AFK Hermits.",
+			power: 'Use an attack from any of your AFK Hermits.',
 		},
 	}
 
@@ -52,7 +52,7 @@ class ZombieCleoRare extends Card {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	) {
-		if (hermitAttackType !== "secondary")
+		if (hermitAttackType !== 'secondary')
 			return super.getAttack(game, component, hermitAttackType)
 
 		const mockedAttack = this.mockedAttacks.get(component)
@@ -64,7 +64,7 @@ class ZombieCleoRare extends Card {
 		const attackName = mockedAttack.attackName
 		newAttack.updateLog(
 			(values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ", then " : ""} attacked ${
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
 				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
 		)
@@ -85,7 +85,7 @@ class ZombieCleoRare extends Card {
 				if (activeInstance.entity !== component.entity) return
 
 				// Only secondary attack
-				if (hermitAttackType !== "secondary") return
+				if (hermitAttackType !== 'secondary') return
 
 				// Make sure we have an afk hermit to pick
 				if (!game.components.exists(SlotComponent, this.pickCondition)) return
@@ -93,7 +93,7 @@ class ZombieCleoRare extends Card {
 				game.addPickRequest({
 					playerId: player.id,
 					id: component.entity,
-					message: "Pick one of your AFK Hermits",
+					message: 'Pick one of your AFK Hermits',
 					canPick: this.pickCondition,
 					onResult: (pickedSlot) => {
 						const pickedCard =
@@ -103,23 +103,23 @@ class ZombieCleoRare extends Card {
 						game.addModalRequest({
 							playerId: player.id,
 							data: {
-								modalId: "copyAttack",
+								modalId: 'copyAttack',
 								payload: {
-									modalName: "Cleo: Choose an attack to copy",
+									modalName: 'Cleo: Choose an attack to copy',
 									modalDescription:
 										"Which of the Hermit's attacks do you want to copy?",
 									hermitCard: pickedCard.entity,
 								},
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return "FAILURE_INVALID_DATA"
+								if (!modalResult) return 'FAILURE_INVALID_DATA'
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return "SUCCESS"
+									return 'SUCCESS'
 								}
-								if (!modalResult.pick) return "FAILURE_INVALID_DATA"
+								if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 								// Store the card to copy when creating the attack
 								this.mockedAttacks.set(
@@ -127,12 +127,12 @@ class ZombieCleoRare extends Card {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return "SUCCESS"
+								return 'SUCCESS'
 							},
 							onTimeout: () => {
 								this.mockedAttacks.set(
 									component,
-									setupMockCard(game, component, pickedCard, "primary"),
+									setupMockCard(game, component, pickedCard, 'primary'),
 								)
 							},
 						})
@@ -146,7 +146,7 @@ class ZombieCleoRare extends Card {
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			if (!game.components.exists(SlotComponent, this.pickCondition)) {
-				blockedActions.push("SECONDARY_ATTACK")
+				blockedActions.push('SECONDARY_ATTACK')
 			}
 
 			return blockedActions

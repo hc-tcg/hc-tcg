@@ -3,17 +3,17 @@ import {
 	Counter,
 	StatusEffectProps,
 	statusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class MuseumCollectionEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...statusEffect,
-		icon: "museum-collection",
-		name: "Museum Collection Size",
+		icon: 'museum-collection',
+		name: 'Museum Collection Size',
 		description:
 			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
 		counter: 0,
-		counterType: "number",
+		counterType: 'number',
 	}
 
 	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {

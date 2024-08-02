@@ -1,18 +1,18 @@
-import {CardComponent} from "../../../components"
-import {query, slot} from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {attach} from "../../base/defaults"
-import {Attach} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {query, slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class BerryBush extends Card {
 	props: Attach = {
 		...attach,
-		id: "berry_bush",
+		id: 'berry_bush',
 		numericId: 200,
-		name: "Sweet Berry Bush",
-		expansion: "advent_of_tcg",
-		rarity: "ultra_rare",
+		name: 'Sweet Berry Bush',
+		expansion: 'advent_of_tcg',
+		rarity: 'ultra_rare',
 		tokens: 2,
 		description:
 			"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
@@ -49,7 +49,7 @@ class BerryBush extends Card {
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
 					opponentPlayer.hand.push(
-						CardComponent.fromCardId("instant_health_ii"),
+						CardComponent.fromCardId('instant_health_ii'),
 					)
 				}
 			}
@@ -71,7 +71,7 @@ class BerryBush extends Card {
 			player.changeActiveRow(null)
 		}
 
-		if (slot && type === "hermit" && row) {
+		if (slot && type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
 			row.itemCards = []

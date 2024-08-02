@@ -1,35 +1,35 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {RowEntity} from "../../../entities"
-import {GameModel} from "../../../models/game-model"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {RowEntity} from '../../../entities'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "tinfoilchef_ultra_rare",
+		id: 'tinfoilchef_ultra_rare',
 		numericId: 99,
-		name: "TFC",
-		expansion: "default",
-		rarity: "ultra_rare",
+		name: 'TFC',
+		expansion: 'default',
+		rarity: 'ultra_rare',
 		tokens: 2,
-		type: "miner",
+		type: 'miner',
 		health: 300,
 		primary: {
-			name: "Phone Call",
-			cost: ["miner"],
+			name: 'Phone Call',
+			cost: ['miner'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Take It Easy",
-			cost: ["miner", "miner", "miner"],
+			name: 'Take It Easy',
+			cost: ['miner', 'miner', 'miner'],
 			damage: 100,
 			power:
-				"Flip a coin.\nIf heads, your opponent must discard any effect card attached to their active Hermit.\nOnly one effect card per Hermit can be discarded using this ability.",
+				'Flip a coin.\nIf heads, your opponent must discard any effect card attached to their active Hermit.\nOnly one effect card per Hermit can be discarded using this ability.',
 		},
 	}
 
@@ -49,7 +49,7 @@ class TinFoilChefUltraRare extends Card {
 		)
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			if (opponentPlayer.activeRow === null) return
@@ -58,7 +58,7 @@ class TinFoilChefUltraRare extends Card {
 			if (!game.components.exists(CardComponent, targetCardQuery)) return
 
 			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === "tails") return
+			if (coinFlip[0] === 'tails') return
 
 			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
 

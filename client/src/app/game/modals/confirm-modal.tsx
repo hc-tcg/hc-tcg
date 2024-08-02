@@ -1,9 +1,9 @@
-import Button from "components/button"
-import Modal from "components/modal"
-import {applyEffect, removeEffect} from "logic/game/game-actions"
-import {getPlayerState} from "logic/game/game-selectors"
-import {useDispatch, useSelector} from "react-redux"
-import css from "./game-modals.module.scss"
+import Button from 'components/button'
+import Modal from 'components/modal'
+import {applyEffect, removeEffect} from 'logic/game/game-actions'
+import {getPlayerState} from 'logic/game/game-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

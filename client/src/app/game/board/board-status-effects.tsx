@@ -1,9 +1,9 @@
-import classNames from "classnames"
-import {LocalStatusEffectInstance} from "common/types/server-requests"
-import StatusEffect from "components/status-effects/status-effect"
-import Tooltip from "components/tooltip"
-import statusEffectImageCss from "../../../components/status-effects/status-effect.module.scss"
-import css from "./board.module.scss"
+import classNames from 'classnames'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
+import StatusEffect from 'components/status-effects/status-effect'
+import Tooltip from 'components/tooltip'
+import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
+import css from './board.module.scss'
 
 type ExpandStatusEffectProps = {
 	statusEffects: Array<any>
@@ -55,7 +55,7 @@ const StatusEffectContainer = ({
 	statusEffects = [...statusEffects].reverse()
 
 	let sidebarStatusEffects = statusEffects.map((effect) => {
-		if (effect.props.type === "damage" || effect.props.type === "hiddenSystem")
+		if (effect.props.type === 'damage' || effect.props.type === 'hiddenSystem')
 			return
 		return (
 			<StatusEffect

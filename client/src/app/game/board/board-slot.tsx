@@ -1,21 +1,21 @@
-import classnames from "classnames"
-import {SlotEntity} from "common/entities"
-import {SlotTypeT} from "common/types/cards"
-import {LocalRowState} from "common/types/game-state"
+import classnames from 'classnames'
+import {SlotEntity} from 'common/entities'
+import {SlotTypeT} from 'common/types/cards'
+import {LocalRowState} from 'common/types/game-state'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
-} from "common/types/server-requests"
-import Card from "components/card"
+} from 'common/types/server-requests'
+import Card from 'components/card'
 import {
 	getCardsCanBePlacedIn,
 	getGameState,
 	getPickRequestPickableSlots,
 	getSelectedCard,
-} from "logic/game/game-selectors"
-import {useSelector} from "react-redux"
-import StatusEffectContainer from "./board-status-effects"
-import css from "./board.module.scss"
+} from 'logic/game/game-selectors'
+import {useSelector} from 'react-redux'
+import StatusEffectContainer from './board-status-effects'
+import css from './board.module.scss'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -40,10 +40,10 @@ const Slot = ({
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-	console.log("UPDATING SELF")
+	console.log('UPDATING SELF')
 
 	const frameImg =
-		type === "hermit" ? "/images/game/frame_glow.png" : "/images/game/frame.png"
+		type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
 		if (
@@ -91,15 +91,15 @@ const Slot = ({
 	return (
 		<div
 			onClick={isClickable ? onClick : () => {}}
-			id={css[cssId || "slot"]}
+			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable && somethingPickable,
 				[css.unpickable]: !isPickable && somethingPickable,
 				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !card,
-				[css.hermitSlot]: type == "hermit",
-				[css.afk]: !active && type !== "single_use",
+				[css.hermitSlot]: type == 'hermit',
+				[css.afk]: !active && type !== 'single_use',
 			})}
 		>
 			{card ? (

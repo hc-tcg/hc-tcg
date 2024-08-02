@@ -1,19 +1,19 @@
-import Card from "../../base/card"
-import {item} from "../../base/defaults"
-import {Item} from "../../base/types"
+import Card from '../../base/card'
+import {item} from '../../base/defaults'
+import {Item} from '../../base/types'
 
 class BuilderItem extends Card {
 	props: Item = {
 		...item,
-		id: "item_builder_common",
+		id: 'item_builder_common',
 		numericId: 51,
-		name: "Builder Item",
-		shortName: "Builder",
-		expansion: "default",
-		rarity: "common",
+		name: 'Builder Item',
+		shortName: 'Builder',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
-		type: "builder",
-		energy: ["builder"],
+		type: 'builder',
+		energy: ['builder'],
 	}
 }
 

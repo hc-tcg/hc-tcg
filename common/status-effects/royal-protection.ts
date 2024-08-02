@@ -2,21 +2,21 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	StatusEffectProps,
 	statusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class RoyalProtectionEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		icon: "royal_protection",
-		name: "Royal Protection",
+		icon: 'royal_protection',
+		name: 'Royal Protection',
 		description:
-			"Any attacks targeting a Hermit under Royal Protection are prevented.",
+			'Any attacks targeting a Hermit under Royal Protection are prevented.',
 		applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	}
 

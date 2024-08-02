@@ -2,14 +2,14 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {executeAttacks} from "../../../utils/attacks"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {executeAttacks} from '../../../utils/attacks'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class EnderPearl extends Card {
 	pickCondition = query.every(
@@ -20,14 +20,14 @@ class EnderPearl extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "ender_pearl",
+		id: 'ender_pearl',
 		numericId: 141,
-		name: "Ender Pearl",
-		expansion: "alter_egos",
-		rarity: "common",
+		name: 'Ender Pearl',
+		expansion: 'alter_egos',
+		rarity: 'common',
 		tokens: 0,
 		description:
-			"Before your attack, move your active Hermit and any attached cards to any open row on the game board. Your active Hermit also takes 10hp damage.",
+			'Before your attack, move your active Hermit and any attached cards to any open row on the game board. Your active Hermit also takes 10hp damage.',
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.pickCondition),
@@ -48,7 +48,7 @@ class EnderPearl extends Card {
 		game.addPickRequest({
 			playerId: player.id,
 			id: component.entity,
-			message: "Pick an empty Hermit slot",
+			message: 'Pick an empty Hermit slot',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.inRow() || !player.activeRow) return
@@ -64,7 +64,7 @@ class EnderPearl extends Card {
 					.newAttack({
 						attacker: pickedSlot.getCard()?.entity,
 						target: player.activeRowEntity,
-						type: "effect",
+						type: 'effect',
 						isBacklash: true,
 					})
 					.addDamage(this.id, 10)

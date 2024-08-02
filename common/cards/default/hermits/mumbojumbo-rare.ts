@@ -1,10 +1,10 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
@@ -12,26 +12,26 @@ import {Hermit} from "../../base/types"
 class MumboJumboRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "mumbojumbo_rare",
+		id: 'mumbojumbo_rare',
 		numericId: 81,
-		name: "Mumbo",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Mumbo',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 3,
-		type: "prankster",
+		type: 'prankster',
 		health: 290,
 		primary: {
-			name: "Moustache",
-			cost: ["prankster"],
+			name: 'Moustache',
+			cost: ['prankster'],
 			damage: 60,
 			power: null,
 		},
 		secondary: {
-			name: "Quite Simple",
-			cost: ["prankster", "prankster"],
+			name: 'Quite Simple',
+			cost: ['prankster', 'prankster'],
 			damage: 40,
 			power:
-				"Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster on the game board.",
+				'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster on the game board.',
 		},
 	}
 
@@ -43,16 +43,16 @@ class MumboJumboRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			const coinFlip = flipCoin(player, component, 2)
-			const headsAmount = coinFlip.filter((flip) => flip === "heads").length
+			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			const pranksterAmount = game.components.filter(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.afk,
-				query.card.type("prankster"),
+				query.card.type('prankster'),
 			).length
 
 			attack.addDamage(component.entity, headsAmount * 20)

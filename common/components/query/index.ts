@@ -1,12 +1,12 @@
-import type {GameModel} from "../../models/game-model"
-import type {Component} from "../../types/ecs"
-import type {TurnAction} from "../../types/game-state"
+import type {GameModel} from '../../models/game-model'
+import type {Component} from '../../types/ecs'
+import type {TurnAction} from '../../types/game-state'
 
-import * as card from "./card"
-import * as effect from "./effect"
-import * as player from "./player"
-import * as row from "./row"
-import * as slot from "./slot"
+import * as card from './card'
+import * as effect from './effect'
+import * as player from './player'
+import * as row from './row'
+import * as slot from './slot'
 
 export type ComponentQuery<Value> = (game: GameModel, value: Value) => boolean
 

@@ -1,7 +1,7 @@
-import {PlayerId} from "common/models/player-model"
-import {LocalGameState} from "common/types/game-state"
-import {getPlayerId} from "logic/session/session-selectors"
-import {RootState} from "store"
+import {PlayerId} from 'common/models/player-model'
+import {LocalGameState} from 'common/types/game-state'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {RootState} from 'store'
 
 export const getGame = (state: RootState) => {
 	return state.game
@@ -40,7 +40,7 @@ export const getOpponentName = (state: RootState) => {
 	const opponent = opponentId && gameState?.players[opponentId]
 
 	if (!opponent) return
-	if (settings.profanityFilter === "off") return opponent.playerName
+	if (settings.profanityFilter === 'off') return opponent.playerName
 	return opponent.censoredPlayerName
 }
 

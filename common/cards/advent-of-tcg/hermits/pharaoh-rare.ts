@@ -1,36 +1,36 @@
-import {CardComponent} from "../../../components"
-import {slot} from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {flipCoin} from "../../../utils/coinFlips"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PharaohRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "pharaoh_rare",
+		id: 'pharaoh_rare',
 		numericId: 214,
-		name: "Pharaoh",
-		expansion: "advent_of_tcg",
-		palette: "pharoah",
-		background: "advent_of_tcg",
-		rarity: "rare",
+		name: 'Pharaoh',
+		expansion: 'advent_of_tcg',
+		palette: 'pharoah',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
 		tokens: 2,
-		type: "balanced",
+		type: 'balanced',
 		health: 300,
 		primary: {
-			name: "Targét",
-			cost: ["balanced"],
+			name: 'Targét',
+			cost: ['balanced'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Xibalba",
-			cost: ["balanced", "balanced"],
+			name: 'Xibalba',
+			cost: ['balanced', 'balanced'],
 			damage: 80,
 			power:
-				"Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.",
+				'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
 		},
 	}
 
@@ -50,14 +50,14 @@ class PharaohRare extends Card {
 				if (activeInstance.entity !== component.entity) return
 
 				// Only secondary attack
-				if (hermitAttackType !== "secondary") return
+				if (hermitAttackType !== 'secondary') return
 
 				const attacker = getActiveRow(player)?.hermitCard
 				if (!attacker) return
 
 				const coinFlip = flipCoin(player, attacker)
 
-				if (coinFlip[0] === "tails") return
+				if (coinFlip[0] === 'tails') return
 
 				const pickCondition = slot.every(
 					slot.hermit,
@@ -71,7 +71,7 @@ class PharaohRare extends Card {
 				game.addPickRequest({
 					playerId: player.id,
 					id: this.props.id,
-					message: "Pick an AFK Hermit from either side of the board",
+					message: 'Pick an AFK Hermit from either side of the board',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
 						pickedRow = pickedSlot.rowId as RowStateWithHermit

@@ -1,13 +1,13 @@
-import type {PlayerEntity, RowEntity, SlotEntity} from "../entities"
-import type {GameModel} from "../models/game-model"
-import type {SlotTypeT} from "../types/cards"
-import {CardComponent} from "./card-component"
-import query from "./query"
-import {RowComponent} from "./row-component"
+import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {GameModel} from '../models/game-model'
+import type {SlotTypeT} from '../types/cards'
+import {CardComponent} from './card-component'
+import query from './query'
+import {RowComponent} from './row-component'
 
 type BoardSlotDefs =
 	| {
-			type: "single_use"
+			type: 'single_use'
 	  }
 	| {
 			type: SlotTypeT
@@ -62,13 +62,13 @@ export class SlotComponent {
 
 	/* Return the player who owns the slot. For single use slots this is the current player. */
 	get player() {
-		if (this.defs.type === "single_use")
+		if (this.defs.type === 'single_use')
 			return this.game.components.getOrError(this.game.currentPlayerEntity)
 		return this.game.components.getOrError(this.defs.player)
 	}
 
 	get opponentPlayer() {
-		if (this.defs.type === "single_use")
+		if (this.defs.type === 'single_use')
 			return this.game.components.getOrError(this.game.opponentPlayerEntity)
 		return this.game.components.get(
 			this.game.otherPlayerEntity(this.defs.player),
@@ -104,7 +104,7 @@ export class BoardSlotComponent extends SlotComponent {
 	}
 
 	override inRow(): this is BoardSlotComponent & {row: RowComponent} {
-		return this.type !== "single_use"
+		return this.type !== 'single_use'
 	}
 
 	get row() {
@@ -117,7 +117,7 @@ export class HandSlotComponent extends SlotComponent {
 	readonly order: number
 
 	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
-		super(game, entity, {player: playerEntity, type: "hand"})
+		super(game, entity, {player: playerEntity, type: 'hand'})
 		this.order = game.components.filter(HandSlotComponent).length
 	}
 
@@ -127,11 +127,11 @@ export class HandSlotComponent extends SlotComponent {
 }
 
 type DeckPosition =
-	| {position: "random"}
-	| {position: "front"}
-	| {position: "back"}
-	| {position: "before"; spot: DeckSlotComponent}
-	| {position: "after"; spot: DeckSlotComponent}
+	| {position: 'random'}
+	| {position: 'front'}
+	| {position: 'back'}
+	| {position: 'before'; spot: DeckSlotComponent}
+	| {position: 'after'; spot: DeckSlotComponent}
 
 function findDeckPosition(
 	game: GameModel,
@@ -151,26 +151,26 @@ function findDeckPosition(
 		return 0
 	}
 
-	if (position.position === "random") {
+	if (position.position === 'random') {
 		let numberOfPossibleSpots = deckPositionsWithCards.length + 1
 		let targetPosition = Math.floor(Math.random() * numberOfPossibleSpots)
 
 		if (targetPosition === 0) {
-			return findDeckPosition(game, player, {position: "front"})
+			return findDeckPosition(game, player, {position: 'front'})
 		} else {
 			return findDeckPosition(game, player, {
-				position: "after",
+				position: 'after',
 				spot: deckPositionsWithCards[targetPosition - 1],
 			})
 		}
 	}
 
-	if (position.position === "front") {
+	if (position.position === 'front') {
 		deckPositionsWithCards.map((spot) => (spot.order += 1))
 		return 0
 	}
 
-	if (position.position === "back") {
+	if (position.position === 'back') {
 		return deckPositionsWithCards[deckPositionsWithCards.length - 1].order + 1
 	}
 
@@ -179,12 +179,12 @@ function findDeckPosition(
 	)
 
 	if (positonOfTargetCard === -1) {
-		throw new Error("Given spot does not exist in deck")
+		throw new Error('Given spot does not exist in deck')
 	}
 
-	if (position.position === "before") {
+	if (position.position === 'before') {
 		if (positonOfTargetCard === 0) {
-			return findDeckPosition(game, player, {position: "front"})
+			return findDeckPosition(game, player, {position: 'front'})
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard - 1].order
@@ -194,9 +194,9 @@ function findDeckPosition(
 		return targetOrder
 	}
 
-	if (position.position === "after") {
+	if (position.position === 'after') {
 		if (positonOfTargetCard === deckPositionsWithCards.length - 1) {
-			return findDeckPosition(game, player, {position: "back"})
+			return findDeckPosition(game, player, {position: 'back'})
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard + 1].order
@@ -206,7 +206,7 @@ function findDeckPosition(
 		return targetOrder
 	}
 
-	throw new Error("Uknown position: " + position)
+	throw new Error('Uknown position: ' + position)
 }
 
 export class DeckSlotComponent extends SlotComponent {
@@ -218,7 +218,7 @@ export class DeckSlotComponent extends SlotComponent {
 		playerEntity: PlayerEntity,
 		position: DeckPosition,
 	) {
-		super(game, entity, {player: playerEntity, type: "deck"})
+		super(game, entity, {player: playerEntity, type: 'deck'})
 		this.order = findDeckPosition(game, playerEntity, position)
 	}
 
@@ -229,7 +229,7 @@ export class DeckSlotComponent extends SlotComponent {
 
 export class DiscardSlotComponent extends SlotComponent {
 	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
-		super(game, entity, {player: playerEntity, type: "discardPile"})
+		super(game, entity, {player: playerEntity, type: 'discardPile'})
 	}
 
 	override inDiscardPile(): this is DiscardSlotComponent {

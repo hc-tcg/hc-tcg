@@ -2,38 +2,38 @@ import {
 	CardComponent,
 	ObserverComponent,
 	RowComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class RenbobRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "renbob_rare",
+		id: 'renbob_rare',
 		numericId: 137,
-		name: "Renbob",
-		expansion: "alter_egos",
-		palette: "alter_egos",
-		background: "alter_egos",
-		rarity: "rare",
+		name: 'Renbob',
+		expansion: 'alter_egos',
+		palette: 'alter_egos',
+		background: 'alter_egos',
+		rarity: 'rare',
 		tokens: 2,
-		type: "explorer",
+		type: 'explorer',
 		health: 300,
 		primary: {
-			name: "Loose Change",
-			cost: ["any"],
+			name: 'Loose Change',
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: "Hyperspace",
-			cost: ["explorer", "explorer"],
+			name: 'Hyperspace',
+			cost: ['explorer', 'explorer'],
 			damage: 80,
 			power:
-				"Attack the Hermit directly opposite your active Hermit on the game board.",
+				'Attack the Hermit directly opposite your active Hermit on the game board.',
 		},
 	}
 
@@ -45,7 +45,7 @@ class RenbobRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== "secondary")
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 			if (!component.slot.inRow()) return
 			attack.setTarget(

@@ -3,14 +3,14 @@ import {
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {TargetBlockEffect} from "../../../status-effects/target-block"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {TargetBlockEffect} from '../../../status-effects/target-block'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class TargetBlock extends Card {
 	pickCondition = query.every(
@@ -22,11 +22,11 @@ class TargetBlock extends Card {
 
 	props: SingleUse = {
 		...singleUse,
-		id: "target_block",
+		id: 'target_block',
 		numericId: 149,
-		name: "Target Block",
-		expansion: "alter_egos",
-		rarity: "rare",
+		name: 'Target Block',
+		expansion: 'alter_egos',
+		rarity: 'rare',
 		tokens: 3,
 		description:
 			"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",

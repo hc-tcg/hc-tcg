@@ -1,12 +1,12 @@
-import classNames from "classnames"
-import {Attach, SingleUse} from "common/cards/base/types"
-import {EXPANSIONS} from "common/const/expansions"
-import {WithoutFunctions} from "common/types/server-requests"
-import {getCardRank} from "common/utils/ranks"
-import {getGameState} from "logic/game/game-selectors"
-import {memo} from "react"
-import {useSelector} from "react-redux"
-import css from "./effect-card-svg.module.scss"
+import classNames from 'classnames'
+import {Attach, SingleUse} from 'common/cards/base/types'
+import {EXPANSIONS} from 'common/const/expansions'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {getCardRank} from 'common/utils/ranks'
+import {getGameState} from 'logic/game/game-selectors'
+import {memo} from 'react'
+import {useSelector} from 'react-redux'
+import css from './effect-card-svg.module.scss'
 
 export type EffectCardProps = {
 	card: WithoutFunctions<Attach | SingleUse>
@@ -16,7 +16,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 	const rank = getCardRank(card.tokens)
 	const showCost = !useSelector(getGameState)
 	const disabled =
-		EXPANSIONS[card.expansion].disabled === true ? "disabled" : "enabled"
+		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -37,7 +37,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 			<g>
 				<image
 					className={css.star}
-					href={"/images/star_color.svg"}
+					href={'/images/star_color.svg'}
 					x="-15"
 					y="65"
 					width="390"
@@ -72,7 +72,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank !== "stone" ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}

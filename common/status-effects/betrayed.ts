@@ -3,23 +3,23 @@ import {
 	PlayerComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "../components"
-import query from "../components/query"
-import {GameModel} from "../models/game-model"
-import {hasEnoughEnergy} from "../utils/attacks"
+} from '../components'
+import query from '../components/query'
+import {GameModel} from '../models/game-model'
+import {hasEnoughEnergy} from '../utils/attacks'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 class BetrayedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "betrayed",
-		name: "Betrayed",
+		icon: 'betrayed',
+		name: 'Betrayed',
 		description:
-			"If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.",
+			'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
 	}
 
 	override onApply(
@@ -41,8 +41,8 @@ class BetrayedEffect extends PlayerStatusEffect {
 			// Start by removing blocked actions in case requirements are no longer met
 			game.removeBlockedActions(
 				this.props.icon,
-				"CHANGE_ACTIVE_HERMIT",
-				"END_TURN",
+				'CHANGE_ACTIVE_HERMIT',
+				'END_TURN',
 			)
 
 			// Return if the opponent has no AFK Hermits to attack
@@ -70,8 +70,8 @@ class BetrayedEffect extends PlayerStatusEffect {
 
 			// Don't prevent change hermit if opponent is blocked from attacking for other reason
 			if (
-				game.isActionBlocked("PRIMARY_ATTACK") &&
-				game.isActionBlocked("SECONDARY_ATTACK")
+				game.isActionBlocked('PRIMARY_ATTACK') &&
+				game.isActionBlocked('SECONDARY_ATTACK')
 			) {
 				return
 			}
@@ -79,8 +79,8 @@ class BetrayedEffect extends PlayerStatusEffect {
 			// The opponent needs to attack in this case, so prevent them switching or ending turn
 			game.addBlockedActions(
 				this.props.icon,
-				"CHANGE_ACTIVE_HERMIT",
-				"END_TURN",
+				'CHANGE_ACTIVE_HERMIT',
+				'END_TURN',
 			)
 		}
 
@@ -98,7 +98,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 				game.addPickRequest({
 					playerId: player.id,
 					id: effect.entity,
-					message: "Pick one of your AFK Hermits",
+					message: 'Pick one of your AFK Hermits',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
 						pickedAfkHermit = pickedSlot
@@ -114,7 +114,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 		)
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isType("primary", "secondary")) return
+			if (!attack.isType('primary', 'secondary')) return
 			observer.unsubscribe(player.hooks.beforeAttack)
 
 			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
@@ -124,8 +124,8 @@ class BetrayedEffect extends PlayerStatusEffect {
 			// They attacked now, they can end turn or change hermits with Chorus Fruit
 			game.removeBlockedActions(
 				this.props.icon,
-				"CHANGE_ACTIVE_HERMIT",
-				"END_TURN",
+				'CHANGE_ACTIVE_HERMIT',
+				'END_TURN',
 			)
 		})
 

@@ -1,7 +1,7 @@
-import {CardComponent} from "common/components"
-import query from "common/components/query"
-import {GameModel} from "common/models/game-model"
-import {GenericActionResult} from "common/types/game-state"
+import {CardComponent} from 'common/components'
+import query from 'common/components/query'
+import {GameModel} from 'common/models/game-model'
+import {GenericActionResult} from 'common/types/game-state'
 
 function* removeEffectSaga(
 	game: GameModel,
@@ -20,7 +20,7 @@ function* removeEffectSaga(
 
 	singleUseCard?.draw()
 
-	return "SUCCESS"
+	return 'SUCCESS'
 }
 
 export default removeEffectSaga

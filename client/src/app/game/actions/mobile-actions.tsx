@@ -1,10 +1,10 @@
-import cn from "classnames"
-import classNames from "classnames"
-import {LocalGameState} from "common/types/game-state"
-import {SlotInfo} from "common/types/server-requests"
-import Button from "components/button"
-import CoinFlip from "components/coin-flip"
-import {endTurn, endTurnAction, setOpenedModal} from "logic/game/game-actions"
+import cn from 'classnames'
+import classNames from 'classnames'
+import {LocalGameState} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import Button from 'components/button'
+import CoinFlip from 'components/coin-flip'
+import {endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
 	getCurrentCoinFlip,
@@ -12,12 +12,12 @@ import {
 	getGameState,
 	getPlayerState,
 	getPlayerStateById,
-} from "logic/game/game-selectors"
-import {getSettings} from "logic/local-settings/local-settings-selectors"
-import {useDispatch, useSelector} from "react-redux"
-import Slot from "../board/board-slot"
-import {shouldShowEndTurnModal} from "../modals/end-turn-modal"
-import css from "./actions.module.scss"
+} from 'logic/game/game-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import Slot from '../board/board-slot'
+import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
+import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -52,11 +52,11 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	let endTurnButton = (
 		<Button
-			variant={!availableActions.includes("END_TURN") ? "default" : "error"}
+			variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
 			size="medium"
 			className={css.mobileButton}
 			onClick={handleEndTurn}
-			disabled={!availableActions.includes("END_TURN")}
+			disabled={!availableActions.includes('END_TURN')}
 		>
 			End Turn
 		</Button>
@@ -64,24 +64,24 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const Status = () => {
 		const waitingForOpponent =
-			availableActions.includes("WAIT_FOR_OPPONENT_ACTION") &&
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') &&
 			availableActions.length === 1
-		const changeHermit = availableActions.includes("CHANGE_ACTIVE_HERMIT")
-		const endTurn = availableActions.includes("END_TURN")
+		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
+		const endTurn = availableActions.includes('END_TURN')
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
 			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
 		}
 
-		let message = ""
+		let message = ''
 
 		if (pickMessage) {
 			message = pickMessage
 		} else if (waitingForOpponent) {
 			message = "Waiting for opponent's action..."
 		} else if (changeHermit && availableActions.length === 1) {
-			message = "Select a new active Hermit"
+			message = 'Select a new active Hermit'
 		} else if (endTurn && changeHermit && availableActions.length === 2) {
 			return (
 				<div className={css.turnSkipMessageContainer}>
@@ -91,7 +91,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			)
 		}
 
-		if (message == "") return null
+		if (message == '') return null
 
 		return (
 			<>
@@ -102,14 +102,14 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const SingleUseSlot = () => {
 		const isPlayable =
-			availableActions.includes("PLAY_SINGLE_USE_CARD") ||
-			availableActions.includes("REMOVE_EFFECT")
+			availableActions.includes('PLAY_SINGLE_USE_CARD') ||
+			availableActions.includes('REMOVE_EFFECT')
 
 		const handleClick = () => {
 			isPlayable &&
 				boardState &&
 				onClick({
-					slotType: "single_use",
+					slotType: 'single_use',
 					slotEntity: boardState.singleUse.slot,
 					card: boardState.singleUse.card,
 				})
@@ -119,7 +119,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
 				<Slot
 					card={boardState?.singleUse.card || null}
-					type={"single_use"}
+					type={'single_use'}
 					onClick={handleClick}
 					entity={singleUse?.slot}
 				/>
@@ -129,13 +129,13 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(setOpenedModal("attack"))
+			dispatch(setOpenedModal('attack'))
 		}
 
 		const attackOptions =
-			availableActions.includes("SINGLE_USE_ATTACK") ||
-			availableActions.includes("PRIMARY_ATTACK") ||
-			availableActions.includes("SECONDARY_ATTACK")
+			availableActions.includes('SINGLE_USE_ATTACK') ||
+			availableActions.includes('PRIMARY_ATTACK') ||
+			availableActions.includes('SECONDARY_ATTACK')
 
 		return (
 			<div className={css.buttons}>

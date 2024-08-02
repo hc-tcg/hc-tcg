@@ -2,19 +2,19 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from "../components"
-import {GameModel} from "../models/game-model"
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
 	systemStatusEffect,
-} from "./status-effect"
+} from './status-effect'
 
 export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "invisibility-potion-heads",
-		name: "Hidden!",
+		icon: 'invisibility-potion-heads',
+		name: 'Hidden!',
 		description: "Your opponent's next attack will miss.",
 	}
 
@@ -25,7 +25,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
-			if (!attack.isType("primary", "secondary")) return
+			if (!attack.isType('primary', 'secondary')) return
 			attack.multiplyDamage(effect.entity, 0)
 			effect.remove()
 		})
@@ -35,8 +35,8 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
 		...systemStatusEffect,
-		icon: "invisibility-potion-tails",
-		name: "Spotted!",
+		icon: 'invisibility-potion-tails',
+		name: 'Spotted!',
 		description: "Your opponent's next attack will deal double damage.",
 	}
 
@@ -47,7 +47,7 @@ export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
 		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
-			if (!attack.isType("primary", "secondary")) return
+			if (!attack.isType('primary', 'secondary')) return
 			attack.multiplyDamage(effect.entity, 2)
 			effect.remove()
 		})

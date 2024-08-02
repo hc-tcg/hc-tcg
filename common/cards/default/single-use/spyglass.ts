@@ -1,20 +1,20 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import {flipCoin} from "../../../utils/coinFlips"
-import {getFormattedName} from "../../../utils/game"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
+import {getFormattedName} from '../../../utils/game'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Spyglass extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "spyglass",
+		id: 'spyglass',
 		numericId: 91,
-		name: "Spyglass",
-		expansion: "default",
-		rarity: "common",
+		name: 'Spyglass',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 1,
 		description:
 			"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
@@ -36,7 +36,7 @@ class Spyglass extends Card {
 		observer.subscribe(player.hooks.onApply, () => {
 			const coinFlip = flipCoin(player, component)
 			const canDiscard =
-				coinFlip[0] === "heads" && opponentPlayer.getHand().length > 0
+				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
 
 			const getEntry = (card: CardComponent): string => {
 				return `$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
@@ -48,33 +48,33 @@ class Spyglass extends Card {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
-					modalId: "selectCards",
+					modalId: 'selectCards',
 					payload: {
-						modalName: `Spyglass${canDiscard ? ": Select 1 card to discard" : ""}`,
-						modalDescription: "",
+						modalName: `Spyglass${canDiscard ? ': Select 1 card to discard' : ''}`,
+						modalDescription: '',
 						cards: opponentPlayer.getHand().map((card) => card.entity),
 						selectionSize: canDiscard ? 1 : 0,
 						primaryButton: {
-							text: canDiscard ? "Confirm Selection" : "Close",
-							variant: "default",
+							text: canDiscard ? 'Confirm Selection' : 'Close',
+							variant: 'default',
 						},
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return "FAILURE_INVALID_DATA"
-					if (!canDiscard) return "SUCCESS"
+					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!canDiscard) return 'SUCCESS'
 
 					if (!modalResult.cards || modalResult.cards.length !== 1)
-						return "FAILURE_INVALID_DATA"
+						return 'FAILURE_INVALID_DATA'
 
 					let card = game.components.get(modalResult.cards[0].entity)
-					if (!card) return "FAILURE_INVALID_DATA"
+					if (!card) return 'FAILURE_INVALID_DATA'
 
 					card.discard()
 
 					game.battleLog.addEntry(player.entity, getEntry(card))
 
-					return "SUCCESS"
+					return 'SUCCESS'
 				},
 				onTimeout() {
 					if (canDiscard) {

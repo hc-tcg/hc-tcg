@@ -1,22 +1,22 @@
-import {CardComponent, ObserverComponent} from "../../../components"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class DiamondSword extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "diamond_sword",
+		id: 'diamond_sword',
 		numericId: 14,
-		name: "Diamond Sword",
-		expansion: "default",
-		rarity: "rare",
+		name: 'Diamond Sword',
+		expansion: 'default',
+		rarity: 'rare',
 		tokens: 1,
 		description: "Do 40hp damage to your opponent's active Hermit.",
 		hasAttack: true,
-		attackPreview: (_game) => "$A40$",
+		attackPreview: (_game) => '$A40$',
 	}
 
 	override onAttach(
@@ -31,7 +31,7 @@ class DiamondSword extends Card {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentPlayer.activeRowEntity,
-					type: "effect",
+					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 				})

@@ -1,5 +1,5 @@
-import {ReactNode} from "react"
-import css from "./deck-main.module.scss"
+import {ReactNode} from 'react'
+import css from './deck-main.module.scss'
 
 type Props = {
 	children: ReactNode

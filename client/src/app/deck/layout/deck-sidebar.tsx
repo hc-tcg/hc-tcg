@@ -1,13 +1,13 @@
-import classNames from "classnames"
-import {KebabMenuIcon} from "components/svgs"
-import {ReactNode, useState} from "react"
-import css from "./deck-sidebar.module.scss"
+import classNames from 'classnames'
+import {KebabMenuIcon} from 'components/svgs'
+import {ReactNode, useState} from 'react'
+import css from './deck-sidebar.module.scss'
 
 type Props = {
 	children: ReactNode
 	header?: ReactNode
 	footer?: ReactNode
-	width?: "normal" | "half"
+	width?: 'normal' | 'half'
 }
 
 function DeckSidebar({children, header, footer, width}: Props) {

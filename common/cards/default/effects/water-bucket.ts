@@ -3,35 +3,35 @@ import {
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import FireEffect from "../../../status-effects/fire"
-import {applySingleUse} from "../../../utils/board"
-import String from "../../alter-egos/effects/string"
-import Card from "../../base/card"
-import {attach, singleUse} from "../../base/defaults"
-import {Attach, SingleUse} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import FireEffect from '../../../status-effects/fire'
+import {applySingleUse} from '../../../utils/board'
+import String from '../../alter-egos/effects/string'
+import Card from '../../base/card'
+import {attach, singleUse} from '../../base/defaults'
+import {Attach, SingleUse} from '../../base/types'
 
 class WaterBucket extends Card {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,
-		category: "attach",
-		id: "water_bucket",
-		expansion: "default",
+		category: 'attach',
+		id: 'water_bucket',
+		expansion: 'default',
 		numericId: 105,
-		name: "Water Bucket",
-		rarity: "common",
+		name: 'Water Bucket',
+		rarity: 'common',
 		tokens: 0,
 		description:
-			"Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.",
+			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
 		attachCondition: query.some(
 			attach.attachCondition,
 			singleUse.attachCondition,
 		),
 		log: (values) => {
-			if (values.pos.slotType === "single_use")
+			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`
 			return `$p{You|${values.player}}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`
 		},
@@ -57,11 +57,11 @@ class WaterBucket extends Card {
 		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = component
-		if (component.slot.type === "single_use") {
+		if (component.slot.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
 				id: component.entity,
-				message: "Pick one of your Hermits",
+				message: 'Pick one of your Hermits',
 				canPick: query.every(
 					query.slot.currentPlayer,
 					query.slot.hermit,
@@ -83,7 +83,7 @@ class WaterBucket extends Card {
 					applySingleUse(game, pickedSlot)
 				},
 			})
-		} else if (component.slot.type === "attach") {
+		} else if (component.slot.type === 'attach') {
 			// Straight away remove fire
 			WaterBucket.removeFireEffect(game, component.slot)
 

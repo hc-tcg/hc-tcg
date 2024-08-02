@@ -1,27 +1,27 @@
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class StressMonster101Common extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "stressmonster101_common",
+		id: 'stressmonster101_common',
 		numericId: 92,
-		name: "Stress",
-		expansion: "default",
-		rarity: "common",
+		name: 'Stress',
+		expansion: 'default',
+		rarity: 'common',
 		tokens: 0,
-		type: "builder",
+		type: 'builder',
 		health: 280,
 		primary: {
 			name: "'Ello",
-			cost: ["builder"],
+			cost: ['builder'],
 			damage: 50,
 			power: null,
 		},
 		secondary: {
-			name: "Geezer",
-			cost: ["builder", "builder"],
+			name: 'Geezer',
+			cost: ['builder', 'builder'],
 			damage: 80,
 			power: null,
 		},

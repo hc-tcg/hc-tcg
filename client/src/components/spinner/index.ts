@@ -1,1 +1,1 @@
-export {default} from "./spinner"
+export {default} from './spinner'

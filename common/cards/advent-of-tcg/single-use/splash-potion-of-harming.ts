@@ -1,19 +1,19 @@
-import {CardComponent} from "../../../components"
-import {AttackModel} from "../../../models/attack-model"
-import {GameModel} from "../../../models/game-model"
-import {applySingleUse} from "../../../utils/board"
-import Card from "../../base/card"
-import {singleUse} from "../../base/defaults"
-import {SingleUse} from "../../base/types"
+import {CardComponent} from '../../../components'
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHarming extends Card {
 	props: SingleUse = {
 		...singleUse,
-		id: "splash_potion_of_harming",
+		id: 'splash_potion_of_harming',
 		numericId: 226,
-		name: "Splash potion of harming",
-		expansion: "advent_of_tcg",
-		rarity: "common",
+		name: 'Splash potion of harming',
+		expansion: 'advent_of_tcg',
+		rarity: 'common',
 		tokens: 3,
 		description:
 			"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
@@ -43,7 +43,7 @@ class SplashPotionOfHarming extends Card {
 						rowIndex: i,
 						row: row,
 					},
-					type: "effect",
+					type: 'effect',
 					log: (values) =>
 						i === activeIndex
 							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`

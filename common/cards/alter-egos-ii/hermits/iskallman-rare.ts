@@ -2,38 +2,38 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from "../../../components"
-import query from "../../../components/query"
-import {GameModel} from "../../../models/game-model"
-import Card from "../../base/card"
-import {hermit} from "../../base/defaults"
-import {Hermit} from "../../base/types"
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class IskallmanRare extends Card {
 	props: Hermit = {
 		...hermit,
-		id: "iskallman_rare",
+		id: 'iskallman_rare',
 		numericId: 233,
-		name: "IskallMAN",
-		expansion: "alter_egos_ii",
-		background: "alter_egos",
-		palette: "alter_egos",
-		rarity: "rare",
+		name: 'IskallMAN',
+		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
+		palette: 'alter_egos',
+		rarity: 'rare',
 		tokens: 0,
-		type: "explorer",
+		type: 'explorer',
 		health: 260,
 		primary: {
-			name: "Iskall...MAAAN",
-			cost: ["any"],
+			name: 'Iskall...MAAAN',
+			cost: ['any'],
 			damage: 40,
 			power: null,
 		},
 		secondary: {
-			name: "Good Deed",
-			cost: ["explorer", "explorer"],
+			name: 'Good Deed',
+			cost: ['explorer', 'explorer'],
 			damage: 50,
 			power:
-				"You can choose to remove 50hp from this Hermit and give it to any AFK Hermit on the game board.",
+				'You can choose to remove 50hp from this Hermit and give it to any AFK Hermit on the game board.',
 		},
 	}
 
@@ -59,7 +59,7 @@ class IskallmanRare extends Card {
 				if (activeInstance.entity !== component.entity) return
 
 				// Only secondary attack
-				if (hermitAttackType !== "secondary") return
+				if (hermitAttackType !== 'secondary') return
 
 				if (
 					player.activeRow &&
@@ -74,29 +74,29 @@ class IskallmanRare extends Card {
 				game.addModalRequest({
 					playerId: player.id,
 					data: {
-						modalId: "selectCards",
+						modalId: 'selectCards',
 						payload: {
-							modalName: "IskallMAN: Heal AFK Hermit",
-							modalDescription: "Do you want to give 50hp to an AFK Hermit?",
+							modalName: 'IskallMAN: Heal AFK Hermit',
+							modalDescription: 'Do you want to give 50hp to an AFK Hermit?',
 							cards: [],
 							selectionSize: 0,
 							primaryButton: {
-								text: "Yes",
-								variant: "default",
+								text: 'Yes',
+								variant: 'default',
 							},
 							secondaryButton: {
-								text: "No",
-								variant: "default",
+								text: 'No',
+								variant: 'default',
 							},
 						},
 					},
 					onResult(modalResult) {
-						if (!modalResult) return "SUCCESS"
-						if (!modalResult.result) return "SUCCESS"
+						if (!modalResult) return 'SUCCESS'
+						if (!modalResult.result) return 'SUCCESS'
 						game.addPickRequest({
 							playerId: player.id,
 							id: component.entity,
-							message: "Pick an AFK Hermit from either side of the board",
+							message: 'Pick an AFK Hermit from either side of the board',
 							canPick: pickCondition,
 							onResult(pickedSlot) {
 								pickedAfkHermit = pickedSlot
@@ -106,7 +106,7 @@ class IskallmanRare extends Card {
 							},
 						})
 
-						return "SUCCESS"
+						return 'SUCCESS'
 					},
 					onTimeout() {
 						return
@@ -119,7 +119,7 @@ class IskallmanRare extends Card {
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (
 				!attack.isAttacker(component.entity) ||
-				attack.type !== "secondary" ||
+				attack.type !== 'secondary' ||
 				attack.isBacklash
 			)
 				return
@@ -128,7 +128,7 @@ class IskallmanRare extends Card {
 			const backlashAttack = game.newAttack({
 				attacker: component.entity,
 				target: player.activeRowEntity,
-				type: "effect",
+				type: 'effect',
 				isBacklash: true,
 			})
 

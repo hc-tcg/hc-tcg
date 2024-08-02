@@ -1,19 +1,19 @@
-import query from "."
-import {ComponentQuery} from "."
+import query from '.'
+import {ComponentQuery} from '.'
 import {
 	CardComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from ".."
-import type Card from "../../cards/base/card"
-import {CardClass} from "../../cards/base/card"
-import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from "../../entities"
-import {CardStatusEffect} from "../../status-effects/status-effect"
-import {TypeT} from "../../types/cards"
+} from '..'
+import type Card from '../../cards/base/card'
+import {CardClass} from '../../cards/base/card'
+import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../../entities'
+import {CardStatusEffect} from '../../status-effects/status-effect'
+import {TypeT} from '../../types/cards'
 
 let CARDS: Record<string, Card>
-import("../../cards").then((mod) => (CARDS = mod.CARDS))
+import('../../cards').then((mod) => (CARDS = mod.CARDS))
 
 export const isHermit: ComponentQuery<CardComponent> = (_game, card) =>
 	card.isHermit()
@@ -27,7 +27,7 @@ export const isSingleUse: ComponentQuery<CardComponent> = (_game, card) =>
 /** Return true if the card is on the board */
 export const attached: ComponentQuery<CardComponent> = (_game, card) =>
 	card.slot !== null &&
-	["hermit", "attach", "item", "single_use"].includes(card.slot.type)
+	['hermit', 'attach', 'item', 'single_use'].includes(card.slot.type)
 
 export function slot(
 	...predicates: Array<ComponentQuery<SlotComponent>>
