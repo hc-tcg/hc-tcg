@@ -36,8 +36,17 @@ import {
 	localEndTurn,
 	localRemoveEffect,
 } from './local-state'
+import {PlayerEntity} from 'common/entities'
 
-function* actionSaga(): SagaIterator {
+function* sendGameMsg(type: string, entity: PlayerEntity, payload: any) {
+	yield* sendMsg('TURN_ACTION', {
+		type,
+		playerEntity: entity,
+		payload: {...payload},
+	})
+}
+
+function* actionSaga(playerEntity: PlayerEntity): SagaIterator {
 	const turnAction = yield race({
 		playCard: take([
 			'PLAY_HERMIT_CARD',
@@ -56,25 +65,30 @@ function* actionSaga(): SagaIterator {
 
 	if (turnAction.playCard) {
 		// This is updated for the client in slot-saga
-		yield call(sendMsg, turnAction.playCard.type, turnAction.playCard.payload)
+		yield call(sendGameMsg, turnAction.playCard.type, playerEntity, turnAction.playCard.payload)
 	} else if (turnAction.applyEffect) {
 		yield* localApplyEffect()
-		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+		yield call(sendGameMsg, 'APPLY_EFFECT', playerEntity, turnAction.applyEffect.payload)
 	} else if (turnAction.removeEffect) {
 		yield* localRemoveEffect()
-		yield call(sendMsg, 'REMOVE_EFFECT')
+		yield call(sendGameMsg, 'REMOVE_EFFECT', playerEntity, {})
 	} else if (turnAction.pickCard) {
-		yield call(sendMsg, 'PICK_REQUEST', turnAction.pickCard.payload)
+		yield call(sendGameMsg, 'PICK_REQUEST', playerEntity, turnAction.pickCard.payload)
 	} else if (turnAction.customModal) {
-		yield call(sendMsg, 'MODAL_REQUEST', turnAction.customModal.payload)
+		yield call(sendGameMsg, 'MODAL_REQUEST', playerEntity, turnAction.customModal.payload)
 	} else if (turnAction.attack) {
-		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
+		yield call(sendGameMsg, turnAction.attack.type, playerEntity, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
 		yield* localEndTurn()
-		yield call(sendMsg, 'END_TURN')
+		yield call(sendGameMsg, 'END_TURN', playerEntity, {})
 	} else if (turnAction.changeActiveHermit) {
 		yield* localChangeActiveHermit(turnAction.changeActiveHermit)
-		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
+		yield call(
+			sendGameMsg,
+			'CHANGE_ACTIVE_HERMIT',
+			playerEntity,
+			turnAction.changeActiveHermit.payload
+		)
 	}
 }
 
@@ -98,7 +112,7 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	])
 
 	// Handle core funcionality
-	yield call(actionSaga)
+	yield call(actionSaga, gameState.playerEntity)
 
 	// After we send an action, disable logic till the next game state is received
 	yield cancel(logic)

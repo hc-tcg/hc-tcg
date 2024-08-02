@@ -7,6 +7,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
+import {getPlayerId} from 'logic/session/session-selectors'
 
 function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)

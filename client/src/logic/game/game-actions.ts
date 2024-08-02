@@ -1,6 +1,6 @@
 import {PlayerEntity} from 'common/entities'
 import {LocalCurrentCoinFlip, LocalGameState, Message} from 'common/types/game-state'
-import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlip} from 'common/types/game-state'
+import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
 import {LocalCardInstance, LocalModalResult, SlotInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({

@@ -26,9 +26,7 @@ import {
 	SlotComponent,
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
-import {PlayerId} from 'common/models/player-model'
 import {PlayerEntity} from 'common/entities'
-import {ViewerComponent} from 'common/components/viewer-component'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -208,8 +206,11 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<TypeT>): Tu
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerId: PlayerId) {
-	return (action: any) => action.type === actionType && action.playerId === playerId
+function playerAction(actionType: string, playerEntity: PlayerEntity) {
+	return (action: any) =>
+		action.type === 'TURN_ACTION' &&
+		action.payload.type === actionType &&
+		action.payload.playerEntity === playerEntity
 }
 
 // return false in case one player is dead
@@ -296,15 +297,10 @@ function* sendGameState(game: GameModel) {
 function* turnActionSaga(game: GameModel, turnAction: any) {
 	const actionType = turnAction.type as TurnAction
 
-	let currentPlayerView = game.components.find(
-		ViewerComponent,
-		(_game, viewer) => viewer.playerOnLeft.entity === game.currentPlayer.entity
-	)
-
 	let endTurn = false
 
 	const availableActions =
-		turnAction.playerId === currentPlayerView?.playerOnLeft.entity
+		turnAction.playerEntity === game.currentPlayer.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -384,22 +380,9 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, currentPlayer} = game
 
-	let playerViewer = game.viewers.find(
-		(viewer) => viewer.playerOnLeft.entity === currentPlayer.entity
-	)
-	let opponentViewer = game.viewers.find(
-		(viewer) => viewer.playerOnLeft.entity === opponentPlayer.entity
-	)
-
-	if (!playerViewer || !opponentViewer) {
-		throw new Error('Can not start a game without a player or opponent')
-	}
-
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
-				playerAction(type, (opponentViewer as ViewerComponent).playerId)
-			),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayer.entity)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
@@ -414,7 +397,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
-			].map((type) => playerAction(type, (playerViewer as ViewerComponent).playerId)),
+			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10)
 	)
@@ -557,7 +540,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			// Run action logic
-			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
+			const result = yield* call(turnActionSaga, game, raceResult.turnAction.payload)
 
 			if (result === 'END_TURN') {
 				break

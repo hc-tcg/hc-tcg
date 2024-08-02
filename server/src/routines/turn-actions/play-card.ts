@@ -9,8 +9,8 @@ function* playCardSaga(
 	turnAction: PlayCardActionData
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
-	const slotEntity = turnAction?.payload?.slot
-	const localCard = turnAction?.payload?.card
+	const slotEntity = turnAction?.payload.slot
+	const localCard = turnAction?.payload.card
 	if (!slotEntity || !localCard) {
 		return 'FAILURE_INVALID_DATA'
 	}
