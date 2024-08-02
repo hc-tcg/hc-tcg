@@ -43,7 +43,7 @@ class KingJoelRare extends Card {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		const firstPickCondition = query.every(
 			query.slot.opponent,

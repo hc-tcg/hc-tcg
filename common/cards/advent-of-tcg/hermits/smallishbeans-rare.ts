@@ -37,7 +37,7 @@ class SmallishbeansAdventRare extends Card {
 		component: CardComponent,
 		_observer: Observer,
 	) {
-		const {player, rowId: row} = pos
+		const {player} = pos
 
 		player.hooks.onAttack.add(component, (attack) => {
 			const attackId = this.getInstanceKey(component)
