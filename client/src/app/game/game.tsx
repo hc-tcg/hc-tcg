@@ -24,6 +24,7 @@ import {
 	getEndGameOverlay,
 	getAvailableActions,
 	getPickRequestPickableSlots,
+	getOpponentState,
 } from 'logic/game/game-selectors'
 import {
 	endTurn,
@@ -72,6 +73,7 @@ function Game() {
 	const selectedCard = useSelector(getSelectedCard)
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
+	const opponentState = useSelector(getOpponentState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	const settings = useSelector(getSettings)

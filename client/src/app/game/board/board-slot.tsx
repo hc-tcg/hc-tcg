@@ -3,7 +3,7 @@ import {LocalRowState} from 'common/types/game-state'
 import Card from 'components/card'
 import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
-import {useSelector} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {
 	getCardsCanBePlacedIn,
 	getGameState,
@@ -13,6 +13,8 @@ import {
 import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
 import {SlotEntity} from 'common/entities'
+import {useEffect, useState} from 'react'
+import {playSound} from 'logic/sound/sound-actions'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -23,13 +25,57 @@ export type SlotProps = {
 	active?: boolean
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
+	muted?: boolean
 }
-const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotProps) => {
+const Slot = ({
+	type,
+	entity,
+	onClick,
+	card,
+	active,
+	statusEffects,
+	cssId,
+	muted = false,
+}: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-	console.log('UPDATING SELF')
+	const [isMoutning, setIsMounting] = useState(true)
+	const [hasEverHadCard, setHasEverHasCard] = useState(false)
+	const dispatch = useDispatch()
+
+	if (card && !hasEverHadCard) {
+		setHasEverHasCard(true)
+	}
+
+	useEffect(() => {
+		if (isMoutning) {
+			setIsMounting(false)
+			return
+		}
+		if (muted) return
+		let sound: Array<string> = []
+		if (!card) {
+			if (type == 'hermit' || type == 'single_use') {
+				sound = ['/sfx/Item_Frame_remove_item1.ogg', '/sfx/Item_Frame_remove_item2.ogg']
+			}
+		} else {
+			sound = ['/sfx/Item_Frame_add_item1.ogg', '/sfx/Item_Frame_add_item2.ogg']
+		}
+		dispatch(playSound(sound[Math.floor(Math.random() * sound.length)]))
+	}, [card?.entity])
+
+	useEffect(() => {
+		if (!card) return
+		if (!hasEverHadCard) return
+		if (!active) return
+		if (muted) return
+
+		let sound = ['/sfx/Item_Frame_rotate_item1.ogg', '/sfx/Item_Frame_rotate_item2.ogg']
+
+		dispatch(playSound(sound[Math.floor(Math.random() * sound.length)]))
+	}, [active && hasEverHadCard])
 
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
