@@ -65,9 +65,8 @@ You can also configure debug settings using `common/config/debug-config.json`. T
 
 ### Formatting & coding style
 
-We run typescript's typechecker and biome's linter and formatter as part of the PR process. You can use these commands to lint your code:
+We run Biome's linter and formatter as part of the PR process. You can use these commands to lint your code:
 ```sh
-npm run typecheck # check your type errors
 npm run lint      # check your code for linting and formatting issues
 npm run format    # format your code
 npm run fix       # fix any autofixable linting errors
