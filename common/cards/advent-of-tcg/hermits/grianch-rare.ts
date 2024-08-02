@@ -11,6 +11,7 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
+import FortuneEffect from '../../../status-effects/fortune'
 
 class GrianchRare extends Card {
 	props: Hermit = {
@@ -36,7 +37,7 @@ class GrianchRare extends Card {
 			cost: ['builder', 'builder'],
 			damage: 80,
 			power:
-				'Flip a Coin.\nIf heads, attack damage doubles.\nIf tails, your opponent may attack twice next round.',
+				'Flip a Coin.\nIf heads, you may attack an additional time.\nIf tails, your opponent may attack twice next round.\nWhen this attack is used with Fortune, only the first coin flip will be affected',
 		},
 	}
 
@@ -68,7 +69,16 @@ class GrianchRare extends Card {
 					return
 				}
 
-				attack.multiplyDamage(component.entity, 2)
+				game.components
+					.find(
+						StatusEffectComponent,
+						query.effect.is(FortuneEffect),
+						query.effect.targetEntity(player.entity)
+					)
+					?.remove()
+
+				game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+				game.removeBlockedActions('game', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
 			}
 		})
 

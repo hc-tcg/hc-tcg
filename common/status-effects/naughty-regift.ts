@@ -21,7 +21,9 @@ class NaughtyRegiftEffect extends PlayerStatusEffect {
 	): void {
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			if (game.currentPlayerEntity !== player.entity) return
+			if (!game.state.turn.completedActions.includes('PRIMARY_ATTACK')) return // Wait until Grianch flips tails on Naughty
 			game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+			game.removeBlockedActions('game', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
 			effect.remove()
 		})
 

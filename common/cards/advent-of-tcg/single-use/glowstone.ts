@@ -15,7 +15,7 @@ class Glowstone extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
+			"View the top 3 cards of your opponent's deck. Choose one for them to discard. The other 2 will be placed on the bottom of their deck in their original order.",
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
@@ -34,7 +34,7 @@ class Glowstone extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Glowstone: Choose the card for your opponent to draw.',
+						modalName: 'Glowstone: Choose the card for your opponent to discard.',
 						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
 						cards: topCards.map((card) => card.entity),
 						selectionSize: 1,
@@ -52,7 +52,7 @@ class Glowstone extends Card {
 					const drawCard = modalResult.cards[0]
 
 					topCards.forEach((card) => {
-						if (drawCard.entity === card.entity) card.draw()
+						if (drawCard.entity === card.entity) card.discard()
 						else
 							card.attach(
 								game.components.new(DeckSlotComponent, opponentPlayer.entity, {position: 'back'})

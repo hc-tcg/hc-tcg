@@ -14,7 +14,7 @@ class Dropper extends Card {
 		expansion: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 0,
-		description: "Shuffle 2 fletching tables into your opponent's deck",
+		description: "Place a fletching table on the top of your opponent's deck",
 		showConfirmationModal: true,
 	}
 
@@ -22,12 +22,10 @@ class Dropper extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			for (let i = 0; i < 2; i++) {
-				let slot = game.components.new(DeckSlotComponent, opponentPlayer.entity, {
-					position: 'random',
-				})
-				game.components.new(CardComponent, FletchingTable, slot.entity)
-			}
+			let slot = game.components.new(DeckSlotComponent, opponentPlayer.entity, {
+				position: 'front',
+			})
+			game.components.new(CardComponent, FletchingTable, slot.entity)
 		})
 	}
 }
