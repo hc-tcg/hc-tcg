@@ -29,6 +29,7 @@ import type {
 } from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardStatusEffect} from '../status-effects/status-effect'
+import {GameHook} from '../types/hooks'
 import query from './query'
 
 let CARDS: Record<any, Card>
@@ -44,6 +45,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	observerEntity: ObserverEntity | null
 
 	turnedOver: boolean
+
+	hooks: {
+		onChangeSlot: GameHook<(slot: SlotComponent) => void>
+	}
 
 	constructor(
 		game: GameModel,
@@ -70,6 +75,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 
 		this.turnedOver = false
+
+		this.hooks = {
+			onChangeSlot: new GameHook(),
+		}
 
 		this.card.onCreate(this.game, this)
 	}
@@ -159,6 +168,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.card.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
+
+		this.hooks.onChangeSlot.call(component)
 	}
 
 	/** Move this card to the hand

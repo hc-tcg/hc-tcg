@@ -28,7 +28,7 @@ class ArmorStand extends Card {
 	}
 
 	override onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
@@ -39,6 +39,19 @@ class ArmorStand extends Card {
 				query.slot.player(component.player.entity),
 				query.slot.rowIs(component.slot.row?.entity),
 			)
+		})
+
+		observer.subscribe(component.hooks.onChangeSlot, (slot) => {
+			if (!slot.inRow()) return
+			game.components
+				.filter(
+					CardComponent,
+					query.card.slot(query.some(query.slot.item, query.slot.attach)),
+					query.card.rowEntity(slot.row.entity),
+				)
+				.forEach((card) => {
+					card.discard()
+				})
 		})
 	}
 }
