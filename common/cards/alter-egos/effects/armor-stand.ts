@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
 import {CardComponent, ObserverComponent} from '../../../components'
-import {Attach, HasHealth} from '../../base/types'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
 import {attach, hermit} from '../../base/defaults'
+import {Attach, HasHealth} from '../../base/types'
 
 class ArmorStand extends Card {
 	props: Attach & HasHealth = {
@@ -27,13 +27,17 @@ class ArmorStand extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot?.onBoard()) return query.nothing
 			return query.every(
 				query.slot.player(component.player.entity),
-				query.slot.rowIs(component.slot.row?.entity)
+				query.slot.rowIs(component.slot.row?.entity),
 			)
 		})
 
@@ -43,7 +47,7 @@ class ArmorStand extends Card {
 				.filter(
 					CardComponent,
 					query.card.slot(query.some(query.slot.item, query.slot.attach)),
-					query.card.rowEntity(slot.row.entity)
+					query.card.rowEntity(slot.row.entity),
 				)
 				.forEach((card) => {
 					card.discard()

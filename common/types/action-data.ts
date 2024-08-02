@@ -4,7 +4,10 @@ import {CardCategoryT} from './cards'
 import {AttackAction, PlayCardAction} from './game-state'
 import {LocalCardInstance} from './server-requests'
 
-export const slotToPlayCardAction: Record<CardCategoryT, PlayCardAction | null> = {
+export const slotToPlayCardAction: Record<
+	CardCategoryT,
+	PlayCardAction | null
+> = {
 	hermit: 'PLAY_HERMIT_CARD',
 	item: 'PLAY_ITEM_CARD',
 	attach: 'PLAY_EFFECT_CARD',

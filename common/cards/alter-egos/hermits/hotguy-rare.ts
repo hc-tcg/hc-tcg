@@ -32,7 +32,11 @@ class HotguyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let usingSecondaryAttack = false
@@ -44,7 +48,10 @@ class HotguyRare extends Card {
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
 			if (!usingSecondaryAttack) return
-			if (attack.attacker instanceof CardComponent && attack.attacker.card instanceof Bow) {
+			if (
+				attack.attacker instanceof CardComponent &&
+				attack.attacker.card instanceof Bow
+			) {
 				attack.addDamage(attack.attacker.entity, attack.getDamage())
 			}
 		})

@@ -1,22 +1,30 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {RowEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {AttackDefs} from '../types/attack'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
 	CardStatusEffect,
-	hiddenStatusEffect,
 	StatusEffectProps,
+	hiddenStatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
-function newGasLightAttack(effect: StatusEffectComponent, target: RowEntity): AttackDefs {
+function newGasLightAttack(
+	effect: StatusEffectComponent,
+	target: RowEntity,
+): AttackDefs {
 	return {
 		attacker: effect.entity,
 		target: target,
 		type: 'status-effect',
 		player: effect.target.opponentPlayer.entity,
-		log: (values) => `${values.target} took ${values.damage} damage from $vGas Light$`,
+		log: (values) =>
+			`${values.target} took ${values.damage} damage from $vGas Light$`,
 	} satisfies AttackDefs
 }
 
@@ -27,7 +35,7 @@ export class GasLightEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let {player, opponentPlayer} = target
 
@@ -45,7 +53,11 @@ export class GasLightEffect extends CardStatusEffect {
 			}
 
 			game.components
-				.new(StatusEffectComponent, GasLightTriggeredEffect, effect.creator.entity)
+				.new(
+					StatusEffectComponent,
+					GasLightTriggeredEffect,
+					effect.creator.entity,
+				)
 				.apply(target.entity)
 			effect.remove()
 		})
@@ -68,7 +80,7 @@ export class GasLightTriggeredEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let {opponentPlayer} = target
 

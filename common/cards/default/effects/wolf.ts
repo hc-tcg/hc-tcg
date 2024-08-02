@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
-import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach} from '../../base/types'
 
 class Wolf extends Card {
@@ -20,7 +20,11 @@ class Wolf extends Card {
 		attachCondition: query.every(attach.attachCondition, query.slot.active),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 		let activated = false
 
@@ -49,7 +53,8 @@ class Wolf extends Card {
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
-					log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $eWolf$`,
 				})
 				.addDamage(component.entity, 20)
 

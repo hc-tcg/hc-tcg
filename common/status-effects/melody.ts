@@ -1,5 +1,9 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
 import {CardComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class MelodyEffect extends CardStatusEffect {
 	props: StatusEffectProps = {

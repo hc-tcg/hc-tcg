@@ -1,21 +1,30 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class RoyalProtectionEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		icon: 'royal_protection',
 		name: 'Royal Protection',
-		description: 'Any attacks targeting a Hermit under Royal Protection are prevented.',
+		description:
+			'Any attacks targeting a Hermit under Royal Protection are prevented.',
 		applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		observer.subscribe(target.player.hooks.beforeDefence, (attack) => {
 			if (!attack.isTargeting(target)) return

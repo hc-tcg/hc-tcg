@@ -1,15 +1,15 @@
-import {GameModel} from '../../../models/game-model'
 import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import RoyalProtectionEffect from '../../../status-effects/royal-protection'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import RoyalProtectionEffect from '../../../status-effects/royal-protection'
-import query from '../../../components/query'
 
 class PrincessGemRare extends Card {
 	props: Hermit = {
@@ -45,18 +45,23 @@ class PrincessGemRare extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const pickCondition = query.every(
 				query.slot.currentPlayer,
 				query.slot.hermit,
 				query.not(query.slot.empty),
 				query.not(query.slot.active),
-				query.not(query.slot.hasStatusEffect(RoyalProtectionEffect))
+				query.not(query.slot.hasStatusEffect(RoyalProtectionEffect)),
 			)
 
 			if (!game.components.exists(SlotComponent, pickCondition)) return

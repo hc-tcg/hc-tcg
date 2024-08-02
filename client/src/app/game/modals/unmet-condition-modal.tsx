@@ -1,8 +1,8 @@
-import Modal from 'components/modal'
-import css from './game-modals.module.scss'
 import Button from 'components/button'
-import {useDispatch} from 'react-redux'
+import Modal from 'components/modal'
 import {removeEffect} from 'logic/game/game-actions'
+import {useDispatch} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
@@ -20,7 +20,9 @@ function UnmetCondition({closeModal, info}: Props) {
 	return (
 		<Modal title="Unmet Condition" closeModal={closeModal}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>You can't play this card in that slot at the moment.</div>
+				<div className={css.description}>
+					You can't play this card in that slot at the moment.
+				</div>
 				<div className={css.options}>
 					<Button onClick={handleOk}>Okay</Button>
 				</div>

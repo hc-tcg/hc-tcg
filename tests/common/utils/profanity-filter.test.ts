@@ -9,6 +9,8 @@ describe('censorship tests', () => {
 		// Do not censor sub words, ie ass
 		expect(censorString('pass')).toBe('pass')
 		expect(censorString('assert')).toBe('assert')
-		expect(censorString('hello pass assert hello')).toBe('hello pass assert hello')
+		expect(censorString('hello pass assert hello')).toBe(
+			'hello pass assert hello',
+		)
 	})
 })

@@ -1,12 +1,13 @@
+import {GameModel} from 'common/models/game-model'
+import {PlayerModel} from 'common/models/player-model'
+import {concatFormattedTextNodes, formatText} from 'common/utils/formatting'
+import {AnyAction} from 'redux'
 import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import {PlayerModel} from 'common/models/player-model'
-import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux'
-import {concatFormattedTextNodes, formatText} from 'common/utils/formatting'
 
 const gameAction =
-	(type: string, game: {players: Record<string, PlayerModel>}) => (action: any) => {
+	(type: string, game: {players: Record<string, PlayerModel>}) =>
+	(action: any) => {
 		return action.type === type && !!game.players[action.playerId]
 	}
 
@@ -22,7 +23,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 			formatText(message, {
 				censor: true,
 				'enable-$': false,
-			})
+			}),
 		),
 		createdAt: Date.now(),
 		systemMessage: false,

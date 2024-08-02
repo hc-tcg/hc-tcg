@@ -1,8 +1,16 @@
-import {ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 export class AussiePingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -21,7 +29,7 @@ export class AussiePingEffect extends PlayerStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
@@ -31,7 +39,12 @@ export class AussiePingEffect extends PlayerStatusEffect {
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player.opponentPlayer, effect.creator, 1, player)
+				const coinFlip = flipCoin(
+					player.opponentPlayer,
+					effect.creator,
+					1,
+					player,
+				)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -45,7 +58,11 @@ export class AussiePingEffect extends PlayerStatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, AussiePingImmuneEffect, effect.creator.entity)
+					.new(
+						StatusEffectComponent,
+						AussiePingImmuneEffect,
+						effect.creator.entity,
+					)
 					.apply(player.entity)
 			}
 		})
@@ -54,7 +71,11 @@ export class AussiePingEffect extends PlayerStatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, AussiePingImmuneEffect, effect.creator.entity)
+					.new(
+						StatusEffectComponent,
+						AussiePingImmuneEffect,
+						effect.creator.entity,
+					)
 					.apply(player.entity)
 			}
 		})
@@ -73,7 +94,7 @@ export class AussiePingImmuneEffect extends PlayerStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			effect.remove()

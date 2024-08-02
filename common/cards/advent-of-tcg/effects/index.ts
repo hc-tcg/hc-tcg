@@ -1,10 +1,10 @@
+import Card from '../../base/card'
+import BerryBush from './berry-bush'
 import BrewingStand from './brewing-stand'
+import Cat from './cat'
 import Furnace from './furnace'
 import Slimeball from './slimeball'
-import Cat from './cat'
-import BerryBush from './berry-bush'
 import Trapdoor from './trapdoor'
-import Card from '../../base/card'
 
 const effectCardClasses: Array<new () => Card> = [
 	BrewingStand,

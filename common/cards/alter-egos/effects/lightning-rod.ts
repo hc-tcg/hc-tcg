@@ -1,6 +1,10 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -23,13 +27,17 @@ class LightningRod extends Card {
 					SlotComponent,
 					query.slot.currentPlayer,
 					query.slot.attach,
-					query.slot.has(LightningRod)
-				)
-			)
+					query.slot.has(LightningRod),
+				),
+			),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let used = false

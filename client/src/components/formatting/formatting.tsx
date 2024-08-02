@@ -1,6 +1,6 @@
+import classNames from 'classnames'
 import {FormattedTextNode, censorProfanityNode} from 'common/utils/formatting'
 import css from './formatting.module.scss'
-import classNames from 'classnames'
 
 type DisplaySettings = {
 	isSelectable?: boolean
@@ -32,7 +32,7 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 				className={classNames(
 					css[node.format],
 					settings.isOpponent ? css.viewedByOpponent : '',
-					...textCssClasses
+					...textCssClasses,
 				)}
 			>
 				{nodeToHtml(node.text, settings)}
@@ -48,14 +48,25 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 		)
 	} else if (node.TYPE == 'ProfanityNode') {
 		if (settings.censorProfanity) {
-			return <span className={classNames(...textCssClasses)}> {censorProfanityNode(node)} </span>
+			return (
+				<span className={classNames(...textCssClasses)}>
+					{' '}
+					{censorProfanityNode(node)}{' '}
+				</span>
+			)
 		}
 		return <span className={classNames(...textCssClasses)}>{node.text}</span>
 	} else if (node.TYPE == 'EmojiNode') {
 		const link = `/images/hermits-emoji/${node.emoji.toLowerCase()}.png`
 		const alt = `:${node.emoji}:`
 
-		return <img className={classNames(css.emoji, ...textCssClasses)} src={link} alt={alt} />
+		return (
+			<img
+				className={classNames(css.emoji, ...textCssClasses)}
+				src={link}
+				alt={alt}
+			/>
+		)
 	} else if (node.TYPE == 'LineBreakNode') {
 		return <br />
 	} else if (node.TYPE == 'TabNode') {
@@ -65,7 +76,10 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 	}
 }
 
-export const FormattedText = (text: FormattedTextNode | undefined, settings?: DisplaySettings) => {
+export const FormattedText = (
+	text: FormattedTextNode | undefined,
+	settings?: DisplaySettings,
+) => {
 	settings = settings || {}
 	if (!text) return <span />
 

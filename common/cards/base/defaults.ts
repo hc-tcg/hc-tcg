@@ -1,5 +1,5 @@
-import type {CardCategoryT, PlayCardLog} from '../../types/cards'
 import query from '../../components/query'
+import type {CardCategoryT, PlayCardLog} from '../../types/cards'
 
 export const item = {
 	item: null,
@@ -10,7 +10,7 @@ export const item = {
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
 		query.actionAvailable('PLAY_ITEM_CARD'),
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
@@ -24,7 +24,7 @@ export const hermit = {
 		query.slot.currentPlayer,
 		query.slot.empty,
 		query.actionAvailable('PLAY_HERMIT_CARD'),
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
@@ -39,7 +39,7 @@ export const attach = {
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
 		query.actionAvailable('PLAY_EFFECT_CARD'),
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	),
 	log: (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
@@ -53,6 +53,6 @@ export const singleUse = {
 	attachCondition: query.every(
 		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,
-		query.actionAvailable('PLAY_SINGLE_USE_CARD')
+		query.actionAvailable('PLAY_SINGLE_USE_CARD'),
 	),
 }

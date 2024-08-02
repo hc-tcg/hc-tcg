@@ -1,6 +1,6 @@
-import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,7 +33,11 @@ class DungeonTangoRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
@@ -54,7 +58,12 @@ class DungeonTangoRare extends Card {
 				playerId: player.id,
 				id: this.props.id,
 				message: 'Choose an item card to discard',
-				canPick: slot.every(slot.player, slot.item, slot.active, slot.not(slot.empty)),
+				canPick: slot.every(
+					slot.player,
+					slot.item,
+					slot.active,
+					slot.not(slot.empty),
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.cardId) return
 
@@ -66,7 +75,7 @@ class DungeonTangoRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

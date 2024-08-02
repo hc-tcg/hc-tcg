@@ -1,4 +1,8 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import SlownessEffect from '../../../status-effects/slowness'
 import Card from '../../base/card'
@@ -19,7 +23,11 @@ class PotionOfSlowness extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {

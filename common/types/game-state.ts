@@ -1,17 +1,17 @@
 import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {CardComponent} from '../components'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {BattleLogModel} from '../models/battle-log-model'
+import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'
+import {ModalRequest} from './modal-requests'
 import type {
 	LocalCardInstance,
-	LocalStatusEffectInstance,
 	LocalModalData,
+	LocalStatusEffectInstance,
 	PickRequest,
 } from './server-requests'
-import type {CardComponent} from '../components'
-import type {PlayerId} from '../models/player-model'
-import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
-import {ModalRequest} from './modal-requests'
 
 type NewType = SlotEntity
 
@@ -67,7 +67,10 @@ export type PickCardActionResult =
 	| 'FAILURE_INVALID_SLOT'
 	| 'FAILURE_WRONG_PICK'
 
-export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
+export type ActionResult =
+	| GenericActionResult
+	| PlayCardActionResult
+	| PickCardActionResult
 
 export type {LocalModalData as ModalData} from './server-requests'
 
@@ -114,7 +117,10 @@ export type PlayCardAction =
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
 
-export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+export type AttackAction =
+	| 'SINGLE_USE_ATTACK'
+	| 'PRIMARY_ATTACK'
+	| 'SECONDARY_ATTACK'
 
 export type TurnAction =
 	| PlayCardAction
@@ -188,7 +194,9 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
+	currentCardsCanBePlacedIn: Array<
+		[LocalCardInstance, Array<SlotEntity>]
+	> | null
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null

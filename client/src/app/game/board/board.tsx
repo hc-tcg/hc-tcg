@@ -1,19 +1,24 @@
-import {useSelector} from 'react-redux'
+import {PlayerEntity, SlotEntity} from 'common/entities'
+import {SlotTypeT} from 'common/types/cards'
 import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
+import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
-import css from './board.module.scss'
-import BoardRow from './board-row'
+import {useSelector} from 'react-redux'
+import Actions from '../actions/actions'
+import MobileActions from '../actions/mobile-actions'
 import PlayerInfo from '../player-info'
 import Timer from '../timer'
-import Actions from '../actions/actions'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import MobileActions from '../actions/mobile-actions'
-import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
-import {SlotTypeT} from 'common/types/cards'
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import BoardRow from './board-row'
+import css from './board.module.scss'
 
 type Props = {
-	onClick: (pickInfo: SlotInfo, player: PlayerEntity, row?: number, index?: number) => void
+	onClick: (
+		pickInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number,
+	) => void
 	localGameState: LocalGameState
 }
 
@@ -33,22 +38,34 @@ function Board({onClick, localGameState}: Props) {
 		entity: SlotEntity,
 		slotType: SlotTypeT,
 		card: LocalCardInstance | null,
-		index: number
+		index: number,
 	) => {
-		onClick({slotEntity: entity, slotType: slotType, card: card}, player, rowIndex, index)
+		onClick(
+			{slotEntity: entity, slotType: slotType, card: card},
+			player,
+			rowIndex,
+			index,
+		)
 	}
 
-	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
+	const PlayerBoard = (
+		player: LocalPlayerState,
+		direction: 'left' | 'right',
+	) => {
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
 				{player.board.rows.map((row, rowIndex) => {
 					return (
 						<BoardRow
 							key={row.entity}
-							player={direction === 'left' ? leftPlayer.entity : rightPlayer.entity}
+							player={
+								direction === 'left' ? leftPlayer.entity : rightPlayer.entity
+							}
 							rowState={row}
 							active={row.entity === player.board.activeRow}
-							onClick={(...args) => handleRowClick(rowIndex, player.entity, ...args)}
+							onClick={(...args) =>
+								handleRowClick(rowIndex, player.entity, ...args)
+							}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
 						/>

@@ -1,10 +1,10 @@
-import Modal from 'components/modal'
-import {useSelector, useDispatch} from 'react-redux'
-import {getAvailableActions} from 'logic/game/game-selectors'
-import {endTurn} from 'logic/game/game-actions'
 import {TurnAction} from 'common/types/game-state'
-import css from './game-modals.module.scss'
 import Button from 'components/button'
+import Modal from 'components/modal'
+import {endTurn} from 'logic/game/game-actions'
+import {getAvailableActions} from 'logic/game/game-selectors'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',
@@ -28,9 +28,13 @@ type Props = {
 	closeModal: () => void
 }
 
-export function shouldShowEndTurnModal(actions: Array<TurnAction>, settings: any): boolean {
+export function shouldShowEndTurnModal(
+	actions: Array<TurnAction>,
+	settings: any,
+): boolean {
 	return (
-		actions.some((action) => ActionMap[action] !== null) && settings.confirmationDialogs === 'on'
+		actions.some((action) => ActionMap[action] !== null) &&
+		settings.confirmationDialogs === 'on'
 	)
 }
 
@@ -52,7 +56,10 @@ function EndTurnModal({closeModal}: Props) {
 	return (
 		<Modal title="End Turn" closeModal={handleCancel}>
 			<div className={css.description}>
-				<p>Are you sure you want to end your turn? These actions are still available:</p>
+				<p>
+					Are you sure you want to end your turn? These actions are still
+					available:
+				</p>
 				<hr />
 				<ul className={css.availableActions}>
 					{availableActions.map((action) => {

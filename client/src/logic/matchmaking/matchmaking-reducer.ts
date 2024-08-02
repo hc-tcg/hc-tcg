@@ -13,7 +13,10 @@ const defaultState: MatchmakingState = {
 	invalidCode: false,
 }
 
-const matchmakingReducer = (state = defaultState, action: AnyAction): MatchmakingState => {
+const matchmakingReducer = (
+	state = defaultState,
+	action: AnyAction,
+): MatchmakingState => {
 	switch (action.type) {
 		case 'JOIN_QUEUE':
 			return {

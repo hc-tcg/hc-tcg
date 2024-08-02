@@ -1,11 +1,11 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {RowEntity} from '../../../entities'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {RowEntity} from '../../../entities'
 
 class TinFoilChefUltraRare extends Card {
 	props: Hermit = {
@@ -33,7 +33,11 @@ class TinFoilChefUltraRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let hasDiscardedFrom = new Set<RowEntity>()
@@ -41,11 +45,12 @@ class TinFoilChefUltraRare extends Card {
 		let targetCardQuery = query.every(
 			query.card.active,
 			query.card.opponentPlayer,
-			query.card.slot(query.slot.attach, query.not(query.slot.frozen))
+			query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
 		)
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			if (opponentPlayer.activeRow === null) return
 			// Can't discard two effect cards on the same hermit

@@ -1,6 +1,10 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -42,17 +46,22 @@ class GrianRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+				return
 
 			const opponentAttachCard = game.components.find(
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.active,
-				query.card.slot(query.slot.attach)
+				query.card.slot(query.slot.attach),
 			)
 			if (!opponentAttachCard) return
 
@@ -64,7 +73,7 @@ class GrianRare extends Card {
 				SlotComponent,
 				query.slot.currentPlayer,
 				query.slot.active,
-				query.slot.attach
+				query.slot.attach,
 			)
 			const canAttach = game.components.find(
 				SlotComponent,
@@ -72,7 +81,7 @@ class GrianRare extends Card {
 				query.not(query.slot.frozen),
 				query.slot.attach,
 				query.slot.active,
-				query.slot.empty
+				query.slot.empty,
 			)
 
 			game.addModalRequest({
@@ -88,7 +97,7 @@ class GrianRare extends Card {
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -97,7 +106,8 @@ class GrianRare extends Card {
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || modalResult.result === undefined)
+						return 'FAILURE_INVALID_DATA'
 
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)

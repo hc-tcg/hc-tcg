@@ -1,10 +1,11 @@
-import {PlayCardLog} from '../../types/cards'
-import {GameModel} from '../../models/game-model'
-import {FormattedTextNode, formatText} from '../../utils/formatting'
-import query from '../../components/query'
-import {HermitAttackType} from '../../types/attack'
-import {AttackModel} from '../../models/attack-model'
 import {CardComponent, ObserverComponent, RowComponent} from '../../components'
+import query from '../../components/query'
+import {AttackModel} from '../../models/attack-model'
+import {GameModel} from '../../models/game-model'
+import {HermitAttackType} from '../../types/attack'
+import {PlayCardLog} from '../../types/cards'
+import {DefaultDictionary} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {
 	Attach,
 	CardProps,
@@ -18,7 +19,6 @@ import {
 	isItem,
 	isSingleUse,
 } from './types'
-import {DefaultDictionary} from '../../types/game-state'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -57,21 +57,29 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when a component of this card is created
 	 */
-	public onCreate(game: GameModel, component: CardComponent) {
+	public onCreate(_game: GameModel, _component: CardComponent) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public onAttach(
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	public onDetach(
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		// default is do nothing
 	}
 
@@ -91,11 +99,15 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this: Card<Hermit>,
 		game: GameModel,
 		component: CardComponent,
-		hermitAttackType: HermitAttackType
+		hermitAttackType: HermitAttackType,
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.components.findEntity(RowComponent, query.row.opponentPlayer, query.row.active),
+			target: game.components.findEntity(
+				RowComponent,
+				query.row.opponentPlayer,
+				query.row.active,
+			),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>
@@ -125,7 +137,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isSingleUse(this.props)
 	}
 
-	public getFormattedDescription(this: Card<Attach | SingleUse>): FormattedTextNode {
+	public getFormattedDescription(
+		this: Card<Attach | SingleUse>,
+	): FormattedTextNode {
 		return formatText(this.props.description)
 	}
 
