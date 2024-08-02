@@ -1,3 +1,4 @@
+import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -5,6 +6,7 @@ import {
 	SlotComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
+import {ViewerComponent} from '../components/viewer-component'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
@@ -27,7 +29,7 @@ import {PlayerId, PlayerModel} from './player-model'
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
-		if (!Object.hasOwn(this.values, game.id)) {
+		if (game.id in this.values) {
 			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
@@ -113,6 +115,10 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
+	public get viewers(): Array<ViewerComponent> {
+		return this.components.filter(ViewerComponent)
+	}
+
 	public getPlayerIds() {
 		return Object.keys(this.players) as Array<PlayerId>
 	}
@@ -131,6 +137,14 @@ export class GameModel {
 
 	public get code() {
 		return this.internalCode
+	}
+
+	public broadcastToViewers(type: string, payload?: any) {
+		broadcast(
+			this.viewers.map((viewer) => viewer.player),
+			type,
+			payload,
+		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
@@ -250,7 +264,7 @@ export class GameModel {
 		}
 	}
 	public cancelPickRequests() {
-		if (this.state.pickRequests[0]?.playerId === this.currentPlayer.id) {
+		if (this.state.pickRequests[0]?.player === this.currentPlayer.entity) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
 				this.state.pickRequests[i].onCancel?.()

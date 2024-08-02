@@ -42,7 +42,7 @@ class Glowstone extends Card {
 				.slice(0, 3)
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

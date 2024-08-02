@@ -54,7 +54,7 @@ class Knockback extends Card {
 			let activeRow = opponentPlayer.activeRow
 			if (activeRow && activeRow.health) {
 				game.addPickRequest({
-					playerId: opponentPlayer.id,
+					player: opponentPlayer.entity,
 					id: component.entity,
 					message: 'Choose a new active Hermit from your AFK Hermits',
 					canPick: this.pickCondition,

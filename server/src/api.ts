@@ -1,7 +1,24 @@
-import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import fetch from 'node-fetch'
 import root from './serverRoot'
+
+function getPlayers(game: GameModel) {
+	return game.components.filter(ViewerComponent).flatMap((viewer) => {
+		if (viewer.spectator) return []
+		let player = viewer.playerOnLeft
+		return [
+			{
+				playerId: viewer.playerId,
+				playerName: player.playerName,
+				censoredPlayerName: player.censoredPlayerName,
+				minecraftName: player.minecraftName,
+				lives: player.lives,
+				deck: player.getDeck().map((card) => card.props.id),
+			},
+		]
+	})
+}
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
@@ -29,18 +46,7 @@ export function registerApis(app: import('express').Express) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									players: g.components
-										.filter(PlayerComponent)
-										.map((player) => {
-											return {
-												playerId: player.id,
-												playerName: player.playerName,
-												censoredPlayerName: player.censoredPlayerName,
-												minecraftName: player.minecraftName,
-												lives: player.lives,
-												deck: player.getDeck().map((card) => card.props.id),
-											}
-										}),
+									players: getPlayers(g),
 									state: g.state,
 								}
 							}),
@@ -91,16 +97,7 @@ export function registerApis(app: import('express').Express) {
 						createdTime: game.createdTime,
 						id: game.id,
 						code: game.code,
-						players: game.components.filter(PlayerComponent).map((player) => {
-							return {
-								playerId: player.id,
-								playerName: player.playerName,
-								censoredPlayerName: player.censoredPlayerName,
-								minecraftName: player.minecraftName,
-								lives: player.lives,
-								deck: player.getDeck().map((card) => card.props.id),
-							}
-						}),
+						players: getPlayers(game),
 						state: game.state,
 					}),
 				})
@@ -122,16 +119,7 @@ export function registerApis(app: import('express').Express) {
 						endTime: Date.now(),
 						id: game.id,
 						code: game.code,
-						players: game.components.filter(PlayerComponent).map((player) => {
-							return {
-								playerId: player.id,
-								playerName: player.playerName,
-								censoredPlayerName: player.censoredPlayerName,
-								minecraftName: player.minecraftName,
-								lives: player.lives,
-								deck: player.getDeck().map((card) => card.props.id),
-							}
-						}),
+						players: getPlayers(game),
 						endInfo: game.endInfo,
 						state: game.state,
 					}),

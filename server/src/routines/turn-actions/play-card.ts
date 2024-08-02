@@ -9,8 +9,8 @@ function* playCardSaga(
 	turnAction: PlayCardActionData,
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
-	const slotEntity = turnAction?.payload?.slot
-	const localCard = turnAction?.payload?.card
+	const slotEntity = turnAction?.payload.slot
+	const localCard = turnAction?.payload.card
 	if (!slotEntity || !localCard) {
 		return 'FAILURE_INVALID_DATA'
 	}
@@ -28,6 +28,12 @@ function* playCardSaga(
 		throw new Error(
 			'A slot that is not on the board can not be picked: ' + pickedSlot,
 		)
+	}
+
+	// You are not supposed to be able to select a slot with a card in it, but network issues can allow
+	// this to happen.
+	if (pickedSlot.getCard()) {
+		return 'FAILURE_INVALID_DATA'
 	}
 
 	const row = pickedSlot.row

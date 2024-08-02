@@ -43,8 +43,8 @@ function Timer() {
 	// Last 10 seconds sfx
 	useEffect(() => {
 		if (
-			remainingSeconds <= 10 &&
-			gameState.turn.currentPlayerId === gameState.playerId
+			remainingTime <= 10 &&
+			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}

@@ -2,8 +2,10 @@ import classnames from 'classnames'
 import {CARDS} from 'common/cards'
 import Card from 'common/cards/base/card'
 import {Hermit, isHermit} from 'common/cards/base/types'
-import {getPlayerStateById} from 'logic/game/game-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
+import {
+	getPlayerEntity,
+	getPlayerStateByEntity,
+} from 'logic/game/game-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
@@ -23,8 +25,8 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	// TODO - This whole file needs to be rafactored
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
-	const playerId = useSelector(getPlayerId)
-	const playerState = useSelector(getPlayerStateById(playerId))
+	const playerEntity = useSelector(getPlayerEntity)
+	const playerState = useSelector(getPlayerStateByEntity(playerEntity))
 
 	const initialId = extraAttacks[0].split(':')[0]
 	const [selectedHermit, setSelectedHermit] = useState<string>(initialId)

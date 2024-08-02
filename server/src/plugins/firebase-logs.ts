@@ -1,6 +1,7 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
 import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {RootModel} from 'common/models/root-model'
 import {GameLog} from 'common/types/game-state'
@@ -47,8 +48,7 @@ export class FirebaseLogs {
 			}
 			const type = game.code ? 'private' : 'public'
 
-			const playerStates: Array<PlayerComponent> =
-				game.components.filter(PlayerComponent)
+			const playerStates = game.components.filter(PlayerComponent)
 
 			function getHand(pState: PlayerComponent) {
 				return pState.getHand()
@@ -60,14 +60,13 @@ export class FirebaseLogs {
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
 				startDeck:
-					game.getPlayerIds()[0] == playerStates[0].id ? 'deck1' : 'deck2',
+					game.state.order[0] == playerStates[0].entity ? 'deck1' : 'deck2',
 			}
 		})
 
 		root.hooks.gameRemoved.add(this.id, (game) => {
 			try {
-				const playerStates: Array<PlayerComponent> =
-					game.components.filter(PlayerComponent)
+				const viewers = game.components.filter(ViewerComponent)
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 
@@ -92,18 +91,20 @@ export class FirebaseLogs {
 				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
-				let pid0 = playerStates[0].id
+
+				let pid0 = viewers[0].playerId
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid0,
 				})
 				summaryObj.deck1 = root.players[pid0]?.deck
 
-				let pid1 = playerStates[1].id
+				let pid1 = viewers[1].playerId
 				root.players[pid1]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
 				})
+
 				summaryObj.deck2 = root.players[pid1]?.deck
 				if (game.endInfo.winner === pid0) {
 					summaryObj.outcome = 'deck1win'

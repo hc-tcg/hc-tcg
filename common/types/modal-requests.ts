@@ -1,6 +1,5 @@
 import {CardComponent} from '../components'
-import {CardEntity} from '../entities'
-import {PlayerId} from '../models/player-model'
+import {CardEntity, PlayerEntity} from '../entities'
 import {ActionResult} from './game-state'
 
 export type ModalRequest = SelectCards.Request | CopyAttack.Request
@@ -10,7 +9,7 @@ export type ModalResult = SelectCards.Result | CopyAttack.Result
 export namespace SelectCards {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: PlayerId
+		player: PlayerEntity
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result | undefined) => ActionResult
@@ -52,7 +51,7 @@ export namespace SelectCards {
 export namespace CopyAttack {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: PlayerId
+		player: PlayerEntity
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result | undefined) => ActionResult

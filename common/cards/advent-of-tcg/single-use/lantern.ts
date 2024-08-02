@@ -37,7 +37,7 @@ class Lantern extends Card {
 				.slice(0, 4)
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {

@@ -26,7 +26,7 @@ const getSlotByLocation = (
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	player: PlayerEntity
+	player?: PlayerEntity
 	onClick: (
 		entity: SlotEntity,
 		type: SlotTypeT,
@@ -51,7 +51,7 @@ const BoardRow = ({
 
 	let shouldDim = !!(
 		(selectedCard || localGameState?.currentPickableSlots) &&
-		localGameState?.turn.currentPlayerId === localGameState?.playerId
+		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
 	)
 
 	const slotTypes: Array<BoardSlotTypeT> = [

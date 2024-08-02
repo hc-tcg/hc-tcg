@@ -75,7 +75,8 @@ const Slot = ({
 
 	if (
 		(localGameState &&
-			localGameState.playerId === localGameState.turn.currentPlayerId) ||
+			localGameState.playerEntity ===
+				localGameState.turn.currentPlayerEntity) ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()

@@ -1,7 +1,7 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import type {PlayerId, PlayerModel} from '../models/player-model'
+import type {PlayerModel} from '../models/player-model'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
@@ -25,8 +25,6 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-
-	readonly id: PlayerId
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -141,7 +139,6 @@ export class PlayerComponent {
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.id = player.id
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false

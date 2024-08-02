@@ -7,6 +7,7 @@ import {
 	RowComponent,
 } from '../components'
 import query from '../components/query'
+import {ViewerComponent} from '../components/viewer-component'
 import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
@@ -26,6 +27,17 @@ export function setupComponents(
 ) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
+
+	components.new(ViewerComponent, {
+		playerOnLeft: player1Component.entity,
+		player: player1,
+		spectator: false,
+	})
+	components.new(ViewerComponent, {
+		playerOnLeft: player2Component.entity,
+		player: player2,
+		spectator: false,
+	})
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)

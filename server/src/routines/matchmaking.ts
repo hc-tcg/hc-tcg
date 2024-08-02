@@ -1,3 +1,4 @@
+import {PlayerComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -32,17 +33,17 @@ function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
 	try {
 		const playerIds = game.getPlayerIds()
-		const players = game.getPlayers()
+		const viewers = game.viewers
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${players[0].name} + ${players[1].name}.`,
+			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
 			'Total games:',
 			root.getGameIds().length,
 		)
 
-		broadcast(players, 'GAME_START')
+		game.broadcastToViewers('GAME_START')
 		root.hooks.newGame.call(game)
 		game.task = yield* spawn(gameSaga, game)
 
@@ -64,21 +65,21 @@ function* gameManager(game: GameModel) {
 			),
 		})
 
-		for (const player of players) {
-			const gameState = getLocalGameState(game, player)
+		for (const viewer of viewers) {
+			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
 				if (!game.endInfo.reason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					playerIds.forEach(
-						(playerId) => (gameState.players[playerId].coinFlips = []),
-					)
+					game.components
+						.filter(PlayerComponent)
+						.forEach((player) => (player.coinFlips = []))
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, player.id)
-			broadcast([player], 'GAME_END', {
+			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
+			broadcast([viewer.player], 'GAME_END', {
 				gameState,
 				outcome,
 				reason: game.endInfo.reason,

@@ -3,9 +3,9 @@ import Modal from 'components/modal'
 import {startAttack} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
-	getPlayerStateById,
+	getPlayerEntity,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
@@ -21,8 +21,8 @@ function AttackModal({closeModal}: Props) {
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const availableActions = useSelector(getAvailableActions)
-	const playerId = useSelector(getPlayerId)
-	const playerState = useSelector(getPlayerStateById(playerId))
+	const playerEntity = useSelector(getPlayerEntity)
+	const playerState = useSelector(getPlayerStateByEntity(playerEntity))
 	const singleUseCard = playerState?.board.singleUse.card
 
 	if (!activeRow || !playerState || !activeRow.hermit) return null

@@ -9,11 +9,11 @@ import {
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
 	getGameState,
+	getPlayerEntity,
 	getPlayerState,
-	getPlayerStateById,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
@@ -28,11 +28,11 @@ type Props = {
 
 const Actions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(
-		getPlayerStateById(localGameState.turn.currentPlayerId),
+		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
-	const playerId = useSelector(getPlayerId)
+	const playerEntity = useSelector(getPlayerEntity)
 	const boardState = currentPlayer?.board
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
@@ -41,7 +41,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
-	const turn = localGameState.turn.currentPlayerId === playerId
+	const turn = localGameState.turn.currentPlayerEntity === playerEntity
 
 	if (!gameState || !playerState) return <main>Loading</main>
 

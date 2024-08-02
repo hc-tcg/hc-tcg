@@ -51,7 +51,7 @@ class PoePoeSkizzRare extends Card {
 			if (!component.slot.inRow()) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick an empty Hermit slot or your active Hermit.',
 				canPick: query.every(
