@@ -29,7 +29,9 @@ export const getPlayerStateByEntity = (player?: PlayerEntity) => (state: RootSta
 export const getPlayerEntity = (state: RootState) => {
 	let player = getGame(state).localGameState?.playerEntity
 	if (!player) {
-		throw new Error('Attempted to get player entity before state is defined. This should be impossible.')
+		throw new Error(
+			'Attempted to get player entity before state is defined. This should be impossible.'
+		)
 	}
 	return player
 }

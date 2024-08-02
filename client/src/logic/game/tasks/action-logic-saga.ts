@@ -5,7 +5,7 @@ import {LocalGameState} from 'common/types/game-state'
 import {setOpenedModal} from 'logic/game/game-actions'
 import {isSingleUse} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
-import { getPlayerEntity } from '../game-selectors'
+import {getPlayerEntity} from '../game-selectors'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 	if (isSingleUse(card.props) && card.props.showConfirmationModal) {

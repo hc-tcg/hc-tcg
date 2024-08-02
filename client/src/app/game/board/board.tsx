@@ -10,7 +10,7 @@ import MobileActions from '../actions/mobile-actions'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
 import {PlayerEntity, SlotEntity} from 'common/entities'
-import { getOpponentState, getPlayerState } from 'logic/game/game-selectors'
+import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo, player: PlayerEntity, row?: number, index?: number) => void
