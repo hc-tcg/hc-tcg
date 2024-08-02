@@ -54,6 +54,7 @@ function* gameManager(game: GameModel) {
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
 				if (!game.endInfo.reason) {
 					// Remove coin flips from state if game was terminated before game end
+					// This prevents clients from showing previous flips that weren't cleared yet
 					playerIds.forEach((playerId) => (gameState.players[playerId].coinFlips = []))
 				}
 			}
