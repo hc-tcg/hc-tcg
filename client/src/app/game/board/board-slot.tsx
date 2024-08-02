@@ -70,7 +70,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	}
 
 	return (
-		<div
+		<button
 			onClick={isClickable ? onClick : () => {}}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
@@ -95,7 +95,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
 			<StatusEffectContainer statusEffects={statusEffects || []} />
-		</div>
+		</button>
 	)
 }
 
