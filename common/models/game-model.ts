@@ -5,7 +5,6 @@ import {
 	RowComponent,
 	SlotComponent,
 } from '../components'
-import {PlayerDefs} from '../components/player-component'
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
 import {PlayerEntity, SlotEntity} from '../entities'
@@ -22,7 +21,11 @@ import {
 import {Hook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {PickRequest} from '../types/server-requests'
-import {getGameState, setupComponents} from '../utils/state-gen'
+import {
+	getGameState,
+	PlayerSetupDefs,
+	setupComponents,
+} from '../utils/state-gen'
 import {AttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 import {PlayerId, PlayerModel} from './player-model'
@@ -67,7 +70,11 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
-	constructor(player1: PlayerDefs, player2: PlayerDefs, code?: string) {
+	constructor(
+		player1: PlayerSetupDefs,
+		player2: PlayerSetupDefs,
+		code?: string,
+	) {
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code || null

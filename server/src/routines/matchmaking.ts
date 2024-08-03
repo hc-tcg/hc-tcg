@@ -35,7 +35,17 @@ function setupGame(
 	player2: PlayerModel,
 	code?: string,
 ): GameModel {
-	let game = new GameModel(player1, player2, code)
+	let game = new GameModel(
+		{
+			model: player1,
+			deck: player1.deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: player2,
+			deck: player2.deck.cards.map((card) => card.props.numericId),
+		},
+		code,
+	)
 
 	game.components.new(ViewerComponent, {
 		player: player1,

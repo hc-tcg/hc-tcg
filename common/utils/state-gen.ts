@@ -14,6 +14,11 @@ import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 
+export type PlayerSetupDefs = {
+	model: PlayerDefs
+	deck: Array<number>
+}
+
 /* Set up the components that will be referenced during the game. This includes:
  * - The player objects
  * - Board Slot
@@ -21,27 +26,27 @@ import {GameState} from '../types/game-state'
  */
 export function setupComponents(
 	components: ComponentTable,
-	player1: PlayerDefs,
-	player2: PlayerDefs,
+	player1: PlayerSetupDefs,
+	player2: PlayerSetupDefs,
 ) {
-	let player1Component = components.new(PlayerComponent, player1)
-	let player2Component = components.new(PlayerComponent, player2)
+	let player1Component = components.new(PlayerComponent, player1.model)
+	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1, player1Component.entity)
-	setupEcsForPlayer(components, player2, player2Component.entity)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
 	components: ComponentTable,
-	playerModel: PlayerDefs,
 	playerEntity: PlayerEntity,
+	deck: Array<number>,
 ) {
-	for (const card of playerModel.deck.cards) {
+	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',
 		})
-		components.new(CardComponent, card.props.numericId, slot.entity)
+		components.new(CardComponent, card, slot.entity)
 	}
 
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {

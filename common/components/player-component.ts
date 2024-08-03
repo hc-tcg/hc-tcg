@@ -4,7 +4,6 @@ import type {GameModel} from '../models/game-model'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
-import {PlayerDeckT} from '../types/deck'
 import type {
 	CoinFlipResult,
 	CurrentCoinFlip,
@@ -20,7 +19,6 @@ import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
-	deck: PlayerDeckT
 	name: string
 	minecraftName: string
 	censoredName: string
