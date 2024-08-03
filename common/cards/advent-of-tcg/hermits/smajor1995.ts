@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
 
 class Smajor1995Rare extends Card {
 	props: Hermit = {
@@ -37,19 +37,23 @@ class Smajor1995Rare extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'secondary'
+			)
+				return
 
 			const pickCondition = slot.every(
 				slot.player,
 				slot.not(slot.active),
 				slot.not(slot.empty),
-				slot.hermit
+				slot.hermit,
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
@@ -63,7 +67,7 @@ class Smajor1995Rare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}

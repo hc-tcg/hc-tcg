@@ -1,31 +1,38 @@
-import type {GameModel} from '../models/game-model'
-import type {PlayerId, PlayerModel} from '../models/player-model'
-import type {CoinFlipResult, CurrentCoinFlip, TurnActions} from '../types/game-state'
-import type {TypeT} from '../types/cards'
-import type {AttackModel} from '../models/attack-model'
-import type {HermitAttackType} from '../types/attack'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {AttackModel} from '../models/attack-model'
+import type {GameModel} from '../models/game-model'
+import {PlayerStatusEffect} from '../status-effects/status-effect'
+import type {HermitAttackType} from '../types/attack'
+import type {TypeT} from '../types/cards'
+import type {
+	CoinFlipResult,
+	CurrentCoinFlip,
+	TurnActions,
+} from '../types/game-state'
+import {GameHook, WaterfallHook} from '../types/hooks'
 import {CardComponent} from './card-component'
 import query from './query'
 import {ComponentQuery} from './query'
-import {DEBUG_CONFIG} from '../config'
-import {GameHook, WaterfallHook} from '../types/hooks'
-import {HandSlotComponent, SlotComponent} from './slot-component'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
-import {StatusEffectComponent} from './status-effect-component'
 import {RowComponent} from './row-component'
-import {VirtualPlayerModel} from '../models/virtual-player-model'
+import {SlotComponent} from './slot-component'
+import {StatusEffectComponent} from './status-effect-component'
+
+/** The minimal information that must be known about a player to start a game */
+export type PlayerDefs = {
+	name: string
+	minecraftName: string
+	censoredName: string
+	playerType: 'user' | 'virtual'
+}
 
 export class PlayerComponent {
 	readonly game: GameModel
 	readonly entity: PlayerEntity
 
 	readonly playerName: string
-	readonly playerType: 'real' | 'virtual'
+	readonly playerType: 'user' | 'virtual'
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-
-	readonly id: PlayerId
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -39,7 +46,9 @@ export class PlayerComponent {
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
-		availableEnergy: WaterfallHook<(availableEnergy: Array<TypeT>) => Array<TypeT>>
+		availableEnergy: WaterfallHook<
+			(availableEnergy: Array<TypeT>) => Array<TypeT>
+		>
 
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
@@ -63,7 +72,10 @@ export class PlayerComponent {
 		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
 		 */
 		getAttackRequests: GameHook<
-			(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
+			(
+				activeInstance: CardComponent,
+				hermitAttackType: HermitAttackType,
+			) => void
 		>
 
 		/** Hook that returns attacks to execute */
@@ -101,13 +113,19 @@ export class PlayerComponent {
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
-			(card: CardComponent, coinFlips: Array<CoinFlipResult>) => Array<CoinFlipResult>
+			(
+				card: CardComponent,
+				coinFlips: Array<CoinFlipResult>,
+			) => Array<CoinFlipResult>
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
 		beforeActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => boolean
+			(
+				oldActiveHermit: CardComponent,
+				newActiveHermit: CardComponent,
+			) => boolean
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
@@ -120,14 +138,13 @@ export class PlayerComponent {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel | VirtualPlayerModel) {
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
-		this.playerType = player.socket ? 'real' : 'virtual'
+		this.playerType = player.playerType
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.id = player.id
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
@@ -168,9 +185,12 @@ export class PlayerComponent {
 	get opponentPlayer() {
 		let player = this.game.components.find(
 			PlayerComponent,
-			(_game, player) => player.entity !== this.entity
+			(_game, player) => player.entity !== this.entity,
 		)
-		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
+		if (!player)
+			throw new Error(
+				'Both players should be added to ECS before fetching opponent.',
+			)
 		return player
 	}
 
@@ -180,7 +200,7 @@ export class PlayerComponent {
 			CardComponent,
 			query.card.slot(query.slot.hermit),
 			query.card.active,
-			query.card.player(this.entity)
+			query.card.player(this.entity),
 		)
 	}
 
@@ -189,7 +209,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.deck)
+			query.card.slot(query.slot.deck),
 		)
 	}
 
@@ -198,7 +218,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.hand)
+			query.card.slot(query.slot.hand),
 		)
 	}
 
@@ -207,7 +227,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.discardPile)
+			query.card.slot(query.slot.discardPile),
 		)
 	}
 
@@ -215,7 +235,10 @@ export class PlayerComponent {
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
 		if (cards.length < amount) {
-			if (!this.game.rules.disableVirtualDeckOut || this.playerType !== 'virtual')
+			if (
+				!this.game.rules.disableVirtualDeckOut ||
+				this.playerType !== 'virtual'
+			)
 				this.deckedOut = true
 		}
 		cards.forEach((card) => card.draw())
@@ -226,7 +249,7 @@ export class PlayerComponent {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
-			query.effect.targetEntity(this.entity)
+			query.effect.targetEntity(this.entity),
 		)
 	}
 
@@ -245,9 +268,12 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
-			const results = this.hooks.beforeActiveRowChange.call(oldHermit, newHermit)
+			const results = this.hooks.beforeActiveRowChange.call(
+				oldHermit,
+				newHermit,
+			)
 			if (results.includes(false)) return false
 		}
 
@@ -256,14 +282,19 @@ export class PlayerComponent {
 			const newHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(newRow.entity))
+				query.card.slot(query.slot.rowIs(newRow.entity)),
 			)
 			const oldHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(currentActiveRow?.entity))
+				query.card.slot(query.slot.rowIs(currentActiveRow?.entity)),
 			)
-			this.game.battleLog.addChangeRowEntry(this, newRow.entity, oldHermit, newHermit)
+			this.game.battleLog.addChangeRowEntry(
+				this,
+				newRow.entity,
+				oldHermit,
+				newHermit,
+			)
 		}
 
 		// Change the active row
@@ -275,7 +306,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
 		}
@@ -286,13 +317,16 @@ export class PlayerComponent {
 	/** Get an array of [card, slot the card can be placed in] for each card in the player's hand. */
 	public getCardsCanBePlacedIn() {
 		return this.game.components
-			.filter(CardComponent, query.card.slot(query.slot.hand, query.slot.player(this.entity)))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.hand, query.slot.player(this.entity)),
+			)
 			.map(
 				(card) =>
-					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
-						CardComponent,
-						Array<SlotEntity>
-					]
+					[
+						card,
+						this.game.getPickableSlots(card.card.props.attachCondition),
+					] as [CardComponent, Array<SlotEntity>],
 			)
 	}
 }

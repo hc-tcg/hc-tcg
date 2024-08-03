@@ -1,10 +1,14 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 
 class BeetlejhostRare extends Card {
 	props: Hermit = {
@@ -29,20 +33,26 @@ class BeetlejhostRare extends Card {
 			name: 'Jopacity',
 			cost: ['balanced', 'balanced'],
 			damage: 100,
-			power: 'This attack does 10 hp less damage every time it is used consecutively.',
+			power:
+				'This attack does 10 hp less damage every time it is used consecutively.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const chromakeyed = game.components.filter(
 				StatusEffectComponent,
 				query.effect.targetEntity(component.entity),
-				query.effect.is(ChromaKeyedEffect)
+				query.effect.is(ChromaKeyedEffect),
 			)[0]
 			if (!chromakeyed) {
 				game.components

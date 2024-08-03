@@ -1,7 +1,16 @@
 import {CardProps} from '../cards/base/types'
-import {StatusEffectComponent, CardComponent, ObserverComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
@@ -19,7 +28,7 @@ export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent<CardProps>,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player} = target
 		if (effect.counter === null) effect.counter = this.props.counter
@@ -52,7 +61,7 @@ export class MultiturnSecondaryAttackDisabledEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent<CardProps>,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player} = target
 		if (effect.counter === null) effect.counter = this.props.counter

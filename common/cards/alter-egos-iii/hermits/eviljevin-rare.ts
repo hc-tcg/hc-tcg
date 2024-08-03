@@ -1,10 +1,10 @@
-import Card from '../../base/card'
-import query from '../../../components/query'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class EvilJevinRare extends Card {
 	props: Hermit = {
@@ -34,16 +34,21 @@ class EvilJevinRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const modalCondition = query.every(
 				query.card.currentPlayer,
 				query.card.slot(query.slot.discardPile),
-				query.card.isHermit
+				query.card.isHermit,
 			)
 
 			let pickableCards = game.components
@@ -56,11 +61,12 @@ class EvilJevinRare extends Card {
 			if (coinFlip[0] !== 'heads') return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Evil Jevin: Choose a Hermit card to retrieve from your discard pile.',
+						modalName:
+							'Evil Jevin: Choose a Hermit card to retrieve from your discard pile.',
 						modalDescription: '',
 						cards: pickableCards,
 						selectionSize: 1,

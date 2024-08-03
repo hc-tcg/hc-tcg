@@ -1,7 +1,7 @@
-import {AnyAction} from 'redux'
-import {PlayerDeckT} from 'common/types/deck'
-import {ToastT} from 'common/types/app'
 import {PlayerId} from 'common/models/player-model'
+import {ToastT} from 'common/types/app'
+import {PlayerDeckT} from 'common/types/deck'
+import {AnyAction} from 'redux'
 
 type SessionState = {
 	playerName: string
@@ -10,7 +10,12 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: PlayerDeckT
 	connecting: boolean
-	errorType?: 'invalid_name' | 'invalid_version' | 'session_expired' | 'timeout' | string
+	errorType?:
+		| 'invalid_name'
+		| 'invalid_version'
+		| 'session_expired'
+		| 'timeout'
+		| string
 	toast: ToastT
 	updates: Record<string, Array<string>>
 }
@@ -26,7 +31,10 @@ const defaultState: SessionState = {
 	updates: {},
 }
 
-const loginReducer = (state = defaultState, action: AnyAction): SessionState => {
+const loginReducer = (
+	state = defaultState,
+	action: AnyAction,
+): SessionState => {
 	switch (action.type) {
 		case 'LOGIN':
 			return {...state, connecting: true, errorType: undefined}

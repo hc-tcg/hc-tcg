@@ -35,7 +35,10 @@ const defaultState: LocalSettings = {
 	...getSettings(),
 }
 
-const localSettingsReducer = (state = defaultState, action: AnyAction): LocalSettings => {
+const localSettingsReducer = (
+	state = defaultState,
+	action: AnyAction,
+): LocalSettings => {
 	switch (action.type) {
 		case 'SET_SETTING':
 			return {...state, [action.payload.key]: action.payload.value}

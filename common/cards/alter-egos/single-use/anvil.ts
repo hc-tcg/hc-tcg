@@ -1,11 +1,16 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	PlayerComponent,
+	RowComponent,
+} from '../../../components'
+import query from '../../../components/query'
+import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, PlayerComponent, RowComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {AttackModel} from '../../../models/attack-model'
-import query from '../../../components/query'
+import {SingleUse} from '../../base/types'
 
 class Anvil extends Card {
 	props: SingleUse = {
@@ -20,7 +25,8 @@ class Anvil extends Card {
 			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
 		attackPreview: (game) => {
-			const targetAmount = this.getTargetHermits(game, game.currentPlayer).length - 1
+			const targetAmount =
+				this.getTargetHermits(game, game.currentPlayer).length - 1
 			if (targetAmount === 0) return '$A30$'
 			return `$A30$ + $A10$ x ${targetAmount}`
 		},
@@ -31,11 +37,16 @@ class Anvil extends Card {
 			RowComponent,
 			query.row.opponentPlayer,
 			query.row.hermitSlotOccupied,
-			(_game, row) => player.activeRow !== null && row.index >= player.activeRow?.index
+			(_game, row) =>
+				player.activeRow !== null && row.index >= player.activeRow?.index,
 		)
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(
@@ -54,7 +65,10 @@ class Anvil extends Card {
 												? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
 												: `, ${values.target} for ${values.damage} damage`,
 									})
-									.addDamage(component.entity, row.index === player.activeRow?.index ? 30 : 10)
+									.addDamage(
+										component.entity,
+										row.index === player.activeRow?.index ? 30 : 10,
+									)
 								if (attacks === null) {
 									return newAttack
 								} else {
@@ -62,19 +76,22 @@ class Anvil extends Card {
 									return attacks
 								}
 							},
-							null
+							null,
 						)
-				  }
+					}
 				: () =>
 						game
 							.newAttack({
 								attacker: component.entity,
-								target: game.components.findEntity(RowComponent, query.row.opponentPlayer),
+								target: game.components.findEntity(
+									RowComponent,
+									query.row.opponentPlayer,
+								),
 								type: 'effect',
 								log: (values) =>
 									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 							})
-							.addDamage(component.entity, 30)
+							.addDamage(component.entity, 30),
 		)
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {

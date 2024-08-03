@@ -1,14 +1,14 @@
-import React, {useState} from 'react'
-import css from './main-menu.module.scss'
-import {useSelector, useDispatch} from 'react-redux'
+import Button from 'components/button'
+import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
+import UpdatesModal from 'components/updates'
+import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {playVoiceTest, sectionChange} from 'logic/sound/sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {getStats} from 'logic/fbdb/fbdb-selectors'
-import MenuLayout from 'components/menu-layout'
-import Button from 'components/button'
-import UpdatesModal from 'components/updates'
+import React, {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -60,7 +60,10 @@ function Settings({setMenuSection}: Props) {
 	return (
 		<>
 			{updatesOpen ? (
-				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
+				<UpdatesModal
+					updatesOpen={updatesOpen}
+					setUpdatesOpen={setUpdatesOpen}
+				/>
 			) : (
 				<></>
 			)}

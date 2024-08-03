@@ -1,5 +1,5 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -30,11 +30,16 @@ class FalseSymmetryRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const coinFlip = flipCoin(player, component)[0]
 
@@ -42,7 +47,10 @@ class FalseSymmetryRare extends Card {
 
 			// Heal 40hp
 			component.slot.inRow() && component.slot.row.heal(40)
-			game.battleLog.addEntry(player.entity, `$p${component.props.name}$ healed $g40hp$`)
+			game.battleLog.addEntry(
+				player.entity,
+				`$p${component.props.name}$ healed $g40hp$`,
+			)
 		})
 	}
 }

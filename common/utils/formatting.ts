@@ -11,6 +11,7 @@ export type Config = {
 export type Format =
 	| 'player'
 	| 'opponent'
+	| 'spectator'
 	| 'effect'
 	| 'item'
 	| 'attack'
@@ -25,7 +26,7 @@ export type Format =
 export type FormattedTextNode =
 	| ListNode
 	| EmptyNode
-	| TextNode
+	| PlaintextNode
 	| FormatNode
 	| DifferentTextNode
 	| ProfanityNode
@@ -53,13 +54,13 @@ export function EmptyNode(): EmptyNode {
 	return {TYPE: 'EmptyNode'}
 }
 
-export type TextNode = {
-	TYPE: 'TextNode'
+export type PlaintextNode = {
+	TYPE: 'PlaintextNode'
 
 	text: string
 }
-export function TextNode(text: string): TextNode {
-	return {TYPE: 'TextNode', text}
+export function PlaintextNode(text: string): PlaintextNode {
+	return {TYPE: 'PlaintextNode', text}
 }
 
 export type FormatNode = {
@@ -68,7 +69,10 @@ export type FormatNode = {
 	format: Format
 	text: FormattedTextNode
 }
-export function FormatNode(format: Format, text: FormattedTextNode): FormatNode {
+export function FormatNode(
+	format: Format,
+	text: FormattedTextNode,
+): FormatNode {
 	return {
 		TYPE: 'FormatNode',
 		format,
@@ -79,6 +83,7 @@ export function FormatNode(format: Format, text: FormattedTextNode): FormatNode 
 const formatDict: Record<string, Format> = {
 	p: 'player',
 	o: 'opponent',
+	s: 'spectator',
 	e: 'effect',
 	m: 'item',
 	v: 'attack',
@@ -90,7 +95,7 @@ const formatDict: Record<string, Format> = {
 }
 export function formatNodefromShorthand(
 	formatShorthand: string,
-	text: FormattedTextNode
+	text: FormattedTextNode,
 ): FormatNode {
 	let format = formatDict[formatShorthand]
 	if (format == undefined) {
@@ -107,7 +112,7 @@ export type DifferentTextNode = {
 }
 export function DifferentTextNode(
 	playerText: FormattedTextNode,
-	opponentText: FormattedTextNode
+	opponentText: FormattedTextNode,
 ): DifferentTextNode {
 	return {
 		TYPE: 'DifferentTextNode',
@@ -171,7 +176,7 @@ const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 const messageParseOptions: Array<
 	[
 		(text: string, config: Config) => boolean,
-		(text: string, config: Config) => [FormattedTextNode, string]
+		(text: string, config: Config) => [FormattedTextNode, string],
 	]
 > = [
 	[
@@ -189,7 +194,7 @@ const messageParseOptions: Array<
 			let [node, remaining] = parseNodesUntil(
 				text,
 				(remaining) => remaining.startsWith('$'),
-				config
+				config,
 			)
 
 			if (node.TYPE === 'EmptyNode') {
@@ -247,7 +252,7 @@ const messageParseOptions: Array<
 			let [nodes, remaining] = parseNodesUntil(
 				text.slice(2),
 				(remaining) => remaining.startsWith('**'),
-				config
+				config,
 			)
 			remaining = remaining.slice(2)
 			return [FormatNode('bold', nodes || EmptyNode()), remaining]
@@ -270,7 +275,7 @@ const messageParseOptions: Array<
 			let [nodes, remaining] = parseNodesUntil(
 				text.slice(1),
 				(remaining) => remaining.startsWith('*'),
-				config
+				config,
 			)
 			remaining = remaining.slice(1)
 			return [FormatNode('italic', nodes || EmptyNode()), remaining]
@@ -332,7 +337,9 @@ function isAlphanumeric(char: string) {
 	)
 }
 
-function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListNode {
+function createCensoredTextNodes(
+	text: string,
+): PlaintextNode | ProfanityNode | ListNode {
 	let nodes = []
 
 	let lowercaseText = text.toLowerCase()
@@ -363,11 +370,13 @@ function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListN
 
 			if (isSpaceBefore && isSpaceAfter) {
 				if (textBefore.length > 0) {
-					nodes.push(TextNode(textBefore))
+					nodes.push(PlaintextNode(textBefore))
 				}
-				nodes.push(ProfanityNode(text.slice(startIndex, startIndex + word.length)))
+				nodes.push(
+					ProfanityNode(text.slice(startIndex, startIndex + word.length)),
+				)
 			} else {
-				nodes.push(TextNode(text.slice(0, startIndex + word.length)))
+				nodes.push(PlaintextNode(text.slice(0, startIndex + word.length)))
 			}
 
 			text = text.slice(startIndex + word.length)
@@ -377,7 +386,7 @@ function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListN
 
 	if (nodes.length != 0) {
 		if (text.length !== 0) {
-			nodes.push(TextNode(text))
+			nodes.push(PlaintextNode(text))
 		}
 		if (nodes.length === 1) {
 			return nodes[0]
@@ -385,7 +394,7 @@ function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListN
 		return ListNode(nodes)
 	}
 
-	return TextNode(text)
+	return PlaintextNode(text)
 }
 
 /* Parse the raw text that is part of a text mode or emoji node, handling escape sequences. */
@@ -429,7 +438,7 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 function parseNodesWhile(
 	text: string,
 	matches: (remaining: string) => boolean,
-	config: Config
+	config: Config,
 ): [FormattedTextNode, string] {
 	let remaining = text
 	let nodes: FormattedTextNode[] = []
@@ -448,9 +457,9 @@ function parseNodesWhile(
 			;[node, remaining] = parseSingleNode(remaining, config)
 			nodes.push(node)
 		}
-	} catch (e) {
+	} catch (_e) {
 		if (remaining.length != 0) {
-			nodes.push(TextNode(remaining))
+			nodes.push(PlaintextNode(remaining))
 			remaining = ''
 		}
 	}
@@ -470,19 +479,26 @@ function parseNodesWhile(
 function parseNodesUntil(
 	text: string,
 	matches: (remaining: string) => boolean,
-	config: Config
+	config: Config,
 ): [FormattedTextNode, string] {
 	return parseNodesWhile(text, (remaining) => !matches(remaining), config)
 }
 
 /* Parse all Nodes until the end of the string. */
 function parseNodesUntilEmpty(text: string, config: Config): FormattedTextNode {
-	let [nodes, _] = parseNodesWhile(text, (remaining) => remaining.length >= 1, config)
+	let [nodes, _] = parseNodesWhile(
+		text,
+		(remaining) => remaining.length >= 1,
+		config,
+	)
 	return nodes
 }
 
 /* Parse a TextNode */
-function parseTextNode(text: string, config: Config): [FormattedTextNode, string] {
+function parseTextNode(
+	text: string,
+	config: Config,
+): [FormattedTextNode, string] {
 	let remaining
 	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 
@@ -490,14 +506,17 @@ function parseTextNode(text: string, config: Config): [FormattedTextNode, string
 	if (config.censor) {
 		textNodes = createCensoredTextNodes(text)
 	} else {
-		textNodes = TextNode(text)
+		textNodes = PlaintextNode(text)
 	}
 
 	return [textNodes, remaining]
 }
 
 /* Parse text into a single node */
-function parseSingleNode(text: string, config: Config): [FormattedTextNode, string] {
+function parseSingleNode(
+	text: string,
+	config: Config,
+): [FormattedTextNode, string] {
 	for (let [condition, parser] of messageParseOptions) {
 		if (condition(text, config)) {
 			return parser(text, config)
@@ -535,8 +554,8 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 
 	try {
 		return parseNodesUntilEmpty(text, config)
-	} catch (e) {
-		return TextNode('There was a unrecoverable formatting error')
+	} catch (_e) {
+		return PlaintextNode('There was a unrecoverable formatting error')
 	}
 }
 
@@ -544,7 +563,7 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 export function censorString(text: string) {
 	let node = createCensoredTextNodes(text)
 
-	if (node.TYPE === 'TextNode') {
+	if (node.TYPE === 'PlaintextNode') {
 		return node.text
 	} else if (node.TYPE === 'ProfanityNode') {
 		return censorProfanityNode(node)
@@ -554,7 +573,7 @@ export function censorString(text: string) {
 
 	let listNode = node as ListNode
 	for (let textNode of listNode.nodes) {
-		if (textNode.TYPE === 'TextNode') {
+		if (textNode.TYPE === 'PlaintextNode') {
 			outputText.push(textNode.text)
 		} else if (textNode.TYPE === 'ProfanityNode') {
 			outputText.push(censorProfanityNode(textNode))
@@ -565,6 +584,8 @@ export function censorString(text: string) {
 }
 
 /* Concat a list of formatted `FormattedTextNode` into a single `FormattedTextNode */
-export function concatFormattedTextNodes(...nodes: Array<FormattedTextNode>): ListNode {
+export function concatFormattedTextNodes(
+	...nodes: Array<FormattedTextNode>
+): ListNode {
 	return ListNode(nodes)
 }

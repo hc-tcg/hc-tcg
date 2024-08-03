@@ -1,8 +1,8 @@
+import {CardComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent} from '../../../components'
 
 class Furnace extends Card {
 	props: Attach = {
@@ -17,7 +17,11 @@ class Furnace extends Card {
 			'After 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		applyStatusEffect(game, 'smelting', component)
 	}
 

@@ -1,12 +1,12 @@
-import {GameModel} from '../models/game-model'
-import {ComponentQuery} from '../components/query'
-import query from '../components/query'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import {ComponentQuery} from '../components/query'
+import query from '../components/query'
+import {GameModel} from '../models/game-model'
 
 export type StatusEffectLog = {
 	/** The status effect target */
@@ -38,7 +38,8 @@ export const statusEffect = {
 	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} ${values.verb} inflicted with ${values.statusEffect}`,
-	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
+	removeLog: (values: StatusEffectLog) =>
+		`${values.statusEffect} on ${values.target} wore off`,
 }
 
 export const systemStatusEffect = {
@@ -65,11 +66,12 @@ export const damageEffect = {
 		!game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetEntity(target.entity),
-			query.effect.type('damage')
+			query.effect.type('damage'),
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
-	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
+	removeLog: (values: StatusEffectLog) =>
+		`${values.statusEffect} on ${values.target} wore off`,
 }
 
 export function isCounter(props: StatusEffectProps | null): props is Counter {
@@ -78,7 +80,7 @@ export function isCounter(props: StatusEffectProps | null): props is Counter {
 
 export abstract class StatusEffect<
 	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps
+	Props extends StatusEffectProps = StatusEffectProps,
 > {
 	public abstract props: Props
 
@@ -86,10 +88,10 @@ export abstract class StatusEffect<
 	 * Called when this statusEffect has its target set
 	 */
 	public onApply(
-		game: GameModel,
-		effect: StatusEffectComponent,
-		target: T,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: T,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -98,10 +100,10 @@ export abstract class StatusEffect<
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
 	public onRemoval(
-		game: GameModel,
-		effect: StatusEffectComponent,
-		target: T,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: T,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -114,10 +116,10 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	 * Called when this statusEffect has its target set
 	 */
 	override onApply(
-		game: GameModel,
-		effect: StatusEffectComponent<CardComponent>,
-		target: CardComponent,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent<CardComponent>,
+		_target: CardComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -126,10 +128,10 @@ export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
 	override onRemoval(
-		game: GameModel,
-		effect: StatusEffectComponent<CardComponent>,
-		target: CardComponent,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent<CardComponent>,
+		_target: CardComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -142,10 +144,10 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 	 * Called when this statusEffect has its target set
 	 */
 	override onApply(
-		game: GameModel,
-		effect: StatusEffectComponent<PlayerComponent>,
-		player: PlayerComponent,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent<PlayerComponent>,
+		_player: PlayerComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}
@@ -154,10 +156,10 @@ export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
 	override onRemoval(
-		game: GameModel,
-		effect: StatusEffectComponent<PlayerComponent>,
-		player: PlayerComponent,
-		observer: ObserverComponent
+		_game: GameModel,
+		_effect: StatusEffectComponent<PlayerComponent>,
+		_player: PlayerComponent,
+		_observer: ObserverComponent,
 	) {
 		// default is do nothing
 	}

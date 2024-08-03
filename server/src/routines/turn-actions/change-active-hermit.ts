@@ -6,14 +6,14 @@ import {GenericActionResult} from 'common/types/game-state'
 
 function* changeActiveHermit(
 	game: GameModel,
-	turnAction: ChangeActiveHermitActionData
+	turnAction: ChangeActiveHermitActionData,
 ): Generator<any, GenericActionResult> {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
 	const pickedSlot = game.components.find(
 		SlotComponent,
-		query.slot.entity(turnAction?.payload?.entity)
+		query.slot.entity(turnAction?.payload?.entity),
 	)
 	if (!pickedSlot?.onBoard()) return 'FAILURE_INVALID_DATA'
 	const row = pickedSlot.row
@@ -38,7 +38,7 @@ function* changeActiveHermit(
 			'PLAY_HERMIT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_EFFECT_CARD',
-			'PLAY_SINGLE_USE_CARD'
+			'PLAY_SINGLE_USE_CARD',
 		)
 	}
 

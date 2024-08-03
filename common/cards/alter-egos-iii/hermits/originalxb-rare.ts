@@ -1,9 +1,13 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import OriginalXBEffect from '../../../status-effects/original-xb'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import OriginalXBEffect from '../../../status-effects/original-xb'
 
 class OriginalXBRare extends Card {
 	props: Hermit = {
@@ -28,15 +32,21 @@ class OriginalXBRare extends Card {
 			name: 'Get Good',
 			cost: ['miner', 'miner', 'any'],
 			damage: 90,
-			power: 'Your opponent must draw an extra card at the end of their next turn.',
+			power:
+				'Your opponent must draw an extra card at the end of their next turn.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			game.components
 				.new(StatusEffectComponent, OriginalXBEffect, component.entity)

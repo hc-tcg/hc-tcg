@@ -1,24 +1,24 @@
-import {useState, useEffect, useMemo} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import Background from 'components/background'
+import LostConnection from 'components/lost-connection'
+import Toast from 'components/toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {sectionChange} from 'logic/sound/sound-actions'
+import {useEffect, useMemo, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {useRouter} from './app-hooks'
-import Login from './login'
-import Game from './game'
-import MainMenu from './main-menu'
 import Deck from './deck'
-import MatchMaking from './match-making'
-import Toast from 'components/toast'
-import Settings from './main-menu/settings'
-import GameSettings from './main-menu/game-settings'
-import DataSettings from './main-menu/data-settings'
-import Credits from './main-menu/credits'
-import CreatePrivate from './main-menu/create-private'
+import Game from './game'
+import Login from './login'
+import MainMenu from './main-menu'
 import BossLanding from './main-menu/boss-landing'
-import LostConnection from 'components/lost-connection'
-import Background from 'components/background'
+import CreatePrivate from './main-menu/create-private'
+import Credits from './main-menu/credits'
+import DataSettings from './main-menu/data-settings'
+import GameSettings from './main-menu/game-settings'
+import Settings from './main-menu/settings'
+import MatchMaking from './match-making'
 
 function App() {
 	const section = useRouter()
@@ -65,7 +65,12 @@ function App() {
 	}
 
 	const background = useMemo(() => {
-		return <Background panorama={settings.panorama} disabled={!settings.panoramaEnabled} />
+		return (
+			<Background
+				panorama={settings.panorama}
+				disabled={!settings.panoramaEnabled}
+			/>
+		)
 	}, [settings.panoramaEnabled])
 
 	return (

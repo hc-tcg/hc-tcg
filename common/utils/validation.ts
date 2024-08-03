@@ -1,7 +1,7 @@
 import {CONFIG, DEBUG_CONFIG} from '../config'
-import {getDeckCost} from './ranks'
-import {LocalCardInstance} from '../types/server-requests'
 import {EXPANSIONS} from '../const/expansions'
+import {LocalCardInstance} from '../types/server-requests'
+import {getDeckCost} from './ranks'
 
 export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	if (DEBUG_CONFIG.disableDeckValidation) return
@@ -12,7 +12,7 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 
 	// Contains disabled cards
 	const hasDisabledCards = deckCards.some(
-		(card) => EXPANSIONS[card.props.expansion].disabled === false
+		(card) => EXPANSIONS[card.props.expansion].disabled === true,
 	)
 	if (hasDisabledCards) return 'Deck must not include removed cards.'
 
@@ -26,7 +26,7 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 		deckCards.some((card) => {
 			if (card.props.category === 'item') return false
 			const duplicates = deckCards.filter(
-				(filterCard) => filterCard.props.numericId === card.props.numericId
+				(filterCard) => filterCard.props.numericId === card.props.numericId,
 			)
 			return duplicates.length > limits.maxDuplicates
 		})
@@ -43,7 +43,11 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	const exactAmountText = `Deck must have exactly ${limits.minCards} cards.`
 
 	if (deckCards.length < limits.minCards)
-		return exactAmount ? exactAmountText : `Deck must have at least ${limits.minCards} cards.`
+		return exactAmount
+			? exactAmountText
+			: `Deck must have at least ${limits.minCards} cards.`
 	if (deckCards.length > limits.maxCards)
-		return exactAmount ? exactAmountText : `Deck can not have more than ${limits.maxCards} cards.`
+		return exactAmount
+			? exactAmountText
+			: `Deck can not have more than ${limits.maxCards} cards.`
 }

@@ -1,10 +1,14 @@
-import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class BadOmen extends Card {
 	props: SingleUse = {
@@ -23,10 +27,17 @@ class BadOmen extends Card {
 				name: 'badomen',
 			},
 		],
-		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.slot.opponentHasActiveHermit,
+		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		// BadOmenEffect must be applied before TrapHoleEffect flips a coin
@@ -35,10 +46,12 @@ class BadOmen extends Card {
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.isHermit,
-				query.card.row(query.row.active)
+				query.card.row(query.row.active),
 			)
 			if (!target) return
-			game.components.new(StatusEffectComponent, BadOmenEffect, component.entity).apply(target)
+			game.components
+				.new(StatusEffectComponent, BadOmenEffect, component.entity)
+				.apply(target)
 		})
 	}
 }

@@ -1,6 +1,6 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -29,28 +29,29 @@ class JinglerRare extends Card {
 			name: 'Deception',
 			cost: ['speedrunner', 'speedrunner', 'any'],
 			damage: 80,
-			power: 'Flip a coin.\nIf heads, your opponent must choose a card to discard from their hand.',
+			power:
+				'Flip a coin.\nIf heads, your opponent must choose a card to discard from their hand.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
-			if (
-				!game.components.exists(
-					CardComponent,
-					query.card.slot(query.slot.hand),
-					query.card.opponentPlayer
-				)
-			)
-				return // Do not roll if player has no more cards in hand
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
+
+			if (opponentPlayer.getHand().length === 0) return
+
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
 			game.addPickRequest({
-				playerId: opponentPlayer.id,
+				player: opponentPlayer.entity,
 				id: component.entity,
 				message: 'Pick 1 card from your hand to discard',
 				canPick: query.slot.hand,
@@ -59,7 +60,11 @@ class JinglerRare extends Card {
 				},
 				onTimeout() {
 					game.components
-						.find(CardComponent, query.card.slot(query.slot.hand), query.card.opponentPlayer)
+						.find(
+							CardComponent,
+							query.card.slot(query.slot.hand),
+							query.card.opponentPlayer,
+						)
 						?.discard()
 				},
 			})

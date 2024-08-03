@@ -1,9 +1,13 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import query from '../../../components/query'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
 import {SingleUse} from '../../base/types'
 
 class InstantHealth extends Card {
@@ -21,16 +25,21 @@ class InstantHealth extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.slot.playerHasActiveHermit,
-			query.exists(SlotComponent, this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition),
 		),
-		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g30hp$`,
+		log: (values) =>
+			`${values.defaultLog} on $p${values.pick.name}$ and healed $g30hp$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,

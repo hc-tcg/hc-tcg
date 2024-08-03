@@ -1,11 +1,12 @@
-import {takeEvery, delay} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
-import {getOpponentId} from '../../utils'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
-import {getLocalGameState} from '../../utils/state-gen'
 import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux'
 import {PlayerModel} from 'common/models/player-model'
+import {AnyAction} from 'redux'
+import {delay, takeEvery} from 'typed-redux-saga'
+import {getOpponentId} from '../../utils'
+import {broadcast} from '../../utils/comm'
+import {getLocalGameState} from '../../utils/state-gen'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
@@ -22,9 +23,19 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		game.state.timer.turnRemaining = remainingTime + graceTime
 	}
 
+	let viewer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) => viewer.playerId === player.id,
+	)
+
+	if (!viewer) {
+		console.error('Player tried to connect with invalid player id')
+		return
+	}
+
 	const payload = {
-		localGameState: getLocalGameState(game, player),
-		order: game.getPlayerIds(),
+		localGameState: getLocalGameState(game, viewer),
+		order: game.getPlayers().map((player) => player.id),
 	}
 	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)
 	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)
@@ -40,9 +51,10 @@ function* statusChangedSaga(game: GameModel, action: AnyAction) {
 function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
 		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' && !!game.players[(action.payload as PlayerModel).id],
+			action.type === 'PLAYER_RECONNECTED' &&
+			!!game.players[(action.payload as PlayerModel).id],
 		sendGameStateOnReconnect,
-		game
+		game,
 	)
 
 	yield* takeEvery(
@@ -50,7 +62,7 @@ function* connectionStatusSaga(game: GameModel) {
 			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
 			!!game.players[(action.payload as PlayerModel).id],
 		statusChangedSaga,
-		game
+		game,
 	)
 }
 

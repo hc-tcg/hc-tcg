@@ -1,9 +1,22 @@
-import {call, cancelled, fork, put, putResolve, race, take, takeEvery} from 'typed-redux-saga'
-import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
-import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
-import {codeReceived, invalidCode, waitingForPlayer, clearMatchmaking} from './matchmaking-actions'
+import gameSaga from 'logic/game/game-saga'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {queueVoice} from 'logic/sound/sound-actions'
+import {
+	call,
+	cancelled,
+	fork,
+	put,
+	race,
+	take,
+	takeEvery,
+} from 'typed-redux-saga'
+import {
+	clearMatchmaking,
+	codeReceived,
+	invalidCode,
+	waitingForPlayer,
+} from './matchmaking-actions'
 
 function* createBossGameSaga() {
 	function* matchmaking() {

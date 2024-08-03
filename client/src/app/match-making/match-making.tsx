@@ -1,12 +1,16 @@
+import Button from 'components/button'
+import ErrorBanner from 'components/error-banner'
+import Spinner from 'components/spinner'
+import TcgLogo from 'components/tcg-logo'
+import {leaveMatchmaking, setCode} from 'logic/matchmaking/matchmaking-actions'
+import {
+	getCode,
+	getInvalidCode,
+	getStatus,
+} from 'logic/matchmaking/matchmaking-selectors'
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {setCode, leaveMatchmaking} from 'logic/matchmaking/matchmaking-actions'
-import {getStatus, getCode, getInvalidCode} from 'logic/matchmaking/matchmaking-selectors'
 import css from './match-making.module.scss'
-import TcgLogo from 'components/tcg-logo'
-import Button from 'components/button'
-import Spinner from 'components/spinner'
-import ErrorBanner from 'components/error-banner'
 
 function MatchMaking() {
 	const dispatch = useDispatch()

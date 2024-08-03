@@ -1,13 +1,18 @@
+import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
+import {PlayerModel} from 'common/models/player-model'
+import {
+	FormatNode,
+	PlaintextNode,
+	concatFormattedTextNodes,
+	formatText,
+} from 'common/utils/formatting'
+import {AnyAction} from 'redux'
 import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import {PlayerModel} from 'common/models/player-model'
-import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux'
-import {VirtualPlayerModel} from 'common/models/virtual-player-model'
-import {concatFormattedTextNodes, formatText} from 'common/utils/formatting'
 
 const gameAction =
-	(type: string, game: {players: Record<string, PlayerModel | VirtualPlayerModel>}) =>
+	(type: string, game: {players: Record<string, PlayerModel>}) =>
 	(action: any) => {
 		return action.type === type && !!game.players[action.playerId]
 	}
@@ -18,17 +23,27 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	if (message.length < 1) return
 	if (message.length > 140) return
 
+	const isSpectator = game.components.find(
+		ViewerComponent,
+		(_game, component) => component.player.id === playerId,
+	)?.spectator
+
 	game.chat.push({
+		sender: {
+			type: 'viewer',
+			id: playerId,
+		},
 		message: concatFormattedTextNodes(
-			formatText(`$p${game.players[playerId].name}$ `, {censor: true}),
+			FormatNode(
+				isSpectator ? 'spectator' : 'player',
+				PlaintextNode(`${game.players[playerId].name}`),
+			),
 			formatText(message, {
 				censor: true,
 				'enable-$': false,
-			})
+			}),
 		),
 		createdAt: Date.now(),
-		systemMessage: false,
-		sender: playerId,
 	})
 	broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 }

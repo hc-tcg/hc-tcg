@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
-import {Hermit} from '../../base/types'
-import {hermit} from '../../base/defaults'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 import BdoubleO100Common from './bdoubleo100-common'
 import BdoubleO100Rare from './bdoubleo100-rare'
 import TangoTekCommon from './tangotek-common'
@@ -35,18 +35,28 @@ class ImpulseSVRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const boomerAmount = game.components.filter(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.attached,
-				query.card.is(BdoubleO100Common, BdoubleO100Rare, TangoTekCommon, TangoTekRare),
-				query.not(query.card.active)
+				query.card.is(
+					BdoubleO100Common,
+					BdoubleO100Rare,
+					TangoTekCommon,
+					TangoTekRare,
+				),
+				query.not(query.card.active),
 			).length
 
 			attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)

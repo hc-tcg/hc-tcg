@@ -1,21 +1,21 @@
 import type Card from './base/card'
 
-import defaultEffectCards from './default/effects'
-import alterEgoEffectCards from './alter-egos/effects'
-// import adventOfTcgEffectCards from './advent-of-tcg/effects'
-import defaultHermitCards from './default/hermits'
-import alterEgosHermitCards from './alter-egos/hermits'
-// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
-import bossHermitCards from './boss/hermits'
-import defaultItemCards from './default/items'
-import defaultSingleUseCards from './default/single-use'
-import alterEgosSingleUseCards from './alter-egos/single-use'
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits'
 import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
 import alterEgosIIIItemCards from './alter-egos-iii/items'
-import seasonXHermitCards from './season-x/hermits'
+import alterEgoEffectCards from './alter-egos/effects'
+import alterEgosHermitCards from './alter-egos/hermits'
+import alterEgosSingleUseCards from './alter-egos/single-use'
 import {CardClass} from './base/card'
+import bossHermitCards from './boss/hermits'
+import defaultEffectCards from './default/effects'
+// import adventOfTcgEffectCards from './advent-of-tcg/effects'
+import defaultHermitCards from './default/hermits'
+// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
+import defaultItemCards from './default/items'
+import defaultSingleUseCards from './default/single-use'
+import seasonXHermitCards from './season-x/hermits'
 
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
@@ -33,7 +33,10 @@ const hermitCardClasses: Array<CardClass> = [
 	...alterEgosIIIHermitCards,
 ]
 
-const itemCardClasses: Array<CardClass> = [...defaultItemCards, ...alterEgosIIIItemCards]
+const itemCardClasses: Array<CardClass> = [
+	...defaultItemCards,
+	...alterEgosIIIItemCards,
+]
 
 const singleUseCardClasses: Array<CardClass> = [
 	...defaultSingleUseCards,
@@ -58,7 +61,7 @@ export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
 		result[card.props.id] = card
 		return result
 	},
-	{}
+	{},
 )
 
 export const CARDS_LIST = allCardClasses.map((card) => new card(card))

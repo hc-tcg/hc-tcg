@@ -1,8 +1,8 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Glowstone extends Card {
 	props: SingleUse = {
@@ -18,19 +18,26 @@ class Glowstone extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(component, () => {
 			if (!opponentPlayer.pile.length) return // Do nothing if opponent has no more cards to draw
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
 						modalName: 'Glowstone: Choose the card for your opponent to draw.',
-						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
-						cards: opponentPlayer.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
+						modalDescription:
+							'The other two cards will be placed on the bottom of their deck.',
+						cards: opponentPlayer.pile
+							.slice(0, 3)
+							.map((card) => card.toLocalCardInstance()),
 						selectionSize: 1,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -67,7 +74,7 @@ class Glowstone extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

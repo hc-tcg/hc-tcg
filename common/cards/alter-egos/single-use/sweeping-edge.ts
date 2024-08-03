@@ -1,17 +1,24 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SweepingEdge extends Card {
 	discardCondition = query.every(
-		query.some(query.slot.active, query.slot.row(query.row.adjacent(query.row.active))),
+		query.some(
+			query.slot.active,
+			query.slot.row(query.row.adjacent(query.row.active)),
+		),
 		query.slot.attach,
 		query.slot.opponent,
 		query.not(query.slot.empty),
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	)
 
 	props: SingleUse = {
@@ -27,11 +34,15 @@ class SweepingEdge extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.discardCondition)
+			query.exists(SlotComponent, this.discardCondition),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {

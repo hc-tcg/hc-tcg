@@ -49,7 +49,11 @@ export default class ComponentTable {
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
-		const value = new newValue(this.game, newEntity<T['entity']>(newValue.name), ...args)
+		const value = new newValue(
+			this.game,
+			newEntity<T['entity']>(newValue.name),
+			...args,
+		)
 		this.data[value.entity] = value
 		return value
 	}
@@ -67,7 +71,9 @@ export default class ComponentTable {
 	): Array<T> {
 		return Object.values(this.data)
 			.filter((x) => x instanceof type)
-			.filter((value) => predicates.every((predicate) => predicate(this.game, value as T))) as any
+			.filter((value) =>
+				predicates.every((predicate) => predicate(this.game, value as T)),
+			) as any
 	}
 
 	public filterEntities<T extends Component>(

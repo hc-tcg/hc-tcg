@@ -1,10 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../../components'
+import {ObserverEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import Card, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import {ObserverEntity} from '../../../entities'
 
 class WormManRare extends Card {
 	props: Hermit = {
@@ -37,11 +36,16 @@ class WormManRare extends Card {
 
 	observers = new InstancedValue<Array<ObserverEntity>>(() => [])
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
 
@@ -49,16 +53,22 @@ class WormManRare extends Card {
 				game.addBlockedActions(this.props.id, 'PLAY_HERMIT_CARD')
 				attachedComponent.turnedOver = true
 
-				const newObserver = game.components.new(ObserverComponent, attachedComponent.entity)
-				this.observers.set(component, [...this.observers.get(component), newObserver.entity])
+				const newObserver = game.components.new(
+					ObserverComponent,
+					attachedComponent.entity,
+				)
+				this.observers.set(component, [
+					...this.observers.get(component),
+					newObserver.entity,
+				])
 
 				newObserver.subscribe(
 					player.hooks.onActiveRowChange,
-					(oldActiveHermit, newActiveHermit) => {
+					(_oldActiveHermit, newActiveHermit) => {
 						if (newActiveHermit.entity !== attachedComponent.entity) return
 						attachedComponent.turnedOver = false
 						newObserver.unsubscribe(player.hooks.freezeSlots)
-					}
+					},
 				)
 
 				observer.unsubscribe(player.hooks.onAttach)
@@ -70,7 +80,11 @@ class WormManRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	override onDetach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		this.observers.get(component).forEach((observerEntity) => {

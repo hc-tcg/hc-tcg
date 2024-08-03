@@ -1,16 +1,16 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import Card from '../../base/card'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../../../components'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
-import UsedClockEffect from '../../../status-effects/used-clock'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
+import UsedClockEffect from '../../../status-effects/used-clock'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Clock extends Card {
 	props: SingleUse = {
@@ -36,15 +36,20 @@ class Clock extends Card {
 				query.exists(
 					PlayerComponent,
 					query.player.currentPlayer,
-					query.player.hasStatusEffect(UsedClockEffect)
-				)
+					query.player.hasStatusEffect(UsedClockEffect),
+				),
 			),
-			(game, _pos) => game.state.turn.turnNumber !== 1
+			(game, _pos) => game.state.turn.turnNumber !== 1,
 		),
-		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
+		log: (values) =>
+			`${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {opponentPlayer, player} = component
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components

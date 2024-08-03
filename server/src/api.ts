@@ -1,15 +1,23 @@
-import {CONFIG} from 'common/config'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
-import {createRequire} from 'module'
-import root from './serverRoot'
 import fetch from 'node-fetch'
-import {PlayerComponent} from 'common/components'
-import query from 'common/components/query'
-import {PlayerInfo} from 'common/types/server-requests'
-const require = createRequire(import.meta.url)
+import root from './serverRoot'
 
-type PlayerStateT = PlayerInfo & {
-	lives: number
+function getPlayers(game: GameModel) {
+	return game.components.filter(ViewerComponent).flatMap((viewer) => {
+		if (viewer.spectator) return []
+		let player = viewer.playerOnLeft
+		return [
+			{
+				playerId: viewer.playerId,
+				playerName: player.playerName,
+				censoredPlayerName: player.censoredPlayerName,
+				minecraftName: player.minecraftName,
+				lives: player.lives,
+				deck: player.getDeck().map((card) => card.props.id),
+			},
+		]
+	})
 }
 
 export function registerApis(app: import('express').Express) {
@@ -38,20 +46,11 @@ export function registerApis(app: import('express').Express) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									players: g.components.filter(PlayerComponent).map((player) => {
-										return {
-											playerId: player.id,
-											playerName: player.playerName,
-											censoredPlayerName: player.censoredPlayerName,
-											minecraftName: player.minecraftName,
-											lives: player.lives,
-											deck: player.getDeck().map((card) => card.props.id),
-										}
-									}),
+									players: getPlayers(g),
 									state: g.state,
 								}
-							})
-						)
+							}),
+						),
 					)
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
@@ -73,7 +72,7 @@ export function registerApis(app: import('express').Express) {
 						playerId: null,
 					}
 
-					console.log(`Private game created via api.`, `Code: ${code}`)
+					console.log('Private game created via api.', `Code: ${code}`)
 
 					res.status(201).send({
 						code,
@@ -98,16 +97,7 @@ export function registerApis(app: import('express').Express) {
 						createdTime: game.createdTime,
 						id: game.id,
 						code: game.code,
-						players: game.components.filter(PlayerComponent).map((player) => {
-							return {
-								playerId: player.id,
-								playerName: player.playerName,
-								censoredPlayerName: player.censoredPlayerName,
-								minecraftName: player.minecraftName,
-								lives: player.lives,
-								deck: player.getDeck().map((card) => card.props.id),
-							}
-						}),
+						players: getPlayers(game),
 						state: game.state,
 					}),
 				})
@@ -129,16 +119,7 @@ export function registerApis(app: import('express').Express) {
 						endTime: Date.now(),
 						id: game.id,
 						code: game.code,
-						players: game.components.filter(PlayerComponent).map((player) => {
-							return {
-								playerId: player.id,
-								playerName: player.playerName,
-								censoredPlayerName: player.censoredPlayerName,
-								minecraftName: player.minecraftName,
-								lives: player.lives,
-								deck: player.getDeck().map((card) => card.props.id),
-							}
-						}),
+						players: getPlayers(game),
 						endInfo: game.endInfo,
 						state: game.state,
 					}),
@@ -161,7 +142,9 @@ export function registerApis(app: import('express').Express) {
 					}),
 				})
 			} catch (e) {
-				console.log('Error notifying discord bot about cancelled private game: ' + e)
+				console.log(
+					'Error notifying discord bot about cancelled private game: ' + e,
+				)
 			}
 		})
 
@@ -174,7 +157,7 @@ export function registerApis(app: import('express').Express) {
 			.catch()
 
 		console.log('apis registered')
-	} catch (err) {
+	} catch (_err) {
 		console.log('no api keys found')
 	}
 }

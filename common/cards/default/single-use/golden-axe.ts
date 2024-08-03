@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class GoldenAxe extends Card {
 	selectionAvailable = false
@@ -23,7 +23,11 @@ class GoldenAxe extends Card {
 		attackPreview: (_game) => '$A40$',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
@@ -46,7 +50,13 @@ class GoldenAxe extends Card {
 			}
 
 			attack.shouldIgnoreCards.push(
-				query.card.slot(query.every(query.slot.opponent, query.slot.attach, query.slot.active))
+				query.card.slot(
+					query.every(
+						query.slot.opponent,
+						query.slot.attach,
+						query.slot.active,
+					),
+				),
 			)
 		})
 	}

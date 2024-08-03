@@ -1,13 +1,17 @@
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CoinFlipResult} from '../types/game-state'
-import {flipCoin} from '../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import {GameModel} from '../models/game-model'
+import {CoinFlipResult} from '../types/game-state'
+import {flipCoin} from '../utils/coinFlips'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class SheepStareEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -22,7 +26,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 		const activeHermit = player.getActiveHermit()
@@ -33,11 +37,20 @@ class SheepStareEffect extends PlayerStatusEffect {
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
 				if (!activeHermit) return
-				const coinFlip = flipCoin(player.opponentPlayer, effect.creator, 1, player)
+				const coinFlip = flipCoin(
+					player.opponentPlayer,
+					effect.creator,
+					1,
+					player,
+				)
 				coinFlipResult = coinFlip[0]
 			}
 
-			if (!(attack.attacker instanceof CardComponent) || !attack.attacker.slot.inRow()) return
+			if (
+				!(attack.attacker instanceof CardComponent) ||
+				!attack.attacker.slot.inRow()
+			)
+				return
 
 			if (coinFlipResult === 'heads') {
 				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)

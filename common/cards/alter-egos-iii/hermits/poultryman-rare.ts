@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import Egg from '../../alter-egos/single-use/egg'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import Egg from '../../alter-egos/single-use/egg'
 
 class PoultryManRare extends Card {
 	props: Hermit = {
@@ -30,20 +30,26 @@ class PoultryManRare extends Card {
 			shortName: 'Chicken C.',
 			cost: ['farm', 'farm', 'any'],
 			damage: 90,
-			power: 'When played with egg, egg is returned to your hand instead of being discarded.',
+			power:
+				'When played with egg, egg is returned to your hand instead of being discarded.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const singleUse = game.components.find(
 				CardComponent,
 				query.card.slot(query.slot.singleUse),
-				query.card.is(Egg)
+				query.card.is(Egg),
 			)
 
 			if (singleUse) {
