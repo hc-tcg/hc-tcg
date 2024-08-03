@@ -6,12 +6,11 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
+import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
-import {PlayerModel} from '../models/player-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 
@@ -22,22 +21,11 @@ import {GameState} from '../types/game-state'
  */
 export function setupComponents(
 	components: ComponentTable,
-	player1: PlayerModel,
-	player2: PlayerModel,
+	player1: PlayerDefs,
+	player2: PlayerDefs,
 ) {
 	let player1Component = components.new(PlayerComponent, player1)
 	let player2Component = components.new(PlayerComponent, player2)
-
-	components.new(ViewerComponent, {
-		playerOnLeft: player1Component.entity,
-		player: player1,
-		spectator: false,
-	})
-	components.new(ViewerComponent, {
-		playerOnLeft: player2Component.entity,
-		player: player2,
-		spectator: false,
-	})
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)
@@ -46,7 +34,7 @@ export function setupComponents(
 
 function setupEcsForPlayer(
 	components: ComponentTable,
-	playerModel: PlayerModel,
+	playerModel: PlayerDefs,
 	playerEntity: PlayerEntity,
 ) {
 	for (const card of playerModel.deck.cards) {

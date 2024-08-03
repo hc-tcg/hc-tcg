@@ -5,6 +5,7 @@ import {
 	RowComponent,
 	SlotComponent,
 } from '../components'
+import {PlayerDefs} from '../components/player-component'
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
 import {PlayerEntity, SlotEntity} from '../entities'
@@ -51,7 +52,6 @@ export class GameModel {
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public players: Record<PlayerId, PlayerModel>
 	public task: any
 	public state: GameState
 
@@ -67,14 +67,10 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
-	constructor(
-		player1: PlayerModel,
-		player2: PlayerModel,
-		code: string | null = null,
-	) {
+	constructor(player1: PlayerDefs, player2: PlayerDefs, code?: string) {
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code
+		this.internalCode = code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -85,11 +81,6 @@ export class GameModel {
 			winner: null,
 			outcome: null,
 			reason: null,
-		}
-
-		this.players = {
-			[player1.id]: player1,
-			[player2.id]: player2,
 		}
 
 		this.components = new ComponentTable(this)
@@ -119,12 +110,18 @@ export class GameModel {
 		return this.components.filter(ViewerComponent)
 	}
 
-	public getPlayerIds() {
-		return Object.keys(this.players) as Array<PlayerId>
+	public get players() {
+		return this.viewers.reduce(
+			(acc, viewer) => {
+				acc[viewer.player.id] = viewer.player
+				return acc
+			},
+			{} as Record<PlayerId, PlayerModel>,
+		)
 	}
 
 	public getPlayers() {
-		return Object.values(this.players)
+		return this.viewers.map((viewer) => viewer.player)
 	}
 
 	public get createdTime() {

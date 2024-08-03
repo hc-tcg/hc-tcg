@@ -1,10 +1,10 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import type {PlayerModel} from '../models/player-model'
 import {PlayerStatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
+import {PlayerDeckT} from '../types/deck'
 import type {
 	CoinFlipResult,
 	CurrentCoinFlip,
@@ -17,6 +17,14 @@ import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+
+/** The minimal information that must be known about a player to start a game */
+export type PlayerDefs = {
+	deck: PlayerDeckT
+	name: string
+	minecraftName: string
+	censoredName: string
+}
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -130,7 +138,7 @@ export class PlayerComponent {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
