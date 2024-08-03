@@ -18,6 +18,10 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	if (message.length > 140) return
 
 	game.chat.push({
+		sender: {
+			type: 'viewer',
+			id: playerId,
+		},
 		message: concatFormattedTextNodes(
 			formatText(`$p${game.players[playerId].name}$ `, {censor: true}),
 			formatText(message, {
@@ -26,8 +30,6 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 			}),
 		),
 		createdAt: Date.now(),
-		systemMessage: false,
-		sender: playerId,
 	})
 	broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 }

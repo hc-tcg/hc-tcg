@@ -205,12 +205,18 @@ export type LocalGameState = {
 	}
 }
 
+type MessageSender =
+	| {
+			type: 'viewer'
+			id: PlayerId
+	  }
+	| {
+			type: 'system'
+			id: PlayerEntity
+	  }
+
 export type Message = {
-	/** Chat messages are tied to the player id, while battle log messages are tied to entity.
-	 * This allows us to seperate the concept of players and viewers.
-	 */
-	sender: PlayerId | PlayerEntity
-	systemMessage: boolean
+	sender: MessageSender
 	message: FormattedTextNode
 	createdAt: number
 }
