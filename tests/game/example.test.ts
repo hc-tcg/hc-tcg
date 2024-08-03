@@ -23,5 +23,6 @@ describe('example test module', () => {
 		)
 
 		let saga = turnSaga(game)
+		saga.next()
 	})
 })

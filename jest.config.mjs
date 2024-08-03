@@ -12,10 +12,11 @@ const config = {
 
 	roots: ['tests', 'common', 'server'],
 
-  moduleNameMapper: {
-    '^common/(.*)$': '<rootDir>/common/$1',
-    '^server/(.*)$': '<rootDir>/server/src/$1',
-  },
+	moduleNameMapper: {
+		'^client/(.*)$': '<rootDir>/client/src/$1',
+		'^common/(.*)$': '<rootDir>/common/$1',
+		'^server/(.*)$': '<rootDir>/server/src/$1',
+	},
 
 	// A map from regular expressions to paths to transformers
 	transform: {
