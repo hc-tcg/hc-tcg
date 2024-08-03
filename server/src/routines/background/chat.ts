@@ -1,15 +1,15 @@
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {
-	concatFormattedTextNodes,
 	FormatNode,
-	formatText,
 	PlaintextNode,
+	concatFormattedTextNodes,
+	formatText,
 } from 'common/utils/formatting'
 import {AnyAction} from 'redux'
 import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import {ViewerComponent} from 'common/components/viewer-component'
 
 const gameAction =
 	(type: string, game: {players: Record<string, PlayerModel>}) =>
