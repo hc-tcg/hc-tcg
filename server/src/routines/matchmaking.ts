@@ -47,16 +47,19 @@ function setupGame(
 		code,
 	)
 
+	let playerEntities = game.components.filterEntities(PlayerComponent)
+
+	// Note player one must be added before player two to make sure each player has the right deck.
 	game.components.new(ViewerComponent, {
 		player: player1,
 		spectator: false,
-		playerOnLeft: game.state.order[0],
+		playerOnLeft: playerEntities[0],
 	})
 
 	game.components.new(ViewerComponent, {
 		player: player2,
 		spectator: false,
-		playerOnLeft: game.state.order[1],
+		playerOnLeft: playerEntities[1],
 	})
 
 	return game
