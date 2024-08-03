@@ -33,7 +33,7 @@ jobs:
         run: npm run server:tsc
 
       - name: Run biome
-        run: npm run check
+        run: npm run lint
 
   unittest:
     name: Run Unit Tests
