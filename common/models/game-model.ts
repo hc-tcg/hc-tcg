@@ -22,8 +22,8 @@ import {Hook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {PickRequest} from '../types/server-requests'
 import {
-	getGameState,
 	PlayerSetupDefs,
+	getGameState,
 	setupComponents,
 } from '../utils/state-gen'
 import {AttackModel} from './attack-model'

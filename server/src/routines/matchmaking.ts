@@ -1,4 +1,5 @@
 import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -21,7 +22,6 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
-import {ViewerComponent} from 'common/components/viewer-component'
 
 export type ClientMessage = {
 	type: string
