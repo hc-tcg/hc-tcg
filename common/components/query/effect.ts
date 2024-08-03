@@ -1,11 +1,17 @@
-import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
-import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
-import {CardEntity, PlayerEntity} from '../../entities'
 import query from '.'
+import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
+import {CardEntity, PlayerEntity} from '../../entities'
+import {
+	CardStatusEffect,
+	StatusEffect,
+	StatusEffectProps,
+} from '../../status-effects/status-effect'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
-import('../../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
+import('../../status-effects').then(
+	(mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS),
+)
 
 export function id(id: string): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => statusEffect.props.icon === id
@@ -15,7 +21,9 @@ export function is(
 	...effect: Array<new () => StatusEffect>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		effect.some((e) => STATUS_EFFECTS[e.name].props.icon === statusEffect.props.icon)
+		effect.some(
+			(e) => STATUS_EFFECTS[e.name].props.icon === statusEffect.props.icon,
+		)
 }
 
 export function targetIsPlayerAnd(
@@ -37,7 +45,7 @@ export function targetIsCardAnd(
 }
 
 export function targetEntity(
-	target: CardEntity | PlayerEntity | null | undefined
+	target: CardEntity | PlayerEntity | null | undefined,
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
 		statusEffect.targetEntity !== null &&

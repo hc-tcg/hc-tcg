@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
 import {CardComponent} from '../../../components'
+import {query} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Lantern extends Card {
 	props: SingleUse = {
@@ -19,22 +19,28 @@ class Lantern extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length >= 4
+			(_game, pos) => pos.player.pile.length >= 4,
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
 						modalName: 'Lantern: Choose 2 cards to draw immediately.',
 						modalDescription: '',
-						cards: player.pile.slice(0, 4).map((card) => card.toLocalCardInstance()),
+						cards: player.pile
+							.slice(0, 4)
+							.map((card) => card.toLocalCardInstance()),
 						selectionSize: 2,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -89,7 +95,7 @@ class Lantern extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

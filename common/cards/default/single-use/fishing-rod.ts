@@ -1,8 +1,8 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class FishingRod extends Card {
 	props: SingleUse = {
@@ -18,7 +18,11 @@ class FishingRod extends Card {
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {

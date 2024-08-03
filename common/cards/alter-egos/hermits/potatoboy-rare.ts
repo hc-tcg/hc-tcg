@@ -1,9 +1,13 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from '../../../components'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
-import {Hermit} from '../../base/types'
 import {hermit} from '../../base/defaults'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {Hermit} from '../../base/types'
 
 class PotatoBoyRare extends Card {
 	props: Hermit = {
@@ -32,17 +36,22 @@ class PotatoBoyRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			game.components
 				.filter(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.adjacent(query.row.active),
-					query.row.hasHermit
+					query.row.hasHermit,
 				)
 				.forEach((row) => {
 					row.heal(40)
@@ -51,7 +60,7 @@ class PotatoBoyRare extends Card {
 						player.entity,
 						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
 							component.props.name
-						}$`
+						}$`,
 					)
 				})
 		})

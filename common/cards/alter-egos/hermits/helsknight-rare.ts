@@ -1,9 +1,13 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 
 class HelsknightRare extends Card {
 	props: Hermit = {
@@ -33,11 +37,16 @@ class HelsknightRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			game.components
 				.new(StatusEffectComponent, TrapHoleEffect, component.entity)
 				.apply(opponentPlayer.entity)

@@ -1,5 +1,5 @@
-import {Server} from 'socket.io'
 import {CONFIG} from 'common/config'
+import {Server} from 'socket.io'
 import store from './be-store'
 import version from './version'
 
@@ -47,7 +47,7 @@ function startSocketIO(server: any) {
 			type: 'CLIENT_CONNECTED',
 			payload: {socket, ...socket.handshake.auth},
 		})
-		socket.onAny((event, message) => {
+		socket.onAny((_event, message) => {
 			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})

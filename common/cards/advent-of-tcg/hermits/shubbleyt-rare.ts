@@ -1,5 +1,5 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -40,7 +40,7 @@ class ShubbleYTRare extends Card {
 			if (attack.type !== 'secondary') return
 
 			game.addModalRequest({
-				playerId: player.id,
+				player: player.entity,
 				data: {
 					modalId: 'selectCards',
 					payload: {
@@ -73,7 +73,7 @@ class ShubbleYTRare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

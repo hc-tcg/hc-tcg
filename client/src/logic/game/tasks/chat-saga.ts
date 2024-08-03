@@ -1,9 +1,11 @@
-import {takeEvery, call, put, fork} from 'redux-saga/effects'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {SagaIterator} from 'redux-saga'
+import {call, fork, put, takeEvery} from 'redux-saga/effects'
 import {chatMessage, chatUpdate} from '../game-actions'
-import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 
-function* chatMessageSaga(action: ReturnType<typeof chatMessage>): SagaIterator {
+function* chatMessageSaga(
+	action: ReturnType<typeof chatMessage>,
+): SagaIterator {
 	yield call(sendMsg, 'CHAT_MESSAGE', action.payload)
 }
 

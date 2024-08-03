@@ -1,10 +1,14 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import WeaknessEffect from '../../../status-effects/weakness'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class PotionOfWeakness extends Card {
 	props: SingleUse = {
@@ -15,7 +19,8 @@ class PotionOfWeakness extends Card {
 		expansion: 'alter_egos',
 		rarity: 'common',
 		tokens: 2,
-		description: "Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
+		description:
+			"Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
 		sidebarDescriptions: [
 			{
 				type: 'glossary',
@@ -23,10 +28,17 @@ class PotionOfWeakness extends Card {
 			},
 		],
 		showConfirmationModal: true,
-		attachCondition: query.every(singleUse.attachCondition, query.slot.opponentHasActiveHermit),
+		attachCondition: query.every(
+			singleUse.attachCondition,
+			query.slot.opponentHasActiveHermit,
+		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {opponentPlayer, player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {

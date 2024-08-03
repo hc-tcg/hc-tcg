@@ -1,11 +1,11 @@
-import {select} from 'typed-redux-saga'
-import {call, put} from 'redux-saga/effects'
-import {SagaIterator} from 'redux-saga'
-import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {setOpenedModal} from 'logic/game/game-actions'
 import {isSingleUse} from 'common/cards/base/types'
+import {LocalGameState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {setOpenedModal} from 'logic/game/game-actions'
+import {SagaIterator} from 'redux-saga'
+import {call, put} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
+import {getPlayerEntity} from '../game-selectors'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 	if (isSingleUse(card.props) && card.props.showConfirmationModal) {
@@ -14,8 +14,8 @@ function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 }
 
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
-	const playerId = yield* select(getPlayerId)
-	const pState = gameState.players[playerId]
+	const player = yield* select(getPlayerEntity)
+	const pState = gameState.players[player]
 	const lastActionResult = gameState.lastActionResult
 
 	if (gameState.currentModalData && gameState.currentModalData.modalId) {

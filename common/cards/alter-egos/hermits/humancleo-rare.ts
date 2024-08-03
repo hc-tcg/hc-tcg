@@ -1,10 +1,14 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import BetrayedEffect from '../../../status-effects/betrayed'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import BetrayedEffect from '../../../status-effects/betrayed'
 
 class HumanCleoRare extends Card {
 	props: Hermit = {
@@ -34,11 +38,16 @@ class HumanCleoRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const coinFlip = flipCoin(player, component, 2)
 

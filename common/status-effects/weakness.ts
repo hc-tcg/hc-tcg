@@ -1,6 +1,15 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class WeaknessEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -13,10 +22,10 @@ class WeaknessEffect extends CardStatusEffect {
 	}
 
 	public override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
@@ -31,7 +40,11 @@ class WeaknessEffect extends CardStatusEffect {
 
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (!target.slot.inRow()) return
-			if (attack.targetEntity !== target.slot.rowEntity || attack.createWeakness === 'never') return
+			if (
+				attack.targetEntity !== target.slot.rowEntity ||
+				attack.createWeakness === 'never'
+			)
+				return
 			attack.createWeakness = 'always'
 		})
 	}

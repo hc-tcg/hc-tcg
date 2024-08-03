@@ -1,6 +1,14 @@
-import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	hiddenStatusEffect,
+} from './status-effect'
 
 class CurseOfBindingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
@@ -13,7 +21,7 @@ class CurseOfBindingEffect extends PlayerStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT')

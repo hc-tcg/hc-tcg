@@ -1,17 +1,17 @@
+import {CardComponent} from 'common/components'
+import query from 'common/components/query'
+import {DEBUG_CONFIG} from 'common/config'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
-import {DEBUG_CONFIG} from 'common/config'
+import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
-import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
-import query from 'common/components/query'
-import {CardComponent} from 'common/components'
 
 function getAttack(
 	game: GameModel,
 	creator: CardComponent,
-	hermitAttackType: HermitAttackType
+	hermitAttackType: HermitAttackType,
 ): Array<AttackModel> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
@@ -41,7 +41,7 @@ function getAttack(
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
-	checkForRequests = true
+	checkForRequests = true,
 ): Generator<any, GenericActionResult> {
 	if (!turnAction?.type) {
 		return 'FAILURE_INVALID_DATA'
@@ -53,7 +53,7 @@ function* attackSaga(
 		CardComponent,
 		query.card.currentPlayer,
 		query.card.isHermit,
-		query.card.active
+		query.card.active,
 	)
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
@@ -71,15 +71,41 @@ function* attackSaga(
 	}
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttack(game, activeInstance, hermitAttackType)
+	let attacks: Array<AttackModel> = getAttack(
+		game,
+		activeInstance,
+		hermitAttackType,
+	)
 
-	const thisAttackSU = game.components.find(CardComponent, query.card.slot(query.slot.singleUse))
+	const thisAttackSU = game.components.find(
+		CardComponent,
+		query.card.slot(query.slot.singleUse),
+	)
+
+	// We block the actions before attacks to allow attacks to unblock actions if they need to.
+	game.addCompletedActions(
+		'SINGLE_USE_ATTACK',
+		'PRIMARY_ATTACK',
+		'SECONDARY_ATTACK',
+	)
+	game.addBlockedActions(
+		'game',
+		'PLAY_HERMIT_CARD',
+		'PLAY_ITEM_CARD',
+		'PLAY_EFFECT_CARD',
+		'PLAY_SINGLE_USE_CARD',
+		'CHANGE_ACTIVE_HERMIT',
+	)
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)
 
 	attacks.forEach((attack) => {
-		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSU)
+		game.battleLog.addAttackEntry(
+			attack,
+			game.currentPlayer.coinFlips,
+			thisAttackSU,
+		)
 	})
 
 	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)

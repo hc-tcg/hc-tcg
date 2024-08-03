@@ -1,6 +1,15 @@
-import {StatusEffectProps, Counter, statusEffect, CardStatusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class SleepingEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -17,7 +26,7 @@ class SleepingEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
@@ -30,14 +39,14 @@ class SleepingEffect extends CardStatusEffect {
 			this.props.icon,
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
-			'CHANGE_ACTIVE_HERMIT'
+			'CHANGE_ACTIVE_HERMIT',
 		)
 
 		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
 			player.entity,
-			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`
+			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`,
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
@@ -54,7 +63,7 @@ class SleepingEffect extends CardStatusEffect {
 					this.props.icon,
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
-					'CHANGE_ACTIVE_HERMIT'
+					'CHANGE_ACTIVE_HERMIT',
 				)
 			}
 		})

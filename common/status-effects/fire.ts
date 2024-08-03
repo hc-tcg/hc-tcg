@@ -1,7 +1,15 @@
-import {CardStatusEffect, StatusEffectProps, damageEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	damageEffect,
+} from './status-effect'
 
 class FireEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -17,7 +25,7 @@ class FireEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = target
 
@@ -28,11 +36,12 @@ class FireEffect extends CardStatusEffect {
 				target: target.slot.row.entity,
 				player: opponentPlayer.entity,
 				type: 'status-effect',
-				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
+				log: (values) =>
+					`${values.target} took ${values.damage} damage from $bBurn$`,
 			})
 			statusEffectAttack.addDamage(target.entity, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack], true)
+			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
 		observer.subscribe(player.hooks.afterDefence, (_attack) => {

@@ -1,17 +1,17 @@
 import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {CardComponent} from '../components'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {BattleLogModel} from '../models/battle-log-model'
+import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'
+import {ModalRequest} from './modal-requests'
 import type {
 	LocalCardInstance,
-	LocalStatusEffectInstance,
 	LocalModalData,
+	LocalStatusEffectInstance,
 	PickRequest,
 } from './server-requests'
-import type {CardComponent} from '../components'
-import type {PlayerId} from '../models/player-model'
-import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
-import {ModalRequest} from './modal-requests'
 
 type NewType = SlotEntity
 
@@ -67,7 +67,10 @@ export type PickCardActionResult =
 	| 'FAILURE_INVALID_SLOT'
 	| 'FAILURE_WRONG_PICK'
 
-export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
+export type ActionResult =
+	| GenericActionResult
+	| PlayCardActionResult
+	| PickCardActionResult
 
 export type {LocalModalData as ModalData} from './server-requests'
 
@@ -84,7 +87,6 @@ export type TurnState = {
 
 export type LocalTurnState = {
 	turnNumber: number
-	currentPlayerId: PlayerId
 	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
@@ -114,7 +116,10 @@ export type PlayCardAction =
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
 
-export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+export type AttackAction =
+	| 'SINGLE_USE_ATTACK'
+	| 'PRIMARY_ATTACK'
+	| 'SECONDARY_ATTACK'
 
 export type TurnAction =
 	| PlayCardAction
@@ -151,7 +156,6 @@ export type GameEndOutcomeT =
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
-	id: PlayerId
 	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
@@ -178,8 +182,6 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerId
-	opponentPlayerId: PlayerId
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
@@ -188,12 +190,14 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
+	currentCardsCanBePlacedIn: Array<
+		[LocalCardInstance, Array<SlotEntity>]
+	> | null
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
 
-	players: Record<PlayerId, LocalPlayerState>
+	players: Record<PlayerEntity, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number
@@ -202,7 +206,10 @@ export type LocalGameState = {
 }
 
 export type Message = {
-	sender: PlayerId
+	/** Chat messages are tied to the player id, while battle log messages are tied to entity.
+	 * This allows us to seperate the concept of players and viewers.
+	 */
+	sender: PlayerId | PlayerEntity
 	systemMessage: boolean
 	message: FormattedTextNode
 	createdAt: number

@@ -1,7 +1,7 @@
 import classNames from 'classnames'
-import css from './button.module.scss'
 import {ReactNode, forwardRef} from 'react'
 import React from 'react'
+import css from './button.module.scss'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	ref?: any
@@ -33,7 +33,7 @@ const Button = ({
 				variant && css[variant],
 				size && css[size],
 				emphasis && css.emphasis,
-				props.className
+				props.className,
 			)}
 			onClick={onClick}
 		>
@@ -45,8 +45,17 @@ const Button = ({
 }
 
 const RefButton = forwardRef(function TestButton(
-	{variant, size, emphasis, leftSlot, rightSlot, children, onClick, ...props}: ButtonProps,
-	ref: React.ForwardedRef<any>
+	{
+		variant,
+		size,
+		emphasis,
+		leftSlot,
+		rightSlot,
+		children,
+		onClick,
+		...props
+	}: ButtonProps,
+	ref: React.ForwardedRef<any>,
 ) {
 	return (
 		<button
@@ -57,7 +66,7 @@ const RefButton = forwardRef(function TestButton(
 				variant && css[variant],
 				size && css[size],
 				emphasis && css.emphasis,
-				props.className
+				props.className,
 			)}
 			onClick={onClick}
 		>

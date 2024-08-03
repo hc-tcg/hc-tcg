@@ -1,11 +1,14 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
-import {attach, item, singleUse} from '../../base/defaults'
-import {opponent} from '../../../components/query/slot'
 
 class Lead extends Card {
 	firstPickCondition = query.every(
@@ -13,7 +16,7 @@ class Lead extends Card {
 		query.slot.item,
 		query.not(query.slot.empty),
 		query.slot.active,
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	)
 	secondPickCondition = query.every(
 		query.slot.opponent,
@@ -21,7 +24,7 @@ class Lead extends Card {
 		query.slot.empty,
 		query.slot.row(query.row.hasHermit),
 		query.not(query.slot.active),
-		query.not(query.slot.frozen)
+		query.not(query.slot.frozen),
 	)
 
 	props: SingleUse = {
@@ -37,16 +40,20 @@ class Lead extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.firstPickCondition),
-			query.exists(SlotComponent, this.secondPickCondition)
+			query.exists(SlotComponent, this.secondPickCondition),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		const {player} = component
 		let itemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
@@ -56,7 +63,7 @@ class Lead extends Card {
 		})
 
 		game.addPickRequest({
-			playerId: player.id,
+			player: player.entity,
 			id: component.entity,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			canPick: this.secondPickCondition,
@@ -69,7 +76,7 @@ class Lead extends Card {
 					player.entity,
 					`$p{You|${player.playerName}}$ used $eLead$ to move $m${
 						itemSlot.getCard()?.props.name
-					}$ to $o${pickedSlot.row.getHermit()?.props.name} (${pickedSlot.row.index})$`
+					}$ to $o${pickedSlot.row.getHermit()?.props.name} (${pickedSlot.row.index})$`,
 				)
 
 				// Move the item

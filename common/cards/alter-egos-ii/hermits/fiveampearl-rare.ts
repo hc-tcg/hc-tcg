@@ -1,9 +1,9 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
 import Wolf from '../../default/effects/wolf'
 
 class FiveAMPearlRare extends Card {
@@ -29,22 +29,28 @@ class FiveAMPearlRare extends Card {
 			name: 'Dogs of War',
 			cost: ['balanced', 'balanced'],
 			damage: 70,
-			power: 'If Wolf card is attached to this Hermit, do an additional 30hp damage.',
+			power:
+				'If Wolf card is attached to this Hermit, do an additional 30hp damage.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			if (
 				!game.components.find(
 					CardComponent,
 					query.card.currentPlayer,
 					query.card.active,
-					query.card.is(Wolf)
+					query.card.is(Wolf),
 				)
 			)
 				return

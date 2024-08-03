@@ -6,6 +6,7 @@ import type {
 	SlotComponent,
 	StatusEffectComponent,
 } from './components'
+import {ViewerComponent} from './components/viewer-component'
 
 /** A unique identifier for a component in the component table. This value is safe to
  *  be send to the client and should be used for that purpose.
@@ -22,10 +23,11 @@ export type RowEntity = Entity<RowComponent>
 export type CardEntity = Entity<CardComponent>
 export type StatusEffectEntity = Entity<StatusEffectComponent>
 export type ObserverEntity = Entity<ObserverComponent>
+export type ViewerEntity = Entity<ViewerComponent>
 
 /** Create a new entity */
 export function newEntity<T>(entityName: string): Entity<T> {
-	return `${entityName}-${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(
-		16
-	)}` as Entity<T>
+	return `${entityName}-${Math.floor(
+		Math.random() * Number.MAX_SAFE_INTEGER,
+	).toString(16)}` as Entity<T>
 }

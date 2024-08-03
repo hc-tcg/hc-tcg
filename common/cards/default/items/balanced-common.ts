@@ -1,6 +1,6 @@
 import Card from '../../base/card'
-import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
+import {Item} from '../../base/types'
 
 class BalancedItem extends Card {
 	props: Item = {

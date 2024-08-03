@@ -1,8 +1,9 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {executeAttacks} from '../utils/attacks'
-import {AttackModel} from '../models/attack-model'
-import query from '../components/query'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	statusEffect,
+} from './status-effect'
 
 class MuseumCollectionEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
