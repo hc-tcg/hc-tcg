@@ -1,15 +1,13 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {PlayerStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
 
-class WeaknessEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+export class WeakToBalancedEffect extends PlayerStatusEffect {
+	props: StatusEffectProps = {
 		...statusEffect,
-		icon: 'weakness',
-		name: 'Weakness',
-		description: "This Hermit is weak to the opponent's active Hermit's type.",
-		counter: 3,
-		counterType: 'turns',
+		icon: 'weak',
+		name: 'Modified Weakness',
+		description: 'This hermit has modified weakness to Balanced type Hermits.',
 	}
 
 	public override onApply(
@@ -36,5 +34,3 @@ class WeaknessEffect extends CardStatusEffect {
 		})
 	}
 }
-
-export default WeaknessEffect
