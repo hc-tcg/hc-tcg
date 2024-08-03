@@ -1,7 +1,7 @@
-import {useDispatch, useSelector} from 'react-redux'
+import {SpeakerIcon} from 'components/svgs'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {SpeakerIcon} from 'components/svgs'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 
 function SoundItem() {
@@ -13,7 +13,11 @@ function SoundItem() {
 	}
 
 	return (
-		<button className={css.item} title="Mute Sounds (M)" onClick={handleSoundChange}>
+		<button
+			className={css.item}
+			title="Mute Sounds (M)"
+			onClick={handleSoundChange}
+		>
 			<SpeakerIcon level={settings.muted ? 0 : 100} />
 		</button>
 	)

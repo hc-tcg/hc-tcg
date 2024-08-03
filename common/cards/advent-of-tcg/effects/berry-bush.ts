@@ -1,10 +1,9 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent} from '../../../components'
 import {query, slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CARDS} from '../..'
-import {CardComponent} from '../../../components'
 
 class BerryBush extends Card {
 	props: Attach = {
@@ -23,11 +22,15 @@ class BerryBush extends Card {
 			slot.empty,
 			slot.playerHasActiveHermit,
 			slot.opponentHasActiveHermit,
-			query.not(slot.frozen)
+			query.not(slot.frozen),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (!row) return
 
@@ -45,7 +48,9 @@ class BerryBush extends Card {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
-					opponentPlayer.hand.push(CardComponent.fromCardId('instant_health_ii'))
+					opponentPlayer.hand.push(
+						CardComponent.fromCardId('instant_health_ii'),
+					)
 				}
 			}
 		})
@@ -59,7 +64,7 @@ class BerryBush extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {

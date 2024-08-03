@@ -1,10 +1,14 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {CardProps, Hermit} from '../../base/types'
-import query from '../../../components/query'
 
 class GoatfatherRare extends Card {
 	props: Hermit = {
@@ -37,11 +41,12 @@ class GoatfatherRare extends Card {
 	public override onAttach(
 		game: GameModel,
 		component: CardComponent<CardProps>,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = component
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			let coinFlip = flipCoin(player, component)[0]
 
@@ -56,10 +61,11 @@ class GoatfatherRare extends Card {
 				.filter(
 					RowComponent,
 					query.row.opponentPlayer,
+					query.row.hermitSlotOccupied,
 					(_game, row) =>
 						opponentActiveHermit !== null &&
 						opponentActiveHermit.slot.inRow() &&
-						row.index > opponentActiveHermit?.slot.row.index
+						row.index > opponentActiveHermit.slot.row.index,
 				)
 				.forEach((row) => {
 					const newAttack = game.newAttack({

@@ -1,5 +1,5 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -31,11 +31,16 @@ class OverseerRare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 
 			const targetHermit = attack.target?.getHermit()
 			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')

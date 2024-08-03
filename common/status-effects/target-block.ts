@@ -1,6 +1,14 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {
+	CardStatusEffect,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 export class TargetBlockEffect extends CardStatusEffect {
 	props: StatusEffectProps = {
@@ -14,7 +22,7 @@ export class TargetBlockEffect extends CardStatusEffect {
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let {opponentPlayer} = target
 		// Redirect all future attacks this turn

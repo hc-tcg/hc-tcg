@@ -1,17 +1,17 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 import Clock from './clock'
 
 class Chest extends Card {
 	pickCondition = query.every(
 		query.card.currentPlayer,
 		query.card.slot(query.slot.discardPile),
-		query.not(query.card.is(Clock))
+		query.not(query.card.is(Clock)),
 	)
 
 	props: SingleUse = {
@@ -22,16 +22,22 @@ class Chest extends Card {
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 2,
-		description: 'Choose one card from your discard pile and return it to your hand.',
+		description:
+			'Choose one card from your discard pile and return it to your hand.',
 		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
 			return game.components.exists(CardComponent, this.pickCondition)
 		}),
 	}
-	override onAttach(game: GameModel, component: CardComponent, _observer: ObserverComponent) {
+
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		game.addModalRequest({
-			playerId: player.id,
+			player: player.entity,
 			data: {
 				modalId: 'selectCards',
 				payload: {
@@ -56,7 +62,8 @@ class Chest extends Card {
 				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].props.id === 'clock') return 'FAILURE_CANNOT_COMPLETE'
+				if (modalResult.cards[0].props.id === 'clock')
+					return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)
 

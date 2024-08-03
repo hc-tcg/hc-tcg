@@ -1,7 +1,7 @@
 import AlertModal from 'components/alert-modal'
 import {toHTML} from 'discord-markdown'
 import {getUpdates} from 'logic/session/session-selectors'
-import {useRef, useEffect} from 'react'
+import {useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
 import sanitize from 'sanitize-html'
 import css from './updates.module.scss'
@@ -26,7 +26,10 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 			setOpen={updatesOpen}
 			onClose={() => {
 				setUpdatesOpen(false)
-				localStorage.setItem('latestUpdateView', (new Date().valueOf() / 1000).toFixed())
+				localStorage.setItem(
+					'latestUpdateView',
+					(new Date().valueOf() / 1000).toFixed(),
+				)
 			}}
 			cancelText="Close"
 			title="Latest updates"

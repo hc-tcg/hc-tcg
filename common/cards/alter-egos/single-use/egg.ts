@@ -1,18 +1,22 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Egg extends Card {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.hermit,
 		query.not(query.slot.active),
-		query.not(query.slot.empty)
+		query.not(query.slot.empty),
 	)
 
 	props: SingleUse = {
@@ -27,19 +31,23 @@ class Egg extends Card {
 			"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition),
 		),
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let afkHermitSlot: SlotComponent | null = null
 
 		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,

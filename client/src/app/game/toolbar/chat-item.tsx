@@ -1,20 +1,22 @@
-import css from './toolbar.module.scss'
-import {useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
-import {getChatMessages, getOpponentId} from 'logic/game/game-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
+import {getChatMessages} from 'logic/game/game-selectors'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './toolbar.module.scss'
 
 function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)
 	const settings = useSelector(getSettings)
-	const opponentId = useSelector(getOpponentId)
+	const playerId = useSelector(getPlayerId)
+
 	const latestOpponentMessageTime =
 		chatMessages.filter((msg) => {
-			return msg.sender === opponentId && msg.systemMessage === false
+			return msg.sender !== playerId && msg.systemMessage === false
 		})[0]?.createdAt || 0
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
 	const dispatch = useDispatch()

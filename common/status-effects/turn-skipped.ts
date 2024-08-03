@@ -1,6 +1,14 @@
-import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {hiddenStatusEffect, PlayerStatusEffect, StatusEffectProps} from './status-effect'
+import {
+	PlayerStatusEffect,
+	StatusEffectProps,
+	hiddenStatusEffect,
+} from './status-effect'
 
 class TurnSkippedEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = hiddenStatusEffect
@@ -9,7 +17,7 @@ class TurnSkippedEffect extends PlayerStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(
@@ -22,7 +30,7 @@ class TurnSkippedEffect extends PlayerStatusEffect {
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
 				'PLAY_SINGLE_USE_CARD',
-				'PLAY_EFFECT_CARD'
+				'PLAY_EFFECT_CARD',
 			)
 		})
 		observer.subscribe(player.hooks.onTurnEnd, () => {

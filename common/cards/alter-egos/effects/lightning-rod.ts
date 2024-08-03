@@ -1,6 +1,10 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -15,7 +19,7 @@ class LightningRod extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description:
-			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
+			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after use. Only one of these cards can be attached to your Hermits at a time.",
 		attachCondition: query.every(
 			attach.attachCondition,
 			query.not(
@@ -23,13 +27,17 @@ class LightningRod extends Card {
 					SlotComponent,
 					query.slot.currentPlayer,
 					query.slot.attach,
-					query.slot.has(LightningRod)
-				)
-			)
+					query.slot.has(LightningRod),
+				),
+			),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let used = false
@@ -38,13 +46,13 @@ class LightningRod extends Card {
 			if (!component.slot?.onBoard() || !component.slot.row) return
 			if (attack.type === 'status-effect' || attack.isBacklash) return
 			if (game.currentPlayer.entity !== opponentPlayer.entity) return
-			if (attack.target?.player.id !== player.id) return
+			if (attack.target?.player.entity !== player.entity) return
 
 			attack.redirect(component.entity, component.slot.row?.entity)
 			used = true
 		})
 
-		observer.subscribe(opponentPlayer.hooks.afterAttack, (_attack) => {
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (!used) return
 			component.discard()
 		})

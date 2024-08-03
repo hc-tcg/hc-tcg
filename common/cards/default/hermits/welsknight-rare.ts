@@ -1,5 +1,5 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -30,15 +30,22 @@ class WelsknightRare extends Card {
 		},
 	}
 
-	override onAttach(_game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
 			if (!component.slot.inRow() || !component.slot.row.health) return
 
-			if (component.slot.row.health < 200) attack.addDamage(component.entity, 20)
-			if (component.slot.row.health < 100) attack.addDamage(component.entity, 20)
+			if (component.slot.row.health < 200)
+				attack.addDamage(component.entity, 20)
+			if (component.slot.row.health < 100)
+				attack.addDamage(component.entity, 20)
 		})
 	}
 }

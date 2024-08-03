@@ -70,11 +70,16 @@ export class SlotComponent {
 	get opponentPlayer() {
 		if (this.defs.type === 'single_use')
 			return this.game.components.getOrError(this.game.opponentPlayerEntity)
-		return this.game.components.get(this.game.otherPlayerEntity(this.defs.player))
+		return this.game.components.get(
+			this.game.otherPlayerEntity(this.defs.player),
+		)
 	}
 
 	public getCard() {
-		return this.game.components.find(CardComponent, query.card.slotEntity(this.entity))
+		return this.game.components.find(
+			CardComponent,
+			query.card.slotEntity(this.entity),
+		)
 	}
 }
 
@@ -87,7 +92,7 @@ export class BoardSlotComponent extends SlotComponent {
 		entity: SlotEntity,
 		defs: BoardSlotDefs,
 		index: number | null,
-		row: RowEntity | null
+		row: RowEntity | null,
 	) {
 		super(game, entity, defs)
 		this.index = index
@@ -128,9 +133,16 @@ type DeckPosition =
 	| {position: 'before'; spot: DeckSlotComponent}
 	| {position: 'after'; spot: DeckSlotComponent}
 
-function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckPosition): number {
+function findDeckPosition(
+	game: GameModel,
+	player: PlayerEntity,
+	position: DeckPosition,
+): number {
 	let deckPositionsWithCards = game.components
-		.filter(CardComponent, query.card.slot(query.slot.deck, query.slot.player(player)))
+		.filter(
+			CardComponent,
+			query.card.slot(query.slot.deck, query.slot.player(player)),
+		)
 		.map((card) => card.slot as DeckSlotComponent)
 		.sort((a, b) => a.order - b.order)
 
@@ -163,7 +175,7 @@ function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckP
 	}
 
 	let positonOfTargetCard = deckPositionsWithCards.findIndex(
-		(value) => value.entity === position.spot.entity
+		(value) => value.entity === position.spot.entity,
 	)
 
 	if (positonOfTargetCard === -1) {
@@ -176,7 +188,9 @@ function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckP
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard - 1].order
-		deckPositionsWithCards.slice(0, positonOfTargetCard).map((spot) => (spot.order -= 1))
+		deckPositionsWithCards
+			.slice(0, positonOfTargetCard)
+			.map((spot) => (spot.order -= 1))
 		return targetOrder
 	}
 
@@ -186,7 +200,9 @@ function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckP
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard + 1].order
-		deckPositionsWithCards.slice(positonOfTargetCard + 1).map((spot) => (spot.order += 1))
+		deckPositionsWithCards
+			.slice(positonOfTargetCard + 1)
+			.map((spot) => (spot.order += 1))
 		return targetOrder
 	}
 
@@ -200,7 +216,7 @@ export class DeckSlotComponent extends SlotComponent {
 		game: GameModel,
 		entity: SlotEntity,
 		playerEntity: PlayerEntity,
-		position: DeckPosition
+		position: DeckPosition,
 	) {
 		super(game, entity, {player: playerEntity, type: 'deck'})
 		this.order = findDeckPosition(game, playerEntity, position)

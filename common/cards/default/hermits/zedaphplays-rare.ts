@@ -1,4 +1,8 @@
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import SheepStareEffect from '../../../status-effects/sheep-stare'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -32,11 +36,16 @@ class ZedaphPlaysRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+				return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return

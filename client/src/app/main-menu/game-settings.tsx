@@ -1,10 +1,10 @@
-import React from 'react'
-import css from './main-menu.module.scss'
-import {useSelector, useDispatch} from 'react-redux'
+import Button from 'components/button'
+import MenuLayout from 'components/menu-layout'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import MenuLayout from 'components/menu-layout'
-import Button from 'components/button'
+import React from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -15,7 +15,10 @@ function GameSettings({setMenuSection}: Props) {
 
 	const handleDialogsChange = () => {
 		dispatch(
-			setSetting('confirmationDialogs', settings.confirmationDialogs !== 'off' ? 'off' : 'on')
+			setSetting(
+				'confirmationDialogs',
+				settings.confirmationDialogs !== 'off' ? 'off' : 'on',
+			),
 		)
 	}
 	const handleGameSideToggle = () => {
@@ -27,10 +30,17 @@ function GameSettings({setMenuSection}: Props) {
 		return 'Disabled'
 	}
 	const handleChatChange = () => {
-		dispatch(setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'))
+		dispatch(
+			setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'),
+		)
 	}
 	const handleProfanityChange = () => {
-		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
+		dispatch(
+			setSetting(
+				'profanityFilter',
+				settings.profanityFilter !== 'off' ? 'off' : 'on',
+			),
+		)
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()

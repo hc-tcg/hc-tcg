@@ -1,10 +1,14 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, ObserverComponent, RowComponent} from '../../../components'
+import {executeAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import query from '../../../components/query'
-import {executeAttacks} from '../../../utils/attacks'
 
 class PoePoeSkizzRare extends Card {
 	props: Hermit = {
@@ -34,26 +38,40 @@ class PoePoeSkizzRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+				return
+			if (!component.slot.inRow()) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
-				message: 'Pick an empty Hermit slot',
-				canPick: query.every(query.slot.hermit, query.slot.currentPlayer, query.slot.empty),
+				message: 'Pick an empty Hermit slot or your active Hermit.',
+				canPick: query.every(
+					query.slot.hermit,
+					query.slot.currentPlayer,
+					query.some(
+						query.slot.empty,
+						query.slot.rowIs(component.slot.rowEntity),
+					),
+				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow() || !component.slot.inRow()) return
+					if (pickedSlot.row.entity === component.slot.rowEntity) return
 
 					game.swapRows(pickedSlot.row, component.slot.row)
 
 					const jumpscareTarget = game.components.find(
 						RowComponent,
 						query.row.opponentPlayer,
-						query.row.index(component.slot.row.index)
+						query.row.index(component.slot.row.index),
 					)
 
 					if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
@@ -65,7 +83,9 @@ class PoePoeSkizzRare extends Card {
 						log: (values) => ` and dealt ${values.damage} to ${values.target}`,
 					})
 					jumpscareAttack.addDamage(component.entity, 20)
-					jumpscareAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+					jumpscareAttack.shouldIgnoreCards.push(
+						query.card.entity(component.entity),
+					)
 					executeAttacks(game, [jumpscareAttack])
 				},
 			})

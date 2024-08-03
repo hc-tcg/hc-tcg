@@ -1,10 +1,14 @@
-import {takeEvery, put} from 'redux-saga/effects'
-import {select} from 'typed-redux-saga'
+import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
+import {put, takeEvery} from 'redux-saga/effects'
 import socket from 'socket'
-import {socketConnect, socketDisconnect, socketConnectError} from './socket-actions'
-import {getSession} from 'logic/session/session-selectors'
+import {select} from 'typed-redux-saga'
+import {
+	socketConnect,
+	socketConnectError,
+	socketDisconnect,
+} from './socket-actions'
 
 export function* sendMsg(type: string, payload?: any): any {
 	while (true) {
