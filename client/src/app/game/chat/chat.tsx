@@ -154,7 +154,9 @@ function Chat() {
 								<span className={css.time}>{hmTime}</span>
 								<span
 									className={classNames(
-										line.sender.type === 'system' ? css.systemMessage : css.text,
+										line.sender.type === 'system'
+											? css.systemMessage
+											: css.text,
 									)}
 								>
 									{FormattedText(line.message, {
