@@ -44,6 +44,9 @@ class JinglerRare extends Card {
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
+
+			if (opponentPlayer.getHand().length === 0) return
+
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
 
