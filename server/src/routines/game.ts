@@ -600,7 +600,7 @@ function* turnActionsSaga(game: GameModel) {
 	}
 }
 
-function* turnSaga(game: GameModel) {
+export function* turnSaga(game: GameModel) {
 	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state

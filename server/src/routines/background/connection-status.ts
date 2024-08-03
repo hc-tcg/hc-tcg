@@ -35,7 +35,7 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 
 	const payload = {
 		localGameState: getLocalGameState(game, viewer),
-		order: game.getPlayerIds(),
+		order: game.getPlayers().map((player) => player.id),
 	}
 	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)
 	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)

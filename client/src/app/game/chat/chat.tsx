@@ -127,14 +127,14 @@ function Chat() {
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
 					{chatMessages.slice().map((line) => {
-						if (line.systemMessage === true && showLog === false)
+						if (line.sender.type === 'system' && showLog === false)
 							return <span></span>
 						const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})
 
-						const isOpponent = playerId !== line.sender
+						const isOpponent = playerId !== line.sender.id
 						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>
@@ -154,7 +154,9 @@ function Chat() {
 								<span className={css.time}>{hmTime}</span>
 								<span
 									className={classNames(
-										line.systemMessage ? css.systemMessage : css.text,
+										line.sender.type === 'system'
+											? css.systemMessage
+											: css.text,
 									)}
 								>
 									{FormattedText(line.message, {

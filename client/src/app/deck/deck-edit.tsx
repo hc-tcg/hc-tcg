@@ -101,8 +101,7 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				data-focused={inputIsFocused}
 			/>
 			<p className={css.errorMessage}>
-				Deck name should be between 1-32 characters and shouldn't include any
-				special characters.
+				Deck name should be between 1-32 characters.
 			</p>
 		</div>
 	)

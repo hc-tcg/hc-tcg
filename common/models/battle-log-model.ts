@@ -80,10 +80,12 @@ export class BattleLogModel {
 			if (!playerEntity) continue
 
 			this.game.chat.push({
+				sender: {
+					type: 'system',
+					id: playerEntity,
+				},
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
-				sender: playerEntity,
-				systemMessage: true,
 			})
 		}
 
@@ -321,10 +323,12 @@ export class BattleLogModel {
 
 	public addTurnEndEntry() {
 		this.game.chat.push({
+			sender: {
+				type: 'system',
+				id: this.game.opponentPlayer.entity,
+			},
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.entity,
-			systemMessage: true,
 		})
 
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
