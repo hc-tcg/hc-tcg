@@ -1,4 +1,5 @@
 import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -29,11 +30,46 @@ export type ClientMessage = {
 	payload?: any
 }
 
+function setupGame(
+	player1: PlayerModel,
+	player2: PlayerModel,
+	code?: string,
+): GameModel {
+	let game = new GameModel(
+		{
+			model: player1,
+			deck: player1.deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: player2,
+			deck: player2.deck.cards.map((card) => card.props.numericId),
+		},
+		code,
+	)
+
+	let playerEntities = game.components.filterEntities(PlayerComponent)
+
+	// Note player one must be added before player two to make sure each player has the right deck.
+	game.components.new(ViewerComponent, {
+		player: player1,
+		spectator: false,
+		playerOnLeft: playerEntities[0],
+	})
+
+	game.components.new(ViewerComponent, {
+		player: player2,
+		spectator: false,
+		playerOnLeft: playerEntities[1],
+	})
+
+	return game
+}
+
 function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
 	try {
-		const playerIds = game.getPlayerIds()
 		const viewers = game.viewers
+		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
@@ -107,7 +143,11 @@ function* gameManager(game: GameModel) {
 }
 
 export function inGame(playerId: PlayerId) {
-	return root.getGames().some((game) => !!game.players[playerId])
+	return root
+		.getGames()
+		.some(
+			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
+		)
 }
 
 export function inQueue(playerId: string) {
@@ -140,7 +180,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = new GameModel(player1, player2)
+				const newGame = setupGame(player1, player2)
 				root.addGame(newGame)
 				yield* fork(gameManager, newGame)
 			} else {
@@ -290,7 +330,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 			return
 		}
 
-		const newGame = new GameModel(player, existingPlayer, code)
+		const newGame = setupGame(player, existingPlayer, code)
 		root.addGame(newGame)
 
 		// Remove this game from the queue, it's started
