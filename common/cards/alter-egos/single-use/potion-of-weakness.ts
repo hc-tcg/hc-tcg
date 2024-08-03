@@ -6,6 +6,18 @@ import {singleUse} from '../../base/defaults'
 import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
 import WeaknessEffect from '../../../status-effects/weakness'
 
+export const weaknessAssociations: Record<TypeT, Array<TypeT>> = {
+	balanced: [WeakToBalancedEffect, StrongToBalancedEffect],
+	builder: [WeakToBuilderEffect, StrongToBuilderEffect],
+	explorer: [WeakToExplorerEffect, StrongToExplorerEffect],
+	farm: [WeakToFarmEffect, StrongToFarmEffect],
+	miner: [WeakToMinerEffect, StrongToMinerEffect],
+	prankster: [WeakToPranksterEffect, StrongToPranksterEffect],
+	pvp: [WeakToPvPEffect, StrongToPvPEffect],
+	redstone: [WeakToRedstoneEffect, StrongToRedstoneEffect],
+	speedrunner: [WeakToSpeedrunnerEffect, StrongToSpeedrunnerEffect],
+	terraform: [WeakToTerrafromEffect, StrongToTerraformEffect],
+}
 class PotionOfWeakness extends Card {
 	props: SingleUse = {
 		...singleUse,
@@ -15,7 +27,7 @@ class PotionOfWeakness extends Card {
 		expansion: 'alter_egos',
 		rarity: 'common',
 		tokens: 2,
-		description: "Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
+		description: "Your opponent's current active Hermit's type is now weak to your current active Hermit's type for 3 turns.",
 		sidebarDescriptions: [
 			{
 				type: 'glossary',
@@ -28,6 +40,10 @@ class PotionOfWeakness extends Card {
 
 	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
 		const {opponentPlayer, player} = component
+
+		let counter = 3
+		const strongType = 0
+		const weakType = 0
 
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
