@@ -1,3 +1,4 @@
+import {CardClass} from '../cards/base/card'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -16,7 +17,7 @@ import {GameState} from '../types/game-state'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
-	deck: Array<number>
+	deck: Array<number | string | CardClass>
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -40,7 +41,7 @@ export function setupComponents(
 function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
-	deck: Array<number>,
+	deck: Array<number | string | CardClass>,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
