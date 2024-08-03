@@ -45,7 +45,7 @@ class JinglerRare extends Card {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
-			if (player.getHand().length === 0) return
+			if (opponentPlayer.getHand().length === 0) return
 
 			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'tails') return
