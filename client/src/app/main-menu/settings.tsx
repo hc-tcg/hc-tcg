@@ -66,13 +66,13 @@ function Settings({setMenuSection}: Props) {
 			>
 				<div className={css.settings}>
 					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music: {getPercDescriptor(settings.musicVolume)}
+						Music Volume: {getPercDescriptor(settings.musicVolume)}
 					</Slider>
 					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sounds: {getPercDescriptor(settings.soundVolume)}
+						Sound Effect Volume: {getPercDescriptor(settings.soundVolume)}
 					</Slider>
 					<Button variant="stone" onClick={handleMuteSound}>
-						Muted: {getBoolDescriptor(settings.muted)}
+						Sound: {getBoolDescriptor(!settings.muted)}
 					</Button>
 					<Button variant="stone" onClick={handlePanoramaToggle}>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
