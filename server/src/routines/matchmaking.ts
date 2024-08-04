@@ -281,8 +281,8 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	// Add to private queue with code
-	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
-	const spectatorCode = Math.floor(Math.random() * 10000000).toString(16)
+	const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
+	const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
 	root.privateQueue[gameCode] = {
 		createdTime: Date.now(),
 		playerId,

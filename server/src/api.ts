@@ -64,18 +64,25 @@ export function registerApis(app: import('express').Express) {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys.includes(apiKey)) {
-					const code = Math.floor(Math.random() * 10000000).toString(16)
+					const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
+					const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
 
 					// Add to private queue with code
-					root.privateQueue[code] = {
+					root.privateQueue[gameCode] = {
 						createdTime: Date.now(),
 						playerId: null,
+						gameCode,
+						spectatorCode,
 					}
 
-					console.log('Private game created via api.', `Code: ${code}`)
+					console.log(
+						'Private game created via api.',
+						`Code: ${gameCode}`,
+						`Spectator Code: ${spectatorCode}`,
+					)
 
 					res.status(201).send({
-						code,
+						gameCode,
 					})
 				} else {
 					res.status(403).send('Access denied - Invalid API key')

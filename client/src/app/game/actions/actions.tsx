@@ -9,6 +9,7 @@ import {
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
 	getGameState,
+	getIsSpectator,
 	getPlayerEntity,
 	getPlayerState,
 	getPlayerStateByEntity,
@@ -18,6 +19,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
+import game from '..'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -33,6 +35,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerEntity = useSelector(getPlayerEntity)
+	const isSpectator = useSelector(getIsSpectator)
 	const boardState = currentPlayer?.board
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
@@ -49,7 +52,13 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 		const waitingForOpponent =
 			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') &&
 			availableActions.length === 1
-		let turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
+		let turnMsg
+		if (isSpectator) {
+			turnMsg = `${currentPlayer.censoredPlayerName}'s Turn`
+		} else {
+			turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
+		}
+
 		if (pickMessage) turnMsg = 'Pick a card'
 		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
@@ -160,10 +169,12 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	return (
 		<div id={id} className={cn(css.actions, css.desktop)}>
 			{Status()}
-			<div className={cn(css.actionSection, !turn && css.fade)}>
-				<h2>Actions</h2>
-				{ActionButtons()}
-			</div>
+			{!isSpectator && (
+				<div className={cn(css.actionSection, !turn && css.fade)}>
+					<h2>Actions</h2>
+					{ActionButtons()}
+				</div>
+			)}
 			{SingleUseSlot()}
 		</div>
 	)

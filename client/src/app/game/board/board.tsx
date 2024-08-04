@@ -2,7 +2,11 @@ import {PlayerEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
-import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
+import {
+	getIsSpectator,
+	getOpponentState,
+	getPlayerState,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import Actions from '../actions/actions'
