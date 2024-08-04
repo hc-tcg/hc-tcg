@@ -106,13 +106,6 @@ function* gameManager(game: GameModel) {
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
-				if (!game.endInfo.reason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
-						.filter(PlayerComponent)
-						.forEach((player) => (player.coinFlips = []))
-				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
 			broadcast([viewer.player], 'GAME_END', {
