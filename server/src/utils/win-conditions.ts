@@ -1,22 +1,25 @@
 import {GameModel} from 'common/models/game-model'
 import {getOpponentId} from '../utils'
 import {ViewerComponent} from 'common/components/viewer-component'
+import {PlayerId} from 'common/models/player-model'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
-//@ts-ignore
-export const getGameOutcome = (game, endResult) => {
+export const getGameOutcome = (game: GameModel, endResult: any) => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) return 'forfeit'
 	if (Object.hasOwn(endResult, 'playerRemoved')) return 'forfeit'
-	if (game.endInfo.deadPlayerIds.length === 2) return 'tie'
+	if (game.endInfo.deadPlayerEntities.length === 2) return 'tie'
 	return 'player_won'
 }
 
-//@ts-ignore
-export const getGamePlayerOutcome = (game, endResult, playerId) => {
+export const getGamePlayerOutcome = (
+	game: GameModel,
+	endResult: any,
+	playerId: PlayerId,
+) => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		const triggerPlayerId = endResult.forfeit.playerId
@@ -26,10 +29,18 @@ export const getGamePlayerOutcome = (game, endResult, playerId) => {
 		const triggerPlayerId = endResult.playerRemoved.payload.id
 		return triggerPlayerId === playerId ? 'leave_loss' : 'leave_win'
 	}
-	if (game.endInfo.deadPlayerIds.length === 2) return 'tie'
-	const deadId = game.endInfo.deadPlayerIds[0]
-	if (!deadId) return 'unknown'
-	if (deadId === playerId) return 'you_lost'
+	if (game.endInfo.deadPlayerEntities.length === 2) return 'tie'
+	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
+	if (!deadPlayerEntity) return 'unknown'
+
+	let deadPlayer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) =>
+			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+	)
+	if (!deadPlayer) return 'unknown'
+
+	if (deadPlayer.playerId === playerId) return 'you_lost'
 	return 'you_won'
 }
 
