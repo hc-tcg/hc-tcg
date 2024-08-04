@@ -37,6 +37,7 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import slotSaga from './tasks/slot-saga'
+import spectatorSaga from './tasks/spectator'
 
 function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 	yield* sendMsg('TURN_ACTION', {
@@ -178,6 +179,7 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 	const backgroundTasks = yield all([
 		fork(opponentConnectionSaga),
 		fork(chatSaga),
+		fork(spectatorSaga),
 	])
 	try {
 		yield put(gameStart())

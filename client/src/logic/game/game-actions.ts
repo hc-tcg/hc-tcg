@@ -132,3 +132,7 @@ export const attackAction = () => ({
 export const endTurnAction = () => ({
 	type: 'END_TURN_ACTION',
 })
+
+export const exitSpectating = () => ({
+	type: 'EXIT_SPECTATING',
+})
