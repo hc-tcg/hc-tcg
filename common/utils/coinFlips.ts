@@ -4,11 +4,10 @@ import {CoinFlipResult} from '../types/game-state'
 
 /* Array of [coin flip number, weight of coinflip number] */
 const COIN_FLIP_WEIGHTS = [
-	[3, 1],
-	[4, 4],
-	[5, 3],
-	[6, 2],
-	[7, 1],
+	[4, 8],
+	[5, 6],
+	[6, 4],
+	[7, 2],
 	[8, 1],
 ]
 
