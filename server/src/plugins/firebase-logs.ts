@@ -80,8 +80,8 @@ export class FirebaseLogs {
 
 				let ref = '/logs'
 				let summaryObj: any = {
-					startHand1: gameLog.startHand1,
-					startHand2: gameLog.startHand2,
+					startHand1: gameLog.startHand1.map((card) => card.props.id),
+					startHand2: gameLog.startHand2.map((card) => card.props.id),
 					startTimestamp: gameLog.startTimestamp,
 					startDeck: gameLog.startDeck,
 					endTimestamp: new Date().getTime(),
