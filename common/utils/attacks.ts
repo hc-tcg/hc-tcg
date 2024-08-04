@@ -255,6 +255,7 @@ function createWeaknessAttack(
 	const weaknessAttack = game.newAttack({
 		attacker: attacker.entity,
 		target: attack.targetEntity,
+		shouldIgnoreSlots: attack.shouldIgnoreCards,
 		type: 'weakness',
 	})
 
