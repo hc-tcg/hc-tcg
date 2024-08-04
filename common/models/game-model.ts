@@ -64,7 +64,7 @@ export class GameModel {
 	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
-		deadPlayerIds: Array<string>
+		deadPlayerEntities: Array<string>
 		winner: string | null
 		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error' | null
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
@@ -84,7 +84,7 @@ export class GameModel {
 		this.task = null
 
 		this.endInfo = {
-			deadPlayerIds: [],
+			deadPlayerEntities: [],
 			winner: null,
 			outcome: null,
 			reason: null,
