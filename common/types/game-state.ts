@@ -171,6 +171,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
+	isSpectator: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 

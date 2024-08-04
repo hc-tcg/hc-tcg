@@ -431,6 +431,7 @@ export function getLocalGameState(
 	let currentPickableSlots = playerState.pickableSlots
 
 	const localGameState: LocalGameState = {
+		isSpectator: viewer.spectator,
 		turn: {
 			turnNumber: turnState.turnNumber,
 			currentPlayerEntity: game.currentPlayer.entity,
