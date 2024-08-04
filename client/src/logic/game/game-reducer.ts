@@ -34,6 +34,7 @@ const gameReducer = (
 			return {...newGame}
 		case 'GAME_START':
 		case 'GAME_END':
+		case 'SPECTATOR_LEAVE':
 			return {
 				...state,
 				localGameState: null,

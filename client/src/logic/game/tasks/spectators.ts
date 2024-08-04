@@ -9,6 +9,7 @@ function* spectatorLeave(cancelBackgroundTasks: any) {
 	let playerId = yield* select(getPlayerId)
 
 	yield call(sendMsg, 'SPECTATOR_LEAVE', {id: playerId})
+	yield put({type: 'SPECTATOR_LEAVE'})
 	yield put(gameEnd())
 	yield* cancelBackgroundTasks()
 }

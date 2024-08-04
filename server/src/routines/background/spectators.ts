@@ -1,9 +1,14 @@
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux-saga'
 import {takeEvery} from 'typed-redux-saga'
 
 function* spectatorLeaveSaga(game: GameModel, action: AnyAction) {
-	game.components.delete(action.id)
+	let viewer = game.components.find(
+		ViewerComponent,
+		(_game, component) => component.playerId === action.id,
+	)
+	if (viewer) game.components.delete(viewer.entity)
 }
 
 function* spectatorSaga(game: GameModel) {
