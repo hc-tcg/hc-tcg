@@ -7,13 +7,13 @@ function ExitItem() {
 	const dispatch = useDispatch()
 	const openedModal = useSelector(getOpenedModal)
 
-	const handleForfeit = () => {
-		if (!openedModal) dispatch(setOpenedModal('forfeit'))
+	const handleExit = () => {
+		if (!openedModal) dispatch(setOpenedModal('exit'))
 	}
 
 	return (
-		<button className={css.item} title="Forfeit" onClick={handleForfeit}>
-			<img src="/images/toolbar/banner.png" height="30" />
+		<button className={css.item} title="Exit" onClick={handleExit}>
+			<img src="/images/toolbar/exit.png" height="30" />
 		</button>
 	)
 }

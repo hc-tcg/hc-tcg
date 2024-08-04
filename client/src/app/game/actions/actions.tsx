@@ -19,7 +19,6 @@ import {useDispatch, useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
-import game from '..'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
