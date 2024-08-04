@@ -1,6 +1,6 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {exitSpectating} from 'logic/game/game-actions'
+import {spectatorLeave} from 'logic/game/game-actions'
 import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
 
@@ -11,7 +11,7 @@ function ExitModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handleYes = () => {
-		dispatch(exitSpectating())
+		dispatch(spectatorLeave())
 		closeModal()
 	}
 

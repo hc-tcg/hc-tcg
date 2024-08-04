@@ -37,7 +37,7 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import slotSaga from './tasks/slot-saga'
-import spectatorSaga from './tasks/spectator'
+import spectatorSaga from './tasks/spectators'
 
 function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 	yield* sendMsg('TURN_ACTION', {
@@ -176,11 +176,16 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
+	function* cancelBackgroundTasks() {
+		yield cancel(backgroundTasks)
+	}
+
 	const backgroundTasks = yield all([
 		fork(opponentConnectionSaga),
 		fork(chatSaga),
-		fork(spectatorSaga),
+		fork(spectatorSaga, cancelBackgroundTasks),
 	])
+
 	try {
 		yield put(gameStart())
 		const result = yield race({
@@ -215,7 +220,7 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
 		console.log('Game ended')
 		yield put(gameEnd())
-		yield cancel(backgroundTasks)
+		yield* cancelBackgroundTasks()
 	}
 }
 

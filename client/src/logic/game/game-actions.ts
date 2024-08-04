@@ -133,6 +133,6 @@ export const endTurnAction = () => ({
 	type: 'END_TURN_ACTION',
 })
 
-export const exitSpectating = () => ({
-	type: 'EXIT_SPECTATING',
+export const spectatorLeave = () => ({
+	type: 'SPECTATOR_LEAVE',
 })
