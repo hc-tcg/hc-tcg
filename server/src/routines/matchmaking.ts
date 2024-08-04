@@ -31,6 +31,7 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
+import {AIComponent} from './virtual'
 
 export type ClientMessage = {
 	type: string
@@ -80,14 +81,11 @@ function* gameManager(game: GameModel) {
 		const viewers = game.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
-		const gameType = players.every((p) => p.socket)
-			? game.code
-				? 'Private'
-				: 'Public'
-			: 'PvE'
+		const gameType =
+			playerIds.length === 2 ? (game.code ? 'Private' : 'Public') : 'PvE'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
+			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
 			'Total games:',
 			root.getGameIds().length,
 		)
@@ -274,6 +272,34 @@ function* leaveQueue(msg: ClientMessage) {
 	}
 }
 
+function setupSolitareGame(
+	player: PlayerModel,
+	opponent: VirtualPlayerModel,
+): GameModel {
+	const game = new GameModel(
+		{
+			model: player,
+			deck: player.deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: opponent,
+			deck: opponent.deck.cards.map((card) => card.props.numericId),
+		},
+		'solitare',
+	)
+
+	const playerEntities = game.components.filterEntities(PlayerComponent)
+	game.components.new(ViewerComponent, {
+		player,
+		spectator: false,
+		playerOnLeft: playerEntities[0],
+	})
+
+	game.components.new(AIComponent, playerEntities[1], opponent.ai)
+
+	return game
+}
+
 function* createBossGame(msg: ClientMessage) {
 	const {playerId} = msg
 	const player = root.players[playerId]
@@ -308,9 +334,16 @@ function* createBossGame(msg: ClientMessage) {
 		},
 	]
 
-	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
+	const newBossGame = setupSolitareGame(player, EX_BOSS_PLAYER)
 	newBossGame.state.isBossGame = true
-	if (newBossGame.opponentPlayer.id !== playerId) {
+	if (
+		newBossGame.components.find(
+			ViewerComponent,
+			(game, viewer) =>
+				!viewer.spectator &&
+				viewer.playerOnLeftEntity === game.currentPlayerEntity, // if there is a non-spectator viewer component for the 0th player (goes second)
+		)
+	) {
 		newBossGame.state.order.reverse()
 	}
 

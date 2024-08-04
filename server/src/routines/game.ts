@@ -40,6 +40,7 @@ import modalRequestSaga from './turn-actions/modal-request'
 import pickRequestSaga from './turn-actions/pick-request'
 import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
+import {AIComponent, virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -416,16 +417,16 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 }
 
 function getPlayerAI(game: GameModel) {
-	const activePlayerId = game.state.turn.opponentAvailableActions.includes(
+	const activePlayerEntity = game.state.turn.opponentAvailableActions.includes(
 		'WAIT_FOR_TURN',
 	)
-		? game.currentPlayer.id
-		: game.opponentPlayer.id
-	const activePlayer = game.players[activePlayerId]
+		? game.currentPlayerEntity
+		: game.opponentPlayerEntity
 
-	if (activePlayer.socket) return
-
-	return AI_CLASSES[activePlayer.ai]
+	return game.components.find(
+		AIComponent,
+		(_game, ai) => ai.playerEntity === activePlayerEntity,
+	)
 }
 
 function* turnActionsSaga(game: GameModel) {

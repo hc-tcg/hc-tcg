@@ -1,40 +1,60 @@
+import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {delay, put} from 'typed-redux-saga'
 import {TurnAction} from 'common/types/game-state'
 import {
+	PlaintextNode,
 	concatFormattedTextNodes,
 	formatNodefromShorthand,
 	formatText,
-	TextNode,
 } from 'common/utils/formatting'
+import {delay, put} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
+import {AIComponent} from './ai-component'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
 }
 
-export type VirtualAIReturn = {type: TurnAction; payload?: any; playerId: string}
+export type VirtualAIReturn = {
+	type: TurnAction
+	payload?: any
+	playerEntity: PlayerEntity
+}
 export interface VirtualAI {
 	get id(): string
 
-	getTurnAction(game: GameModel): Generator<any, VirtualAIReturn>
+	getTurnAction(
+		game: GameModel,
+		component: AIComponent,
+	): Generator<any, VirtualAIReturn>
 }
+export type AIClass = new () => VirtualAI
 
-export default function* virtualPlayerActionSaga(game: GameModel, ai: VirtualAI) {
+export default function* virtualPlayerActionSaga(
+	game: GameModel,
+	component: AIComponent,
+) {
 	const coinFlips = game.currentPlayer.coinFlips
-	yield* delay(coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay())
+	yield* delay(
+		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
+	)
 	try {
-		const action = yield* ai.getTurnAction(game)
-		yield* put(action)
+		const payload = yield* component.getTurnAction()
+		yield* put({
+			type: 'TURN_ACTION',
+			payload,
+		})
 	} catch (e) {
 		game.chat.push({
 			createdAt: Date.now(),
 			message: concatFormattedTextNodes(
-				formatText(`$oAI$: "${ai.id}" `),
-				formatNodefromShorthand('b', TextNode(`${e}`))
+				formatText(`$oAI$: "${component.ai.id}" `),
+				formatNodefromShorthand('b', PlaintextNode(`${e}`)),
 			),
-			sender: game.currentPlayer.id,
-			systemMessage: true,
+			sender: {
+				type: 'system',
+				id: component.playerEntity,
+			},
 		})
 		broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 	}

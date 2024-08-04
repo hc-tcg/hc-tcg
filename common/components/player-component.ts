@@ -16,13 +16,13 @@ import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {ViewerComponent} from './viewer-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
 	name: string
 	minecraftName: string
 	censoredName: string
-	playerType: 'user' | 'virtual'
 }
 
 export class PlayerComponent {
@@ -30,7 +30,6 @@ export class PlayerComponent {
 	readonly entity: PlayerEntity
 
 	readonly playerName: string
-	readonly playerType: 'user' | 'virtual'
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
 
@@ -142,7 +141,6 @@ export class PlayerComponent {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
-		this.playerType = player.playerType
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
 		this.coinFlips = []
@@ -237,7 +235,11 @@ export class PlayerComponent {
 		if (cards.length < amount) {
 			if (
 				!this.game.rules.disableVirtualDeckOut ||
-				this.playerType !== 'virtual'
+				this.game.components.exists(
+					ViewerComponent,
+					(_game, viewer) =>
+						!viewer.spectator && viewer.playerOnLeftEntity === this.entity,
+				)
 			)
 				this.deckedOut = true
 		}

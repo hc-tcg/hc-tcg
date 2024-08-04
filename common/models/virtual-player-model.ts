@@ -1,11 +1,11 @@
+import {decode} from 'js-base64'
+import {CARDS} from '../cards'
+import {CardEntity, newEntity} from '../entities'
 import {PlayerDeckT} from '../types/deck'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
-import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
-import {encode, decode} from 'js-base64'
-import {CARDS} from '../cards'
+import {validateDeck} from '../utils/validation'
 import {PlayerId} from './player-model'
-import {CardEntity, newEntity} from '../entities'
 
 export class VirtualPlayerModel {
 	private internalId: PlayerId
@@ -14,7 +14,6 @@ export class VirtualPlayerModel {
 	public name: string
 	public minecraftName: string
 	public censoredName: string
-	public socket: null
 	public ai: string
 
 	constructor(playerName: string, minecraftName: string, ai: string) {
@@ -26,7 +25,9 @@ export class VirtualPlayerModel {
 			name: 'virtual',
 			icon: 'any',
 			cards: this.getHashFromDeck(
-				this.possibleDecks[Math.floor(Math.random() * this.possibleDecks.length)]
+				this.possibleDecks[
+					Math.floor(Math.random() * this.possibleDecks.length)
+				],
 			),
 		}
 
@@ -34,23 +35,26 @@ export class VirtualPlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 
-		this.socket = null
 		this.ai = ai
 	}
 
-	private possibleDecks = ['woHCgcKBUVFRwojCiMKVwpUODg4YGDw8PDs7Ozs7Ozs7Ozs7Ozs7wogjI8KWGTsaGgca']
+	private possibleDecks = [
+		'woHCgcKBUVFRwojCiMKVwpUODg4YGDw8PDs7Ozs7Ozs7Ozs7Ozs7wogjI8KWGTsaGgca',
+	]
 
 	private getHashFromDeck(hash: string): Array<LocalCardInstance> {
 		try {
 			var b64 = decode(hash)
 				.split('')
 				.map((char) => char.charCodeAt(0))
-		} catch (err) {
+		} catch (_err) {
 			return []
 		}
 		const deck = []
 		for (let i = 0; i < b64.length; i++) {
-			const card = Object.values(CARDS).find((value) => value.props.numericId === b64[i])
+			const card = Object.values(CARDS).find(
+				(value) => value.props.numericId === b64[i],
+			)
 			if (!card) continue
 			deck.push({
 				props: WithoutFunctions(card.props),

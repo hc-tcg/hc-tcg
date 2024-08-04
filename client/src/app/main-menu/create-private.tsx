@@ -1,8 +1,8 @@
-import css from './main-menu.module.scss'
-import {useDispatch} from 'react-redux'
-import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
+import MenuLayout from 'components/menu-layout'
 import {createPrivateGame} from 'logic/matchmaking/matchmaking-actions'
+import {useDispatch} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -21,10 +21,18 @@ function CreatePrivate({setMenuSection}: Props) {
 			className={css.settingsMenu}
 		>
 			<div className={css.settings}>
-				<Button variant="stone" id={css.newPrivateGame} onClick={handleNewPrivateGame}>
+				<Button
+					variant="stone"
+					id={css.newPrivateGame}
+					onClick={handleNewPrivateGame}
+				>
 					Create Invite-Only Game
 				</Button>
-				<Button variant="stone" id={css.bossLanding} onClick={handleChallengeBoss}>
+				<Button
+					variant="stone"
+					id={css.bossLanding}
+					onClick={handleChallengeBoss}
+				>
 					Challenge Evil X
 				</Button>
 			</div>

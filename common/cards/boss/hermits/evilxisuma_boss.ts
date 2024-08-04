@@ -27,10 +27,14 @@ export type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK?, TERTIARY_ATTACK?]
 
 const bossAttacks = new InstancedValue<BOSS_ATTACK>(() => ['50DMG'])
 
-export const supplyBossAttack = (component: CardComponent, value: BOSS_ATTACK) =>
-	bossAttacks.set(component, value)
+export const supplyBossAttack = (
+	component: CardComponent,
+	value: BOSS_ATTACK,
+) => bossAttacks.set(component, value)
 
-const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | undefined => {
+const attackLog = (
+	bossAttack: BOSS_ATTACK,
+): ((values: AttackLog) => string) | undefined => {
 	let attackName: string
 	if (bossAttack.length === 1) attackName = `$v${bossAttack[0]}$`
 	else {
@@ -58,7 +62,9 @@ const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | u
 
 	switch (bossAttack[1]) {
 		case 'HEAL150':
-			return (values) => baseLog(values) + `${footer ? ',' : ' and'} healed for $g150hp$${footer}`
+			return (values) =>
+				baseLog(values) +
+				`${footer ? ',' : ' and'} healed for $g150hp$${footer}`
 		case 'ABLAZE':
 			return (values) =>
 				baseLog(values) +
@@ -73,7 +79,7 @@ const effectDiscardCondition = query.card.slot(
 	query.slot.opponent,
 	query.slot.active,
 	query.slot.attach,
-	query.not(query.slot.frozen)
+	query.not(query.slot.frozen),
 )
 
 /** EX is immune to poison, fire, and slowness */
@@ -83,7 +89,7 @@ function removeImmuneEffects(game: GameModel, slot: SlotComponent) {
 		.filter(
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
-			query.effect.is(PoisonEffect, FireEffect, SlownessEffect)
+			query.effect.is(PoisonEffect, FireEffect, SlownessEffect),
 		)
 		.forEach((effect) => effect.remove())
 }
@@ -109,8 +115,10 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 	/** Determines whether the player attempting to use this is the boss */
 	private isBeingMocked(game: GameModel, component: CardComponent) {
 		return (
-			game.components.filter(RowComponent, query.row.player(component.slot.player.entity))
-				.length !== 1
+			game.components.filter(
+				RowComponent,
+				query.row.player(component.slot.player.entity),
+			).length !== 1
 		)
 	}
 
@@ -119,7 +127,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 	override getAttack(
 		game: GameModel,
 		component: CardComponent,
-		hermitAttackType: HermitAttackType
+		hermitAttackType: HermitAttackType,
 	) {
 		// Players who imitate this card should use regular attacks and not the boss'
 		if (this.isBeingMocked(game, component)) {
@@ -134,7 +142,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 				target: game.components.findEntity(
 					RowComponent,
 					query.row.opponentPlayer,
-					query.row.active
+					query.row.active,
 				),
 				type: hermitAttackType,
 				createWeakness: 'ifWeak',
@@ -145,7 +153,10 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		const disabled = game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.entity(component.entity)),
-			query.effect.is(MultiturnPrimaryAttackDisabledEffect, MultiturnSecondaryAttackDisabledEffect)
+			query.effect.is(
+				MultiturnPrimaryAttackDisabledEffect,
+				MultiturnSecondaryAttackDisabledEffect,
+			),
 		)
 		this.damageDisabled.set(component, disabled)
 
@@ -166,7 +177,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 						RowComponent,
 						query.row.opponentPlayer,
 						query.row.hasHermit,
-						query.not(query.row.active)
+						query.not(query.row.active),
 					)
 					.forEach((afkRow) => {
 						const newAttack = game
@@ -174,10 +185,13 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 								attacker: component.entity,
 								target: afkRow.entity,
 								type: hermitAttackType,
-								log: (values) => `, ${values.damage} damage to ${values.target}`,
+								log: (values) =>
+									`, ${values.damage} damage to ${values.target}`,
 							})
 							.addDamage(component.entity, 20)
-						newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
+						newAttack.shouldIgnoreCards.push(
+							query.card.entity(component.entity),
+						)
 						attack.addNewAttack(newAttack)
 					})
 			}
@@ -186,7 +200,11 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		return attack
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		if (this.isBeingMocked(game, component)) {
 			super.onAttach(game, component, observer)
 			return
@@ -201,7 +219,11 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 
 		// If opponent gave EX any extra cards on turn 1, remove all of them
 		game.components
-			.filter(CardComponent, query.card.currentPlayer, query.not(query.card.onBoard))
+			.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.not(query.card.onBoard),
+			)
 			.forEach((card) => destroyCard(game, card))
 
 		// Let EX use secondary attack in case opponent blocks primary
@@ -227,7 +249,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 						const opponentActiveHermit = game.components.findEntity(
 							CardComponent,
 							query.card.isHermit,
-							query.card.row(query.row.active)
+							query.card.row(query.row.active),
 						)
 						if (opponentActiveHermit)
 							game.components
@@ -252,14 +274,14 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 					query.slot.active,
 					query.slot.item,
 					query.not(query.slot.empty),
-					(_game, slot) => slot.getCard()?.isItem() === true
+					(_game, slot) => slot.getCard()?.isItem() === true,
 				)
 				if (
 					opponentPlayer.activeRow?.health &&
 					game.components.exists(SlotComponent, pickCondition)
 				) {
 					game.addPickRequest({
-						playerId: opponentPlayer.id,
+						player: opponentPlayer.entity,
 						id: component.entity,
 						message: 'Choose an item to discard from your active Hermit.',
 						canPick: pickCondition,
@@ -280,7 +302,9 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 						},
 						onTimeout() {
 							// Discard the first available item card
-							game.components.find(CardComponent, query.card.slot(pickCondition))?.discard()
+							game.components
+								.find(CardComponent, query.card.slot(pickCondition))
+								?.discard()
 						},
 					})
 				}
@@ -291,7 +315,11 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 			// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
 			game.components
-				.filter(CardComponent, query.card.opponentPlayer, query.card.slot(query.slot.deck))
+				.filter(
+					CardComponent,
+					query.card.opponentPlayer,
+					query.card.slot(query.slot.deck),
+				)
 				.forEach((card) => destroyCard(game, card))
 			removeImmuneEffects(game, component.slot)
 		})
@@ -305,8 +333,8 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 				query.effect.targetIsCardAnd(query.card.entity(component.entity)),
 				query.effect.is(
 					MultiturnPrimaryAttackDisabledEffect,
-					MultiturnSecondaryAttackDisabledEffect
-				)
+					MultiturnSecondaryAttackDisabledEffect,
+				),
 			)
 			if (lastAttackDisabledByAmnesia) {
 				if (amnesiaEffect) amnesiaEffect.remove()

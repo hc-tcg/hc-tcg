@@ -1,15 +1,25 @@
-import {GameModel} from '../models/game-model'
-import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import query from '../components/query'
+import {GameModel} from '../models/game-model'
+import {
+	CardStatusEffect,
+	Counter,
+	StatusEffectProps,
+	systemStatusEffect,
+} from './status-effect'
 
 class ExBossNineStatusEffect extends CardStatusEffect {
 	props: StatusEffectProps & Counter = {
 		...systemStatusEffect,
 		icon: 'exboss-nine',
 		name: 'Boss Rules',
-		description: "At the end of EX's ninth turn, an additional move will be performed.",
+		description:
+			"At the end of EX's ninth turn, an additional move will be performed.",
 		counter: 8, // Starts at 8 and triggers at 0 turns remaining
 		counterType: 'turns',
 	}
@@ -18,7 +28,7 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = target
 		if (effect.counter === null) effect.counter = this.props.counter
@@ -37,10 +47,14 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 				voiceLine = 'NINEDISCARD'
 				game.battleLog.addEntry(
 					player.entity,
-					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard {their|your} hand and draw a new card`
+					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard {their|your} hand and draw a new card`,
 				)
 				game.components
-					.filter(CardComponent, query.card.slot(query.slot.hand), query.card.opponentPlayer)
+					.filter(
+						CardComponent,
+						query.card.slot(query.slot.hand),
+						query.card.opponentPlayer,
+					)
 					.forEach((card) => card.discard())
 				opponentPlayer.draw(1)
 			} else {
@@ -48,7 +62,7 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 				voiceLine = 'NINEATTACHED'
 				game.battleLog.addEntry(
 					player.entity,
-					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard everything from {their|your} active Hermit`
+					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard everything from {their|your} active Hermit`,
 				)
 				game.components
 					.filter(
@@ -57,15 +71,17 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 						query.card.opponentPlayer,
 						query.some(
 							query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
-							query.card.slot(query.slot.item)
-						)
+							query.card.slot(query.slot.item),
+						),
 					)
 					.forEach((card) => card.discard())
 			}
 
 			effect.remove()
 			effect.counter = null // Effects aren't deleted so counter must be invalidated
-			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: [voiceLine]})
+			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {
+				lines: [voiceLine],
+			})
 			game.battleLog.sendLogs()
 		})
 	}

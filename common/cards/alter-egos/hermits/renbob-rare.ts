@@ -46,8 +46,10 @@ class RenbobRare extends Card {
 
 		// Renbob should not retarget if opponent can only play one Hermit
 		if (
-			game.components.filter(RowComponent, query.row.player(player.opponentPlayer.entity))
-				.length === 1
+			game.components.filter(
+				RowComponent,
+				query.row.player(player.opponentPlayer.entity),
+			).length === 1
 		)
 			return
 

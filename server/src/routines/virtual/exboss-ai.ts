@@ -1,10 +1,7 @@
-import {delay} from 'typed-redux-saga'
-import {AttackActionData, PlayCardActionData} from 'common/types/action-data'
-import {GameModel} from 'common/models/game-model'
-import {AttackAction} from 'common/types/game-state'
-import {broadcast} from '../../utils/comm'
-import {VirtualAI, VirtualAIReturn} from './virtual-action'
-import {BOSS_ATTACK, supplyBossAttack} from 'common/cards/boss/hermits/evilxisuma_boss'
+import {
+	BOSS_ATTACK,
+	supplyBossAttack,
+} from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -12,8 +9,16 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
+import {AttackActionData, PlayCardActionData} from 'common/types/action-data'
+import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {delay} from 'typed-redux-saga'
+import {broadcast} from '../../utils/comm'
+import {AIComponent} from './ai-component'
+import {VirtualAI, VirtualAIReturn} from './virtual-action'
 
 class ExBossAI implements VirtualAI {
 	get id(): string {
@@ -47,37 +52,54 @@ class ExBossAI implements VirtualAI {
 			}
 		}
 
-		const attackDef: BOSS_ATTACK = [(['50DMG', '70DMG', '90DMG'] as const)[attackIndexes.damage]]
+		const attackDef: BOSS_ATTACK = [
+			(['50DMG', '70DMG', '90DMG'] as const)[attackIndexes.damage],
+		]
 		if (attackIndexes.secondary !== undefined) {
-			attackDef[1] = (['HEAL150', 'ABLAZE', 'DOUBLE'] as const)[attackIndexes.secondary]
+			attackDef[1] = (['HEAL150', 'ABLAZE', 'DOUBLE'] as const)[
+				attackIndexes.secondary
+			]
 			if (attackIndexes.tertiary !== undefined)
-				attackDef[2] = (['EFFECTCARD', 'AFK20', 'ITEMCARD'] as const)[attackIndexes.tertiary]
+				attackDef[2] = (['EFFECTCARD', 'AFK20', 'ITEMCARD'] as const)[
+					attackIndexes.tertiary
+				]
 		}
 
 		return attackDef
 	}
 
-	*getTurnAction(game: GameModel): Generator<any, VirtualAIReturn> {
+	*getTurnAction(
+		game: GameModel,
+		component: AIComponent,
+	): Generator<any, VirtualAIReturn> {
+		const {playerEntity} = component
+
 		if (game.state.modalRequests.length)
-			if (game.state.modalRequests[0].data.payload.modalName.startsWith('Lantern'))
+			if (
+				game.state.modalRequests[0].data.payload.modalName.startsWith('Lantern')
+			)
 				// Handles when challenger plays "Lantern"
 				return {
 					type: 'MODAL_REQUEST',
-					playerId: game.opponentPlayer.id,
+					playerEntity,
 					payload: {result: true, cards: null},
 				}
 
 		const {currentPlayer} = game
 
 		if (game.state.turn.turnNumber === 2) {
-			const bossCard = currentPlayer.getHand().find((card) => card.props.id === 'evilxisuma_boss')
+			const bossCard = currentPlayer
+				.getHand()
+				.find((card) => card.props.id === 'evilxisuma_boss')
 			const slot = game.components.findEntity(
 				BoardSlotComponent,
 				query.slot.currentPlayer,
-				query.slot.hermit
+				query.slot.hermit,
 			)
 			if (bossCard && slot) {
-				const playHermitCard: PlayCardActionData & {playerId: string} = {
+				const playHermitCard: PlayCardActionData & {
+					playerEntity: PlayerEntity
+				} = {
 					type: 'PLAY_HERMIT_CARD',
 					payload: {
 						slot,
@@ -89,7 +111,7 @@ class ExBossAI implements VirtualAI {
 							attackHint: null,
 						},
 					},
-					playerId: currentPlayer.id,
+					playerEntity,
 				}
 				return playHermitCard
 			}
@@ -97,24 +119,25 @@ class ExBossAI implements VirtualAI {
 
 		const attackType = game.state.turn.availableActions.find(
 			(action): action is AttackAction =>
-				action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK'
+				action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
 		)
 		if (attackType) {
-			const attackAction: AttackActionData & {playerId: string} = {
+			const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
 				type: attackType,
 				payload: {
-					playerId: currentPlayer.id,
+					player: playerEntity,
 				},
-				playerId: currentPlayer.id,
+				playerEntity,
 			}
 
 			const bossCard = game.components.find(
 				CardComponent,
 				query.card.currentPlayer,
 				query.card.active,
-				query.card.slot(query.slot.hermit)
+				query.card.slot(query.slot.hermit),
 			)
-			if (bossCard === null) throw new Error(`EX's active hermit cannot be found, please report`)
+			if (bossCard === null)
+				throw new Error(`EX's active hermit cannot be found, please report`)
 			const bossAttack = this.getBossAttack(currentPlayer)
 			supplyBossAttack(bossCard, bossAttack)
 			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: bossAttack})
@@ -124,22 +147,27 @@ class ExBossAI implements VirtualAI {
 		}
 
 		if (!game.state.turn.availableActions.includes('END_TURN'))
-			throw new Error('EX does not know what to do in this state, please report')
+			throw new Error(
+				'EX does not know what to do in this state, please report',
+			)
 
 		const nineEffect = game.components.find(
 			StatusEffectComponent,
-			query.effect.is(ExBossNineStatusEffect)
+			query.effect.is(ExBossNineStatusEffect),
 		)
 		if (nineEffect && nineEffect.counter === 0) {
 			currentPlayer.hooks.onTurnEnd.callSome([[]], (observer) => {
-				const entity = game.components.get(game.components.get(observer)?.wrappingEntity || null)
-				if (entity instanceof StatusEffectComponent) return entity === nineEffect
+				const entity = game.components.get(
+					game.components.get(observer)?.wrappingEntity || null,
+				)
+				if (entity instanceof StatusEffectComponent)
+					return entity === nineEffect
 				return false
 			})
 			yield* delay(10600)
 		}
 
-		return {type: 'END_TURN', playerId: currentPlayer.id}
+		return {type: 'END_TURN', playerEntity}
 	}
 }
 
