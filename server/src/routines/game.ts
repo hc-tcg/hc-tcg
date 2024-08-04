@@ -40,6 +40,7 @@ import modalRequestSaga from './turn-actions/modal-request'
 import pickRequestSaga from './turn-actions/pick-request'
 import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
+import spectatorSaga from './background/spectators'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -707,7 +708,11 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 function* backgroundTasksSaga(game: GameModel) {
-	yield* all([fork(chatSaga, game), fork(connectionStatusSaga, game)])
+	yield* all([
+		fork(chatSaga, game),
+		fork(connectionStatusSaga, game),
+		fork(spectatorSaga, game),
+	])
 }
 
 function* gameSaga(game: GameModel) {
