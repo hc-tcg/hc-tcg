@@ -1,7 +1,7 @@
-import {GameModel} from 'common/models/game-model'
-import {getOpponentId} from '../utils'
 import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
 import {PlayerId} from 'common/models/player-model'
+import {getOpponentId} from '../utils'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
