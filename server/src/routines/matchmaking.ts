@@ -103,7 +103,7 @@ function* gameManager(game: GameModel) {
 			),
 		})
 
-		for (const viewer of viewers) {
+		for (const viewer of game.viewers) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
@@ -323,13 +323,10 @@ function* joinPrivateGame(msg: ClientMessage) {
 	)
 
 	if (spectatorGame) {
-		const playerEntities =
-			spectatorGame.components.filterEntities(PlayerComponent)
-
 		const viewer = spectatorGame.components.new(ViewerComponent, {
 			player: player,
 			spectator: true,
-			playerOnLeft: playerEntities[1],
+			playerOnLeft: spectatorGame.state.order[0],
 		})
 
 		console.log(

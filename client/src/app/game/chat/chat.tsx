@@ -3,7 +3,12 @@ import classNames from 'classnames'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
 import {chatMessage} from 'logic/game/game-actions'
-import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
+import {
+	getChatMessages,
+	getGameState,
+	getIsSpectator,
+	getOpponentName,
+} from 'logic/game/game-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -25,6 +30,9 @@ function Chat() {
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
+	const isSpectator = useSelector(getIsSpectator)
+	const players = useSelector(getGameState)?.players
+	const order = useSelector(getGameState)?.order || []
 
 	const viewingFromMobile = window.innerHeight > window.innerWidth
 
@@ -134,7 +142,14 @@ function Chat() {
 							minute: '2-digit',
 						})
 
-						const isOpponent = playerId !== line.sender.id
+						let isOpponent
+						if (isSpectator) {
+							isOpponent =
+								players && players[order[0]]?.playerId === line.sender.id
+						} else {
+							isOpponent = playerId !== line.sender.id
+						}
+
 						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>

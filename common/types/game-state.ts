@@ -157,6 +157,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
+	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
