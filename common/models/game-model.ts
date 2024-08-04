@@ -51,7 +51,8 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
-	private internalCode: string | null
+	private internalGameCode: string | null
+	private internalSpectatorCode: string | null
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
@@ -73,11 +74,13 @@ export class GameModel {
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
-		code?: string,
+		gameCode?: string,
+		spectatorCode?: string,
 	) {
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code || null
+		this.internalGameCode = gameCode || null
+		this.internalSpectatorCode = spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -139,8 +142,12 @@ export class GameModel {
 		return this.internalId
 	}
 
-	public get code() {
-		return this.internalCode
+	public get gameCode() {
+		return this.internalGameCode
+	}
+
+	public get spectatorCode() {
+		return this.internalSpectatorCode
 	}
 
 	public broadcastToViewers(type: string, payload?: any) {

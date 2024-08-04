@@ -287,16 +287,18 @@ function Game() {
 
 			<div className={css.bottom}>
 				<Toolbar />
-				<div className={css.hand} ref={handRef}>
-					{Filter()}
-					<CardList
-						wrap={false}
-						cards={filteredCards}
-						onClick={(card: LocalCardInstance) => selectCard(card)}
-						selected={[selectedCard]}
-						unpickable={unpickableCards}
-					/>
-				</div>
+				{Object.keys(gameState.players).includes(playerState.entity) && (
+					<div className={css.hand} ref={handRef}>
+						{Filter()}
+						<CardList
+							wrap={false}
+							cards={filteredCards}
+							onClick={(card: LocalCardInstance) => selectCard(card)}
+							selected={[selectedCard]}
+							unpickable={unpickableCards}
+						/>
+					</div>
+				)}
 			</div>
 
 			{renderModal(openedModal, handleOpenModal)}

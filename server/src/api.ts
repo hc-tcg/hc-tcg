@@ -45,7 +45,7 @@ export function registerApis(app: import('express').Express) {
 								return {
 									createdTime: g.createdTime,
 									id: g.id,
-									code: g.code,
+									code: g.gameCode,
 									players: getPlayers(g),
 									state: g.state,
 								}
@@ -96,7 +96,7 @@ export function registerApis(app: import('express').Express) {
 					body: JSON.stringify({
 						createdTime: game.createdTime,
 						id: game.id,
-						code: game.code,
+						code: game.gameCode,
 						players: getPlayers(game),
 						state: game.state,
 					}),
@@ -118,7 +118,7 @@ export function registerApis(app: import('express').Express) {
 						createdTime: game.createdTime,
 						endTime: Date.now(),
 						id: game.id,
-						code: game.code,
+						code: game.gameCode,
 						players: getPlayers(game),
 						endInfo: game.endInfo,
 						state: game.state,

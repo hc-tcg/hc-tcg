@@ -30,8 +30,10 @@ function* createPrivateGameSaga() {
 			})
 
 			if (createGameResponse.success) {
-				const gameCode: string = createGameResponse.success.payload
-				yield* put(codeReceived(gameCode))
+				const gameCode: string = createGameResponse.success.payload.gameCode
+				const spectatorCode: string =
+					createGameResponse.success.payload.spectatorCode
+				yield* put(codeReceived({gameCode, spectatorCode}))
 			} else {
 				// Something went wrong, go back to menu
 				yield* put(clearMatchmaking())
@@ -80,6 +82,7 @@ function* joinPrivateGameSaga() {
 				const result = yield* race({
 					failure: call(receiveMsg, 'JOIN_PRIVATE_GAME_FAILURE'),
 					success: call(receiveMsg, 'JOIN_PRIVATE_GAME_SUCCESS'),
+					specateSuccess: call(receiveMsg, 'SPECTATE_PRIVATE_GAME_SUCCESS'),
 					invalidCode: call(receiveMsg, 'INVALID_CODE'),
 					waitingForPlayer: call(receiveMsg, 'WAITING_FOR_PLAYER'),
 					timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
@@ -107,6 +110,8 @@ function* joinPrivateGameSaga() {
 					if (queueResponse.gameStart) {
 						yield* call(gameSaga)
 					}
+				} else if (result.specateSuccess) {
+					yield* call(gameSaga, result.specateSuccess.payload)
 				} else if (result.invalidCode) {
 					yield* put(invalidCode())
 				}

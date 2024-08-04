@@ -33,7 +33,8 @@ export type ClientMessage = {
 function setupGame(
 	player1: PlayerModel,
 	player2: PlayerModel,
-	code?: string,
+	gameCode?: string,
+	spectatorCode?: string,
 ): GameModel {
 	let game = new GameModel(
 		{
@@ -44,7 +45,8 @@ function setupGame(
 			model: player2,
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-		code,
+		gameCode,
+		spectatorCode,
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -71,7 +73,7 @@ function* gameManager(game: GameModel) {
 		const viewers = game.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
@@ -131,7 +133,7 @@ function* gameManager(game: GameModel) {
 		if (game.task) yield* cancel(game.task)
 		game.afterGameEnd.call()
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
@@ -280,15 +282,22 @@ function* createPrivateGame(msg: ClientMessage) {
 
 	// Add to private queue with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
+	const spectatorCode = Math.floor(Math.random() * 10000000).toString(16)
 	root.privateQueue[gameCode] = {
 		createdTime: Date.now(),
 		playerId,
+		gameCode,
+		spectatorCode,
 	}
 
 	// Send code to player
-	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', gameCode)
+	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', {gameCode, spectatorCode})
 
-	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
+	console.log(
+		`Private game created by ${player.name}.`,
+		`Code: ${gameCode}`,
+		`Spectator Code: ${spectatorCode}`,
+	)
 }
 
 function* joinPrivateGame(msg: ClientMessage) {
@@ -305,6 +314,34 @@ function* joinPrivateGame(msg: ClientMessage) {
 			player.name,
 		)
 		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
+		return
+	}
+
+	// Check if spectator game first
+	const spectatorGame = Object.values(root.games).find(
+		(game) => game.spectatorCode === code,
+	)
+
+	if (spectatorGame) {
+		const playerEntities =
+			spectatorGame.components.filterEntities(PlayerComponent)
+
+		const viewer = spectatorGame.components.new(ViewerComponent, {
+			player: player,
+			spectator: true,
+			playerOnLeft: playerEntities[1],
+		})
+
+		console.log(
+			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+		)
+
+		broadcast(
+			[player],
+			'SPECTATE_PRIVATE_GAME_SUCCESS',
+			getLocalGameState(spectatorGame, viewer),
+		)
+
 		return
 	}
 
@@ -330,7 +367,12 @@ function* joinPrivateGame(msg: ClientMessage) {
 			return
 		}
 
-		const newGame = setupGame(player, existingPlayer, code)
+		const newGame = setupGame(
+			player,
+			existingPlayer,
+			root.privateQueue[code].gameCode,
+			root.privateQueue[code].spectatorCode,
+		)
 		root.addGame(newGame)
 
 		// Remove this game from the queue, it's started

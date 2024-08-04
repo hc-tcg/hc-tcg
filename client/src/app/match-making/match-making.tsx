@@ -4,8 +4,9 @@ import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {leaveMatchmaking, setCode} from 'logic/matchmaking/matchmaking-actions'
 import {
-	getCode,
+	getGameCode,
 	getInvalidCode,
+	getSpectatorCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import React from 'react'
@@ -15,7 +16,8 @@ import css from './match-making.module.scss'
 function MatchMaking() {
 	const dispatch = useDispatch()
 	const status = useSelector(getStatus)
-	const code = useSelector(getCode)
+	const gameCode = useSelector(getGameCode)
+	const spectatorCode = useSelector(getSpectatorCode)
 	const invalidCode = useSelector(getInvalidCode)
 
 	const handleCancel = () => {
@@ -29,8 +31,8 @@ function MatchMaking() {
 	}
 
 	const handleCodeClick = () => {
-		if (!code) return
-		navigator.clipboard.writeText(code)
+		if (!gameCode) return
+		navigator.clipboard.writeText(gameCode)
 	}
 
 	const Status = () => {
@@ -77,7 +79,11 @@ function MatchMaking() {
 					<>
 						<p>Waiting for opponent</p>
 						<div className={css.code} onClick={handleCodeClick}>
-							{code}
+							{gameCode}
+						</div>
+						<p>Spectator Code</p>
+						<div className={css.code} onClick={handleCodeClick}>
+							{spectatorCode}
 						</div>
 						<div className={css.options}>
 							<Button variant="stone" onClick={handleCancel}>
@@ -90,7 +96,7 @@ function MatchMaking() {
 				return (
 					<>
 						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-							<label htmlFor="gameCode">Enter game code:</label>
+							<label htmlFor="gameCode">Enter game or spectator code:</label>
 							<input
 								className={invalidCode ? css.invalidCode : ''}
 								name="gameCode"

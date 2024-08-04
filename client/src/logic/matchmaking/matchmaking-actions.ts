@@ -2,6 +2,11 @@ export type JoinQueueAction = {
 	type: 'JOIN_QUEUE'
 }
 
+export type CodeT = {
+	gameCode: string
+	spectatorCode: string
+}
+
 export const joinQueue = () => ({
 	type: 'JOIN_QUEUE' as const,
 })
@@ -14,7 +19,7 @@ export const joinPrivateGame = () => ({
 	type: 'JOIN_PRIVATE_GAME' as const,
 })
 
-export const codeReceived = (code: string) => ({
+export const codeReceived = (code: CodeT) => ({
 	type: 'CODE_RECEIVED' as const,
 	payload: code,
 })
