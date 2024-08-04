@@ -1,4 +1,6 @@
+import {GameModel} from 'common/models/game-model'
 import {getOpponentId} from '../utils'
+import {ViewerComponent} from 'common/components/viewer-component'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -31,8 +33,7 @@ export const getGamePlayerOutcome = (game, endResult, playerId) => {
 	return 'you_won'
 }
 
-//@ts-ignore
-export const getWinner = (game, endResult) => {
+export const getWinner = (game: GameModel, endResult: any) => {
 	if (Object.hasOwn(endResult, 'timeout')) return null
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		return getOpponentId(game, endResult.forfeit.playerId)
@@ -40,8 +41,14 @@ export const getWinner = (game, endResult) => {
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
 		return getOpponentId(game, endResult.playerRemoved.payload.id)
 	}
-	if (game.endInfo.deadPlayerIds.length === 2) return null
-	const deadId = game.endInfo.deadPlayerIds[0]
-	if (!deadId) return null
-	return getOpponentId(game, deadId)
+	if (game.endInfo.deadPlayerEntities.length === 2) return null
+	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
+	if (!deadPlayerEntity) return null
+	let deadPlayer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) =>
+			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+	)
+	if (!deadPlayer) return null
+	return getOpponentId(game, deadPlayer.playerId)
 }
