@@ -8,6 +8,7 @@ import {
 	LocalGameState,
 } from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
+import {Message as ChatMessage} from '../types/game-state'
 
 export const serverMessages = messages(
 	'PLAYER_RECONNECTED',
@@ -34,6 +35,7 @@ export const serverMessages = messages(
 	'PRIVATE_GAME_CANCELLED',
 	'GAME_OVER_STAT',
 	'GAME_STATE',
+	'CHAT_UPDATE',
 )
 
 export type ServerMessages = [
@@ -77,6 +79,7 @@ export type ServerMessages = [
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
+	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 ]
 
 export type ServerMessage = Message<ServerMessages>

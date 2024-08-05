@@ -7,9 +7,14 @@ import {
 	concatFormattedTextNodes,
 	formatText,
 } from 'common/utils/formatting'
-import {AnyAction} from 'redux'
 import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {
+	clientMessages,
+	ClientMessageTable,
+	RecievedClientMessage,
+} from 'common/socket-messages/client-messages'
 
 const gameAction =
 	(type: string, game: {players: Record<string, PlayerModel>}) =>
@@ -17,8 +22,16 @@ const gameAction =
 		return action.type === type && !!game.players[action.playerId]
 	}
 
-function* chatMessageSaga(game: GameModel, action: AnyAction) {
-	const {payload: message, playerId} = action
+function* chatMessageSaga(
+	game: GameModel,
+	action: RecievedClientMessage<
+		ClientMessageTable[typeof clientMessages.CHAT_MESSAGE]
+	>,
+) {
+	const {
+		payload: {message},
+		playerId,
+	} = action
 	if (typeof message !== 'string') return
 	if (message.length < 1) return
 	if (message.length > 140) return
@@ -45,11 +58,18 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 		),
 		createdAt: Date.now(),
 	})
-	broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
+	broadcast(game.getPlayers(), {
+		type: serverMessages.CHAT_UPDATE,
+		messages: game.chat,
+	})
 }
 
 function* chatSaga(game: GameModel) {
-	yield* takeEvery(gameAction('CHAT_MESSAGE', game), chatMessageSaga, game)
+	yield* takeEvery(
+		gameAction(clientMessages.CHAT_MESSAGE, game),
+		chatMessageSaga,
+		game,
+	)
 }
 
 export default chatSaga

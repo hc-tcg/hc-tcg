@@ -1,4 +1,5 @@
 import {PlayerEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 
@@ -13,6 +14,7 @@ export const clientMessages = messages(
 	'JOIN_PRIVATE_GAME',
 	'TURN_ACTION',
 	'FORFEIT',
+	'CHAT_MESSAGE',
 )
 
 export type ClientMessages = [
@@ -33,7 +35,15 @@ export type ClientMessages = [
 		}
 	},
 	{type: typeof clientMessages.FORFEIT},
+	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 ]
 
 export type ClientMessage = Message<ClientMessages>
 export type ClientMessageTable = MessageTable<ClientMessages>
+
+export type RecievedClientMessage<T extends {type: string}> = {
+	type: T['type']
+	playerId: PlayerId
+	playerSecret: string
+	payload: T
+}
