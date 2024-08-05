@@ -39,7 +39,7 @@ export const serverMessages = messages(
 )
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED; connected: boolean},
+	{type: typeof serverMessages.PLAYER_RECONNECTED},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{type: typeof serverMessages.PLAYER_INFO; player: PlayerInfo},
 	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeckT},

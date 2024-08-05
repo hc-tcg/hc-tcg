@@ -12,7 +12,6 @@ import {broadcast} from '../../utils/comm'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {
 	clientMessages,
-	ClientMessageTable,
 	RecievedClientMessage,
 } from 'common/socket-messages/client-messages'
 
@@ -24,9 +23,7 @@ const gameAction =
 
 function* chatMessageSaga(
 	game: GameModel,
-	action: RecievedClientMessage<
-		ClientMessageTable[typeof clientMessages.CHAT_MESSAGE]
-	>,
+	action: RecievedClientMessage<typeof clientMessages.CHAT_MESSAGE>,
 ) {
 	const {
 		payload: {message},

@@ -2,8 +2,11 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
+import {PlayerInfo} from '../types/server-requests'
 
 export const clientMessages = messages(
+	'CLIENT_CONNECTED',
+	'CLIENT_DISCONNECTED',
 	'GET_UPDATES',
 	'UPDATE_DECK',
 	'UPDATE_MINECRAFT_NAME',
@@ -18,6 +21,16 @@ export const clientMessages = messages(
 )
 
 export type ClientMessages = [
+	{
+		type: typeof clientMessages.CLIENT_CONNECTED
+		playerId: PlayerId,
+		playerName: string,
+		playerSecret: string,
+		minecraftName: string,
+		deck: PlayerDeckT,
+		socket: any,
+	},
+	{type: typeof clientMessages.CLIENT_DISCONNECTED},
 	{type: typeof clientMessages.GET_UPDATES},
 	{type: typeof clientMessages.UPDATE_DECK; deck: PlayerDeckT},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
@@ -41,9 +54,11 @@ export type ClientMessages = [
 export type ClientMessage = Message<ClientMessages>
 export type ClientMessageTable = MessageTable<ClientMessages>
 
-export type RecievedClientMessage<T extends {type: string}> = {
-	type: T['type']
+export type RecievedClientMessage<
+	T extends ClientMessage['type'] = ClientMessage['type'],
+> = {
+	type: T
 	playerId: PlayerId
 	playerSecret: string
-	payload: T
+	payload: ClientMessageTable[T]
 }

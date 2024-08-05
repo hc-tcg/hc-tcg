@@ -1,19 +1,18 @@
-import {PlayerModel} from 'common/models/player-model'
-import {
-	invalidPlayer,
-	loadUpdates,
-	newDeck,
-	newMinecraftName,
-	playerInfo,
-	playerReconnected,
-} from 'common/socket-messages/server-messages'
-import {delay, put, race, take, takeEvery} from 'typed-redux-saga'
-import {broadcast} from 'utils/comm'
+import {delay, put, race, take} from 'typed-redux-saga'
 import root from '../serverRoot'
+import {broadcast} from '../utils/comm'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {
+	clientMessages,
+	RecievedClientMessage,
+} from 'common/socket-messages/client-messages'
+import {PlayerModel} from 'common/models/player-model'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
-function* playerConnectedSaga(action: any) {
+export function* playerConnectedSaga(
+	action: RecievedClientMessage<typeof clientMessages.CLIENT_CONNECTED>,
+) {
 	const {playerName, minecraftName, deck, socket} = action.payload
 
 	if (action.payload.playerId) {
@@ -24,9 +23,9 @@ function* playerConnectedSaga(action: any) {
 			existingPlayer.socket = socket
 			if (deck) existingPlayer.setPlayerDeck(deck)
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
-			broadcast([existingPlayer], playerReconnected(existingPlayer.deck))
+			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
 		} else {
-			broadcast([existingPlayer], invalidPlayer())
+			broadcast([existingPlayer], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
@@ -40,10 +39,13 @@ function* playerConnectedSaga(action: any) {
 
 	yield* delay(500)
 
-	broadcast([newPlayer], playerInfo(newPlayer.getPlayerInfo()))
+	broadcast([newPlayer], {
+		type: serverMessages.PLAYER_INFO,
+		player: newPlayer.getPlayerInfo(),
+	})
 }
 
-function* playerDisconnectedSaga(action: any) {
+export function* playerDisconnectedSaga(action: any) {
 	const {socket} = action.payload
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
@@ -69,27 +71,30 @@ function* playerDisconnectedSaga(action: any) {
 	}
 }
 
-function* updateDeckSaga(action: any) {
+export function* updateDeckSaga(action: any) {
 	const {playerId} = action
 	let playerDeck = action.payload
 	const player = root.players[playerId]
 	if (!player) return
 	player.setPlayerDeck(playerDeck)
 
-	broadcast([player], newDeck(player.deck))
+	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 
-function* updateMinecraftNameSaga(action: any) {
+export function* updateMinecraftNameSaga(action: any) {
 	const {playerId} = action
 	let minecraftName = action.payload
 	const player = root.players[playerId]
 	if (!player) return
 	player.setMinecraftName(minecraftName)
 
-	broadcast([player], newMinecraftName(player.minecraftName))
+	broadcast([player], {
+		type: serverMessages.NEW_MINECRAFT_NAME,
+		name: player.minecraftName,
+	})
 }
 
-function* loadUpdatesSaga(action: any) {
+export function* loadUpdatesSaga(action: any) {
 	const {playerId} = action
 	const player = root.players[playerId]
 
@@ -98,13 +103,8 @@ function* loadUpdatesSaga(action: any) {
 		return
 	}
 
-	broadcast([player], loadUpdates(root.updates))
-}
-
-export function* playerSaga() {
-	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
-	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
-	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
-	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
-	yield* takeEvery('GET_UPDATES', loadUpdatesSaga)
+	broadcast([player], {
+		type: serverMessages.LOAD_UPDATES,
+		updates: root.updates,
+	})
 }

@@ -2,15 +2,12 @@ import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {
-	gameStateOnReconnect,
-	opponentConnection,
-} from 'common/socket-messages/server-messages'
 import {AnyAction} from 'redux'
 import {delay, takeEvery} from 'typed-redux-saga'
 import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 import {getLocalGameState} from '../../utils/state-gen'
+import {serverMessages} from 'common/socket-messages/server-messages'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
@@ -37,19 +34,25 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		return
 	}
 
-	const payload = {
+	broadcast([player], {
+		type: serverMessages.GAME_STATE_ON_RECONNECT,
 		localGameState: getLocalGameState(game, viewer),
 		order: game.getPlayers().map((player) => player.id),
-	}
-	broadcast([player], gameStateOnReconnect(payload))
-	broadcast([player], opponentConnection(opponent.socket?.connected))
+	})
+	broadcast([opponent], {
+		type: serverMessages.OPPONENT_CONNECTION,
+		isConnected: opponent.socket?.connected,
+	})
 }
 
 function* statusChangedSaga(game: GameModel, action: AnyAction) {
 	const playerId = (action.payload as PlayerModel).id
 	const opponentId = getOpponentId(game, playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
-	broadcast([game.players[opponentId]], opponentConnection(connectionStatus))
+	broadcast([game.players[opponentId]], {
+		type: serverMessages.OPPONENT_CONNECTION,
+		isConnected: connectionStatus,
+	})
 }
 
 function* connectionStatusSaga(game: GameModel) {
