@@ -9,7 +9,7 @@ import {
 	socketConnectError,
 	socketDisconnect,
 } from './socket-actions'
-import {ServerActions} from 'common/socket-messages/server-messages'
+import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {ClientMessage} from 'common/socket-messages/client-messages'
 
 export function* sendMsg(payload: ClientMessage): any {
@@ -31,13 +31,13 @@ export function* sendMsg(payload: ClientMessage): any {
 	}
 }
 
-export function receiveMsg<T extends keyof ServerActions>(type: T) {
+export function receiveMsg<T extends keyof ServerMessageTable>(type: T) {
 	return () => {
-		return new Promise<ServerActions[T]>((resolve) => {
-			const listener = (message: ServerActions[T]) => {
+		return new Promise<ServerMessageTable[T]>((resolve) => {
+			const listener = (message: ServerMessageTable[T]) => {
 				resolve(message)
 			}
-			socket.once(type, listener as any)
+			socket.once(type as string, listener as any)
 		})
 	}
 }
