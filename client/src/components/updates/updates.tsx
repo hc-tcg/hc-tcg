@@ -36,8 +36,8 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 			action={() => {}}
 			description={
 				<ul className={css.updatesList}>
-					{updates['updates'] ? (
-						updates['updates'].map((text, i) => {
+					{updates.length !== 0 ? (
+						updates.map((text, i) => {
 							return (
 								<>
 									<li

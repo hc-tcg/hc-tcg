@@ -17,7 +17,7 @@ type SessionState = {
 		| 'timeout'
 		| string
 	toast: ToastT
-	updates: Record<string, Array<string>>
+	updates: Array<string>
 }
 
 const defaultState: SessionState = {
@@ -28,7 +28,7 @@ const defaultState: SessionState = {
 	playerDeck: {name: '', icon: 'any', cards: []},
 	connecting: false,
 	toast: {open: false, title: '', description: '', image: ''},
-	updates: {},
+	updates: [],
 }
 
 const loginReducer = (
