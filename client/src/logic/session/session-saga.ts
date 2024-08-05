@@ -7,7 +7,6 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import {socketConnecting} from 'logic/socket/socket-actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
@@ -23,6 +22,7 @@ import {clientMessages} from 'common/socket-messages/client-messages'
 import {PlayerId} from 'common/models/player-model'
 import assert from 'assert'
 import {message} from 'common/redux-actions'
+import {socketActions, SocketMessage} from 'logic/socket/socket-actions'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -114,7 +114,7 @@ export function* loginSaga() {
 
 	const urlDeck = getDeck()
 
-	yield* put(socketConnecting())
+	yield* put(message<SocketMessage>({type: socketActions.SOCKET_CONNECTING}))
 	socket.connect()
 	const connectErrorChan = createConnectErrorChannel()
 	const result = yield* race({
