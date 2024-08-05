@@ -1,22 +1,8 @@
-import {PlayerId} from 'common/models/player-model'
-import {Action, actions, ActionTable} from 'common/redux-actions'
+import {Message, messages, MessageTable} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
+import {PlayerInfo} from 'common/types/server-requests'
 
-const sessionPayloads = () => ({
-	login,
-	setPlayerInfo,
-	disconnect,
-	logout,
-	setNewDeck,
-	setMinecraftName,
-	loadUpdates,
-	setToast,
-	closeToast,
-	updateDeck,
-	updateMinecraftName,
-})
-
-export const sessionActions = actions(
+export const sessionActions = messages(
 	'LOGIN',
 	'SET_PLAYER_INFO',
 	'DISCONNECT',
@@ -30,78 +16,25 @@ export const sessionActions = actions(
 	'UPDATE_MINECRAFT_NAME',
 )
 
-export type SessionAction = Action<typeof sessionPayloads>
-export type SessionActionTable = ActionTable<typeof sessionPayloads>
-
-export const login = (playerName: string) => ({
-	type: sessionActions.LOGIN,
-	payload: playerName,
-})
-
-type PlayerInfoT = {
-	playerId: PlayerId
-	playerName: string
-	minecraftName: string
-	playerSecret: string
-	playerDeck: PlayerDeckT
-}
-
-export const setPlayerInfo = (playerInfo: PlayerInfoT) => ({
-	type: sessionActions.SET_PLAYER_INFO,
-	payload: playerInfo,
-})
-
-export const disconnect = (errorType?: string) => ({
-	type: sessionActions.DISCONNECT,
-	payload: errorType,
-})
-
-export const logout = () => ({
-	type: sessionActions.LOGOUT,
-})
-
-export const setNewDeck = (newDeck: PlayerDeckT) => ({
-	type: sessionActions.SET_NEW_DECK,
-	payload: newDeck,
-})
-
-export const setMinecraftName = (name: string) => ({
-	type: sessionActions.SET_MINECRAFT_NAME,
-	payload: name,
-})
-
-export const loadUpdates = (updates: Record<string, string[]>) => ({
-	type: sessionActions.LOAD_UPDATES,
-	payload: {updates},
-})
-
-type SetToastDefs = {
-	open: boolean
-	title: string
-	description: string
-	image: string
-}
-
-export const setToast = ({open, title, description, image}: SetToastDefs) => ({
-	type: sessionActions.SET_TOAST,
-	payload: {
-		open,
-		title,
-		description,
-		image,
+export type SessionMessages = [
+	{type: typeof sessionActions.LOGIN; name: string},
+	{type: typeof sessionActions.SET_PLAYER_INFO; player: PlayerInfo},
+	{type: typeof sessionActions.DISCONNECT; errorMessage: string},
+	{type: typeof sessionActions.LOGOUT},
+	{type: typeof sessionActions.SET_NEW_DECK; deck: PlayerDeckT},
+	{type: typeof sessionActions.SET_MINECRAFT_NAME; name: string},
+	{type: typeof sessionActions.LOAD_UPDATES; updates: Record<string, string[]>},
+	{
+		type: typeof sessionActions.SET_TOAST
+		open: boolean
+		title: string
+		description: string
+		image: string
 	},
-})
+	{type: typeof sessionActions.CLOSE_TOAST},
+	{type: typeof sessionActions.UPDATE_DECK; deck: PlayerDeckT},
+	{type: typeof sessionActions.UPDATE_MINECRAFT_NAME; name: string},
+]
 
-export const closeToast = () => ({
-	type: sessionActions.CLOSE_TOAST,
-})
-
-export const updateDeck = (deck: PlayerDeckT) => ({
-	type: sessionActions.UPDATE_DECK,
-	payload: deck,
-})
-
-export const updateMinecraftName = (name: string) => ({
-	type: sessionActions.UPDATE_MINECRAFT_NAME,
-	payload: name,
-})
+export type SessionMessage = Message<SessionMessages>
+export type SessionMessageTable = MessageTable<SessionMessages>

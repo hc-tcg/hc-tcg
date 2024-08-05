@@ -13,23 +13,16 @@ import {eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {PlayerDeckT} from '../../../../common/types/deck'
 import {
-	disconnect,
-	loadUpdates,
 	sessionActions,
-	SessionActionTable,
-	setMinecraftName,
-	setNewDeck,
-	setPlayerInfo,
+	SessionMessage,
+	SessionMessageTable,
 } from './session-actions'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {
-	getUpdates,
-	updateDeck,
-	updateMinecraftName,
-} from 'common/socket-messages/client-messages'
+import {clientMessages} from 'common/socket-messages/client-messages'
 import {PlayerId} from 'common/models/player-model'
 import assert from 'assert'
+import {message} from 'common/redux-actions'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -110,11 +103,11 @@ export function* loginSaga() {
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
-		const {payload: playerName} = yield* take<
-			SessionActionTable[typeof sessionActions.LOGIN]
+		const {name} = yield* take<
+			SessionMessageTable[typeof sessionActions.LOGIN]
 		>(sessionActions.LOGIN)
 
-		socket.auth = {playerName, version: getClientVersion()}
+		socket.auth = {name, version: getClientVersion()}
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
@@ -147,7 +140,12 @@ export function* loginSaga() {
 			typeof errorType === 'string',
 			'For some unknown reason, `errorType` is a string even though the type system claims otherwise.',
 		)
-		yield put(disconnect(errorType))
+		yield put(
+			message<SessionMessage>({
+				type: sessionActions.DISCONNECT,
+				errorMessage: errorType,
+			}),
+		)
 		return
 	}
 
@@ -157,20 +155,30 @@ export function* loginSaga() {
 		if (!session) return
 		console.log('User reconnected')
 		yield put(
-			setPlayerInfo({...session, playerDeck: result.playerReconnected.payload}),
+			message<SessionMessage>({
+				type: sessionActions.SET_PLAYER_INFO,
+				player: session,
+			}),
 		)
 	}
 
 	if (result.playerInfo) {
-		const payload = result.playerInfo.payload
-		yield put(setPlayerInfo({...payload}))
-		saveSession(payload)
+		yield put(
+			message<SessionMessage>({
+				type: sessionActions.SET_PLAYER_INFO,
+				player: result.playerInfo.player,
+			}),
+		)
+		saveSession(result.playerInfo.player)
 
 		const minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName) {
-			yield* sendMsg(updateMinecraftName(minecraftName))
+			yield* sendMsg({type: 'UPDATE_MINECRAFT_NAME', name: minecraftName})
 		} else {
-			yield* sendMsg(updateMinecraftName(payload.playerName))
+			yield* sendMsg({
+				type: 'UPDATE_MINECRAFT_NAME',
+				name: result.playerInfo.player.playerName,
+			})
 		}
 
 		const activeDeckName = getActiveDeckName()
@@ -182,58 +190,76 @@ export function* loginSaga() {
 			console.log('Selected deck found in url: ' + urlDeck.name)
 			saveDeck(urlDeck)
 			setActiveDeck(urlDeck.name)
-			yield* sendMsg(updateDeck(urlDeck))
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: urlDeck})
 		} else if (activeDeckValid) {
 			// set player deck to active deck, and send to server
 			console.log('Selected previous active deck: ' + activeDeck.name)
-			yield* sendMsg(updateDeck(activeDeck))
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: activeDeck})
 		} else {
 			// use and save the generated starter deck
-			saveDeck(payload.playerDeck)
-			setActiveDeck(payload.playerDeck.name)
+			saveDeck(result.playerInfo.player.playerDeck)
+			setActiveDeck(result.playerInfo.player.playerDeck.name)
 			console.log('Generated new starter deck')
 		}
 
 		// set user info for reconnects
-		socket.auth.playerId = payload.playerId
-		socket.auth.playerSecret = payload.playerSecret
+		socket.auth.playerId = result.playerInfo.player.playerId
+		socket.auth.playerSecret = result.playerInfo.player.playerSecret
 	}
 }
 
 export function* logoutSaga() {
-	yield* takeEvery<SessionActionTable[typeof sessionActions.UPDATE_DECK]>(
+	yield* takeEvery<SessionMessageTable[typeof sessionActions.UPDATE_DECK]>(
 		sessionActions.UPDATE_DECK,
 		function* (action) {
-			yield* sendMsg(updateDeck(action.payload))
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<
-		SessionActionTable[typeof sessionActions.UPDATE_MINECRAFT_NAME]
+		SessionMessageTable[typeof sessionActions.UPDATE_MINECRAFT_NAME]
 	>('UPDATE_MINECRAFT_NAME', function* (action) {
-		yield* sendMsg(updateMinecraftName(action.payload))
+		yield* sendMsg({
+			type: clientMessages.UPDATE_MINECRAFT_NAME,
+			name: action.name,
+		})
 	})
 	yield* race([take('LOGOUT'), call(receiveMsg(serverMessages.INVALID_PLAYER))])
 	clearSession()
 	socket.disconnect()
-	yield put(disconnect())
+	yield put(message<SessionMessage>({type: sessionActions.LOGOUT}))
 }
 
 export function* newDeckSaga() {
 	while (true) {
 		const result = yield* call(receiveMsg(serverMessages.NEW_DECK))
-		yield put(setNewDeck(result.payload))
+		yield put(
+			message<SessionMessage>({
+				type: sessionActions.SET_NEW_DECK,
+				deck: result.deck,
+			}),
+		)
 	}
 }
 
 export function* minecraftNameSaga() {
 	while (true) {
 		const result = yield* call(receiveMsg(serverMessages.NEW_MINECRAFT_NAME))
-		yield put(setMinecraftName(result.payload))
+		yield put(
+			message<SessionMessage>({
+				type: sessionActions.UPDATE_MINECRAFT_NAME,
+				name: result.name,
+			}),
+		)
 	}
 }
 
 export function* updatesSaga() {
-	yield sendMsg(getUpdates())
+	yield sendMsg({type: clientMessages.GET_UPDATES})
 	const result = yield* call(receiveMsg(serverMessages.LOAD_UPDATES))
-	yield put(loadUpdates(result.payload))
+	yield put(
+		message<SessionMessage>({
+			type: sessionActions.LOAD_UPDATES,
+			updates: result.updates,
+		}),
+	)
 }

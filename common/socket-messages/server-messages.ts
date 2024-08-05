@@ -1,13 +1,14 @@
 import {PlayerId} from '../models/player-model'
-import {Action, actions, ActionTable} from '../redux-actions'
+import {Message, messages, MessageTable} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 import {
 	GamePlayerEndOutcomeT,
 	GameEndReasonT,
 	LocalGameState,
 } from '../types/game-state'
+import {PlayerInfo} from '../types/server-requests'
 
-export const serverMessages = actions(
+export const serverMessages = messages(
 	'PLAYER_RECONNECTED',
 	'INVALID_PLAYER',
 	'PLAYER_INFO',
@@ -32,31 +33,27 @@ export const serverMessages = actions(
 )
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED; payload: PlayerDeckT},
+	{type: typeof serverMessages.PLAYER_RECONNECTED; connected: boolean},
 	{type: typeof serverMessages.INVALID_PLAYER},
-	{type: typeof serverMessages.PLAYER_INFO},
-	{type: typeof serverMessages.NEW_DECK; payload: PlayerDeckT},
-	{type: typeof serverMessages.NEW_MINECRAFT_NAME; payload: string},
+	{type: typeof serverMessages.PLAYER_INFO; player: PlayerInfo},
+	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeckT},
+	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
-		payload: Record<string, Array<string>>
+		updates: Record<string, Array<string>>
 	},
 	{
 		type: typeof serverMessages.GAME_STATE_ON_RECONNECT
-		payload: {
-			localGameState: LocalGameState | null
-			order: PlayerId[]
-		}
+		localGameState: LocalGameState | null
+		order: PlayerId[]
 	},
-	{type: typeof serverMessages.OPPONENT_CONNECTION; payload: boolean},
+	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
 	{
 		type: typeof serverMessages.GAME_END
-		payload: {
-			gameState: LocalGameState | null
-			outcome: GamePlayerEndOutcomeT | null
-			reason: GameEndReasonT | null
-		}
+		gameState: LocalGameState | null
+		outcome: GamePlayerEndOutcomeT | null
+		reason: GameEndReasonT | null
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
@@ -71,5 +68,5 @@ export type ServerMessages = [
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
 ]
 
-export type ServerMessage = Action<ServerMessages>
-export type ServerMessageTable = ActionTable<ServerMessages>
+export type ServerMessage = Message<ServerMessages>
+export type ServerMessageTable = MessageTable<ServerMessages>

@@ -1,6 +1,6 @@
-import {actions} from '../../../../common/redux-actions'
+import {messages} from '../../../../common/redux-actions'
 
-export const matchmakingActions = actions(
+export const matchmakingActions = messages(
 	'JOIN_QUEUE',
 	'JOIN_QUEUE_FAILURE',
 	'CREATE_PRIVATE_GAME',

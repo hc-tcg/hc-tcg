@@ -10,9 +10,9 @@ import {
 	LocalModalResult,
 	SlotInfo,
 } from 'common/types/server-requests'
-import {Action, actions} from 'common/redux-actions'
+import {Message, messages} from 'common/redux-actions'
 
-export const gameActions = actions(
+export const gameActions = messages(
 	'GAME_STATE_RECIEVED',
 	'LOCAL_GAME_STATE',
 	'GAME_START',
@@ -36,7 +36,7 @@ export const gameActions = actions(
 	'UPDATE_GAME',
 )
 
-export type GameAction = Action<
+export type GameAction = Message<
 	| typeof gameStateReceived
 	| typeof localGameState
 	| typeof gameStart

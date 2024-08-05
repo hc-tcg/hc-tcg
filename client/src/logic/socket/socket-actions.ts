@@ -1,13 +1,13 @@
-import {Action, actions} from 'common/redux-actions'
+import {Message, messages} from 'common/redux-actions'
 
-export const socketActions = actions(
+export const socketActions = messages(
 	'SOCKET_CONNECTING',
 	'SOCKET_CONNECT',
 	'SOCKET_DISCONNECT',
 	'SOCKET_CONNECT_ERROR',
 )
 
-export type SocketAction = Action<
+export type SocketAction = Message<
 	| typeof socketConnecting
 	| typeof socketConnect
 	| typeof socketDisconnect

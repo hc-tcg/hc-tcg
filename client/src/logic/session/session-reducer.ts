@@ -1,7 +1,7 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
-import {sessionActions, SessionAction} from './session-actions'
+import {sessionActions, SessionMessage} from './session-actions'
 
 type SessionState = {
 	playerName: string
@@ -33,7 +33,7 @@ const defaultState: SessionState = {
 
 const loginReducer = (
 	state = defaultState,
-	action: SessionAction,
+	action: SessionMessage,
 ): SessionState => {
 	switch (action.type) {
 		case sessionActions.LOGIN:

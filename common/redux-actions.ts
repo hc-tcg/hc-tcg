@@ -2,25 +2,29 @@ type KeysToStrings<T extends Record<number, any>> = {
 	[Key in keyof T as Key & string]: T[Key]
 }
 
-export type Action<T extends Record<number, {type: string}>> = T[number]
+export type Message<T extends Record<number, {type: string}>> = T[number]
 
-type ActionTableInner<T extends Record<string, any>> = {
+type MessageTableInner<T extends Record<string, any>> = {
 	[n in keyof KeysToStrings<T> as T[n]['type']]: T[n]
 }
 
-export type ActionTable<T extends Record<number, {type: string}>> =
-	ActionTableInner<KeysToStrings<T>>
+export type MessageTable<T extends Record<number, {type: string}>> =
+	MessageTableInner<KeysToStrings<T>>
 
-type ActionsDict<T extends Array<string>> = {
+type MessageDict<T extends Array<string>> = {
 	[Key in keyof {[n in keyof T as T[n] & string]: string}]: Key
 }
 
-export function actions<T extends Array<string>>(
+export function messages<T extends Array<string>>(
 	...actions: T
-): ActionsDict<T> {
+): MessageDict<T> {
 	let actionsDict: Record<string, string> = {}
 	for (const action in actions) {
 		actionsDict[action] = action
 	}
 	return actionsDict as any
+}
+
+export function message<T>(message: T): {type: string} {
+	return message as any
 }

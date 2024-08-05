@@ -1,8 +1,8 @@
-import {Action, actions} from 'common/redux-actions'
+import {Message, messages} from 'common/redux-actions'
 
-export const fbdbActions = actions('AUTHED', 'RESET_STATS', 'STATS')
+export const fbdbActions = messages('AUTHED', 'RESET_STATS', 'STATS')
 
-export type FbdbAction = Action<
+export type FbdbAction = Message<
 	typeof authLogin | typeof resetStats | typeof statsUpdate
 >
 
