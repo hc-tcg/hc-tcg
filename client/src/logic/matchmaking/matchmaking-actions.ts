@@ -1,4 +1,4 @@
-import {messages} from '../../../../common/redux-actions'
+import {Message, messages, MessageTable} from '../../../../common/redux-actions'
 
 export const matchmakingActions = messages(
 	'JOIN_QUEUE',
@@ -13,52 +13,20 @@ export const matchmakingActions = messages(
 	'WAITING_FOR_PLAYER',
 )
 
-export type MatchmakingAction = ReturnType<
-	| typeof joinQueue
-	| typeof createPrivateGame
-	| typeof joinPrivateGame
-	| typeof codeReceived
-	| typeof leaveMatchmaking
-	| typeof clearMatchmaking
-	| typeof setCode
-	| typeof invalidCode
-	| typeof waitingForPlayer
->
+export type MatchmakingAction = [
+	{type: typeof matchmakingActions.JOIN_QUEUE},
+	{type: typeof matchmakingActions.CREATE_PRIVATE_GAME},
+	{type: typeof matchmakingActions.JOIN_PRIVATE_GAME},
+	{type: typeof matchmakingActions.CODE_RECIEVED; code: string},
+	{type: typeof matchmakingActions.LEAVE_MATCHMAKING},
+	{type: typeof matchmakingActions.CLEAR_MATCHMAKING},
+	{
+		type: typeof matchmakingActions.SET_MATCHMAKING_CODE
+		code: string
+	},
+	{type: typeof matchmakingActions.INVALID_CODE},
+	{type: typeof matchmakingActions.WAITING_FOR_PLAYER},
+]
 
-export const joinQueue = () => ({
-	type: matchmakingActions.JOIN_QUEUE,
-})
-
-export const createPrivateGame = () => ({
-	type: matchmakingActions.CREATE_PRIVATE_GAME,
-})
-
-export const joinPrivateGame = () => ({
-	type: matchmakingActions.JOIN_PRIVATE_GAME,
-})
-
-export const codeReceived = (code: string) => ({
-	type: matchmakingActions.CODE_RECIEVED,
-	payload: code,
-})
-
-export const leaveMatchmaking = () => ({
-	type: matchmakingActions.LEAVE_MATCHMAKING,
-})
-
-export const clearMatchmaking = () => ({
-	type: matchmakingActions.CLEAR_MATCHMAKING,
-})
-
-export const setCode = (gameCode: string | null) => ({
-	type: matchmakingActions.SET_MATCHMAKING_CODE,
-	payload: gameCode,
-})
-
-export const invalidCode = () => ({
-	type: matchmakingActions.INVALID_CODE,
-})
-
-export const waitingForPlayer = () => ({
-	type: matchmakingActions.WAITING_FOR_PLAYER,
-})
+export type MatchmakingMessage = Message<MatchmakingAction>
+export type MatchmakingMessageTable = MessageTable<MatchmakingAction>

@@ -18,8 +18,9 @@ export const serverMessages = messages(
 	'GAME_STATE_ON_RECONNECT',
 	'OPPONENT_CONNECTION',
 	'GAME_CRASH',
+	'GAME_START',
 	'GAME_END',
-	'PRIVATE_GAME_TMEOUT',
+	'PRIVATE_GAME_TIMEOUT',
 	'LEAVE_QUEUE_SUCCESS',
 	'LEAVE_QUEUE_FAILURE',
 	'CREATE_PRIVATE_GAME_SUCCESS',
@@ -49,16 +50,17 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
+	{type: typeof serverMessages.GAME_START},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GamePlayerEndOutcomeT | null
 		reason: GameEndReasonT | null
 	},
-	{type: typeof serverMessages.PRIVATE_GAME_TMEOUT},
+	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
 	{type: typeof serverMessages.LEAVE_QUEUE_FAILURE},
-	{type: typeof serverMessages.CREATE_PRIVATE_GAME_SUCCESS},
+	{type: typeof serverMessages.CREATE_PRIVATE_GAME_SUCCESS; code: string},
 	{type: typeof serverMessages.CREATE_PRIVATE_GAME_FAILURE},
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_SUCCESS},
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_FAILURE},
