@@ -1,41 +1,64 @@
-export type JoinQueueAction = {
-	type: 'JOIN_QUEUE'
-}
+import {actions} from '../../../../common/redux-actions'
+
+export const matchmakingActions = actions(
+	'JOIN_QUEUE',
+	'JOIN_QUEUE_FAILURE',
+	'CREATE_PRIVATE_GAME',
+	'JOIN_PRIVATE_GAME',
+	'CODE_RECIEVED',
+	'LEAVE_MATCHMAKING',
+	'CLEAR_MATCHMAKING',
+	'SET_MATCHMAKING_CODE',
+	'INVALID_CODE',
+	'WAITING_FOR_PLAYER',
+)
+
+export type MatchmakingAction = ReturnType<
+	| typeof joinQueue
+	| typeof createPrivateGame
+	| typeof joinPrivateGame
+	| typeof codeReceived
+	| typeof leaveMatchmaking
+	| typeof clearMatchmaking
+	| typeof setCode
+	| typeof invalidCode
+	| typeof waitingForPlayer
+>
 
 export const joinQueue = () => ({
-	type: 'JOIN_QUEUE' as const,
+	type: matchmakingActions.JOIN_QUEUE,
 })
 
 export const createPrivateGame = () => ({
-	type: 'CREATE_PRIVATE_GAME' as const,
+	type: matchmakingActions.CREATE_PRIVATE_GAME,
 })
 
 export const joinPrivateGame = () => ({
-	type: 'JOIN_PRIVATE_GAME' as const,
+	type: matchmakingActions.JOIN_PRIVATE_GAME,
 })
 
 export const codeReceived = (code: string) => ({
-	type: 'CODE_RECEIVED' as const,
+	type: matchmakingActions.CODE_RECIEVED,
 	payload: code,
 })
 
 export const leaveMatchmaking = () => ({
-	type: 'LEAVE_MATCHMAKING' as const,
+	type: matchmakingActions.LEAVE_MATCHMAKING,
 })
 
 export const clearMatchmaking = () => ({
-	type: 'CLEAR_MATCHMAKING' as const,
+	type: matchmakingActions.CLEAR_MATCHMAKING,
 })
 
 export const setCode = (gameCode: string | null) => ({
-	type: 'SET_MATCHMAKING_CODE' as const,
+	type: matchmakingActions.SET_MATCHMAKING_CODE,
 	payload: gameCode,
 })
 
 export const invalidCode = () => ({
-	type: 'INVALID_CODE' as const,
+	type: matchmakingActions.INVALID_CODE,
 })
 
 export const waitingForPlayer = () => ({
-	type: 'WAITING_FOR_PLAYER' as const,
+	type: matchmakingActions.WAITING_FOR_PLAYER,
 })

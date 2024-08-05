@@ -227,7 +227,7 @@ function* joinQueue(msg: ClientMessage) {
 
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log('[Join queue] Player is already in game or queue:', player.name)
-		broadcast([player], 'JOIN_QUEUE_FAILURE')
+		broadcast([player], joinQueueFailure())
 		return
 	}
 
@@ -420,3 +420,6 @@ function* matchmakingSaga() {
 // send and receive nessage is how we communicate with the server,completely independent of the store and reducer
 
 export default matchmakingSaga
+function joinQueueFailure(): any {
+	throw new Error('Function not implemented.')
+}
