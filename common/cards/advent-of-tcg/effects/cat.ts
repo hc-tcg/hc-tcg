@@ -45,8 +45,8 @@ class Cat extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Cat: Draw a card from the bottom of your deck?',
-						modalDescription: '',
+						modalName: 'Cat',
+						modalDescription: 'Draw a card from the bottom of your deck?',
 						cards: [
 							player.getDeck().sort(CardComponent.compareOrder)[0].entity,
 						],

@@ -580,7 +580,7 @@ function* turnActionsSaga(game: GameModel) {
 				}
 
 				game.endInfo.reason = 'time'
-				game.endInfo.deadPlayerIds = [currentPlayer.entity]
+				game.endInfo.deadPlayerEntities = [currentPlayer.entity]
 				return 'GAME_END'
 			}
 
@@ -624,7 +624,7 @@ export function* turnSaga(game: GameModel) {
 		if (turnStartDeadPlayers.length) {
 			game.endInfo.reason =
 				turnStartDeadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
-			game.endInfo.deadPlayerIds = turnStartDeadPlayers.map(
+			game.endInfo.deadPlayerEntities = turnStartDeadPlayers.map(
 				(player) => player.entity,
 			)
 			return 'GAME_END'
@@ -666,7 +666,7 @@ export function* turnSaga(game: GameModel) {
 		} else {
 			game.endInfo.reason = 'hermits'
 		}
-		game.endInfo.deadPlayerIds = deadPlayers.map((player) => player.entity)
+		game.endInfo.deadPlayerEntities = deadPlayers.map((player) => player.entity)
 		return 'GAME_END'
 	}
 

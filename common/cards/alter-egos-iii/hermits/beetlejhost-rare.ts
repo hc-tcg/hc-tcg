@@ -34,7 +34,7 @@ class BeetlejhostRare extends Card {
 			cost: ['balanced', 'balanced'],
 			damage: 100,
 			power:
-				'This attack does 10 hp less damage every time it is used consecutively.',
+				'This attack does 10hp less damage every time it is used on consecutive turns.',
 		},
 	}
 
