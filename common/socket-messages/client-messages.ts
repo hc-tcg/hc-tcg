@@ -1,3 +1,4 @@
+import {PlayerEntity} from '../entities'
 import {Message, messages, MessageTable} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 
@@ -10,6 +11,8 @@ export const clientMessages = messages(
 	'JOIN_QUEUE',
 	'LEAVE_QUEUE',
 	'JOIN_PRIVATE_GAME',
+	'TURN_ACTION',
+	'FORFEIT',
 )
 
 export type ClientMessages = [
@@ -21,6 +24,15 @@ export type ClientMessages = [
 	{type: typeof clientMessages.JOIN_QUEUE},
 	{type: typeof clientMessages.LEAVE_QUEUE},
 	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
+	{
+		type: typeof clientMessages.TURN_ACTION
+		action: {
+			type: string
+			playerEntity: PlayerEntity
+			payload: any
+		}
+	},
+	{type: typeof clientMessages.FORFEIT},
 ]
 
 export type ClientMessage = Message<ClientMessages>

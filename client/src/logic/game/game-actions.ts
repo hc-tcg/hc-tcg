@@ -4,6 +4,7 @@ import {
 	LocalGameState,
 	Message as ChatMessage,
 	GameEndOutcomeT,
+    GamePlayerEndOutcomeT,
 } from 'common/types/game-state'
 import {GameEndReasonT} from 'common/types/game-state'
 import {
@@ -68,7 +69,7 @@ export type GameActions = [
 	{
 		type: typeof gameActions.SHOW_END_GAME_OVERLAY
 		outcome: GameEndOutcomeT
-		reason?: GameEndReasonT
+		reason?: GameEndReasonT | GamePlayerEndOutcomeT
 	},
 	{type: typeof gameActions.SET_COIN_FLIP; coinFlip: LocalCurrentCoinFlip},
 	{type: typeof gameActions.SET_OPPONENT_CONNECTION; connected: boolean},

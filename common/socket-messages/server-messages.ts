@@ -33,6 +33,7 @@ export const serverMessages = messages(
 	'WAITING_FOR_PLAYER',
 	'PRIVATE_GAME_CANCELLED',
 	'GAME_OVER_STAT',
+	'GAME_STATE',
 )
 
 export type ServerMessages = [
@@ -75,6 +76,7 @@ export type ServerMessages = [
 		outcome: GameEndOutcomeT
 		won: boolean
 	},
+	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
 ]
 
 export type ServerMessage = Message<ServerMessages>
