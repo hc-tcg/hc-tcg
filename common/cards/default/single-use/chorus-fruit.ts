@@ -25,6 +25,7 @@ class ChorusFruit extends Card {
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
+			query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
 			query.not(
 				query.exists(
 					SlotComponent,
