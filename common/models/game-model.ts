@@ -13,10 +13,13 @@ import ComponentTable from '../types/ecs'
 import {
 	ActionResult,
 	DefaultDictionary,
+	GamePlayerEndOutcomeT,
+	GameEndReasonT,
 	GameState,
 	Message,
 	TurnAction,
 	TurnActions,
+	GameEndOutcomeT,
 } from '../types/game-state'
 import {Hook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
@@ -66,8 +69,8 @@ export class GameModel {
 	public endInfo: {
 		deadPlayerEntities: Array<string>
 		winner: string | null
-		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error' | null
-		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
+		outcome: GameEndOutcomeT | null
+		reason: GameEndReasonT | null
 	}
 
 	constructor(
@@ -143,10 +146,9 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public broadcastToViewers(type: string, payload?: any) {
+	public broadcastToViewers(payload?: any) {
 		broadcast(
 			this.viewers.map((viewer) => viewer.player),
-			type,
 			payload,
 		)
 	}

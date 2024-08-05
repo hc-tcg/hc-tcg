@@ -4,7 +4,7 @@ import {
 	LocalGameState,
 	Message,
 } from 'common/types/game-state'
-import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
+import {GamePlayerEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
 import {
 	LocalCardInstance,
 	LocalModalResult,
@@ -125,7 +125,7 @@ export const startAttack = (
 })
 
 export const showEndGameOverlay = (
-	outcome: GameEndOutcomeT,
+	outcome: GamePlayerEndOutcomeT,
 	reason: GameEndReasonT = null,
 ) => ({
 	type: gameActions.SHOW_END_GAME_OVERLAY,

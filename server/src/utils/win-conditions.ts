@@ -2,6 +2,7 @@ import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId} from 'common/models/player-model'
 import {getOpponentId} from '../utils'
+import {GamePlayerEndOutcomeT} from 'common/types/game-state'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -19,7 +20,7 @@ export const getGamePlayerOutcome = (
 	game: GameModel,
 	endResult: any,
 	playerId: PlayerId,
-) => {
+): GamePlayerEndOutcomeT => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		const triggerPlayerId = endResult.forfeit.playerId

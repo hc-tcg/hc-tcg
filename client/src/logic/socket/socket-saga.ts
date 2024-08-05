@@ -9,6 +9,7 @@ import {
 	socketConnectError,
 	socketDisconnect,
 } from './socket-actions'
+import {ServerMessage} from 'common/socket-messages/server-messages'
 
 export function* sendMsg(type: string, payload?: any): any {
 	while (true) {
@@ -27,11 +28,6 @@ export function* sendMsg(type: string, payload?: any): any {
 			socket.once('connect', resolve)
 		})
 	}
-}
-
-export type ServerMessage = {
-	type: string
-	payload?: any
 }
 
 export const receiveMsg = (type: string) => {

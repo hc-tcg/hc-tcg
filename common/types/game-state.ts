@@ -140,6 +140,13 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
+	| 'timeout'
+	| 'forfeit'
+	| 'tie'
+	| 'player_won'
+	| 'error'
+
+export type GamePlayerEndOutcomeT =
 	| 'client_crash'
 	| 'server_crash'
 	| 'timeout'
@@ -153,7 +160,7 @@ export type GameEndOutcomeT =
 	| 'you_lost'
 	| null
 
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity

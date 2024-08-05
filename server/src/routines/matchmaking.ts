@@ -22,6 +22,13 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
+import {
+	gameCrash,
+	gameEnd,
+	leaveQueueFailure,
+	leaveQueueSuccess,
+	privateGameTimeout,
+} from 'common/socket-messages/server-messages'
 
 export type ClientMessage = {
 	type: string
@@ -115,18 +122,21 @@ function* gameManager(game: GameModel) {
 				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
-			broadcast([viewer.player], 'GAME_END', {
-				gameState,
-				outcome,
-				reason: game.endInfo.reason,
-			})
+			broadcast(
+				[viewer.player],
+				gameEnd({
+					gameState,
+					outcome,
+					reason: game.endInfo.reason,
+				}),
+			)
 		}
 		game.endInfo.outcome = getGameOutcome(game, result)
 		game.endInfo.winner = getWinner(game, result)
 	} catch (err) {
 		console.log('Error: ', err)
 		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), 'GAME_CRASH')
+		broadcast(game.getPlayers(), gameCrash())
 	} finally {
 		if (game.task) yield* cancel(game.task)
 		game.afterGameEnd.call()
@@ -207,7 +217,7 @@ function* cleanUpSaga() {
 				if (info.playerId) {
 					const player = root.players[info.playerId]
 					if (player) {
-						broadcast([player], 'PRIVATE_GAME_TIMEOUT')
+						broadcast([player], privateGameTimeout())
 					}
 				}
 				delete root.privateQueue[code]
@@ -233,7 +243,7 @@ function* joinQueue(msg: ClientMessage) {
 
 	// Add them to the queue
 	root.queue.push(playerId)
-	broadcast([player], 'JOIN_QUEUE_SUCCESS')
+	broadcast([player], leaveQueueSuccess())
 	console.log(`Joining queue: ${player.name}`)
 }
 
@@ -250,10 +260,10 @@ function* leaveQueue(msg: ClientMessage) {
 	const queueIndex = root.queue.indexOf(playerId)
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
-		broadcast([player], 'LEAVE_QUEUE_SUCCESS')
+		broadcast([player], leaveQueueSuccess())
 		console.log(`Left queue: ${player.name}`)
 	} else {
-		broadcast([player], 'LEAVE_QUEUE_FAILURE')
+		broadcast([player], leaveQueueFailure())
 		console.log(
 			'[Leave queue]: Player tried to leave queue when not there:',
 			player.name,
