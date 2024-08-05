@@ -10,9 +10,58 @@ import {
 	LocalModalResult,
 	SlotInfo,
 } from 'common/types/server-requests'
+import {actions} from 'common/redux-actions'
+
+export const gameActions = actions(
+	'GAME_STATE_RECIEVED',
+	'LOCAL_GAME_STATE',
+	'GAME_START',
+	'GAME_END',
+	'SET_SELECTED_CARD',
+	'SET_OPENED_MODAL',
+	'SLOT_PICKED',
+	'FORFEIT',
+	'START_ATTACK',
+	'SHOW_END_GAME_OVERLAY',
+	'SET_COIN_FLIP',
+	'SET_OPPONENT_CONNECTION',
+	'MODAL_REQUEST',
+	'APPLY_EFFECT',
+	'REMOVE_EFFECT',
+	'END_TURN',
+	'CHAT_MESSAGE',
+	'CHAT_UPDATE',
+	'ATTACK_ACTION',
+	'END_TURN_ACTION',
+	'UPDATE_GAME',
+)
+
+export type GameActions =
+	| ReturnType<typeof gameStateReceived>
+	| ReturnType<typeof localGameState>
+	| ReturnType<typeof gameStart>
+	| ReturnType<typeof gameEnd>
+	| ReturnType<typeof setSelectedCard>
+	| ReturnType<typeof setOpenedModal>
+	| ReturnType<typeof setSelectedCard>
+	| ReturnType<typeof setOpenedModal>
+	| ReturnType<typeof slotPicked>
+	| ReturnType<typeof forfeit>
+	| ReturnType<typeof startAttack>
+	| ReturnType<typeof showEndGameOverlay>
+	| ReturnType<typeof setCoinFlip>
+	| ReturnType<typeof setOpponentConnection>
+	| ReturnType<typeof setOpenedModal>
+	| ReturnType<typeof applyEffect>
+	| ReturnType<typeof removeEffect>
+	| ReturnType<typeof endTurn>
+	| ReturnType<typeof chatMessage>
+	| ReturnType<typeof chatUpdate>
+	| ReturnType<typeof attackAction>
+	| ReturnType<typeof endTurnAction>
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
-	type: 'GAME_STATE_RECEIVED' as const,
+	type: gameActions.GAME_STATE_RECIEVED,
 	payload: {
 		localGameState,
 		time: Date.now(),
@@ -20,7 +69,7 @@ export const gameStateReceived = (localGameState: LocalGameState) => ({
 })
 
 export const localGameState = (localGameState: LocalGameState) => ({
-	type: 'LOCAL_GAME_STATE' as const,
+	type: gameActions.LOCAL_GAME_STATE,
 	payload: {
 		localGameState,
 		time: Date.now(),
@@ -28,20 +77,20 @@ export const localGameState = (localGameState: LocalGameState) => ({
 })
 
 export const gameStart = () => ({
-	type: 'GAME_START' as const,
+	type: gameActions.GAME_START,
 })
 
 export const gameEnd = () => ({
-	type: 'GAME_END' as const,
+	type: gameActions.GAME_END,
 })
 
 export const setSelectedCard = (card: LocalCardInstance | null) => ({
-	type: 'SET_SELECTED_CARD' as const,
+	type: gameActions.SET_SELECTED_CARD,
 	payload: card,
 })
 
 export const setOpenedModal = (id: string | null, info: any = null) => ({
-	type: 'SET_OPENED_MODAL' as const,
+	type: gameActions.SET_OPENED_MODAL,
 	payload: id === null ? null : {id, info},
 })
 
@@ -51,7 +100,7 @@ export const slotPicked = (
 	row?: number,
 	index?: number,
 ) => ({
-	type: 'SLOT_PICKED' as const,
+	type: gameActions.SLOT_PICKED,
 	payload: {
 		slot: slotInfo,
 		player: player,
@@ -61,7 +110,7 @@ export const slotPicked = (
 })
 
 export const forfeit = () => ({
-	type: 'FORFEIT' as const,
+	type: gameActions.FORFEIT,
 })
 
 type ExtraItemT = {hermitId: string; type: 'primary' | 'secondary'}
@@ -70,7 +119,7 @@ export const startAttack = (
 	type: 'single-use' | 'primary' | 'secondary',
 	extra?: Record<string, ExtraItemT>,
 ) => ({
-	type: 'START_ATTACK' as const,
+	type: gameActions.START_ATTACK,
 	payload: {type, extra},
 })
 
@@ -78,7 +127,7 @@ export const showEndGameOverlay = (
 	outcome: GameEndOutcomeT,
 	reason: GameEndReasonT = null,
 ) => ({
-	type: 'SHOW_END_GAME_OVERLAY' as const,
+	type: gameActions.SHOW_END_GAME_OVERLAY,
 	payload: {
 		outcome,
 		reason,
@@ -86,49 +135,53 @@ export const showEndGameOverlay = (
 })
 
 export const setCoinFlip = (payload: LocalCurrentCoinFlip | null) => ({
-	type: 'SET_COIN_FLIP',
+	type: gameActions.SET_COIN_FLIP,
 	payload,
 })
 
 export const setOpponentConnection = (payload: boolean) => ({
-	type: 'SET_OPPONENT_CONNECTION',
+	type: gameActions.SET_OPPONENT_CONNECTION,
 	payload,
 })
 
 // ---
 
 export const modalRequest = (payload: {modalResult: LocalModalResult}) => ({
-	type: 'MODAL_REQUEST' as const,
+	type: gameActions.MODAL_REQUEST,
 	payload,
 })
 
 export const applyEffect = (payload: any) => ({
-	type: 'APPLY_EFFECT' as const,
+	type: gameActions.APPLY_EFFECT,
 	payload,
 })
 
 export const removeEffect = () => ({
-	type: 'REMOVE_EFFECT' as const,
+	type: gameActions.REMOVE_EFFECT,
 })
 
 export const endTurn = () => ({
-	type: 'END_TURN' as const,
+	type: gameActions.END_TURN,
 })
 
 export const chatMessage = (message: string) => ({
-	type: 'CHAT_MESSAGE',
+	type: gameActions.CHAT_MESSAGE,
 	payload: message,
 })
 
 export const chatUpdate = (messages: Array<Message>) => ({
-	type: 'CHAT_UPDATE',
+	type: gameActions.CHAT_UPDATE,
 	payload: messages,
 })
 
 export const attackAction = () => ({
-	type: 'ATTACK_ACTION',
+	type: gameActions.ATTACK_ACTION,
 })
 
 export const endTurnAction = () => ({
-	type: 'END_TURN_ACTION',
+	type: gameActions.END_TURN_ACTION,
+})
+
+export const updateGame = () => ({
+	type: gameActions.UPDATE_GAME,
 })

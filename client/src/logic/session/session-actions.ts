@@ -1,17 +1,18 @@
 import {PlayerId} from 'common/models/player-model'
+import {actions} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
 
-export const sessionActions = {
-	LOGIN: 'LOGIN',
-	SET_PLAYER_INFO: 'SET_PLAYER_INFO',
-	DISCONNECT: 'DISCONNECT',
-	LOGOUT: 'LOGOUT',
-	SET_NEW_DECK: 'SET_NEW_DECK',
-	SET_MINECRAFT_NAME: 'SET_MINECRAFT_NAME',
-	LOAD_UPDATES: 'LOAD_UPDATES',
-	SET_TOAST: 'SET_TOAST',
-	CLOSE_TOAST: 'CLOSE_TOAST',
-} as const
+export const sessionActions = actions(
+	'LOGIN',
+	'SET_PLAYER_INFO',
+	'DISCONNECT',
+	'LOGOUT',
+	'SET_NEW_DECK',
+	'SET_MINECRAFT_NAME',
+	'LOAD_UPDATES',
+	'SET_TOAST',
+	'CLOSE_TOAST',
+)
 
 export const login = (playerName: string) => ({
 	type: sessionActions.LOGIN,
