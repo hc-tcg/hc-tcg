@@ -8,32 +8,6 @@ import {
 } from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
-export const serverTypes = () => ({
-	playerReconnected,
-	invalidPlayer,
-	playerInfo,
-	newDeck,
-	newMinecraftName,
-	loadUpdates,
-	gameStateOnReconnect,
-	opponentConnection,
-	gameCrash,
-	gameEnd,
-	privateGameTimeout,
-	leaveQueueSuccess,
-	leaveQueueFailure,
-	createPrivateGameSuccess,
-	createPrivateGameFailure,
-	joinPrivateGameSuccess,
-	joinPrivateGameFailure,
-	invalidCode,
-	waitingForPlayer,
-	privateGameCancelled,
-})
-
-export type ServerActions = ActionTable<typeof serverTypes>
-export type ServerMessage = Action<typeof serverTypes>
-
 export const serverMessages = actions(
 	'PLAYER_RECONNECTED',
 	'INVALID_PLAYER',
@@ -60,6 +34,32 @@ export const serverMessages = actions(
 	'WAITING_FOR_PLAYER',
 	'PRIVATE_GAME_CANCELLED',
 )
+
+const PayloadConstructors = () => ({
+	playerReconnected,
+	invalidPlayer,
+	playerInfo,
+	newDeck,
+	newMinecraftName,
+	loadUpdates,
+	gameStateOnReconnect,
+	opponentConnection,
+	gameCrash,
+	gameEnd,
+	privateGameTimeout,
+	leaveQueueSuccess,
+	leaveQueueFailure,
+	createPrivateGameSuccess,
+	createPrivateGameFailure,
+	joinPrivateGameSuccess,
+	joinPrivateGameFailure,
+	invalidCode,
+	waitingForPlayer,
+	privateGameCancelled,
+})
+
+export type ServerActions = ActionTable<typeof PayloadConstructors>
+export type ServerMessage = Action<typeof PayloadConstructors>
 
 export const playerReconnected = (playerDeck: PlayerDeckT) => ({
 	type: serverMessages.PLAYER_RECONNECTED,

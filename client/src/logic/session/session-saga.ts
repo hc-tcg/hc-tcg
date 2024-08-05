@@ -10,7 +10,7 @@ import {
 import {socketConnecting} from 'logic/socket/socket-actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {AnyAction} from 'redux'
-import {SagaIterator, eventChannel} from 'redux-saga'
+import {eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {PlayerDeckT} from '../../../../common/types/deck'
 import {
@@ -21,7 +21,6 @@ import {
 	setPlayerInfo,
 } from './session-actions'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
-import {ServerMessage} from 'common/socket-messages/server-messages'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
