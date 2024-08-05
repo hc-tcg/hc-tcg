@@ -7,12 +7,12 @@ import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
 	StatusEffectProps,
-	statusEffect,
+	systemStatusEffect,
 } from './status-effect'
 
 class CurseOfBindingEffect extends PlayerStatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		icon: 'binded',
 		name: 'Curse of Binding',
 		description: 'You can not switch your active hermit this turn.',
