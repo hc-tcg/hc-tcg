@@ -13,6 +13,7 @@ const sessionPayloads = () => ({
 	setToast,
 	closeToast,
 	updateDeck,
+	updateMinecraftName,
 })
 
 export const sessionActions = actions(
@@ -26,6 +27,7 @@ export const sessionActions = actions(
 	'SET_TOAST',
 	'CLOSE_TOAST',
 	'UPDATE_DECK',
+	'UPDATE_MINECRAFT_NAME',
 )
 
 export type SessionAction = Action<typeof sessionPayloads>
@@ -97,4 +99,9 @@ export const closeToast = () => ({
 export const updateDeck = (deck: PlayerDeckT) => ({
 	type: sessionActions.UPDATE_DECK,
 	payload: deck,
+})
+
+export const updateMinecraftName = (name: string) => ({
+	type: sessionActions.UPDATE_MINECRAFT_NAME,
+	payload: name,
 })
