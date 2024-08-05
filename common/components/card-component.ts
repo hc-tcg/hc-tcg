@@ -148,6 +148,12 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			this.slot.onBoard() !== component.onBoard() ||
 			this.player.entity !== component.player.entity
 
+		if (this.slot.onBoard() && !component.onBoard()) {
+			this.game.components
+				.filter(StatusEffectComponent, query.effect.targetEntity(this.entity))
+				.forEach((effect) => effect.remove())
+		}
+
 		if (this.slot.onBoard() && changingBoards) {
 			if (!this.observerEntity)
 				throw new Error(
