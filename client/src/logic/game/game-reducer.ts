@@ -1,5 +1,4 @@
 import {LocalGameRoot} from 'common/types/game-state'
-import {AnyAction} from 'redux'
 import {GameAction, gameActions} from './game-actions'
 
 const defaultState: LocalGameRoot = {
