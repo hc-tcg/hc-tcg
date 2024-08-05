@@ -4,13 +4,10 @@ import {eventChannel} from 'redux-saga'
 import {put, takeEvery} from 'redux-saga/effects'
 import socket from 'socket'
 import {select} from 'typed-redux-saga'
-import {
-	socketConnect,
-	socketConnectError,
-	socketDisconnect,
-} from './socket-actions'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {ClientMessage} from 'common/socket-messages/client-messages'
+import {message} from 'common/redux-actions'
+import {socketActions, SocketMessage} from './socket-actions'
 
 export function* sendMsg(payload: ClientMessage): any {
 	while (true) {
@@ -58,9 +55,14 @@ function* socketSaga(): SagaIterator {
 	})
 	yield takeEvery(channel, function* (type) {
 		console.log('@socket: ', type)
-		if (type === 'connect') yield put(socketConnect())
-		if (type === 'disconnect') yield put(socketDisconnect())
-		if (type === 'connect_error') yield put(socketConnectError())
+		if (type === 'connect')
+			yield put(message<SocketMessage>({type: socketActions.SOCKET_CONNECT}))
+		if (type === 'disconnect')
+			yield put(message<SocketMessage>({type: socketActions.SOCKET_DISCONNECT}))
+		if (type === 'connect_error')
+			yield put(
+				message<SocketMessage>({type: socketActions.SOCKET_CONNECT_ERROR}),
+			)
 	})
 }
 
