@@ -11,7 +11,6 @@ import {socketConnecting} from 'logic/socket/socket-actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {call, delay, put, race, take, takeEvery} from 'redux-saga/effects'
 import socket from 'socket'
 import {PlayerDeckT} from '../../../../common/types/deck'
 import {
@@ -21,6 +20,8 @@ import {
 	setNewDeck,
 	setPlayerInfo,
 } from './session-actions'
+import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
+import {ServerMessage} from 'common/socket-messages/server-messages'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -97,11 +98,11 @@ const createConnectErrorChannel = () =>
 		return () => socket.off('connect_error', connectErrorListener)
 	})
 
-export function* loginSaga(): SagaIterator {
+export function* loginSaga() {
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
-		const {payload: playerName} = yield take('LOGIN')
+		const {payload: playerName} = yield* take('LOGIN')
 		socket.auth = {playerName, version: getClientVersion()}
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
@@ -109,13 +110,13 @@ export function* loginSaga(): SagaIterator {
 
 	const urlDeck = getDeck()
 
-	yield put(socketConnecting())
+	yield* put(socketConnecting())
 	socket.connect()
 	const connectErrorChan = createConnectErrorChannel()
-	const result = yield race({
-		playerInfo: call(receiveMsg, 'PLAYER_INFO'),
-		invalidPlayer: call(receiveMsg, 'INVALID_PLAYER'),
-		playerReconnected: call(receiveMsg, 'PLAYER_RECONNECTED'),
+	const result = yield* race({
+		playerInfo: call(receiveMsg('PLAYER_INFO')),
+		invalidPlayer: call(receiveMsg('INVALID_PLAYER')),
+		playerReconnected: call(receiveMsg('PLAYER_RECONNECTED')),
 		connectError: take(connectErrorChan),
 		timeout: delay(8000),
 	})
@@ -184,38 +185,38 @@ export function* loginSaga(): SagaIterator {
 	}
 }
 
-export function* logoutSaga(): SagaIterator {
-	yield takeEvery('UPDATE_DECK', function* (action: AnyAction) {
+export function* logoutSaga() {
+	yield* takeEvery('UPDATE_DECK', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_DECK', action.payload)
 	})
-	yield takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
+	yield* takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', action.payload)
 	})
-	yield race([take('LOGOUT'), call(receiveMsg, 'INVALID_PLAYER')])
+	yield* race([take('LOGOUT'), call(receiveMsg('INVALID_PLAYER'))])
 	clearSession()
 	socket.disconnect()
 	yield put(disconnect())
 }
 
-export function* newDeckSaga(): SagaIterator {
+export function* newDeckSaga() {
 	while (true) {
-		const result = yield call(receiveMsg, 'NEW_DECK')
+		const result = yield* call(receiveMsg('NEW_DECK'))
 		yield put(setNewDeck(result.payload))
 	}
 }
 
-export function* minecraftNameSaga(): SagaIterator {
+export function* minecraftNameSaga() {
 	while (true) {
-		const result = yield call(receiveMsg, 'NEW_MINECRAFT_NAME')
+		const result = yield* call(receiveMsg('NEW_MINECRAFT_NAME'))
 		yield put(setMinecraftName(result.payload))
 	}
 }
 
-export function* updatesSaga(): SagaIterator {
+export function* updatesSaga() {
 	yield sendMsg('GET_UPDATES', {
 		type: 'GET_UPDATES',
 		payload: {},
 	})
-	const result = yield call(receiveMsg, 'LOAD_UPDATES')
+	const result = yield* call(receiveMsg('LOAD_UPDATES'))
 	yield put(loadUpdates(result.payload))
 }

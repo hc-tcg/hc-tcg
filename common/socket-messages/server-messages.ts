@@ -1,5 +1,5 @@
 import {PlayerId} from '../models/player-model'
-import {Action, actions} from '../redux-actions'
+import {Action, actions, ActionTable} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 import {
 	GamePlayerEndOutcomeT,
@@ -8,30 +8,31 @@ import {
 } from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
-export type ServerMessage = Action<
-	| typeof playerReconnected
-	| typeof invalidPlayer
-	| typeof playerInfo
-	| typeof newDeck
-	| typeof newMinecraftName
-	| typeof loadUpdates
-	| typeof gameStateOnReconnect
-	| typeof opponentConnection
-	| typeof gameCrash
-	| typeof gameEnd
-	| typeof privateGameTimeout
-	| typeof leaveQueueSuccess
-	| typeof leaveQueueFailure
-	| typeof createPrivateGameSuccess
-	| typeof createPrivateGameFailure
-	| typeof joinPrivateGameSuccess
-	| typeof createPrivateGameFailure
-	| typeof joinPrivateGameSuccess
-	| typeof joinPrivateGameFailure
-	| typeof invalidCode
-	| typeof waitingForPlayer
-	| typeof privateGameCancelled
->
+export const serverTypes = () => ({
+	playerReconnected,
+	invalidPlayer,
+	playerInfo,
+	newDeck,
+	newMinecraftName,
+	loadUpdates,
+	gameStateOnReconnect,
+	opponentConnection,
+	gameCrash,
+	gameEnd,
+	privateGameTimeout,
+	leaveQueueSuccess,
+	leaveQueueFailure,
+	createPrivateGameSuccess,
+	createPrivateGameFailure,
+	joinPrivateGameSuccess,
+	joinPrivateGameFailure,
+	invalidCode,
+	waitingForPlayer,
+	privateGameCancelled,
+})
+
+export type ServerActions = ActionTable<typeof serverTypes>
+export type ServerMessage = Action<typeof serverTypes>
 
 export const serverMessages = actions(
 	'PLAYER_RECONNECTED',

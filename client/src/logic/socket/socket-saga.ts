@@ -9,7 +9,7 @@ import {
 	socketConnectError,
 	socketDisconnect,
 } from './socket-actions'
-import {ServerMessage} from 'common/socket-messages/server-messages'
+import {ServerActions} from 'common/socket-messages/server-messages'
 
 export function* sendMsg(type: string, payload?: any): any {
 	while (true) {
@@ -30,13 +30,15 @@ export function* sendMsg(type: string, payload?: any): any {
 	}
 }
 
-export const receiveMsg = (type: string) => {
-	return new Promise<ServerMessage>((resolve) => {
-		const listener = (message: ServerMessage) => {
-			resolve(message)
-		}
-		socket.once(type, listener)
-	})
+export function receiveMsg<T extends keyof ServerActions>(type: T) {
+	return () => {
+		return new Promise<ServerActions[T]>((resolve) => {
+			const listener = (message: ServerActions[T]) => {
+				resolve(message)
+			}
+			socket.once(type, listener as any)
+		})
+	}
 }
 
 function* socketSaga(): SagaIterator {

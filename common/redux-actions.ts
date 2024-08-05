@@ -1,5 +1,5 @@
 type ActionsDict<T extends Array<string>> = {
-	[n in keyof T as T[n] & string]: n & string
+	[Key in keyof {[n in keyof T as T[n] & string]: string}]: Key
 }
 
 export function actions<T extends Array<string>>(
@@ -12,6 +12,14 @@ export function actions<T extends Array<string>>(
 	return actionsDict as any
 }
 
-export type Action<T extends (...args: any) => any> = ReturnType<T> & {
-	type: ReturnType<T>['type']
+export type Action<
+	T extends (...args: any) => Record<string, (...args: any) => {type: string}>,
+> = ReturnType<ReturnType<T>[keyof ReturnType<T>]>
+
+export type ActionTable<
+	T extends (...args: any) => Record<string, (...args: any) => {type: string}>,
+> = {
+	[Prop in keyof ReturnType<T> as ReturnType<
+		ReturnType<T>[Prop]
+	>['type']]: ReturnType<ReturnType<T>[Prop]>
 }

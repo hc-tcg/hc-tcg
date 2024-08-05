@@ -63,7 +63,7 @@ export const setMinecraftName = (name: string) => ({
 	payload: name,
 })
 
-export const loadUpdates = (updates: Array<string>) => ({
+export const loadUpdates = (updates: Record<string, string[]>) => ({
 	type: sessionActions.LOAD_UPDATES,
 	payload: {updates},
 })
