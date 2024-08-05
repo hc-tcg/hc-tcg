@@ -23,11 +23,18 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import {
+	createPrivateGameFailure,
+	createPrivateGameSuccess,
 	gameCrash,
 	gameEnd,
+	invalidCode,
+	joinPrivateGameFailure,
+	joinPrivateGameSuccess,
 	leaveQueueFailure,
 	leaveQueueSuccess,
+	privateGameCancelled,
 	privateGameTimeout,
+    waitingForPlayer,
 } from 'common/socket-messages/server-messages'
 
 export type ClientMessage = {
@@ -284,7 +291,7 @@ function* createPrivateGame(msg: ClientMessage) {
 			'[Create private game] Player is already in game or queue:',
 			player.name,
 		)
-		broadcast([player], 'CREATE_PRIVATE_GAME_FAILURE')
+		broadcast([player], createPrivateGameFailure())
 		return
 	}
 
@@ -296,7 +303,7 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	// Send code to player
-	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', gameCode)
+	broadcast([player], createPrivateGameSuccess(gameCode))
 
 	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
 }
@@ -314,14 +321,14 @@ function* joinPrivateGame(msg: ClientMessage) {
 			'[Join private game] Player is already in game or queue:',
 			player.name,
 		)
-		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
+		broadcast([player], joinPrivateGameFailure())
 		return
 	}
 
 	// Find the code in the private queue
 	const info = root.privateQueue[code]
 	if (!info) {
-		broadcast([player], 'INVALID_CODE')
+		broadcast([player], invalidCode())
 		return
 	}
 
@@ -336,7 +343,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 			)
 			delete root.privateQueue[code]
 
-			broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
+			broadcast([player], joinPrivateGameFailure())
 			return
 		}
 
@@ -348,12 +355,12 @@ function* joinPrivateGame(msg: ClientMessage) {
 
 		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
-		broadcast([player], 'JOIN_PRIVATE_GAME_SUCCESS')
+		broadcast([player], joinPrivateGameSuccess())
 		yield* fork(gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
-		broadcast([player], 'WAITING_FOR_PLAYER')
+		broadcast([player], waitingForPlayer())
 
 		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
 	}
@@ -367,7 +374,7 @@ function* cancelPrivateGame(msg: ClientMessage) {
 		if (info.playerId && info.playerId === playerId) {
 			const player = root.players[info.playerId]
 			if (player) {
-				broadcast([player], 'PRIVATE_GAME_CANCELLED')
+				broadcast([player], privateGameCancelled())
 			}
 
 			root.hooks.privateCancelled.call(code)
