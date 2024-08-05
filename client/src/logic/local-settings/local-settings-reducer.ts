@@ -1,4 +1,8 @@
 import {AnyAction} from 'redux'
+import {
+	LocalSettingsAction,
+	localSettingsActions,
+} from './local-settings-actions'
 
 type LocalSettings = Record<string, any>
 
@@ -36,12 +40,12 @@ const defaultState: LocalSettings = {
 
 const localSettingsReducer = (
 	state = defaultState,
-	action: AnyAction,
+	action: LocalSettingsAction,
 ): LocalSettings => {
 	switch (action.type) {
-		case 'SET_SETTING':
+		case localSettingsActions.SET_SETTING:
 			return {...state, [action.payload.key]: action.payload.value}
-		case 'RESET_SETTING':
+		case localSettingsActions.RESET_SETTINGS:
 			return {...state, [action.payload]: defaultState[action.payload]}
 		default:
 			return state

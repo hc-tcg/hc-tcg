@@ -1,9 +1,17 @@
+import {actions} from 'common/redux-actions'
+
+export const localSettingsActions = actions('SET_SETTING', 'RESET_SETTINGS')
+
+export type LocalSettingsAction = ReturnType<
+	typeof setSetting | typeof resetSetting
+>
+
 export const setSetting = (key: string, value: any) => ({
-	type: 'SET_SETTING',
+	type: localSettingsActions.SET_SETTING,
 	payload: {key, value},
 })
 
 export const resetSetting = (key: string) => ({
-	type: 'RESET_SETTING',
+	type: localSettingsActions.RESET_SETTINGS,
 	payload: key,
 })

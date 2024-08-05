@@ -1,4 +1,4 @@
-import {AnyAction} from 'redux'
+import {FbdbAction, fbdbActions} from './fbdb-actions'
 
 type FbdbState = {
 	uuid: string
@@ -10,11 +10,11 @@ const defaultState: FbdbState = {
 	stats: {w: 0, l: 0, fw: 0, fl: 0, t: 0},
 }
 
-const fbdbReducer = (state = defaultState, action: AnyAction): FbdbState => {
+const fbdbReducer = (state = defaultState, action: FbdbAction): FbdbState => {
 	switch (action.type) {
-		case 'STATS':
+		case fbdbActions.STATS:
 			return {...state, stats: action.payload}
-		case 'AUTHED':
+		case fbdbActions.AUTHED:
 			return {...state, uuid: action.payload}
 		default:
 			return state
