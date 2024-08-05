@@ -1,6 +1,6 @@
 import {LocalGameRoot} from 'common/types/game-state'
 import {AnyAction} from 'redux'
-import { gameActions } from './game-actions'
+import {GameAction, gameActions} from './game-actions'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -17,7 +17,7 @@ const defaultState: LocalGameRoot = {
 
 const gameReducer = (
 	state = defaultState,
-	action: AnyAction,
+	action: GameAction,
 ): LocalGameRoot => {
 	switch (action.type) {
 		case gameActions.LOCAL_GAME_STATE:
@@ -29,7 +29,7 @@ const gameReducer = (
 			}
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
-				action.payload.localGameState?.currentPlayerEntity
+				action.payload.localGameState?.turn.currentPlayerEntity
 			)
 				return newGame
 			return {...newGame}

@@ -1,18 +1,21 @@
-import {AnyAction} from 'redux'
+import {SocketAction, socketActions} from './socket-actions'
 
 type SocketState = null | 'connecting' | 'connected'
 
 const defaultState: SocketState = null
 
-const loginReducer = (state = defaultState, action: AnyAction): SocketState => {
+const loginReducer = (
+	state = defaultState,
+	action: SocketAction,
+): SocketState => {
 	switch (action.type) {
-		case 'SOCKET_CONNECTING':
+		case socketActions.SOCKET_CONNECTING:
 			return 'connecting'
-		case 'SOCKET_CONNECT':
+		case socketActions.SOCKET_CONNECT:
 			return 'connected'
-		case 'SOCKET_DISCONNECT':
+		case socketActions.SOCKET_DISCONNECT:
 			return null
-		case 'CONNECT_ERROR':
+		case socketActions.SOCKET_CONNECT_ERROR:
 			return null
 		default:
 			return state

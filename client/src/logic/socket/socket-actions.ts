@@ -1,6 +1,22 @@
-export const socketConnecting = () => ({type: 'SOCKET_CONNECTING' as const})
-export const socketConnect = () => ({type: 'SOCKET_CONNECT' as const})
-export const socketDisconnect = () => ({type: 'SOCKET_DISCONNECT' as const})
+import {actions} from 'common/redux-actions'
+
+export const socketActions = actions(
+	'SOCKET_CONNECTING',
+	'SOCKET_CONNECT',
+	'SOCKET_DISCONNECT',
+	'SOCKET_CONNECT_ERROR',
+)
+
+export type SocketAction = ReturnType<
+	| typeof socketConnecting
+	| typeof socketConnect
+	| typeof socketDisconnect
+	| typeof socketConnectError
+>
+
+export const socketConnecting = () => ({type: socketActions.SOCKET_CONNECTING})
+export const socketConnect = () => ({type: socketActions.SOCKET_CONNECT})
+export const socketDisconnect = () => ({type: socketActions.SOCKET_DISCONNECT})
 export const socketConnectError = () => ({
-	type: 'SOCKET_CONNECT_ERROR' as const,
+	type: socketActions.SOCKET_CONNECT_ERROR,
 })

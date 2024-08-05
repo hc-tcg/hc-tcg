@@ -237,7 +237,7 @@ export type LocalGameRoot = {
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
-	currentCoinFlip: CurrentCoinFlip | null
+	currentCoinFlip: LocalCurrentCoinFlip | null
 	opponentConnected: boolean
 }
 

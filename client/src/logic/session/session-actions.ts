@@ -14,6 +14,18 @@ export const sessionActions = actions(
 	'CLOSE_TOAST',
 )
 
+export type SessionActions = ReturnType<
+	| typeof login
+	| typeof setPlayerInfo
+	| typeof disconnect
+	| typeof logout
+	| typeof setNewDeck
+	| typeof setMinecraftName
+	| typeof loadUpdates
+	| typeof setToast
+	| typeof closeToast
+>
+
 export const login = (playerName: string) => ({
 	type: sessionActions.LOGIN,
 	payload: playerName,
@@ -28,7 +40,7 @@ type PlayerInfoT = {
 }
 
 export const setPlayerInfo = (playerInfo: PlayerInfoT) => ({
-	type: 'SET_PLAYER_INFO' as const,
+	type: sessionActions.SET_PLAYER_INFO,
 	payload: playerInfo,
 })
 
@@ -38,21 +50,21 @@ export const disconnect = (errorType?: string) => ({
 })
 
 export const logout = () => ({
-	type: 'LOGOUT' as const,
+	type: sessionActions.LOGOUT,
 })
 
 export const setNewDeck = (newDeck: PlayerDeckT) => ({
-	type: 'SET_NEW_DECK' as const,
+	type: sessionActions.SET_NEW_DECK,
 	payload: newDeck,
 })
 
 export const setMinecraftName = (name: string) => ({
-	type: 'SET_MINECRAFT_NAME' as const,
+	type: sessionActions.SET_MINECRAFT_NAME,
 	payload: name,
 })
 
 export const loadUpdates = (updates: Array<string>) => ({
-	type: 'LOAD_UPDATES' as const,
+	type: sessionActions.LOAD_UPDATES,
 	payload: {updates},
 })
 
@@ -64,7 +76,7 @@ type SetToastDefs = {
 }
 
 export const setToast = ({open, title, description, image}: SetToastDefs) => ({
-	type: 'SET_TOAST' as const,
+	type: sessionActions.SET_TOAST,
 	payload: {
 		open,
 		title,
@@ -74,16 +86,5 @@ export const setToast = ({open, title, description, image}: SetToastDefs) => ({
 })
 
 export const closeToast = () => ({
-	type: 'CLOSE_TOAST' as const,
+	type: sessionActions.CLOSE_TOAST,
 })
-
-export type SessionActions =
-	| ReturnType<typeof login>
-	| ReturnType<typeof setPlayerInfo>
-	| ReturnType<typeof disconnect>
-	| ReturnType<typeof logout>
-	| ReturnType<typeof setNewDeck>
-	| ReturnType<typeof setMinecraftName>
-	| ReturnType<typeof loadUpdates>
-	| ReturnType<typeof setToast>
-	| ReturnType<typeof closeToast>

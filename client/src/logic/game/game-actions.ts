@@ -36,7 +36,7 @@ export const gameActions = actions(
 	'UPDATE_GAME',
 )
 
-export type GameActions =
+export type GameAction =
 	| ReturnType<typeof gameStateReceived>
 	| ReturnType<typeof localGameState>
 	| ReturnType<typeof gameStart>
@@ -59,6 +59,7 @@ export type GameActions =
 	| ReturnType<typeof chatUpdate>
 	| ReturnType<typeof attackAction>
 	| ReturnType<typeof endTurnAction>
+	| ReturnType<typeof updateGame>
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: gameActions.GAME_STATE_RECIEVED,
