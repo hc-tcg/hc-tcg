@@ -35,7 +35,7 @@ export const serverMessages = actions(
 	'PRIVATE_GAME_CANCELLED',
 )
 
-const PayloadConstructors = () => ({
+const payloadConstructors = () => ({
 	playerReconnected,
 	invalidPlayer,
 	playerInfo,
@@ -58,8 +58,8 @@ const PayloadConstructors = () => ({
 	privateGameCancelled,
 })
 
-export type ServerActions = ActionTable<typeof PayloadConstructors>
-export type ServerMessage = Action<typeof PayloadConstructors>
+export type ServerActions = ActionTable<typeof payloadConstructors>
+export type ServerMessage = Action<typeof payloadConstructors>
 
 export const playerReconnected = (playerDeck: PlayerDeckT) => ({
 	type: serverMessages.PLAYER_RECONNECTED,

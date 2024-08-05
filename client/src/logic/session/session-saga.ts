@@ -21,6 +21,7 @@ import {
 	setPlayerInfo,
 } from './session-actions'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
+import {serverMessages} from 'common/socket-messages/server-messages'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -191,7 +192,7 @@ export function* logoutSaga() {
 	yield* takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', action.payload)
 	})
-	yield* race([take('LOGOUT'), call(receiveMsg('INVALID_PLAYER'))])
+	yield* race([take('LOGOUT'), call(receiveMsg(serverMessages.INVALID_PLAYER))])
 	clearSession()
 	socket.disconnect()
 	yield put(disconnect())
@@ -199,14 +200,14 @@ export function* logoutSaga() {
 
 export function* newDeckSaga() {
 	while (true) {
-		const result = yield* call(receiveMsg('NEW_DECK'))
+		const result = yield* call(receiveMsg(serverMessages.NEW_DECK))
 		yield put(setNewDeck(result.payload))
 	}
 }
 
 export function* minecraftNameSaga() {
 	while (true) {
-		const result = yield* call(receiveMsg('NEW_MINECRAFT_NAME'))
+		const result = yield* call(receiveMsg(serverMessages.NEW_MINECRAFT_NAME))
 		yield put(setMinecraftName(result.payload))
 	}
 }
@@ -216,6 +217,6 @@ export function* updatesSaga() {
 		type: 'GET_UPDATES',
 		payload: {},
 	})
-	const result = yield* call(receiveMsg('LOAD_UPDATES'))
+	const result = yield* call(receiveMsg(serverMessages.LOAD_UPDATES))
 	yield put(loadUpdates(result.payload))
 }
