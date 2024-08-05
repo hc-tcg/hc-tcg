@@ -23,6 +23,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {setToast} from 'logic/session/session-actions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -332,15 +333,14 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
 		saveDeck(deck, initialDeck)
-		dispatch({
-			type: 'SET_TOAST',
-			payload: {
+		dispatch(
+			setToast({
 				open: true,
 				title: 'Deck Saved!',
 				description: `Saved ${deck.name}`,
 				image: `/images/types/type-${deck.icon}.png`,
-			},
-		})
+			}),
+		)
 		back()
 	}
 	const validationMessage = validateDeck(loadedDeck.cards)

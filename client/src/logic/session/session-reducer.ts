@@ -1,7 +1,7 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
-import {AnyAction} from 'redux'
+import {sessionActions, SessionActions} from './session-actions'
 
 type SessionState = {
 	playerName: string
@@ -33,12 +33,12 @@ const defaultState: SessionState = {
 
 const loginReducer = (
 	state = defaultState,
-	action: AnyAction,
+	action: SessionActions,
 ): SessionState => {
 	switch (action.type) {
-		case 'LOGIN':
+		case sessionActions.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
-		case 'DISCONNECT':
+		case sessionActions.DISCONNECT:
 			return {
 				...state,
 				connecting: false,
@@ -49,29 +49,29 @@ const loginReducer = (
 				playerDeck: state.playerDeck,
 				errorType: action.payload,
 			}
-		case 'SET_PLAYER_INFO':
+		case sessionActions.SET_PLAYER_INFO:
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
 				...action.payload,
 			}
-		case 'LOAD_UPDATES':
+		case sessionActions.LOAD_UPDATES:
 			return {
 				...state,
 				...action.payload,
 			}
-		case 'SET_NEW_DECK':
+		case sessionActions.SET_NEW_DECK:
 			return {
 				...state,
 				playerDeck: action.payload,
 			}
-		case 'SET_TOAST':
+		case sessionActions.SET_TOAST:
 			return {
 				...state,
 				toast: action.payload,
 			}
-		case 'CLOSE_TOAST':
+		case sessionActions.CLOSE_TOAST:
 			return {
 				...state,
 				toast: {
@@ -79,7 +79,7 @@ const loginReducer = (
 					open: false,
 				},
 			}
-		case 'SET_MINECRAFT_NAME':
+		case sessionActions.SET_MINECRAFT_NAME:
 			return {
 				...state,
 				minecraftName: action.payload,
