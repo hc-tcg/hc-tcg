@@ -47,29 +47,29 @@ const loginReducer = (
 				playerId: '' as PlayerId,
 				playerSecret: '',
 				playerDeck: state.playerDeck,
-				errorType: action.payload,
+				errorType: action.errorMessage,
 			}
 		case sessionActions.SET_PLAYER_INFO:
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
-				...action.payload,
+				...action.player,
 			}
 		case sessionActions.LOAD_UPDATES:
 			return {
 				...state,
-				...action.payload,
+				...action.updates,
 			}
 		case sessionActions.SET_NEW_DECK:
 			return {
 				...state,
-				playerDeck: action.payload,
+				playerDeck: action.deck,
 			}
 		case sessionActions.SET_TOAST:
 			return {
 				...state,
-				toast: action.payload,
+				toast: action,
 			}
 		case sessionActions.CLOSE_TOAST:
 			return {
@@ -82,7 +82,7 @@ const loginReducer = (
 		case sessionActions.SET_MINECRAFT_NAME:
 			return {
 				...state,
-				minecraftName: action.payload,
+				minecraftName: action.name,
 			}
 		default:
 			return state

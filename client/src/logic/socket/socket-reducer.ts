@@ -1,4 +1,4 @@
-import {SocketAction, socketActions} from './socket-actions'
+import {socketActions, SocketMessage} from './socket-actions'
 
 type SocketState = null | 'connecting' | 'connected'
 
@@ -6,7 +6,7 @@ const defaultState: SocketState = null
 
 const loginReducer = (
 	state = defaultState,
-	action: SocketAction,
+	action: SocketMessage,
 ): SocketState => {
 	switch (action.type) {
 		case socketActions.SOCKET_CONNECTING:

@@ -13,9 +13,9 @@ const defaultState: FbdbState = {
 const fbdbReducer = (state = defaultState, action: FbdbAction): FbdbState => {
 	switch (action.type) {
 		case fbdbActions.STATS:
-			return {...state, stats: action.payload}
+			return {...state, stats: action}
 		case fbdbActions.AUTHED:
-			return {...state, uuid: action.payload}
+			return {...state, uuid: action.uuid}
 		default:
 			return state
 	}
