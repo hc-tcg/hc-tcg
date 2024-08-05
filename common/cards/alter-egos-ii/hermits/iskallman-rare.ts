@@ -76,7 +76,7 @@ class IskallmanRare extends Card {
 					data: {
 						modalId: 'selectCards',
 						payload: {
-							modalName: 'IskallMAN: Heal AFK Hermit',
+							modalName: 'IskallMAN - Good Deed',
 							modalDescription: 'Do you want to give 50hp to an AFK Hermit?',
 							cards: [],
 							selectionSize: 0,

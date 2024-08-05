@@ -72,18 +72,20 @@ function SelectCardsModal({closeModal}: Props) {
 		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
-				<div className={css.cards}>
-					<div className={css.cardsListContainer}>
-						<CardList
-							onClick={handleSelection}
-							cards={cards}
-							selected={selected}
-							wrap={true}
-							tooltipAboveModal
-							disableAnimations
-						/>
+				{cards.length > 0 && (
+					<div className={css.cards}>
+						<div className={css.cardsListContainer}>
+							<CardList
+								onClick={handleSelection}
+								cards={cards}
+								selected={selected}
+								wrap={true}
+								tooltipAboveModal
+								disableAnimations
+							/>
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 			<div className={css.options}>
 				{secondaryButton && (
