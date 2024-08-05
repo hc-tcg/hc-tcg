@@ -1,7 +1,7 @@
-import {gameActions, GameMessage} from 'logic/game/game-actions'
-import {matchmakingActions, MatchmakingMessage} from './matchmaking-actions'
+import {GameMessage, gameActions} from 'logic/game/game-actions'
+import {SessionMessage, sessionActions} from 'logic/session/session-actions'
+import {MatchmakingMessage, matchmakingActions} from './matchmaking-actions'
 import {MatchmakingStatus} from './matchmaking-types'
-import {sessionActions, SessionMessage} from 'logic/session/session-actions'
 
 type MatchmakingState = {
 	status: MatchmakingStatus

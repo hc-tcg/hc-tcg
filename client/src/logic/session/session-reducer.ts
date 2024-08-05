@@ -1,7 +1,7 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
-import {sessionActions, SessionMessage} from './session-actions'
+import {SessionMessage, sessionActions} from './session-actions'
 
 type SessionState = {
 	playerName: string

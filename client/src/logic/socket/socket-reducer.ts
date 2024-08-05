@@ -1,4 +1,4 @@
-import {socketActions, SocketMessage} from './socket-actions'
+import {SocketMessage, socketActions} from './socket-actions'
 
 type SocketState = null | 'connecting' | 'connected'
 

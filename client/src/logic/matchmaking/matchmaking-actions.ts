@@ -1,4 +1,4 @@
-import {Message, messages, MessageTable} from '../../../../common/redux-actions'
+import {Message, MessageTable, messages} from '../../../../common/redux-actions'
 
 export const matchmakingActions = messages(
 	'JOIN_QUEUE',

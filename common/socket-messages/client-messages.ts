@@ -1,5 +1,5 @@
 import {PlayerEntity} from '../entities'
-import {Message, messages, MessageTable} from '../redux-actions'
+import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 
 export const clientMessages = messages(

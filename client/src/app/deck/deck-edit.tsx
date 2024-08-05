@@ -17,13 +17,13 @@ import errorIcon from 'components/svgs/errorIcon'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
+import {setToast} from 'logic/session/session-actions'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {setToast} from 'logic/session/session-actions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [

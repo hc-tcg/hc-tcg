@@ -1,11 +1,11 @@
 import {PlayerId} from '../models/player-model'
-import {Message, messages, MessageTable} from '../redux-actions'
+import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 import {
-	GamePlayerEndOutcomeT,
-	GameEndReasonT,
-	LocalGameState,
 	GameEndOutcomeT,
+	GameEndReasonT,
+	GamePlayerEndOutcomeT,
+	LocalGameState,
 } from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
@@ -57,8 +57,8 @@ export type ServerMessages = [
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT | null
-		reason: GameEndReasonT | null
+		outcome: GamePlayerEndOutcomeT
+		reason: GameEndReasonT
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

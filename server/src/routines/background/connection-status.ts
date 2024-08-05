@@ -2,15 +2,15 @@ import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
+import {
+	gameStateOnReconnect,
+	opponentConnection,
+} from 'common/socket-messages/server-messages'
 import {AnyAction} from 'redux'
 import {delay, takeEvery} from 'typed-redux-saga'
 import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 import {getLocalGameState} from '../../utils/state-gen'
-import {
-	gameStateOnReconnect,
-	opponentConnection,
-} from 'common/socket-messages/server-messages'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId

@@ -3,6 +3,20 @@ import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
+	createPrivateGameFailure,
+	createPrivateGameSuccess,
+	gameCrash,
+	gameEnd,
+	invalidCode,
+	joinPrivateGameFailure,
+	joinPrivateGameSuccess,
+	leaveQueueFailure,
+	leaveQueueSuccess,
+	privateGameCancelled,
+	privateGameTimeout,
+	waitingForPlayer,
+} from 'common/socket-messages/server-messages'
+import {
 	all,
 	cancel,
 	delay,
@@ -22,20 +36,6 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
-import {
-	createPrivateGameFailure,
-	createPrivateGameSuccess,
-	gameCrash,
-	gameEnd,
-	invalidCode,
-	joinPrivateGameFailure,
-	joinPrivateGameSuccess,
-	leaveQueueFailure,
-	leaveQueueSuccess,
-	privateGameCancelled,
-	privateGameTimeout,
-	waitingForPlayer,
-} from 'common/socket-messages/server-messages'
 
 export type ClientMessage = {
 	type: string

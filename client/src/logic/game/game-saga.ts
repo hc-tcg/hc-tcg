@@ -1,8 +1,10 @@
 import {PlayerEntity} from 'common/entities'
+import {message} from 'common/redux-actions'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {AnyAction} from 'redux'
-import {SagaIterator} from 'redux-saga'
 import {
 	all,
 	call,
@@ -16,6 +18,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
+import {GameMessage, GameMessageTable, gameActions} from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
 import {
 	localApplyEffect,
@@ -29,10 +32,6 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import slotSaga from './tasks/slot-saga'
-import {clientMessages} from 'common/socket-messages/client-messages'
-import {message} from 'common/redux-actions'
-import {gameActions, GameMessage} from './game-actions'
-import {serverMessages} from 'common/socket-messages/server-messages'
 
 function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 	yield* sendMsg({
@@ -210,8 +209,8 @@ function* gameSaga(initialGameState?: LocalGameState) {
 
 		const result = yield* race({
 			game: call(gameActionsSaga, initialGameState),
-			gameEnd: call(receiveMsg, 'GAME_END'),
-			gameCrash: call(receiveMsg, 'GAME_CRASH'),
+			gameEnd: call(receiveMsg(serverMessages.GAME_END)),
+			gameCrash: call(receiveMsg(serverMessages.GAME_CRASH)),
 		})
 
 		if (Object.hasOwn(result, 'game')) {
@@ -221,31 +220,47 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			yield put(
 				message<GameMessage>({
 					type: gameActions.SHOW_END_GAME_OVERLAY,
-					outcome: 'error',
-					reason: 'server_crash',
+					outcome: 'server_crash',
+					reason: 'error',
 				}),
 			)
-		} else if (Object.hasOwn(result, 'gameEnd')) {
-			const {gameState: newGameState, outcome, reason} = result.gameEnd.payload
+		} else if (result.gameEnd) {
+			const {gameState: newGameState, outcome, reason} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve(
-					localGameState({
-						...newGameState,
-						availableActions: [],
+					message<GameMessage>({
+						type: gameActions.LOCAL_GAME_STATE,
+						localGameState: newGameState,
+						time: Date.now(),
 					}),
 				)
 			}
-			yield put(showEndGameOverlay(outcome, reason))
+			yield put(
+				message<GameMessage>({
+					type: gameActions.SHOW_END_GAME_OVERLAY,
+					reason,
+					outcome,
+				}),
+			)
 		}
 	} catch (err) {
 		console.error('Client error: ', err)
-		yield put(showEndGameOverlay('client_crash'))
+		yield put(
+			message<GameMessage>({
+				type: gameActions.SHOW_END_GAME_OVERLAY,
+				outcome: 'client_crash',
+				reason: 'error',
+			}),
+		)
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
-		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
+		if (hasOverlay)
+			yield take<GameMessageTable[typeof gameActions.SHOW_END_GAME_OVERLAY]>(
+				gameActions.SHOW_END_GAME_OVERLAY,
+			)
 		console.log('Game ended')
-		yield put(gameEnd())
+		yield put(message<GameMessage>({type: gameActions.GAME_END}))
 		yield cancel(backgroundTasks)
 	}
 }

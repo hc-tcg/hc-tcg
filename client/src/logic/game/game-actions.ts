@@ -1,10 +1,10 @@
 import {PlayerEntity} from 'common/entities'
+import {Message, MessageTable, messages} from 'common/redux-actions'
 import {
+	Message as ChatMessage,
+	GamePlayerEndOutcomeT,
 	LocalCurrentCoinFlip,
 	LocalGameState,
-	Message as ChatMessage,
-	GameEndOutcomeT,
-    GamePlayerEndOutcomeT,
 } from 'common/types/game-state'
 import {GameEndReasonT} from 'common/types/game-state'
 import {
@@ -12,7 +12,6 @@ import {
 	LocalModalResult,
 	SlotInfo,
 } from 'common/types/server-requests'
-import {messages, Message} from 'common/redux-actions'
 
 export const gameActions = messages(
 	'GAME_STATE_RECIEVED',
@@ -68,8 +67,8 @@ export type GameActions = [
 	},
 	{
 		type: typeof gameActions.SHOW_END_GAME_OVERLAY
-		outcome: GameEndOutcomeT
-		reason?: GameEndReasonT | GamePlayerEndOutcomeT
+		outcome: GamePlayerEndOutcomeT
+		reason: GameEndReasonT
 	},
 	{type: typeof gameActions.SET_COIN_FLIP; coinFlip: LocalCurrentCoinFlip},
 	{type: typeof gameActions.SET_OPPONENT_CONNECTION; connected: boolean},
@@ -85,3 +84,4 @@ export type GameActions = [
 ]
 
 export type GameMessage = Message<GameActions>
+export type GameMessageTable = MessageTable<GameActions>

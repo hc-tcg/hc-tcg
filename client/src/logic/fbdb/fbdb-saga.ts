@@ -1,9 +1,9 @@
 import {message} from 'common/redux-actions'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {receiveMsg} from 'logic/socket/socket-saga'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {FbdbAction, fbdbActions} from './fbdb-actions'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {call, put, takeEvery, takeLatest} from 'typed-redux-saga'
+import {FbdbAction, fbdbActions} from './fbdb-actions'
 
 const createAuthChannel = () => {
 	return eventChannel((emitter: any) => {

@@ -13,13 +13,12 @@ import ComponentTable from '../types/ecs'
 import {
 	ActionResult,
 	DefaultDictionary,
-	GamePlayerEndOutcomeT,
+	GameEndOutcomeT,
 	GameEndReasonT,
 	GameState,
 	Message,
 	TurnAction,
 	TurnActions,
-	GameEndOutcomeT,
 } from '../types/game-state'
 import {Hook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'

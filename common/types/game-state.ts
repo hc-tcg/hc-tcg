@@ -160,7 +160,7 @@ export type GamePlayerEndOutcomeT =
 	| 'you_lost'
 	| null
 
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time'
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity

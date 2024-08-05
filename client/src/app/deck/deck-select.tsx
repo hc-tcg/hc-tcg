@@ -26,6 +26,7 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+import {updateDeck} from 'logic/session/session-actions'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {playSound} from 'logic/sound/sound-actions'
 import {ReactNode, useState} from 'react'
@@ -35,7 +36,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import { updateDeck } from 'logic/session/session-actions'
 
 type Props = {
 	setMenuSection: (section: string) => void

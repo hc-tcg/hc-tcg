@@ -1,3 +1,8 @@
+import assert from 'assert'
+import {PlayerId} from 'common/models/player-model'
+import {message} from 'common/redux-actions'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
@@ -7,22 +12,17 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+import {SocketMessage, socketActions} from 'logic/socket/socket-actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
+import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import {PlayerDeckT} from '../../../../common/types/deck'
 import {
-	sessionActions,
 	SessionMessage,
 	SessionMessageTable,
+	sessionActions,
 } from './session-actions'
-import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
-import {serverMessages} from 'common/socket-messages/server-messages'
-import {clientMessages} from 'common/socket-messages/client-messages'
-import {PlayerId} from 'common/models/player-model'
-import assert from 'assert'
-import {message} from 'common/redux-actions'
-import {socketActions, SocketMessage} from 'logic/socket/socket-actions'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')

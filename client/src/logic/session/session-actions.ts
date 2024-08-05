@@ -1,4 +1,4 @@
-import {Message, messages, MessageTable} from 'common/redux-actions'
+import {Message, MessageTable, messages} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 

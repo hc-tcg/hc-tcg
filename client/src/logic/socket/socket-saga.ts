@@ -1,12 +1,12 @@
+import {message} from 'common/redux-actions'
+import {ClientMessage} from 'common/socket-messages/client-messages'
+import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {put, select, takeEvery} from 'typed-redux-saga'
-import {ServerMessageTable} from 'common/socket-messages/server-messages'
-import {ClientMessage} from 'common/socket-messages/client-messages'
-import {message} from 'common/redux-actions'
-import {socketActions, SocketMessage} from './socket-actions'
+import {SocketMessage, socketActions} from './socket-actions'
 
 export function* sendMsg(payload: ClientMessage): any {
 	while (true) {

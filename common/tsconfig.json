@@ -11,5 +11,9 @@
 		"esModuleInterop": true,
 		"outDir": "./dist"
 	},
-	"include": [".", "../invisibility-potion.ts", "../client/src/logic/matchmaking/matchmaking-actions.ts"]
+	"include": [
+		".",
+		"../invisibility-potion.ts",
+		"../client/src/logic/matchmaking/matchmaking-actions.ts"
+	]
 }

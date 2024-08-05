@@ -1,7 +1,4 @@
 import {PlayerModel} from 'common/models/player-model'
-import {delay, put, race, take, takeEvery} from 'typed-redux-saga'
-import root from '../serverRoot'
-import {broadcast} from 'utils/comm'
 import {
 	invalidPlayer,
 	loadUpdates,
@@ -10,6 +7,9 @@ import {
 	playerInfo,
 	playerReconnected,
 } from 'common/socket-messages/server-messages'
+import {delay, put, race, take, takeEvery} from 'typed-redux-saga'
+import {broadcast} from 'utils/comm'
+import root from '../serverRoot'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 

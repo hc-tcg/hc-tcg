@@ -1,3 +1,8 @@
+import assert from 'assert'
+import {message} from 'common/redux-actions'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameMessage, gameActions} from 'logic/game/game-actions'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
@@ -9,16 +14,11 @@ import {
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
-import {clientMessages} from 'common/socket-messages/client-messages'
-import {serverMessages} from 'common/socket-messages/server-messages'
-import {message} from 'common/redux-actions'
 import {
-	matchmakingActions,
 	MatchmakingMessage,
 	MatchmakingMessageTable,
+	matchmakingActions,
 } from './matchmaking-actions'
-import assert from 'assert'
-import {gameActions, GameMessage} from 'logic/game/game-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {

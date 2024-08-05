@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
-import {GamePlayerEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
+import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
 import {showEndGameOverlay} from 'logic/game/game-actions'
 import {getOpponentName} from 'logic/game/game-selectors'
