@@ -10,14 +10,15 @@ import {
 	socketDisconnect,
 } from './socket-actions'
 import {ServerActions} from 'common/socket-messages/server-messages'
+import {ClientMessage} from 'common/socket-messages/client-messages'
 
-export function* sendMsg(type: string, payload?: any): any {
+export function* sendMsg(payload: ClientMessage): any {
 	while (true) {
 		if (socket.connected) {
-			console.log('[send]', type, payload)
+			console.log('[send]', payload.type, payload)
 			const {playerId, playerSecret} = yield* select(getSession)
-			socket.emit(type, {
-				type,
+			socket.emit(payload.type, {
+				type: payload.type,
 				payload,
 				playerId,
 				playerSecret,

@@ -1,6 +1,19 @@
 import {PlayerId} from 'common/models/player-model'
-import {Action, actions} from 'common/redux-actions'
+import {Action, actions, ActionTable} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
+
+const sessionPayloads = () => ({
+	login,
+	setPlayerInfo,
+	disconnect,
+	logout,
+	setNewDeck,
+	setMinecraftName,
+	loadUpdates,
+	setToast,
+	closeToast,
+	updateDeck,
+})
 
 export const sessionActions = actions(
 	'LOGIN',
@@ -12,19 +25,11 @@ export const sessionActions = actions(
 	'LOAD_UPDATES',
 	'SET_TOAST',
 	'CLOSE_TOAST',
+	'UPDATE_DECK',
 )
 
-export type SessionAction = Action<
-	| typeof login
-	| typeof setPlayerInfo
-	| typeof disconnect
-	| typeof logout
-	| typeof setNewDeck
-	| typeof setMinecraftName
-	| typeof loadUpdates
-	| typeof setToast
-	| typeof closeToast
->
+export type SessionAction = Action<typeof sessionPayloads>
+export type SessionActionTable = ActionTable<typeof sessionPayloads>
 
 export const login = (playerName: string) => ({
 	type: sessionActions.LOGIN,
@@ -87,4 +92,9 @@ export const setToast = ({open, title, description, image}: SetToastDefs) => ({
 
 export const closeToast = () => ({
 	type: sessionActions.CLOSE_TOAST,
+})
+
+export const updateDeck = (deck: PlayerDeckT) => ({
+	type: sessionActions.UPDATE_DECK,
+	payload: deck,
 })

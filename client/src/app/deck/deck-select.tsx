@@ -35,6 +35,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import { updateDeck } from 'logic/session/session-actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -106,10 +107,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({
-			type: 'UPDATE_DECK',
-			payload: loadedDeck,
-		})
+		dispatch(updateDeck(loadedDeck))
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
