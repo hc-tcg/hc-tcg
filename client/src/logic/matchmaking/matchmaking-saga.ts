@@ -1,4 +1,3 @@
-import {gameEnd} from 'logic/game/game-actions'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
@@ -19,6 +18,7 @@ import {
 	MatchmakingMessageTable,
 } from './matchmaking-actions'
 import assert from 'assert'
+import {gameActions, GameMessage} from 'logic/game/game-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -67,7 +67,7 @@ function* createPrivateGameSaga() {
 						type: matchmakingActions.CLEAR_MATCHMAKING,
 					}),
 				)
-				yield* put(gameEnd())
+				yield* put(message<GameMessage>({type: gameActions.GAME_END}))
 			}
 		}
 	}
@@ -149,7 +149,7 @@ function* joinPrivateGameSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
-				yield put(gameEnd())
+				yield put(message<GameMessage>({type: gameActions.GAME_END}))
 				yield* put(
 					message<MatchmakingMessage>({
 						type: matchmakingActions.CLEAR_MATCHMAKING,
@@ -210,7 +210,7 @@ function* joinQueueSaga() {
 						type: matchmakingActions.CLEAR_MATCHMAKING,
 					}),
 				)
-				yield* put(gameEnd())
+				yield put(message<GameMessage>({type: gameActions.GAME_END}))
 			}
 		}
 	}
