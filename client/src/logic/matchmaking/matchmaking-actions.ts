@@ -13,7 +13,7 @@ export const matchmakingActions = messages(
 	'WAITING_FOR_PLAYER',
 )
 
-export type MatchmakingAction = [
+type MatchmakingActions = [
 	{type: typeof matchmakingActions.JOIN_QUEUE},
 	{type: typeof matchmakingActions.CREATE_PRIVATE_GAME},
 	{type: typeof matchmakingActions.JOIN_PRIVATE_GAME},
@@ -28,5 +28,5 @@ export type MatchmakingAction = [
 	{type: typeof matchmakingActions.WAITING_FOR_PLAYER},
 ]
 
-export type MatchmakingMessage = Message<MatchmakingAction>
-export type MatchmakingMessageTable = MessageTable<MatchmakingAction>
+export type MatchmakingMessage = Message<MatchmakingActions>
+export type MatchmakingMessageTable = MessageTable<MatchmakingActions>

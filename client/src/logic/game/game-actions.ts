@@ -3,8 +3,9 @@ import {
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	Message as ChatMessage,
+	GameEndOutcomeT,
 } from 'common/types/game-state'
-import {GamePlayerEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
+import {GameEndReasonT} from 'common/types/game-state'
 import {
 	LocalCardInstance,
 	LocalModalResult,
@@ -50,7 +51,7 @@ export type GameActions = [
 	{type: typeof gameActions.GAME_START},
 	{type: typeof gameActions.GAME_END},
 	{type: typeof gameActions.SET_SELECTED_CARD; card: LocalCardInstance | null},
-	{type: typeof gameActions.SET_OPENED_MODAL; id: string | null; info?: any},
+	{type: typeof gameActions.SET_OPENED_MODAL; id: string; info?: any},
 	{
 		type: typeof gameActions.SLOT_PICKED
 		slotInfo: SlotInfo
@@ -66,7 +67,7 @@ export type GameActions = [
 	},
 	{
 		type: typeof gameActions.SHOW_END_GAME_OVERLAY
-		outcome: GamePlayerEndOutcomeT
+		outcome: GameEndOutcomeT
 		reason?: GameEndReasonT
 	},
 	{type: typeof gameActions.SET_COIN_FLIP; coinFlip: LocalCurrentCoinFlip},

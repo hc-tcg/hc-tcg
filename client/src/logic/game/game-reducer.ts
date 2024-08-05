@@ -1,5 +1,5 @@
 import {LocalGameRoot} from 'common/types/game-state'
-import {GameAction, gameActions} from './game-actions'
+import {gameActions, GameMessage} from './game-actions'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -16,19 +16,19 @@ const defaultState: LocalGameRoot = {
 
 const gameReducer = (
 	state = defaultState,
-	action: GameAction,
+	action: GameMessage,
 ): LocalGameRoot => {
 	switch (action.type) {
 		case gameActions.LOCAL_GAME_STATE:
 			const newGame: LocalGameRoot = {
 				...state,
-				localGameState: action.payload.localGameState,
-				time: action.payload.time,
+				localGameState: action.localGameState,
+				time: action.time,
 				openedModal: null,
 			}
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
-				action.payload.localGameState?.turn.currentPlayerEntity
+				action.localGameState?.turn.currentPlayerEntity
 			)
 				return newGame
 			return {...newGame}
@@ -50,32 +50,38 @@ const gameReducer = (
 		case gameActions.SET_SELECTED_CARD:
 			return {
 				...state,
-				selectedCard: action.payload,
+				selectedCard: action.card,
 			}
 		case gameActions.SET_OPENED_MODAL:
 			return {
 				...state,
-				openedModal: action.payload,
+				openedModal: {id: action.id, info: action.info},
 			}
 		case gameActions.SHOW_END_GAME_OVERLAY:
 			return {
 				...state,
-				endGameOverlay: action.payload,
+				endGameOverlay:
+					action.reason && action.outcome
+						? {
+								reason: action.reason,
+								outcome: action.outcome,
+							}
+						: null,
 			}
 		case gameActions.CHAT_UPDATE:
 			return {
 				...state,
-				chat: action.payload,
+				chat: action.messages,
 			}
 		case gameActions.SET_OPPONENT_CONNECTION:
 			return {
 				...state,
-				opponentConnected: action.payload,
+				opponentConnected: action.connected,
 			}
 		case gameActions.SET_COIN_FLIP:
 			return {
 				...state,
-				currentCoinFlip: action.payload,
+				currentCoinFlip: action.coinFlip,
 			}
 		// Update the board for the current player. This is used to put cards on the board before the
 		// server sends the new state.
