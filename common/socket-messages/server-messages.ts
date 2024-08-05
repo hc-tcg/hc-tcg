@@ -5,6 +5,7 @@ import {
 	GamePlayerEndOutcomeT,
 	GameEndReasonT,
 	LocalGameState,
+	GameEndOutcomeT,
 } from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
@@ -31,6 +32,7 @@ export const serverMessages = messages(
 	'INVALID_CODE',
 	'WAITING_FOR_PLAYER',
 	'PRIVATE_GAME_CANCELLED',
+	'GAME_OVER_STAT',
 )
 
 export type ServerMessages = [
@@ -68,6 +70,11 @@ export type ServerMessages = [
 	{type: typeof serverMessages.INVALID_CODE},
 	{type: typeof serverMessages.WAITING_FOR_PLAYER},
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
+	{
+		type: typeof serverMessages.GAME_OVER_STAT
+		outcome: GameEndOutcomeT
+		won: boolean
+	},
 ]
 
 export type ServerMessage = Message<ServerMessages>

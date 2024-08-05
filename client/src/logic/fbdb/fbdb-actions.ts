@@ -2,26 +2,17 @@ import {Message, messages} from 'common/redux-actions'
 
 export const fbdbActions = messages('AUTHED', 'RESET_STATS', 'STATS')
 
-export type FbdbAction = Message<
-	typeof authLogin | typeof resetStats | typeof statsUpdate
->
+export type FbdbActions = [
+	{type: typeof fbdbActions.AUTHED; uuid: string},
+	{type: typeof fbdbActions.RESET_STATS},
+	{
+		type: typeof fbdbActions.STATS
+		w: number
+		l: number
+		fw: number
+		fl: number
+		t: number
+	},
+]
 
-export const authLogin = (uuid: string) => ({
-	type: fbdbActions.AUTHED,
-	payload: uuid,
-})
-
-export const resetStats = () => ({
-	type: fbdbActions.RESET_STATS,
-})
-
-export const statsUpdate = (stats: {
-	w: number
-	l: number
-	fw: number
-	fl: number
-	t: number
-}) => ({
-	type: fbdbActions.STATS,
-	payload: stats,
-})
+export type FbdbAction = Message<FbdbActions>
