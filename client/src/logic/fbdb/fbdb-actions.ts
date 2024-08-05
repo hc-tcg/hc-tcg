@@ -1,8 +1,8 @@
-import {actions} from 'common/redux-actions'
+import {Action, actions} from 'common/redux-actions'
 
 export const fbdbActions = actions('AUTHED', 'RESET_STATS', 'STATS')
 
-export type FbdbAction = ReturnType<
+export type FbdbAction = Action<
 	typeof authLogin | typeof resetStats | typeof statsUpdate
 >
 

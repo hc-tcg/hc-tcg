@@ -1,5 +1,5 @@
 import {PlayerId} from 'common/models/player-model'
-import {actions} from 'common/redux-actions'
+import {Action, actions} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
 
 export const sessionActions = actions(
@@ -14,7 +14,7 @@ export const sessionActions = actions(
 	'CLOSE_TOAST',
 )
 
-export type SessionActions = ReturnType<
+export type SessionAction = Action<
 	| typeof login
 	| typeof setPlayerInfo
 	| typeof disconnect

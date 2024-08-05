@@ -10,7 +10,7 @@ import {
 	LocalModalResult,
 	SlotInfo,
 } from 'common/types/server-requests'
-import {actions} from 'common/redux-actions'
+import {Action, actions} from 'common/redux-actions'
 
 export const gameActions = actions(
 	'GAME_STATE_RECIEVED',
@@ -36,30 +36,31 @@ export const gameActions = actions(
 	'UPDATE_GAME',
 )
 
-export type GameAction =
-	| ReturnType<typeof gameStateReceived>
-	| ReturnType<typeof localGameState>
-	| ReturnType<typeof gameStart>
-	| ReturnType<typeof gameEnd>
-	| ReturnType<typeof setSelectedCard>
-	| ReturnType<typeof setOpenedModal>
-	| ReturnType<typeof setSelectedCard>
-	| ReturnType<typeof setOpenedModal>
-	| ReturnType<typeof slotPicked>
-	| ReturnType<typeof forfeit>
-	| ReturnType<typeof startAttack>
-	| ReturnType<typeof showEndGameOverlay>
-	| ReturnType<typeof setCoinFlip>
-	| ReturnType<typeof setOpponentConnection>
-	| ReturnType<typeof setOpenedModal>
-	| ReturnType<typeof applyEffect>
-	| ReturnType<typeof removeEffect>
-	| ReturnType<typeof endTurn>
-	| ReturnType<typeof chatMessage>
-	| ReturnType<typeof chatUpdate>
-	| ReturnType<typeof attackAction>
-	| ReturnType<typeof endTurnAction>
-	| ReturnType<typeof updateGame>
+export type GameAction = Action<
+	| typeof gameStateReceived
+	| typeof localGameState
+	| typeof gameStart
+	| typeof gameEnd
+	| typeof setSelectedCard
+	| typeof setOpenedModal
+	| typeof setSelectedCard
+	| typeof setOpenedModal
+	| typeof slotPicked
+	| typeof forfeit
+	| typeof startAttack
+	| typeof showEndGameOverlay
+	| typeof setCoinFlip
+	| typeof setOpponentConnection
+	| typeof setOpenedModal
+	| typeof applyEffect
+	| typeof removeEffect
+	| typeof endTurn
+	| typeof chatMessage
+	| typeof chatUpdate
+	| typeof attackAction
+	| typeof endTurnAction
+	| typeof updateGame
+>
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: gameActions.GAME_STATE_RECIEVED,

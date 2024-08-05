@@ -1,6 +1,15 @@
 import {PlayerModel} from 'common/models/player-model'
 import {delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import root from '../serverRoot'
+import {broadcast} from 'utils/comm'
+import {
+	invalidPlayer,
+	loadUpdates,
+	newDeck,
+	newMinecraftName,
+	playerInfo,
+	playerReconnected,
+} from 'common/socket-messages/server-messages'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
@@ -15,12 +24,9 @@ function* playerConnectedSaga(action: any) {
 			existingPlayer.socket = socket
 			if (deck) existingPlayer.setPlayerDeck(deck)
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
-			socket.emit('PLAYER_RECONNECTED', {
-				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.deck,
-			})
+			broadcast([existingPlayer], playerReconnected(existingPlayer.deck))
 		} else {
-			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
+			broadcast([existingPlayer], invalidPlayer())
 		}
 		return
 	}
@@ -34,10 +40,7 @@ function* playerConnectedSaga(action: any) {
 
 	yield* delay(500)
 
-	socket.emit('PLAYER_INFO', {
-		type: 'PLAYER_INFO',
-		payload: newPlayer.getPlayerInfo(),
-	})
+	broadcast([newPlayer], playerInfo(newPlayer.getPlayerInfo()))
 }
 
 function* playerDisconnectedSaga(action: any) {
@@ -68,15 +71,12 @@ function* playerDisconnectedSaga(action: any) {
 
 function* updateDeckSaga(action: any) {
 	const {playerId} = action
-	let newDeck = action.payload
+	let playerDeck = action.payload
 	const player = root.players[playerId]
 	if (!player) return
-	player.setPlayerDeck(newDeck)
+	player.setPlayerDeck(playerDeck)
 
-	player.socket?.emit('NEW_DECK', {
-		type: 'NEW_DECK',
-		payload: player.deck,
-	})
+	broadcast([player], newDeck(player.deck))
 }
 
 function* updateMinecraftNameSaga(action: any) {
@@ -86,10 +86,7 @@ function* updateMinecraftNameSaga(action: any) {
 	if (!player) return
 	player.setMinecraftName(minecraftName)
 
-	player.socket?.emit('NEW_MINECRAFT_NAME', {
-		type: 'NEW_MINECRAFT_NAME',
-		payload: player.minecraftName,
-	})
+	broadcast([player], newMinecraftName(player.minecraftName))
 }
 
 function* loadUpdatesSaga(action: any) {
@@ -101,10 +98,7 @@ function* loadUpdatesSaga(action: any) {
 		return
 	}
 
-	player.socket?.emit('LOAD_UPDATES', {
-		type: 'LOAD_UPDATES',
-		payload: root.updates,
-	})
+	broadcast([player], loadUpdates(root.updates))
 }
 
 export function* playerSaga() {

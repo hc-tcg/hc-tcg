@@ -1,11 +1,22 @@
-import {actions} from '../redux-actions'
+import {PlayerId} from '../models/player-model'
+import {Action, actions} from '../redux-actions'
+import {PlayerDeckT} from '../types/deck'
 import {
 	GamePlayerEndOutcomeT,
 	GameEndReasonT,
 	LocalGameState,
 } from '../types/game-state'
+import {PlayerInfo} from '../types/server-requests'
 
-export type ServerMessage = ReturnType<
+export type ServerMessage = Action<
+	| typeof playerReconnected
+	| typeof invalidPlayer
+	| typeof playerInfo
+	| typeof newDeck
+	| typeof newMinecraftName
+	| typeof loadUpdates
+	| typeof gameStateOnReconnect
+	| typeof opponentConnection
 	| typeof gameCrash
 	| typeof gameEnd
 	| typeof privateGameTimeout
@@ -13,9 +24,27 @@ export type ServerMessage = ReturnType<
 	| typeof leaveQueueFailure
 	| typeof createPrivateGameSuccess
 	| typeof createPrivateGameFailure
+	| typeof joinPrivateGameSuccess
+	| typeof createPrivateGameFailure
+	| typeof joinPrivateGameSuccess
+	| typeof joinPrivateGameFailure
+	| typeof invalidCode
+	| typeof waitingForPlayer
+	| typeof privateGameCancelled
 >
 
 export const serverMessages = actions(
+	'PLAYER_RECONNECTED',
+	'INVALID_PLAYER',
+	'PLAYER_CONNECTED',
+	'PLAYER_INFO',
+	'PLAYER_DISCONNECTED',
+	'PLAYER_REMOVED',
+	'NEW_DECK',
+	'NEW_MINECRAFT_NAME',
+	'LOAD_UPDATES',
+	'GAME_STATE_ON_RECONNECT',
+	'OPPONENT_CONNECTION',
 	'GAME_CRASH',
 	'GAME_END',
 	'PRIVATE_GAME_TIMEOUT',
@@ -30,6 +59,50 @@ export const serverMessages = actions(
 	'WAITING_FOR_PLAYER',
 	'PRIVATE_GAME_CANCELLED',
 )
+
+export const playerReconnected = (playerDeck: PlayerDeckT) => ({
+	type: serverMessages.PLAYER_RECONNECTED,
+	payload: playerDeck,
+})
+
+export const invalidPlayer = () => ({
+	type: serverMessages.INVALID_PLAYER,
+})
+
+export const playerInfo = (info: PlayerInfo) => ({
+	type: serverMessages.PLAYER_INFO,
+	payload: info,
+})
+
+export const newDeck = (deck: PlayerDeckT) => ({
+	type: serverMessages.NEW_DECK,
+	payload: deck,
+})
+
+export const newMinecraftName = (name: string) => ({
+	type: serverMessages.NEW_MINECRAFT_NAME,
+	payload: name,
+})
+
+export const loadUpdates = (updates: Record<string, string[]>) => ({
+	type: serverMessages.LOAD_UPDATES,
+	payload: updates,
+})
+
+type GameStateOnReconnectDefs = {
+	localGameState: LocalGameState | null
+	order: PlayerId[]
+}
+
+export const gameStateOnReconnect = (defs: GameStateOnReconnectDefs) => ({
+	type: serverMessages.GAME_STATE_ON_RECONNECT,
+	payload: defs,
+})
+
+export const opponentConnection = (opponentConnected: boolean) => ({
+	type: serverMessages.OPPONENT_CONNECTION,
+	payload: opponentConnected,
+})
 
 export const gameCrash = () => ({
 	type: serverMessages.GAME_CRASH,

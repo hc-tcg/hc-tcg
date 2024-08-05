@@ -1,8 +1,8 @@
-import {actions} from 'common/redux-actions'
+import {Action, actions} from 'common/redux-actions'
 
 export const localSettingsActions = actions('SET_SETTING', 'RESET_SETTINGS')
 
-export type LocalSettingsAction = ReturnType<
+export type LocalSettingsAction = Action<
 	typeof setSetting | typeof resetSetting
 >
 

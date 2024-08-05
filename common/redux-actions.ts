@@ -11,3 +11,7 @@ export function actions<T extends Array<string>>(
 	}
 	return actionsDict as any
 }
+
+export type Action<T extends (...args: any) => any> = ReturnType<T> & {
+	type: ReturnType<T>['type']
+}

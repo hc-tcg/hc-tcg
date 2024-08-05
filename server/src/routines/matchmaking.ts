@@ -34,7 +34,7 @@ import {
 	leaveQueueSuccess,
 	privateGameCancelled,
 	privateGameTimeout,
-    waitingForPlayer,
+	waitingForPlayer,
 } from 'common/socket-messages/server-messages'
 
 export type ClientMessage = {

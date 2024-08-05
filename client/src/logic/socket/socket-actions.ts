@@ -1,4 +1,4 @@
-import {actions} from 'common/redux-actions'
+import {Action, actions} from 'common/redux-actions'
 
 export const socketActions = actions(
 	'SOCKET_CONNECTING',
@@ -7,7 +7,7 @@ export const socketActions = actions(
 	'SOCKET_CONNECT_ERROR',
 )
 
-export type SocketAction = ReturnType<
+export type SocketAction = Action<
 	| typeof socketConnecting
 	| typeof socketConnect
 	| typeof socketDisconnect
