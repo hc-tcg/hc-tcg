@@ -26,7 +26,7 @@ export function* playerConnectedSaga(
 			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
 		} else {
 			console.log('invalid player connected')
-			socket.emit(serverMessages.INVALID_PLAYER, {})
+			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
