@@ -9,7 +9,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-const EMPTY_ROW = '$o$bINVALID_VALUE$$'
+const EMPTY_ROW = '$o$bINVALID VALUE$$'
 
 class RenbobRare extends Card {
 	props: Hermit = {
