@@ -9,6 +9,8 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
+const EMPTY_ROW = '$o$bINVALID_VALUE$$'
+
 class RenbobRare extends Card {
 	props: Hermit = {
 		...hermit,
@@ -56,6 +58,14 @@ class RenbobRare extends Card {
 					query.row.index(component.slot.row.index),
 				)?.entity || null,
 			)
+			attack.updateLog((values) => {
+				if (values.previousLog === undefined) return ''
+				return values.target === EMPTY_ROW
+					? values.previousLog
+							.replace(`${values.target} `, '')
+							.replace(`for ${values.damage} damage`, 'and missed')
+					: values.previousLog
+			})
 		})
 	}
 }
