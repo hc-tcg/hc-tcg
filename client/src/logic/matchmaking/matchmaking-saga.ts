@@ -156,6 +156,7 @@ function* joinQueueSaga() {
 		try {
 			// Send message to server to join the queue
 			yield sendMsg({type: clientMessages.JOIN_QUEUE})
+			console.log("A")
 
 			// Wait for response
 			const joinResponse = yield* race({
@@ -163,6 +164,7 @@ function* joinQueueSaga() {
 				failure: call(receiveMsg(serverMessages.JOIN_PRIVATE_GAME_FAILURE)),
 			})
 
+			console.log("B")
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
 				yield* put<LocalMessage>({
@@ -173,6 +175,7 @@ function* joinQueueSaga() {
 
 			// We have joined the queue, wait for game start
 			yield call(receiveMsg(serverMessages.GAME_START))
+			console.log("C")
 			yield call(gameSaga)
 			console.log('end game sagas')
 		} catch (err) {

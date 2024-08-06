@@ -118,11 +118,7 @@ export function* loginSaga() {
 		timeout: delay(8000),
 	})
 
-	if (
-		result.invalidPlayer ||
-		result.connectError ||
-		Object.hasOwn(result, 'timeout')
-	) {
+	if (result.invalidPlayer || result.connectError || result.timeout) {
 		clearSession()
 		let errorType
 		if (result.invalidPlayer) errorType = 'session_expired'

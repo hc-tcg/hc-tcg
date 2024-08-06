@@ -192,7 +192,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		fork(chatSaga),
 	])
 	try {
-		yield put<LocalMessage>({
+		yield *put<LocalMessage>({
 			type: actions.GAME_START,
 		})
 

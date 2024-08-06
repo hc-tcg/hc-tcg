@@ -9,18 +9,17 @@ import socket from 'socket'
 import {put, select, takeEvery} from 'typed-redux-saga'
 
 export function* sendMsg(payload: ClientMessage): any {
-	while (true) {
-		if (socket.connected) {
-			console.log('[send]', payload.type, payload)
-			const {playerId, playerSecret} = yield* select(getSession)
-			socket.emit(payload.type, {
-				type: payload.type,
-				payload,
-				playerId,
-				playerSecret,
-			})
-			break
-		}
+	if (socket.connected) {
+		console.log('[send]', payload.type, payload)
+		const {playerId, playerSecret} = yield* select(getSession)
+		socket.emit(payload.type, {
+			type: payload.type,
+			payload,
+			playerId,
+			playerSecret,
+		})
+	} else {
+		throw new Error('Can not send message when socket is not connected')
 	}
 }
 
