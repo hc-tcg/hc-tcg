@@ -25,10 +25,12 @@ class Anvil extends Card {
 			'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 		hasAttack: true,
 		attackPreview: (game) => {
-			const targetAmount =
-				this.getTargetHermits(game, game.currentPlayer).length - 1
-			if (targetAmount === 0) return '$A30$'
-			return `$A30$ + $A10$ x ${targetAmount}`
+			const targets = this.getTargetHermits(game, game.currentPlayer)
+			if (targets.length === 0) return '0'
+			if (targets[0].index === game.currentPlayer.activeRow!.index) {
+				return targets.length === 1 ? '$A30$' : `$A30$ + ${targets.length - 1}`
+			}
+			return `$A10$ x ${targets.length}`
 		},
 	}
 
@@ -50,7 +52,7 @@ class Anvil extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			return this.getTargetHermits(game, player).reduce(
+			const attack = this.getTargetHermits(game, player).reduce(
 				(attacks: null | AttackModel, row) => {
 					if (!row.getHermit()) return attacks
 
@@ -59,10 +61,12 @@ class Anvil extends Card {
 							attacker: component.entity,
 							target: row.entity,
 							type: 'effect',
-							log: (values) =>
-								row.index === player.activeRow?.index
-									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: `, ${values.target} for ${values.damage} damage`,
+							log:
+								attacks === null
+									? (values) =>
+											`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+									: (values) =>
+											`, ${values.target} for ${values.damage} damage`,
 						})
 						.addDamage(
 							component.entity,
@@ -77,10 +81,23 @@ class Anvil extends Card {
 				},
 				null,
 			)
+			if (attack === null) {
+				// No valid targets
+				game.battleLog.addEntry(
+					component.player.entity,
+					'$eAnvil$ did $b0$ damage',
+				)
+				applySingleUse(game)
+			}
+
+			return attack
 		})
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
-			applySingleUse(game, component.slot)
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (attack.isAttacker(component.entity)) {
+				applySingleUse(game, component.slot)
+				observer.unsubscribe(player.hooks.afterAttack)
+			}
 		})
 	}
 }
