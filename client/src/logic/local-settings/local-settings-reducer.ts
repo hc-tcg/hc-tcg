@@ -1,4 +1,4 @@
-import { Action, actions } from "logic/actions"
+import { LocalMessage, actions } from "logic/actions"
 
 type LocalSettings = Record<string, any>
 
@@ -36,7 +36,7 @@ const defaultState: LocalSettings = {
 
 const localSettingsReducer = (
 	state = defaultState,
-	action: Action,
+	action: LocalMessage,
 ): LocalSettings => {
 	switch (action.type) {
 		case actions.SETTINGS_SET:

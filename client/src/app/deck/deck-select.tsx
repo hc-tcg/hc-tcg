@@ -34,7 +34,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {Action, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 import {message} from 'common/redux-actions'
 
 type Props = {
@@ -236,7 +236,7 @@ function SelectDeck({
 				'/sfx/Page_turn3.ogg',
 			]
 			dispatch(
-				message<Action>(
+				message<LocalMessage>(
 					{
 						type: actions.SOUND_PLAY,
 						path: pageTurn[Math.floor(Math.random() * pageTurn.length)],

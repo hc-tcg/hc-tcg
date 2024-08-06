@@ -1,5 +1,5 @@
 import {PlayerEntity, SlotEntity} from 'common/entities'
-import {Message, messages} from 'common/redux-actions'
+import {Message, messages, MessageTable} from 'common/redux-actions'
 import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'
 import {
@@ -17,7 +17,6 @@ import {
 } from 'common/types/server-requests'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
-import {put} from 'typed-redux-saga'
 
 export const actions = messages(
 	'SOCKET_CONNECTING',
@@ -63,6 +62,7 @@ export const actions = messages(
 	'GAME_TURN_END',
 	'CHAT_MESSAGE',
 	'CHAT_UPDATE',
+	'GAME_ACTIONS_ATTACK_START',
 	'GAME_ACTIONS_ATTACK',
 	'GAME_ACTIONS_END_TURN',
 	'GAME_UPDATE',
@@ -146,7 +146,10 @@ type Actions = [
 	{
 		type: typeof actions.GAME_END_OVERLAY_HIDE
 	},
-	{type: typeof actions.GAME_COIN_FLIP_SET; coinFlip: LocalCurrentCoinFlip | null},
+	{
+		type: typeof actions.GAME_COIN_FLIP_SET
+		coinFlip: LocalCurrentCoinFlip | null
+	},
 	{type: typeof actions.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
 	{type: typeof actions.GAME_EFFECT_APPLY; payload: any},
@@ -154,7 +157,11 @@ type Actions = [
 	{type: typeof actions.GAME_TURN_END},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof actions.GAME_ACTIONS_ATTACK; attackType: HermitAttackType},
+	{
+		type: typeof actions.GAME_ACTIONS_ATTACK_START
+		attackType: HermitAttackType
+	},
+	{type: typeof actions.GAME_ACTIONS_ATTACK},
 	{type: typeof actions.GAME_ACTIONS_END_TURN},
 	{type: typeof actions.GAME_UPDATE},
 	{type: typeof actions.FIREBASE_AUTHED; uuid: string},
@@ -173,12 +180,12 @@ type Actions = [
 	{type: typeof actions.SOUND_SECTION_CHANGE; section: any},
 ]
 
-export type Action = Message<Actions>
+/** A message used locally on the client to update global state */
+export type LocalMessage = Message<Actions>
 
-export function useActionDispatch(): Dispatch<Action> {
+/** A message used locally on the client to update global state */
+export type LocalMessageTable = MessageTable<Actions>
+
+export function useActionDispatch(): Dispatch<LocalMessage> {
 	return useDispatch()
-}
-
-export function* putAction(action: Action): any {
-	return yield* put(action)
 }

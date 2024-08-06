@@ -17,7 +17,7 @@ import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
-import {Action, actions, useActionDispatch} from 'logic/actions'
+import {LocalMessage, actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void

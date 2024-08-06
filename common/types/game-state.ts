@@ -240,7 +240,7 @@ export type LocalGameRoot = {
 	} | null
 	endGameOverlay: {
 		reason: GameEndReasonT
-		outcome: GameEndOutcomeT
+		outcome: GamePlayerEndOutcomeT
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null

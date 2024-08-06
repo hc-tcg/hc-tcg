@@ -1,10 +1,10 @@
 import {TurnAction} from 'common/types/game-state'
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {endTurn} from 'logic/game/game-actions'
 import {getAvailableActions} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',
@@ -39,13 +39,13 @@ export function shouldShowEndTurnModal(
 }
 
 function EndTurnModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const availableActions = useSelector(getAvailableActions)
 
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
 	const handleEndTurn = () => {
-		dispatch(endTurn())
+		dispatch({type: actions.GAME_TURN_END})
 		closeModal()
 	}
 

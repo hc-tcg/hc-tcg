@@ -1,5 +1,5 @@
 import {LocalGameRoot} from 'common/types/game-state'
-import {Action, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -14,7 +14,7 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (state = defaultState, action: Action): LocalGameRoot => {
+const gameReducer = (state = defaultState, action: LocalMessage): LocalGameRoot => {
 	switch (action.type) {
 		case actions.GAME_LOCAL_STATE:
 			const newGame: LocalGameRoot = {

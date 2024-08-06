@@ -1,5 +1,5 @@
 import {MatchmakingStatus} from './matchmaking-types'
-import {Action, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 
 type MatchmakingState = {
 	status: MatchmakingStatus
@@ -15,7 +15,7 @@ const defaultState: MatchmakingState = {
 
 const matchmakingReducer = (
 	state = defaultState,
-	action: Action,
+	action: LocalMessage,
 ): MatchmakingState => {
 	switch (action.type) {
 		case actions.MATCHMAKING_QUEUE_JOIN:

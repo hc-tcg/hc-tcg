@@ -5,7 +5,7 @@ import Button from 'components/button'
 import {getOpponentName} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import { actions, useActionDispatch } from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	outcome?: GamePlayerEndOutcomeT
@@ -40,6 +40,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 		lives: 'lost all lives.',
 		cards: 'ran out of cards.',
 		time: 'ran out of time without an active hermit.',
+		error: 'there was an error',
 	}
 
 	switch (outcome) {

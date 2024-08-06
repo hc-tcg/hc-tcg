@@ -1,10 +1,10 @@
-import {Action, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 
 type SocketState = null | 'connecting' | 'connected'
 
 const defaultState: SocketState = null
 
-const loginReducer = (state = defaultState, action: Action): SocketState => {
+const loginReducer = (state = defaultState, action: LocalMessage): SocketState => {
 	switch (action.type) {
 		case actions.SOCKET_CONNECTING:
 			return 'connecting'

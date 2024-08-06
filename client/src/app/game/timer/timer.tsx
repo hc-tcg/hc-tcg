@@ -5,13 +5,13 @@ import {
 	getGameState,
 	getTime,
 } from 'logic/game/game-selectors'
-import {playSound} from 'logic/sound/sound-actions'
 import {useEffect, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './timer.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 function Timer() {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const gameState = useSelector(getGameState) as LocalGameState
 	const time = useSelector(getTime)
 	const currentCoinflip = useSelector(getCurrentCoinFlip)
@@ -46,7 +46,7 @@ function Timer() {
 			remainingTime <= 10 &&
 			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
-			dispatch(playSound('/sfx/Click.ogg'))
+			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [remainingSeconds])
 

@@ -16,7 +16,7 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
-import {Action, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 import {message} from 'common/redux-actions'
 
 function App() {
@@ -31,7 +31,7 @@ function App() {
 
 	useEffect(() => {
 		dispatch(
-			message<Action>({type: actions.SOUND_SECTION_CHANGE, section: section}),
+			message<LocalMessage>({type: actions.SOUND_SECTION_CHANGE, section: section}),
 		)
 	}, [section])
 
