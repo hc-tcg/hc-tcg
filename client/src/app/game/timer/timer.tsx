@@ -1,5 +1,6 @@
 import cn from 'classnames'
 import {LocalGameState} from 'common/types/game-state'
+import {actions, useActionDispatch} from 'logic/actions'
 import {
 	getCurrentCoinFlip,
 	getGameState,
@@ -8,7 +9,6 @@ import {
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './timer.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 function Timer() {
 	const dispatch = useActionDispatch()

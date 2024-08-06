@@ -1,6 +1,8 @@
+import {message} from 'common/redux-actions'
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
+import {LocalMessage, actions} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
@@ -16,8 +18,6 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
-import {LocalMessage, actions} from 'logic/actions'
-import {message} from 'common/redux-actions'
 
 function App() {
 	const section = useRouter()
@@ -31,7 +31,10 @@ function App() {
 
 	useEffect(() => {
 		dispatch(
-			message<LocalMessage>({type: actions.SOUND_SECTION_CHANGE, section: section}),
+			message<LocalMessage>({
+				type: actions.SOUND_SECTION_CHANGE,
+				section: section,
+			}),
 		)
 	}, [section])
 

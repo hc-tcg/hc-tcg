@@ -3,11 +3,11 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import Modal from 'components/modal'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getGameState} from 'logic/game/game-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	closeModal: () => void

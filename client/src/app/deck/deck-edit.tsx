@@ -14,6 +14,7 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
+import {actions} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
@@ -22,7 +23,6 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {actions} from 'logic/actions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [

@@ -2,7 +2,6 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
-import {PlayerInfo} from '../types/server-requests'
 
 export const clientMessages = messages(
 	'CLIENT_CONNECTED',
@@ -23,12 +22,12 @@ export const clientMessages = messages(
 export type ClientMessages = [
 	{
 		type: typeof clientMessages.CLIENT_CONNECTED
-		playerId: PlayerId,
-		playerName: string,
-		playerSecret: string,
-		minecraftName: string,
-		deck: PlayerDeckT,
-		socket: any,
+		playerId: PlayerId
+		playerName: string
+		playerSecret: string
+		minecraftName: string
+		deck: PlayerDeckT
+		socket: any
 	},
 	{type: typeof clientMessages.CLIENT_DISCONNECTED},
 	{type: typeof clientMessages.GET_UPDATES},

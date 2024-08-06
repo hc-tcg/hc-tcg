@@ -1,5 +1,5 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {actions, LocalMessage} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 import {receiveMsg} from 'logic/socket/socket-saga'
 import {SagaIterator, eventChannel} from 'redux-saga'
 import {call, put, takeEvery, takeLatest} from 'typed-redux-saga'

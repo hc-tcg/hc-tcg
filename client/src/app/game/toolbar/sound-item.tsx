@@ -1,8 +1,8 @@
 import {SpeakerIcon} from 'components/svgs'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 function SoundItem() {
 	const settings = useSelector(getSettings)

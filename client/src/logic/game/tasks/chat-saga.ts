@@ -1,6 +1,6 @@
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {SagaIterator} from 'redux-saga'
 import {call, fork, put, takeEvery} from 'typed-redux-saga'

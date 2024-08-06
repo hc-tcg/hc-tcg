@@ -1,4 +1,4 @@
-import {actions, LocalMessage} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
 

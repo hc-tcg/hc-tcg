@@ -2,12 +2,12 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void

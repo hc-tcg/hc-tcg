@@ -2,6 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {AnyAction} from 'redux'
 import {
@@ -30,7 +31,6 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import slotSaga from './tasks/slot-saga'
-import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
 
 function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 	yield* sendMsg({

@@ -5,6 +5,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {
 	getActiveDeckName,
 	getSavedDeck,
@@ -16,7 +17,6 @@ import {eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import {PlayerDeckT} from '../../../../common/types/deck'
-import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
 
 const loadSession = (): PlayerInfo | null => {
 	const playerName = sessionStorage.getItem('playerName')

@@ -3,11 +3,11 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void

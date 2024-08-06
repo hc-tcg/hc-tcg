@@ -4,11 +4,11 @@ import ErrorBanner from 'components/error-banner'
 import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null

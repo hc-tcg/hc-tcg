@@ -4,6 +4,7 @@ import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
+import {actions, useActionDispatch} from 'logic/actions'
 import {
 	getAvailableActions,
 	getCurrentCoinFlip,
@@ -17,7 +18,6 @@ import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
-import {LocalMessage, actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void

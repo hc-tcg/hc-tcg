@@ -1,7 +1,8 @@
 import {
-	clientMessages,
 	RecievedClientMessage,
+	clientMessages,
 } from 'common/socket-messages/client-messages'
+import {takeEvery} from 'typed-redux-saga'
 import {
 	cancelPrivateGame,
 	createPrivateGame,
@@ -16,7 +17,6 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {takeEvery} from 'typed-redux-saga'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {

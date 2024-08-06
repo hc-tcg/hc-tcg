@@ -1,5 +1,6 @@
 import {SingleUse, isHermit} from 'common/cards/base/types'
 import Modal from 'components/modal'
+import {actions, useActionDispatch} from 'logic/actions'
 import {
 	getAvailableActions,
 	getPlayerEntity,
@@ -9,7 +10,6 @@ import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import Attack from './attack'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	closeModal: () => void

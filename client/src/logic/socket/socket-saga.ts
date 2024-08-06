@@ -1,7 +1,7 @@
 import {message} from 'common/redux-actions'
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
-import {actions, LocalMessage} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'

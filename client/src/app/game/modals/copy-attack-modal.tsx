@@ -1,11 +1,11 @@
 import {isHermit} from 'common/cards/base/types'
 import {ModalData} from 'common/types/game-state'
 import Modal from 'components/modal'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getGameState} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	closeModal: () => void

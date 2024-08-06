@@ -4,7 +4,10 @@ type SocketState = null | 'connecting' | 'connected'
 
 const defaultState: SocketState = null
 
-const loginReducer = (state = defaultState, action: LocalMessage): SocketState => {
+const loginReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): SocketState => {
 	switch (action.type) {
 		case actions.SOCKET_CONNECTING:
 			return 'connecting'

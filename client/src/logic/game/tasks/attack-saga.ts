@@ -1,4 +1,5 @@
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {LocalMessageTable, actions} from 'logic/actions'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {SagaIterator} from 'redux-saga'
 import {put} from 'redux-saga/effects'
@@ -8,7 +9,6 @@ import {
 	getOpponentActiveRow,
 	getPlayerActiveRow,
 } from '../../../app/game/game-selectors'
-import {actions, LocalMessageTable} from 'logic/actions'
 
 export function* attackSaga(
 	action: LocalMessageTable[typeof actions.GAME_ATTACK_START],

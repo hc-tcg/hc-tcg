@@ -1,7 +1,7 @@
+import {actions} from 'logic/actions'
 import {getOpenedModal} from 'logic/game/game-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
-import {actions} from 'logic/actions'
 
 function ForfeitItem() {
 	const dispatch = useDispatch()

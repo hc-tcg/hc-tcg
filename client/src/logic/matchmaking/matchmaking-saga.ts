@@ -2,7 +2,7 @@ import assert from 'assert'
 import {message} from 'common/redux-actions'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {

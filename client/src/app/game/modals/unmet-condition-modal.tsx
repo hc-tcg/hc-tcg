@@ -1,7 +1,7 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import css from './game-modals.module.scss'
 import {actions, useActionDispatch} from 'logic/actions'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

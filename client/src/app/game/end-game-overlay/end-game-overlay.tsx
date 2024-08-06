@@ -2,10 +2,10 @@ import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
 import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getOpponentName} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	outcome?: GamePlayerEndOutcomeT

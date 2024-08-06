@@ -1,4 +1,4 @@
-import {actions, LocalMessage} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/actions'
 
 type FbdbState = {
 	uuid: string

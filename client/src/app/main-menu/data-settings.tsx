@@ -1,10 +1,10 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
+import {actions} from 'logic/actions'
 import {useState} from 'react'
 import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
-import {actions} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void

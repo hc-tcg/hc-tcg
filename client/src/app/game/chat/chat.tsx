@@ -2,13 +2,13 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)

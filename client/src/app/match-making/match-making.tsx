@@ -2,6 +2,7 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
+import {actions, useActionDispatch} from 'logic/actions'
 import {
 	getCode,
 	getInvalidCode,
@@ -10,7 +11,6 @@ import {
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 function MatchMaking() {
 	const dispatch = useActionDispatch()

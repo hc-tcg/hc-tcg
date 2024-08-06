@@ -1,9 +1,9 @@
+import {LocalMessageTable, actions} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
-import {actions, LocalMessageTable} from 'logic/actions'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()

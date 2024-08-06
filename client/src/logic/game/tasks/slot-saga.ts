@@ -5,6 +5,7 @@ import {
 	slotToPlayCardAction,
 } from 'common/types/action-data'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {
 	getAvailableActions,
 	getCurrentPickMessage,
@@ -16,7 +17,6 @@ import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
-import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof actions.GAME_SLOT_PICKED],
@@ -40,8 +40,10 @@ function* pickWithSelectedSaga(
 ): SagaIterator {
 	const pickInfo = action.slotInfo
 
-	yield putResolve<LocalMessage>({type: actions.GAME_CARD_SELECTED_SET, card: null})
-
+	yield putResolve<LocalMessage>({
+		type: actions.GAME_CARD_SELECTED_SET,
+		card: null,
+	})
 
 	// If the hand is clicked don't send data
 	if (pickInfo.slotType !== 'hand') {

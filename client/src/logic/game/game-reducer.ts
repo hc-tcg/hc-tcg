@@ -14,7 +14,10 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (state = defaultState, action: LocalMessage): LocalGameRoot => {
+const gameReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): LocalGameRoot => {
 	switch (action.type) {
 		case actions.GAME_LOCAL_STATE:
 			const newGame: LocalGameRoot = {

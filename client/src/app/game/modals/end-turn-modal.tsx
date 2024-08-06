@@ -1,10 +1,10 @@
 import {TurnAction} from 'common/types/game-state'
 import Button from 'components/button'
 import Modal from 'components/modal'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getAvailableActions} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import {actions, useActionDispatch} from 'logic/actions'
 
 const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',

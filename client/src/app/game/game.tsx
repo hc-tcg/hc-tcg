@@ -3,6 +3,7 @@ import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
+import {actions, useActionDispatch} from 'logic/actions'
 import {
 	getAvailableActions,
 	getEndGameOverlay,
@@ -31,7 +32,6 @@ import {
 import CopyAttackModal from './modals/copy-attack-modal'
 import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 import Toolbar from './toolbar'
-import {actions, useActionDispatch} from 'logic/actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,

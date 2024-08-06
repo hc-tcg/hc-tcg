@@ -7,8 +7,8 @@ import {
 	GamePlayerEndOutcomeT,
 	LocalGameState,
 } from '../types/game-state'
-import {PlayerInfo} from '../types/server-requests'
 import {Message as ChatMessage} from '../types/game-state'
+import {PlayerInfo} from '../types/server-requests'
 
 export const serverMessages = messages(
 	'PLAYER_RECONNECTED',

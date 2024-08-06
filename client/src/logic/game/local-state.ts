@@ -2,9 +2,9 @@ import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {hasEnoughEnergy} from 'common/utils/attacks'
+import {LocalMessageTable, actions} from 'logic/actions'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
-import {actions, LocalMessageTable} from 'logic/actions'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 

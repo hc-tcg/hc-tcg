@@ -1,4 +1,4 @@
-import { LocalMessage, actions } from "logic/actions"
+import {LocalMessage, actions} from 'logic/actions'
 
 type LocalSettings = Record<string, any>
 
