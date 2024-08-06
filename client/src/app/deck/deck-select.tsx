@@ -27,7 +27,6 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import {playSound} from 'logic/sound/sound-actions'
 import {ReactNode, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -35,7 +34,8 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {sessionActions} from 'logic/session/session-actions'
+import {Action, actions} from 'logic/actions'
+import {message} from 'common/redux-actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -107,7 +107,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({type: sessionActions.UPDATE_DECK, loadedDeck})
+		dispatch({type: actions.DECK_SET, loadedDeck})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
@@ -235,7 +235,14 @@ function SelectDeck({
 				'/sfx/Page_turn2.ogg',
 				'/sfx/Page_turn3.ogg',
 			]
-			dispatch(playSound(pageTurn[Math.floor(Math.random() * pageTurn.length)]))
+			dispatch(
+				message<Action>(
+					{
+						type: actions.SOUND_PLAY,
+						path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+					},
+				),
+			)
 		}
 	}
 

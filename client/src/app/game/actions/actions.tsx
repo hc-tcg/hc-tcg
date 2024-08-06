@@ -3,7 +3,6 @@ import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
-import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
 	getCurrentCoinFlip,
@@ -18,6 +17,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
+import {actions} from 'logic/actions'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -118,13 +118,13 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(attackAction())
+			dispatch({type: actions.GAME_ACTIONS_ATTACK})
 		}
 		function handleEndTurn() {
 			if (shouldShowEndTurnModal(availableActions, settings)) {
-				dispatch(endTurnAction())
+				dispatch({type: actions.GAME_ACTIONS_END_TURN})
 			} else {
-				dispatch(endTurn())
+				dispatch({type: actions.GAME_TURN_END})
 			}
 		}
 

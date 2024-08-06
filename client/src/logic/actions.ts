@@ -57,8 +57,8 @@ export const actions = messages(
 	'GAME_TURN_END',
 	'CHAT_MESSAGE',
 	'CHAT_UPDATE',
-	'ATTACK_ACTION',
-	'END_TURN_ACTION',
+	'GAME_ACTIONS_ATTACK',
+	'GAME_ACTIONS_END_TURN',
 	'GAME_UPDATE',
 	'FIREBASE_AUTHED',
 	'FIREBASE_STATS_RESET',
@@ -141,8 +141,8 @@ type Actions = [
 	{type: typeof actions.GAME_TURN_END},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof actions.ATTACK_ACTION},
-	{type: typeof actions.END_TURN_ACTION},
+	{type: typeof actions.GAME_ACTIONS_ATTACK},
+	{type: typeof actions.GAME_ACTIONS_END_TURN},
 	{type: typeof actions.GAME_UPDATE},
 	{type: typeof actions.FIREBASE_AUTHED; uuid: string},
 	{type: typeof actions.FIREBASE_STATS_RESET},
@@ -157,7 +157,7 @@ type Actions = [
 	{type: typeof actions.SETTINGS_SET; key: string; value: any},
 	{type: typeof actions.SETTINGS_RESET; key: string},
 	{type: typeof actions.SOUND_PLAY; path: string},
-	{type: typeof actions.SOUND_SECTION_CHANGE; payload: any},
+	{type: typeof actions.SOUND_SECTION_CHANGE; section: any},
 ]
 
 export type Action = Message<Actions>

@@ -22,8 +22,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {sessionActions} from 'logic/session/session-actions'
-import {localSettingsActions} from 'logic/local-settings/local-settings-actions'
+import {actions} from 'logic/actions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -212,7 +211,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	function toggleTooltips() {
 		dispatch({
-			type: localSettingsActions.SET_SETTING,
+			type: actions.SETTINGS_SET,
 			key: 'showAdvancedTooltips',
 			value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
 		})
@@ -333,7 +332,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
 		saveDeck(deck, initialDeck)
 		dispatch({
-			type: sessionActions.SET_TOAST,
+			type: actions.TOAST_OPEN,
 			open: true,
 			title: 'Deck Saved!',
 			description: `Saved ${deck.name}`,

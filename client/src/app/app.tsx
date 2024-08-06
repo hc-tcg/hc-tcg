@@ -4,7 +4,6 @@ import Toast from 'components/toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
-import {sectionChange} from 'logic/sound/sound-actions'
 import {useEffect, useMemo, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {useRouter} from './app-hooks'
@@ -17,6 +16,8 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import {Action, actions} from 'logic/actions'
+import {message} from 'common/redux-actions'
 
 function App() {
 	const section = useRouter()
@@ -29,7 +30,9 @@ function App() {
 	let enableToast = false
 
 	useEffect(() => {
-		dispatch(sectionChange(section))
+		dispatch(
+			message<Action>({type: actions.SOUND_SECTION_CHANGE, section: section}),
+		)
 	}, [section])
 
 	const router = () => {
