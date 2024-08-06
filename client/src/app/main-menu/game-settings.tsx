@@ -1,56 +1,60 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function GameSettings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const settings = useSelector(getSettings)
 
 	const handleDialogsChange = () => {
-		dispatch(
-			setSetting(
-				'confirmationDialogs',
-				settings.confirmationDialogs !== 'off' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'confirmationDialogs',
+			value: settings.confirmationDialogs !== 'off' ? 'off' : 'on',
+		})
 	}
 	const handleGameSideToggle = () => {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch(setSetting('gameSide', gameSide))
+		dispatch({type: actions.SETTINGS_SET, key: 'gameSide', value: gameSide})
 	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
 	}
 	const handleChatChange = () => {
-		dispatch(
-			setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'),
-		)
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'disableChat',
+			value: settings.disableChat !== 'off' ? 'off' : 'on',
+		})
 	}
 	const handleProfanityChange = () => {
-		dispatch(
-			setSetting(
-				'profanityFilter',
-				settings.profanityFilter !== 'off' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'profanityFilter',
+			value: settings.profanityFilter !== 'off' ? 'off' : 'on',
+		})
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const username = ev.currentTarget.minecraftName.value.trim()
 		if (username.length > 3) {
 			dispatch({
-				type: 'UPDATE_MINECRAFT_NAME',
-				payload: username,
+				type: actions.MINECRAFT_NAME_SET,
+				name: username,
 			})
-			dispatch(setSetting('minecraftName', username))
+			dispatch({
+				type: actions.SETTINGS_SET,
+				key: 'minecraftName',
+				value: username,
+			})
 			localStorage.setItem('minecraftName', username)
 		}
 	}

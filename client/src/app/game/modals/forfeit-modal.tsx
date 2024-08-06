@@ -1,8 +1,8 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {forfeit} from 'logic/game/game-actions'
 import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
+import {actions} from 'logic/actions'
 
 type Props = {
 	closeModal: () => void
@@ -11,7 +11,7 @@ function AttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handleYes = () => {
-		dispatch(forfeit())
+		dispatch({type: actions.GAME_FORFEIT})
 		closeModal()
 	}
 

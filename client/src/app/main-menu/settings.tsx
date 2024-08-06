@@ -3,33 +3,49 @@ import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React, {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function Settings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'soundVolume',
+			value: ev.currentTarget.value,
+		})
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('musicVolume', ev.currentTarget.value))
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'musicVolume',
+			value: ev.currentTarget.value,
+		})
 	}
 	const handleMuteSound = () => {
-		dispatch(setSetting('muted', !settings.muted))
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'muted',
+			value: !settings.muted,
+		})
 	}
 
 	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+		dispatch({
+			type: actions.SETTINGS_SET,
+			key: 'panoramaEnabled',
+			value: !settings.panoramaEnable,
+		})
 	}
 	const getBoolDescriptor = (value?: boolean) => {
 		return value ? 'Enabled' : 'Disabled'

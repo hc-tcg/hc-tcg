@@ -1,15 +1,15 @@
 import {SpeakerIcon} from 'components/svgs'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 function SoundItem() {
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 
 	const handleSoundChange = () => {
-		dispatch(setSetting('muted', !settings.muted))
+		dispatch({type: actions.SETTINGS_SET, key: 'muted', value: !settings.muted})
 	}
 
 	return (

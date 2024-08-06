@@ -2,30 +2,30 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {leaveMatchmaking, setCode} from 'logic/matchmaking/matchmaking-actions'
 import {
 	getCode,
 	getInvalidCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 function MatchMaking() {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const status = useSelector(getStatus)
 	const code = useSelector(getCode)
 	const invalidCode = useSelector(getInvalidCode)
 
 	const handleCancel = () => {
-		dispatch(leaveMatchmaking())
+		dispatch({type: actions.MATCHMAKING_LEAVE})
 	}
 
 	const handleCodeSubmit = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const code = ev.currentTarget.gameCode.value.trim()
-		dispatch(setCode(code))
+		dispatch({type: actions.MATCHMAKING_CODE_SET, code})
 	}
 
 	const handleCodeClick = () => {

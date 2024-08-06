@@ -1,4 +1,4 @@
-import {FbdbAction, fbdbActions} from './fbdb-actions'
+import {actions, LocalMessage} from 'logic/actions'
 
 type FbdbState = {
 	uuid: string
@@ -10,11 +10,11 @@ const defaultState: FbdbState = {
 	stats: {w: 0, l: 0, fw: 0, fl: 0, t: 0},
 }
 
-const fbdbReducer = (state = defaultState, action: FbdbAction): FbdbState => {
+const fbdbReducer = (state = defaultState, action: LocalMessage): FbdbState => {
 	switch (action.type) {
-		case fbdbActions.STATS:
+		case actions.FIREBASE_STATS:
 			return {...state, stats: action}
-		case fbdbActions.AUTHED:
+		case actions.FIREBASE_AUTHED:
 			return {...state, uuid: action.uuid}
 		default:
 			return state

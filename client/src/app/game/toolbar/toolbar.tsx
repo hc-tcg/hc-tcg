@@ -1,17 +1,17 @@
-import {setOpenedModal} from 'logic/game/game-actions'
 import {getGameState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import ChatItem from './chat-item'
 import ForfeitItem from './forfeit-item'
 import SoundItem from './sound-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
+import {actions, useActionDispatch} from 'logic/actions'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 
 	const handleDiscarded = () => {
 		if (!gameState) return
@@ -31,7 +31,10 @@ function Toolbar() {
 				},
 			},
 		}
-		dispatch(setOpenedModal(gameState.currentModalData.modalId))
+		dispatch({
+			type: actions.GAME_MODAL_OPENED_SET,
+			id: gameState.currentModalData.modalId,
+		})
 	}
 
 	if (!gameState) return null

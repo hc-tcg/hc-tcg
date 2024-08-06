@@ -5,23 +5,22 @@ import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {matchmakingActions} from 'logic/matchmaking/matchmaking-actions'
-import {sessionActions} from 'logic/session/session-actions'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () => dispatch({type: matchmakingActions.JOIN_QUEUE})
+	const handleJoinQueue = () => dispatch({type: actions.MATCHMAKING_QUEUE_JOIN})
 	const handleCreatePrivateGame = () =>
-		dispatch({type: matchmakingActions.CREATE_PRIVATE_GAME})
+		dispatch({type: actions.MATCHMAKING_PRIVATE_GAME_CREATE})
 	const handleJoinPrivateGame = () =>
-		dispatch({type: matchmakingActions.JOIN_PRIVATE_GAME})
-	const handleLogOut = () => dispatch({type: sessionActions.LOGOUT})
+		dispatch({type: actions.MATCHMAKING_PRIVATE_GAME_JOIN})
+	const handleLogOut = () => dispatch({type: actions.LOGOUT})
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 

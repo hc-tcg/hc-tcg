@@ -3,32 +3,30 @@ import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {put, select} from 'typed-redux-saga'
-import {slotPicked} from './game-actions'
 import {getGameState, getPlayerState} from './game-selectors'
+import {actions, LocalMessageTable} from 'logic/actions'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
-type SlotPickedAction = ReturnType<typeof slotPicked>
-
 /** Make the client look like a card has been placed in a slot */
 export function* localPutCardInSlot(
-	action: SlotPickedAction,
+	action: LocalMessageTable[typeof actions.GAME_SLOT_PICKED],
 	selectedCard: LocalCardInstance,
 ) {
 	let gameState = yield* select(getGameState)
 	if (!gameState) throw new Error('Can not find game state')
 
 	let playerState = Object.values(gameState?.players || {}).find(
-		(player) => player.entity === action.payload.player,
+		(player) => player.entity === action.player,
 	)
 	if (!playerState) throw new Error('Player state not found.')
 
 	let board = playerState?.board
-	let slot = action.payload.slot
+	let slot = action.slotInfo
 	if (!board) return
 
-	let row = action.payload.row
-	let index = action.payload.index
+	let row = action.row
+	let index = action.index
 
 	if (slot.slotType === 'single_use') {
 		board.singleUse = {slot: slot.slotEntity, card: selectedCard}

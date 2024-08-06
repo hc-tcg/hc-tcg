@@ -1,11 +1,10 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
-import {resetStats} from 'logic/fbdb/fbdb-actions'
-import {resetSetting} from 'logic/local-settings/local-settings-actions'
 import {useState} from 'react'
 import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
+import {actions} from 'logic/actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,8 +15,8 @@ function DataSettings({setMenuSection}: Props) {
 	const [modal, setModal] = useState<any>(null)
 
 	const resetChatWindow = () => {
-		dispatch(resetSetting('chatPosition'))
-		dispatch(resetSetting('chatSize'))
+		dispatch({type: actions.SETTINGS_RESET, value: 'chatPosition'})
+		dispatch({type: actions.SETTINGS_RESET, value: 'chatSize'})
 	}
 
 	const handleReset = (
@@ -95,7 +94,7 @@ function DataSettings({setMenuSection}: Props) {
 					onClick={handleReset(
 						'Are you sure you want to reset your stats?',
 						'Your stats have been reset.',
-						() => dispatch(resetStats()),
+						() => dispatch({type: actions.FIREBASE_STATS_RESET}),
 					)}
 				>
 					Reset Stats

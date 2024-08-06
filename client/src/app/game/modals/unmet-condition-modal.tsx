@@ -1,19 +1,18 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {removeEffect} from 'logic/game/game-actions'
-import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	closeModal: () => void
 	info: {removeSuAfter: boolean}
 }
 function UnmetCondition({closeModal, info}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const handleOk = () => {
 		closeModal()
 		if (info?.removeSuAfter) {
-			dispatch(removeEffect())
+			dispatch({type: actions.GAME_EFFECT_REMOVE})
 		}
 	}
 

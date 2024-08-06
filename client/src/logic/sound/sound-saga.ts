@@ -2,8 +2,8 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
-import {PlaySoundT, SectionChangeT} from './sound-actions'
 import {trackList} from './sound-config'
+import {actions, LocalMessageTable} from 'logic/actions'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -23,10 +23,10 @@ window.bgMusic = bgMusic
 // @ts-ignore
 window.audioCtx = audioCtx
 
-function* backgroundMusic(action: SectionChangeT): SagaIterator {
-	const section = action.payload
-
-	if (section !== 'game') {
+function* backgroundMusic(
+	action: LocalMessageTable[typeof actions.SOUND_SECTION_CHANGE],
+): SagaIterator {
+	if (action.section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
 		bgMusic.src = ''
@@ -48,13 +48,15 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	}
 }
 
-function* playSoundSaga(action: PlaySoundT): SagaIterator {
+function* playSoundSaga(
+	action: LocalMessageTable[typeof actions.SOUND_PLAY],
+): SagaIterator {
 	try {
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
 		if (settings.soundVolume === '0') return
 
-		const sound = new Audio(action.payload)
+		const sound = new Audio(action.path)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
 		sourceNode.connect(soundGainNode)
 		sound.onended = () => sourceNode.disconnect(soundGainNode)
@@ -82,9 +84,9 @@ function* settingSaga(): SagaIterator {
 function* soundSaga(): SagaIterator {
 	// @ts-ignore
 	yield call(settingSaga)
-	yield takeEvery('SET_SETTING', settingSaga)
-	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
-	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
+	yield takeEvery(actions.SETTINGS_SET, settingSaga)
+	yield takeLatest(actions.SOUND_SECTION_CHANGE, backgroundMusic)
+	yield takeEvery(actions.SOUND_PLAY, playSoundSaga)
 	document.addEventListener(
 		'click',
 		() => {

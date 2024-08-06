@@ -8,13 +8,13 @@ import {
 	getOpponentActiveRow,
 	getPlayerActiveRow,
 } from '../../../app/game/game-selectors'
-import {startAttack} from '../game-actions'
+import {actions, LocalMessageTable} from 'logic/actions'
 
-type AttackAction = ReturnType<typeof startAttack>
-
-export function* attackSaga(action: AttackAction): SagaIterator {
-	const {type} = action.payload
-	const actionType = attackToAttackAction[type]
+export function* attackSaga(
+	action: LocalMessageTable[typeof actions.GAME_ATTACK_START],
+): SagaIterator {
+	const {attackType} = action
+	const actionType = attackToAttackAction[attackType]
 
 	const player = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)

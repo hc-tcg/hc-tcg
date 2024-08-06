@@ -2,7 +2,7 @@ import * as Toast from '@radix-ui/react-toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './toast.module.scss'
-import {sessionActions} from 'logic/session/session-actions'
+import {actions} from 'logic/actions'
 
 type Props = {
 	title: string
@@ -26,7 +26,7 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 	const handleClose = () => {
 		playSFX('out')
 		setTimeout(() => {
-			dispatch({type: sessionActions.CLOSE_TOAST})
+			dispatch({type: actions.TOAST_CLOSE})
 		}, 250)
 	}
 
