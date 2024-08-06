@@ -1,18 +1,24 @@
+import {actions, LocalMessage} from 'logic/actions'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
-import {setOpenedModal} from '../game-actions'
 
 function* attackActionSaga(): SagaIterator {
 	while (true) {
 		yield take('ATTACK_ACTION')
-		yield put(setOpenedModal('attack'))
+		yield put<LocalMessage>({
+			type: actions.GAME_MODAL_OPENED_SET,
+			id: 'attack',
+		})
 	}
 }
 
 function* endTurnActionSaga(): SagaIterator {
 	while (true) {
 		yield take('END_TURN_ACTION')
-		yield put(setOpenedModal('end-turn'))
+		yield put<LocalMessage>({
+			type: actions.GAME_MODAL_OPENED_SET,
+			id: 'end-turn',
+		})
 	}
 }
 

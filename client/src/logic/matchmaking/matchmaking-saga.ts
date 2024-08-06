@@ -2,7 +2,7 @@ import assert from 'assert'
 import {message} from 'common/redux-actions'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameMessage, gameActions} from 'logic/game/game-actions'
+import {actions, LocalMessage, LocalMessageTable} from 'logic/actions'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
@@ -14,11 +14,6 @@ import {
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
-import {
-	MatchmakingMessage,
-	MatchmakingMessageTable,
-	matchmakingActions,
-} from './matchmaking-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -33,19 +28,15 @@ function* createPrivateGameSaga() {
 			})
 
 			if (createGameResponse.success) {
-				yield* put(
-					message<MatchmakingMessage>({
-						type: 'CODE_RECIEVED',
-						code: createGameResponse.success.code,
-					}),
-				)
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CODE_RECIEVED,
+					code: createGameResponse.success.code,
+				})
 			} else {
 				// Something went wrong, go back to menu
-				yield* put(
-					message<MatchmakingMessage>({
-						type: matchmakingActions.CLEAR_MATCHMAKING,
-					}),
-				)
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CLEAR,
+				})
 				return
 			}
 
@@ -62,12 +53,10 @@ function* createPrivateGameSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
-				yield* put(
-					message<MatchmakingMessage>({
-						type: matchmakingActions.CLEAR_MATCHMAKING,
-					}),
-				)
-				yield* put(message<GameMessage>({type: gameActions.GAME_END}))
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CLEAR,
+				})
+				yield* put<LocalMessage>({type: actions.GAME_END})
 			}
 		}
 	}
@@ -76,9 +65,7 @@ function* createPrivateGameSaga() {
 		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
-	yield* put(
-		message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-	)
+	yield* put(message<LocalMessage>({type: actions.MATCHMAKING_CLEAR}))
 
 	if (result.cancel) {
 		// Tell the server the private game is cancelled
@@ -91,8 +78,8 @@ function* joinPrivateGameSaga() {
 		try {
 			while (true) {
 				const {code} = yield* take<
-					MatchmakingMessageTable[typeof matchmakingActions.SET_MATCHMAKING_CODE]
-				>(matchmakingActions.SET_MATCHMAKING_CODE)
+					LocalMessageTable[typeof actions.MATCHMAKING_CODE_SET]
+				>(actions.MATCHMAKING_CODE_SET)
 
 				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
 
@@ -105,28 +92,22 @@ function* joinPrivateGameSaga() {
 				})
 
 				if (result.invalidCode) {
-					yield* put(
-						message<MatchmakingMessage>({
-							type: matchmakingActions.INVALID_CODE,
-						}),
-					)
+					yield* put<LocalMessage>({
+						type: actions.MATCHMAKING_CODE_INVALID,
+					})
 					continue
 				}
 
 				if (result.failure) {
 					// Something went wrong, go back to menu
-					yield* put(
-						message<MatchmakingMessage>({
-							type: matchmakingActions.CLEAR_MATCHMAKING,
-						}),
-					)
+					yield* put<LocalMessage>({
+						type: actions.MATCHMAKING_CLEAR,
+					})
 				} else if (result.success || result.waitingForPlayer) {
 					if (result.waitingForPlayer) {
-						yield* put(
-							message<MatchmakingMessage>({
-								type: matchmakingActions.WAITING_FOR_PLAYER,
-							}),
-						)
+						yield* put<LocalMessage>({
+							type: actions.MATCHMAKING_WAITING_FOR_PLAYER,
+						})
 					}
 
 					// Private game joined successfully - wait for game start or timeout
@@ -139,7 +120,7 @@ function* joinPrivateGameSaga() {
 						yield* call(gameSaga)
 					}
 				} else if (result.invalidCode) {
-					yield* put(message<MatchmakingMessage>({type: 'INVALID_CODE'}))
+					yield* put<LocalMessage>({type: actions.MATCHMAKING_CODE_INVALID})
 				}
 
 				// For anything but invalid code, we exit loop
@@ -149,24 +130,20 @@ function* joinPrivateGameSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
-				yield put(message<GameMessage>({type: gameActions.GAME_END}))
-				yield* put(
-					message<MatchmakingMessage>({
-						type: matchmakingActions.CLEAR_MATCHMAKING,
-					}),
-				)
+				yield put<LocalMessage>({type: actions.GAME_END})
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CLEAR,
+				})
 			}
 		}
 	}
 
 	const result = yield* race({
-		cancel: take(matchmakingActions.LEAVE_MATCHMAKING), // We pressed the leave button
+		cancel: take(actions.MATCHMAKING_CLEAR), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 
-	yield* put(
-		message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-	)
+	yield* put(message<LocalMessage>({type: actions.MATCHMAKING_CLEAR}))
 
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
@@ -188,11 +165,9 @@ function* joinQueueSaga() {
 
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
-				yield* put(
-					message<MatchmakingMessage>({
-						type: matchmakingActions.CLEAR_MATCHMAKING,
-					}),
-				)
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CLEAR,
+				})
 				return
 			}
 
@@ -205,32 +180,26 @@ function* joinQueueSaga() {
 		} finally {
 			if (yield* cancelled()) {
 				// Clear state and back to menu
-				yield* put(
-					message<MatchmakingMessage>({
-						type: matchmakingActions.CLEAR_MATCHMAKING,
-					}),
-				)
-				yield put(message<GameMessage>({type: gameActions.GAME_END}))
+				yield* put<LocalMessage>({
+					type: actions.MATCHMAKING_CLEAR,
+				})
+				yield put<LocalMessage>({type: actions.GAME_END})
 			}
 		}
 	}
 
 	const result = yield* race({
-		leave: take(matchmakingActions.LEAVE_MATCHMAKING), // We pressed the leave button
+		leave: take(actions.MATCHMAKING_LEAVE), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 
-	yield* put(
-		message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-	)
+	yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 
 	if (result.leave) {
 		// Tell the server we left the queue
 		yield* call(sendMsg({type: clientMessages.LEAVE_QUEUE}))
 	} else {
-		yield* put(
-			message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-		)
+		yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 	}
 }
 
@@ -238,26 +207,22 @@ function* reconnectSaga() {
 	const reconnectState = yield* call(
 		receiveMsg(serverMessages.GAME_STATE_ON_RECONNECT),
 	)
-	yield* put(
-		message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-	)
+	yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 	assert(
 		reconnectState.localGameState,
 		'The user must be in a game when they connect',
 	)
 	yield* call(gameSaga, reconnectState.localGameState)
-	yield* put(
-		message<MatchmakingMessage>({type: matchmakingActions.CLEAR_MATCHMAKING}),
-	)
+	yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 }
 
 function* matchmakingSaga() {
-	yield* takeEvery(matchmakingActions.JOIN_QUEUE, joinQueueSaga)
+	yield* takeEvery(actions.MATCHMAKING_QUEUE_JOIN, joinQueueSaga)
 	yield* takeEvery(
-		matchmakingActions.CREATE_PRIVATE_GAME,
+		actions.MATCHMAKING_PRIVATE_GAME_CREATE,
 		createPrivateGameSaga,
 	)
-	yield* takeEvery(matchmakingActions.JOIN_PRIVATE_GAME, joinPrivateGameSaga)
+	yield* takeEvery(actions.MATCHMAKING_PRIVATE_GAME_JOIN, joinPrivateGameSaga)
 	yield* fork(reconnectSaga)
 }
 
