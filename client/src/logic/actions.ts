@@ -1,5 +1,6 @@
 import {PlayerEntity, SlotEntity} from 'common/entities'
 import {Message, messages} from 'common/redux-actions'
+import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'
 import {
 	GameEndReasonT,
@@ -152,7 +153,7 @@ type Actions = [
 	{type: typeof actions.GAME_TURN_END},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof actions.GAME_ACTIONS_ATTACK},
+	{type: typeof actions.GAME_ACTIONS_ATTACK; attackType: HermitAttackType},
 	{type: typeof actions.GAME_ACTIONS_END_TURN},
 	{type: typeof actions.GAME_UPDATE},
 	{type: typeof actions.FIREBASE_AUTHED; uuid: string},

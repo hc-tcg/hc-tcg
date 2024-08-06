@@ -133,7 +133,7 @@ function Game() {
 		const chatIsClosed = settings.showChat === 'off'
 
 		if (e.key === 'Escape') {
-			dispatch(setSetting('showChat', 'off'))
+			dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'off'})
 		}
 
 		if (e.key === 'c' || e.key === 'C') {
@@ -142,33 +142,36 @@ function Game() {
 			if (chatIsClosed) {
 				e.stopImmediatePropagation()
 				e.preventDefault()
-				dispatch(setSetting('showChat', 'on'))
+				dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'on'})
 			}
 		}
 
 		if (chatIsClosed) {
 			if (e.key === 'a' || e.key === 'A') {
-				dispatch(setOpenedModal('attack'))
+				dispatch({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
 			}
 			if (e.key === 'e' || e.key === 'E') {
 				if (availableActions.includes('END_TURN')) {
 					if (shouldShowEndTurnModal(availableActions, settings)) {
-						dispatch(endTurnAction())
+						dispatch({type: actions.GAME_ACTIONS_END_TURN})
 					} else {
-						dispatch(endTurn())
+						dispatch({type: actions.GAME_TURN_END})
 					}
 				}
 			}
 			if (e.key === 'm' || e.key === 'M') {
-				dispatch(setSetting('muted', !settings.muted))
+				dispatch({
+					type: actions.SETTINGS_SET,
+					key: 'muted',
+					value: !settings.muted,
+				})
 			}
 			if (e.key === 't' || e.key === 'T') {
-				dispatch(
-					setSetting(
-						'showAdvancedTooltips',
-						settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
-					),
-				)
+				dispatch({
+					type: actions.SETTINGS_SET,
+					key: 'showAdvancedTooltips',
+					value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
+				})
 			}
 		}
 	}
@@ -202,7 +205,7 @@ function Game() {
 			gameState.turn.turnNumber === 1 ||
 			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
-			dispatch(playSound('/sfx/Click.ogg'))
+			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.turn.currentPlayerEntity])
 
@@ -214,7 +217,7 @@ function Game() {
 			someCustom &&
 			gameState.turn.currentPlayerEntity !== gameState.playerEntity
 		) {
-			dispatch(playSound('/sfx/Click.ogg'))
+			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
 
