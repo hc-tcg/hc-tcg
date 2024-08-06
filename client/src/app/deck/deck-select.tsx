@@ -17,7 +17,7 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {LocalMessage, actions} from 'logic/actions'
+import {LocalMessage, actions, useActionDispatch} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	convertLegacyDecks,
@@ -30,7 +30,7 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {ReactNode, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
@@ -51,7 +51,7 @@ function SelectDeck({
 	loadedDeck,
 }: Props) {
 	// REDUX
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 
@@ -78,7 +78,7 @@ function SelectDeck({
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
-		dispatch({type: 'SET_TOAST', payload: toast})
+		dispatch({type: actions.TOAST_OPEN, ...toast})
 	const deleteToast: ToastT = {
 		open: true,
 		title: 'Deck Deleted!',
@@ -107,7 +107,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({type: actions.DECK_SET, loadedDeck})
+		dispatch({type: actions.DECK_SET, deck: loadedDeck})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {

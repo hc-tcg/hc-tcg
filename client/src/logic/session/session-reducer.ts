@@ -61,6 +61,7 @@ const loginReducer = (
 				...state,
 				...action.updates,
 			}
+		case actions.DECK_NEW:
 		case actions.DECK_SET:
 			return {
 				...state,
@@ -79,6 +80,7 @@ const loginReducer = (
 					open: false,
 				},
 			}
+		case actions.MINECRAFT_NAME_NEW:
 		case actions.MINECRAFT_NAME_SET:
 			return {
 				...state,

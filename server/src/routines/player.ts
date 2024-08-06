@@ -25,7 +25,8 @@ export function* playerConnectedSaga(
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
 		} else {
-			broadcast([existingPlayer], {type: serverMessages.INVALID_PLAYER})
+			if (existingPlayer)
+				broadcast([existingPlayer], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
@@ -45,7 +46,9 @@ export function* playerConnectedSaga(
 	})
 }
 
-export function* playerDisconnectedSaga(action: any) {
+export function* playerDisconnectedSaga(
+	action: RecievedClientMessage<typeof clientMessages.CLIENT_DISCONNECTED>,
+) {
 	const {socket} = action.payload
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
@@ -71,9 +74,11 @@ export function* playerDisconnectedSaga(action: any) {
 	}
 }
 
-export function* updateDeckSaga(action: any) {
+export function* updateDeckSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
+) {
 	const {playerId} = action
-	let playerDeck = action.payload
+	let playerDeck = action.payload.deck
 	const player = root.players[playerId]
 	if (!player) return
 	player.setPlayerDeck(playerDeck)
@@ -81,9 +86,11 @@ export function* updateDeckSaga(action: any) {
 	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 
-export function* updateMinecraftNameSaga(action: any) {
+export function* updateMinecraftNameSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_MINECRAFT_NAME>,
+) {
 	const {playerId} = action
-	let minecraftName = action.payload
+	let minecraftName = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
 	player.setMinecraftName(minecraftName)

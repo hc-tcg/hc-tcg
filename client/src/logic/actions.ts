@@ -27,11 +27,14 @@ export const actions = messages(
 	'PLAYER_INFO_SET',
 	'DISCONNECT',
 	'LOGOUT',
+	'DISCONNECT',
 	'UPDATES_LOAD',
 	'TOAST_OPEN',
 	'TOAST_CLOSE',
 	'DECK_SET',
+	'DECK_NEW',
 	'MINECRAFT_NAME_SET',
+	'MINECRAFT_NAME_NEW',
 	'MATCHMAKING_QUEUE_JOIN',
 	'MATCHMAKING_QUEUE_JOIN_FAILURE',
 	'MATCHMAKING_PRIVATE_GAME_CREATE',
@@ -84,17 +87,20 @@ type Actions = [
 	{type: typeof actions.PLAYER_INFO_SET; player: PlayerInfo},
 	{type: typeof actions.DISCONNECT; errorMessage: string},
 	{type: typeof actions.LOGOUT},
+	{type: typeof actions.DISCONNECT},
 	{type: typeof actions.UPDATES_LOAD; updates: Record<string, string[]>},
 	{
 		type: typeof actions.TOAST_OPEN
 		open: boolean
 		title: string
 		description: string
-		image: string
+		image?: string
 	},
 	{type: typeof actions.TOAST_CLOSE},
 	{type: typeof actions.DECK_SET; deck: PlayerDeckT},
+	{type: typeof actions.DECK_NEW; deck: PlayerDeckT},
 	{type: typeof actions.MINECRAFT_NAME_SET; name: string},
+	{type: typeof actions.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof actions.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof actions.MATCHMAKING_PRIVATE_GAME_CREATE},
 	{type: typeof actions.MATCHMAKING_PRIVATE_GAME_JOIN},

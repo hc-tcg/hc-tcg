@@ -44,7 +44,7 @@ function Settings({setMenuSection}: Props) {
 		dispatch({
 			type: actions.SETTINGS_SET,
 			key: 'panoramaEnabled',
-			value: !settings.panoramaEnable,
+			value: !settings.panoramaEnabled,
 		})
 	}
 	const getBoolDescriptor = (value?: boolean) => {

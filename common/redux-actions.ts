@@ -19,7 +19,7 @@ export function messages<T extends Array<string>>(
 	...actions: T
 ): MessageDict<T> {
 	let actionsDict: Record<string, string> = {}
-	for (const action in actions) {
+	for (const action of actions) {
 		actionsDict[action] = action
 	}
 	return actionsDict as any

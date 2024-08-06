@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
@@ -101,7 +100,7 @@ export function* loginSaga() {
 			actions.LOGIN,
 		)
 
-		socket.auth = {name, version: getClientVersion()}
+		socket.auth = {playerName: name, version: getClientVersion()}
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
@@ -130,10 +129,10 @@ export function* loginSaga() {
 		else if (Object.hasOwn(result, 'timeout')) errorType = 'timeout'
 		else if (result.connectError) errorType = result.connectError
 		if (socket.connected) socket.disconnect()
-		assert(
-			typeof errorType === 'string',
-			'For some unknown reason, `errorType` is a string even though the type system claims otherwise.',
-		)
+		if (typeof errorType !== 'string')
+			throw new Error(
+				'For some unknown reason, `errorType` is a string even though the type system claims otherwise.',
+			)
 		yield put<LocalMessage>({
 			type: actions.DISCONNECT,
 			errorMessage: errorType,
@@ -204,7 +203,7 @@ export function* logoutSaga() {
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof actions.MINECRAFT_NAME_SET]>(
-		'UPDATE_MINECRAFT_NAME',
+		actions.MINECRAFT_NAME_SET,
 		function* (action) {
 			yield* sendMsg({
 				type: clientMessages.UPDATE_MINECRAFT_NAME,
@@ -212,17 +211,20 @@ export function* logoutSaga() {
 			})
 		},
 	)
-	yield* race([take('LOGOUT'), call(receiveMsg(serverMessages.INVALID_PLAYER))])
+	yield* race([
+		take(actions.LOGOUT),
+		call(receiveMsg(serverMessages.INVALID_PLAYER)),
+	])
 	clearSession()
 	socket.disconnect()
-	yield put<LocalMessage>({type: actions.LOGOUT})
+	yield put<LocalMessage>({type: actions.DISCONNECT})
 }
 
 export function* newDeckSaga() {
 	while (true) {
 		const result = yield* call(receiveMsg(serverMessages.NEW_DECK))
 		yield put<LocalMessage>({
-			type: actions.DECK_SET,
+			type: actions.DECK_NEW,
 			deck: result.deck,
 		})
 	}
@@ -232,7 +234,7 @@ export function* minecraftNameSaga() {
 	while (true) {
 		const result = yield* call(receiveMsg(serverMessages.NEW_MINECRAFT_NAME))
 		yield put<LocalMessage>({
-			type: actions.MINECRAFT_NAME_SET,
+			type: actions.MINECRAFT_NAME_NEW,
 			name: result.name,
 		})
 	}
