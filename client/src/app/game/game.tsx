@@ -5,13 +5,6 @@ import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
 import {
-	endTurn,
-	endTurnAction,
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
-import {
 	getAvailableActions,
 	getEndGameOverlay,
 	getGameState,
@@ -20,9 +13,7 @@ import {
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {playSound} from 'logic/sound/sound-actions'
 import {useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import Board from './board'
@@ -41,6 +32,7 @@ import {
 import CopyAttackModal from './modals/copy-attack-modal'
 import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 import Toolbar from './toolbar'
+import {actions, useActionDispatch} from 'logic/actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -76,7 +68,7 @@ function Game() {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const [filter, setFilter] = useState<string>('')
 
@@ -99,19 +91,19 @@ function Game() {
 	}, [handleKeys])
 
 	const handleOpenModal = (id: string | null) => {
-		dispatch(setOpenedModal(id))
+		dispatch({type: actions.GAME_MODAL_OPENED_SET, id: id})
 	}
 
 	const handleBoardClick = (
-		pickInfo: SlotInfo,
+		slotInfo: SlotInfo,
 		player: PlayerEntity,
 		row?: number,
 		index?: number,
 	) => {
-		console.log('Slot selected: ', pickInfo)
+		console.log('Slot selected: ', slotInfo)
 
 		// This is a hack to make picked cards appear
-		dispatch(slotPicked(pickInfo, player, row, index))
+		dispatch({type: actions.GAME_SLOT_PICKED, slotInfo, player, row, index})
 	}
 
 	const selectCard = (card: LocalCardInstance) => {
@@ -121,26 +113,20 @@ function Game() {
 			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-			const actionData: PickSlotActionData = {
-				type: 'PICK_REQUEST',
-				payload: {
-					entity: card.slot,
-				},
-			}
 
-			dispatch(actionData)
+			dispatch({type: actions.GAME_PICK_REQUEST, slot: card.slot})
 		} else {
 			if (equalCard(card, selectedCard)) {
-				dispatch(setSelectedCard(null))
+				dispatch({type: actions.GAME_CARD_SELECTED_SET, card: null})
 			} else {
 				console.log('Selecting card:', card)
-				dispatch(setSelectedCard(card))
+				dispatch({type: actions.GAME_CARD_SELECTED_SET, card})
 			}
 		}
 	}
 
 	if (availableActions.includes('PICK_REQUEST')) {
-		dispatch(setSelectedCard(null))
+		dispatch({type: actions.GAME_CARD_SELECTED_SET, card: null})
 	}
 
 	function handleKeys(e: any) {

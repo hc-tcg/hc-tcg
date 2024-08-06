@@ -1,4 +1,4 @@
-import {PlayerEntity} from 'common/entities'
+import {PlayerEntity, SlotEntity} from 'common/entities'
 import {Message, messages} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
 import {
@@ -48,6 +48,7 @@ export const actions = messages(
 	'GAME_CARD_SELECTED_SET',
 	'GAME_MODAL_OPENED_SET',
 	'GAME_SLOT_PICKED',
+	'GAME_PICK_REQUEST',
 	'GAME_FORFEIT',
 	'GAME_ATTACK_START',
 	'GAME_END_OVERLAY_SHOW',
@@ -117,13 +118,17 @@ type Actions = [
 	{type: typeof actions.GAME_START},
 	{type: typeof actions.GAME_END},
 	{type: typeof actions.GAME_CARD_SELECTED_SET; card: LocalCardInstance | null},
-	{type: typeof actions.GAME_MODAL_OPENED_SET; id: string; info?: any},
+	{type: typeof actions.GAME_MODAL_OPENED_SET; id: string | null; info?: any},
 	{
 		type: typeof actions.GAME_SLOT_PICKED
 		slotInfo: SlotInfo
 		player: PlayerEntity
 		row?: number
 		index?: number
+	},
+	{
+		type: typeof actions.GAME_PICK_REQUEST
+		slot: SlotEntity
 	},
 	{type: typeof actions.GAME_FORFEIT},
 	{

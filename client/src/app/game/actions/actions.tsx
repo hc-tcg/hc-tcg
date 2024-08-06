@@ -13,11 +13,11 @@ import {
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
-import {actions} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -39,7 +39,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 
 	const turn = localGameState.turn.currentPlayerEntity === playerEntity
 

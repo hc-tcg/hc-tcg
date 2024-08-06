@@ -13,12 +13,11 @@ import {
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
-import {Action, actions} from 'logic/actions'
-import {message} from 'common/redux-actions'
+import {Action, actions, useActionDispatch} from 'logic/actions'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -39,7 +38,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
@@ -130,9 +129,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(
-				message<Action>({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'}),
-			)
+			dispatch({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 
 		const attackOptions =
