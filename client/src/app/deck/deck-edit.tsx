@@ -14,16 +14,16 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
-import {setToast} from 'logic/session/session-actions'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {sessionActions} from 'logic/session/session-actions'
+import {localSettingsActions} from 'logic/local-settings/local-settings-actions'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -211,12 +211,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 
 	function toggleTooltips() {
-		dispatch(
-			setSetting(
-				'showAdvancedTooltips',
-				settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: localSettingsActions.SET_SETTING,
+			key: 'showAdvancedTooltips',
+			value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
+		})
 	}
 
 	//MISC
@@ -333,14 +332,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
 		saveDeck(deck, initialDeck)
-		dispatch(
-			setToast({
-				open: true,
-				title: 'Deck Saved!',
-				description: `Saved ${deck.name}`,
-				image: `/images/types/type-${deck.icon}.png`,
-			}),
-		)
+		dispatch({
+			type: sessionActions.SET_TOAST,
+			open: true,
+			title: 'Deck Saved!',
+			description: `Saved ${deck.name}`,
+			image: `/images/types/type-${deck.icon}.png`,
+		})
 		back()
 	}
 	const validationMessage = validateDeck(loadedDeck.cards)

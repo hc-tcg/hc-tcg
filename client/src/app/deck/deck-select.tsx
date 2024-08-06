@@ -26,7 +26,6 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import {updateDeck} from 'logic/session/session-actions'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {playSound} from 'logic/sound/sound-actions'
 import {ReactNode, useState} from 'react'
@@ -36,6 +35,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {sessionActions} from 'logic/session/session-actions'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -107,7 +107,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch(updateDeck(loadedDeck))
+		dispatch({type: sessionActions.UPDATE_DECK, loadedDeck})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
