@@ -44,7 +44,7 @@ class PotatoBoyRare extends Card {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type == 'secondary')
+			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
 				return
 			game.components
 				.filter(
