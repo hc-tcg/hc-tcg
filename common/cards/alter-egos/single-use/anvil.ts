@@ -28,7 +28,9 @@ class Anvil extends Card {
 			const targets = this.getTargetHermits(game, game.currentPlayer)
 			if (targets.length === 0) return '0'
 			if (targets[0].index === game.currentPlayer.activeRow!.index) {
-				return targets.length === 1 ? '$A30$' : `$A30$ + ${targets.length - 1}`
+				return targets.length === 1
+					? '$A30$'
+					: `$A30$ + $A10$ x ${targets.length - 1}`
 			}
 			return `$A10$ x ${targets.length}`
 		},
