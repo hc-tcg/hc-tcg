@@ -1,4 +1,4 @@
-import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {AttackActionData, attackToAttackAction} from 'common/types/turn-action-data'
 import {LocalMessageTable, actions} from 'logic/actions'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {SagaIterator} from 'redux-saga'

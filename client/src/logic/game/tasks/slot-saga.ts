@@ -45,6 +45,7 @@ function* pickForPickRequestSaga(
 
 	yield put<LocalMessage>({
 		type: actions.GAME_TURN_ACTION,
+		action: 'PICK_REQUEST',
 		data: {
 			entity: action.slotInfo.slotEntity,
 		},
@@ -57,7 +58,7 @@ function* pickWithSelectedSaga(
 ): SagaIterator {
 	const pickInfo = action.slotInfo
 
-	yield putResolve<LocalMessage>({
+	yield* putResolve<LocalMessage>({
 		type: actions.GAME_CARD_SELECTED_SET,
 		card: null,
 	})
@@ -70,7 +71,7 @@ function* pickWithSelectedSaga(
 		yield* localPutCardInSlot(action, selectedCard)
 		yield* localRemoveCardFromHand(selectedCard)
 
-		yield put<LocalMessage>({
+		yield* put<LocalMessage>({
 			type: actions.GAME_TURN_ACTION,
 			action: actionType,
 			data: {
@@ -97,10 +98,13 @@ function* pickWithoutSelectedSaga(
 	if (!hermitRow) return
 
 	if (playerState?.board.activeRow === hermitRow.entity) {
-		yield put<LocalMessage>({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
+		yield* put<LocalMessage>({
+			type: actions.GAME_MODAL_OPENED_SET,
+			id: 'attack',
+		})
 	} else {
 		if (settings.confirmationDialogs !== 'off') {
-			yield put<LocalMessage>({
+			yield* put<LocalMessage>({
 				type: actions.GAME_MODAL_OPENED_SET,
 				id: 'change-hermit-modal',
 				info: action.slotInfo,
@@ -135,26 +139,26 @@ function* slotPickedSaga(
 			playerState?.board.singleUse.card &&
 			!playerState?.board.singleUseCardUsed
 		) {
-			yield put<LocalMessage>({type: actions.GAME_EFFECT_REMOVE})
+			yield* put<LocalMessage>({type: actions.GAME_EFFECT_REMOVE})
 			return
 		}
 	}
 
 	if (availableActions.includes('PICK_REQUEST')) {
 		// Run a seperate saga for the pick request
-		yield call(pickForPickRequestSaga, action)
+		yield* call(pickForPickRequestSaga, action)
 		return
 	}
 
 	if (selectedCard) {
-		yield call(pickWithSelectedSaga, action, selectedCard)
+		yield* call(pickWithSelectedSaga, action, selectedCard)
 	} else {
-		yield call(pickWithoutSelectedSaga, action)
+		yield* call(pickWithoutSelectedSaga, action)
 	}
 }
 
 function* slotSaga(): SagaIterator {
-	yield takeLeading(actions.GAME_SLOT_PICKED, slotPickedSaga)
+	yield* takeLeading(actions.GAME_SLOT_PICKED, slotPickedSaga)
 }
 
 export default slotSaga
