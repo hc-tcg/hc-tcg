@@ -21,9 +21,6 @@ export function* sendMsg(payload: ClientMessage): any {
 			})
 			break
 		}
-		yield new Promise((resolve: any) => {
-			socket.once('connect', resolve)
-		})
 	}
 }
 

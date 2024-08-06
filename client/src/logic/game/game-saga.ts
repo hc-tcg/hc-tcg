@@ -202,9 +202,9 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			gameCrash: call(receiveMsg(serverMessages.GAME_CRASH)),
 		})
 
-		if (Object.hasOwn(result, 'game')) {
+		if (result.game) {
 			throw new Error('Unexpected game ending')
-		} else if (Object.hasOwn(result, 'gameCrash')) {
+		} else if (result.gameCrash) {
 			console.log('Server error')
 			yield put<LocalMessage>({
 				type: actions.GAME_END_OVERLAY_SHOW,

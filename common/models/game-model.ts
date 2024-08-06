@@ -8,6 +8,7 @@ import {
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
 import {PlayerEntity, SlotEntity} from '../entities'
+import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -145,7 +146,7 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public broadcastToViewers(payload?: any) {
+	public broadcastToViewers(payload?: ServerMessage) {
 		broadcast(
 			this.viewers.map((viewer) => viewer.player),
 			payload,

@@ -77,7 +77,7 @@ function* gameManager(game: GameModel) {
 			root.getGameIds().length,
 		)
 
-		game.broadcastToViewers('GAME_START')
+		game.broadcastToViewers({type: serverMessages.GAME_START})
 		root.hooks.newGame.call(game)
 		game.task = yield* spawn(gameSaga, game)
 

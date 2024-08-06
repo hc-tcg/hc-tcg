@@ -155,7 +155,7 @@ function* joinQueueSaga() {
 	function* matchmaking() {
 		try {
 			// Send message to server to join the queue
-			yield* sendMsg({type: clientMessages.JOIN_QUEUE})
+			yield sendMsg({type: clientMessages.JOIN_QUEUE})
 
 			// Wait for response
 			const joinResponse = yield* race({
@@ -172,8 +172,8 @@ function* joinQueueSaga() {
 			}
 
 			// We have joined the queue, wait for game start
-			yield* call(receiveMsg(serverMessages.GAME_START))
-			yield* call(gameSaga)
+			yield call(receiveMsg(serverMessages.GAME_START))
+			yield call(gameSaga)
 			console.log('end game sagas')
 		} catch (err) {
 			console.error('Game crashed: ', err)
@@ -197,9 +197,7 @@ function* joinQueueSaga() {
 
 	if (result.leave) {
 		// Tell the server we left the queue
-		yield* call(sendMsg({type: clientMessages.LEAVE_QUEUE}))
-	} else {
-		yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
+		yield* sendMsg({type: clientMessages.LEAVE_QUEUE})
 	}
 }
 
