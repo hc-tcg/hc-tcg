@@ -14,6 +14,8 @@ import {
 	PlayerInfo,
 	SlotInfo,
 } from 'common/types/server-requests'
+import {Dispatch} from 'react'
+import {useDispatch} from 'react-redux'
 
 export const actions = messages(
 	'SOCKET_CONNECTING',
@@ -49,6 +51,7 @@ export const actions = messages(
 	'GAME_FORFEIT',
 	'GAME_ATTACK_START',
 	'GAME_END_OVERLAY_SHOW',
+	'GAME_END_OVERLAY_HIDE',
 	'GAME_COIN_FLIP_SET',
 	'GAME_OPPONENT_CONNECTION_SET',
 	'GAME_MODAL_REQUEST',
@@ -133,6 +136,9 @@ type Actions = [
 		outcome: GamePlayerEndOutcomeT
 		reason: GameEndReasonT
 	},
+	{
+		type: typeof actions.GAME_END_OVERLAY_HIDE
+	},
 	{type: typeof actions.GAME_COIN_FLIP_SET; coinFlip: LocalCurrentCoinFlip},
 	{type: typeof actions.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
@@ -161,3 +167,7 @@ type Actions = [
 ]
 
 export type Action = Message<Actions>
+
+export function useActionDispatch(): Dispatch<Action> {
+	return useDispatch()
+}
