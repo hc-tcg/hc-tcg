@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {message} from 'common/redux-actions'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
@@ -65,7 +64,7 @@ function* createPrivateGameSaga() {
 		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
-	yield* put(message<LocalMessage>({type: actions.MATCHMAKING_CLEAR}))
+	yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 
 	if (result.cancel) {
 		// Tell the server the private game is cancelled
@@ -143,7 +142,7 @@ function* joinPrivateGameSaga() {
 		matchmaking: call(matchmaking),
 	})
 
-	yield* put(message<LocalMessage>({type: actions.MATCHMAKING_CLEAR}))
+	yield* put<LocalMessage>({type: actions.MATCHMAKING_CLEAR})
 
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
@@ -156,7 +155,7 @@ function* joinQueueSaga() {
 		try {
 			// Send message to server to join the queue
 			yield sendMsg({type: clientMessages.JOIN_QUEUE})
-			console.log("A")
+			console.log('A')
 
 			// Wait for response
 			const joinResponse = yield* race({
@@ -164,7 +163,7 @@ function* joinQueueSaga() {
 				failure: call(receiveMsg(serverMessages.JOIN_PRIVATE_GAME_FAILURE)),
 			})
 
-			console.log("B")
+			console.log('B')
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
 				yield* put<LocalMessage>({
@@ -175,7 +174,7 @@ function* joinQueueSaga() {
 
 			// We have joined the queue, wait for game start
 			yield call(receiveMsg(serverMessages.GAME_START))
-			console.log("C")
+			console.log('C')
 			yield call(gameSaga)
 			console.log('end game sagas')
 		} catch (err) {

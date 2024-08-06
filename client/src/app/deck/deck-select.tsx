@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import {message} from 'common/redux-actions'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
@@ -17,7 +16,7 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {LocalMessage, actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	convertLegacyDecks,
@@ -235,12 +234,10 @@ function SelectDeck({
 				'/sfx/Page_turn2.ogg',
 				'/sfx/Page_turn3.ogg',
 			]
-			dispatch(
-				message<LocalMessage>({
-					type: actions.SOUND_PLAY,
-					path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
-				}),
-			)
+			dispatch({
+				type: actions.SOUND_PLAY,
+				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+			})
 		}
 	}
 

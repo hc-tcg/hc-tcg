@@ -1,13 +1,12 @@
-import {message} from 'common/redux-actions'
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
-import {LocalMessage, actions} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {useRouter} from './app-hooks'
 import Deck from './deck'
 import Game from './game'
@@ -21,7 +20,7 @@ import MatchMaking from './match-making'
 
 function App() {
 	const section = useRouter()
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const playerName = useSelector(getPlayerName)
 	const socketStatus = useSelector(getSocketStatus)
 	const toastMessage = useSelector(getToast)
@@ -30,12 +29,10 @@ function App() {
 	let enableToast = false
 
 	useEffect(() => {
-		dispatch(
-			message<LocalMessage>({
-				type: actions.SOUND_SECTION_CHANGE,
-				section: section,
-			}),
-		)
+		dispatch({
+			type: actions.SOUND_SECTION_CHANGE,
+			section: section,
+		})
 	}, [section])
 
 	const router = () => {

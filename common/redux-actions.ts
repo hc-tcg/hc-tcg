@@ -24,7 +24,3 @@ export function messages<T extends Array<string>>(
 	}
 	return actionsDict as any
 }
-
-export function message<T>(message: T): {type: string} {
-	return message as any
-}

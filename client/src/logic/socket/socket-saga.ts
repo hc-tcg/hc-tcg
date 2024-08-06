@@ -1,4 +1,3 @@
-import {message} from 'common/redux-actions'
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {LocalMessage, actions} from 'logic/actions'
@@ -55,7 +54,7 @@ function* socketSaga(): SagaIterator {
 		if (type === 'disconnect')
 			yield* put<LocalMessage>({type: actions.SOCKET_DISCONNECT})
 		if (type === 'connect_error')
-			yield* put(message<LocalMessage>({type: actions.SOCKET_CONNECT_ERROR}))
+			yield* put(<LocalMessage>{type: actions.SOCKET_CONNECT_ERROR})
 	})
 }
 

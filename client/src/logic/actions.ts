@@ -27,7 +27,6 @@ export const actions = messages(
 	'PLAYER_INFO_SET',
 	'DISCONNECT',
 	'LOGOUT',
-	'DISCONNECT',
 	'UPDATES_LOAD',
 	'TOAST_OPEN',
 	'TOAST_CLOSE',

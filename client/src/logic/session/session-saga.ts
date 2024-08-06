@@ -156,10 +156,13 @@ export function* loginSaga() {
 
 		const minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName) {
-			yield* sendMsg({type: 'UPDATE_MINECRAFT_NAME', name: minecraftName})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_MINECRAFT_NAME,
+				name: minecraftName,
+			})
 		} else {
 			yield* sendMsg({
-				type: 'UPDATE_MINECRAFT_NAME',
+				type: clientMessages.UPDATE_MINECRAFT_NAME,
 				name: result.playerInfo.player.playerName,
 			})
 		}
