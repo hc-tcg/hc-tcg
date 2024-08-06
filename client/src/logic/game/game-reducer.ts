@@ -1,5 +1,5 @@
 import {LocalGameRoot} from 'common/types/game-state'
-import {GameMessage, gameActions} from './game-actions'
+import {Action, actions} from 'logic/actions'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -14,12 +14,9 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (
-	state = defaultState,
-	action: GameMessage,
-): LocalGameRoot => {
+const gameReducer = (state = defaultState, action: Action): LocalGameRoot => {
 	switch (action.type) {
-		case gameActions.LOCAL_GAME_STATE:
+		case actions.GAME_LOCAL_STATE:
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.localGameState,
@@ -32,8 +29,8 @@ const gameReducer = (
 			)
 				return newGame
 			return {...newGame}
-		case gameActions.GAME_START:
-		case gameActions.GAME_END:
+		case actions.GAME_START:
+		case actions.GAME_END:
 			return {
 				...state,
 				localGameState: null,
@@ -47,17 +44,17 @@ const gameReducer = (
 				opponentConnected: true,
 			}
 
-		case gameActions.SET_SELECTED_CARD:
+		case actions.GAME_CARD_SELECTED_SET:
 			return {
 				...state,
 				selectedCard: action.card,
 			}
-		case gameActions.SET_OPENED_MODAL:
+		case actions.GAME_MODAL_OPENED_SET:
 			return {
 				...state,
 				openedModal: {id: action.id, info: action.info},
 			}
-		case gameActions.SHOW_END_GAME_OVERLAY:
+		case actions.GAME_END_OVERLAY_SHOW:
 			return {
 				...state,
 				endGameOverlay:
@@ -68,17 +65,17 @@ const gameReducer = (
 							}
 						: null,
 			}
-		case gameActions.CHAT_UPDATE:
+		case actions.CHAT_UPDATE:
 			return {
 				...state,
 				chat: action.messages,
 			}
-		case gameActions.SET_OPPONENT_CONNECTION:
+		case actions.GAME_OPPONENT_CONNECTION_SET:
 			return {
 				...state,
 				opponentConnected: action.connected,
 			}
-		case gameActions.SET_COIN_FLIP:
+		case actions.GAME_COIN_FLIP_SET:
 			return {
 				...state,
 				currentCoinFlip: action.coinFlip,
@@ -87,7 +84,7 @@ const gameReducer = (
 		// server sends the new state.
 		// This updates based on outside mutations because I am so confused by redux and I want to ship
 		// the release tomorrow.
-		case gameActions.UPDATE_GAME:
+		case actions.GAME_UPDATE:
 			return state
 
 		default:

@@ -1,7 +1,7 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
-import {SessionMessage, sessionActions} from './session-actions'
+import { Action, actions } from 'logic/actions'
 
 type SessionState = {
 	playerName: string
@@ -33,12 +33,12 @@ const defaultState: SessionState = {
 
 const loginReducer = (
 	state = defaultState,
-	action: SessionMessage,
+	action: Action,
 ): SessionState => {
 	switch (action.type) {
-		case sessionActions.LOGIN:
+		case actions.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
-		case sessionActions.DISCONNECT:
+		case actions.DISCONNECT:
 			return {
 				...state,
 				connecting: false,
@@ -49,29 +49,29 @@ const loginReducer = (
 				playerDeck: state.playerDeck,
 				errorType: action.errorMessage,
 			}
-		case sessionActions.SET_PLAYER_INFO:
+		case actions.PLAYER_INFO_SET:
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
 				...action.player,
 			}
-		case sessionActions.LOAD_UPDATES:
+		case actions.UPDATES_LOAD:
 			return {
 				...state,
 				...action.updates,
 			}
-		case sessionActions.SET_NEW_DECK:
+		case actions.DECK_SET:
 			return {
 				...state,
 				playerDeck: action.deck,
 			}
-		case sessionActions.SET_TOAST:
+		case actions.TOAST_OPEN:
 			return {
 				...state,
 				toast: action,
 			}
-		case sessionActions.CLOSE_TOAST:
+		case actions.TOAST_CLOSE:
 			return {
 				...state,
 				toast: {
@@ -79,7 +79,7 @@ const loginReducer = (
 					open: false,
 				},
 			}
-		case sessionActions.SET_MINECRAFT_NAME:
+		case actions.MINECRAFT_NAME_SET:
 			return {
 				...state,
 				minecraftName: action.name,

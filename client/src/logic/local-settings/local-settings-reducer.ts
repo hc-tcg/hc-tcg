@@ -1,7 +1,4 @@
-import {
-	LocalSettingsAction,
-	localSettingsActions,
-} from './local-settings-actions'
+import { Action, actions } from "logic/actions"
 
 type LocalSettings = Record<string, any>
 
@@ -39,12 +36,12 @@ const defaultState: LocalSettings = {
 
 const localSettingsReducer = (
 	state = defaultState,
-	action: LocalSettingsAction,
+	action: Action,
 ): LocalSettings => {
 	switch (action.type) {
-		case localSettingsActions.SET_SETTING:
+		case actions.SETTINGS_SET:
 			return {...state, [action.key]: action.value}
-		case localSettingsActions.RESET_SETTINGS:
+		case actions.SETTINGS_RESET:
 			return {...state, [action.key]: defaultState[action.key]}
 		default:
 			return state
