@@ -62,7 +62,7 @@ class MonkeyfarmRare extends Card {
 			if (coinFlip[0] !== 'heads') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,
