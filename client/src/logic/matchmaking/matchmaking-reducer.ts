@@ -18,7 +18,7 @@ const matchmakingReducer = (
 	action: Action,
 ): MatchmakingState => {
 	switch (action.type) {
-		case actions.JOIN_QUEUE:
+		case actions.MATCHMAKING_JOIN_QUEUE:
 			return {
 				...state,
 				status: 'random_waiting',
