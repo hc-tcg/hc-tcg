@@ -52,7 +52,7 @@ const gameReducer = (state = defaultState, action: Action): LocalGameRoot => {
 		case actions.GAME_MODAL_OPENED_SET:
 			return {
 				...state,
-				openedModal: {id: action.id, info: action.info},
+				openedModal: action.id ? {id: action.id, info: action.info} : null,
 			}
 		case actions.GAME_END_OVERLAY_SHOW:
 			return {

@@ -17,6 +17,7 @@ import {
 } from 'common/types/server-requests'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
+import {put} from 'typed-redux-saga'
 
 export const actions = messages(
 	'SOCKET_CONNECTING',
@@ -145,7 +146,7 @@ type Actions = [
 	{
 		type: typeof actions.GAME_END_OVERLAY_HIDE
 	},
-	{type: typeof actions.GAME_COIN_FLIP_SET; coinFlip: LocalCurrentCoinFlip},
+	{type: typeof actions.GAME_COIN_FLIP_SET; coinFlip: LocalCurrentCoinFlip | null},
 	{type: typeof actions.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
 	{type: typeof actions.GAME_EFFECT_APPLY; payload: any},
@@ -176,4 +177,8 @@ export type Action = Message<Actions>
 
 export function useActionDispatch(): Dispatch<Action> {
 	return useDispatch()
+}
+
+export function* putAction(action: Action): any {
+	return yield* put(action)
 }

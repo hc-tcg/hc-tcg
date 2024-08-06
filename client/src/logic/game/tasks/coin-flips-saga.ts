@@ -1,19 +1,20 @@
 import {LocalGameState} from 'common/types/game-state'
+import {actions, putAction} from 'logic/actions'
 import {SagaIterator} from 'redux-saga'
-import {delay, put} from 'redux-saga/effects'
-import {setCoinFlip} from '../game-actions'
+import {delay} from 'redux-saga/effects'
 
 function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
-	yield put(setCoinFlip(null))
+	yield putAction({type: actions.GAME_COIN_FLIP_SET, coinFlip: null})
 
 	// Get new coin flips
 	const coinFlips =
 		gameState.players[gameState.turn.currentPlayerEntity].coinFlips
 	for (const coinFlip of coinFlips) {
-		yield put(setCoinFlip(coinFlip))
+		yield putAction({type: actions.GAME_COIN_FLIP_SET, coinFlip})
 		yield delay(coinFlip.delay)
 	}
-	yield put(setCoinFlip(null))
+
+	yield putAction({type: actions.GAME_COIN_FLIP_SET, coinFlip: null})
 }
 
 export default coinFlipSaga
