@@ -12,7 +12,6 @@ export const slotToPlayCardAction: Record<
 	item: 'PLAY_ITEM_CARD',
 	attach: 'PLAY_EFFECT_CARD',
 	single_use: 'PLAY_SINGLE_USE_CARD',
-	health: null,
 }
 export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
 	'single-use': 'SINGLE_USE_ATTACK',

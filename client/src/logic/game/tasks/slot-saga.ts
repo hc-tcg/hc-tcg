@@ -1,9 +1,3 @@
-import {
-	ChangeActiveHermitActionData,
-	PickSlotActionData,
-	PlayCardActionData,
-	slotToPlayCardAction,
-} from 'common/types/action-data'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {
@@ -14,24 +8,47 @@ import {
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
-import {call, put, putResolve, take, takeLeading} from 'redux-saga/effects'
+import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
+import {CardCategoryT} from 'common/types/cards'
+import {AttackAction, PlayCardAction} from 'common/types/game-state'
+import {HermitAttackType} from 'common/types/attack'
+
+export const slotToPlayCardAction: Record<
+	CardCategoryT,
+	PlayCardAction | null
+> = {
+	hermit: 'PLAY_HERMIT_CARD',
+	item: 'PLAY_ITEM_CARD',
+	attach: 'PLAY_EFFECT_CARD',
+	single_use: 'PLAY_SINGLE_USE_CARD',
+}
+
+export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
+	'single-use': 'SINGLE_USE_ATTACK',
+	primary: 'PRIMARY_ATTACK',
+	secondary: 'SECONDARY_ATTACK',
+}
+
+export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
+	SINGLE_USE_ATTACK: 'single-use',
+	PRIMARY_ATTACK: 'primary',
+	SECONDARY_ATTACK: 'secondary',
+}
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof actions.GAME_SLOT_PICKED],
-): SagaIterator {
+) {
 	const currentPickRequest = yield* select(getCurrentPickMessage)
 	if (!currentPickRequest) return
 
-	const actionData: PickSlotActionData = {
-		type: 'PICK_REQUEST',
-		payload: {
+	yield put<LocalMessage>({
+		type: actions.GAME_TURN_ACTION,
+		data: {
 			entity: action.slotInfo.slotEntity,
 		},
-	}
-
-	yield put(actionData)
+	})
 }
 
 function* pickWithSelectedSaga(
@@ -53,12 +70,14 @@ function* pickWithSelectedSaga(
 		yield* localPutCardInSlot(action, selectedCard)
 		yield* localRemoveCardFromHand(selectedCard)
 
-		const actionData: PlayCardActionData = {
-			type: actionType,
-			payload: {slot: pickInfo.slotEntity, card: selectedCard},
-		}
-
-		yield put(actionData)
+		yield put<LocalMessage>({
+			type: actions.GAME_TURN_ACTION,
+			action: actionType,
+			data: {
+				slot: pickInfo.slotEntity,
+				card: selectedCard,
+			},
+		})
 	}
 }
 
@@ -81,13 +100,16 @@ function* pickWithoutSelectedSaga(
 		yield put<LocalMessage>({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
 	} else {
 		if (settings.confirmationDialogs !== 'off') {
-			yield put({
+			yield put<LocalMessage>({
 				type: actions.GAME_MODAL_OPENED_SET,
 				id: 'change-hermit-modal',
-				payload: action.slotInfo,
+				info: action.slotInfo,
 			})
-			const result = yield take('CONFIRM_HERMIT_CHANGE')
-			if (!result.payload) return
+			const result = yield* take<
+				LocalMessageTable[typeof actions.GAME_HERMIT_CHANGE_CONFIRM]
+			>(actions.GAME_HERMIT_CHANGE_CONFIRM)
+
+			if (!result.confirmed) return
 		}
 
 		const data: ChangeActiveHermitActionData = {
@@ -96,7 +118,7 @@ function* pickWithoutSelectedSaga(
 				entity: action.slotInfo.slotEntity,
 			},
 		}
-		yield put(data)
+		yield put<LocalMessage>(data)
 	}
 }
 
@@ -132,7 +154,7 @@ function* slotPickedSaga(
 }
 
 function* slotSaga(): SagaIterator {
-	yield takeLeading('SLOT_PICKED', slotPickedSaga)
+	yield takeLeading(actions.GAME_SLOT_PICKED, slotPickedSaga)
 }
 
 export default slotSaga

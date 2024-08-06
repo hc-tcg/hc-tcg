@@ -100,8 +100,6 @@ function Game() {
 		index?: number,
 	) => {
 		console.log('Slot selected: ', slotInfo)
-
-		// This is a hack to make picked cards appear
 		dispatch({type: actions.GAME_SLOT_PICKED, slotInfo, player, row, index})
 	}
 

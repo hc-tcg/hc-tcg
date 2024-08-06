@@ -7,6 +7,7 @@ import {
 	GamePlayerEndOutcomeT,
 	LocalCurrentCoinFlip,
 	LocalGameState,
+	TurnAction,
 } from 'common/types/game-state'
 import {Message as ChatMessage} from 'common/types/game-state'
 import {
@@ -44,8 +45,8 @@ export const actions = messages(
 	'MATCHMAKING_CODE_SET',
 	'MATCHMAKING_CODE_INVALID',
 	'MATCHMAKING_WAITING_FOR_PLAYER',
-	'GAME_STATE_RECIEVED',
-	'GAME_LOCAL_STATE',
+	'GAME_LOCAL_STATE_RECIEVED',
+	'GAME_LOCAL_STATE_SET',
 	'GAME_START',
 	'GAME_END',
 	'GAME_CARD_SELECTED_SET',
@@ -54,6 +55,7 @@ export const actions = messages(
 	'GAME_PICK_REQUEST',
 	'GAME_FORFEIT',
 	'GAME_ATTACK_START',
+	'GAME_TURN_ACTION',
 	'GAME_END_OVERLAY_SHOW',
 	'GAME_END_OVERLAY_HIDE',
 	'GAME_COIN_FLIP_SET',
@@ -61,6 +63,7 @@ export const actions = messages(
 	'GAME_MODAL_REQUEST',
 	'GAME_EFFECT_APPLY',
 	'GAME_EFFECT_REMOVE',
+	'GAME_HERMIT_CHANGE_CONFIRM',
 	'GAME_TURN_END',
 	'CHAT_MESSAGE',
 	'CHAT_UPDATE',
@@ -113,12 +116,12 @@ type Actions = [
 	{type: typeof actions.MATCHMAKING_CODE_INVALID},
 	{type: typeof actions.MATCHMAKING_WAITING_FOR_PLAYER},
 	{
-		type: typeof actions.GAME_STATE_RECIEVED
+		type: typeof actions.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState
 		time: number
 	},
 	{
-		type: typeof actions.GAME_LOCAL_STATE
+		type: typeof actions.GAME_LOCAL_STATE_SET
 		localGameState: LocalGameState
 		time: number
 	},
@@ -159,6 +162,7 @@ type Actions = [
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
 	{type: typeof actions.GAME_EFFECT_APPLY; payload: any},
 	{type: typeof actions.GAME_EFFECT_REMOVE},
+	{type: typeof actions.GAME_HERMIT_CHANGE_CONFIRM, confirmed: boolean},
 	{type: typeof actions.GAME_TURN_END},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
@@ -166,6 +170,7 @@ type Actions = [
 		type: typeof actions.GAME_ACTIONS_ATTACK_START
 		attackType: HermitAttackType
 	},
+	{type: typeof actions.GAME_TURN_ACTION; action: TurnAction; data: any},
 	{type: typeof actions.GAME_ACTIONS_ATTACK},
 	{type: typeof actions.GAME_ACTIONS_END_TURN},
 	{type: typeof actions.GAME_UPDATE},
@@ -191,6 +196,5 @@ export type LocalMessage = Message<Actions>
 /** A message used locally on the client to update global state */
 export type LocalMessageTable = MessageTable<Actions>
 
-export function useActionDispatch(): Dispatch<LocalMessage> {
-	return useDispatch()
-}
+export const useActionDispatch =
+	useDispatch satisfies () => Dispatch<LocalMessage>

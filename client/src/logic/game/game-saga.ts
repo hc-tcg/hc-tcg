@@ -4,7 +4,6 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
-import {AnyAction} from 'redux'
 import {
 	all,
 	call,
@@ -44,85 +43,66 @@ function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
 }
 
 function* actionSaga(playerEntity: PlayerEntity) {
-	const turnAction = yield* race({
-		playCard: take([
+	const turnAction = yield* take<
+		LocalMessageTable[typeof actions.GAME_TURN_ACTION]
+	>(actions.GAME_TURN_ACTION)
+
+	if (
+		[
 			'PLAY_HERMIT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_EFFECT_CARD',
 			'PLAY_SINGLE_USE_CARD',
-		]),
-		applyEffect: take('APPLY_EFFECT'),
-		removeEffect: take('REMOVE_EFFECT'),
-		pickCard: take('PICK_REQUEST'),
-		customModal: take('MODAL_REQUEST'),
-		attack: take(['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
-		endTurn: take('END_TURN'),
-		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
-	}) as any // We cast to any because I am too confused by this code - Lunarmagpie
-
-	if (turnAction.playCard) {
+		].includes(turnAction.action)
+	) {
 		// This is updated for the client in slot-saga
 		yield* call(
 			sendTurnAction,
-			turnAction.playCard.type,
+			turnAction.action,
 			playerEntity,
-			turnAction.playCard.payload,
+			turnAction.data,
 		)
-	} else if (turnAction.applyEffect) {
+	} else if (turnAction.action === 'APPLY_EFFECT') {
 		yield* localApplyEffect()
-		yield call(
-			sendTurnAction,
-			'APPLY_EFFECT',
-			playerEntity,
-			turnAction.applyEffect.payload,
-		)
-	} else if (turnAction.removeEffect) {
+		yield call(sendTurnAction, 'APPLY_EFFECT', playerEntity, turnAction.data)
+	} else if (turnAction.action === 'REMOVE_EFFECT') {
 		yield* localRemoveEffect()
 		yield call(sendTurnAction, 'REMOVE_EFFECT', playerEntity, {})
-	} else if (turnAction.pickCard) {
-		yield call(
-			sendTurnAction,
-			'PICK_REQUEST',
-			playerEntity,
-			turnAction.pickCard.payload,
+	} else if (turnAction.action === 'PICK_REQUEST') {
+		yield call(sendTurnAction, 'PICK_REQUEST', playerEntity, turnAction.data)
+	} else if (turnAction.action === 'MODAL_REQUEST') {
+		yield call(sendTurnAction, 'MODAL_REQUEST', playerEntity, turnAction.data)
+	} else if (
+		['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(
+			turnAction.action,
 		)
-	} else if (turnAction.customModal) {
-		yield call(
-			sendTurnAction,
-			'MODAL_REQUEST',
-			playerEntity,
-			turnAction.customModal.payload,
-		)
-	} else if (turnAction.attack) {
-		yield call(
-			sendTurnAction,
-			turnAction.attack.type,
-			playerEntity,
-			turnAction.attack.payload,
-		)
-	} else if (turnAction.endTurn) {
+	) {
+		yield call(sendTurnAction, turnAction.action, playerEntity, turnAction.data)
+	} else if (turnAction.action === 'END_TURN') {
 		yield* localEndTurn()
 		yield call(sendTurnAction, 'END_TURN', playerEntity, {})
-	} else if (turnAction.changeActiveHermit) {
-		yield* localChangeActiveHermit(turnAction.changeActiveHermit)
+	} else if (turnAction.action === 'CHANGE_ACTIVE_HERMIT') {
+		yield* localChangeActiveHermit(turnAction)
 		yield call(
 			sendTurnAction,
 			'CHANGE_ACTIVE_HERMIT',
 			playerEntity,
-			turnAction.changeActiveHermit.payload,
+			turnAction.data,
 		)
 	}
 }
 
-function* gameStateSaga(action: AnyAction) {
-	const gameState: LocalGameState = action.payload.localGameState
+function* gameStateSaga(
+	action: LocalMessageTable[typeof actions.GAME_LOCAL_STATE_RECIEVED],
+) {
+	const gameState: LocalGameState = action.localGameState
 
 	// First show coin flips, if any
 	yield* call(coinFlipSaga, gameState)
 
 	// Actually update the local state
 	yield* put<LocalMessage>({
-		type: actions.GAME_LOCAL_STATE,
+		type: actions.GAME_LOCAL_STATE_SET,
 		localGameState: gameState,
 		time: Date.now(),
 	})
@@ -135,7 +115,7 @@ function* gameStateSaga(action: AnyAction) {
 		fork(actionModalsSaga),
 		fork(slotSaga),
 		fork(actionLogicSaga, gameState),
-		takeEvery('START_ATTACK', attackSaga),
+		takeEvery(actions.GAME_ACTIONS_ATTACK_START, attackSaga),
 	])
 
 	// Handle core funcionality
@@ -150,7 +130,7 @@ function* gameStateReceiver() {
 	while (true) {
 		const {localGameState} = yield* call(receiveMsg(serverMessages.GAME_STATE))
 		yield* put<LocalMessage>({
-			type: actions.GAME_STATE_RECIEVED,
+			type: actions.GAME_LOCAL_STATE_RECIEVED,
 			localGameState: localGameState,
 			time: Date.now(),
 		})
@@ -158,18 +138,20 @@ function* gameStateReceiver() {
 }
 
 function* gameActionsSaga(initialGameState?: LocalGameState) {
-	yield* takeEvery(actions.GAME_FORFEIT, function* () {
-		yield call(sendMsg({type: clientMessages.FORFEIT}))
-	})
+	yield* fork(() =>
+		all([
+			takeEvery(actions.GAME_FORFEIT, function* () {
+				yield call(sendMsg({type: clientMessages.FORFEIT}))
+			}),
 
-	yield fork(gameStateReceiver)
+			fork(gameStateReceiver),
+			takeLatest(actions.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
+		]),
+	)
 
-	yield takeLatest('GAME_STATE_RECEIVED', gameStateSaga)
-
-	console.log('Game started')
 	if (initialGameState) {
 		yield put<LocalMessage>({
-			type: actions.GAME_STATE_RECIEVED,
+			type: actions.GAME_LOCAL_STATE_SET,
 			localGameState: initialGameState,
 			time: Date.now(),
 		})
@@ -187,12 +169,12 @@ function* opponentConnectionSaga() {
 }
 
 function* gameSaga(initialGameState?: LocalGameState) {
-	const backgroundTasks = yield* all([
-		fork(opponentConnectionSaga),
-		fork(chatSaga),
-	])
+	const backgroundTasks = yield* fork(() =>
+		all([fork(opponentConnectionSaga), fork(chatSaga)]),
+	)
+
 	try {
-		yield *put<LocalMessage>({
+		yield* put<LocalMessage>({
 			type: actions.GAME_START,
 		})
 
@@ -216,7 +198,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
-					type: actions.GAME_LOCAL_STATE,
+					type: actions.GAME_LOCAL_STATE_SET,
 					localGameState: newGameState,
 					time: Date.now(),
 				})

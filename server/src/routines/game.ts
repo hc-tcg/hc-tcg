@@ -40,6 +40,8 @@ import modalRequestSaga from './turn-actions/modal-request'
 import pickRequestSaga from './turn-actions/pick-request'
 import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
+import {broadcast} from 'utils/comm'
+import {serverMessages} from 'common/socket-messages/server-messages'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -318,11 +320,9 @@ function* sendGameState(game: GameModel) {
 	game.viewers.forEach((viewer) => {
 		const localGameState = getLocalGameState(game, viewer)
 
-		viewer.player.socket.emit('GAME_STATE', {
-			type: 'GAME_STATE',
-			payload: {
-				localGameState,
-			},
+		broadcast([viewer.player], {
+			type: serverMessages.GAME_STATE,
+			localGameState,
 		})
 	})
 }

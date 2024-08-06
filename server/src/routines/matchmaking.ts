@@ -95,7 +95,7 @@ function* gameManager(game: GameModel) {
 			),
 			forfeit: take(
 				(action: any) =>
-					action.type === 'FORFEIT' && playerIds.includes(action.playerId),
+					action.type === clientMessages.FORFEIT && playerIds.includes(action.playerId),
 			),
 		})
 
@@ -229,7 +229,7 @@ export function* joinQueue(
 
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log('[Join queue] Player is already in game or queue:', player.name)
-		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
 		return
 	}
 
