@@ -1,6 +1,6 @@
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
-import {Message, MessageTable, messages} from '../redux-actions'
+import {Message, MessageTable, messages} from '../redux-messages'
 import {PlayerDeckT} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 

@@ -1,5 +1,5 @@
 import {PlayerId, PlayerModel} from 'common/models/player-model'
-import {Message, MessageTable, messages} from 'common/redux-actions'
+import {Message, MessageTable, messages} from 'common/redux-messages'
 import {PlayerDeckT} from 'common/types/deck'
 
 export const localMessages = messages({
