@@ -86,8 +86,8 @@ function* pickWithoutSelectedSaga(
 				info: action.slotInfo,
 			})
 			const result = yield* take<
-				LocalMessageTable[typeof actions.GAME_HERMIT_CHANGE_CONFIRM]
-			>(actions.GAME_HERMIT_CHANGE_CONFIRM)
+				LocalMessageTable[typeof actions.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM]
+			>(actions.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM)
 
 			if (!result.confirmed) return
 		}
@@ -115,7 +115,12 @@ function* slotPickedSaga(
 			playerState?.board.singleUse.card &&
 			!playerState?.board.singleUseCardUsed
 		) {
-			yield* put<LocalMessage>({type: actions.GAME_EFFECT_REMOVE})
+			yield* put<LocalMessage>({
+				type: actions.GAME_TURN_ACTION,
+				action: {
+					type: 'REMOVE_EFFECT',
+				},
+			})
 			return
 		}
 	}

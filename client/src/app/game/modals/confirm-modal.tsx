@@ -12,12 +12,22 @@ function ConfirmModal({closeModal}: Props) {
 	const dispatch = useActionDispatch()
 
 	const handleYes = () => {
-		dispatch({type: actions.GAME_EFFECT_APPLY, payload: {}})
+		dispatch({
+			type: actions.GAME_TURN_ACTION,
+			action: {
+				type: 'APPLY_EFFECT',
+			},
+		})
 		closeModal()
 	}
 
 	const handleNo = () => {
-		dispatch({type: actions.GAME_EFFECT_REMOVE})
+		dispatch({
+			type: actions.GAME_TURN_ACTION,
+			action: {
+				type: 'REMOVE_EFFECT',
+			},
+		})
 		closeModal()
 	}
 

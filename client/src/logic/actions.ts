@@ -7,7 +7,6 @@ import {
 	GamePlayerEndOutcomeT,
 	LocalCurrentCoinFlip,
 	LocalGameState,
-	TurnAction,
 } from 'common/types/game-state'
 import {Message as ChatMessage} from 'common/types/game-state'
 import {
@@ -62,9 +61,7 @@ export const actions = messages(
 	'GAME_COIN_FLIP_SET',
 	'GAME_OPPONENT_CONNECTION_SET',
 	'GAME_MODAL_REQUEST',
-	'GAME_EFFECT_APPLY',
-	'GAME_EFFECT_REMOVE',
-	'GAME_HERMIT_CHANGE_CONFIRM',
+	'GAME_ACTIONS_HERMIT_CHANGE_CONFIRM',
 	'CHAT_MESSAGE',
 	'CHAT_UPDATE',
 	'GAME_TURN_END',
@@ -161,9 +158,7 @@ type Actions = [
 	},
 	{type: typeof actions.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
-	{type: typeof actions.GAME_EFFECT_APPLY; payload: any},
-	{type: typeof actions.GAME_EFFECT_REMOVE},
-	{type: typeof actions.GAME_HERMIT_CHANGE_CONFIRM; confirmed: boolean},
+	{type: typeof actions.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM; confirmed: boolean},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
 	{type: typeof actions.GAME_TURN_END},
@@ -200,5 +195,4 @@ export type LocalMessage = Message<Actions>
 /** A message used locally on the client to update global state */
 export type LocalMessageTable = MessageTable<Actions>
 
-export const useActionDispatch =
-	useDispatch satisfies () => Dispatch<LocalMessage>
+export const useActionDispatch = useDispatch as () => Dispatch<LocalMessage>

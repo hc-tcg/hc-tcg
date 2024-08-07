@@ -48,7 +48,6 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof actions.GAME_TURN_ACTION]
 	>(actions.GAME_TURN_ACTION)
-	console.log(turnAction)
 
 	if (
 		[
