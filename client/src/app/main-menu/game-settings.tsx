@@ -1,7 +1,7 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -10,7 +10,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 function GameSettings({setMenuSection}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	const handleDialogsChange = () => {

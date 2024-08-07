@@ -1,22 +1,21 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
-import {localMessages} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
-import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function DataSettings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const [modal, setModal] = useState<any>(null)
 
 	const resetChatWindow = () => {
-		dispatch({type: localMessages.SETTINGS_RESET, value: 'chatPosition'})
-		dispatch({type: localMessages.SETTINGS_RESET, value: 'chatSize'})
+		dispatch({type: localMessages.SETTINGS_RESET, key: 'chatPosition'})
+		dispatch({type: localMessages.SETTINGS_RESET, key: 'chatSize'})
 	}
 
 	const handleReset = (

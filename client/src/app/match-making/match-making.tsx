@@ -7,13 +7,13 @@ import {
 	getInvalidCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'
 
 function MatchMaking() {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const status = useSelector(getStatus)
 	const code = useSelector(getCode)
 	const invalidCode = useSelector(getInvalidCode)

@@ -17,7 +17,7 @@ import {
 	ModalVariant,
 } from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import Board from './board'
@@ -47,7 +47,7 @@ function Game() {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	const settings = useSelector(getSettings)
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const [filter, setFilter] = useState<string>('')
 

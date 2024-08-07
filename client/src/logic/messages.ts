@@ -206,4 +206,4 @@ export type LocalMessage = Message<Actions>
 /** A message used locally on the client to update global state */
 export type LocalMessageTable = MessageTable<Actions>
 
-export const useActionDispatch = useDispatch as () => Dispatch<LocalMessage>
+export const useMessageDispatch = useDispatch as () => Dispatch<LocalMessage>

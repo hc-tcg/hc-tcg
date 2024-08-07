@@ -4,7 +4,7 @@ import ErrorBanner from 'components/error-banner'
 import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
@@ -22,7 +22,7 @@ const getLoginError = (errorType: string) => {
 }
 
 const Login = () => {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
 

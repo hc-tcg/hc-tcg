@@ -4,7 +4,7 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import Modal from 'components/modal'
 import {getGameState} from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
@@ -14,7 +14,7 @@ type Props = {
 }
 
 function SelectCardsModal({closeModal}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData

@@ -1,6 +1,6 @@
 import {getGameState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import ChatItem from './chat-item'
 import ForfeitItem from './forfeit-item'
@@ -11,7 +11,7 @@ import TooltipsItem from './tooltips-item'
 function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleDiscarded = () => {
 		if (!gameState) return

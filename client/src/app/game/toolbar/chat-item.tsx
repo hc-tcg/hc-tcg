@@ -3,7 +3,7 @@ import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
 import {getChatMessages} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -19,7 +19,7 @@ function ChatItem() {
 			return msg.sender.type === 'viewer' && msg.sender.id !== playerId
 		})[0]?.createdAt || 0
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 
 	if (settings.showChat === 'on' && lastSeen !== latestOpponentMessageTime) {
 		setLastSeen(latestOpponentMessageTime)

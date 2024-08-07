@@ -5,7 +5,7 @@ import {
 	getPlayerEntity,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
@@ -17,7 +17,7 @@ type Props = {
 
 function AttackModal({closeModal}: Props) {
 	// TODO - This whole file needs to be rafactored
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const availableActions = useSelector(getAvailableActions)

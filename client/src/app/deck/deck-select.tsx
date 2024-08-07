@@ -17,7 +17,7 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -50,7 +50,7 @@ function SelectDeck({
 	loadedDeck,
 }: Props) {
 	// REDUX
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 

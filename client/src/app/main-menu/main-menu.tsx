@@ -3,7 +3,7 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -13,7 +13,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () =>
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})

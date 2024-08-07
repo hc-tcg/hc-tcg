@@ -2,7 +2,7 @@ import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
@@ -20,7 +20,7 @@ import MatchMaking from './match-making'
 
 function App() {
 	const section = useRouter()
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const playerName = useSelector(getPlayerName)
 	const socketStatus = useSelector(getSocketStatus)
 	const toastMessage = useSelector(getToast)

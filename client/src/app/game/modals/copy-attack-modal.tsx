@@ -2,7 +2,7 @@ import {isHermit} from 'common/cards/base/types'
 import {ModalData} from 'common/types/game-state'
 import Modal from 'components/modal'
 import {getGameState} from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
@@ -11,7 +11,7 @@ type Props = {
 	closeModal: () => void
 }
 function CopyAttackModal({closeModal}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData

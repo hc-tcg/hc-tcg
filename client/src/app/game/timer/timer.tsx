@@ -5,13 +5,13 @@ import {
 	getGameState,
 	getTime,
 } from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './timer.module.scss'
 
 function Timer() {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const gameState = useSelector(getGameState) as LocalGameState
 	const time = useSelector(getTime)
 	const currentCoinflip = useSelector(getCurrentCoinFlip)

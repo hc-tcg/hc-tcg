@@ -5,14 +5,14 @@ import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import {getGameState} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
 	closeModal: () => void
 	info: SlotInfo
 }
 function ChangeHermitModal({closeModal, info}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
 	const gameState = useSelector(getGameState)

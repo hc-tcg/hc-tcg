@@ -4,7 +4,7 @@ import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -13,7 +13,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 function Settings({setMenuSection}: Props) {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)

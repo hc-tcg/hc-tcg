@@ -15,10 +15,10 @@ import CardList from 'components/card-list'
 import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
@@ -182,7 +182,7 @@ const ALL_CARDS = sortCards(
 )
 
 function EditDeck({back, title, saveDeck, deck}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	// STATE

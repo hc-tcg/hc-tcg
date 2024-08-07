@@ -12,7 +12,7 @@ import {
 	getPlayerState,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
 import css from './actions.module.scss'
@@ -35,7 +35,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
 

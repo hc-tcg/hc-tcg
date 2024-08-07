@@ -4,7 +4,7 @@ import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -15,7 +15,7 @@ function clamp(n: number, min: number, max: number): number {
 }
 
 function Chat() {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages =
 		settings.disableChat === 'off' ? useSelector(getChatMessages) : []

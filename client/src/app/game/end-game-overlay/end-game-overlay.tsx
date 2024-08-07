@@ -3,7 +3,7 @@ import cn from 'classnames'
 import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
 import {getOpponentName} from 'logic/game/game-selectors'
-import {localMessages, useActionDispatch} from 'logic/messages'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 
@@ -13,7 +13,7 @@ type Props = {
 }
 
 const EndGameOverlay = ({outcome, reason}: Props) => {
-	const dispatch = useActionDispatch()
+	const dispatch = useMessageDispatch()
 	const opponent = useSelector(getOpponentName)
 	let animation
 	let winCondition = false
