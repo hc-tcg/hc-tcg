@@ -207,10 +207,8 @@ function* reconnectSaga() {
 		receiveMsg(serverMessages.GAME_STATE_ON_RECONNECT),
 	)
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
-	assert(
-		reconnectState.localGameState,
-		'The user must be in a game when they connect',
-	)
+	if (!reconnectState.localGameState)
+		throw new Error('The user must be in a game when they reconnect')
 	yield* call(gameSaga, reconnectState.localGameState)
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
 }

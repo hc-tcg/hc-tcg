@@ -98,7 +98,7 @@ function* gameStateSaga(
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_LOCAL_STATE_SET,
 		localGameState: gameState,
-		time: Date.now(),
+		time: action.time,
 	})
 
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return

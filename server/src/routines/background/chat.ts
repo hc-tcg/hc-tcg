@@ -48,6 +48,7 @@ function* chatMessageSaga(
 				isSpectator ? 'spectator' : 'player',
 				PlaintextNode(`${game.players[playerId].name}`),
 			),
+			PlaintextNode(' '),
 			formatText(message, {
 				censor: true,
 				'enable-$': false,

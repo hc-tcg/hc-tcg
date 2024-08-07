@@ -8,9 +8,7 @@ import {call, fork, put, takeEvery} from 'typed-redux-saga'
 function* chatMessageSaga(
 	action: LocalMessageTable[typeof localMessages.CHAT_MESSAGE],
 ): SagaIterator {
-	yield* call(
-		sendMsg({type: clientMessages.CHAT_MESSAGE, message: action.message}),
-	)
+	yield* sendMsg({type: clientMessages.CHAT_MESSAGE, message: action.message})
 }
 
 function* receiveMessagesSaga() {
