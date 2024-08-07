@@ -3,11 +3,7 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
-import {
-	createPrivateGame,
-	joinPrivateGame,
-	joinQueue,
-} from 'logic/matchmaking/matchmaking-actions'
+import {joinPrivateGame, joinQueue} from 'logic/matchmaking/matchmaking-actions'
 import {logout} from 'logic/session/session-actions'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
@@ -21,7 +17,7 @@ function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () => dispatch(joinQueue())
-	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
+	const handleCreatePrivateGame = () => setMenuSection('create-private')
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')

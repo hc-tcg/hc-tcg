@@ -16,6 +16,7 @@ import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {ViewerComponent} from './viewer-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -232,7 +233,15 @@ export class PlayerComponent {
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
 		if (cards.length < amount) {
-			this.deckedOut = true
+			if (
+				!this.game.rules.disableVirtualDeckOut ||
+				this.game.components.exists(
+					ViewerComponent,
+					(_game, viewer) =>
+						!viewer.spectator && viewer.playerOnLeftEntity === this.entity,
+				)
+			)
+				this.deckedOut = true
 		}
 		cards.forEach((card) => card.draw())
 		return cards

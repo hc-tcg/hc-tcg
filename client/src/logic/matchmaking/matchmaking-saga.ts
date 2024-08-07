@@ -1,6 +1,7 @@
 import {gameEnd} from 'logic/game/game-actions'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {queueVoice} from 'logic/sound/sound-actions'
 import {
 	call,
 	cancelled,
@@ -16,6 +17,48 @@ import {
 	invalidCode,
 	waitingForPlayer,
 } from './matchmaking-actions'
+
+function* createBossGameSaga() {
+	function* matchmaking() {
+		try {
+			// Send message to server to create the game
+			yield* call(sendMsg, 'CREATE_BOSS_GAME')
+
+			const createBossResponse = yield* race({
+				success: call(receiveMsg, 'CREATE_BOSS_GAME_SUCCESS'),
+				failure: call(receiveMsg, 'CREATE_BOSS_GAME_FAILURE'),
+			})
+
+			if (createBossResponse.failure) {
+				yield* put(clearMatchmaking())
+				return
+			}
+
+			yield* call(receiveMsg, 'GAME_START')
+			yield* put(queueVoice(['EXSTART']))
+			yield* call(gameSaga)
+		} catch (err) {
+			console.error('Game crashed: ', err)
+		} finally {
+			if (yield* cancelled()) {
+				// Clear state and back to menu
+				yield* put(clearMatchmaking())
+				yield* put(gameEnd())
+			}
+		}
+	}
+
+	const result = yield* race({
+		cancel: take('LEAVE_MATCHMAKING'),
+		matchmaking: call(matchmaking),
+	})
+
+	yield* put(clearMatchmaking())
+
+	if (result.cancel) {
+		yield* call(sendMsg, 'CANCEL_BOSS_GAME')
+	}
+}
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -196,6 +239,7 @@ function* matchmakingSaga() {
 	yield* takeEvery('JOIN_QUEUE', joinQueueSaga)
 	yield* takeEvery('CREATE_PRIVATE_GAME', createPrivateGameSaga)
 	yield* takeEvery('JOIN_PRIVATE_GAME', joinPrivateGameSaga)
+	yield* takeEvery('CREATE_BOSS_GAME', createBossGameSaga)
 	yield* fork(reconnectSaga)
 }
 

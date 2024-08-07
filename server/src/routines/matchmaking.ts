@@ -1,7 +1,16 @@
-import {PlayerComponent} from 'common/components'
+import {CARDS} from 'common/cards'
+import {
+	BoardSlotComponent,
+	PlayerComponent,
+	RowComponent,
+} from 'common/components'
+import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
+import {CardEntity, newEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {VirtualPlayerModel} from 'common/models/virtual-player-model'
+import {WithoutFunctions} from 'common/types/server-requests'
 import {
 	all,
 	cancel,
@@ -22,6 +31,7 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
+import {AIComponent} from './virtual'
 
 export type ClientMessage = {
 	type: string
@@ -71,10 +81,11 @@ function* gameManager(game: GameModel) {
 		const viewers = game.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType =
+			playerIds.length === 2 ? (game.code ? 'Private' : 'Public') : 'PvE'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
+			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
 			'Total games:',
 			root.getGameIds().length,
 		)
@@ -261,6 +272,123 @@ function* leaveQueue(msg: ClientMessage) {
 	}
 }
 
+function setupSolitareGame(
+	player: PlayerModel,
+	opponent: VirtualPlayerModel,
+): GameModel {
+	const game = new GameModel(
+		{
+			model: player,
+			deck: player.deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: opponent,
+			deck: opponent.deck.cards.map((card) => card.props.numericId),
+		},
+		'solitare',
+	)
+
+	const playerEntities = game.components.filterEntities(PlayerComponent)
+	game.components.new(ViewerComponent, {
+		player,
+		spectator: false,
+		playerOnLeft: playerEntities[0],
+	})
+
+	game.components.new(AIComponent, playerEntities[1], opponent.ai)
+
+	return game
+}
+
+function* createBossGame(msg: ClientMessage) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Create Boss game] Player not found: ', playerId)
+		return
+	}
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.log(
+			'[Create Boss game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], 'CREATE_BOSS_GAME_FAILURE')
+		return
+	}
+
+	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
+
+	const EX_BOSS_PLAYER = new VirtualPlayerModel(
+		'EX',
+		'EvilXisuma',
+		'evilxisuma_boss',
+	)
+	EX_BOSS_PLAYER.deck.cards = [
+		{
+			props: WithoutFunctions(CARDS['evilxisuma_boss'].props),
+			entity: newEntity('card-entity') as CardEntity,
+			slot: null,
+			turnedOver: false,
+			attackHint: null,
+		},
+	]
+
+	const newBossGame = setupSolitareGame(player, EX_BOSS_PLAYER)
+	newBossGame.state.isBossGame = true
+	if (
+		newBossGame.components.find(
+			ViewerComponent,
+			(game, viewer) =>
+				!viewer.spectator &&
+				viewer.playerOnLeftEntity === game.currentPlayerEntity, // if there is a non-spectator viewer component for the 0th player (goes second)
+		)
+	) {
+		newBossGame.state.order.reverse()
+	}
+
+	function destroyRow(row: RowComponent) {
+		newBossGame.components
+			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+		newBossGame.components.delete(row.entity)
+	}
+
+	// Remove challenger's rows other than indexes 0, 1, and 2
+	newBossGame.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			(_game, row) => row.index > 2,
+		)
+		.forEach(destroyRow)
+	// Remove boss' rows other than index 0
+	newBossGame.components
+		.filter(
+			RowComponent,
+			query.row.currentPlayer,
+			query.not(query.row.index(0)),
+		)
+		.forEach(destroyRow)
+	// Remove boss' item slots
+	newBossGame.components
+		.filterEntities(
+			BoardSlotComponent,
+			query.slot.currentPlayer,
+			query.slot.item,
+		)
+		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+
+	newBossGame.rules = {
+		disableRewardCards: true,
+		disableVirtualDeckOut: true,
+	}
+
+	root.addGame(newBossGame)
+
+	yield* fork(gameManager, newBossGame)
+}
+
 function* createPrivateGame(msg: ClientMessage) {
 	const {playerId} = msg
 	const player = root.players[playerId]
@@ -400,6 +528,7 @@ function* matchmakingSaga() {
 		takeEvery('LEAVE_QUEUE', leaveQueue),
 
 		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
+		takeEvery('CREATE_BOSS_GAME', createBossGame),
 		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
 		takeEvery('CANCEL_PRIVATE_GAME', cancelPrivateGame),
 	])

@@ -1,6 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {LocalGameState} from 'common/types/game-state'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {queueVoice} from 'logic/sound/sound-actions'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
 import {
@@ -152,12 +153,20 @@ function* gameStateReceiver(): SagaIterator {
 	}
 }
 
+function* voiceAnnounceReceiver(): SagaIterator {
+	// constantly forward @sound/VOICE_ANNOUNCE messages from the server to the store
+	while (true) {
+		const {payload} = yield call(receiveMsg, '@sound/VOICE_ANNOUNCE')
+		yield put(queueVoice(payload.lines))
+	}
+}
+
 function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
 
-	yield fork(gameStateReceiver)
+	yield all([fork(gameStateReceiver), fork(voiceAnnounceReceiver)])
 
 	yield takeLatest('GAME_STATE_RECEIVED', gameStateSaga)
 

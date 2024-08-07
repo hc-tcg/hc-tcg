@@ -8,6 +8,7 @@ import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import DyedEffect from './dyed'
+import ExBossNineStatusEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
@@ -55,6 +56,7 @@ const effectClasses: Array<new () => StatusEffect> = [
 	MelodyEffect,
 
 	/* System Status Effect */
+	ExBossNineStatusEffect,
 	UsedClockEffect,
 	DeathloopReady,
 	RevivedByDeathloopEffect,

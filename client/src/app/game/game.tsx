@@ -22,7 +22,7 @@ import {
 } from 'logic/game/game-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {playSound} from 'logic/sound/sound-actions'
+import {playSound, queueVoice} from 'logic/sound/sound-actions'
 import {useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import Board from './board'
@@ -231,6 +231,28 @@ function Game() {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
+
+	// Play EX voice lines on hermit deaths and game end
+	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
+		(id) => gameState.players[id].lives,
+	)
+	const [prevLives, setPrevLives] = useState(lives)
+	useEffect(() => {
+		if (!gameState.isBossGame) return
+		if (endGameOverlay) {
+			if (endGameOverlay.outcome === 'you_won') dispatch(queueVoice(['EXLOSE']))
+			else dispatch(queueVoice(['PLAYERLOSE']))
+			return
+		}
+		const playerLostLife = lives[0] - prevLives[0] < 0
+		const opponentLostLife = lives[1] - prevLives[1] < 0
+		setPrevLives(lives)
+		if (opponentLostLife) {
+			dispatch(queueVoice(['EXLIFE']))
+		} else if (playerLostLife) {
+			dispatch(queueVoice(['PLAYERLIFE']))
+		}
+	}, [...lives, endGameOverlay])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {

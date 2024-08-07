@@ -23,6 +23,7 @@ const matchmakingReducer = (
 				...state,
 				status: 'random_waiting',
 			}
+		case 'CREATE_BOSS_GAME':
 		case 'CREATE_PRIVATE_GAME':
 			return {
 				...state,

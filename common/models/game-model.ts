@@ -13,6 +13,7 @@ import ComponentTable from '../types/ecs'
 import {
 	ActionResult,
 	DefaultDictionary,
+	GameRules,
 	GameState,
 	Message,
 	TurnAction,
@@ -70,6 +71,8 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
+	public rules: GameRules
+
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
@@ -89,6 +92,8 @@ export class GameModel {
 			outcome: null,
 			reason: null,
 		}
+
+		this.rules = {}
 
 		this.components = new ComponentTable(this)
 		this.afterGameEnd = new Hook<string, () => void>()

@@ -5,6 +5,7 @@ import UpdatesModal from 'components/updates'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {playVoiceTest, sectionChange} from 'logic/sound/sound-actions'
 import React, {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -24,6 +25,10 @@ function Settings({setMenuSection}: Props) {
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
+	const handleVoiceChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch(setSetting('voiceVolume', ev.currentTarget.value))
+		dispatch(playVoiceTest())
+	}
 	const handleMuteSound = () => {
 		dispatch(setSetting('muted', !settings.muted))
 	}
@@ -38,10 +43,14 @@ function Settings({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
-	const handleGameSettings = () => setMenuSection('game-settings')
-	const handleDataSettings = () => setMenuSection('data-settings')
+	const changeMenuSection = (section: string) => {
+		dispatch(sectionChange('menu'))
+		setMenuSection(section)
+	}
+	const handleGameSettings = () => changeMenuSection('game-settings')
+	const handleDataSettings = () => changeMenuSection('data-settings')
 
-	const handleCredits = () => setMenuSection('credits')
+	const handleCredits = () => changeMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
 	const handleUpdates = () => {
@@ -59,7 +68,7 @@ function Settings({setMenuSection}: Props) {
 				<></>
 			)}
 			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
+				back={() => changeMenuSection('mainmenu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -70,6 +79,9 @@ function Settings({setMenuSection}: Props) {
 					</Slider>
 					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 						Sound Effect Volume: {getPercDescriptor(settings.soundVolume)}
+					</Slider>
+					<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
+						Voice: {getPercDescriptor(settings.voiceVolume)}
 					</Slider>
 					<Button variant="stone" onClick={handleMuteSound}>
 						Sound: {getBoolDescriptor(!settings.muted)}

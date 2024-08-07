@@ -49,35 +49,50 @@ class Anvil extends Card {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.getAttack, () => {
-			return this.getTargetHermits(game, player).reduce(
-				(attacks: null | AttackModel, row) => {
-					if (!row.getHermit()) return attacks
-
-					const newAttack = game
-						.newAttack({
-							attacker: component.entity,
-							target: row.entity,
-							type: 'effect',
-							log: (values) =>
-								row.index === player.activeRow?.index
-									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: `, ${values.target} for ${values.damage} damage`,
-						})
-						.addDamage(
-							component.entity,
-							row.index === player.activeRow?.index ? 30 : 10,
+		observer.subscribe(
+			player.hooks.getAttack,
+			game.components.filter(RowComponent, query.row.opponentPlayer).length > 1
+				? () => {
+						return this.getTargetHermits(game, player).reduce(
+							(attacks: null | AttackModel, row) => {
+								const newAttack = game
+									.newAttack({
+										attacker: component.entity,
+										target: row.entity,
+										type: 'effect',
+										log: (values) =>
+											row.index === player.activeRow?.index
+												? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+												: `, ${values.target} for ${values.damage} damage`,
+									})
+									.addDamage(
+										component.entity,
+										row.index === player.activeRow?.index ? 30 : 10,
+									)
+								if (attacks === null) {
+									return newAttack
+								} else {
+									attacks.addNewAttack(newAttack)
+									return attacks
+								}
+							},
+							null,
 						)
-					if (attacks === null) {
-						return newAttack
-					} else {
-						attacks.addNewAttack(newAttack)
-						return attacks
 					}
-				},
-				null,
-			)
-		})
+				: () =>
+						game
+							.newAttack({
+								attacker: component.entity,
+								target: game.components.findEntity(
+									RowComponent,
+									query.row.opponentPlayer,
+								),
+								type: 'effect',
+								log: (values) =>
+									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+							})
+							.addDamage(component.entity, 30),
+		)
 
 		observer.subscribe(player.hooks.afterAttack, (_attack) => {
 			applySingleUse(game, component.slot)

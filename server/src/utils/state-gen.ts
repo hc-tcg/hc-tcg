@@ -484,6 +484,8 @@ export function getLocalGameState(
 		players,
 
 		timer: game.state.timer,
+
+		isBossGame: game.state.isBossGame,
 	}
 
 	return localGameState

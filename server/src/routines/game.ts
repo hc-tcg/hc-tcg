@@ -40,6 +40,7 @@ import modalRequestSaga from './turn-actions/modal-request'
 import pickRequestSaga from './turn-actions/pick-request'
 import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
+import {AIComponent, virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -286,6 +287,7 @@ function* checkHermitHealth(game: GameModel) {
 				playerState.lives -= 1
 
 				// reward card
+				if (game.rules.disableRewardCards) continue
 				game.components
 					.filter(
 						CardComponent,
@@ -414,6 +416,19 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	}
 }
 
+function getPlayerAI(game: GameModel) {
+	const activePlayerEntity = game.state.turn.opponentAvailableActions.includes(
+		'WAIT_FOR_TURN',
+	)
+		? game.currentPlayerEntity
+		: game.opponentPlayerEntity
+
+	return game.components.find(
+		AIComponent,
+		(_game, ai) => ai.playerEntity === activePlayerEntity,
+	)
+}
+
 function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, currentPlayer} = game
 
@@ -503,6 +518,9 @@ function* turnActionsSaga(game: GameModel) {
 
 			yield* call(sendGameState, game)
 			game.battleLog.sendLogs()
+
+			const playerAI = getPlayerAI(game)
+			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),

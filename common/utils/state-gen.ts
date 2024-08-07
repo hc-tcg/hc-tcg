@@ -154,6 +154,8 @@ export function getGameState(game: GameModel): GameState {
 			turnRemaining: 0,
 			opponentActionStartTime: null,
 		},
+
+		isBossGame: false,
 	}
 
 	return gameState
