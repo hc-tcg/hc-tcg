@@ -1,8 +1,8 @@
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {GenericActionResult} from 'common/types/game-state'
+import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 
 function* changeActiveHermit(
 	game: GameModel,

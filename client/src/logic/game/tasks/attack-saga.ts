@@ -1,6 +1,6 @@
 import {attackToAttackAction} from 'common/types/turn-action-data'
-import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {getPlayerState} from 'logic/game/game-selectors'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'

@@ -1,11 +1,11 @@
 import {SingleUse, isHermit} from 'common/cards/base/types'
 import Modal from 'components/modal'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getPlayerEntity,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'

@@ -2,6 +2,10 @@ import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
+import {
+	AnyTurnActionData,
+	ChangeActiveHermitActionData,
+} from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
@@ -29,12 +33,8 @@ import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
-import slotSaga from './tasks/slot-saga'
-import {
-	AnyTurnActionData,
-	ChangeActiveHermitActionData,
-} from 'common/types/turn-action-data'
 import endTurnSaga from './tasks/end-turn-saga'
+import slotSaga from './tasks/slot-saga'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* sendMsg({

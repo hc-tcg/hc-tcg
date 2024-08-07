@@ -1,10 +1,10 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
 import {getAvailableActions} from 'logic/game/game-selectors'
-import {useSelector} from 'react-redux'
-import css from './game-modals.module.scss'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
 import {localMessages, useActionDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

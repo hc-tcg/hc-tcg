@@ -2,12 +2,12 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getCode,
 	getInvalidCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'

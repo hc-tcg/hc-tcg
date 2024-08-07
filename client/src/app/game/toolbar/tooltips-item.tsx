@@ -1,5 +1,5 @@
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 

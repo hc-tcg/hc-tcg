@@ -1,8 +1,8 @@
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {PlayCardActionData} from 'common/types/turn-action-data'
 import {ActionResult} from 'common/types/game-state'
+import {PlayCardActionData} from 'common/types/turn-action-data'
 
 function* playCardSaga(
 	game: GameModel,

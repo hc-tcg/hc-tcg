@@ -3,7 +3,6 @@ import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getEndGameOverlay,
@@ -13,7 +12,12 @@ import {
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
+import {
+	MODAL_COMPONENTS,
+	ModalVariant,
+} from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import Board from './board'
@@ -21,10 +25,6 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
-import {
-	MODAL_COMPONENTS,
-	ModalVariant,
-} from 'logic/game/tasks/action-modals-saga'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -80,7 +80,13 @@ function Game() {
 		index?: number,
 	) => {
 		console.log('Slot selected: ', slotInfo)
-		dispatch({type: localMessages.GAME_SLOT_PICKED, slotInfo, player, row, index})
+		dispatch({
+			type: localMessages.GAME_SLOT_PICKED,
+			slotInfo,
+			player,
+			row,
+			index,
+		})
 	}
 
 	const selectCard = (card: LocalCardInstance) => {
@@ -110,7 +116,11 @@ function Game() {
 		const chatIsClosed = settings.showChat === 'off'
 
 		if (e.key === 'Escape') {
-			dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'off'})
+			dispatch({
+				type: localMessages.SETTINGS_SET,
+				key: 'showChat',
+				value: 'off',
+			})
 		}
 
 		if (e.key === 'c' || e.key === 'C') {
@@ -119,7 +129,11 @@ function Game() {
 			if (chatIsClosed) {
 				e.stopImmediatePropagation()
 				e.preventDefault()
-				dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'on'})
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					key: 'showChat',
+					value: 'on',
+				})
 			}
 		}
 

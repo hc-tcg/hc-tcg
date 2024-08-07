@@ -1,5 +1,5 @@
-import {localMessages} from 'logic/messages'
 import {getOpenedModal} from 'logic/game/game-selectors'
+import {localMessages} from 'logic/messages'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 

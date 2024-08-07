@@ -1,5 +1,5 @@
-import {LocalMessageTable, localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'

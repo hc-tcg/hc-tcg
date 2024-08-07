@@ -1,11 +1,11 @@
 import {GameModel} from 'common/models/game-model'
+import {ActionResult} from 'common/types/game-state'
+import {CopyAttack, SelectCards} from 'common/types/modal-requests'
+import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
 import {
 	AttackActionData,
 	attackToAttackAction,
 } from 'common/types/turn-action-data'
-import {ActionResult} from 'common/types/game-state'
-import {CopyAttack, SelectCards} from 'common/types/modal-requests'
-import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
 import {call} from 'typed-redux-saga'
 import attackSaga from './attack'
 

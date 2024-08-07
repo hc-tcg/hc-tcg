@@ -15,7 +15,8 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useActionDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () => dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+	const handleJoinQueue = () =>
+		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
 	const handleCreatePrivateGame = () =>
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_CREATE})
 	const handleJoinPrivateGame = () =>

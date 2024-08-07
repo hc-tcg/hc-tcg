@@ -1,3 +1,4 @@
+import {BattleLogModel} from 'common/models/battle-log-model'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -8,7 +9,6 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
-import {BattleLogModel} from 'common/models/battle-log-model'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null

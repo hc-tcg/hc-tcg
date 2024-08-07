@@ -1,10 +1,9 @@
 import {TurnAction} from 'common/types/game-state'
-import {LocalMessage, localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
-import {getAvailableActions} from '../game-selectors'
 import {
 	AttackModal,
 	ChangeHermitModal,
@@ -15,6 +14,7 @@ import {
 	SelectCardsModal,
 	UnmetConditionModal,
 } from '../../../app/game/modals'
+import {getAvailableActions} from '../game-selectors'
 
 export const MODAL_COMPONENTS = {
 	attack: AttackModal,

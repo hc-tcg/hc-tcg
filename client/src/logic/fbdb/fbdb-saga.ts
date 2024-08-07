@@ -19,7 +19,10 @@ const createValueChannel = () => {
 
 function* authSaga(user: any): SagaIterator {
 	if (!user) return
-	yield* put<LocalMessage>({type: localMessages.FIREBASE_AUTHED, uuid: user.uid})
+	yield* put<LocalMessage>({
+		type: localMessages.FIREBASE_AUTHED,
+		uuid: user.uid,
+	})
 	global.dbObj.uuid = user.uid
 	global.dbObj.dbref = firebase.database().ref('/stats').child(user.uid)
 	const valueChannel = yield* call(createValueChannel)

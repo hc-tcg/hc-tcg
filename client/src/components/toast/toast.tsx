@@ -1,6 +1,6 @@
 import * as Toast from '@radix-ui/react-toast'
-import {localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages} from 'logic/messages'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './toast.module.scss'
 

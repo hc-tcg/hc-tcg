@@ -95,7 +95,8 @@ function* gameManager(game: GameModel) {
 			),
 			forfeit: take(
 				(action: any) =>
-					action.type === clientMessages.FORFEIT && playerIds.includes(action.playerId),
+					action.type === clientMessages.FORFEIT &&
+					playerIds.includes(action.playerId),
 			),
 		})
 

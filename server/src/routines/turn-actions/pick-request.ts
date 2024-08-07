@@ -2,11 +2,11 @@ import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
+import {ActionResult} from 'common/types/game-state'
 import {
 	AttackActionData,
 	attackToAttackAction,
 } from 'common/types/turn-action-data'
-import {ActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
 import attackSaga from './attack'
 

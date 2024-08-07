@@ -1,5 +1,5 @@
 import {LocalCardInstance} from 'common/types/server-requests'
-import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {slotToPlayCardAction} from 'common/types/turn-action-data'
 import {
 	getAvailableActions,
 	getCurrentPickMessage,
@@ -7,11 +7,11 @@ import {
 	getSelectedCard,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
-import {slotToPlayCardAction} from 'common/types/turn-action-data'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],

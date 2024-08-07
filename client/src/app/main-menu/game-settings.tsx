@@ -1,7 +1,7 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -22,7 +22,11 @@ function GameSettings({setMenuSection}: Props) {
 	}
 	const handleGameSideToggle = () => {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch({type: localMessages.SETTINGS_SET, key: 'gameSide', value: gameSide})
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'gameSide',
+			value: gameSide,
+		})
 	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'

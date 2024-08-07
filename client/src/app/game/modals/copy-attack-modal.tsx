@@ -1,8 +1,8 @@
 import {isHermit} from 'common/cards/base/types'
 import {ModalData} from 'common/types/game-state'
 import Modal from 'components/modal'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {getGameState} from 'logic/game/game-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
@@ -23,7 +23,10 @@ function CopyAttackModal({closeModal}: Props) {
 	const hermitFullName = opponentHermitInfo.props.id.split('_')[0]
 
 	const handlePrimary = () => {
-		dispatch({type: localMessages.GAME_MODAL_REQUEST, modalResult: {pick: 'primary'}})
+		dispatch({
+			type: localMessages.GAME_MODAL_REQUEST,
+			modalResult: {pick: 'primary'},
+		})
 		closeModal()
 	}
 
@@ -36,7 +39,10 @@ function CopyAttackModal({closeModal}: Props) {
 	}
 
 	const handleClose = () => {
-		dispatch({type: localMessages.GAME_MODAL_REQUEST, modalResult: {cancel: true}})
+		dispatch({
+			type: localMessages.GAME_MODAL_REQUEST,
+			modalResult: {cancel: true},
+		})
 		closeModal()
 	}
 

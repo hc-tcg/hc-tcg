@@ -1,7 +1,7 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {getPlayerState} from 'logic/game/game-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 

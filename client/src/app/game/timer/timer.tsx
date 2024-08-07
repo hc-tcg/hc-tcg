@@ -1,11 +1,11 @@
 import cn from 'classnames'
 import {LocalGameState} from 'common/types/game-state'
-import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getCurrentCoinFlip,
 	getGameState,
 	getTime,
 } from 'logic/game/game-selectors'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './timer.module.scss'

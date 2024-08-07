@@ -125,7 +125,10 @@ type Actions = [
 	},
 	{type: typeof localMessages.GAME_START},
 	{type: typeof localMessages.GAME_END},
-	{type: typeof localMessages.GAME_CARD_SELECTED_SET; card: LocalCardInstance | null},
+	{
+		type: typeof localMessages.GAME_CARD_SELECTED_SET
+		card: LocalCardInstance | null
+	},
 	{
 		type: typeof localMessages.GAME_MODAL_OPENED_SET
 		id: keyof typeof MODAL_COMPONENTS | null
@@ -161,8 +164,14 @@ type Actions = [
 		coinFlip: LocalCurrentCoinFlip | null
 	},
 	{type: typeof localMessages.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
-	{type: typeof localMessages.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
-	{type: typeof localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM; confirmed: boolean},
+	{
+		type: typeof localMessages.GAME_MODAL_REQUEST
+		modalResult: LocalModalResult
+	},
+	{
+		type: typeof localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM
+		confirmed: boolean
+	},
 	{type: typeof localMessages.CHAT_MESSAGE; message: string},
 	{type: typeof localMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 	{type: typeof localMessages.GAME_TURN_END},

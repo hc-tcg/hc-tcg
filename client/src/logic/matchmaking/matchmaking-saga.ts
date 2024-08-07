@@ -1,8 +1,8 @@
 import assert from 'assert'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import gameSaga from 'logic/game/game-saga'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
 	call,
@@ -119,7 +119,9 @@ function* joinPrivateGameSaga() {
 						yield* call(gameSaga)
 					}
 				} else if (result.invalidCode) {
-					yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CODE_INVALID})
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_CODE_INVALID,
+					})
 				}
 
 				// For anything but invalid code, we exit loop
@@ -219,7 +221,10 @@ function* matchmakingSaga() {
 		localMessages.MATCHMAKING_PRIVATE_GAME_CREATE,
 		createPrivateGameSaga,
 	)
-	yield* takeEvery(localMessages.MATCHMAKING_PRIVATE_GAME_JOIN, joinPrivateGameSaga)
+	yield* takeEvery(
+		localMessages.MATCHMAKING_PRIVATE_GAME_JOIN,
+		joinPrivateGameSaga,
+	)
 	yield* fork(reconnectSaga)
 }
 
