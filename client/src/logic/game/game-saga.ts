@@ -147,7 +147,7 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 
 	if (initialGameState) {
 		yield put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_SET,
+			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 			localGameState: initialGameState,
 			time: Date.now(),
 		})
