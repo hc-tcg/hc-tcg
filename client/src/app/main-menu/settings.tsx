@@ -2,7 +2,7 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React, {useState} from 'react'
@@ -20,21 +20,21 @@ function Settings({setMenuSection}: Props) {
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'soundVolume',
 			value: ev.currentTarget.value,
 		})
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'musicVolume',
 			value: ev.currentTarget.value,
 		})
 	}
 	const handleMuteSound = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'muted',
 			value: !settings.muted,
 		})
@@ -42,7 +42,7 @@ function Settings({setMenuSection}: Props) {
 
 	const handlePanoramaToggle = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'panoramaEnabled',
 			value: !settings.panoramaEnabled,
 		})

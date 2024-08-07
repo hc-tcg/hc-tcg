@@ -1,6 +1,6 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
@@ -15,14 +15,14 @@ function GameSettings({setMenuSection}: Props) {
 
 	const handleDialogsChange = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'confirmationDialogs',
 			value: settings.confirmationDialogs !== 'off' ? 'off' : 'on',
 		})
 	}
 	const handleGameSideToggle = () => {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch({type: actions.SETTINGS_SET, key: 'gameSide', value: gameSide})
+		dispatch({type: localMessages.SETTINGS_SET, key: 'gameSide', value: gameSide})
 	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
@@ -30,14 +30,14 @@ function GameSettings({setMenuSection}: Props) {
 	}
 	const handleChatChange = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'disableChat',
 			value: settings.disableChat !== 'off' ? 'off' : 'on',
 		})
 	}
 	const handleProfanityChange = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'profanityFilter',
 			value: settings.profanityFilter !== 'off' ? 'off' : 'on',
 		})
@@ -47,11 +47,11 @@ function GameSettings({setMenuSection}: Props) {
 		const username = ev.currentTarget.minecraftName.value.trim()
 		if (username.length > 3) {
 			dispatch({
-				type: actions.MINECRAFT_NAME_SET,
+				type: localMessages.MINECRAFT_NAME_SET,
 				name: username,
 			})
 			dispatch({
-				type: actions.SETTINGS_SET,
+				type: localMessages.SETTINGS_SET,
 				key: 'minecraftName',
 				value: username,
 			})

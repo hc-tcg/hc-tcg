@@ -1,7 +1,7 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 
 type SessionState = {
 	playerName: string
@@ -36,9 +36,9 @@ const loginReducer = (
 	action: LocalMessage,
 ): SessionState => {
 	switch (action.type) {
-		case actions.LOGIN:
+		case localMessages.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
-		case actions.DISCONNECT:
+		case localMessages.DISCONNECT:
 			return {
 				...state,
 				connecting: false,
@@ -49,30 +49,30 @@ const loginReducer = (
 				playerDeck: state.playerDeck,
 				errorType: action.errorMessage,
 			}
-		case actions.PLAYER_INFO_SET:
+		case localMessages.PLAYER_INFO_SET:
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
 				...action.player,
 			}
-		case actions.UPDATES_LOAD:
+		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
 				...action.updates,
 			}
-		case actions.DECK_NEW:
-		case actions.DECK_SET:
+		case localMessages.DECK_NEW:
+		case localMessages.DECK_SET:
 			return {
 				...state,
 				playerDeck: action.deck,
 			}
-		case actions.TOAST_OPEN:
+		case localMessages.TOAST_OPEN:
 			return {
 				...state,
 				toast: action,
 			}
-		case actions.TOAST_CLOSE:
+		case localMessages.TOAST_CLOSE:
 			return {
 				...state,
 				toast: {
@@ -80,8 +80,8 @@ const loginReducer = (
 					open: false,
 				},
 			}
-		case actions.MINECRAFT_NAME_NEW:
-		case actions.MINECRAFT_NAME_SET:
+		case localMessages.MINECRAFT_NAME_NEW:
+		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,
 				minecraftName: action.name,

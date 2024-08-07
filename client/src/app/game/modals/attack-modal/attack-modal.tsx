@@ -1,6 +1,6 @@
 import {SingleUse, isHermit} from 'common/cards/base/types'
 import Modal from 'components/modal'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getPlayerEntity,
@@ -38,7 +38,7 @@ function AttackModal({closeModal}: Props) {
 	const singleUseInfo = singleUseCard ? singleUseCard : null
 
 	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
-		dispatch({type: actions.GAME_ACTIONS_ATTACK, attackType: type})
+		dispatch({type: localMessages.GAME_ACTIONS_ATTACK, attackType: type})
 		closeModal()
 	}
 

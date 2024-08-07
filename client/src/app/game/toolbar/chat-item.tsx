@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getChatMessages} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -27,8 +27,8 @@ function ChatItem() {
 
 	const toggleChat = () => {
 		settings.showChat === 'on'
-			? dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'off'})
-			: dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'on'})
+			? dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'off'})
+			: dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'on'})
 	}
 
 	const newMessage =

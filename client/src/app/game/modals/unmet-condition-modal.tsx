@@ -1,6 +1,6 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import css from './game-modals.module.scss'
 
 type Props = {
@@ -12,7 +12,7 @@ function UnmetCondition({closeModal, info}: Props) {
 	const handleOk = () => {
 		closeModal()
 		if (info?.removeSuAfter) {
-			dispatch({type: actions.GAME_EFFECT_REMOVE})
+			dispatch({type: localMessages.GAME_EFFECT_REMOVE})
 		}
 	}
 

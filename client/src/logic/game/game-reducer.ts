@@ -6,7 +6,7 @@ import {
 	Message,
 } from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
 import {BattleLogModel} from 'common/models/battle-log-model'
 
@@ -47,7 +47,7 @@ const gameReducer = (
 	action: LocalMessage,
 ): LocalGameRoot => {
 	switch (action.type) {
-		case actions.GAME_LOCAL_STATE_SET:
+		case localMessages.GAME_LOCAL_STATE_SET:
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.localGameState,
@@ -60,8 +60,8 @@ const gameReducer = (
 			)
 				return newGame
 			return {...newGame}
-		case actions.GAME_START:
-		case actions.GAME_END:
+		case localMessages.GAME_START:
+		case localMessages.GAME_END:
 			return {
 				...state,
 				localGameState: null,
@@ -75,17 +75,17 @@ const gameReducer = (
 				opponentConnected: true,
 			}
 
-		case actions.GAME_CARD_SELECTED_SET:
+		case localMessages.GAME_CARD_SELECTED_SET:
 			return {
 				...state,
 				selectedCard: action.card,
 			}
-		case actions.GAME_MODAL_OPENED_SET:
+		case localMessages.GAME_MODAL_OPENED_SET:
 			return {
 				...state,
 				openedModal: action.id ? {id: action.id, info: action.info} : null,
 			}
-		case actions.GAME_END_OVERLAY_SHOW:
+		case localMessages.GAME_END_OVERLAY_SHOW:
 			return {
 				...state,
 				endGameOverlay:
@@ -96,17 +96,17 @@ const gameReducer = (
 							}
 						: null,
 			}
-		case actions.CHAT_UPDATE:
+		case localMessages.CHAT_UPDATE:
 			return {
 				...state,
 				chat: action.messages,
 			}
-		case actions.GAME_OPPONENT_CONNECTION_SET:
+		case localMessages.GAME_OPPONENT_CONNECTION_SET:
 			return {
 				...state,
 				opponentConnected: action.connected,
 			}
-		case actions.GAME_COIN_FLIP_SET:
+		case localMessages.GAME_COIN_FLIP_SET:
 			return {
 				...state,
 				currentCoinFlip: action.coinFlip,
@@ -115,7 +115,7 @@ const gameReducer = (
 		// server sends the new state.
 		// This updates based on outside mutations because I am so confused by redux and I want to ship
 		// the release tomorrow.
-		case actions.GAME_UPDATE:
+		case localMessages.GAME_UPDATE:
 			return state
 
 		default:

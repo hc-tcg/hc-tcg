@@ -3,7 +3,7 @@ import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getCurrentCoinFlip,
@@ -115,10 +115,10 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 		function handleEndTurn() {
-			dispatch({type: actions.GAME_ACTIONS_END_TURN})
+			dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 		}
 
 		const attackOptions =

@@ -1,5 +1,5 @@
 import {attackToAttackAction} from 'common/types/turn-action-data'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {SagaIterator} from 'redux-saga'
 import {put} from 'redux-saga/effects'
@@ -11,7 +11,7 @@ import {
 } from '../../../app/game/game-selectors'
 
 export function* attackSaga(
-	action: LocalMessageTable[typeof actions.GAME_ACTIONS_ATTACK],
+	action: LocalMessageTable[typeof localMessages.GAME_ACTIONS_ATTACK],
 ): SagaIterator {
 	const {attackType} = action
 	const actionType = attackToAttackAction[attackType]

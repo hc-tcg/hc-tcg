@@ -1,4 +1,4 @@
-import {LocalMessageTable, actions} from 'logic/messages'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
@@ -24,7 +24,7 @@ window.bgMusic = bgMusic
 window.audioCtx = audioCtx
 
 function* backgroundMusic(
-	action: LocalMessageTable[typeof actions.SOUND_SECTION_CHANGE],
+	action: LocalMessageTable[typeof localMessages.SOUND_SECTION_CHANGE],
 ): SagaIterator {
 	if (action.section !== 'game') {
 		bgMusic.pause()
@@ -49,7 +49,7 @@ function* backgroundMusic(
 }
 
 function* playSoundSaga(
-	action: LocalMessageTable[typeof actions.SOUND_PLAY],
+	action: LocalMessageTable[typeof localMessages.SOUND_PLAY],
 ): SagaIterator {
 	try {
 		if (audioCtx.state !== 'running') return
@@ -84,9 +84,9 @@ function* settingSaga(): SagaIterator {
 function* soundSaga(): SagaIterator {
 	// @ts-ignore
 	yield call(settingSaga)
-	yield takeEvery(actions.SETTINGS_SET, settingSaga)
-	yield takeLatest(actions.SOUND_SECTION_CHANGE, backgroundMusic)
-	yield takeEvery(actions.SOUND_PLAY, playSoundSaga)
+	yield takeEvery(localMessages.SETTINGS_SET, settingSaga)
+	yield takeLatest(localMessages.SOUND_SECTION_CHANGE, backgroundMusic)
+	yield takeEvery(localMessages.SOUND_PLAY, playSoundSaga)
 	document.addEventListener(
 		'click',
 		() => {

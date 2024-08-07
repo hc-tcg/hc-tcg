@@ -1,4 +1,4 @@
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 
 type SocketState = null | 'connecting' | 'connected'
 
@@ -9,13 +9,13 @@ const loginReducer = (
 	action: LocalMessage,
 ): SocketState => {
 	switch (action.type) {
-		case actions.SOCKET_CONNECTING:
+		case localMessages.SOCKET_CONNECTING:
 			return 'connecting'
-		case actions.SOCKET_CONNECT:
+		case localMessages.SOCKET_CONNECT:
 			return 'connected'
-		case actions.SOCKET_DISCONNECT:
+		case localMessages.SOCKET_DISCONNECT:
 			return null
-		case actions.SOCKET_CONNECT_ERROR:
+		case localMessages.SOCKET_CONNECT_ERROR:
 			return null
 		default:
 			return state

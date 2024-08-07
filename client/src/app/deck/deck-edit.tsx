@@ -14,7 +14,7 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
-import {actions} from 'logic/messages'
+import {localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
@@ -211,7 +211,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	function toggleTooltips() {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'showAdvancedTooltips',
 			value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
 		})
@@ -332,7 +332,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
 		saveDeck(deck, initialDeck)
 		dispatch({
-			type: actions.TOAST_OPEN,
+			type: localMessages.TOAST_OPEN,
 			open: true,
 			title: 'Deck Saved!',
 			description: `Saved ${deck.name}`,

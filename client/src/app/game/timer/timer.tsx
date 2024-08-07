@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import {LocalGameState} from 'common/types/game-state'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getCurrentCoinFlip,
 	getGameState,
@@ -46,7 +46,7 @@ function Timer() {
 			remainingTime <= 10 &&
 			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
-			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [remainingSeconds])
 

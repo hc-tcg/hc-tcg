@@ -1,5 +1,5 @@
 import {TurnAction} from 'common/types/game-state'
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
@@ -51,7 +51,7 @@ export const ActionMap: Record<TurnAction, string | null> = {
 
 function* endTurnActionSaga(): SagaIterator {
 	while (true) {
-		yield take(actions.GAME_ACTIONS_END_TURN)
+		yield take(localMessages.GAME_ACTIONS_END_TURN)
 		const availableActions = yield* select(getAvailableActions)
 		const settings = yield* select(getSettings)
 		if (
@@ -59,12 +59,12 @@ function* endTurnActionSaga(): SagaIterator {
 			settings.confirmationDialogs === 'on'
 		) {
 			yield put<LocalMessage>({
-				type: actions.GAME_MODAL_OPENED_SET,
+				type: localMessages.GAME_MODAL_OPENED_SET,
 				id: 'end-turn',
 			})
 		} else {
 			yield put<LocalMessage>({
-				type: actions.GAME_TURN_END,
+				type: localMessages.GAME_TURN_END,
 			})
 		}
 	}

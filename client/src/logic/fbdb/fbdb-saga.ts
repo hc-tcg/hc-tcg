@@ -1,5 +1,5 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {receiveMsg} from 'logic/socket/socket-saga'
 import {SagaIterator, eventChannel} from 'redux-saga'
 import {call, put, takeEvery, takeLatest} from 'typed-redux-saga'
@@ -19,7 +19,7 @@ const createValueChannel = () => {
 
 function* authSaga(user: any): SagaIterator {
 	if (!user) return
-	yield* put<LocalMessage>({type: actions.FIREBASE_AUTHED, uuid: user.uid})
+	yield* put<LocalMessage>({type: localMessages.FIREBASE_AUTHED, uuid: user.uid})
 	global.dbObj.uuid = user.uid
 	global.dbObj.dbref = firebase.database().ref('/stats').child(user.uid)
 	const valueChannel = yield* call(createValueChannel)
@@ -29,7 +29,7 @@ function* authSaga(user: any): SagaIterator {
 function* valueSaga(ss: any) {
 	const tmp = ss.val() || {wins: 0, l: 0, fw: 0, fl: 0, t: 0}
 	if (!tmp.t) tmp.t = 0 // for old stats
-	yield put<LocalMessage>({type: actions.FIREBASE_STATS, ...tmp})
+	yield put<LocalMessage>({type: localMessages.FIREBASE_STATS, ...tmp})
 	global.dbObj.stats = JSON.parse(JSON.stringify(tmp))
 }
 

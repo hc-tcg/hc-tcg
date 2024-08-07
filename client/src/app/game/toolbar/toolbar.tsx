@@ -1,4 +1,4 @@
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getGameState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
@@ -32,7 +32,7 @@ function Toolbar() {
 			},
 		}
 		dispatch({
-			type: actions.GAME_MODAL_OPENED_SET,
+			type: localMessages.GAME_MODAL_OPENED_SET,
 			id: gameState.currentModalData.modalId,
 		})
 	}

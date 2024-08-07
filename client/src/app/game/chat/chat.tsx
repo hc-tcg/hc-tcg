@@ -2,7 +2,7 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -30,7 +30,7 @@ function Chat() {
 	// If the chat menu was opened previously, lets make sure it is off at the start of the game.
 	useEffect(() => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'showChat',
 			value: 'off',
 		})
@@ -56,7 +56,7 @@ function Chat() {
 
 		if (!params.pressed) {
 			dispatch({
-				type: actions.SETTINGS_SET,
+				type: localMessages.SETTINGS_SET,
 				key: 'chatPosition',
 				value: {
 					x: chatPosSetting.x + chatPos.x,
@@ -80,12 +80,12 @@ function Chat() {
 		messageEl.value = ''
 		messageEl.focus()
 		if (chatMessage.length === 0) return
-		dispatch({type: actions.CHAT_MESSAGE, message: chatMessage})
+		dispatch({type: localMessages.CHAT_MESSAGE, message: chatMessage})
 	}
 
 	const closeChat = () => {
 		dispatch({
-			type: actions.SETTINGS_SET,
+			type: localMessages.SETTINGS_SET,
 			key: 'showChat',
 			value: 'off',
 		})
@@ -113,7 +113,7 @@ function Chat() {
 			style={style}
 			onClick={(e) => {
 				dispatch({
-					type: actions.SETTINGS_SET,
+					type: localMessages.SETTINGS_SET,
 					key: 'chatSize',
 					value: {
 						w: e.currentTarget.offsetWidth,
@@ -127,7 +127,7 @@ function Chat() {
 				<Button
 					onClick={() =>
 						dispatch({
-							type: actions.SETTINGS_SET,
+							type: localMessages.SETTINGS_SET,
 							key: 'showBattleLogs',
 							value: !showLog,
 						})

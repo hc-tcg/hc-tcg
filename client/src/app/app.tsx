@@ -1,7 +1,7 @@
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
@@ -30,7 +30,7 @@ function App() {
 
 	useEffect(() => {
 		dispatch({
-			type: actions.SOUND_SECTION_CHANGE,
+			type: localMessages.SOUND_SECTION_CHANGE,
 			section: section,
 		})
 	}, [section])

@@ -1,6 +1,6 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {actions} from 'logic/messages'
+import {localMessages} from 'logic/messages'
 import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
 
@@ -11,7 +11,7 @@ function AttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handleYes = () => {
-		dispatch({type: actions.GAME_FORFEIT})
+		dispatch({type: localMessages.GAME_FORFEIT})
 		closeModal()
 	}
 

@@ -2,7 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
 	all,
@@ -46,8 +46,8 @@ function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 
 function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
-		LocalMessageTable[typeof actions.GAME_TURN_ACTION]
-	>(actions.GAME_TURN_ACTION)
+		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+	>(localMessages.GAME_TURN_ACTION)
 
 	if (
 		[
@@ -87,7 +87,7 @@ function* actionSaga(playerEntity: PlayerEntity) {
 }
 
 function* gameStateSaga(
-	action: LocalMessageTable[typeof actions.GAME_LOCAL_STATE_RECIEVED],
+	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
 ) {
 	const gameState: LocalGameState = action.localGameState
 
@@ -96,7 +96,7 @@ function* gameStateSaga(
 
 	// Actually update the local state
 	yield* put<LocalMessage>({
-		type: actions.GAME_LOCAL_STATE_SET,
+		type: localMessages.GAME_LOCAL_STATE_SET,
 		localGameState: gameState,
 		time: Date.now(),
 	})
@@ -111,7 +111,7 @@ function* gameStateSaga(
 			fork(slotSaga),
 			fork(actionLogicSaga, gameState),
 			fork(endTurnSaga),
-			takeEvery(actions.GAME_ACTIONS_ATTACK, attackSaga),
+			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
 		]),
 	)
 
@@ -127,7 +127,7 @@ function* gameStateReceiver() {
 	while (true) {
 		const {localGameState} = yield* call(receiveMsg(serverMessages.GAME_STATE))
 		yield* put<LocalMessage>({
-			type: actions.GAME_LOCAL_STATE_RECIEVED,
+			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 			localGameState: localGameState,
 			time: Date.now(),
 		})
@@ -137,17 +137,17 @@ function* gameStateReceiver() {
 function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
-			takeEvery(actions.GAME_FORFEIT, function* () {
+			takeEvery(localMessages.GAME_FORFEIT, function* () {
 				yield sendMsg({type: clientMessages.FORFEIT})
 			}),
 			fork(gameStateReceiver),
-			takeLatest(actions.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
+			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),
 	)
 
 	if (initialGameState) {
 		yield put<LocalMessage>({
-			type: actions.GAME_LOCAL_STATE_SET,
+			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: initialGameState,
 			time: Date.now(),
 		})
@@ -158,7 +158,7 @@ function* opponentConnectionSaga() {
 	while (true) {
 		const action = yield* call(receiveMsg(serverMessages.OPPONENT_CONNECTION))
 		yield* put<LocalMessage>({
-			type: actions.GAME_OPPONENT_CONNECTION_SET,
+			type: localMessages.GAME_OPPONENT_CONNECTION_SET,
 			connected: action.isConnected,
 		})
 	}
@@ -171,7 +171,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 
 	try {
 		yield* put<LocalMessage>({
-			type: actions.GAME_START,
+			type: localMessages.GAME_START,
 		})
 
 		const result = yield* race({
@@ -185,7 +185,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		} else if (result.gameCrash) {
 			console.log('Server error')
 			yield put<LocalMessage>({
-				type: actions.GAME_END_OVERLAY_SHOW,
+				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome: 'server_crash',
 				reason: 'error',
 			})
@@ -194,13 +194,13 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
-					type: actions.GAME_LOCAL_STATE_SET,
+					type: localMessages.GAME_LOCAL_STATE_SET,
 					localGameState: newGameState,
 					time: Date.now(),
 				})
 			}
 			yield put<LocalMessage>({
-				type: actions.GAME_END_OVERLAY_SHOW,
+				type: localMessages.GAME_END_OVERLAY_SHOW,
 				reason,
 				outcome,
 			})
@@ -208,18 +208,18 @@ function* gameSaga(initialGameState?: LocalGameState) {
 	} catch (err) {
 		console.error('Client error: ', err)
 		yield put<LocalMessage>({
-			type: actions.GAME_END_OVERLAY_SHOW,
+			type: localMessages.GAME_END_OVERLAY_SHOW,
 			outcome: 'client_crash',
 			reason: 'error',
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
 		if (hasOverlay)
-			yield take<LocalMessageTable[typeof actions.GAME_END_OVERLAY_SHOW]>(
-				actions.GAME_END_OVERLAY_SHOW,
+			yield take<LocalMessageTable[typeof localMessages.GAME_END_OVERLAY_SHOW]>(
+				localMessages.GAME_END_OVERLAY_SHOW,
 			)
 		console.log('Game ended')
-		yield put<LocalMessage>({type: actions.GAME_END})
+		yield put<LocalMessage>({type: localMessages.GAME_END})
 		yield cancel(backgroundTasks)
 	}
 }

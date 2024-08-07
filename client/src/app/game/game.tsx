@@ -3,7 +3,7 @@ import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getEndGameOverlay,
@@ -70,7 +70,7 @@ function Game() {
 	}, [handleKeys])
 
 	const handleOpenModal = (id: ModalVariant | null) => {
-		dispatch({type: actions.GAME_MODAL_OPENED_SET, id: id})
+		dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: id})
 	}
 
 	const handleBoardClick = (
@@ -80,7 +80,7 @@ function Game() {
 		index?: number,
 	) => {
 		console.log('Slot selected: ', slotInfo)
-		dispatch({type: actions.GAME_SLOT_PICKED, slotInfo, player, row, index})
+		dispatch({type: localMessages.GAME_SLOT_PICKED, slotInfo, player, row, index})
 	}
 
 	const selectCard = (card: LocalCardInstance) => {
@@ -91,26 +91,26 @@ function Game() {
 
 			// Send pick card action with the hand info
 
-			dispatch({type: actions.GAME_PICK_REQUEST, slot: card.slot})
+			dispatch({type: localMessages.GAME_PICK_REQUEST, slot: card.slot})
 		} else {
 			if (equalCard(card, selectedCard)) {
-				dispatch({type: actions.GAME_CARD_SELECTED_SET, card: null})
+				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
 			} else {
 				console.log('Selecting card:', card)
-				dispatch({type: actions.GAME_CARD_SELECTED_SET, card})
+				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card})
 			}
 		}
 	}
 
 	if (availableActions.includes('PICK_REQUEST')) {
-		dispatch({type: actions.GAME_CARD_SELECTED_SET, card: null})
+		dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
 	}
 
 	function handleKeys(e: any) {
 		const chatIsClosed = settings.showChat === 'off'
 
 		if (e.key === 'Escape') {
-			dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'off'})
+			dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'off'})
 		}
 
 		if (e.key === 'c' || e.key === 'C') {
@@ -119,29 +119,29 @@ function Game() {
 			if (chatIsClosed) {
 				e.stopImmediatePropagation()
 				e.preventDefault()
-				dispatch({type: actions.SETTINGS_SET, key: 'showChat', value: 'on'})
+				dispatch({type: localMessages.SETTINGS_SET, key: 'showChat', value: 'on'})
 			}
 		}
 
 		if (chatIsClosed) {
 			if (e.key === 'a' || e.key === 'A') {
-				dispatch({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
+				dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 			}
 			if (e.key === 'e' || e.key === 'E') {
 				if (availableActions.includes('END_TURN')) {
-					dispatch({type: actions.GAME_ACTIONS_END_TURN})
+					dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 				}
 			}
 			if (e.key === 'm' || e.key === 'M') {
 				dispatch({
-					type: actions.SETTINGS_SET,
+					type: localMessages.SETTINGS_SET,
 					key: 'muted',
 					value: !settings.muted,
 				})
 			}
 			if (e.key === 't' || e.key === 'T') {
 				dispatch({
-					type: actions.SETTINGS_SET,
+					type: localMessages.SETTINGS_SET,
 					key: 'showAdvancedTooltips',
 					value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
 				})
@@ -178,7 +178,7 @@ function Game() {
 			gameState.turn.turnNumber === 1 ||
 			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
-			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.turn.currentPlayerEntity])
 
@@ -190,7 +190,7 @@ function Game() {
 			someCustom &&
 			gameState.turn.currentPlayerEntity !== gameState.playerEntity
 		) {
-			dispatch({type: actions.SOUND_PLAY, path: '/sfx/Click.ogg'})
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
 

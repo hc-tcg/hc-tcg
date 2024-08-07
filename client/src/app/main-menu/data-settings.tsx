@@ -1,7 +1,7 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
-import {actions} from 'logic/messages'
+import {localMessages} from 'logic/messages'
 import {useState} from 'react'
 import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -15,8 +15,8 @@ function DataSettings({setMenuSection}: Props) {
 	const [modal, setModal] = useState<any>(null)
 
 	const resetChatWindow = () => {
-		dispatch({type: actions.SETTINGS_RESET, value: 'chatPosition'})
-		dispatch({type: actions.SETTINGS_RESET, value: 'chatSize'})
+		dispatch({type: localMessages.SETTINGS_RESET, value: 'chatPosition'})
+		dispatch({type: localMessages.SETTINGS_RESET, value: 'chatSize'})
 	}
 
 	const handleReset = (
@@ -94,7 +94,7 @@ function DataSettings({setMenuSection}: Props) {
 					onClick={handleReset(
 						'Are you sure you want to reset your stats?',
 						'Your stats have been reset.',
-						() => dispatch({type: actions.FIREBASE_STATS_RESET}),
+						() => dispatch({type: localMessages.FIREBASE_STATS_RESET}),
 					)}
 				>
 					Reset Stats

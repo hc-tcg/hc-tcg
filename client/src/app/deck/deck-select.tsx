@@ -16,7 +16,7 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	convertLegacyDecks,
@@ -77,7 +77,7 @@ function SelectDeck({
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
-		dispatch({type: actions.TOAST_OPEN, ...toast})
+		dispatch({type: localMessages.TOAST_OPEN, ...toast})
 	const deleteToast: ToastT = {
 		open: true,
 		title: 'Deck Deleted!',
@@ -106,7 +106,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({type: actions.DECK_SET, deck: loadedDeck})
+		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
@@ -235,7 +235,7 @@ function SelectDeck({
 				'/sfx/Page_turn3.ogg',
 			]
 			dispatch({
-				type: actions.SOUND_PLAY,
+				type: localMessages.SOUND_PLAY,
 				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
 			})
 		}

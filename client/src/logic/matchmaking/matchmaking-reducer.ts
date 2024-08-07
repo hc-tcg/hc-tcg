@@ -1,4 +1,4 @@
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
@@ -18,61 +18,61 @@ const matchmakingReducer = (
 	action: LocalMessage,
 ): MatchmakingState => {
 	switch (action.type) {
-		case actions.MATCHMAKING_QUEUE_JOIN:
+		case localMessages.MATCHMAKING_QUEUE_JOIN:
 			return {
 				...state,
 				status: 'random_waiting',
 			}
-		case actions.MATCHMAKING_PRIVATE_GAME_CREATE:
+		case localMessages.MATCHMAKING_PRIVATE_GAME_CREATE:
 			return {
 				...state,
 				status: 'loading',
 			}
-		case actions.MATCHMAKING_PRIVATE_GAME_JOIN:
+		case localMessages.MATCHMAKING_PRIVATE_GAME_JOIN:
 			return {
 				...state,
 				status: 'private_code_needed',
 				invalidCode: false,
 			}
-		case actions.MATCHMAKING_WAITING_FOR_PLAYER:
+		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER:
 			return {
 				...state,
 				status: 'waiting_for_player',
 			}
-		case actions.MATCHMAKING_CODE_RECIEVED:
+		case localMessages.MATCHMAKING_CODE_RECIEVED:
 			return {
 				...state,
 				code: action.code,
 				status: 'private_waiting',
 			}
-		case actions.MATCHMAKING_CODE_INVALID:
+		case localMessages.MATCHMAKING_CODE_INVALID:
 			return {
 				...state,
 				status: 'private_code_needed',
 				invalidCode: true,
 			}
-		case actions.MATCHMAKING_CODE_SET:
+		case localMessages.MATCHMAKING_CODE_SET:
 			return {
 				...state,
 				code: action.code,
 				status: 'loading',
 			}
-		case actions.DISCONNECT:
-		case actions.MATCHMAKING_LEAVE:
+		case localMessages.DISCONNECT:
+		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
 				code: null,
 				status: null,
 				invalidCode: false,
 			}
-		case actions.MATCHMAKING_CLEAR:
+		case localMessages.MATCHMAKING_CLEAR:
 			return {
 				...state,
 				code: null,
 				status: null,
 				invalidCode: false,
 			}
-		case actions.GAME_START:
+		case localMessages.GAME_START:
 			return {
 				...state,
 				status: 'starting',

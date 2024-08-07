@@ -1,4 +1,4 @@
-import { actions } from 'logic/messages'
+import { localMessages } from 'logic/messages'
 import fbdbSaga from 'logic/fbdb/fbdb-saga'
 import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
@@ -33,7 +33,7 @@ function* rootSaga(): SagaIterator {
 	while (true) {
 		console.log('Starting game loop')
 		const result = yield race({
-			disconnect: take(actions.DISCONNECT),
+			disconnect: take(localMessages.DISCONNECT),
 			app: call(appSaga),
 		})
 		console.log('Game loop end: ', result)

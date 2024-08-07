@@ -4,7 +4,7 @@ import {getAvailableActions} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 
 type Props = {
 	closeModal: () => void
@@ -17,7 +17,7 @@ function EndTurnModal({closeModal}: Props) {
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
 	const handleEndTurn = () => {
-		dispatch({type: actions.GAME_TURN_END})
+		dispatch({type: localMessages.GAME_TURN_END})
 		closeModal()
 	}
 

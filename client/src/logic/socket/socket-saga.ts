@@ -1,6 +1,6 @@
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
-import {LocalMessage, actions} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
@@ -50,11 +50,11 @@ function* socketSaga(): SagaIterator {
 	yield* takeEvery(channel, function* (type) {
 		console.log('@socket: ', type)
 		if (type === 'connect')
-			yield* put<LocalMessage>({type: actions.SOCKET_CONNECT})
+			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECT})
 		if (type === 'disconnect')
-			yield* put<LocalMessage>({type: actions.SOCKET_DISCONNECT})
+			yield* put<LocalMessage>({type: localMessages.SOCKET_DISCONNECT})
 		if (type === 'connect_error')
-			yield* put(<LocalMessage>{type: actions.SOCKET_CONNECT_ERROR})
+			yield* put(<LocalMessage>{type: localMessages.SOCKET_CONNECT_ERROR})
 	})
 }
 

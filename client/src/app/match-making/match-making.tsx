@@ -2,7 +2,7 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {actions, useActionDispatch} from 'logic/messages'
+import {localMessages, useActionDispatch} from 'logic/messages'
 import {
 	getCode,
 	getInvalidCode,
@@ -19,13 +19,13 @@ function MatchMaking() {
 	const invalidCode = useSelector(getInvalidCode)
 
 	const handleCancel = () => {
-		dispatch({type: actions.MATCHMAKING_LEAVE})
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
 	}
 
 	const handleCodeSubmit = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const code = ev.currentTarget.gameCode.value.trim()
-		dispatch({type: actions.MATCHMAKING_CODE_SET, code})
+		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
 	}
 
 	const handleCodeClick = () => {
