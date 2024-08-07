@@ -24,21 +24,10 @@ import {
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
-import {
-	actionChannel,
-	all,
-	call,
-	cancel,
-	delay,
-	fork,
-	race,
-	take,
-} from 'typed-redux-saga'
+import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {printHooksState} from '../utils'
 import {getLocalGameState} from '../utils/state-gen'
-import chatSaga from './background/chat'
-import connectionStatusSaga from './background/connection-status'
 import applyEffectSaga from './turn-actions/apply-effect'
 import attackSaga from './turn-actions/attack'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -712,20 +701,12 @@ function* checkDeckedOut(game: GameModel) {
 	})
 }
 
-function* backgroundTasksSaga(game: GameModel) {
-	yield* all([fork(chatSaga, game), fork(connectionStatusSaga, game)])
-}
-
 function* gameSaga(game: GameModel) {
-	const backgroundTasks = yield* fork(backgroundTasksSaga, game)
-
 	while (true) {
 		game.state.turn.turnNumber++
 		const result = yield* call(turnSaga, game)
 		if (result === 'GAME_END') break
 	}
-
-	yield* cancel(backgroundTasks)
 }
 
 export default gameSaga

@@ -72,7 +72,7 @@ export function* playerDisconnectedSaga(
 		reconnect: take(
 			(action: any) =>
 				action.type === localMessages.PLAYER_RECONNECTED &&
-				action.payload.id === playerId,
+				action.player.id === playerId,
 		),
 	})
 

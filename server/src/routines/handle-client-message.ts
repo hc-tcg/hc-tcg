@@ -15,6 +15,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import { chatMessage } from './background/chat'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -48,6 +49,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.CANCEL_PRIVATE_GAME:
 			return yield* cancelPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.CHAT_MESSAGE:
+			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

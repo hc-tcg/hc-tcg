@@ -1,6 +1,4 @@
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
 	clientMessages,
@@ -12,19 +10,16 @@ import {
 	concatFormattedTextNodes,
 	formatText,
 } from 'common/utils/formatting'
-import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
+import {select} from 'typed-redux-saga'
+import {getGame} from 'selectors'
 
-const gameAction =
-	(type: string, game: {players: Record<string, PlayerModel>}) =>
-	(action: any) => {
-		return action.type === type && !!game.players[action.playerId]
-	}
-
-function* chatMessageSaga(
-	game: GameModel,
+export function* chatMessage(
 	action: RecievedClientMessage<typeof clientMessages.CHAT_MESSAGE>,
 ) {
+	let game = yield* select(getGame(action.playerId))
+	if (!game) return
+
 	const {
 		payload: {message},
 		playerId,
@@ -61,13 +56,3 @@ function* chatMessageSaga(
 		messages: game.chat,
 	})
 }
-
-function* chatSaga(game: GameModel) {
-	yield* takeEvery(
-		gameAction(clientMessages.CHAT_MESSAGE, game),
-		chatMessageSaga,
-		game,
-	)
-}
-
-export default chatSaga

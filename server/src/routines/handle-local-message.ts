@@ -1,6 +1,10 @@
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
-import {takeEvery} from 'typed-redux-saga'
+import {all, call, takeEvery} from 'typed-redux-saga'
 import {playerConnectedSaga, playerDisconnectedSaga} from './player'
+import {
+	sendGameStateOnReconnect,
+	statusChangedSaga,
+} from './background/connection-status'
 
 function* handler(message: LocalMessage) {
 	switch (message.type) {
@@ -10,6 +14,21 @@ function* handler(message: LocalMessage) {
 			)
 		case localMessages.CLIENT_DISCONNECTED:
 			return yield* playerDisconnectedSaga(
+				message as LocalMessageTable[typeof message.type],
+			)
+		case localMessages.PLAYER_RECONNECTED:
+			return yield* all([
+				call(
+					sendGameStateOnReconnect,
+					message as LocalMessageTable[typeof message.type],
+				),
+				call(
+					statusChangedSaga,
+					message as LocalMessageTable[typeof message.type],
+				),
+			])
+		case localMessages.PLAYER_DISCONNECTED:
+			return yield* statusChangedSaga(
 				message as LocalMessageTable[typeof message.type],
 			)
 	}
