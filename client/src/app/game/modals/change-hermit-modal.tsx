@@ -3,15 +3,16 @@ import Button from 'components/button'
 import Modal from 'components/modal'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import {getGameState} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
+import {localMessages, useActionDispatch} from 'logic/messages'
 
 type Props = {
 	closeModal: () => void
 	info: SlotInfo
 }
 function ChangeHermitModal({closeModal, info}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useActionDispatch()
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
 	const gameState = useSelector(getGameState)
@@ -37,12 +38,18 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const lastAction = hasActiveHermit && canChange
 
 	const handleYes = () => {
-		dispatch({type: 'CONFIRM_HERMIT_CHANGE', payload: true})
+		dispatch({
+			type: localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM,
+			confirmed: true,
+		})
 		closeModal()
 	}
 
 	const handleNo = () => {
-		dispatch({type: 'CONFIRM_HERMIT_CHANGE', payload: false})
+		dispatch({
+			type: localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM,
+			confirmed: false,
+		})
 		closeModal()
 	}
 

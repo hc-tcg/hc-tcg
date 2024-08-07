@@ -85,9 +85,8 @@ type Actions = [
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
 	{type: typeof localMessages.LOGIN; name: string},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
-	{type: typeof localMessages.DISCONNECT; errorMessage: string},
+	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
-	{type: typeof localMessages.DISCONNECT},
 	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string[]>},
 	{
 		type: typeof localMessages.TOAST_OPEN

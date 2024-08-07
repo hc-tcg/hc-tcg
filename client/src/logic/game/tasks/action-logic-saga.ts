@@ -34,11 +34,6 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		pState.board.singleUse.card
 	) {
 		yield call(singleUseSaga, pState.board.singleUse.card)
-	} else if (lastActionResult?.result === 'FAILURE_UNMET_CONDITION') {
-		yield put<LocalMessage>({
-			type: localMessages.GAME_MODAL_OPENED_SET,
-			id: 'unmet-condition',
-		})
 	}
 }
 

@@ -146,7 +146,7 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public broadcastToViewers(payload?: ServerMessage) {
+	public broadcastToViewers(payload: ServerMessage) {
 		broadcast(
 			this.viewers.map((viewer) => viewer.player),
 			payload,

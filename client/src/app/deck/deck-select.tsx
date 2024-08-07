@@ -448,15 +448,13 @@ function SelectDeck({
 											setSavedDecks(getSavedDecks())
 
 											dispatch({
-												type: 'SET_TOAST',
-												payload: {
-													show: true,
-													title: 'Convert Legacy Decks',
-													description: conversionCount
-														? `Converted ${conversionCount} decks!`
-														: 'No decks to convert!',
-													image: '/images/card-icon.png',
-												},
+												type: localMessages.TOAST_OPEN,
+												open: true,
+												title: 'Convert Legacy Decks',
+												description: conversionCount
+													? `Converted ${conversionCount} decks!`
+													: 'No decks to convert!',
+												image: '/images/card-icon.png',
 											})
 										}}
 									>

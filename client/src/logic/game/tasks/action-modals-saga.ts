@@ -12,7 +12,6 @@ import {
 	EndTurnModal,
 	ForfeitModal,
 	SelectCardsModal,
-	UnmetConditionModal,
 } from '../../../app/game/modals'
 import {getAvailableActions} from '../game-selectors'
 
@@ -22,7 +21,6 @@ export const MODAL_COMPONENTS = {
 	forfeit: ForfeitModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
-	'unmet-condition': UnmetConditionModal,
 
 	// Custom modals
 	copyAttack: CopyAttackModal,
