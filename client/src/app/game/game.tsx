@@ -96,7 +96,6 @@ function Game() {
 			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-
 			dispatch({
 				type: localMessages.GAME_TURN_ACTION,
 				action: {
