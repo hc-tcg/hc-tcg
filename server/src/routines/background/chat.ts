@@ -10,9 +10,9 @@ import {
 	concatFormattedTextNodes,
 	formatText,
 } from 'common/utils/formatting'
-import {broadcast} from '../../utils/comm'
-import {select} from 'typed-redux-saga'
 import {getGame} from 'selectors'
+import {select} from 'typed-redux-saga'
+import {broadcast} from '../../utils/comm'
 
 export function* chatMessage(
 	action: RecievedClientMessage<typeof clientMessages.CHAT_MESSAGE>,

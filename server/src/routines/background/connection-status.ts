@@ -1,12 +1,12 @@
 import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {localMessages, LocalMessageTable} from 'messages'
+import {LocalMessageTable, localMessages} from 'messages'
+import {getGame} from 'selectors'
 import {delay, select} from 'typed-redux-saga'
 import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 import {getLocalGameState} from '../../utils/state-gen'
-import {getGame} from 'selectors'
 
 export function* sendGameStateOnReconnect(
 	action: LocalMessageTable[typeof localMessages.PLAYER_RECONNECTED],
