@@ -138,9 +138,8 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
 			takeEvery(actions.GAME_FORFEIT, function* () {
-				yield call(sendMsg({type: clientMessages.FORFEIT}))
+				yield sendMsg({type: clientMessages.FORFEIT})
 			}),
-
 			fork(gameStateReceiver),
 			takeLatest(actions.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),
