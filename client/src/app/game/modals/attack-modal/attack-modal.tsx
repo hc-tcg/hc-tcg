@@ -1,6 +1,6 @@
 import {SingleUse, isHermit} from 'common/cards/base/types'
 import Modal from 'components/modal'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {
 	getAvailableActions,
 	getPlayerEntity,

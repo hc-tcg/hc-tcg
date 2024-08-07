@@ -1,4 +1,4 @@
-import {actions} from 'logic/actions'
+import {actions} from 'logic/messages'
 import {getOpenedModal} from 'logic/game/game-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './toolbar.module.scss'

@@ -1,5 +1,5 @@
 import {LocalGameRoot} from 'common/types/game-state'
-import {LocalMessage, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/messages'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,

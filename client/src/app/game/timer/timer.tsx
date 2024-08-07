@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import {LocalGameState} from 'common/types/game-state'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {
 	getCurrentCoinFlip,
 	getGameState,

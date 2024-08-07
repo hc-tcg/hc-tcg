@@ -1,4 +1,4 @@
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {getGameState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'

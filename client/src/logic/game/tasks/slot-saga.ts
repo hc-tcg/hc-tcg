@@ -1,5 +1,5 @@
 import {LocalCardInstance} from 'common/types/server-requests'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
 import {
 	getAvailableActions,
 	getCurrentPickMessage,

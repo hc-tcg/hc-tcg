@@ -1,6 +1,6 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import css from './game-modals.module.scss'
 
 type Props = {

@@ -1,7 +1,7 @@
 import assert from 'assert'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
 import gameSaga from 'logic/game/game-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {

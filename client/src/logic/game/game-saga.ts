@@ -2,7 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {
 	all,

@@ -4,7 +4,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
-import {LocalMessage, LocalMessageTable, actions} from 'logic/actions'
+import {LocalMessage, LocalMessageTable, actions} from 'logic/messages'
 import {
 	getActiveDeckName,
 	getSavedDeck,

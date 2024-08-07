@@ -2,7 +2,7 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {
 	getCode,
 	getInvalidCode,

@@ -1,5 +1,5 @@
 import {TurnAction} from 'common/types/game-state'
-import {LocalMessage, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'

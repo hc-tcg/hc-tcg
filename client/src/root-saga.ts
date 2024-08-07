@@ -1,4 +1,4 @@
-import { actions } from 'logic/actions'
+import { actions } from 'logic/messages'
 import fbdbSaga from 'logic/fbdb/fbdb-saga'
 import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'

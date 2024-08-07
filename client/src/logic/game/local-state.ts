@@ -2,7 +2,7 @@ import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
 import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {LocalMessageTable, actions} from 'logic/actions'
+import {LocalMessageTable, actions} from 'logic/messages'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
 

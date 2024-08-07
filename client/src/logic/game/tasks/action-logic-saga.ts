@@ -1,7 +1,7 @@
 import {isSingleUse} from 'common/cards/base/types'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
-import {LocalMessage, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'

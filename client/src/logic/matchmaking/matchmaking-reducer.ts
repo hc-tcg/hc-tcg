@@ -1,4 +1,4 @@
-import {LocalMessage, actions} from 'logic/actions'
+import {LocalMessage, actions} from 'logic/messages'
 import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {

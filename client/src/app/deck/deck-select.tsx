@@ -16,7 +16,7 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	convertLegacyDecks,

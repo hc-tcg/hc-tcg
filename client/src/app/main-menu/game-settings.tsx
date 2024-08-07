@@ -1,6 +1,6 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'

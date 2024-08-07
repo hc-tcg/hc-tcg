@@ -4,7 +4,7 @@ import {getAvailableActions} from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
-import {actions, useActionDispatch} from 'logic/actions'
+import {actions, useActionDispatch} from 'logic/messages'
 
 type Props = {
 	closeModal: () => void
