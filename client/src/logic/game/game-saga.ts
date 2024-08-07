@@ -111,7 +111,7 @@ function* gameStateSaga(
 			fork(slotSaga),
 			fork(actionLogicSaga, gameState),
 			fork(endTurnSaga),
-			takeEvery(actions.GAME_ACTIONS_ATTACK_START, attackSaga),
+			takeEvery(actions.GAME_ACTIONS_ATTACK, attackSaga),
 		]),
 	)
 

@@ -20,41 +20,21 @@ import Board from './board'
 import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
-import {
-	AttackModal,
-	ChangeHermitModal,
-	ConfirmModal,
-	EndTurnModal,
-	ForfeitModal,
-	SelectCardsModal,
-	UnmetConditionModal,
-} from './modals'
-import CopyAttackModal from './modals/copy-attack-modal'
-import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 import Toolbar from './toolbar'
-
-const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
-	attack: AttackModal,
-	confirm: ConfirmModal,
-	forfeit: ForfeitModal,
-	'change-hermit-modal': ChangeHermitModal,
-	'end-turn': EndTurnModal,
-	'unmet-condition': UnmetConditionModal,
-
-	// Custom modals
-	copyAttack: CopyAttackModal,
-	selectCards: SelectCardsModal,
-}
+import {
+	MODAL_COMPONENTS,
+	ModalVariant,
+} from 'logic/game/tasks/action-modals-saga'
 
 const renderModal = (
-	openedModal: {id: string; info: any} | null,
-	handleOpenModalId: (modalId: string | null) => void,
+	openedModal: {id: ModalVariant; info: any} | null,
+	handleOpenModalId: (modalId: ModalVariant | null) => void,
 ) => {
 	const closeModal = () => handleOpenModalId(null)
 	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
 		return null
 
-	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
+	const ModalComponent = MODAL_COMPONENTS[openedModal.id] as any
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
 }
 
@@ -89,7 +69,7 @@ function Game() {
 		}
 	}, [handleKeys])
 
-	const handleOpenModal = (id: string | null) => {
+	const handleOpenModal = (id: ModalVariant | null) => {
 		dispatch({type: actions.GAME_MODAL_OPENED_SET, id: id})
 	}
 

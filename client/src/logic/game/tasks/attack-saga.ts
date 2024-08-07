@@ -11,7 +11,7 @@ import {
 } from '../../../app/game/game-selectors'
 
 export function* attackSaga(
-	action: LocalMessageTable[typeof actions.GAME_ACTIONS_ATTACK_START],
+	action: LocalMessageTable[typeof actions.GAME_ACTIONS_ATTACK],
 ): SagaIterator {
 	const {attackType} = action
 	const actionType = attackToAttackAction[attackType]

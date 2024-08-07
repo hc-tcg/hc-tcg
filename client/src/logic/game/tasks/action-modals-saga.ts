@@ -5,16 +5,31 @@ import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {getAvailableActions} from '../game-selectors'
+import {
+	AttackModal,
+	ChangeHermitModal,
+	ConfirmModal,
+	CopyAttackModal,
+	EndTurnModal,
+	ForfeitModal,
+	SelectCardsModal,
+	UnmetConditionModal,
+} from '../../../app/game/modals'
 
-function* attackActionSaga(): SagaIterator {
-	while (true) {
-		yield take(actions.GAME_ACTIONS_ATTACK)
-		yield put<LocalMessage>({
-			type: actions.GAME_MODAL_OPENED_SET,
-			id: 'attack',
-		})
-	}
+export const MODAL_COMPONENTS = {
+	attack: AttackModal,
+	confirm: ConfirmModal,
+	forfeit: ForfeitModal,
+	'change-hermit-modal': ChangeHermitModal,
+	'end-turn': EndTurnModal,
+	'unmet-condition': UnmetConditionModal,
+
+	// Custom modals
+	copyAttack: CopyAttackModal,
+	selectCards: SelectCardsModal,
 }
+
+export type ModalVariant = keyof typeof MODAL_COMPONENTS
 
 export const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',
@@ -56,7 +71,6 @@ function* endTurnActionSaga(): SagaIterator {
 }
 
 function* actionModalsSaga(): SagaIterator {
-	yield fork(attackActionSaga)
 	yield fork(endTurnActionSaga)
 }
 

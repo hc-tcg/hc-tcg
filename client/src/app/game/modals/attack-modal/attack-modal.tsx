@@ -38,7 +38,7 @@ function AttackModal({closeModal}: Props) {
 	const singleUseInfo = singleUseCard ? singleUseCard : null
 
 	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
-		dispatch({type: actions.GAME_ACTIONS_ATTACK_START, attackType: type})
+		dispatch({type: actions.GAME_ACTIONS_ATTACK, attackType: type})
 		closeModal()
 	}
 

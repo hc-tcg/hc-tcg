@@ -1,5 +1,33 @@
-import {LocalGameRoot} from 'common/types/game-state'
+import {
+	GameEndReasonT,
+	GamePlayerEndOutcomeT,
+	LocalCurrentCoinFlip,
+	LocalGameState,
+	Message,
+} from 'common/types/game-state'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, actions} from 'logic/messages'
+import {ModalVariant} from './tasks/action-modals-saga'
+import {BattleLogModel} from 'common/models/battle-log-model'
+
+type LocalGameRoot = {
+	localGameState: LocalGameState | null
+	time: number
+
+	selectedCard: LocalCardInstance | null
+	openedModal: {
+		id: ModalVariant
+		info: null
+	} | null
+	endGameOverlay: {
+		reason: GameEndReasonT
+		outcome: GamePlayerEndOutcomeT
+	} | null
+	chat: Array<Message>
+	battleLog: BattleLogModel | null
+	currentCoinFlip: LocalCurrentCoinFlip | null
+	opponentConnected: boolean
+}
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,

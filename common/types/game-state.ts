@@ -1,7 +1,6 @@
 import type {Attach, CardProps, HasHealth} from '../cards/base/types'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
-import type {BattleLogModel} from '../models/battle-log-model'
 import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'
@@ -226,26 +225,6 @@ export type Message = {
 	sender: MessageSender
 	message: FormattedTextNode
 	createdAt: number
-}
-
-// state sent to client
-export type LocalGameRoot = {
-	localGameState: LocalGameState | null
-	time: number
-
-	selectedCard: LocalCardInstance | null
-	openedModal: {
-		id: string
-		info: null
-	} | null
-	endGameOverlay: {
-		reason: GameEndReasonT
-		outcome: GamePlayerEndOutcomeT
-	} | null
-	chat: Array<Message>
-	battleLog: BattleLogModel | null
-	currentCoinFlip: LocalCurrentCoinFlip | null
-	opponentConnected: boolean
 }
 
 export type GameLog = {

@@ -115,7 +115,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch({type: actions.GAME_ACTIONS_ATTACK})
+			dispatch({type: actions.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 		function handleEndTurn() {
 			dispatch({type: actions.GAME_ACTIONS_END_TURN})
