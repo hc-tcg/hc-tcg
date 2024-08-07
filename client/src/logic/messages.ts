@@ -78,7 +78,7 @@ export const localMessages = messages(
 	'SOUND_SECTION_CHANGE',
 )
 
-type Actions = [
+type Messages = [
 	{type: typeof localMessages.SOCKET_CONNECT},
 	{type: typeof localMessages.SOCKET_CONNECTING},
 	{type: typeof localMessages.SOCKET_DISCONNECT},
@@ -201,9 +201,9 @@ type Actions = [
 ]
 
 /** A message used locally on the client to update global state */
-export type LocalMessage = Message<Actions>
+export type LocalMessage = Message<Messages>
 
 /** A message used locally on the client to update global state */
-export type LocalMessageTable = MessageTable<Actions>
+export type LocalMessageTable = MessageTable<Messages>
 
 export const useMessageDispatch = useDispatch as () => Dispatch<LocalMessage>

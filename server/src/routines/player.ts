@@ -7,22 +7,26 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {delay, put, race, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {LocalMessage, localMessages, LocalMessageTable} from 'messages'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
 export function* playerConnectedSaga(
-	action: RecievedClientMessage<typeof clientMessages.CLIENT_CONNECTED>,
+	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
 ) {
-	const {playerName, minecraftName, deck, socket} = action.payload
+	const {playerName, minecraftName, deck, socket} = action
 
-	if (action.payload.playerId) {
-		const existingPlayer = root.players[action.payload.playerId]
-		const validPlayer = existingPlayer?.secret === action.payload.playerSecret
+	if (action.playerId) {
+		const existingPlayer = root.players[action.playerId]
+		const validPlayer = existingPlayer?.secret === action.playerSecret
 
 		if (validPlayer) {
 			existingPlayer.socket = socket
 			if (deck) existingPlayer.setPlayerDeck(deck)
-			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
+			yield* put<LocalMessage>({
+				type: localMessages.PLAYER_RECONNECTED,
+				player: existingPlayer,
+			})
 			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
 		} else {
 			console.log('invalid player connected')
@@ -36,7 +40,10 @@ export function* playerConnectedSaga(
 	root.addPlayer(newPlayer)
 
 	root.hooks.playerJoined.call(newPlayer)
-	yield* put({type: 'PLAYER_CONNECTED', payload: newPlayer})
+	yield* put<LocalMessage>({
+		type: localMessages.PLAYER_CONNECTED,
+		player: newPlayer,
+	})
 
 	yield* delay(500)
 
@@ -47,9 +54,9 @@ export function* playerConnectedSaga(
 }
 
 export function* playerDisconnectedSaga(
-	action: RecievedClientMessage<typeof clientMessages.CLIENT_DISCONNECTED>,
+	action: LocalMessageTable[typeof localMessages.CLIENT_DISCONNECTED],
 ) {
-	const {socket} = action.payload
+	const {socket} = action
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
@@ -58,18 +65,19 @@ export function* playerDisconnectedSaga(
 	// Remove player from queues straight away
 	root.hooks.playerLeft.call(player)
 
-	yield* put({type: 'PLAYER_DISCONNECTED', payload: player})
+	yield* put<LocalMessage>({type: localMessages.PLAYER_DISCONNECTED, player})
 
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
 			(action: any) =>
-				action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId,
+				action.type === localMessages.PLAYER_RECONNECTED &&
+				action.payload.id === playerId,
 		),
 	})
 
 	if (result.timeout) {
-		yield* put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
+		yield* put<LocalMessage>({type: localMessages.PLAYER_REMOVED, player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
 	}
 }

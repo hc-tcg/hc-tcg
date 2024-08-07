@@ -12,22 +12,12 @@ import {
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
-	playerConnectedSaga,
-	playerDisconnectedSaga,
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
-		case clientMessages.CLIENT_CONNECTED:
-			return yield* playerConnectedSaga(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.CLIENT_DISCONNECTED:
-			return yield* playerDisconnectedSaga(
-				message as RecievedClientMessage<typeof message.type>,
-			)
 		case clientMessages.UPDATE_DECK:
 			return yield* updateDeckSaga(
 				message as RecievedClientMessage<typeof message.type>,

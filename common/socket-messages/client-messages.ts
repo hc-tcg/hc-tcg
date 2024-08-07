@@ -5,8 +5,6 @@ import {PlayerDeckT} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages(
-	'CLIENT_CONNECTED',
-	'CLIENT_DISCONNECTED',
 	'GET_UPDATES',
 	'UPDATE_DECK',
 	'UPDATE_MINECRAFT_NAME',
@@ -21,16 +19,6 @@ export const clientMessages = messages(
 )
 
 export type ClientMessages = [
-	{
-		type: typeof clientMessages.CLIENT_CONNECTED
-		playerId: PlayerId
-		playerName: string
-		playerSecret: string
-		minecraftName: string
-		deck: PlayerDeckT
-		socket: any
-	},
-	{type: typeof clientMessages.CLIENT_DISCONNECTED},
 	{type: typeof clientMessages.GET_UPDATES},
 	{type: typeof clientMessages.UPDATE_DECK; deck: PlayerDeckT},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},

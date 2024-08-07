@@ -27,6 +27,7 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
+import {localMessages} from 'messages'
 
 function setupGame(
 	player1: PlayerModel,
@@ -90,7 +91,7 @@ function* gameManager(game: GameModel) {
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
 				(action: any) =>
-					action.type === 'PLAYER_REMOVED' &&
+					action.type === localMessages.PLAYER_REMOVED &&
 					playerIds.includes(action.payload.id),
 			),
 			forfeit: take(
