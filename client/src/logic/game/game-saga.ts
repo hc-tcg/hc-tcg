@@ -214,8 +214,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
-		if (hasOverlay)
-			yield take(localMessages.GAME_END_OVERLAY_HIDE)
+		if (hasOverlay) yield take(localMessages.GAME_END_OVERLAY_HIDE)
 		console.log('Game ended')
 		yield put<LocalMessage>({type: localMessages.GAME_END})
 		yield cancel(backgroundTasks)

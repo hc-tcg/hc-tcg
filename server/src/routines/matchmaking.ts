@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
@@ -8,6 +7,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {localMessages} from 'messages'
 import {
 	all,
 	cancel,
@@ -27,7 +27,6 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
-import {localMessages} from 'messages'
 
 function setupGame(
 	player1: PlayerModel,

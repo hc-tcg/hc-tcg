@@ -1,4 +1,4 @@
-import {LocalMessage, localMessages, LocalMessageTable} from 'messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {takeEvery} from 'typed-redux-saga'
 import {playerConnectedSaga, playerDisconnectedSaga} from './player'
 

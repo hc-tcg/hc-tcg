@@ -3,12 +3,12 @@ import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {localMessages} from 'messages'
 import {AnyAction} from 'redux'
 import {delay, takeEvery} from 'typed-redux-saga'
 import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 import {getLocalGameState} from '../../utils/state-gen'
-import {localMessages} from 'messages'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId

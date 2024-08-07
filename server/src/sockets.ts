@@ -1,8 +1,8 @@
 import {CONFIG} from 'common/config'
+import {LocalMessage, localMessages} from 'messages'
 import {Server} from 'socket.io'
 import store from './be-store'
 import version from './version'
-import {LocalMessage, localMessages} from 'messages'
 
 const isValidName = (name: string) => {
 	if (name.length < 1) return false

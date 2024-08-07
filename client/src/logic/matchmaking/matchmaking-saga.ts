@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import gameSaga from 'logic/game/game-saga'
