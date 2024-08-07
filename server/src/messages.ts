@@ -2,14 +2,14 @@ import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-actions'
 import {PlayerDeckT} from 'common/types/deck'
 
-export const localMessages = messages(
-	'CLIENT_CONNECTED',
-	'CLIENT_DISCONNECTED',
-	'PLAYER_CONNECTED',
-	'PLAYER_DISCONNECTED',
-	'PLAYER_RECONNECTED',
-	'PLAYER_REMOVED',
-)
+export const localMessages = messages({
+	CLIENT_CONNECTED: null,
+	CLIENT_DISCONNECTED: null,
+	PLAYER_CONNECTED: null,
+	PLAYER_DISCONNECTED: null,
+	PLAYER_RECONNECTED: null,
+	PLAYER_REMOVED: null,
+})
 
 type Messages = [
 	{

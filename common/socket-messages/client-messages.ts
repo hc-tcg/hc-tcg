@@ -4,19 +4,19 @@ import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const clientMessages = messages(
-	'GET_UPDATES',
-	'UPDATE_DECK',
-	'UPDATE_MINECRAFT_NAME',
-	'CREATE_PRIVATE_GAME',
-	'CANCEL_PRIVATE_GAME',
-	'JOIN_QUEUE',
-	'LEAVE_QUEUE',
-	'JOIN_PRIVATE_GAME',
-	'TURN_ACTION',
-	'FORFEIT',
-	'CHAT_MESSAGE',
-)
+export const clientMessages = messages({
+	GET_UPDATES: null,
+	UPDATE_DECK: null,
+	UPDATE_MINECRAFT_NAME: null,
+	CREATE_PRIVATE_GAME: null,
+	CANCEL_PRIVATE_GAME: null,
+	JOIN_QUEUE: null,
+	LEAVE_QUEUE: null,
+	JOIN_PRIVATE_GAME: null,
+	TURN_ACTION: null,
+	FORFEIT: null,
+	CHAT_MESSAGE: null,
+})
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},

@@ -11,15 +11,15 @@ type MessageTableInner<T extends Record<string, any>> = {
 export type MessageTable<T extends Record<number, {type: string}>> =
 	MessageTableInner<KeysToStrings<T>>
 
-type MessageDict<T extends Array<string>> = {
-	[Key in keyof {[n in keyof T as T[n] & string]: string}]: Key
+type MessageDict<T extends Record<string, null>> = {
+	[Key in keyof T]: Key
 }
 
-export function messages<T extends Array<string>>(
-	...actions: T
+export function messages<T extends Record<string, null>>(
+	actions: T,
 ): MessageDict<T> {
 	let actionsDict: Record<string, string> = {}
-	for (const action of actions) {
+	for (const action of Object.keys(actions)) {
 		actionsDict[action] = action
 	}
 	return actionsDict as any
