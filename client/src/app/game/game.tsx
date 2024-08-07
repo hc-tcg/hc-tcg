@@ -149,11 +149,7 @@ function Game() {
 			}
 			if (e.key === 'e' || e.key === 'E') {
 				if (availableActions.includes('END_TURN')) {
-					if (shouldShowEndTurnModal(availableActions, settings)) {
-						dispatch({type: actions.GAME_ACTIONS_END_TURN})
-					} else {
-						dispatch({type: actions.GAME_TURN_END})
-					}
+					dispatch({type: actions.GAME_ACTIONS_END_TURN})
 				}
 			}
 			if (e.key === 'm' || e.key === 'M') {

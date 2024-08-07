@@ -14,7 +14,7 @@ import {
 	AttackActionData,
 	PickSlotActionData,
 	attackToAttackAction,
-} from 'common/types/action-data'
+} from 'common/types/turn-action-data'
 import {TypeT} from 'common/types/cards'
 import {ActionResult, TurnAction, TurnActions} from 'common/types/game-state'
 import {hasEnoughEnergy} from 'common/utils/attacks'
@@ -42,6 +42,10 @@ import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
 import {broadcast} from 'utils/comm'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {
+	clientMessages,
+	ClientMessageTable,
+} from 'common/socket-messages/client-messages'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -244,7 +248,7 @@ function getAvailableActions(
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
 	return (action: any) =>
 		action.type === 'TURN_ACTION' &&
-		action.payload.type === actionType &&
+		action.payload.action.type === actionType &&
 		action.payload.playerEntity === playerEntity
 }
 
@@ -327,8 +331,11 @@ function* sendGameState(game: GameModel) {
 	})
 }
 
-function* turnActionSaga(game: GameModel, turnAction: any) {
-	const actionType = turnAction.type as TurnAction
+function* turnActionSaga(
+	game: GameModel,
+	turnAction: ClientMessageTable[typeof clientMessages.TURN_ACTION],
+) {
+	const actionType = turnAction.action.type
 
 	let endTurn = false
 
@@ -357,23 +364,24 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	}
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
+
 	switch (actionType) {
 		case 'PLAY_HERMIT_CARD':
 		case 'PLAY_ITEM_CARD':
 		case 'PLAY_EFFECT_CARD':
 		case 'PLAY_SINGLE_USE_CARD':
-			result = yield* call(playCardSaga, game, turnAction)
+			result = yield* call(playCardSaga, game, turnAction.action)
 			break
 		case 'SINGLE_USE_ATTACK':
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
-			result = yield* call(attackSaga, game, turnAction)
+			result = yield* call(attackSaga, game, turnAction.action)
 			break
 		case 'CHANGE_ACTIVE_HERMIT':
-			result = yield* call(changeActiveHermitSaga, game, turnAction)
+			result = yield* call(changeActiveHermitSaga, game, turnAction.action)
 			break
 		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, turnAction)
+			result = yield* call(applyEffectSaga, game, turnAction.action)
 			break
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
@@ -382,14 +390,14 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(
 				pickRequestSaga,
 				game,
-				(turnAction as PickSlotActionData)?.payload.entity,
+				(turnAction.action as PickSlotActionData)?.entity,
 			)
 			break
 		case 'MODAL_REQUEST':
 			result = yield* call(
 				modalRequestSaga,
 				game,
-				turnAction?.payload?.modalResult,
+				turnAction?.action?.modalResult,
 			)
 			break
 		case 'END_TURN':
@@ -560,9 +568,7 @@ function* turnActionsSaga(game: GameModel) {
 						// There are no active requests left, and we're in the middle of an attack. Execute it now.
 						const turnAction: AttackActionData = {
 							type: attackToAttackAction[currentAttack],
-							payload: {
-								player: game.currentPlayer.entity,
-							},
+							player: game.currentPlayer.entity,
 						}
 						yield* call(attackSaga, game, turnAction, false)
 					}

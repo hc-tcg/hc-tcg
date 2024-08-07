@@ -13,10 +13,8 @@ import {
 	getPlayerState,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
-import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
 
 type Props = {
@@ -37,17 +35,12 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const settings = useSelector(getSettings)
 	const dispatch = useActionDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
-		if (shouldShowEndTurnModal(availableActions, settings)) {
-			dispatch({type: actions.GAME_ACTIONS_END_TURN})
-		} else {
-			dispatch({type: actions.GAME_TURN_END})
-		}
+		dispatch({type: actions.GAME_ACTIONS_END_TURN})
 	}
 
 	let endTurnButton = (

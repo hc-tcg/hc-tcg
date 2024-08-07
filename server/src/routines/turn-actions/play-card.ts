@@ -1,7 +1,7 @@
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {PlayCardActionData} from 'common/types/action-data'
+import {PlayCardActionData} from 'common/types/turn-action-data'
 import {ActionResult} from 'common/types/game-state'
 
 function* playCardSaga(
@@ -9,8 +9,8 @@ function* playCardSaga(
 	turnAction: PlayCardActionData,
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
-	const slotEntity = turnAction?.payload.slot
-	const localCard = turnAction?.payload.card
+	const slotEntity = turnAction?.slot
+	const localCard = turnAction?.card
 	if (!slotEntity || !localCard) {
 		return 'FAILURE_INVALID_DATA'
 	}

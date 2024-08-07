@@ -11,31 +11,7 @@ import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
-import {CardCategoryT} from 'common/types/cards'
-import {AttackAction, PlayCardAction} from 'common/types/game-state'
-import {HermitAttackType} from 'common/types/attack'
-
-export const slotToPlayCardAction: Record<
-	CardCategoryT,
-	PlayCardAction | null
-> = {
-	hermit: 'PLAY_HERMIT_CARD',
-	item: 'PLAY_ITEM_CARD',
-	attach: 'PLAY_EFFECT_CARD',
-	single_use: 'PLAY_SINGLE_USE_CARD',
-}
-
-export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
-	'single-use': 'SINGLE_USE_ATTACK',
-	primary: 'PRIMARY_ATTACK',
-	secondary: 'SECONDARY_ATTACK',
-}
-
-export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
-	SINGLE_USE_ATTACK: 'single-use',
-	PRIMARY_ATTACK: 'primary',
-	SECONDARY_ATTACK: 'secondary',
-}
+import {slotToPlayCardAction} from 'common/types/turn-action-data'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof actions.GAME_SLOT_PICKED],
@@ -45,8 +21,8 @@ function* pickForPickRequestSaga(
 
 	yield put<LocalMessage>({
 		type: actions.GAME_TURN_ACTION,
-		action: 'PICK_REQUEST',
-		data: {
+		action: {
+			type: 'PICK_REQUEST',
 			entity: action.slotInfo.slotEntity,
 		},
 	})
@@ -73,8 +49,8 @@ function* pickWithSelectedSaga(
 
 		yield* put<LocalMessage>({
 			type: actions.GAME_TURN_ACTION,
-			action: actionType,
-			data: {
+			action: {
+				type: actionType,
 				slot: pickInfo.slotEntity,
 				card: selectedCard,
 			},
@@ -116,13 +92,13 @@ function* pickWithoutSelectedSaga(
 			if (!result.confirmed) return
 		}
 
-		const data: ChangeActiveHermitActionData = {
-			type: 'CHANGE_ACTIVE_HERMIT',
-			payload: {
+		yield* put<LocalMessage>({
+			type: actions.GAME_TURN_ACTION,
+			action: {
+				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: action.slotInfo.slotEntity,
 			},
-		}
-		yield put<LocalMessage>(data)
+		})
 	}
 }
 

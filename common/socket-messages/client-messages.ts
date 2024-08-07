@@ -2,6 +2,7 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-actions'
 import {PlayerDeckT} from '../types/deck'
+import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages(
 	'CLIENT_CONNECTED',
@@ -40,11 +41,8 @@ export type ClientMessages = [
 	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
 	{
 		type: typeof clientMessages.TURN_ACTION
-		action: {
-			type: string
-			playerEntity: PlayerEntity
-			payload: any
-		}
+		playerEntity: PlayerEntity
+		action: AnyTurnActionData
 	},
 	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},

@@ -30,15 +30,17 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import slotSaga from './tasks/slot-saga'
+import {
+	AnyTurnActionData,
+	ChangeActiveHermitActionData,
+} from 'common/types/turn-action-data'
+import endTurnSaga from './tasks/end-turn-saga'
 
-function* sendTurnAction(type: string, entity: PlayerEntity, payload: any) {
+function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* sendMsg({
 		type: clientMessages.TURN_ACTION,
-		action: {
-			type,
-			playerEntity: entity,
-			payload: {...payload},
-		},
+		playerEntity: entity,
+		action: action,
 	})
 }
 
@@ -46,6 +48,7 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof actions.GAME_TURN_ACTION]
 	>(actions.GAME_TURN_ACTION)
+	console.log(turnAction)
 
 	if (
 		[
@@ -53,42 +56,34 @@ function* actionSaga(playerEntity: PlayerEntity) {
 			'PLAY_ITEM_CARD',
 			'PLAY_EFFECT_CARD',
 			'PLAY_SINGLE_USE_CARD',
-		].includes(turnAction.action)
+		].includes(turnAction.action.type)
 	) {
 		// This is updated for the client in slot-saga
-		yield* call(
-			sendTurnAction,
-			turnAction.action,
-			playerEntity,
-			turnAction.data,
-		)
-	} else if (turnAction.action === 'APPLY_EFFECT') {
+		yield* call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'APPLY_EFFECT') {
 		yield* localApplyEffect()
-		yield call(sendTurnAction, 'APPLY_EFFECT', playerEntity, turnAction.data)
-	} else if (turnAction.action === 'REMOVE_EFFECT') {
+		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
 		yield* localRemoveEffect()
-		yield call(sendTurnAction, 'REMOVE_EFFECT', playerEntity, {})
-	} else if (turnAction.action === 'PICK_REQUEST') {
-		yield call(sendTurnAction, 'PICK_REQUEST', playerEntity, turnAction.data)
-	} else if (turnAction.action === 'MODAL_REQUEST') {
-		yield call(sendTurnAction, 'MODAL_REQUEST', playerEntity, turnAction.data)
+		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'PICK_REQUEST') {
+		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'MODAL_REQUEST') {
+		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (
 		['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(
-			turnAction.action,
+			turnAction.action.type,
 		)
 	) {
-		yield call(sendTurnAction, turnAction.action, playerEntity, turnAction.data)
-	} else if (turnAction.action === 'END_TURN') {
+		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'END_TURN') {
 		yield* localEndTurn()
-		yield call(sendTurnAction, 'END_TURN', playerEntity, {})
-	} else if (turnAction.action === 'CHANGE_ACTIVE_HERMIT') {
-		yield* localChangeActiveHermit(turnAction)
-		yield call(
-			sendTurnAction,
-			'CHANGE_ACTIVE_HERMIT',
-			playerEntity,
-			turnAction.data,
+		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
+		yield* localChangeActiveHermit(
+			turnAction.action as ChangeActiveHermitActionData,
 		)
+		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
 }
 
@@ -111,12 +106,15 @@ function* gameStateSaga(
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
 		return
 
-	const logic = yield* all([
-		fork(actionModalsSaga),
-		fork(slotSaga),
-		fork(actionLogicSaga, gameState),
-		takeEvery(actions.GAME_ACTIONS_ATTACK_START, attackSaga),
-	])
+	const logic = yield* fork(() =>
+		all([
+			fork(actionModalsSaga),
+			fork(slotSaga),
+			fork(actionLogicSaga, gameState),
+			fork(endTurnSaga),
+			takeEvery(actions.GAME_ACTIONS_ATTACK_START, attackSaga),
+		]),
+	)
 
 	// Handle core funcionality
 	yield call(actionSaga, gameState.playerEntity)

@@ -16,6 +16,7 @@ import {
 	PlayerInfo,
 	SlotInfo,
 } from 'common/types/server-requests'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
 
@@ -64,9 +65,9 @@ export const actions = messages(
 	'GAME_EFFECT_APPLY',
 	'GAME_EFFECT_REMOVE',
 	'GAME_HERMIT_CHANGE_CONFIRM',
-	'GAME_TURN_END',
 	'CHAT_MESSAGE',
 	'CHAT_UPDATE',
+	'GAME_TURN_END',
 	'GAME_ACTIONS_ATTACK_START',
 	'GAME_ACTIONS_ATTACK',
 	'GAME_ACTIONS_END_TURN',
@@ -162,15 +163,18 @@ type Actions = [
 	{type: typeof actions.GAME_MODAL_REQUEST; modalResult: LocalModalResult},
 	{type: typeof actions.GAME_EFFECT_APPLY; payload: any},
 	{type: typeof actions.GAME_EFFECT_REMOVE},
-	{type: typeof actions.GAME_HERMIT_CHANGE_CONFIRM, confirmed: boolean},
-	{type: typeof actions.GAME_TURN_END},
+	{type: typeof actions.GAME_HERMIT_CHANGE_CONFIRM; confirmed: boolean},
 	{type: typeof actions.CHAT_MESSAGE; message: string},
 	{type: typeof actions.CHAT_UPDATE; messages: Array<ChatMessage>},
+	{type: typeof actions.GAME_TURN_END},
 	{
 		type: typeof actions.GAME_ACTIONS_ATTACK_START
 		attackType: HermitAttackType
 	},
-	{type: typeof actions.GAME_TURN_ACTION; action: TurnAction; data: any},
+	{
+		type: typeof actions.GAME_TURN_ACTION
+		action: AnyTurnActionData
+	},
 	{type: typeof actions.GAME_ACTIONS_ATTACK},
 	{type: typeof actions.GAME_ACTIONS_END_TURN},
 	{type: typeof actions.GAME_UPDATE},

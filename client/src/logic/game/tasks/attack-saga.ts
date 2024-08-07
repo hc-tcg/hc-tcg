@@ -1,4 +1,7 @@
-import {AttackActionData, attackToAttackAction} from 'common/types/turn-action-data'
+import {
+	AttackActionData,
+	attackToAttackAction,
+} from 'common/types/turn-action-data'
 import {LocalMessageTable, actions} from 'logic/actions'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {SagaIterator} from 'redux-saga'
@@ -24,9 +27,7 @@ export function* attackSaga(
 
 	const attackData: AttackActionData = {
 		type: actionType,
-		payload: {
-			player: player.entity,
-		},
+		player: player.entity,
 	}
 	yield put(attackData)
 }
