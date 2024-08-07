@@ -20,7 +20,7 @@ type LocalGameRoot = {
 		info: null
 	} | null
 	endGameOverlay: {
-		reason: GameEndReasonT
+		reason: GameEndReasonT | null
 		outcome: GamePlayerEndOutcomeT
 	} | null
 	chat: Array<Message>
@@ -88,13 +88,10 @@ const gameReducer = (
 		case localMessages.GAME_END_OVERLAY_SHOW:
 			return {
 				...state,
-				endGameOverlay:
-					action.reason && action.outcome
-						? {
-								reason: action.reason,
-								outcome: action.outcome,
-							}
-						: null,
+				endGameOverlay: {
+					reason: action.reason || null,
+					outcome: action.outcome,
+				},
 			}
 		case localMessages.CHAT_UPDATE:
 			return {

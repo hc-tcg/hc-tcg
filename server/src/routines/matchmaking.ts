@@ -114,12 +114,12 @@ function* gameManager(game: GameModel) {
 				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
-			assert(game.endInfo.reason, 'Games can not end without a reason')
+			// assert(game.endInfo.reason, 'Games can not end without a reason')
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
-				reason: game.endInfo.reason,
+				reason: game.endInfo.reason || undefined,
 			})
 		}
 		game.endInfo.outcome = getGameOutcome(game, result)

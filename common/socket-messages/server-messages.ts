@@ -61,7 +61,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GamePlayerEndOutcomeT
-		reason: GameEndReasonT
+		reason?: GameEndReasonT
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

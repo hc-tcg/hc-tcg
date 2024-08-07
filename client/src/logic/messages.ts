@@ -153,7 +153,7 @@ type Actions = [
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GamePlayerEndOutcomeT
-		reason: GameEndReasonT
+		reason?: GameEndReasonT
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_HIDE

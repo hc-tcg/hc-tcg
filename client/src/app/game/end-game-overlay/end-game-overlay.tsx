@@ -9,7 +9,7 @@ import css from './end-game-overlay.module.scss'
 
 type Props = {
 	outcome?: GamePlayerEndOutcomeT
-	reason?: GameEndReasonT
+	reason?: GameEndReasonT | null
 }
 
 const EndGameOverlay = ({outcome, reason}: Props) => {
@@ -17,6 +17,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 	const opponent = useSelector(getOpponentName)
 	let animation
 	let winCondition = false
+
 	const closeModal = () => {
 		dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
 	}
