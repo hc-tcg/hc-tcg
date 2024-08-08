@@ -153,7 +153,7 @@ function Settings({setMenuSection}: Props) {
 						</div>
 						<div className={css.stat}>
 							<span>Winrate</span>
-							<span>{totalGamesPlayed > 0 ? winrate + '%' : 'N/A'}</span>
+							<span>{totalGames > stats.t ? winrate + '%' : 'N/A'}</span>
 						</div>
 					</div>
 				</div>
