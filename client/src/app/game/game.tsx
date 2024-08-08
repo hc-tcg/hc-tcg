@@ -122,7 +122,7 @@ function Game() {
 			dispatch({
 				type: localMessages.SETTINGS_SET,
 				key: 'showChat',
-				value: 'off',
+				value: false,
 			})
 		}
 
