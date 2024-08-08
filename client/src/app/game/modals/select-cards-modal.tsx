@@ -47,18 +47,22 @@ function SelectCardsModal({closeModal}: Props) {
 	const handlePrimary = () => {
 		if (selectionSize === 0) {
 			dispatch({
-				type: localMessages.GAME_MODAL_REQUEST,
-				modalResult: {result: true, cards: null},
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'MODAL_REQUEST',
+					modalResult: {result: true, cards: null},
+				},
 			})
 			closeModal()
 			return
 		}
+
 		if (selected.length <= selectionSize) {
 			dispatch({
-				type: localMessages.GAME_MODAL_REQUEST,
-				modalResult: {
-					result: true,
-					cards: selected.map((card) => card.entity),
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'MODAL_REQUEST',
+					modalResult: selected.map((card) => card.entity),
 				},
 			})
 			closeModal()
@@ -67,8 +71,11 @@ function SelectCardsModal({closeModal}: Props) {
 
 	const handleClose = () => {
 		dispatch({
-			type: localMessages.GAME_MODAL_REQUEST,
-			modalResult: {result: false, cards: null},
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {result: false, cards: null},
+			},
 		})
 		closeModal()
 	}

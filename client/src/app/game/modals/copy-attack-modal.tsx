@@ -24,24 +24,33 @@ function CopyAttackModal({closeModal}: Props) {
 
 	const handlePrimary = () => {
 		dispatch({
-			type: localMessages.GAME_MODAL_REQUEST,
-			modalResult: {pick: 'primary'},
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {pick: 'primary'},
+			},
 		})
 		closeModal()
 	}
 
 	const handleSecondary = () => {
 		dispatch({
-			type: localMessages.GAME_MODAL_REQUEST,
-			modalResult: {pick: 'secondary'},
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {pick: 'secondary'},
+			},
 		})
 		closeModal()
 	}
 
 	const handleClose = () => {
 		dispatch({
-			type: localMessages.GAME_MODAL_REQUEST,
-			modalResult: {cancel: true},
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {cancel: 'true'},
+			},
 		})
 		closeModal()
 	}
