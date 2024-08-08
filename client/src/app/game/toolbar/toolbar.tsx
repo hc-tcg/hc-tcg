@@ -53,7 +53,7 @@ function Toolbar() {
 			</button>
 
 			{/* Toggle Chat */}
-			{settings.disableChat === 'off' && <ChatItem />}
+			{!settings.disableChat && <ChatItem />}
 
 			{/* Toggle Tooltips */}
 			<TooltipsItem />
