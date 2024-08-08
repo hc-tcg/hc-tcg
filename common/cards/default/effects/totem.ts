@@ -7,8 +7,9 @@ import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
-const Totem: Hermit = {
+const Totem: Attach = {
 	...attach,
 	id: 'totem',
 	numericId: 101,
@@ -37,7 +38,7 @@ const Totem: Hermit = {
 
 			if (!target) return
 
-			let targetAttach = target.getHermit()
+			let targetHermit = target.getHermit()
 			if (targetHermit?.isAlive()) return
 
 			target.health = 10

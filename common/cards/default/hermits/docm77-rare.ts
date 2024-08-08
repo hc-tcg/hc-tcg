@@ -42,9 +42,9 @@ const Docm77Rare: Hermit = {
 			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(component.entity, this.props.secondary.damage)
+				attack.addDamage(component.entity, this.secondary.damage)
 			} else {
-				attack.reduceDamage(component.entity, this.props.secondary.damage / 2)
+				attack.reduceDamage(component.entity, this.secondary.damage / 2)
 			}
 		})
 	},

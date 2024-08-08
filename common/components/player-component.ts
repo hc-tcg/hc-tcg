@@ -316,10 +316,10 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[
-						card,
-						this.game.getPickableSlots(card.card.props.attachCondition),
-					] as [CardComponent, Array<SlotEntity>],
+					[card, this.game.getPickableSlots(card.card.attachCondition)] as [
+						CardComponent,
+						Array<SlotEntity>,
+					],
 			)
 	}
 }

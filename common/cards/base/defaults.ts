@@ -1,7 +1,17 @@
-import {CardComponent, ObserverComponent} from '../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../components'
 import query from '../../components/query'
+import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
+import {HermitAttackType} from '../../types/attack'
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {Attach, Hermit, SingleUse} from './types'
+
+export function getFormattedDescription(
+	this: Attach | SingleUse,
+): FormattedTextNode {
+	return formatText(this.description)
+}
 
 export const card = {
 	onCreate(_game: GameModel, _component: CardComponent) {},
@@ -15,6 +25,11 @@ export const card = {
 		_component: CardComponent,
 		_observer: ObserverComponent,
 	) {},
+	/** Gets the log entry for this attack*/
+	getLog(values: PlayCardLog) {
+		if (!this.log) return ''
+		return this.log(values)
+	},
 }
 
 export const item = {
@@ -46,6 +61,35 @@ export const hermit = {
 	),
 	log: (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
+	getAttack(
+		this: Hermit,
+		game: GameModel,
+		component: CardComponent,
+		hermitAttackType: HermitAttackType,
+	): AttackModel | null {
+		const attack = game.newAttack({
+			attacker: component.entity,
+			target: game.components.findEntity(
+				RowComponent,
+				query.row.opponentPlayer,
+				query.row.active,
+			),
+			type: hermitAttackType,
+			createWeakness: 'ifWeak',
+			log: (values) =>
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+					values.target
+				} with ${values.attackName} for ${values.damage} damage`,
+		})
+
+		if (attack.type === 'primary') {
+			attack.addDamage(component.entity, this.primary.damage)
+		} else if (attack.type === 'secondary') {
+			attack.addDamage(component.entity, this.secondary.damage)
+		}
+
+		return attack
+	},
 }
 
 export const attach = {
@@ -62,6 +106,7 @@ export const attach = {
 	),
 	log: (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
+	getFormattedDescription,
 }
 
 export const singleUse = {
@@ -75,4 +120,5 @@ export const singleUse = {
 		query.slot.playerHasActiveHermit,
 		query.actionAvailable('PLAY_SINGLE_USE_CARD'),
 	),
+	getFormattedDescription,
 }

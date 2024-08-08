@@ -17,6 +17,7 @@ import type {
 	TypeT,
 } from '../../types/cards'
 import type {WithoutFunctions} from '../../types/server-requests'
+import {FormattedTextNode} from '../../utils/formatting'
 
 export type Card = {
 	id: string
@@ -95,13 +96,13 @@ export type Hermit = HasHealth & {
 	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharoah'
-	background?: 'alter_egos' | 'advent_of_tcg'
-	getAttack?(
+	getAttack(
 		game: GameModel,
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	): AttackModel | null
+	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharoah'
+	background?: 'alter_egos' | 'advent_of_tcg'
 }
 
 export function isHermit(
@@ -117,6 +118,7 @@ export function isHermit(
 export type Attach = Card &
 	Description & {
 		attachable: null
+		getFormattedDescription(): FormattedTextNode
 	}
 
 export function isAttach(
@@ -135,6 +137,7 @@ export type SingleUse = Card &
 		showConfirmationModal: boolean
 		hasAttack: boolean
 		attackPreview?: (game: GameModel) => string
+		getFormattedDescription(): FormattedTextNode
 	}
 
 export function isSingleUse(
