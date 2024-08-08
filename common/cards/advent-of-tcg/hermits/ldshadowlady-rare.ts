@@ -1,5 +1,10 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -36,75 +41,60 @@ class LDShadowLadyRare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
-		player.hooks.afterAttack.add(component, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(component) ||
-				attack.type !== 'secondary' ||
-				!attack.getTarget()
-			)
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
 			if (
-				!game.someSlotFulfills(
-					slot.every(slot.opponent, slot.hermit, slot.active),
+				!game.components.exists(
+					SlotComponent,
+					query.slot.opponent,
+					query.slot.hermit,
+					query.slot.active,
 				)
 			)
 				return
 
-			const pickCondition = slot.every(
-				slot.empty,
-				slot.hermit,
-				slot.opponent,
-				slot.not(slot.active),
+			const pickCondition = query.every(
+				query.slot.hermit,
+				query.slot.opponent,
+				query.slot.empty,
+				query.not(query.slot.active),
 			)
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				player: player.entity,
-				id: this.props.id,
+				id: component.entity,
 				message: "Move your opponent's active Hermit to a new slot.",
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (pickedSlot.rowIndex === null) return
-					if (opponentPlayer.board.activeRow === null) return
+					if (!pickedSlot.inRow()) return
+					if (opponentPlayer.activeRow === null) return
 
-					game.swapRows(
-						opponentPlayer,
-						opponentPlayer.board.activeRow,
-						pickedSlot.rowIndex,
-					)
+					game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
 				},
 				onTimeout() {
-					if (opponentPlayer.board.activeRow === null) return
+					if (opponentPlayer.activeRow === null) return
 
-					const emptyHermitSlots = game.filterSlots(pickCondition)
-
-					const pickedRowIndex =
-						emptyHermitSlots[
-							Math.floor(Math.random() * emptyHermitSlots.length)
-						].rowIndex
-
-					if (!pickedRowIndex) return
-
-					game.swapRows(
-						opponentPlayer,
-						opponentPlayer.board.activeRow,
-						pickedRowIndex,
+					const emptyOpponentRow = game.components.find(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.not(query.row.active),
+						query.not(query.row.hasHermit),
 					)
+
+					if (!emptyOpponentRow) return
+
+					game.swapRows(opponentPlayer.activeRow, emptyOpponentRow)
 				},
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-
-		player.hooks.afterAttack.remove(component)
 	}
 }
 

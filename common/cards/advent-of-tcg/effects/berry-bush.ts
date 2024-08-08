@@ -1,12 +1,16 @@
-import {CardComponent} from '../../../components'
-import {query, slot} from '../../../components/query'
+import {
+	CardComponent,
+	HandSlotComponent,
+	ObserverComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {Attach, HasHealth} from '../../base/types'
 
 class BerryBush extends Card {
-	props: Attach = {
+	props: Attach & HasHealth = {
 		...attach,
 		id: 'berry_bush',
 		numericId: 200,
@@ -14,72 +18,50 @@ class BerryBush extends Card {
 		expansion: 'advent_of_tcg',
 		rarity: 'ultra_rare',
 		tokens: 2,
+		health: 50,
 		description:
 			"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 		attachCondition: query.every(
-			slot.opponent,
-			slot.hermit,
-			slot.empty,
-			slot.playerHasActiveHermit,
-			slot.opponentHasActiveHermit,
-			query.not(slot.frozen),
+			query.slot.opponent,
+			query.slot.hermit,
+			query.slot.empty,
+			query.slot.playerHasActiveHermit,
+			query.slot.opponentHasActiveHermit,
+			query.not(query.slot.frozen),
 		),
 	}
 
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer, rowId: row} = pos
-		if (!row) return
+		const {player, opponentPlayer} = component
 
-		row.health = 30
-
-		player.hooks.afterAttack.add(component, () => {
-			if (!row.health) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
-			}
-		})
-
-		opponentPlayer.hooks.afterAttack.add(component, () => {
-			if (!row.health) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
+		observer.subscribe(opponentPlayer.hooks.afterAttack, () => {
+			if (component.slot.inRow() && !component.slot.row.health) {
 				for (let i = 0; i < 2; i++) {
-					opponentPlayer.hand.push(
-						CardComponent.fromCardId('instant_health_ii'),
+					game.components.new(
+						CardComponent,
+						'instant_health_ii',
+						game.components.new(HandSlotComponent, opponentPlayer.entity)
+							.entity,
 					)
 				}
 			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(component, () => {
-			if (!row.health || row.health <= 10) {
-				discardCard(game, row.hermitCard)
-				return
-			}
-			row.health -= 10
+		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
+			if (component.slot.inRow() && component.slot.row.health)
+				component.slot.row.damage(10)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer, type, rowId: row} = pos
-
-		if (getActiveRow(player) === row) {
-			player.changeActiveRow(null)
-		}
-
-		if (slot && type === 'hermit' && row) {
-			row.health = null
-			row.effectCard = null
-			row.itemCards = []
-		}
-
-		player.hooks.afterAttack.remove(component)
-		opponentPlayer.hooks.afterAttack.remove(component)
-		opponentPlayer.hooks.onTurnEnd.remove(component)
+		observer.subscribe(player.hooks.freezeSlots, () => {
+			if (!component.slot.inRow()) return query.nothing
+			return query.every(
+				query.slot.player(component.player.entity),
+				query.slot.rowIs(component.slot.row.entity),
+			)
+		})
 	}
 }
 

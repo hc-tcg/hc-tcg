@@ -1,6 +1,9 @@
 import type Card from './base/card'
 
-// import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
+import adventOfTcgEffectCards from './advent-of-tcg/effects'
+import adventOfTcgHermitCards from './advent-of-tcg/hermits'
+import adventOfTcgItemCards from './advent-of-tcg/items'
+import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits'
 import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
 import alterEgosIIIItemCards from './alter-egos-iii/items'
@@ -9,9 +12,7 @@ import alterEgosHermitCards from './alter-egos/hermits'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 import {CardClass} from './base/card'
 import defaultEffectCards from './default/effects'
-// import adventOfTcgEffectCards from './advent-of-tcg/effects'
 import defaultHermitCards from './default/hermits'
-// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
 import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import seasonXHermitCards from './season-x/hermits'
@@ -19,13 +20,13 @@ import seasonXHermitCards from './season-x/hermits'
 const effectCardClasses: Array<CardClass> = [
 	...defaultEffectCards,
 	...alterEgoEffectCards,
-	// ...adventOfTcgEffectCards,
+	...adventOfTcgEffectCards,
 ]
 
 const hermitCardClasses: Array<CardClass> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
-	// ...adventOfTcgHermitCards,
+	...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
 	...seasonXHermitCards,
 	...alterEgosIIIHermitCards,
@@ -34,12 +35,13 @@ const hermitCardClasses: Array<CardClass> = [
 const itemCardClasses: Array<CardClass> = [
 	...defaultItemCards,
 	...alterEgosIIIItemCards,
+	...adventOfTcgItemCards,
 ]
 
 const singleUseCardClasses: Array<CardClass> = [
 	...defaultSingleUseCards,
 	...alterEgosSingleUseCards,
-	// ...adventOfTcgSingleUseCards,
+	...adventOfTcgSingleUseCards,
 ]
 
 const allCardClasses: Array<CardClass> = [

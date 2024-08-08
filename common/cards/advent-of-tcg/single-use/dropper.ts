@@ -1,4 +1,8 @@
-import {CardComponent, DeckSlotComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
@@ -14,27 +18,23 @@ class Dropper extends Card {
 		expansion: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 0,
-		description: "Shuffle 2 fletching tables into your opponent's deck",
+		description: "Place a fletching table on the top of your opponent's deck",
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = component
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			for (let i = 0; i < 2; i++) {
-				let slot = game.components.new(DeckSlotComponent, player.entity, {
-					position: 'random',
-				})
-				game.components.new(CardComponent, FletchingTable, slot.entity)
-			}
+		observer.subscribe(player.hooks.onApply, () => {
+			let slot = game.components.new(DeckSlotComponent, opponentPlayer.entity, {
+				position: 'front',
+			})
+			game.components.new(CardComponent, FletchingTable, slot.entity)
 		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent): void {
-		const {player} = component
-
-		player.hooks.onApply.remove(component)
 	}
 }
 

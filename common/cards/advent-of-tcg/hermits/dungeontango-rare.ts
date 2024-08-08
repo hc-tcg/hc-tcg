@@ -1,5 +1,9 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -23,7 +27,7 @@ class DungeonTangoRare extends Card {
 			cost: ['any'],
 			damage: 40,
 			power:
-				'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
+				'Discard 1 item card attached to this Hermit to draw a random Hermit card from your deck. If you have no more Hermit cards, keep the item card attached.',
 		},
 		secondary: {
 			name: 'Ravager',
@@ -36,49 +40,47 @@ class DungeonTangoRare extends Card {
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'primary') return
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(activeInstance, hermitAttackType) => {
+				if (
+					activeInstance.entity !== component.entity ||
+					hermitAttackType !== 'primary'
+				)
+					return
 
-			let i: number = 0
-			do {
-				if (player.pile[i].props.id) {
-					break
-				}
-				i++
-			} while (i < player.pile.length)
+				const hermitCard = player.getDeck().find((card) => card.isHermit())
 
-			if (i == player.pile.length) return
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.item,
+					query.slot.active,
+					query.not(query.slot.empty),
+					query.not(query.slot.frozen),
+				)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: this.props.id,
-				message: 'Choose an item card to discard',
-				canPick: slot.every(
-					slot.player,
-					slot.item,
-					slot.active,
-					slot.not(slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.cardId) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-					discardCard(game, pickedSlot.cardId)
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an item card to discard',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const pickedCard = pickedSlot.getCard()
+						if (!pickedCard || !hermitCard) return
 
-					player.hand.push(player.pile.splice(i, 1)[0])
-				},
-			})
-		})
-	}
+						pickedCard.discard()
 
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
+						hermitCard.draw()
+					},
+				})
+			},
+		)
 	}
 }
 

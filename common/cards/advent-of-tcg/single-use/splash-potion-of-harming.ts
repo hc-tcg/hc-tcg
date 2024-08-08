@@ -1,5 +1,9 @@
-import {CardComponent} from '../../../components'
-import {AttackModel} from '../../../models/attack-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -18,58 +22,69 @@ class SplashPotionOfHarming extends Card {
 		description:
 			"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
 		hasAttack: true,
+		attackPreview: (game) => {
+			const targetAmount = this.getTargetHermits(game).length - 1
+			if (targetAmount === 0) return '$A40$'
+			return `$A40$ + $A20$ x ${targetAmount}`
+		},
+	}
+
+	getTargetHermits(game: GameModel) {
+		return game.components.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.hermitSlotOccupied,
+		)
 	}
 
 	override onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
-		const {opponentPlayer, player} = pos
+		const {opponentPlayer, player} = component
 
-		player.hooks.getAttack.add(component, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const activeIndex = activePos.rowIndex
-			const opponentRows = opponentPlayer.board.rows
+		observer.subscribe(player.hooks.getAttack, () => {
+			const activeRow = opponentPlayer.activeRowEntity
+			const opponentRows = this.getTargetHermits(game).sort(
+				(a, b) => a.index - b.index,
+			)
 
-			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
-				if (!row || !row.hermitCard) return r
-				const newAttack = new AttackModel({
-					id: this.getInstanceKey(component),
-					attacker: activePos,
-					target: {
-						player: opponentPlayer,
-						rowIndex: i,
-						row: row,
-					},
+			const attack = game
+				.newAttack({
+					attacker: component.entity,
+					target: opponentRows[0].entity,
 					type: 'effect',
 					log: (values) =>
-						i === activeIndex
-							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-							: `, ${values.target} for ${values.damage} damage`,
-				}).addDamage(this.props.id, 40)
-				if (r) return r.addNewAttack(newAttack)
-				return newAttack
-			}, null)
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(
+					component.entity,
+					opponentRows[0].entity === activeRow ? 40 : 20,
+				)
+
+			opponentRows.slice(1).forEach((row) => {
+				const newAttack = game
+					.newAttack({
+						attacker: component.entity,
+						target: row.entity,
+						type: 'effect',
+						log: (values) => `, ${values.target} for ${values.damage} damage`,
+					})
+					.addDamage(component.entity, row.entity === activeRow ? 40 : 20)
+				attack.addNewAttack(newAttack)
+			})
 
 			return attack
 		})
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isAttacker(component.entity)) return
 
 			applySingleUse(game)
 
-			player.hooks.onAttack.remove(component)
+			observer.unsubscribe(player.hooks.onAttack)
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.getAttack.remove(component)
-		player.hooks.onAttack.remove(component)
 	}
 }
 

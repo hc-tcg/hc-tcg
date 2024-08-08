@@ -21,6 +21,7 @@ import {
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
+import NaughtyRegiftEffect from './naughty-regift'
 import OriginalXbEffect from './original-xb'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
@@ -33,6 +34,7 @@ import {
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SoulmateEffect from './soulmate'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import {TrapHoleEffect} from './trap-hole'
@@ -78,6 +80,8 @@ const effectClasses: Array<new () => StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	SoulmateEffect,
+	NaughtyRegiftEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

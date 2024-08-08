@@ -1,4 +1,9 @@
-import {CardComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
+import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	StatusEffectProps,
@@ -10,25 +15,33 @@ class DyedEffect extends CardStatusEffect {
 		...statusEffect,
 		icon: 'dyed',
 		name: 'Dyed',
-		description: 'Items attached to this Hermit become any type.',
+		description: 'This Hermit can use items of any type.',
 		applyCondition: (_game, card) =>
 			card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
 	}
 
-	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
-	// 	target.player.hooks.availableEnergy.add(effect, (availableEnergy) => {
-	// 		if (!target.slot.inRow() || target.player.activeRowEntity !== target.slot.row.entity)
-	// 			return availableEnergy
-	// 		return availableEnergy.map(() => 'any')
-	// 	})
-	// }
+	override onApply(
+		_game: GameModel,
+		effect: StatusEffectComponent<CardComponent>,
+		target: CardComponent,
+		observer: ObserverComponent,
+	) {
+		const {player} = target
 
-	// override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
-	// 	const {player, opponentPlayer} = target
+		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
+			if (
+				!target.slot.inRow() ||
+				player.activeRowEntity !== target.slot.row.entity
+			)
+				return availableEnergy
+			return availableEnergy.map(() => 'any')
+		})
 
-	// 	player.hooks.availableEnergy.remove(effect)
-	// 	opponentPlayer.hooks.onTurnEnd.remove(effect)
-	// }
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
+			if (!attack.isTargeting(target) || attack.target?.health) return
+			effect.remove()
+		})
+	}
 }
 
 export default DyedEffect
