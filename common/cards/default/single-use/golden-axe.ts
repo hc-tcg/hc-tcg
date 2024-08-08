@@ -2,28 +2,22 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class GoldenAxe extends CardOld {
-	selectionAvailable = false
-
-	props: SingleUse = {
-		...singleUse,
-		id: 'golden_axe',
-		numericId: 31,
-		name: 'Golden Axe',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A40$',
-	}
-
-	override onAttach(
+const GoldenAxe: SingleUse = {
+	...singleUse,
+	id: 'golden_axe',
+	numericId: 31,
+	name: 'Golden Axe',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A40$',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -59,7 +53,7 @@ class GoldenAxe extends CardOld {
 				),
 			)
 		})
-	}
+	},
 }
 
 export default GoldenAxe
