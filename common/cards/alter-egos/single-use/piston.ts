@@ -7,48 +7,44 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Piston extends CardOld {
-	firstPickCondition = query.every(
-		query.slot.currentPlayer,
-		query.slot.item,
-		query.slot.row(query.row.hasHermit),
-		query.not(query.slot.frozen),
-		query.not(query.slot.empty),
-		// This condition needs to be different than the one for the second pick request in this case
-		// The reason is that we don't know the row that's chosen until after the first pick request is over
-		query.slot.adjacent(
-			query.every(
-				query.slot.row(query.row.hasHermit),
-				query.slot.item,
-				query.slot.empty,
-				query.not(query.slot.frozen),
-			),
+const firstPickCondition = query.every(
+	query.slot.currentPlayer,
+	query.slot.item,
+	query.slot.row(query.row.hasHermit),
+	query.not(query.slot.frozen),
+	query.not(query.slot.empty),
+	// This condition needs to be different than the one for the second pick request in this case
+	// The reason is that we don't know the row that's chosen until after the first pick request is over
+	query.slot.adjacent(
+		query.every(
+			query.slot.row(query.row.hasHermit),
+			query.slot.item,
+			query.slot.empty,
+			query.not(query.slot.frozen),
 		),
-	)
+	),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'piston',
-		numericId: 144,
-		name: 'Piston',
-		expansion: 'alter_egos',
-		rarity: 'common',
-		tokens: 0,
-		description:
-			'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.firstPickCondition),
-		),
-		log: (values) =>
-			`${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
-	}
-
-	override onAttach(
+const Piston: SingleUse = {
+	...singleUse,
+	id: 'piston',
+	numericId: 144,
+	name: 'Piston',
+	expansion: 'alter_egos',
+	rarity: 'common',
+	tokens: 0,
+	description:
+		'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.exists(SlotComponent, firstPickCondition),
+	),
+	log: (values) =>
+		`${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -61,7 +57,7 @@ class Piston extends CardOld {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick an item card from one of your active or AFK Hermits',
-			canPick: this.firstPickCondition,
+			canPick: firstPickCondition,
 			onResult(pickResult) {
 				// Store the component of the chosen item
 				pickedItemSlot = pickResult
@@ -94,7 +90,7 @@ class Piston extends CardOld {
 				player.singleUseCardUsed = false
 			},
 		})
-	}
+	},
 }
 
 export default Piston

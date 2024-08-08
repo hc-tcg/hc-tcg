@@ -1,7 +1,6 @@
 import {CARDS} from 'common/cards'
 import {
 	Card,
-	Hermit,
 	isAttach,
 	isHermit,
 	isItem,

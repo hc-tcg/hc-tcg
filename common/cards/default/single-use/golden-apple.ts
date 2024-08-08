@@ -6,36 +6,32 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class GoldenApple extends CardOld {
-	pickCondition = query.every(
-		query.slot.hermit,
-		query.not(query.slot.active),
-		query.not(query.slot.empty),
-	)
+const pickCondition = query.every(
+	query.slot.hermit,
+	query.not(query.slot.active),
+	query.not(query.slot.empty),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'golden_apple',
-		numericId: 30,
-		name: 'Golden Apple',
-		expansion: 'default',
-		rarity: 'ultra_rare',
-		tokens: 3,
-		description: 'Heal one of your AFK Hermits 100hp.',
-		log: (values) =>
-			`${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.slot.playerHasActiveHermit,
-			query.exists(SlotComponent, this.pickCondition),
-		),
-	}
-
-	override onAttach(
+const GoldenApple: SingleUse = {
+	...singleUse,
+	id: 'golden_apple',
+	numericId: 30,
+	name: 'Golden Apple',
+	expansion: 'default',
+	rarity: 'ultra_rare',
+	tokens: 3,
+	description: 'Heal one of your AFK Hermits 100hp.',
+	log: (values) =>
+		`${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.slot.playerHasActiveHermit,
+		query.exists(SlotComponent, pickCondition),
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -46,7 +42,7 @@ class GoldenApple extends CardOld {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick one of your AFK Hermits',
-			canPick: this.pickCondition,
+			canPick: pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.onBoard())
 					throw new Error('Can not pick slot that is not on board')
@@ -56,7 +52,7 @@ class GoldenApple extends CardOld {
 				pickedSlot.row?.heal(100)
 			},
 		})
-	}
+	},
 }
 
 export default GoldenApple

@@ -7,37 +7,33 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class FireCharge extends CardOld {
-	pickCondition = query.every(
-		query.slot.currentPlayer,
-		query.not(query.slot.frozen),
-		query.not(query.slot.empty),
-		query.some(query.slot.item, query.slot.attach),
-	)
+const pickCondition = query.every(
+	query.slot.currentPlayer,
+	query.not(query.slot.frozen),
+	query.not(query.slot.empty),
+	query.some(query.slot.item, query.slot.attach),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'fire_charge',
-		numericId: 142,
-		name: 'Fire Charge',
-		expansion: 'alter_egos',
-		rarity: 'common',
-		tokens: 0,
-		description:
-			'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition),
-		),
-		log: (values) =>
-			`${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
-	}
-
-	override onAttach(
+const FireCharge: SingleUse = {
+	...singleUse,
+	id: 'fire_charge',
+	numericId: 142,
+	name: 'Fire Charge',
+	expansion: 'alter_egos',
+	rarity: 'common',
+	tokens: 0,
+	description:
+		'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.exists(SlotComponent, pickCondition),
+	),
+	log: (values) =>
+		`${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -49,7 +45,7 @@ class FireCharge extends CardOld {
 			id: component.entity,
 			message:
 				'Pick an item or effect card from one of your active or AFK Hermits',
-			canPick: this.pickCondition,
+			canPick: pickCondition,
 			onResult(pickedSlot) {
 				applySingleUse(game, pickedSlot)
 				pickedSlot.getCard()?.discard()
@@ -60,7 +56,7 @@ class FireCharge extends CardOld {
 				player.singleUseCardUsed = false
 			},
 		})
-	}
+	},
 }
 
 export default FireCharge

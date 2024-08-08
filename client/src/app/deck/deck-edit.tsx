@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import {CARDS_LIST} from 'common/cards'
-import Card from 'common/cards/base/card'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'

@@ -6,34 +6,30 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import PoisonEffect from '../../../status-effects/poison'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class SplashPotionOfPoison extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'splash_potion_of_poison',
-		numericId: 90,
-		name: 'Splash Potion of Poison',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description: "Poison your opponent's active Hermit.",
-		showConfirmationModal: true,
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'poison',
-			},
-		],
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.slot.opponentHasActiveHermit,
-		),
-	}
-
-	override onAttach(
+const SplashPotionOfPoison: SingleUse = {
+	...singleUse,
+	id: 'splash_potion_of_poison',
+	numericId: 90,
+	name: 'Splash Potion of Poison',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description: "Poison your opponent's active Hermit.",
+	showConfirmationModal: true,
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'poison',
+		},
+	],
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.slot.opponentHasActiveHermit,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -45,7 +41,7 @@ class SplashPotionOfPoison extends CardOld {
 				.new(StatusEffectComponent, PoisonEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
+	},
 }
 
 export default SplashPotionOfPoison
