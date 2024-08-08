@@ -17,10 +17,7 @@ function Settings({setMenuSection}: Props) {
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 
-	const totalGames = Object.values(stats).reduce((a, b) => {
-		if (typeof b === 'number') return a + b
-		return a
-	}, 0)
+	const totalGames = stats.w + stats.l + stats.fw + stats.fl + stats.t
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
