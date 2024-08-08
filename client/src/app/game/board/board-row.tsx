@@ -7,8 +7,8 @@ import {
 	LocalStatusEffectInstance,
 } from 'common/types/server-requests'
 import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
-import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useSelector} from 'react-redux'
 import HealthSlot from './board-health'
 import Slot from './board-slot'
 import StatusEffectContainer from './board-status-effects'

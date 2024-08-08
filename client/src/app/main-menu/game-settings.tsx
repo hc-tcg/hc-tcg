@@ -104,7 +104,8 @@ function GameSettings({setMenuSection}: Props) {
 					Profanity Filter: {getDescriptor(settings.profanityFilterEnabled)}
 				</Button>
 				<Button variant="stone" onClick={handleSlotHighlightingChange}>
-					Card Slot Highlighting: {getDescriptor(settings.slotHighlightingEnabled)}
+					Card Slot Highlighting:{' '}
+					{getDescriptor(settings.slotHighlightingEnabled)}
 				</Button>
 				<div className={css.minecraftNameArea}>
 					<div className={css.left}>
