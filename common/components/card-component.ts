@@ -6,7 +6,6 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '.'
-import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
 	type Card,
@@ -52,7 +51,7 @@ export class CardComponent<CardType extends Card = Card> {
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
-		card: number | string | CardClass,
+		card: number | string | Card,
 		slot: SlotEntity,
 	) {
 		this.game = game

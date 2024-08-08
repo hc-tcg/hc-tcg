@@ -45,7 +45,7 @@ const Shield: Attach = {
 					CardComponent,
 					query.card.slot(query.slot.hermit),
 					query.card.row(query.row.entity(attack.targetEntity)),
-				)?.props.name
+				)?.card.name
 				game.battleLog.addEntry(
 					player.entity,
 					`$p${hermitName}'s$ $eShield$ on row #${attack.target!.index + 1} was broken`,

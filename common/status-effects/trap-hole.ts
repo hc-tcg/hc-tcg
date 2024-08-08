@@ -45,13 +45,13 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 			if (coinFlip[0] == 'heads') {
 				game.battleLog.addEntry(
 					player.entity,
-					`$p${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,
+					`$p${effect.creator.card.name}$ flipped $pheads$ and took $e${singleUseCard.card.name}$`,
 				)
 				singleUseCard.draw(player.opponentPlayer.entity)
 			} else {
 				game.battleLog.addEntry(
 					player.entity,
-					`$p${effect.creator.props.name}$ flipped $btails$b`,
+					`$p${effect.creator.card.name}$ flipped $btails$b`,
 				)
 			}
 		})

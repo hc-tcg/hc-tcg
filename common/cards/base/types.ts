@@ -44,6 +44,7 @@ export type Card = {
 		component: CardComponent<any>,
 		observer: ObserverComponent,
 	): void
+	getLog(values: PlayCardLog): string
 }
 
 export type Item = Card & {

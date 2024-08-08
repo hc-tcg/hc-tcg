@@ -32,7 +32,7 @@ const EnderPearl: SingleUse = {
 	),
 	log: (values) =>
 		`${values.defaultLog} to move $p${
-			values.game.currentPlayer.activeRow?.getHermit()?.props.name
+			values.game.currentPlayer.activeRow?.getHermit()?.card.name
 		}$ to row #${values.pick.rowIndex}`,
 	onAttach(
 		game: GameModel,

@@ -54,7 +54,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 			const energy =
 				(activeHermit.slot.inRow() &&
 					activeHermit.slot.row.getItems()?.flatMap((item) => {
-						if (item?.isItem()) return item.props.type
+						if (item?.isItem()) return item.card.type
 						return []
 					})) ||
 				[]
@@ -62,8 +62,8 @@ class BetrayedEffect extends PlayerStatusEffect {
 			// Return if no energy
 			if (
 				!activeHermit.isHermit() ||
-				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
-					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
+				(!hasEnoughEnergy(energy, activeHermit.card.primary.cost) &&
+					!hasEnoughEnergy(energy, activeHermit.card.secondary.cost))
 			) {
 				return
 			}

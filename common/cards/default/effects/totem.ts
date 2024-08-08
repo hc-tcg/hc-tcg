@@ -52,7 +52,7 @@ const Totem: Attach = {
 					ail.remove()
 				})
 
-			const revivedHermit = targetHermit?.props.name
+			const revivedHermit = targetHermit?.card.name
 			game.battleLog.addEntry(
 				player.entity,
 				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`,

@@ -50,7 +50,7 @@ const ZombieCleoRare: Hermit = {
 		hermitAttackType: HermitAttackType,
 	) {
 		if (hermitAttackType !== 'secondary')
-			return super.getAttack(game, component, hermitAttackType)
+			return this.getAttack.call(this, game, component, hermitAttackType)
 
 		const mockedAttack = mockedAttacks.get(component)
 		if (!mockedAttack) return null

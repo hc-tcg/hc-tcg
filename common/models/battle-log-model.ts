@@ -33,7 +33,7 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.card.name}$ `
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
@@ -113,15 +113,15 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.card.category === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return `${card.card.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return `${card.card.name}`
 	}
 
 	public addPlayCardEntry(
@@ -142,10 +142,10 @@ export class BattleLogModel {
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
-			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
+			defaultLog: `$p{You|${player.playerName}}$ used $e${card.card.name}$`,
 			pos: {
 				rowIndex: cardRow ? `${cardRow.index + 1}` : invalid,
-				id: card.props.id,
+				id: card.card.id,
 				name: this.genCardName(card.player, card, cardRow),
 				hermitCard: this.genCardName(
 					card.player,
@@ -156,7 +156,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
-				id: pickedCard?.card.props.id || invalid,
+				id: pickedCard?.card.id || invalid,
 				name: pickedCard
 					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
 					: invalid,
@@ -214,14 +214,14 @@ export class BattleLogModel {
 			if (attackerInfo instanceof CardComponent && attackerInfo.isHermit()) {
 				attackName =
 					subAttack.type === 'primary'
-						? attackerInfo.props.primary.name
-						: attackerInfo.props.secondary.name
+						? attackerInfo.card.primary.name
+						: attackerInfo.card.secondary.name
 			} else {
-				attackName = singleUse?.props.name || '$eINVALID$'
+				attackName = singleUse?.card.name || '$eINVALID$'
 			}
 
 			const logMessage = subAttack.getLog({
-				attacker: `$p${attackerInfo.props.name}$`,
+				attacker: `$p${attackerInfo.card.name}$`,
 				player: attack.player.playerName,
 				opponent: attack.player.opponentPlayer.playerName,
 				target: `$${targetFormatting}${this.genCardName(
@@ -263,7 +263,7 @@ export class BattleLogModel {
 			this.logMessageQueue.push({
 				player: player.entity,
 				description: `$o${
-					this.game.components.get(coinFlip.card)?.props.name
+					this.game.components.get(coinFlip.card)?.card.name
 				}$ ${this.generateCoinFlipDescription(coinFlip)} on their coinflip`,
 			})
 		})
@@ -291,14 +291,14 @@ export class BattleLogModel {
 		if (oldHermit) {
 			this.logMessageQueue.push({
 				player: player.entity,
-				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.props.name}$ for $p${
-					newHermit.props.name
+				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.card.name}$ for $p${
+					newHermit.card.name
 				} (${newRow.index + 1})$`,
 			})
 		} else {
 			this.logMessageQueue.push({
 				player: player.entity,
-				description: `$p{You|${player.playerName}}$ activated $p${newHermit.props.name} (${
+				description: `$p{You|${player.playerName}}$ activated $p${newHermit.card.name} (${
 					newRow.index + 1
 				})$`,
 			})
@@ -312,7 +312,7 @@ export class BattleLogModel {
 			query.card.rowEntity(row),
 		)
 		if (!hermitCard) return
-		const cardName = hermitCard.props.name
+		const cardName = hermitCard.card.name
 		let player = this.game.components.get(playerEntity)
 
 		const livesRemaining = player?.lives === 3 ? 'two lives' : 'one life'
@@ -357,7 +357,7 @@ export class BattleLogModel {
 				'Unknown Row'
 
 			const logMessage = log({
-				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,
+				target: `$${targetFormatting}${pos.card.name} (${rowNumberString})$`,
 				verb: 'was',
 				statusEffect: `$e${effect.props.name}$`,
 			})

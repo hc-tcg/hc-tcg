@@ -49,7 +49,7 @@ const RendogRare: Hermit = {
 		hermitAttackType: HermitAttackType,
 	) {
 		if (hermitAttackType !== 'secondary')
-			return hermit.getAttack(game, component, hermitAttackType)
+			return hermit.getAttack.call(this, game, component, hermitAttackType)
 
 		const mockedAttack = mockedAttacks.get(component)
 		if (!mockedAttack) return null

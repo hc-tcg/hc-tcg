@@ -42,11 +42,11 @@ class SleepingEffect extends CardStatusEffect {
 			'CHANGE_ACTIVE_HERMIT',
 		)
 
-		target.slot.row.heal(target.props.health)
+		target.slot.row.heal(target.card.health)
 
 		game.battleLog.addEntry(
 			player.entity,
-			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`,
+			`$p${target.card.name}$ went to $eSleep$ and restored $gfull health$`,
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {

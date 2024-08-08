@@ -58,7 +58,7 @@ const Chest: SingleUse = {
 				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].props.id === 'clock')
+				if (modalResult.cards[0].card.id === 'clock')
 					return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)

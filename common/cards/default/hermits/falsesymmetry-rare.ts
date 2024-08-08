@@ -45,7 +45,7 @@ const FalseSymmetryRare: Hermit = {
 			component.slot.inRow() && component.slot.row.heal(40)
 			game.battleLog.addEntry(
 				player.entity,
-				`$p${component.props.name}$ healed $g40hp$`,
+				`$p${component.card.name}$ healed $g40hp$`,
 			)
 		})
 	},

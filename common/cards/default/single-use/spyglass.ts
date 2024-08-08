@@ -36,7 +36,7 @@ const Spyglass: SingleUse = {
 
 			const getEntry = (card: CardComponent): string => {
 				return `$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
-					card.props.id,
+					card.card.id,
 					true,
 				)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
 			}

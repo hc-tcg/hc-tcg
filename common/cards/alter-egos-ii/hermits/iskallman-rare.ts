@@ -138,7 +138,7 @@ const IskallmanRare: Hermit = {
 				pickedAfkHermit.row.heal(50)
 				game.battleLog.addEntry(
 					player.entity,
-					`$p${component.props.name}$ took $b50hp$ damage, and healed $p${hermitInfo.props.name} (${
+					`$p${component.card.name}$ took $b50hp$ damage, and healed $p${hermitInfo.card.name} (${
 						(pickedAfkHermit.row.index || 0) + 1
 					})$ by $g50hp$`,
 				)
