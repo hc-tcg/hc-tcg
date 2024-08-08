@@ -73,9 +73,8 @@ function Settings({setMenuSection}: Props) {
 		setUpdatesOpen(true)
 	}
 
-	const totalGamesPlayed = stats.w + stats.fw + stats.l + stats.fl
 	const winrate =
-		Math.round(((stats.w + stats.fw) / totalGamesPlayed) * 10000) / 100
+		Math.round(((stats.w + stats.fw) / (totalGames - stats.t)) * 10000) / 100
 
 	return (
 		<>
