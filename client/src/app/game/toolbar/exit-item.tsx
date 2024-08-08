@@ -1,14 +1,15 @@
-import {setOpenedModal} from 'logic/game/game-actions'
 import {getOpenedModal} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 
 function ExitItem() {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const openedModal = useSelector(getOpenedModal)
 
 	const handleExit = () => {
-		if (!openedModal) dispatch(setOpenedModal('exit'))
+		if (!openedModal)
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'exit'})
 	}
 
 	return (

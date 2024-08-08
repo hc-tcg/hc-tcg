@@ -1,17 +1,16 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {spectatorLeave} from 'logic/game/game-actions'
-import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
 	closeModal: () => void
 }
 function ExitModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
-		dispatch(spectatorLeave())
+		dispatch({type: localMessages.GAME_SPECTATOR_LEAVE})
 		closeModal()
 	}
 

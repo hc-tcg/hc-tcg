@@ -166,15 +166,9 @@ function* opponentConnectionSaga() {
 }
 
 function* gameSaga(initialGameState?: LocalGameState) {
-	function* cancelBackgroundTasks() {
-		yield cancel(backgroundTasks)
-	}
-
-	const backgroundTasks = yield* all([
-		fork(opponentConnectionSaga),
-		fork(chatSaga),
-		fork(spectatorSaga, cancelBackgroundTasks),
-	])
+	const backgroundTasks = yield* fork(() =>
+		all([fork(opponentConnectionSaga), fork(chatSaga), fork(spectatorSaga)]),
+	)
 
 	try {
 		yield* put<LocalMessage>({
@@ -185,6 +179,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(serverMessages.GAME_END)),
 			gameCrash: call(receiveMsg(serverMessages.GAME_CRASH)),
+			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {
@@ -225,7 +220,6 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		console.log('Game ended')
 		yield put<LocalMessage>({type: localMessages.GAME_END})
 		yield cancel(backgroundTasks)
-		yield* cancelBackgroundTasks()
 	}
 }
 

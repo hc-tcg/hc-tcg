@@ -12,7 +12,6 @@ import {
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
-import {codeReceived} from './matchmaking-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -27,9 +26,11 @@ function* createPrivateGameSaga() {
 			})
 
 			if (createGameResponse.success) {
-				const gameCode: string = createGameResponse.success.gameCode
-				const spectatorCode: string = createGameResponse.success.spectatorCode
-				yield* put(codeReceived({gameCode, spectatorCode}))
+				yield* put<LocalMessage>({
+					type: localMessages.MATCHMAKING_CODE_RECIEVED,
+					gameCode: createGameResponse.success.gameCode,
+					spectatorCode: createGameResponse.success.spectatorCode,
+				})
 			} else {
 				// Something went wrong, go back to menu
 				yield* put<LocalMessage>({
@@ -60,7 +61,7 @@ function* createPrivateGameSaga() {
 	}
 
 	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
