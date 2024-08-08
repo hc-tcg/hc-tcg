@@ -192,6 +192,16 @@ nav {
 	}
 }
 
+.settingDescriptor {
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 1vh;
+	color: var(--text-light);
+}
+
 .minecraftNameArea {
 	background: hsla(0deg, 0%, 0%, 55%);
 	border-radius: 0.5vh;
@@ -249,11 +259,16 @@ nav {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	gap: 0.5vh;
+	margin: 0.5vh;
+}
+
+.resetModalDescription {
+	padding: 1vh;
 }
 
 .resetModalButton {
-	margin: 1vh;
-	min-width: 45%;
+	width: 50%;
 }
 
 /* DESKTOP */

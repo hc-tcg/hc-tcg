@@ -37,7 +37,7 @@ const defaultSettings: LocalSettings = {
 	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
-	minecraftName: 'alex',
+	minecraftName: '',
 }
 
 const getSettings = (): LocalSettings => {
@@ -70,6 +70,8 @@ const localSettingsReducer = (
 				...state,
 				[action.key]: defaultState[action.key as keyof LocalSettings],
 			}
+		case localMessages.ALL_SETTINGS_RESET:
+			return defaultSettings
 		default:
 			return state
 	}

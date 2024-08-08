@@ -77,6 +77,7 @@ export const localMessages = messages({
 	FIREBASE_STATS: null,
 	SETTINGS_SET: null,
 	SETTINGS_RESET: null,
+	ALL_SETTINGS_RESET: null,
 	SOUND_PLAY: null,
 	SOUND_SECTION_CHANGE: null,
 })
@@ -195,6 +196,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.SETTINGS_SET; setting: LocalSetting},
 	{type: typeof localMessages.SETTINGS_RESET; key: keyof LocalSettings},
+	{type: typeof localMessages.ALL_SETTINGS_RESET},
 	{type: typeof localMessages.SOUND_PLAY; path: string},
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
 ]
