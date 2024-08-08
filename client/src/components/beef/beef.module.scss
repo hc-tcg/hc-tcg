@@ -1,50 +1,50 @@
 .beef {
-	display: flex;
-	position: fixed;
-	bottom: 1.5vh;
-	right: 1.5vh;
-	font-size: 1.8vh;
-	align-items: center;
-	gap: 1vh;
-	font-family: Minecraft;
-	color: white;
-	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
-	text-decoration: none;
+  display: flex;
+  position: fixed;
+  bottom: 1.5vh;
+  right: 1.5vh;
+  font-size: 1.8vh;
+  align-items: center;
+  gap: 1vh;
+  font-family: Minecraft, Unifont;
+  color: white;
+  text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+  text-decoration: none;
 }
 
 .avatar {
-	box-shadow: 0 0 2px black;
-	width: 7vh;
-	height: 7vh;
-	border-radius: 3.5vh;
+  box-shadow: 0 0 2px black;
+  width: 7vh;
+  height: 7vh;
+  border-radius: 3.5vh;
 }
 
 .beef:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 
-	.avatar {
-		box-shadow: 0 0 0.3vh 0.1vh black;
-	}
+  .avatar {
+    box-shadow: 0 0 0.3vh 0.1vh black;
+  }
 }
 
 @media screen and (max-width: 100vh) {
-	.beef {
-		bottom: 5vh;
-		right: 0;
-		left: 0;
-		width: 100%;
-		justify-content: center;
-	}
+  .beef {
+    bottom: 5vh;
+    right: 0;
+    left: 0;
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 @media screen and (max-width: 80vh) {
-	.beef {
-		font-size: 1.5vh;
-	}
+  .beef {
+    font-size: 1.5vh;
+  }
 
-	.avatar {
-		width: 5vh;
-		height: 5vh;
-		border-radius: 2.5vh;
-	}
+  .avatar {
+    width: 5vh;
+    height: 5vh;
+    border-radius: 2.5vh;
+  }
 }

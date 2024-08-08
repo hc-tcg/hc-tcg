@@ -1,50 +1,50 @@
 .statusEffectTooltip {
-	overflow: hidden;
-	background-color: rgba(10, 1, 15, 95%);
-	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
-	color: rgb(161, 161, 161);
-	padding: 8px;
-	border-radius: 4px;
+  overflow: hidden;
+  background-color: rgba(10, 1, 15, 95%);
+  box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
+  color: rgb(161, 161, 161);
+  padding: 8px;
+  border-radius: 4px;
 }
 
 .topLine {
-	display: flex;
-	gap: 10px;
-	font-size: 20px;
-	flex-flow: row nowrap;
-	line-height: 1;
-	white-space: nowrap;
+  display: flex;
+  gap: 10px;
+  font-size: 20px;
+  flex-flow: row nowrap;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .name {
-	color: white;
-	text-decoration: underline;
-	font-family: MinecraftBold;
+  color: white;
+  text-decoration: underline;
+  font-family: MinecraftBold;
 }
 
 .description {
-	margin-top: 4px;
-	color: rgb(158, 14, 158);
-	font-size: 18px;
-	font-family: MinecraftItalic;
-	line-height: 1.1;
+  margin-top: 4px;
+  color: rgb(158, 14, 158);
+  font-size: 18px;
+  font-family: MinecraftItalic;
+  line-height: 1.1;
 }
 
 .turnsRemaining {
-	margin-top: 4px;
-	font-family: Minecraft;
-	font-size: 18px;
-	line-height: 1.1;
+  margin-top: 4px;
+  font-family: Minecraft, Unifont;
+  font-size: 18px;
+  line-height: 1.1;
 }
 
 .tooltip {
-	font-style: italic;
+  font-style: italic;
 
-	&.player {
-		color: lightblue;
-	}
+  &.player {
+    color: lightblue;
+  }
 }
 
 .counter {
-	font-family: MinecraftBold;
+  font-family: MinecraftBold;
 }

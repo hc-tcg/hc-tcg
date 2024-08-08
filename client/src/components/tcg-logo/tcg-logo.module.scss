@@ -1,47 +1,47 @@
 /* Default */
 
 .logo {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	justify-content: end;
-	align-items: end;
-	width: 65vh;
-	overflow: visible;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: end;
+  width: 65vh;
+  overflow: visible;
 }
 
 .splashText {
-	position: absolute;
-	right: 1.5vh;
-	bottom: 7.6vh;
+  position: absolute;
+  right: 1.5vh;
+  bottom: 7.6vh;
 
-	font-size: 2.8vh;
-	color: #fcfc29;
-	text-shadow: #3f3e00 0.2vh 0.2vh;
-	font-family: Minecraft;
-	margin: 0;
-	animation: splashTextAnim 0.4s alternate-reverse infinite ease-in-out;
+  font-size: 2.8vh;
+  color: #fcfc29;
+  text-shadow: #3f3e00 0.2vh 0.2vh;
+  font-family: Minecraft, Unifont;
+  margin: 0;
+  animation: splashTextAnim 0.4s alternate-reverse infinite ease-in-out;
 }
 
 @media screen and (max-width: 85vh) {
-	.logo {
-		width: 75vw;
-	}
+  .logo {
+    width: 75vw;
+  }
 
-	.splashText {
-		right: -1vw;
-		bottom: 8vw;
+  .splashText {
+    right: -1vw;
+    bottom: 8vw;
 
-		font-size: 4vw;
-	}
+    font-size: 4vw;
+  }
 }
 
 @keyframes splashTextAnim {
-	from {
-		transform: scale(100%) rotate(-20deg);
-	}
+  from {
+    transform: scale(100%) rotate(-20deg);
+  }
 
-	to {
-		transform: scale(107%) rotate(-20deg);
-	}
+  to {
+    transform: scale(107%) rotate(-20deg);
+  }
 }
