@@ -7,7 +7,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {localMessages} from 'messages'
+import {localMessages, LocalMessageTable} from 'messages'
 import {
 	all,
 	cancel,
@@ -93,7 +93,10 @@ function* gameManager(game: GameModel) {
 			playerRemoved: take(
 				(action: any) =>
 					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(action.payload.id),
+					playerIds.includes(
+						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+							.player.id,
+					),
 			),
 			forfeit: take(
 				(action: any) =>
