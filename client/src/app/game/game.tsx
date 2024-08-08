@@ -96,8 +96,13 @@ function Game() {
 			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-
-			dispatch({type: localMessages.GAME_PICK_REQUEST, slot: card.slot})
+			dispatch({
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'PICK_REQUEST',
+					entity: card.slot,
+				},
+			})
 		} else {
 			if (equalCard(card, selectedCard)) {
 				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})

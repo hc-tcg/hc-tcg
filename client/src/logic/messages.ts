@@ -53,7 +53,6 @@ export const localMessages = messages({
 	GAME_CARD_SELECTED_SET: null,
 	GAME_MODAL_OPENED_SET: null,
 	GAME_SLOT_PICKED: null,
-	GAME_PICK_REQUEST: null,
 	GAME_FORFEIT: null,
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
@@ -139,10 +138,6 @@ type Messages = [
 		player: PlayerEntity
 		row?: number
 		index?: number
-	},
-	{
-		type: typeof localMessages.GAME_PICK_REQUEST
-		slot: SlotEntity
 	},
 	{type: typeof localMessages.GAME_FORFEIT},
 	{
