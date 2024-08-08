@@ -1,5 +1,4 @@
-import {CardClass} from '../../base/card'
-import { Hermit } from '../../base/types'
+import {Hermit} from '../../base/types'
 // common cards
 import BeetlejhostCommon from './beetlejhost-common'
 import EvilJevinCommon from './eviljevin-common'

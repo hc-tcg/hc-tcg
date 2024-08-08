@@ -8,7 +8,6 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

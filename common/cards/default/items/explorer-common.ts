@@ -1,4 +1,3 @@
-import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Item} from '../../base/types'
 

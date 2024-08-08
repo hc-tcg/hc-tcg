@@ -1,6 +1,5 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 

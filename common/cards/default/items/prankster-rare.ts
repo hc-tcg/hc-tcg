@@ -1,6 +1,5 @@
-import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
-import {Description, Item} from '../../base/types'
+import {Item} from '../../base/types'
 
 const PranksterDoubleItem: Item = {
 	...item,

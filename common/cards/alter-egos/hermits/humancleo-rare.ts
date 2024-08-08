@@ -6,7 +6,6 @@ import {
 import {GameModel} from '../../../models/game-model'
 import BetrayedEffect from '../../../status-effects/betrayed'
 import {flipCoin} from '../../../utils/coinFlips'
-import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

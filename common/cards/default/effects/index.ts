@@ -1,5 +1,4 @@
-import {CardClass} from '../../base/card'
-import { Card } from '../../base/types'
+import {Card} from '../../base/types'
 import Bed from './bed'
 import DiamondArmor from './diamond-armor'
 import GoldArmor from './gold-armor'

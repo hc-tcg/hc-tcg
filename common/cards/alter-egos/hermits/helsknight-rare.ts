@@ -5,7 +5,6 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {TrapHoleEffect} from '../../../status-effects/trap-hole'
-import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

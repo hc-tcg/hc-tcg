@@ -11,7 +11,6 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

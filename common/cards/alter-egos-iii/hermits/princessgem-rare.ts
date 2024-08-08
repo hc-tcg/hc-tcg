@@ -7,7 +7,6 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
-import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

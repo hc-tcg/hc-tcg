@@ -1,5 +1,4 @@
-import {CardClass} from '../../base/card'
-import { Card } from '../../base/types'
+import {Card} from '../../base/types'
 import ArchitectFalseRare from './architectfalse-rare'
 import BeetlejhostRare from './beetlejhost-rare'
 import BoomerBdubsCommon from './boomerbdubs-common'

@@ -1,5 +1,4 @@
-import {CardClass} from '../../base/card'
-import { Card } from '../../base/types'
+import {Card} from '../../base/types'
 import ArmorStand from './armor-stand'
 import ChainmailArmor from './chainmail-armor'
 import CommandBlock from './command-block'
