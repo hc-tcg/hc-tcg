@@ -50,8 +50,8 @@ function Settings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'panoramaEnabled',
-				value: !settings.panoramaEnabled,
+				key: 'enablePanorama',
+				value: !settings.enablePanorama,
 			},
 		})
 	}
@@ -99,7 +99,7 @@ function Settings({setMenuSection}: Props) {
 						Sound: {getBoolDescriptor(!settings.muted)}
 					</Button>
 					<Button variant="stone" onClick={handlePanoramaToggle}>
-						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+						Panorama: {getBoolDescriptor(settings.enablePanorama)}
 					</Button>
 					<Button variant="stone" onClick={handleGameSettings}>
 						Game Settings

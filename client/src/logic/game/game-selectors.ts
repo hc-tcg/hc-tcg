@@ -55,7 +55,7 @@ export const getOpponentName = (state: RootState) => {
 	const opponent = opponentId && gameState?.players[opponentId]
 
 	if (!opponent) return
-	if (!settings.profanityFilter) return opponent.playerName
+	if (!settings.enableProfanityFilter) return opponent.playerName
 	return opponent.censoredPlayerName
 }
 

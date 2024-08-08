@@ -65,10 +65,10 @@ function App() {
 		return (
 			<Background
 				panorama={settings.panorama}
-				disabled={!settings.panoramaEnabled}
+				disabled={!settings.enablePanorama}
 			/>
 		)
-	}, [settings.panoramaEnabled])
+	}, [settings.enablePanorama])
 
 	return (
 		<main>

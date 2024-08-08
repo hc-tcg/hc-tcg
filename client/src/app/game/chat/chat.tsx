@@ -17,7 +17,7 @@ function clamp(n: number, min: number, max: number): number {
 function Chat() {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
-	const chatMessages = !settings.disableChat ? useSelector(getChatMessages) : []
+	const chatMessages = settings.enableChat ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
@@ -187,7 +187,7 @@ function Chat() {
 								>
 									{FormattedText(line.message, {
 										isOpponent,
-										censorProfanity: settings.profanityFilter,
+										censorProfanity: settings.enableProfanityFilter,
 									})}
 								</span>
 							</div>

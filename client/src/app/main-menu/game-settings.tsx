@@ -17,8 +17,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'confirmationDialogs',
-				value: !settings.confirmationDialogs,
+				key: 'enableConfirmationDialogs',
+				value: !settings.enableConfirmationDialogs,
 			},
 		})
 	}
@@ -39,8 +39,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'disableChat',
-				value: !settings.disableChat,
+				key: 'enableChat',
+				value: !settings.enableChat,
 			},
 		})
 	}
@@ -48,8 +48,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'profanityFilter',
-				value: !settings.profanityFilter,
+				key: 'enableProfanityFilter',
+				value: !settings.enableProfanityFilter,
 			},
 		})
 	}
@@ -85,17 +85,18 @@ function GameSettings({setMenuSection}: Props) {
 					Game Side: {settings.gameSide.toString()}
 				</Button>
 				<Button variant="stone" onClick={handleDialogsChange}>
-					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+					Confirmation Dialogs:{' '}
+					{getDescriptor(settings.enableConfirmationDialogs)}
 				</Button>
 				<Button variant="stone" onClick={handleChatChange}>
-					Hide Chat: {getDescriptor(settings.disableChat)}
+					In-Game Chat: {getDescriptor(settings.enableChat)}
 				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
-					Profanity Filter: {getDescriptor(settings.profanityFilter)}
+					Profanity Filter: {getDescriptor(settings.enableProfanityFilter)}
 				</Button>
 				<div className={css.minecraftNameArea}>
 					<div className={css.upper}>
-						<h3>Ingame Player head</h3>
+						<h3>In-Game Player head</h3>
 						<img
 							className={css.playerHead}
 							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
