@@ -1,4 +1,4 @@
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import {PlayerEntity} from 'common/entities'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'

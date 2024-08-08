@@ -28,13 +28,16 @@ import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {printHooksState} from '../utils'
 import {getLocalGameState} from '../utils/state-gen'
-import applyEffectSaga from './turn-actions/apply-effect'
-import attackSaga from './turn-actions/attack'
-import changeActiveHermitSaga from './turn-actions/change-active-hermit'
-import modalRequestSaga from './turn-actions/modal-request'
-import pickRequestSaga from './turn-actions/pick-request'
-import playCardSaga from './turn-actions/play-card'
-import removeEffectSaga from './turn-actions/remove-effect'
+
+import {
+	applyEffectSaga,
+	attackSaga,
+	changeActiveHermitSaga,
+	modalRequestSaga,
+	pickRequestSaga,
+	playCardSaga,
+	removeEffectSaga,
+} from './turn-actions'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
