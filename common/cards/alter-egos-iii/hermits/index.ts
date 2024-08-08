@@ -1,4 +1,5 @@
 import {CardClass} from '../../base/card'
+import { Card } from '../../base/types'
 import ArchitectFalseRare from './architectfalse-rare'
 import BeetlejhostRare from './beetlejhost-rare'
 import BoomerBdubsCommon from './boomerbdubs-common'
@@ -30,7 +31,7 @@ import SpookyStressRare from './spookystress-rare'
 import SteampunkTangoRare from './steampunktango-rare'
 import WormManRare from './wormman-rare'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Card> = [
 	ArchitectFalseRare,
 	BeetlejhostRare,
 	DwarfImpulseRare,

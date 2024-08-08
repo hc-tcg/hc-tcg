@@ -10,45 +10,41 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {flipCoin} from '../../../utils/coinFlips'
-import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class EvilXisumaRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'evilxisuma_rare',
-		numericId: 128,
-		name: 'Evil X',
-		rarity: 'rare',
-		expansion: 'alter_egos',
-		palette: 'alter_egos',
-		background: 'alter_egos',
-		tokens: 3,
-		type: 'balanced',
-		health: 280,
-		primary: {
-			name: 'Evil Inside',
-			cost: [],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Derpcoin',
-			cost: ['balanced', 'balanced'],
-			damage: 80,
-			power:
-				"Flip a coin.\nIf heads, choose one attack of your opponent's current active Hermit to disable on their next turn.",
-		},
-	}
+const opponentActiveHermitQuery = query.every(
+	query.card.opponentPlayer,
+	query.card.active,
+	query.card.isHermit,
+)
 
-	opponentActiveHermitQuery = query.every(
-		query.card.opponentPlayer,
-		query.card.active,
-		query.card.isHermit,
-	)
-
-	override onAttach(
+const EvilXisumaRare: Hermit = {
+	...hermit,
+	id: 'evilxisuma_rare',
+	numericId: 128,
+	name: 'Evil X',
+	rarity: 'rare',
+	expansion: 'alter_egos',
+	palette: 'alter_egos',
+	background: 'alter_egos',
+	tokens: 3,
+	type: 'balanced',
+	health: 280,
+	primary: {
+		name: 'Evil Inside',
+		cost: [],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Derpcoin',
+		cost: ['balanced', 'balanced'],
+		damage: 80,
+		power:
+			"Flip a coin.\nIf heads, choose one attack of your opponent's current active Hermit to disable on their next turn.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -56,9 +52,7 @@ class EvilXisumaRare extends CardOld {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			if (
-				!game.components.exists(CardComponent, this.opponentActiveHermitQuery)
-			) {
+			if (!game.components.exists(CardComponent, opponentActiveHermitQuery)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 			return blockedActions
@@ -74,7 +68,7 @@ class EvilXisumaRare extends CardOld {
 
 			let opponentActiveHermit = game.components.find(
 				CardComponent,
-				this.opponentActiveHermitQuery,
+				opponentActiveHermitQuery,
 			)
 			if (!opponentActiveHermit) return
 
@@ -115,7 +109,7 @@ class EvilXisumaRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default EvilXisumaRare

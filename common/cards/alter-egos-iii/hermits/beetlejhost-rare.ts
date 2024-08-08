@@ -10,35 +10,32 @@ import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class BeetlejhostRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'beetlejhost_rare',
-		numericId: 151,
-		name: 'Beetlejhost',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'balanced',
-		health: 300,
-		primary: {
-			name: 'Abacus',
-			cost: ['any'],
-			damage: 30,
-			power: null,
-		},
-		secondary: {
-			name: 'Jopacity',
-			cost: ['balanced', 'balanced'],
-			damage: 100,
-			power:
-				'This attack does 10hp less damage every time it is used on consecutive turns.',
-		},
-	}
-
-	override onAttach(
+const BeetlejhostRare: Hermit = {
+	...hermit,
+	id: 'beetlejhost_rare',
+	numericId: 151,
+	name: 'Beetlejhost',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'balanced',
+	health: 300,
+	primary: {
+		name: 'Abacus',
+		cost: ['any'],
+		damage: 30,
+		power: null,
+	},
+	secondary: {
+		name: 'Jopacity',
+		cost: ['balanced', 'balanced'],
+		damage: 100,
+		power:
+			'This attack does 10hp less damage every time it is used on consecutive turns.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -60,7 +57,7 @@ class BeetlejhostRare extends CardOld {
 					.apply(component.entity)
 			}
 		})
-	}
+	},
 }
 
 export default BeetlejhostRare

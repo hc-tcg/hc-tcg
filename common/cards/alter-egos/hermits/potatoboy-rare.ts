@@ -9,34 +9,31 @@ import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PotatoBoyRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'potatoboy_rare',
-		numericId: 135,
-		name: 'Potato Boy',
-		expansion: 'alter_egos',
-		palette: 'alter_egos',
-		background: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'farm',
-		health: 270,
-		primary: {
-			name: 'Peace & Love',
-			cost: ['farm'],
-			damage: 0,
-			power: 'Heal all Hermits that are adjacent to your active Hermit 40hp.',
-		},
-		secondary: {
-			name: 'Volcarbo',
-			cost: ['farm', 'farm', 'any'],
-			damage: 90,
-			power: null,
-		},
-	}
-
-	override onAttach(
+const PotatoBoyRare: Hermit = {
+	...hermit,
+	id: 'potatoboy_rare',
+	numericId: 135,
+	name: 'Potato Boy',
+	expansion: 'alter_egos',
+	palette: 'alter_egos',
+	background: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'farm',
+	health: 270,
+	primary: {
+		name: 'Peace & Love',
+		cost: ['farm'],
+		damage: 0,
+		power: 'Heal all Hermits that are adjacent to your active Hermit 40hp.',
+	},
+	secondary: {
+		name: 'Volcarbo',
+		cost: ['farm', 'farm', 'any'],
+		damage: 90,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -64,7 +61,7 @@ class PotatoBoyRare extends CardOld {
 					)
 				})
 		})
-	}
+	},
 }
 
 export default PotatoBoyRare

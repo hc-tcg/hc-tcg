@@ -12,6 +12,7 @@ export const card: Card = {
 	isHermit(): this is CardOld<CardOld & Hermit> {
 		return isHermit(this.props)
 	},
+	onCreate(_game, _observer) {},
 	onAttach(_game, _component, _observer) {},
 	onDetach(_game, _component, _observer) {},
 }

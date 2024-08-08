@@ -10,35 +10,32 @@ import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PoePoeSkizzRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'poepoeskizz_rare',
-		numericId: 167,
-		name: 'Poe Poe Skizz',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'pvp',
-		health: 250,
-		primary: {
-			name: 'Teardown',
-			cost: ['pvp'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Jumpscare',
-			cost: ['pvp', 'pvp', 'any'],
-			damage: 90,
-			power:
-				'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
-		},
-	}
-
-	override onAttach(
+const PoePoeSkizzRare: Hermit = {
+	...hermit,
+	id: 'poepoeskizz_rare',
+	numericId: 167,
+	name: 'Poe Poe Skizz',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'pvp',
+	health: 250,
+	primary: {
+		name: 'Teardown',
+		cost: ['pvp'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Jumpscare',
+		cost: ['pvp', 'pvp', 'any'],
+		damage: 90,
+		power:
+			'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -90,7 +87,7 @@ class PoePoeSkizzRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default PoePoeSkizzRare

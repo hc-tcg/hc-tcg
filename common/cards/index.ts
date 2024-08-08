@@ -21,7 +21,7 @@ const effectCardClasses: Array<CardClass> = [
 	// ...adventOfTcgEffectCards,
 ]
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Card> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
 	// ...adventOfTcgHermitCards,
@@ -41,7 +41,7 @@ const singleUseCardClasses: Array<CardClass> = [
 	// ...adventOfTcgSingleUseCards,
 ]
 
-const allCardClasses: Array<CardClass> = [
+const allCardClasses: Array<Card> = [
 	...effectCardClasses,
 	...hermitCardClasses,
 	...itemCardClasses,

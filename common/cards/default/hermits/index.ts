@@ -1,7 +1,5 @@
 import {Card} from '../../base/types'
-// common cards
 import BdoubleO100Common from './bdoubleo100-common'
-// rare & ultra rare cards
 import BdoubleO100Rare from './bdoubleo100-rare'
 import Cubfan135Common from './cubfan135-common'
 import Cubfan135Rare from './cubfan135-rare'

@@ -9,35 +9,32 @@ import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class RenbobRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'renbob_rare',
-		numericId: 137,
-		name: 'Renbob',
-		expansion: 'alter_egos',
-		palette: 'alter_egos',
-		background: 'alter_egos',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'explorer',
-		health: 300,
-		primary: {
-			name: 'Loose Change',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Hyperspace',
-			cost: ['explorer', 'explorer'],
-			damage: 80,
-			power:
-				'Attack the Hermit directly opposite your active Hermit on the game board.',
-		},
-	}
-
-	public override onAttach(
+const RenbobRare: Hermit = {
+	...hermit,
+	id: 'renbob_rare',
+	numericId: 137,
+	name: 'Renbob',
+	expansion: 'alter_egos',
+	palette: 'alter_egos',
+	background: 'alter_egos',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'explorer',
+	health: 300,
+	primary: {
+		name: 'Loose Change',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Hyperspace',
+		cost: ['explorer', 'explorer'],
+		damage: 80,
+		power:
+			'Attack the Hermit directly opposite your active Hermit on the game board.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -57,7 +54,7 @@ class RenbobRare extends CardOld {
 				)?.entity || null,
 			)
 		})
-	}
+	},
 }
 
 export default RenbobRare

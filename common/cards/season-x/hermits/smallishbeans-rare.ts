@@ -7,33 +7,30 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SmallishbeansCommon from './smallishbeans-common'
 
-class SmallishbeansRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'smallishbeans_rare',
-		numericId: 161,
-		name: 'Joel',
-		expansion: 'season_x',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'explorer',
-		health: 260,
-		primary: {
-			name: 'Neck Kisses',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Obsess',
-			cost: ['explorer', 'explorer', 'any'],
-			damage: 90,
-			power:
-				'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
-		},
-	}
-
-	override onAttach(
+const SmallishbeansRare: Hermit = {
+	...hermit,
+	id: 'smallishbeans_rare',
+	numericId: 161,
+	name: 'Joel',
+	expansion: 'season_x',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'explorer',
+	health: 260,
+	primary: {
+		name: 'Neck Kisses',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Obsess',
+		cost: ['explorer', 'explorer', 'any'],
+		damage: 90,
+		power:
+			'For each AFK Joel or King Joel on the game board, do an additional 10hp damage.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -58,7 +55,7 @@ class SmallishbeansRare extends CardOld {
 
 			attack.addDamage(component.entity, joelQuantity * 10)
 		})
-	}
+	},
 }
 
 export default SmallishbeansRare

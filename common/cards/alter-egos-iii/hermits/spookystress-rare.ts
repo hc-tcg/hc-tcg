@@ -11,36 +11,33 @@ import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import WaterBucket from '../../default/effects/water-bucket'
 
-class SpookyStressRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'spookystress_rare',
-		numericId: 173,
-		name: 'Spooky Stress',
-		shortName: 'S. Stress',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'terraform',
-		health: 260,
-		primary: {
-			name: 'Meh',
-			cost: ['terraform'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: "Wa'a",
-			cost: ['terraform', 'terraform', 'any'],
-			damage: 90,
-			power:
-				'If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits.',
-		},
-	}
-
-	override onAttach(
+const SpookyStressRare: Hermit = {
+	...hermit,
+	id: 'spookystress_rare',
+	numericId: 173,
+	name: 'Spooky Stress',
+	shortName: 'S. Stress',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'terraform',
+	health: 260,
+	primary: {
+		name: 'Meh',
+		cost: ['terraform'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: "Wa'a",
+		cost: ['terraform', 'terraform', 'any'],
+		damage: 90,
+		power:
+			'If Water Bucket is attached to this Hermit, do 10hp damage to each of your opponent’s AFK Hermits.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -79,7 +76,7 @@ class SpookyStressRare extends CardOld {
 					attack.addNewAttack(newAttack)
 				})
 		})
-	}
+	},
 }
 
 export default SpookyStressRare

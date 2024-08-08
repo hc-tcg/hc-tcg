@@ -10,33 +10,30 @@ import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SkizzlemanRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'skizzleman_rare',
-		numericId: 172,
-		name: 'Skizz',
-		expansion: 'season_x',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'builder',
-		health: 290,
-		primary: {
-			name: 'Hupper Cut ',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Gas Light',
-			cost: ['builder', 'builder'],
-			damage: 70,
-			power:
-				"After your attack, deal an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
-		},
-	}
-
-	override onAttach(
+const SkizzlemanRare: Hermit = {
+	...hermit,
+	id: 'skizzleman_rare',
+	numericId: 172,
+	name: 'Skizz',
+	expansion: 'season_x',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'builder',
+	health: 290,
+	primary: {
+		name: 'Hupper Cut ',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Gas Light',
+		cost: ['builder', 'builder'],
+		damage: 70,
+		power:
+			"After your attack, deal an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -59,7 +56,7 @@ class SkizzlemanRare extends CardOld {
 						.apply(card.entity)
 				})
 		})
-	}
+	},
 }
 
 export default SkizzlemanRare

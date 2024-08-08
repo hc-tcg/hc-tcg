@@ -1,4 +1,5 @@
 import {CardClass} from '../../base/card'
+import { Hermit } from '../../base/types'
 // common cards
 import BeetlejhostCommon from './beetlejhost-common'
 import EvilJevinCommon from './eviljevin-common'
@@ -14,7 +15,7 @@ import PotatoBoyRare from './potatoboy-rare'
 import PoultryManCommon from './poultryman-common'
 import RenbobRare from './renbob-rare'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Hermit> = [
 	// AE Cards
 	BeetlejhostCommon,
 	EvilJevinCommon,
