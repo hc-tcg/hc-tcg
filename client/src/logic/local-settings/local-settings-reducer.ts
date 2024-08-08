@@ -4,10 +4,10 @@ export type LocalSettings = {
 	soundVolume: number
 	musicVolume: number
 	muted: boolean
-	profanityFilter: boolean
-	showChat: boolean
-	disableChat: boolean
-	confirmationDialogs: boolean
+	profanityFilterEnabled: boolean
+	showChatWindow: boolean
+	chatEnabled: boolean
+	confirmationDialogsEnabled: boolean
 	showBattleLogs: boolean
 	showAdvancedTooltips: boolean
 	chatPosition: {x: number; y: number}
@@ -26,10 +26,10 @@ const defaultSettings: LocalSettings = {
 	soundVolume: 100,
 	musicVolume: 75,
 	muted: false,
-	profanityFilter: true,
-	disableChat: false,
-	confirmationDialogs: true,
-	showChat: false,
+	profanityFilterEnabled: true,
+	chatEnabled: true,
+	confirmationDialogsEnabled: true,
+	showChatWindow: false,
 	showBattleLogs: false,
 	showAdvancedTooltips: true,
 	chatPosition: {x: 0, y: 0},
@@ -37,7 +37,7 @@ const defaultSettings: LocalSettings = {
 	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
-	minecraftName: 'alex',
+	minecraftName: '',
 }
 
 const getSettings = (): LocalSettings => {
@@ -70,6 +70,8 @@ const localSettingsReducer = (
 				...state,
 				[action.key]: defaultState[action.key as keyof LocalSettings],
 			}
+		case localMessages.ALL_SETTINGS_RESET:
+			return defaultSettings
 		default:
 			return state
 	}
