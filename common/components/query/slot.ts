@@ -6,7 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '..'
-import {CardClass} from '../../cards/base/card'
+import {Card} from '../../cards/base/types'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'
 
@@ -123,9 +123,7 @@ export const entity = (
 	return (_game, pos) => pos.entity === entity
 }
 
-export const has = (
-	...cards: Array<CardClass>
-): ComponentQuery<SlotComponent> => {
+export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		return game.components.exists(
 			CardComponent,

@@ -1,16 +1,16 @@
 import query from '../../components/query'
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
-import {Card, isItem} from './types'
+import {Card, HasHealth, Hermit, isHealth, isHermit, isItem, Item} from './types'
 
 export const card: Card = {
-	isItem() {
-		return isItem(this.props)
+	isItem(): this is Item {
+		return isItem(this)
 	},
-	isHealth(): this is CardOld<CardOld & HasHealth> {
-		return isHealth(this.props)
+	isHealth(): this is HasHealth {
+		return isHealth(this)
 	},
-	isHermit(): this is CardOld<CardOld & Hermit> {
-		return isHermit(this.props)
+	isHermit(): this is Hermit {
+		return isHermit(this)
 	},
 	onCreate(_game, _observer) {},
 	onAttach(_game, _component, _observer) {},

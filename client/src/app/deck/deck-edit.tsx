@@ -44,7 +44,7 @@ const EXPANSION_NAMES = [
 	...Object.keys(EXPANSIONS).filter((expansion) => {
 		return CARDS_LIST.some(
 			(card) =>
-				card.props.expansion === expansion &&
+				card.expansion === expansion &&
 				EXPANSIONS[expansion].disabled === false,
 		)
 	}),
@@ -171,8 +171,8 @@ export function sortCards(
 
 const ALL_CARDS = sortCards(
 	CARDS_LIST.map(
-		(card: Card): LocalCardInstance => ({
-			props: WithoutFunctions(card.props),
+		(card): LocalCardInstance => ({
+			props: WithoutFunctions(card),
 			entity: newEntity('deck_editor_card'),
 			slot: null,
 			attackHint: null,

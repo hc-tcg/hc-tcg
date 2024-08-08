@@ -18,17 +18,18 @@ const LightningRod: Attach = {
 	tokens: 2,
 	description:
 		"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after use. Only one of these cards can be attached to your Hermits at a time.",
-	attachCondition: query.every(
-		attach.attachCondition,
-		query.not(
-			query.exists(
-				SlotComponent,
-				query.slot.currentPlayer,
-				query.slot.attach,
-				query.slot.has(LightningRod),
+	attachCondition: (game, pos) =>
+		query.every(
+			attach.attachCondition,
+			query.not(
+				query.exists(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.attach,
+					query.slot.has(LightningRod),
+				),
 			),
-		),
-	),
+		)(game, pos),
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

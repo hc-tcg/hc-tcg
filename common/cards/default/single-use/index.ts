@@ -1,5 +1,5 @@
 import {CardClass} from '../../base/card'
-import { Card } from '../../base/types'
+import {Card} from '../../base/types'
 import Bow from './bow'
 import Chest from './chest'
 import ChorusFruit from './chorus-fruit'
