@@ -16,7 +16,11 @@ function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
-	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
+
+	const totalGames = Object.values(stats).reduce((a, b) => {
+		if (typeof b === 'number') return a + b
+		return a
+	}, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
@@ -73,7 +77,8 @@ function Settings({setMenuSection}: Props) {
 	}
 
 	const totalGamesPlayed = stats.w + stats.fw + stats.l + stats.fl
-	const winrate = ((stats.w + stats.fw) / totalGamesPlayed) * 100
+	const winrate =
+		Math.round(((stats.w + stats.fw) / totalGamesPlayed) * 10000) / 100
 
 	return (
 		<>
