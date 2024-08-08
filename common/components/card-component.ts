@@ -97,10 +97,6 @@ export class CardComponent<CardType extends Card = Card> {
 		return (a.slot.order as number) - (b.slot.order as number)
 	}
 
-	public get props(): Props {
-		return this.card.props
-	}
-
 	/** The slot that this card is in */
 	public get slot(): SlotComponent {
 		return this.game.components.getOrError(this.slotEntity)
@@ -119,19 +115,19 @@ export class CardComponent<CardType extends Card = Card> {
 	}
 
 	public isItem(): this is CardComponent<Item> {
-		return isItem(this.props)
+		return isItem(this.card)
 	}
 	public isSingleUse(): this is CardComponent<SingleUse> {
-		return isSingleUse(this.props)
+		return isSingleUse(this.card)
 	}
 	public isAttach(): this is CardComponent<Attach> {
-		return isAttach(this.props)
+		return isAttach(this.card)
 	}
 	public isHealth(): this is CardComponent<HasHealth> {
-		return isHealth(this.props)
+		return isHealth(this.card)
 	}
 	public isHermit(): this is CardComponent<Hermit> {
-		return isHermit(this.props)
+		return isHermit(this.card)
 	}
 
 	/** Return true if this hermit is in a row and this hermits HP is greater than 0 */

@@ -244,10 +244,10 @@ function createWeaknessAttack(
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 
-	const strength = STRENGTHS[attacker.props.type]
+	const strength = STRENGTHS[attacker.card.type]
 	if (
 		attack.createWeakness !== 'always' &&
-		!strength.includes(targetCardInfo.props.type)
+		!strength.includes(targetCardInfo.card.type)
 	) {
 		return null
 	}
@@ -292,11 +292,11 @@ export function setupMockCard(
 	})
 
 	return {
-		hermitName: mocking.props.name,
+		hermitName: mocking.card.name,
 		attackName:
 			attackType === 'primary'
-				? mocking.props.primary.name
-				: mocking.props.secondary.name,
+				? mocking.card.primary.name
+				: mocking.card.secondary.name,
 		getAttack: () => {
 			return mocking.card.getAttack(game, component, attackType)
 		},
