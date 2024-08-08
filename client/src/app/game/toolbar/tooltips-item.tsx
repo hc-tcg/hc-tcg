@@ -10,8 +10,10 @@ function TooltipsItem() {
 	const handleTooltips = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'showAdvancedTooltips',
-			value: !settings.showAdvancedTooltips,
+			setting: {
+				key: 'showAdvancedTooltips',
+				value: !settings.showAdvancedTooltips,
+			},
 		})
 	}
 

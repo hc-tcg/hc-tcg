@@ -29,13 +29,17 @@ function ChatItem() {
 		settings.showChat
 			? dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'showChat',
-					value: false,
+					setting: {
+						key: 'showChat',
+						value: false,
+					},
 				})
 			: dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'showChat',
-					value: true,
+					setting: {
+						key: 'showChat',
+						value: true,
+					},
 				})
 	}
 

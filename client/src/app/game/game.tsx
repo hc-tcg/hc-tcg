@@ -121,8 +121,10 @@ function Game() {
 		if (e.key === 'Escape') {
 			dispatch({
 				type: localMessages.SETTINGS_SET,
-				key: 'showChat',
-				value: false,
+				setting: {
+					key: 'showChat',
+					value: false,
+				},
 			})
 		}
 
@@ -134,8 +136,10 @@ function Game() {
 				e.preventDefault()
 				dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'showChat',
-					value: true,
+					setting: {
+						key: 'showChat',
+						value: true,
+					},
 				})
 			}
 		}
@@ -152,15 +156,19 @@ function Game() {
 			if (e.key === 'm' || e.key === 'M') {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'muted',
-					value: !settings.muted,
+					setting: {
+						key: 'muted',
+						value: !settings.muted,
+					},
 				})
 			}
 			if (e.key === 't' || e.key === 'T') {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'showAdvancedTooltips',
-					value: !settings.showAdvancedTooltips,
+					setting: {
+						key: 'showAdvancedTooltips',
+						value: !settings.showAdvancedTooltips,
+					},
 				})
 			}
 		}

@@ -1,7 +1,5 @@
 import * as Toast from '@radix-ui/react-toast'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
 import css from './toast.module.scss'
 
 type Props = {
