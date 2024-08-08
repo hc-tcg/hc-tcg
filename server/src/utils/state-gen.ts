@@ -1,6 +1,7 @@
 import {CARDS} from 'common/cards'
 import {
 	Card,
+	Hermit,
 	isAttach,
 	isHermit,
 	isItem,
@@ -103,7 +104,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	let hermitCards = cards
 		.filter((card) => isHermit(card))
 		.filter((card) => !isHermit(card) || types.includes(card.type))
-		.filter((card) => card.name !== 'diamond') as Array<Card>
+		.filter((card) => card.name !== 'diamond')
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -122,7 +123,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			(hermitCard.tokens !== 'wild' ? hermitCard.tokens : 1) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.category].items += 2
+			itemCounts[hermitCard.type].items += 2
 		}
 	}
 
