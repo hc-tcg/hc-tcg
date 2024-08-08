@@ -31,7 +31,7 @@ function Chat() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'showChat',
-			value: 'off',
+			value: false,
 		})
 	}, [])
 
@@ -86,7 +86,7 @@ function Chat() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'showChat',
-			value: 'off',
+			value: false,
 		})
 	}
 

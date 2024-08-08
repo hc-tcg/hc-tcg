@@ -30,7 +30,7 @@ function ChatItem() {
 			? dispatch({
 					type: localMessages.SETTINGS_SET,
 					key: 'showChat',
-					value: 'off',
+					value: false,
 				})
 			: dispatch({
 					type: localMessages.SETTINGS_SET,
