@@ -11,8 +11,10 @@ function SoundItem() {
 	const handleSoundChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'muted',
-			value: !settings.muted,
+			setting: {
+				key: 'muted',
+				value: !settings.muted,
+			},
 		})
 	}
 

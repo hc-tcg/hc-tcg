@@ -19,6 +19,10 @@ import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
 import {MODAL_COMPONENTS} from './game/tasks/action-modals-saga'
+import {
+	LocalSetting,
+	LocalSettings,
+} from './local-settings/local-settings-reducer'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,
@@ -189,8 +193,8 @@ type Messages = [
 		fl: number
 		t: number
 	},
-	{type: typeof localMessages.SETTINGS_SET; key: string; value: any},
-	{type: typeof localMessages.SETTINGS_RESET; key: string},
+	{type: typeof localMessages.SETTINGS_SET; setting: LocalSetting},
+	{type: typeof localMessages.SETTINGS_RESET; key: keyof LocalSettings},
 	{type: typeof localMessages.SOUND_PLAY; path: string},
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
 ]
