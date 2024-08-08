@@ -5,7 +5,7 @@ import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {Attach, Hermit, SingleUse} from './types'
+import {Attach, Card, Hermit, SingleUse} from './types'
 
 export function getFormattedDescription(
 	this: Attach | SingleUse,
@@ -26,7 +26,7 @@ export const card = {
 		_observer: ObserverComponent,
 	) {},
 	/** Gets the log entry for this attack*/
-	getLog(values: PlayCardLog) {
+	getLog(this: Card, values: PlayCardLog) {
 		if (!this.log) return ''
 		return this.log(values)
 	},
