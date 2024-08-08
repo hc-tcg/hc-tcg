@@ -17,8 +17,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'enableConfirmationDialogs',
-				value: !settings.enableConfirmationDialogs,
+				key: 'confirmationDialogsEnabled',
+				value: !settings.confirmationDialogsEnabled,
 			},
 		})
 	}
@@ -39,8 +39,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'enableChat',
-				value: !settings.enableChat,
+				key: 'chatEnabled',
+				value: !settings.chatEnabled,
 			},
 		})
 	}
@@ -48,8 +48,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'enableProfanityFilter',
-				value: !settings.enableProfanityFilter,
+				key: 'profanityFilterEnabled',
+				value: !settings.profanityFilterEnabled,
 			},
 		})
 	}
@@ -86,36 +86,36 @@ function GameSettings({setMenuSection}: Props) {
 				</Button>
 				<Button variant="stone" onClick={handleDialogsChange}>
 					Confirmation Dialogs:{' '}
-					{getDescriptor(settings.enableConfirmationDialogs)}
+					{getDescriptor(settings.confirmationDialogsEnabled)}
 				</Button>
 				<Button variant="stone" onClick={handleChatChange}>
-					In-Game Chat: {getDescriptor(settings.enableChat)}
+					In-Game Chat: {getDescriptor(settings.chatEnabled)}
 				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
-					Profanity Filter: {getDescriptor(settings.enableProfanityFilter)}
+					Profanity Filter: {getDescriptor(settings.profanityFilterEnabled)}
 				</Button>
 				<div className={css.minecraftNameArea}>
-					<div className={css.upper}>
-						<h3>In-Game Player head</h3>
+					<div className={css.left}>
 						<img
 							className={css.playerHead}
 							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
 							alt="player head"
 						/>
 					</div>
-					<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
-						<div className={css.customInput}>
-							<input
-								maxLength={16}
-								name="minecraftName"
-								placeholder=" "
-								autoFocus
-								id="minecraft-name"
-							></input>
-							<label htmlFor="minecraft-name">Minecraft Username</label>
-						</div>
-						<Button variant="stone">Select</Button>
-					</form>
+					<div className={css.right}>
+						<p>Select in-game player head</p>
+						<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
+							<div className={css.customInput}>
+								<input
+									maxLength={16}
+									name="minecraftName"
+									placeholder="Minecraft Username"
+									id="minecraft-name"
+								></input>
+							</div>
+							<Button variant="stone">Select</Button>
+						</form>
+					</div>
 				</div>
 			</div>
 		</MenuLayout>

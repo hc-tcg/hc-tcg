@@ -25,7 +25,7 @@ function PlayerInfo({player, direction}: Props) {
 	if (!gameState) throw new Error('This should not happen')
 
 	const getName = (player: LocalPlayerState) => {
-		if (!settings.enableProfanityFilter) return player.playerName
+		if (!settings.profanityFilterEnabled) return player.playerName
 		return player.censoredPlayerName
 	}
 

@@ -4,15 +4,15 @@ export type LocalSettings = {
 	soundVolume: number
 	musicVolume: number
 	muted: boolean
-	enableProfanityFilter: boolean
-	showChat: boolean
-	enableChat: boolean
-	enableConfirmationDialogs: boolean
+	profanityFilterEnabled: boolean
+	showChatWindow: boolean
+	chatEnabled: boolean
+	confirmationDialogsEnabled: boolean
 	showBattleLogs: boolean
 	showAdvancedTooltips: boolean
 	chatPosition: {x: number; y: number}
 	chatSize: {w: number; h: number}
-	enablePanorama: boolean
+	panoramaEnabled: boolean
 	panorama: string
 	gameSide: string
 	minecraftName: string
@@ -26,15 +26,15 @@ const defaultSettings: LocalSettings = {
 	soundVolume: 100,
 	musicVolume: 75,
 	muted: false,
-	enableProfanityFilter: true,
-	enableChat: true,
-	enableConfirmationDialogs: true,
-	showChat: false,
+	profanityFilterEnabled: true,
+	chatEnabled: true,
+	confirmationDialogsEnabled: true,
+	showChatWindow: false,
 	showBattleLogs: false,
 	showAdvancedTooltips: true,
 	chatPosition: {x: 0, y: 0},
 	chatSize: {w: 0, h: 0},
-	enablePanorama: true,
+	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
 	minecraftName: 'alex',

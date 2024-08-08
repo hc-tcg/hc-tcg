@@ -54,7 +54,7 @@ function* endTurnActionSaga(): SagaIterator {
 		const settings = yield* select(getSettings)
 		if (
 			availableActions.some((action) => ActionMap[action] !== null) &&
-			settings.enableConfirmationDialogs
+			settings.confirmationDialogsEnabled
 		) {
 			yield put<LocalMessage>({
 				type: localMessages.GAME_MODAL_OPENED_SET,

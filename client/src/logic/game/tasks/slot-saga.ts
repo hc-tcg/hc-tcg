@@ -79,7 +79,7 @@ function* pickWithoutSelectedSaga(
 			id: 'attack',
 		})
 	} else {
-		if (settings.enableConfirmationDialogs) {
+		if (settings.confirmationDialogsEnabled) {
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_MODAL_OPENED_SET,
 				id: 'change-hermit-modal',
