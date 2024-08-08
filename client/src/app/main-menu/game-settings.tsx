@@ -53,6 +53,15 @@ function GameSettings({setMenuSection}: Props) {
 			},
 		})
 	}
+	const handleSlotHighlightingChange = () => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'slotHighlightingEnabled',
+				value: !settings.slotHighlightingEnabled,
+			},
+		})
+	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const username = ev.currentTarget.minecraftName.value.trim()
@@ -93,6 +102,9 @@ function GameSettings({setMenuSection}: Props) {
 				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
 					Profanity Filter: {getDescriptor(settings.profanityFilterEnabled)}
+				</Button>
+				<Button variant="stone" onClick={handleSlotHighlightingChange}>
+					Card Slot Highlighting: {getDescriptor(settings.slotHighlightingEnabled)}
 				</Button>
 				<div className={css.minecraftNameArea}>
 					<div className={css.left}>

@@ -14,6 +14,7 @@ import {
 	getSelectedCard,
 } from 'logic/game/game-selectors'
 import {useSelector} from 'react-redux'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
 
@@ -36,6 +37,7 @@ const Slot = ({
 	statusEffects,
 	cssId,
 }: SlotProps) => {
+	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
@@ -94,8 +96,8 @@ const Slot = ({
 			disabled={!isClickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.pickable]: isPickable && somethingPickable,
-				[css.unpickable]: !isPickable && somethingPickable,
+				[css.pickable]: isPickable && somethingPickable && settings.slotHighlightingEnabled,
+				[css.unpickable]: !isPickable && somethingPickable && settings.slotHighlightingEnabled,
 				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !card,

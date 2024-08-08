@@ -12,6 +12,7 @@ export type LocalSettings = {
 	showAdvancedTooltips: boolean
 	chatPosition: {x: number; y: number}
 	chatSize: {w: number; h: number}
+	slotHighlightingEnabled: boolean
 	panoramaEnabled: boolean
 	panorama: string
 	gameSide: string
@@ -34,6 +35,7 @@ const defaultSettings: LocalSettings = {
 	showAdvancedTooltips: true,
 	chatPosition: {x: 0, y: 0},
 	chatSize: {w: 0, h: 0},
+	slotHighlightingEnabled: true,
 	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
