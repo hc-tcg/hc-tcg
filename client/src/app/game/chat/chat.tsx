@@ -2,13 +2,12 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
-import {chatMessage} from 'logic/game/game-actions'
 import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
 
 function clamp(n: number, min: number, max: number): number {
@@ -16,7 +15,7 @@ function clamp(n: number, min: number, max: number): number {
 }
 
 function Chat() {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages =
 		settings.disableChat === 'off' ? useSelector(getChatMessages) : []
@@ -30,7 +29,11 @@ function Chat() {
 
 	// If the chat menu was opened previously, lets make sure it is off at the start of the game.
 	useEffect(() => {
-		dispatch(setSetting('showChat', 'off'))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'showChat',
+			value: 'off',
+		})
 	}, [])
 
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
@@ -52,12 +55,14 @@ function Chat() {
 		})
 
 		if (!params.pressed) {
-			dispatch(
-				setSetting('chatPosition', {
+			dispatch({
+				type: localMessages.SETTINGS_SET,
+				key: 'chatPosition',
+				value: {
 					x: chatPosSetting.x + chatPos.x,
 					y: chatPosSetting.y + chatPos.y,
-				}),
-			)
+				},
+			})
 			setChatPos({
 				x: 0,
 				y: 0,
@@ -71,15 +76,19 @@ function Chat() {
 		ev.preventDefault()
 		const form = ev.currentTarget
 		const messageEl = form.message as HTMLInputElement
-		const message = messageEl.value.trim()
+		const chatMessage = messageEl.value.trim()
 		messageEl.value = ''
 		messageEl.focus()
-		if (message.length === 0) return
-		dispatch(chatMessage(message))
+		if (chatMessage.length === 0) return
+		dispatch({type: localMessages.CHAT_MESSAGE, message: chatMessage})
 	}
 
 	const closeChat = () => {
-		dispatch(setSetting('showChat', 'off'))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'showChat',
+			value: 'off',
+		})
 	}
 
 	// @TODO: Repopulate chat messages after reconnecting
@@ -103,18 +112,26 @@ function Chat() {
 			className={css.chat}
 			style={style}
 			onClick={(e) => {
-				dispatch(
-					setSetting('chatSize', {
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					key: 'chatSize',
+					value: {
 						w: e.currentTarget.offsetWidth,
 						h: e.currentTarget.offsetHeight,
-					}),
-				)
+					},
+				})
 			}}
 		>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponentName}</p>
 				<Button
-					onClick={() => dispatch(setSetting('showBattleLogs', !showLog))}
+					onClick={() =>
+						dispatch({
+							type: localMessages.SETTINGS_SET,
+							key: 'showBattleLogs',
+							value: !showLog,
+						})
+					}
 					size="small"
 				>
 					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}

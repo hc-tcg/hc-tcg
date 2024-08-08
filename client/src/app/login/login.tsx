@@ -4,10 +4,10 @@ import ErrorBanner from 'components/error-banner'
 import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {login} from 'logic/session/session-actions'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './login.module.scss'
 
 const getLoginError = (errorType: string) => {
@@ -22,14 +22,14 @@ const getLoginError = (errorType: string) => {
 }
 
 const Login = () => {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0) dispatch(login(name))
+		if (name.length > 0) dispatch({type: localMessages.LOGIN, name: name})
 	}
 
 	return (

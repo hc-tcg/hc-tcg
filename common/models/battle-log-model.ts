@@ -99,7 +99,10 @@ export class BattleLogModel {
 			),
 		)
 
-		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
+		broadcast(this.game.getPlayers(), {
+			type: 'CHAT_UPDATE',
+			messages: this.game.chat,
+		})
 	}
 
 	private genCardName(
@@ -331,7 +334,10 @@ export class BattleLogModel {
 			message: {TYPE: 'LineNode'},
 		})
 
-		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
+		broadcast(this.game.getPlayers(), {
+			type: 'CHAT_UPDATE',
+			messages: this.game.chat,
+		})
 	}
 
 	public addStatusEffectEntry(

@@ -3,10 +3,10 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import Modal from 'components/modal'
-import {modalRequest} from 'logic/game/game-actions'
 import {getGameState} from 'logic/game/game-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 }
 
 function SelectCardsModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
@@ -46,25 +46,30 @@ function SelectCardsModal({closeModal}: Props) {
 
 	const handlePrimary = () => {
 		if (selectionSize === 0) {
-			dispatch(modalRequest({modalResult: {result: true, cards: null}}))
+			dispatch({
+				type: localMessages.GAME_MODAL_REQUEST,
+				modalResult: {result: true, cards: null},
+			})
 			closeModal()
 			return
 		}
 		if (selected.length <= selectionSize) {
-			dispatch(
-				modalRequest({
-					modalResult: {
-						result: true,
-						cards: selected.map((card) => card.entity),
-					},
-				}),
-			)
+			dispatch({
+				type: localMessages.GAME_MODAL_REQUEST,
+				modalResult: {
+					result: true,
+					cards: selected.map((card) => card.entity),
+				},
+			})
 			closeModal()
 		}
 	}
 
 	const handleClose = () => {
-		dispatch(modalRequest({modalResult: {result: false, cards: null}}))
+		dispatch({
+			type: localMessages.GAME_MODAL_REQUEST,
+			modalResult: {result: false, cards: null},
+		})
 		closeModal()
 	}
 

@@ -1,8 +1,11 @@
 import {GameModel} from 'common/models/game-model'
-import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
 import {ActionResult} from 'common/types/game-state'
 import {CopyAttack, SelectCards} from 'common/types/modal-requests'
 import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
+import {
+	AttackActionData,
+	attackToAttackAction,
+} from 'common/types/turn-action-data'
 import {call} from 'typed-redux-saga'
 import attackSaga from './attack'
 
@@ -44,9 +47,7 @@ function* modalRequestSaga(
 			// There are no active requests left, and we're in the middle of an attack. Execute it now.
 			const turnAction: AttackActionData = {
 				type: attackToAttackAction[game.state.turn.currentAttack],
-				payload: {
-					player: game.currentPlayer.entity,
-				},
+				player: game.currentPlayer.entity,
 			}
 			const attackResult = yield* call(attackSaga, game, turnAction, false)
 

@@ -1,4 +1,4 @@
-import {AnyAction} from 'redux'
+import {LocalMessage, localMessages} from 'logic/messages'
 
 type LocalSettings = Record<string, any>
 
@@ -36,13 +36,13 @@ const defaultState: LocalSettings = {
 
 const localSettingsReducer = (
 	state = defaultState,
-	action: AnyAction,
+	action: LocalMessage,
 ): LocalSettings => {
 	switch (action.type) {
-		case 'SET_SETTING':
-			return {...state, [action.payload.key]: action.payload.value}
-		case 'RESET_SETTING':
-			return {...state, [action.payload]: defaultState[action.payload]}
+		case localMessages.SETTINGS_SET:
+			return {...state, [action.key]: action.value}
+		case localMessages.SETTINGS_RESET:
+			return {...state, [action.key]: defaultState[action.key]}
 		default:
 			return state
 	}

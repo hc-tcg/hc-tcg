@@ -17,6 +17,7 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -27,9 +28,8 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import {playSound} from 'logic/sound/sound-actions'
 import {ReactNode, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
@@ -50,7 +50,7 @@ function SelectDeck({
 	loadedDeck,
 }: Props) {
 	// REDUX
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 
@@ -77,7 +77,7 @@ function SelectDeck({
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
-		dispatch({type: 'SET_TOAST', payload: toast})
+		dispatch({type: localMessages.TOAST_OPEN, ...toast})
 	const deleteToast: ToastT = {
 		open: true,
 		title: 'Deck Deleted!',
@@ -106,10 +106,7 @@ function SelectDeck({
 		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({
-			type: 'UPDATE_DECK',
-			payload: loadedDeck,
-		})
+		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
@@ -237,7 +234,10 @@ function SelectDeck({
 				'/sfx/Page_turn2.ogg',
 				'/sfx/Page_turn3.ogg',
 			]
-			dispatch(playSound(pageTurn[Math.floor(Math.random() * pageTurn.length)]))
+			dispatch({
+				type: localMessages.SOUND_PLAY,
+				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+			})
 		}
 	}
 
@@ -448,15 +448,13 @@ function SelectDeck({
 											setSavedDecks(getSavedDecks())
 
 											dispatch({
-												type: 'SET_TOAST',
-												payload: {
-													show: true,
-													title: 'Convert Legacy Decks',
-													description: conversionCount
-														? `Converted ${conversionCount} decks!`
-														: 'No decks to convert!',
-													image: '/images/card-icon.png',
-												},
+												type: localMessages.TOAST_OPEN,
+												open: true,
+												title: 'Convert Legacy Decks',
+												description: conversionCount
+													? `Converted ${conversionCount} decks!`
+													: 'No decks to convert!',
+												image: '/images/card-icon.png',
 											})
 										}}
 									>

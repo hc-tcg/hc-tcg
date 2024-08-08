@@ -1,6 +1,7 @@
 import * as Toast from '@radix-ui/react-toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './toast.module.scss'
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
 }
 
 const ToastMessage = ({setOpen, title, description, image}: Props) => {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	const playSFX = (sound: 'in' | 'out') => {
@@ -25,7 +26,7 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 	const handleClose = () => {
 		playSFX('out')
 		setTimeout(() => {
-			dispatch({type: 'CLOSE_TOAST'})
+			dispatch({type: localMessages.TOAST_CLOSE})
 		}, 250)
 	}
 

@@ -1,23 +1,33 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
-import {applyEffect, removeEffect} from 'logic/game/game-actions'
 import {getPlayerState} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
 }
 function ConfirmModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
-		dispatch(applyEffect({}))
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'APPLY_EFFECT',
+			},
+		})
 		closeModal()
 	}
 
 	const handleNo = () => {
-		dispatch(removeEffect())
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'REMOVE_EFFECT',
+			},
+		})
 		closeModal()
 	}
 

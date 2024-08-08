@@ -1,19 +1,18 @@
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 
 function TooltipsItem() {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	const handleTooltips = () => {
-		dispatch(
-			setSetting(
-				'showAdvancedTooltips',
-				settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'showAdvancedTooltips',
+			value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
+		})
 	}
 
 	return (

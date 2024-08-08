@@ -3,9 +3,12 @@ import query from 'common/components/query'
 import {DEBUG_CONFIG} from 'common/config'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
-import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
+import {
+	AttackActionData,
+	attackActionToAttack,
+} from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 
 function getAttack(
