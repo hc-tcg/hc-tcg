@@ -1,111 +1,111 @@
 :root {
-    /* COLORS */
-    --color-primary: #3c8527;
-    --color-primary-shadow: #1d4d13;
-    --color-primary-highlight: #639d52;
-    --color-secondary: #fb95e2;
-    --color-secondary-shadow: #e159c2;
-    --color-secondary-highlight: #fcaae8;
-    --color-error: #ca3636;
-    --color-error-shadow: #ad1d1d;
-    --color-error-highlight: #cf4a4a;
-    --gray-900: rgb(30, 30, 31);
-    --gray-800: rgb(37, 38, 39);
-    --gray-700: rgb(49, 50, 51);
-    --gray-600: rgb(72, 73, 74);
-    --gray-500: rgb(88, 88, 90);
-    --gray-400: rgb(117, 117, 119);
-    --gray-300: rgb(162, 162, 164);
-    --gray-200: rgb(209, 210, 212);
-    --gray-100: rgb(231, 233, 237);
-    --gray-50: rgb(248, 250, 255);
+	/* COLORS */
+	--color-primary: #3c8527;
+	--color-primary-shadow: #1d4d13;
+	--color-primary-highlight: #639d52;
+	--color-secondary: #fb95e2;
+	--color-secondary-shadow: #e159c2;
+	--color-secondary-highlight: #fcaae8;
+	--color-error: #ca3636;
+	--color-error-shadow: #ad1d1d;
+	--color-error-highlight: #cf4a4a;
+	--gray-900: rgb(30, 30, 31);
+	--gray-800: rgb(37, 38, 39);
+	--gray-700: rgb(49, 50, 51);
+	--gray-600: rgb(72, 73, 74);
+	--gray-500: rgb(88, 88, 90);
+	--gray-400: rgb(117, 117, 119);
+	--gray-300: rgb(162, 162, 164);
+	--gray-200: rgb(209, 210, 212);
+	--gray-100: rgb(231, 233, 237);
+	--gray-50: rgb(248, 250, 255);
 
-    /* FONTS */
-    --text-light: var(--gray-50);
-    --text-dark: var(--gray-800);
-    --text-shadow: drop-shadow(1px 1px 0 rgba(0, 0, 0, 50%));
+	/* FONTS */
+	--text-light: var(--gray-50);
+	--text-dark: var(--gray-800);
+	--text-shadow: drop-shadow(1px 1px 0 rgba(0, 0, 0, 50%));
 
-    /* EXTRA */
-    --shadow: rgba(0, 0, 0, 40%);
-    --highlight: rgba(255, 255, 255, 10%);
-    --common: rgb(0, 197, 0);
-    --rare: rgb(249, 168, 3);
-    --ultra-rare: rgb(98, 255, 255);
-    --breakpoint: 80rem;
+	/* EXTRA */
+	--shadow: rgba(0, 0, 0, 40%);
+	--highlight: rgba(255, 255, 255, 10%);
+	--common: rgb(0, 197, 0);
+	--rare: rgb(249, 168, 3);
+	--ultra-rare: rgb(98, 255, 255);
+	--breakpoint: 80rem;
 }
 
 @font-face {
-    font-family: Minecraft;
-    src: url("/fonts/MinecraftRegular-Bmg3.otf");
+	font-family: Minecraft;
+	src: url("/fonts/MinecraftRegular-Bmg3.otf");
 }
 
 @font-face {
-    font-family: Unifont;
-    src: url("/fonts/unifont-15.1.05.otf");
+	font-family: Unifont;
+	src: url("/fonts/unifont-15.1.05.otf");
 }
 
 @font-face {
-    font-family: MinecraftBold;
-    src: url("/fonts/MinecraftBold-nMK1.otf");
+	font-family: MinecraftBold;
+	src: url("/fonts/MinecraftBold-nMK1.otf");
 }
 
 @font-face {
-    font-family: MinecraftItalic;
-    src: url("/fonts/MinecraftItalic-R8Mo.otf");
+	font-family: MinecraftItalic;
+	src: url("/fonts/MinecraftItalic-R8Mo.otf");
 }
 
 @font-face {
-    font-family: Minecrafter;
-    src: url("/fonts/Minecrafter.Reg.ttf");
+	font-family: Minecrafter;
+	src: url("/fonts/Minecrafter.Reg.ttf");
 }
 
 @font-face {
-    font-family: BangersRegular;
-    src: url("/fonts/BangersRegular.otf");
+	font-family: BangersRegular;
+	src: url("/fonts/BangersRegular.otf");
 }
 
 @font-face {
-    font-family: BangersBold;
-    src: url("/fonts/BangersBold.otf");
+	font-family: BangersBold;
+	src: url("/fonts/BangersBold.otf");
 }
 
 @font-face {
-    font-family: Badaboom;
-    src: url("/fonts/badaboom-bb.regular.otf");
+	font-family: Badaboom;
+	src: url("/fonts/badaboom-bb.regular.otf");
 }
 
 * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
 }
 
 html,
 body,
 #root,
 main {
-    height: 100%;
-    overflow: hidden;
+	height: 100%;
+	overflow: hidden;
 }
 
 body {
-    margin: 0;
-    font-family: Minecraft, Unifont, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-size: 1rem;
-    background: rgb(72, 72, 72);
+	margin: 0;
+	font-family: Minecraft, Unifont, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	font-size: 1rem;
+	background: rgb(72, 72, 72);
 
-    * {
-        user-select: none;
-    }
+	* {
+		user-select: none;
+	}
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-        monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
 }
 
 h1,
@@ -114,63 +114,63 @@ h3,
 h4,
 h5,
 h6 {
-    font-size: 1rem;
+	font-size: 1rem;
 }
 
 button {
-    margin: 0;
-    padding: 0;
-    border: none;
-    background: none;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
 }
 
 input:not([type]),
 input[type="text"] {
-    width: 200px;
-    padding: 0 10px;
-    height: 30px;
-    line-height: 1;
-    vertical-align: bottom;
-    border: 2px solid #000;
-    font-family: Minecraft, Unifont;
+	width: 200px;
+	padding: 0 10px;
+	height: 30px;
+	line-height: 1;
+	vertical-align: bottom;
+	border: 2px solid #000;
+	font-family: Minecraft, Unifont;
 }
 
 input:focus-visible {
-    outline: none;
+	outline: none;
 }
 
 ul,
 li {
-    list-style: none;
-    margin: 0;
-    padding-inline: 0;
+	list-style: none;
+	margin: 0;
+	padding-inline: 0;
 }
 
 /* scrollbar */
 ::-webkit-scrollbar {
-    width: 1.5vh;
-    height: 1.5vh;
+	width: 1.5vh;
+	height: 1.5vh;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #e6e8eb;
-    border: 0.25vh solid black;
-    border-radius: 0.25vh;
-    box-shadow: inset 0 0 0 0.25vh white;
-    background-clip: padding-box;
+	background: #e6e8eb;
+	border: 0.25vh solid black;
+	border-radius: 0.25vh;
+	box-shadow: inset 0 0 0 0.25vh white;
+	background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-track {
-    background: #58585a;
-    border: 0.5vh solid transparent;
-    border-radius: 0.5vh;
-    background-clip: padding-box;
-    margin-block: 0.5vh;
+	background: #58585a;
+	border: 0.5vh solid transparent;
+	border-radius: 0.5vh;
+	background-clip: padding-box;
+	margin-block: 0.5vh;
 }
 
 ::-webkit-scrollbar-button,
 ::-webkit-scrollbar-track-piece,
 ::-webkit-scrollbar-corner,
 ::-webkit-resizer {
-    display: none;
+	display: none;
 }

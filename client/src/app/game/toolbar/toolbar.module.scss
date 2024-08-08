@@ -1,74 +1,74 @@
 .toolbar {
-    display: flex;
-    justify-content: center;
-    flex-flow: row nowrap;
-    gap: 1vh;
-    background: var(--gray-700);
-    border-bottom: 1px solid #aaa;
-    padding: 1vh;
+	display: flex;
+	justify-content: center;
+	flex-flow: row nowrap;
+	gap: 1vh;
+	background: var(--gray-700);
+	border-bottom: 1px solid #aaa;
+	padding: 1vh;
 
-    span {
-        font-family: Minecraft, Unifont;
-    }
+	span {
+		font-family: Minecraft, Unifont;
+	}
 
-    button {
-        cursor: pointer;
+	button {
+		cursor: pointer;
 
-        &:hover {
-            background: var(--gray-500);
-        }
-    }
+		&:hover {
+			background: var(--gray-500);
+		}
+	}
 }
 
 .item {
-    $size: 4vh;
+	$size: 4vh;
 
-    min-width: $size;
-    height: $size;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2vh;
-    color: var(--text-light);
-    user-select: none;
-    background: var(--gray-900);
-    border-radius: 1vh;
+	min-width: $size;
+	height: $size;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2vh;
+	color: var(--text-light);
+	user-select: none;
+	background: var(--gray-900);
+	border-radius: 1vh;
 
-    > * {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 100%;
-        width: 100%;
-        object-fit: contain;
-        padding: 0.75vh;
-    }
+	> * {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		height: 100%;
+		width: 100%;
+		object-fit: contain;
+		padding: 0.75vh;
+	}
 
-    span {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-content: center;
-        color: var(--text-light);
-    }
+	span {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-content: center;
+		color: var(--text-light);
+	}
 }
 
 @keyframes newMessageAnim {
-    0% {
-        background: black;
-    }
+	0% {
+		background: black;
+	}
 
-    75% {
-        background: orange;
-    }
+	75% {
+		background: orange;
+	}
 
-    100% {
-        background: orange;
-    }
+	100% {
+		background: orange;
+	}
 }
 
 .newMessage {
-    animation: newMessageAnim 1000ms infinite alternate ease;
+	animation: newMessageAnim 1000ms infinite alternate ease;
 }
