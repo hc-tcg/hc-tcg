@@ -6,36 +6,32 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Cubfan135Rare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'cubfan135_rare',
-		numericId: 10,
-		name: 'Cub',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'speedrunner',
-		health: 260,
-		primary: {
-			name: 'Dash',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: "Let's Go",
-			cost: ['speedrunner', 'speedrunner', 'speedrunner'],
-			damage: 100,
-			power: 'After attack, you can choose to go AFK.',
-		},
-	}
-
-	override onAttach(
+const Cubfan135Rare: Hermit = {
+	...hermit,
+	id: 'cubfan135_rare',
+	numericId: 10,
+	name: 'Cub',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'speedrunner',
+	health: 260,
+	primary: {
+		name: 'Dash',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: "Let's Go",
+		cost: ['speedrunner', 'speedrunner', 'speedrunner'],
+		damage: 100,
+		power: 'After attack, you can choose to go AFK.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -76,7 +72,7 @@ class Cubfan135Rare extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Cubfan135Rare

@@ -1,5 +1,3 @@
-import type Card from './base/card'
-
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits'
 import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
@@ -8,6 +6,7 @@ import alterEgoEffectCards from './alter-egos/effects'
 import alterEgosHermitCards from './alter-egos/hermits'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 import {CardClass} from './base/card'
+import {Card} from './base/types'
 import defaultEffectCards from './default/effects'
 // import adventOfTcgEffectCards from './advent-of-tcg/effects'
 import defaultHermitCards from './default/hermits'
@@ -50,7 +49,7 @@ const allCardClasses: Array<CardClass> = [
 ]
 
 export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
-	(result: Record<string | string, Card>, cardClass) => {
+	(result: Record<string | string, CardOld>, cardClass) => {
 		let card = new cardClass(cardClass)
 		result[cardClass.name] = card
 		result[card.props.numericId] = card

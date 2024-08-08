@@ -8,11 +8,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class TargetBlock extends Card {
+class TargetBlock extends CardOld {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.hermit,

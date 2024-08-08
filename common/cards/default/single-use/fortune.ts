@@ -5,12 +5,12 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import FortuneStatusEffect from '../../../status-effects/fortune'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
-class Fortune extends Card {
+class Fortune extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fortune',

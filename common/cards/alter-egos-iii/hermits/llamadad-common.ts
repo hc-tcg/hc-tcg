@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class LlamadadCommmon extends Card {
+class LlamadadCommmon extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'llamadad_common',

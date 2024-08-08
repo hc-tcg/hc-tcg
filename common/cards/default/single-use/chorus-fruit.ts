@@ -7,11 +7,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class ChorusFruit extends Card {
+class ChorusFruit extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'chorus_fruit',

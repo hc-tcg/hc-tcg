@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 // common cards
 import BdoubleO100Common from './bdoubleo100-common'
 // rare & ultra rare cards
@@ -58,7 +58,7 @@ import ZedaphPlaysRare from './zedaphplays-rare'
 import ZombieCleoCommon from './zombiecleo-common'
 import ZombieCleoRare from './zombiecleo-rare'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Card> = [
 	BdoubleO100Common,
 	BdoubleO100Rare,
 	Cubfan135Common,

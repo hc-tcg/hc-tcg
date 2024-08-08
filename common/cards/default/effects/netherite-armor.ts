@@ -1,10 +1,10 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class NetheriteArmor extends Card {
+class NetheriteArmor extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'netherite_armor',

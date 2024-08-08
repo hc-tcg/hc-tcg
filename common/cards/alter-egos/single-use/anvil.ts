@@ -8,11 +8,11 @@ import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Anvil extends Card {
+class Anvil extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'anvil',

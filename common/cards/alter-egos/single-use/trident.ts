@@ -3,11 +3,11 @@ import {GameModel} from '../../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Trident extends Card {
+class Trident extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'trident',

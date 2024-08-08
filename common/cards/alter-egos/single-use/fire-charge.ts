@@ -7,11 +7,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class FireCharge extends Card {
+class FireCharge extends CardOld {
 	pickCondition = query.every(
 		query.slot.currentPlayer,
 		query.not(query.slot.frozen),

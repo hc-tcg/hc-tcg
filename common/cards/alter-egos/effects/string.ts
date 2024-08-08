@@ -1,9 +1,9 @@
 import query from '../../../components/query'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class String extends Card {
+class String extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'string',

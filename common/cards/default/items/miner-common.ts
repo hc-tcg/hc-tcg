@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Item} from '../../base/types'
 
-class MinerItem extends Card {
+class MinerItem extends CardOld {
 	props: Item = {
 		...item,
 		id: 'item_miner_common',

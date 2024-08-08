@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class NetheriteSword extends Card {
+class NetheriteSword extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'netherite_sword',

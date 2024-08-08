@@ -7,42 +7,38 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class EthosLabRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'ethoslab_rare',
-		numericId: 20,
-		name: 'Etho',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'redstone',
-		health: 280,
-		primary: {
-			name: 'Oh Snappers',
-			cost: ['redstone'],
-			damage: 50,
-			power: null,
+const EthosLabRare: Hermit = {
+	...hermit,
+	id: 'ethoslab_rare',
+	numericId: 20,
+	name: 'Etho',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'redstone',
+	health: 280,
+	primary: {
+		name: 'Oh Snappers',
+		cost: ['redstone'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Blue Fire',
+		cost: ['redstone', 'redstone'],
+		damage: 80,
+		power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
+	},
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'fire',
 		},
-		secondary: {
-			name: 'Blue Fire',
-			cost: ['redstone', 'redstone'],
-			damage: 80,
-			power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
-		},
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'fire',
-			},
-		],
-	}
-
-	override onAttach(
+	],
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -68,7 +64,7 @@ class EthosLabRare extends Card {
 				.new(StatusEffectComponent, FireEffect, component.entity)
 				.apply(opponentActiveHermit?.entity)
 		})
-	}
+	},
 }
 
 export default EthosLabRare

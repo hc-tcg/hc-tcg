@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Item} from '../../base/types'
 
-class SpeedrunnerItem extends Card {
+class SpeedrunnerItem extends CardOld {
 	props: Item = {
 		...item,
 		id: 'item_speedrunner_common',

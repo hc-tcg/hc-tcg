@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Lead extends Card {
+class Lead extends CardOld {
 	firstPickCondition = query.every(
 		query.slot.opponent,
 		query.slot.item,

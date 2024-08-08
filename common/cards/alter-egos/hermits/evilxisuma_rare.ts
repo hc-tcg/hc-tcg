@@ -10,11 +10,11 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class EvilXisumaRare extends Card {
+class EvilXisumaRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'evilxisuma_rare',

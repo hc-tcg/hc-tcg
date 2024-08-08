@@ -5,11 +5,11 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import OriginalXBEffect from '../../../status-effects/original-xb'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OriginalXBRare extends Card {
+class OriginalXBRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'originalxb_rare',

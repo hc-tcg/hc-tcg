@@ -8,46 +8,43 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
-import Card, {InstancedValue} from '../../base/card'
+import {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ZombieCleoRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'zombiecleo_rare',
-		numericId: 116,
-		name: 'Cleo',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'pvp',
-		health: 290,
-		primary: {
-			name: 'Dismissed',
-			cost: ['pvp'],
-			damage: 60,
-			power: null,
-		},
-		secondary: {
-			name: 'Puppetry',
-			cost: ['pvp', 'pvp', 'pvp'],
-			damage: 0,
-			power: 'Use an attack from any of your AFK Hermits.',
-		},
-	}
+const pickCondition = query.every(
+	query.slot.currentPlayer,
+	query.slot.hermit,
+	query.not(query.slot.empty),
+	query.not(query.slot.active),
+	query.not(query.slot.has(ArmorStand)),
+)
 
-	pickCondition = query.every(
-		query.slot.currentPlayer,
-		query.slot.hermit,
-		query.not(query.slot.empty),
-		query.not(query.slot.active),
-		query.not(query.slot.has(ArmorStand)),
-	)
+const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 
-	mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
-
-	override getAttack(
+const ZombieCleoRare: Hermit = {
+	...hermit,
+	id: 'zombiecleo_rare',
+	numericId: 116,
+	name: 'Cleo',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'pvp',
+	health: 290,
+	primary: {
+		name: 'Dismissed',
+		cost: ['pvp'],
+		damage: 60,
+		power: null,
+	},
+	secondary: {
+		name: 'Puppetry',
+		cost: ['pvp', 'pvp', 'pvp'],
+		damage: 0,
+		power: 'Use an attack from any of your AFK Hermits.',
+	},
+	getAttack(
 		game: GameModel,
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
@@ -55,7 +52,7 @@ class ZombieCleoRare extends Card {
 		if (hermitAttackType !== 'secondary')
 			return super.getAttack(game, component, hermitAttackType)
 
-		const mockedAttack = this.mockedAttacks.get(component)
+		const mockedAttack = mockedAttacks.get(component)
 		if (!mockedAttack) return null
 
 		let newAttack = mockedAttack.getAttack()
@@ -69,9 +66,9 @@ class ZombieCleoRare extends Card {
 				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
 		)
 		return newAttack
-	}
+	},
 
-	override onAttach(
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -88,13 +85,13 @@ class ZombieCleoRare extends Card {
 				if (hermitAttackType !== 'secondary') return
 
 				// Make sure we have an afk hermit to pick
-				if (!game.components.exists(SlotComponent, this.pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
 				game.addPickRequest({
 					player: player.entity,
 					id: component.entity,
 					message: 'Pick one of your AFK Hermits',
-					canPick: this.pickCondition,
+					canPick: pickCondition,
 					onResult: (pickedSlot) => {
 						const pickedCard =
 							pickedSlot.getCard() as CardComponent<Hermit> | null
@@ -122,7 +119,7 @@ class ZombieCleoRare extends Card {
 								if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 								// Store the card to copy when creating the attack
-								this.mockedAttacks.set(
+								mockedAttacks.set(
 									component,
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
@@ -130,7 +127,7 @@ class ZombieCleoRare extends Card {
 								return 'SUCCESS'
 							},
 							onTimeout: () => {
-								this.mockedAttacks.set(
+								mockedAttacks.set(
 									component,
 									setupMockCard(game, component, pickedCard, 'primary'),
 								)
@@ -145,21 +142,20 @@ class ZombieCleoRare extends Card {
 		)
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			if (!game.components.exists(SlotComponent, this.pickCondition)) {
+			if (!game.components.exists(SlotComponent, pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 
 			return blockedActions
 		})
-	}
-
-	override onDetach(
+	},
+	onDetach(
 		_game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
 	) {
-		this.mockedAttacks.clear(component)
-	}
+		mockedAttacks.clear(component)
+	},
 }
 
 export default ZombieCleoRare

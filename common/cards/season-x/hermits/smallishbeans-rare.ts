@@ -2,12 +2,12 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SmallishbeansCommon from './smallishbeans-common'
 
-class SmallishbeansRare extends Card {
+class SmallishbeansRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'smallishbeans_rare',

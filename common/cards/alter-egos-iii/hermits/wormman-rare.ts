@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {ObserverEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import Card, {InstancedValue} from '../../base/card'
+import CardOld, {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class WormManRare extends Card {
+class WormManRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'wormman_rare',

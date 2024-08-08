@@ -1,4 +1,4 @@
-import type {CardProps} from '../cards/base/types'
+import type {Card} from '../cards/base/types'
 import type {
 	CardComponent,
 	SlotComponent,
@@ -32,7 +32,7 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 	return t as WithoutFunctions<T>
 }
 
-export type LocalCardInstance<Props extends CardProps = CardProps> = {
+export type LocalCardInstance<Props extends Card = Card> = {
 	readonly props: WithoutFunctions<Props>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null

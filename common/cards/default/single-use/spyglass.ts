@@ -3,11 +3,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Spyglass extends Card {
+class Spyglass extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'spyglass',

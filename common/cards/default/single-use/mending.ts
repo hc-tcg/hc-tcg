@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Mending extends Card {
+class Mending extends CardOld {
 	pickCondition = query.every(
 		query.slot.currentPlayer,
 		query.slot.attach,

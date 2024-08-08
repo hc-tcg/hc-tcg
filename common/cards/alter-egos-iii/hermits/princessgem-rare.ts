@@ -7,11 +7,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PrincessGemRare extends Card {
+class PrincessGemRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'princessgem_rare',

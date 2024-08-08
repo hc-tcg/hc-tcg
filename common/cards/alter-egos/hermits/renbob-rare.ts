@@ -5,11 +5,11 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class RenbobRare extends Card {
+class RenbobRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'renbob_rare',

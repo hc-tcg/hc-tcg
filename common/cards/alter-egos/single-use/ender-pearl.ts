@@ -7,11 +7,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class EnderPearl extends Card {
+class EnderPearl extends CardOld {
 	pickCondition = query.every(
 		query.slot.empty,
 		query.slot.hermit,

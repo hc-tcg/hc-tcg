@@ -1,10 +1,10 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class FlintAndSteel extends Card {
+class FlintAndSteel extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'flint_&_steel',

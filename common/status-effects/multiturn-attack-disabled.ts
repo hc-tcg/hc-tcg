@@ -1,4 +1,4 @@
-import {CardProps} from '../cards/base/types'
+import {Card} from '../cards/base/types'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -27,7 +27,7 @@ export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 	public override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent<CardProps>,
+		target: CardComponent<Card>,
 		observer: ObserverComponent,
 	): void {
 		const {player} = target
@@ -60,7 +60,7 @@ export class MultiturnSecondaryAttackDisabledEffect extends CardStatusEffect {
 	public override onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent<CardProps>,
+		target: CardComponent<Card>,
 		observer: ObserverComponent,
 	): void {
 		const {player} = target

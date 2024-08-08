@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import PoisonEffect from '../../../status-effects/poison'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class SplashPotionOfPoison extends Card {
+class SplashPotionOfPoison extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_poison',

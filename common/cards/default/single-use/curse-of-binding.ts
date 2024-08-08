@@ -5,11 +5,11 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class CurseOfBinding extends Card {
+class CurseOfBinding extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'curse_of_binding',

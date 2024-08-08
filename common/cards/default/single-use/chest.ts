@@ -2,12 +2,12 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 import Clock from './clock'
 
-class Chest extends Card {
+class Chest extends CardOld {
 	pickCondition = query.every(
 		query.card.currentPlayer,
 		query.card.slot(query.slot.discardPile),

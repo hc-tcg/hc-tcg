@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class BeetlejhostRare extends Card {
+class BeetlejhostRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'beetlejhost_rare',

@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Ladder extends Card {
+class Ladder extends CardOld {
 	pickCondition = query.every(
 		query.slot.currentPlayer,
 		query.slot.hermit,

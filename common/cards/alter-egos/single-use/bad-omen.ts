@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class BadOmen extends Card {
+class BadOmen extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'bad_omen',

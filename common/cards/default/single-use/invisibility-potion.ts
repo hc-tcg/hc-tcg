@@ -9,11 +9,11 @@ import {
 	InvisibilityPotionTailsEffect,
 } from '../../../status-effects/invisibility-potion'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class InvisibilityPotion extends Card {
+class InvisibilityPotion extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'invisibility_potion',

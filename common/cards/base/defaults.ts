@@ -1,7 +1,23 @@
 import query from '../../components/query'
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
+import {Card, isItem} from './types'
+
+export const card: Card = {
+	isItem() {
+		return isItem(this.props)
+	},
+	isHealth(): this is CardOld<CardOld & HasHealth> {
+		return isHealth(this.props)
+	},
+	isHermit(): this is CardOld<CardOld & Hermit> {
+		return isHermit(this.props)
+	},
+	onAttach(_game, _component, _observer) {},
+	onDetach(_game, _component, _observer) {},
+}
 
 export const item = {
+	...card,
 	item: null,
 	category: 'item' as CardCategoryT,
 	attachCondition: query.every(
@@ -17,6 +33,7 @@ export const item = {
 }
 
 export const hermit = {
+	...card,
 	hermit: null,
 	category: 'hermit' as CardCategoryT,
 	attachCondition: query.every(
@@ -31,6 +48,7 @@ export const hermit = {
 }
 
 export const attach = {
+	...card,
 	attachable: null,
 	category: 'attach' as CardCategoryT,
 	attachCondition: query.every(
@@ -46,6 +64,7 @@ export const attach = {
 }
 
 export const singleUse = {
+	...card,
 	singleUse: null,
 	showConfirmationModal: false,
 	hasAttack: false,

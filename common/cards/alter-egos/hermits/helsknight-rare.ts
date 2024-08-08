@@ -5,11 +5,11 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {TrapHoleEffect} from '../../../status-effects/trap-hole'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class HelsknightRare extends Card {
+class HelsknightRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'helsknight_rare',

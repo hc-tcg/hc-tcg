@@ -1,10 +1,10 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class GoldArmor extends Card {
+class GoldArmor extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'gold_armor',

@@ -2,7 +2,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import DiamondArmor from './diamond-armor'
@@ -10,7 +10,7 @@ import GoldArmor from './gold-armor'
 import IronArmor from './iron-armor'
 import NetheriteArmor from './netherite-armor'
 
-class Thorns extends Card {
+class Thorns extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'thorns',

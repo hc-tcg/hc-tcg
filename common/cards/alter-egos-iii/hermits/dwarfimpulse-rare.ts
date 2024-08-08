@@ -2,12 +2,12 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {CardEntity, RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import GoldenAxe from '../../default/single-use/golden-axe'
 
-class DwarfImpulseRare extends Card {
+class DwarfImpulseRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'dwarfimpulse_rare',

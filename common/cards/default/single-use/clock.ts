@@ -8,11 +8,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Clock extends Card {
+class Clock extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'clock',

@@ -1,11 +1,11 @@
 import {CardComponent} from '../../../components'
 import {query, row, slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Slimeball extends Card {
+class Slimeball extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'slimeball',

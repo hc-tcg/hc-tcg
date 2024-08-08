@@ -9,11 +9,11 @@ import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Crossbow extends Card {
+class Crossbow extends CardOld {
 	pickCondition = query.every(
 		query.slot.opponent,
 		query.slot.hermit,

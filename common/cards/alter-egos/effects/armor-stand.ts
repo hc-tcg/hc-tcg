@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach, hermit} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 
-class ArmorStand extends Card {
+class ArmorStand extends CardOld {
 	props: Attach & HasHealth = {
 		...attach,
 		id: 'armor_stand',

@@ -6,12 +6,12 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import WaterBucket from '../../default/effects/water-bucket'
 
-class SpookyStressRare extends Card {
+class SpookyStressRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'spookystress_rare',

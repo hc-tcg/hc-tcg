@@ -8,7 +8,6 @@ import {DefaultDictionary} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {
 	Attach,
-	CardProps,
 	HasHealth,
 	Hermit,
 	Item,
@@ -44,9 +43,9 @@ export class InstancedValue<T> extends DefaultDictionary<CardComponent, T> {
 	}
 }
 
-export type CardClass = new (cardClass: CardClass) => Card
+export type CardClass = new (cardClass: CardClass) => CardOld
 
-abstract class Card<Props extends CardProps = CardProps> {
+abstract class CardOld {
 	public abstract props: Props
 	public cardClass: CardClass
 
@@ -83,20 +82,20 @@ abstract class Card<Props extends CardProps = CardProps> {
 		// default is do nothing
 	}
 
-	public isItem(): this is Card<CardProps & Item> {
+	public isItem(): this is CardOld<CardOld & Item> {
 		return isItem(this.props)
 	}
 
-	public isHealth(): this is Card<CardProps & HasHealth> {
+	public isHealth(): this is CardOld<CardOld & HasHealth> {
 		return isHealth(this.props)
 	}
 
-	public isHermit(): this is Card<CardProps & Hermit> {
+	public isHermit(): this is CardOld<CardOld & Hermit> {
 		return isHermit(this.props)
 	}
 
 	public getAttack(
-		this: Card<Hermit>,
+		this: CardOld<Hermit>,
 		game: GameModel,
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
@@ -125,20 +124,20 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return attack
 	}
 
-	public hasAttacks(this: Card<HasHealth>): this is Card<Props & Hermit> {
+	public hasAttacks(this: CardOld<HasHealth>): this is CardOld<Props & Hermit> {
 		return 'primary' in this.props && 'secondary' in this.props
 	}
 
-	public isAttach(): this is Card<CardProps & Attach> {
+	public isAttach(): this is CardOld<CardOld & Attach> {
 		return isAttach(this.props)
 	}
 
-	public isSingleUse(): this is Card<CardProps & SingleUse> {
+	public isSingleUse(): this is CardOld<CardOld & SingleUse> {
 		return isSingleUse(this.props)
 	}
 
 	public getFormattedDescription(
-		this: Card<Attach | SingleUse>,
+		this: CardOld<Attach | SingleUse>,
 	): FormattedTextNode {
 		return formatText(this.props.description)
 	}
@@ -150,4 +149,4 @@ abstract class Card<Props extends CardProps = CardProps> {
 	}
 }
 
-export default Card
+export default CardOld

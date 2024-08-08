@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Totem extends Card {
+class Totem extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'totem',

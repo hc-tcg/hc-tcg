@@ -11,7 +11,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -21,7 +21,7 @@ type AttackInfo = {
 	turn: number
 }
 
-class ArchitectFalseRare extends Card {
+class ArchitectFalseRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'architectfalse_rare',

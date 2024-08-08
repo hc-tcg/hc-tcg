@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Item} from '../../base/types'
 
-class BalancedItem extends Card {
+class BalancedItem extends CardOld {
 	props: Item = {
 		...item,
 		id: 'item_balanced_common',

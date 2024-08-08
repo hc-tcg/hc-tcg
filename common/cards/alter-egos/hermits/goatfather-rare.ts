@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
-import {CardProps, Hermit} from '../../base/types'
+import {Hermit} from '../../base/types'
 
-class GoatfatherRare extends Card {
+class GoatfatherRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'goatfather_rare',
@@ -40,7 +40,7 @@ class GoatfatherRare extends Card {
 
 	public override onAttach(
 		game: GameModel,
-		component: CardComponent<CardProps>,
+		component: CardComponent<CardOld>,
 		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = component

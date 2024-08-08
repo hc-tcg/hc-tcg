@@ -9,11 +9,11 @@ import {GameModel} from '../../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
 import PoisonEffect from '../../../status-effects/poison'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
 import {Attach, SingleUse} from '../../base/types'
 
-class MilkBucket extends Card {
+class MilkBucket extends CardOld {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,

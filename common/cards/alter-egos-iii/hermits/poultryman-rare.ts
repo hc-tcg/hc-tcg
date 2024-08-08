@@ -2,11 +2,11 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import Egg from '../../alter-egos/single-use/egg'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PoultryManRare extends Card {
+class PoultryManRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'poultryman_rare',

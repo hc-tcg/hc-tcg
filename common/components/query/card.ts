@@ -6,13 +6,13 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '..'
-import type Card from '../../cards/base/card'
-import {CardClass} from '../../cards/base/card'
+import type CardOld from '../../cards/base/card'
+import {Card} from '../../cards/base/types'
 import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {CardStatusEffect} from '../../status-effects/status-effect'
 import {TypeT} from '../../types/cards'
 
-let CARDS: Record<string, Card>
+let CARDS: Record<string, CardOld>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
 
 export const isHermit: ComponentQuery<CardComponent> = (_game, card) =>
@@ -83,9 +83,7 @@ export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
-export function is(
-	...cardTypes: Array<CardClass>
-): ComponentQuery<CardComponent> {
+export function is(...cardTypes: Array<Card>): ComponentQuery<CardComponent> {
 	return (_game, card) =>
 		cardTypes
 			.map((t) => CARDS[t.name].props.numericId)

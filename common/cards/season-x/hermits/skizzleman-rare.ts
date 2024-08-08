@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {GasLightEffect} from '../../../status-effects/gas-light'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SkizzlemanRare extends Card {
+class SkizzlemanRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'skizzleman_rare',

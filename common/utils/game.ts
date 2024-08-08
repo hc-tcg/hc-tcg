@@ -1,10 +1,13 @@
 import {CARDS} from '../cards'
-import Card from '../cards/base/card'
+import CardOld from '../cards/base/card'
 
 export function getFormattedName(cardId: string, opponent: boolean) {
 	const cardInfo = CARDS[cardId]
 
-	const getFormatting = (cardInfo: Card, opponent: boolean): string | null => {
+	const getFormatting = (
+		cardInfo: CardOld,
+		opponent: boolean,
+	): string | null => {
 		if (cardInfo.props.category === 'hermit') return opponent ? '$o' : '$p'
 		if (cardInfo.props.category === 'single_use') return '$e'
 		if (cardInfo.props.category === 'attach') return '$e'

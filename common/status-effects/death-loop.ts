@@ -1,4 +1,4 @@
-import {CardProps} from '../cards/base/types'
+import {Card} from '../cards/base/types'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -22,8 +22,8 @@ export class DeathloopReady extends CardStatusEffect {
 
 	override onApply(
 		game: GameModel,
-		effect: StatusEffectComponent<CardComponent<CardProps>, StatusEffectProps>,
-		target: CardComponent<CardProps>,
+		effect: StatusEffectComponent<CardComponent<Card>, StatusEffectProps>,
+		target: CardComponent<Card>,
 		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = target

@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Item} from '../../base/types'
 
-class TerraformItem extends Card {
+class TerraformItem extends CardOld {
 	props: Item = {
 		...item,
 		id: 'item_terraform_common',

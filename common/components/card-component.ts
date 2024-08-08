@@ -6,11 +6,10 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '.'
-import type Card from '../cards/base/card'
 import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
-	type CardProps,
+	type Card,
 	type HasHealth,
 	type Hermit,
 	type Item,
@@ -36,9 +35,9 @@ let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
-export class CardComponent<Props extends CardProps = CardProps> {
+export class CardComponent<CardType extends Card = Card> {
 	readonly game: GameModel
-	readonly card: Card<Props>
+	readonly card: CardType
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
@@ -60,9 +59,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.entity = entity
 		this.observerEntity = null
 		if (card instanceof Object) {
-			this.card = CARDS[card.name] as Card<Props>
+			this.card = CARDS[card.name] as CardType
 		} else {
-			this.card = CARDS[card] as Card<Props>
+			this.card = CARDS[card] as CardType
 		}
 
 		this.slotEntity = slot

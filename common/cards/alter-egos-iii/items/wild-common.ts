@@ -1,8 +1,8 @@
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {item} from '../../base/defaults'
 import {Description, Item} from '../../base/types'
 
-class WildItem extends Card {
+class WildItem extends CardOld {
 	props: Item & Description = {
 		...item,
 		id: 'item_any_common',

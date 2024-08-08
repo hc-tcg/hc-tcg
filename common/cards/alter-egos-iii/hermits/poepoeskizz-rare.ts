@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PoePoeSkizzRare extends Card {
+class PoePoeSkizzRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'poepoeskizz_rare',

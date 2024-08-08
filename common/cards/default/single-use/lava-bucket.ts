@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class LavaBucket extends Card {
+class LavaBucket extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'lava_bucket',

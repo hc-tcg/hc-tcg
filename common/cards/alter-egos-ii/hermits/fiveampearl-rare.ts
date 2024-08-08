@@ -1,12 +1,12 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import Wolf from '../../default/effects/wolf'
 
-class FiveAMPearlRare extends Card {
+class FiveAMPearlRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'fiveampearl_rare',

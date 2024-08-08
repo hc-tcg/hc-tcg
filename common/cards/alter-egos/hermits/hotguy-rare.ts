@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import Bow from '../../default/single-use/bow'
 
-class HotguyRare extends Card {
+class HotguyRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'hotguy_rare',
