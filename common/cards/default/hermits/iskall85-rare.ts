@@ -38,7 +38,7 @@ const Iskall85Rare: Hermit = {
 
 			const hermit = attack.target?.getHermit()
 			if (!hermit) return
-			if (!hermit.isHermit() || hermit.card.type !== 'builder') return
+			if (!hermit.isHermit() || hermit.props.type !== 'builder') return
 
 			attack.multiplyDamage(component.entity, 2)
 		})

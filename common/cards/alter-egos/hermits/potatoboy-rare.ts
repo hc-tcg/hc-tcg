@@ -54,8 +54,8 @@ const PotatoBoyRare: Hermit = {
 					let hermit = row.getHermit()
 					game.battleLog.addEntry(
 						player.entity,
-						`$p${hermit?.card.name} (${row.index + 1})$ was healed $g40hp$ by $p${
-							component.card.name
+						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
+							component.props.name
 						}$`,
 					)
 				})

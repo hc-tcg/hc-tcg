@@ -26,7 +26,7 @@ import type {
 	SlotEntity,
 } from '../entities'
 import type {GameModel} from '../models/game-model'
-import {CardStatusEffect, StatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {GameHook} from '../types/hooks'
 import query from './query'
 
@@ -36,7 +36,7 @@ import('../cards').then((mod) => (CARDS = mod.CARDS))
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<CardType extends Card = Card> {
 	readonly game: GameModel
-	readonly card: CardType
+	readonly props: CardType
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
@@ -58,9 +58,9 @@ export class CardComponent<CardType extends Card = Card> {
 		this.entity = entity
 		this.observerEntity = null
 		if (card instanceof Object) {
-			this.card = CARDS[card.name] as CardType
+			this.props = CARDS[card.name] as CardType
 		} else {
-			this.card = CARDS[card] as CardType
+			this.props = CARDS[card] as CardType
 		}
 
 		this.slotEntity = slot
@@ -68,7 +68,7 @@ export class CardComponent<CardType extends Card = Card> {
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
 
@@ -78,7 +78,7 @@ export class CardComponent<CardType extends Card = Card> {
 			onChangeSlot: new GameHook(),
 		}
 
-		this.card.onCreate(this.game, this)
+		this.props.onCreate(this.game, this)
 	}
 
 	/** A function that is used to order cards by thier slot's order.
@@ -114,19 +114,19 @@ export class CardComponent<CardType extends Card = Card> {
 	}
 
 	public isItem(): this is CardComponent<Item> {
-		return isItem(this.card)
+		return isItem(this.props)
 	}
 	public isSingleUse(): this is CardComponent<SingleUse> {
-		return isSingleUse(this.card)
+		return isSingleUse(this.props)
 	}
 	public isAttach(): this is CardComponent<Attach> {
-		return isAttach(this.card)
+		return isAttach(this.props)
 	}
 	public isHealth(): this is CardComponent<HasHealth> {
-		return isHealth(this.card)
+		return isHealth(this.props)
 	}
 	public isHermit(): this is CardComponent<Hermit> {
-		return isHermit(this.card)
+		return isHermit(this.props)
 	}
 
 	/** Return true if this hermit is in a row and this hermits HP is greater than 0 */
@@ -156,7 +156,7 @@ export class CardComponent<CardType extends Card = Card> {
 			let observer = this.game.components.get(this.observerEntity)
 			if (!observer) throw new Error('Observer expected to be in ECS')
 			observer.unsubscribeFromEverything()
-			this.card.onDetach(this.game, this, observer)
+			this.props.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)
 		}
 
@@ -165,7 +165,7 @@ export class CardComponent<CardType extends Card = Card> {
 		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
 

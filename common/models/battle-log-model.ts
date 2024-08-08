@@ -33,7 +33,7 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.card.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
@@ -113,15 +113,15 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.card.category === 'hermit' &&
+			card.props.category === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.card.name} (${row?.index + 1})`
+			return `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.card.name}`
+		return `${card.props.name}`
 	}
 
 	public addPlayCardEntry(
@@ -138,14 +138,14 @@ export class BattleLogModel {
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
 
-		const logMessage = card.card.getLog({
+		const logMessage = card.props.getLog({
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
-			defaultLog: `$p{You|${player.playerName}}$ used $e${card.card.name}$`,
+			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
 				rowIndex: cardRow ? `${cardRow.index + 1}` : invalid,
-				id: card.card.id,
+				id: card.props.id,
 				name: this.genCardName(card.player, card, cardRow),
 				hermitCard: this.genCardName(
 					card.player,
@@ -156,7 +156,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
-				id: pickedCard?.card.id || invalid,
+				id: pickedCard?.props.id || invalid,
 				name: pickedCard
 					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
 					: invalid,
@@ -214,14 +214,14 @@ export class BattleLogModel {
 			if (attackerInfo instanceof CardComponent && attackerInfo.isHermit()) {
 				attackName =
 					subAttack.type === 'primary'
-						? attackerInfo.card.primary.name
-						: attackerInfo.card.secondary.name
+						? attackerInfo.props.primary.name
+						: attackerInfo.props.secondary.name
 			} else {
-				attackName = singleUse?.card.name || '$eINVALID$'
+				attackName = singleUse?.props.name || '$eINVALID$'
 			}
 
 			const logMessage = subAttack.getLog({
-				attacker: `$p${attackerInfo.card.name}$`,
+				attacker: `$p${attackerInfo.props.name}$`,
 				player: attack.player.playerName,
 				opponent: attack.player.opponentPlayer.playerName,
 				target: `$${targetFormatting}${this.genCardName(
@@ -263,7 +263,7 @@ export class BattleLogModel {
 			this.logMessageQueue.push({
 				player: player.entity,
 				description: `$o${
-					this.game.components.get(coinFlip.card)?.card.name
+					this.game.components.get(coinFlip.card)?.props.name
 				}$ ${this.generateCoinFlipDescription(coinFlip)} on their coinflip`,
 			})
 		})
@@ -291,14 +291,14 @@ export class BattleLogModel {
 		if (oldHermit) {
 			this.logMessageQueue.push({
 				player: player.entity,
-				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.card.name}$ for $p${
-					newHermit.card.name
+				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.props.name}$ for $p${
+					newHermit.props.name
 				} (${newRow.index + 1})$`,
 			})
 		} else {
 			this.logMessageQueue.push({
 				player: player.entity,
-				description: `$p{You|${player.playerName}}$ activated $p${newHermit.card.name} (${
+				description: `$p{You|${player.playerName}}$ activated $p${newHermit.props.name} (${
 					newRow.index + 1
 				})$`,
 			})
@@ -312,7 +312,7 @@ export class BattleLogModel {
 			query.card.rowEntity(row),
 		)
 		if (!hermitCard) return
-		const cardName = hermitCard.card.name
+		const cardName = hermitCard.props.name
 		let player = this.game.components.get(playerEntity)
 
 		const livesRemaining = player?.lives === 3 ? 'two lives' : 'one life'
@@ -357,7 +357,7 @@ export class BattleLogModel {
 				'Unknown Row'
 
 			const logMessage = log({
-				target: `$${targetFormatting}${pos.card.name} (${rowNumberString})$`,
+				target: `$${targetFormatting}${pos.props.name} (${rowNumberString})$`,
 				verb: 'was',
 				statusEffect: `$e${effect.props.name}$`,
 			})

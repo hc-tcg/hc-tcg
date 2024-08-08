@@ -43,7 +43,7 @@ const Mending: SingleUse = {
 	),
 	log: (values) =>
 		`${values.defaultLog} to move $e${
-			values.game.currentPlayer.activeRow?.getAttach()?.card.name
+			values.game.currentPlayer.activeRow?.getAttach()?.props.name
 		}$ to $p${values.pick.hermitCard}$`,
 	onAttach(
 		game: GameModel,

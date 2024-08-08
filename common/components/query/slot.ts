@@ -152,7 +152,7 @@ export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 export function hasStatusEffect(
-	statusEffect: new () => StatusEffect,
+	statusEffect: StatusEffect,
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
 		return game.components.exists(

@@ -194,12 +194,12 @@ function getLocalCard<CardType extends Card>(
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
 	let attackPreview = null
-	if (card.isSingleUse() && card.card.hasAttack && card.card.attackPreview) {
-		attackPreview = card.card.attackPreview(game)
+	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+		attackPreview = card.props.attackPreview(game)
 	}
 
 	return {
-		props: card.card as WithoutFunctions<CardType>,
+		props: card.props as WithoutFunctions<CardType>,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
@@ -415,7 +415,7 @@ export function getLocalGameState(
 		// Add the card name before the request
 		const pickRequestCreator = game.components.get(currentPickRequest.id)
 		if (pickRequestCreator) {
-			currentPickMessage = `${pickRequestCreator.card.name}: ${currentPickMessage}`
+			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
 		if (currentPickRequest.player == viewer.playerOnLeft.entity) {

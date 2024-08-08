@@ -39,7 +39,7 @@ const OverseerRare: Hermit = {
 				return
 
 			const targetHermit = attack.target?.getHermit()
-			if (targetHermit?.isHermit() && targetHermit.card.type === 'farm')
+			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
 				attack.multiplyDamage(component.entity, 2)
 		})
 	},

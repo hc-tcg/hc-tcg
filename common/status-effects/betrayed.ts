@@ -43,7 +43,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			const energy =
 				(activeHermit.slot.inRow() &&
 					activeHermit.slot.row.getItems()?.flatMap((item) => {
-						if (item?.isItem()) return item.card.type
+						if (item?.isItem()) return item.props.type
 						return []
 					})) ||
 				[]
@@ -51,8 +51,8 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			// Return if no energy
 			if (
 				!activeHermit.isHermit() ||
-				(!hasEnoughEnergy(energy, activeHermit.card.primary.cost) &&
-					!hasEnoughEnergy(energy, activeHermit.card.secondary.cost))
+				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
+					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
 			) {
 				return
 			}

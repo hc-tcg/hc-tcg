@@ -85,8 +85,8 @@ const KeralisRare: Hermit = {
 
 			game.battleLog.addEntry(
 				player.entity,
-				`$p${hermit?.card.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
-					hermit?.card.name
+				`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
+					hermit?.props.name
 				}$`,
 			)
 		})

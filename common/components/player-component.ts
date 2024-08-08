@@ -1,7 +1,7 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -316,7 +316,7 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[card, this.game.getPickableSlots(card.card.attachCondition)] as [
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
 						CardComponent,
 						Array<SlotEntity>,
 					],

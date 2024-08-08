@@ -244,10 +244,10 @@ function createWeaknessAttack(
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 
-	const strength = STRENGTHS[attacker.card.type]
+	const strength = STRENGTHS[attacker.props.type]
 	if (
 		attack.createWeakness !== 'always' &&
-		!strength.includes(targetCardInfo.card.type)
+		!strength.includes(targetCardInfo.props.type)
 	) {
 		return null
 	}
@@ -279,7 +279,7 @@ export function setupMockCard(
 ): MockedAttack {
 	let observer = game.components.new(ObserverComponent, component.entity)
 
-	mocking.card.onAttach(game, component, observer)
+	mocking.props.onAttach(game, component, observer)
 
 	component.player.hooks.getAttackRequests.callSome(
 		[component, attackType],
@@ -287,18 +287,18 @@ export function setupMockCard(
 	)
 
 	observer.subscribe(component.player.hooks.onTurnEnd, () => {
-		mocking.card.onDetach(game, component, observer)
+		mocking.props.onDetach(game, component, observer)
 		observer.unsubscribeFromEverything()
 	})
 
 	return {
-		hermitName: mocking.card.name,
+		hermitName: mocking.props.name,
 		attackName:
 			attackType === 'primary'
-				? mocking.card.primary.name
-				: mocking.card.secondary.name,
+				? mocking.props.primary.name
+				: mocking.props.secondary.name,
 		getAttack: () => {
-			return mocking.card.getAttack(game, component, attackType)
+			return mocking.props.getAttack(game, component, attackType)
 		},
 	}
 }

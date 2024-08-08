@@ -110,3 +110,9 @@ export const damageEffect = {
 	removeLog: (values: StatusEffectLog) =>
 		`${values.statusEffect} on ${values.target} wore off`,
 }
+
+export function isCounter<T extends CardComponent | PlayerComponent>(
+	effect: StatusEffect<T>,
+): effect is Counter<T> {
+	return 'counter' in effect
+}

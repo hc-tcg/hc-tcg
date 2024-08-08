@@ -46,7 +46,7 @@ const HotguyRare: Hermit = {
 			if (!usingSecondaryAttack) return
 			if (
 				attack.attacker instanceof CardComponent &&
-				attack.attacker.card.id === Bow.id
+				attack.attacker.props.id === Bow.id
 			) {
 				attack.addDamage(attack.attacker.entity, attack.getDamage())
 			}

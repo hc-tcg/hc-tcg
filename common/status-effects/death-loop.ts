@@ -51,7 +51,7 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 
 			game.battleLog.addEntry(
 				player.entity,
-				`Using $vDeathloop$, $p${targetHermit.card.name}$ revived with $g50hp$`,
+				`Using $vDeathloop$, $p${targetHermit.props.name}$ revived with $g50hp$`,
 			)
 
 			game.components

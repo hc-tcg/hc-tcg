@@ -166,9 +166,9 @@ const getSidebarDescriptions = (
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{STATUS_EFFECTS[statusEffect].props.name}</u>
+						<u>{STATUS_EFFECTS[statusEffect].name}</u>
 					</b>
-					<p>{STATUS_EFFECTS[statusEffect].props.description}</p>
+					<p>{STATUS_EFFECTS[statusEffect].description}</p>
 				</div>
 			)
 		}

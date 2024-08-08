@@ -93,6 +93,6 @@ export class RowComponent {
 		)
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
-		this.health = Math.min(this.health + amount, hermit.card.health)
+		this.health = Math.min(this.health + amount, hermit.props.health)
 	}
 }

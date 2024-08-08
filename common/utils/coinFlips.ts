@@ -28,7 +28,7 @@ export function flipCoin(
 	)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
+			`${card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
 		)
 		return []
 	}
@@ -48,7 +48,7 @@ export function flipCoin(
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
-	const name = card.card.name
+	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
 	player.coinFlips.push({
 		card: card.entity,
