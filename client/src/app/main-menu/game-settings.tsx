@@ -17,7 +17,7 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'confirmationDialogs',
-			value: settings.confirmationDialogs !== 'off' ? 'off' : 'on',
+			value: !settings.confirmationDialogs,
 		})
 	}
 	const handleGameSideToggle = () => {
@@ -28,22 +28,21 @@ function GameSettings({setMenuSection}: Props) {
 			value: gameSide,
 		})
 	}
-	const getDescriptor = (value?: string) => {
-		if (value !== 'off') return 'Enabled'
-		return 'Disabled'
+	const getDescriptor = (value: boolean) => {
+		return value ? 'Enabled' : 'Disabled'
 	}
 	const handleChatChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'disableChat',
-			value: settings.disableChat !== 'off' ? 'off' : 'on',
+			value: !settings.disableChat,
 		})
 	}
 	const handleProfanityChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'profanityFilter',
-			value: settings.profanityFilter !== 'off' ? 'off' : 'on',
+			value: !settings.profanityFilter,
 		})
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {

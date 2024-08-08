@@ -47,11 +47,11 @@ function Settings({setMenuSection}: Props) {
 			value: !settings.panoramaEnabled,
 		})
 	}
-	const getBoolDescriptor = (value?: boolean) => {
+	const getBoolDescriptor = (value: boolean) => {
 		return value ? 'Enabled' : 'Disabled'
 	}
-	const getPercDescriptor = (value?: string) => {
-		if (value !== '0') return `${value}%`
+	const getPercentDescriptor = (value: number) => {
+		if (value !== 0) return `${value}%`
 		return 'Disabled'
 	}
 	const handleGameSettings = () => setMenuSection('game-settings')
@@ -82,10 +82,10 @@ function Settings({setMenuSection}: Props) {
 			>
 				<div className={css.settings}>
 					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music Volume: {getPercDescriptor(settings.musicVolume)}
+						Music Volume: {getPercentDescriptor(settings.musicVolume)}
 					</Slider>
 					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sound Effect Volume: {getPercDescriptor(settings.soundVolume)}
+						Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
 					</Slider>
 					<Button variant="stone" onClick={handleMuteSound}>
 						Sound: {getBoolDescriptor(!settings.muted)}

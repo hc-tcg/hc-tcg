@@ -13,24 +13,22 @@ type Props = {
 
 const ToastMessage = ({setOpen, title, description, image}: Props) => {
 	const dispatch = useMessageDispatch()
-	const settings = useSelector(getSettings)
-
-	const playSFX = (sound: 'in' | 'out') => {
-		let audioFile
-		sound === 'in' && (audioFile = 'sfx/Toast_In.ogg')
-		sound === 'out' && (audioFile = 'sfx/Toast_Out.ogg')
-		const sfx: any = new Audio(audioFile)
-		settings.soundOn === 'on' && sfx.play()
-	}
 
 	const handleClose = () => {
-		playSFX('out')
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: 'sfx/Toast_Out.ogg',
+		})
 		setTimeout(() => {
 			dispatch({type: localMessages.TOAST_CLOSE})
 		}, 250)
 	}
 
-	setOpen && playSFX('in')
+	setOpen &&
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: 'sfx/Toast_In.ogg',
+		})
 
 	return (
 		<>
