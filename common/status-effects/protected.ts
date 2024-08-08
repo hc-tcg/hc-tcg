@@ -1,16 +1,11 @@
-import {
-	CardStatusEffect,
-	StatusEffect,
-	statusEffect,
-} from './status-effect'
+import {CardComponent} from '../components'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class ProtectedEffect extends CardStatusEffect {
-	props: StatusEffect = {
-		...statusEffect,
-		icon: 'protected',
-		name: "Sheriff's Protection",
-		description: 'This Hermit does not take damage on their first active turn.',
-	}
+const ProtectedEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	icon: 'protected',
+	name: "Sheriff's Protection",
+	description: 'This Hermit does not take damage on their first active turn.',
 
 	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent, ) {
 	// 	const {player} = component

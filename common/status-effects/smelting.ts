@@ -1,20 +1,14 @@
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffect,
-	statusEffect,
-} from './status-effect'
+import {CardComponent} from '../components'
+import {Counter, statusEffect} from './status-effect'
 
-class SmeltingEffect extends CardStatusEffect {
-	props: StatusEffect & Counter = {
-		...statusEffect,
-		icon: 'smelting',
-		name: 'Smelting',
-		description:
-			'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
-		counter: 4,
-		counterType: 'turns',
-	}
+const SmeltingEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'smelting',
+	name: 'Smelting',
+	description:
+		'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
+	counter: 4,
+	counterType: 'turns',
 
 	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 	// 	const {player} = component

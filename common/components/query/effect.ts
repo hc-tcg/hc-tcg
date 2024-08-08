@@ -2,13 +2,9 @@ import {ComponentQuery} from '.'
 import query from '.'
 import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {CardEntity, PlayerEntity} from '../../entities'
-import {
-	CardStatusEffect,
-	StatusEffect,
-	StatusEffect,
-} from '../../status-effects/status-effect'
+import {StatusEffect} from '../../status-effects/status-effect'
 
-let STATUS_EFFECTS: Record<any, CardStatusEffect>
+let STATUS_EFFECTS: Record<any, StatusEffect<CardComponent>>
 import('../../status-effects').then(
 	(mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS),
 )
@@ -18,12 +14,10 @@ export function id(id: string): ComponentQuery<StatusEffectComponent> {
 }
 
 export function is(
-	...effect: Array<new () => StatusEffect>
+	...effect: Array<StatusEffect>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		effect.some(
-			(e) => STATUS_EFFECTS[e.name].props.icon === statusEffect.props.icon,
-		)
+		effect.some((e) => STATUS_EFFECTS[e.name].icon === statusEffect.props.icon)
 }
 
 export function targetIsPlayerAnd(

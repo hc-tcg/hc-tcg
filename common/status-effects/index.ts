@@ -81,10 +81,7 @@ const effectClasses: Array<StatusEffect> = [
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
-	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
-		let effect = new effectClass()
-		if (!effect.props) return result
-		result[effectClass.name] = effect
-		result[effect.props.icon] = effect
+	effectClasses.reduce((result: Record<string, StatusEffect>, effect) => {
+		result[effect.name] = effect
 		return result
 	}, {})

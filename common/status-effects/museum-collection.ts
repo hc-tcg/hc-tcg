@@ -1,20 +1,17 @@
+import {CardComponent} from '../components'
 import {
-	CardStatusEffect,
 	Counter,
-	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
-class MuseumCollectionEffect extends CardStatusEffect {
-	props: StatusEffect & Counter = {
-		...statusEffect,
-		icon: 'museum-collection',
-		name: 'Museum Collection Size',
-		description:
-			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
-		counter: 0,
-		counterType: 'number',
-	}
+const MuseumCollectionEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'museum-collection',
+	name: 'Museum Collection Size',
+	description:
+		"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
+	counter: 0,
+	counterType: 'number',
 
 	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 	// 	const {player} = component

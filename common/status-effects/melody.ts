@@ -1,19 +1,13 @@
 import {CardComponent} from '../components'
-import {
-	CardStatusEffect,
-	StatusEffect,
-	statusEffect,
-} from './status-effect'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class MelodyEffect extends CardStatusEffect {
-	props: StatusEffect = {
-		...statusEffect,
-		icon: 'melody',
-		name: "Ollie's Melody",
-		description: 'This Hermit heals 10hp every turn.',
-		applyCondition: (_game, card) =>
-			card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
-	}
+const MelodyEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	icon: 'melody',
+	name: "Ollie's Melody",
+	description: 'This Hermit heals 10hp every turn.',
+	applyCondition: (_game, card) =>
+		card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
 
 	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 	// 	const {player} = component

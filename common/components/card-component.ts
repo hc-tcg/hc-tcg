@@ -26,7 +26,7 @@ import type {
 	SlotEntity,
 } from '../entities'
 import type {GameModel} from '../models/game-model'
-import {CardStatusEffect} from '../status-effects/status-effect'
+import {CardStatusEffect, StatusEffect} from '../status-effects/status-effect'
 import {GameHook} from '../types/hooks'
 import query from './query'
 
@@ -196,7 +196,7 @@ export class CardComponent<CardType extends Card = Card> {
 		)
 	}
 
-	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
+	public getStatusEffect(...statusEffect: Array<StatusEffect<CardComponent>>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),
