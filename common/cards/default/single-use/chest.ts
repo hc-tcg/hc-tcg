@@ -41,8 +41,8 @@ class Chest extends Card {
 			data: {
 				modalId: 'selectCards',
 				payload: {
-					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
-					modalDescription: '',
+					modalName: 'Chest',
+					modalDescription: 'Choose a card to retrieve from your discard pile.',
 					cards: game.components
 						.filter(CardComponent, this.pickCondition)
 						.map((card) => card.entity),

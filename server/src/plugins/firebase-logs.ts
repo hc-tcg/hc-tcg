@@ -50,14 +50,10 @@ export class FirebaseLogs {
 
 			const playerStates = game.components.filter(PlayerComponent)
 
-			function getHand(pState: PlayerComponent) {
-				return pState.getHand()
-			}
-
 			this.gameLogs[game.id] = {
 				type,
-				startHand1: getHand(playerStates[0]),
-				startHand2: getHand(playerStates[1]),
+				startHand1: playerStates[0].getHand(),
+				startHand2: playerStates[1].getHand(),
 				startTimestamp: new Date().getTime(),
 				startDeck:
 					game.state.order[0] == playerStates[0].entity ? 'deck1' : 'deck2',
@@ -80,8 +76,8 @@ export class FirebaseLogs {
 
 				let ref = '/logs'
 				let summaryObj: any = {
-					startHand1: gameLog.startHand1,
-					startHand2: gameLog.startHand2,
+					startHand1: gameLog.startHand1.map((card) => card.props.id),
+					startHand2: gameLog.startHand2.map((card) => card.props.id),
 					startTimestamp: gameLog.startTimestamp,
 					startDeck: gameLog.startDeck,
 					endTimestamp: new Date().getTime(),

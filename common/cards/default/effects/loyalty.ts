@@ -26,25 +26,19 @@ class Loyalty extends Card {
 	) {
 		const {player, opponentPlayer} = component
 
-		const afterAttack = (_attack: AttackModel) => {
+		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!component.slot.inRow() || component.slot.row.health) return
+			if (!attack.target) return
 
 			game.components
 				.filter(
 					CardComponent,
 					query.card.player(player.entity),
-					query.card.active,
+					query.card.row(query.row.index(attack.target.index)),
 					query.card.slot(query.slot.item),
 				)
 				.forEach((card) => card.draw())
-		}
-
-		observer.subscribe(player.hooks.afterAttack, (attack) =>
-			afterAttack(attack),
-		)
-		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) =>
-			afterAttack(attack),
-		)
+		})
 	}
 }
 

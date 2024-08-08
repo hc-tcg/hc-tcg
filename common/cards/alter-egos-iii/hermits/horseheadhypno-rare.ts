@@ -58,9 +58,9 @@ class HorseHeadHypnoRare extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName:
-							'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
-						modalDescription: '',
+						modalName: 'Horse Head Hypno - Restock',
+						modalDescription:
+							'Choose an item card to retrieve from your discard pile.',
 						cards: game.components
 							.filter(CardComponent, modalCondition)
 							.map((card) => card.entity),

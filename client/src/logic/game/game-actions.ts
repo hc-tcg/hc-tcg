@@ -76,7 +76,7 @@ export const startAttack = (
 
 export const showEndGameOverlay = (
 	outcome: GameEndOutcomeT,
-	reason: GameEndReasonT = null,
+	reason: GameEndReasonT,
 ) => ({
 	type: 'SHOW_END_GAME_OVERLAY' as const,
 	payload: {

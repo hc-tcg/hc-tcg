@@ -1,18 +1,21 @@
 import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
-import {GameModel} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
-import {AnyAction} from 'redux'
-import {delay, takeEvery} from 'typed-redux-saga'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalMessageTable, localMessages} from 'messages'
+import {getGame} from 'selectors'
+import {delay, select} from 'typed-redux-saga'
 import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 import {getLocalGameState} from '../../utils/state-gen'
 
-function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
-	const playerId = action.payload.internalId
+export function* sendGameStateOnReconnect(
+	action: LocalMessageTable[typeof localMessages.PLAYER_RECONNECTED],
+) {
+	const game = yield* select(getGame(action.player.id))
+	if (!game) return
+
+	const playerId = action.player.id
 	const player = game.players[playerId]
-	const opponentId = getOpponentId(game, playerId)
-	const opponent = game.players[opponentId]
 
 	yield* delay(500)
 
@@ -33,37 +36,26 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 		return
 	}
 
-	const payload = {
+	broadcast([player], {
+		type: serverMessages.GAME_STATE_ON_RECONNECT,
 		localGameState: getLocalGameState(game, viewer),
 		order: game.getPlayers().map((player) => player.id),
-	}
-	broadcast([player], 'GAME_STATE_ON_RECONNECT', payload)
-	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)
+	})
 }
 
-function* statusChangedSaga(game: GameModel, action: AnyAction) {
-	const playerId = (action.payload as PlayerModel).id
+export function* statusChangedSaga(
+	action:
+		| LocalMessageTable[typeof localMessages.PLAYER_RECONNECTED]
+		| LocalMessageTable[typeof localMessages.PLAYER_DISCONNECTED],
+) {
+	const game = yield* select(getGame(action.player.id))
+	if (!game) return
+
+	const playerId = action.player.id
 	const opponentId = getOpponentId(game, playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
-	broadcast([game.players[opponentId]], 'OPPONENT_CONNECTION', connectionStatus)
+	broadcast([game.players[opponentId]], {
+		type: serverMessages.OPPONENT_CONNECTION,
+		isConnected: connectionStatus,
+	})
 }
-
-function* connectionStatusSaga(game: GameModel) {
-	yield* takeEvery(
-		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' &&
-			!!game.players[(action.payload as PlayerModel).id],
-		sendGameStateOnReconnect,
-		game,
-	)
-
-	yield* takeEvery(
-		(action: any) =>
-			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
-			!!game.players[(action.payload as PlayerModel).id],
-		statusChangedSaga,
-		game,
-	)
-}
-
-export default connectionStatusSaga

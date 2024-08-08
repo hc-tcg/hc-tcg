@@ -74,7 +74,7 @@ class BoomerBdubsRare extends Card {
 					data: {
 						modalId: 'selectCards',
 						payload: {
-							modalName: 'Boomer BDubs: Coin Flip',
+							modalName: 'Boomer BDubs - Watch This',
 							modalDescription: 'Do you want to flip a coin for your attack?',
 							cards: [],
 							selectionSize: 0,

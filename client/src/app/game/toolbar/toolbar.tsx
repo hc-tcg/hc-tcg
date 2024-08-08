@@ -1,7 +1,7 @@
-import {setOpenedModal} from 'logic/game/game-actions'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import ChatItem from './chat-item'
 import ForfeitItem from './forfeit-item'
 import SoundItem from './sound-item'
@@ -13,7 +13,7 @@ function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
 	const isSpectator = useSelector(getIsSpectator)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleDiscarded = () => {
 		if (!gameState) return
@@ -33,7 +33,10 @@ function Toolbar() {
 				},
 			},
 		}
-		dispatch(setOpenedModal(gameState.currentModalData.modalId))
+		dispatch({
+			type: localMessages.GAME_MODAL_OPENED_SET,
+			id: gameState.currentModalData.modalId,
+		})
 	}
 
 	if (!gameState) return null
@@ -60,7 +63,7 @@ function Toolbar() {
 			)}
 
 			{/* Toggle Chat */}
-			{settings.disableChat === 'off' && <ChatItem />}
+			{!settings.disableChat && <ChatItem />}
 
 			{/* Toggle Tooltips */}
 			<TooltipsItem />

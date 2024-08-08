@@ -3,39 +3,55 @@ import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function Settings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'soundVolume',
+			value: ev.currentTarget.value,
+		})
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('musicVolume', ev.currentTarget.value))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'musicVolume',
+			value: ev.currentTarget.value,
+		})
 	}
 	const handleMuteSound = () => {
-		dispatch(setSetting('muted', !settings.muted))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'muted',
+			value: !settings.muted,
+		})
 	}
 
 	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'panoramaEnabled',
+			value: !settings.panoramaEnabled,
+		})
 	}
-	const getBoolDescriptor = (value?: boolean) => {
+	const getBoolDescriptor = (value: boolean) => {
 		return value ? 'Enabled' : 'Disabled'
 	}
-	const getPercDescriptor = (value?: string) => {
-		if (value !== '0') return `${value}%`
+	const getPercentDescriptor = (value: number) => {
+		if (value !== 0) return `${value}%`
 		return 'Disabled'
 	}
 	const handleGameSettings = () => setMenuSection('game-settings')
@@ -66,13 +82,13 @@ function Settings({setMenuSection}: Props) {
 			>
 				<div className={css.settings}>
 					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music: {getPercDescriptor(settings.musicVolume)}
+						Music Volume: {getPercentDescriptor(settings.musicVolume)}
 					</Slider>
 					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sounds: {getPercDescriptor(settings.soundVolume)}
+						Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
 					</Slider>
 					<Button variant="stone" onClick={handleMuteSound}>
-						Muted: {getBoolDescriptor(settings.muted)}
+						Sound: {getBoolDescriptor(!settings.muted)}
 					</Button>
 					<Button variant="stone" onClick={handlePanoramaToggle}>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}

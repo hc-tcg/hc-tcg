@@ -65,9 +65,9 @@ class EvilJevinRare extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName:
-							'Evil Jevin: Choose a Hermit card to retrieve from your discard pile.',
-						modalDescription: '',
+						modalName: 'Evil Jevin - Emerge',
+						modalDescription:
+							'Choose a Hermit card to retrieve from your discard pile.',
 						cards: pickableCards,
 						selectionSize: 1,
 						primaryButton: {

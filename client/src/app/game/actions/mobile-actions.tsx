@@ -4,7 +4,6 @@ import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
-import {endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
 	getCurrentCoinFlip,
@@ -14,10 +13,9 @@ import {
 	getPlayerState,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import Slot from '../board/board-slot'
-import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
 import css from './actions.module.scss'
 
 type Props = {
@@ -39,17 +37,12 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
-		if (shouldShowEndTurnModal(availableActions, settings)) {
-			dispatch(endTurnAction())
-		} else {
-			dispatch(endTurn())
-		}
+		dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 	}
 
 	let endTurnButton = (
@@ -131,7 +124,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(setOpenedModal('attack'))
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 
 		const attackOptions =

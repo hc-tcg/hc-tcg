@@ -1,56 +1,63 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function GameSettings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	const handleDialogsChange = () => {
-		dispatch(
-			setSetting(
-				'confirmationDialogs',
-				settings.confirmationDialogs !== 'off' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'confirmationDialogs',
+			value: !settings.confirmationDialogs,
+		})
 	}
 	const handleGameSideToggle = () => {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch(setSetting('gameSide', gameSide))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'gameSide',
+			value: gameSide,
+		})
 	}
-	const getDescriptor = (value?: string) => {
-		if (value !== 'off') return 'Enabled'
-		return 'Disabled'
+	const getDescriptor = (value: boolean) => {
+		return value ? 'Enabled' : 'Disabled'
 	}
 	const handleChatChange = () => {
-		dispatch(
-			setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'),
-		)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'disableChat',
+			value: !settings.disableChat,
+		})
 	}
 	const handleProfanityChange = () => {
-		dispatch(
-			setSetting(
-				'profanityFilter',
-				settings.profanityFilter !== 'off' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			key: 'profanityFilter',
+			value: !settings.profanityFilter,
+		})
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const username = ev.currentTarget.minecraftName.value.trim()
 		if (username.length > 3) {
 			dispatch({
-				type: 'UPDATE_MINECRAFT_NAME',
-				payload: username,
+				type: localMessages.MINECRAFT_NAME_SET,
+				name: username,
 			})
-			dispatch(setSetting('minecraftName', username))
+			dispatch({
+				type: localMessages.SETTINGS_SET,
+				key: 'minecraftName',
+				value: username,
+			})
 			localStorage.setItem('minecraftName', username)
 		}
 	}
