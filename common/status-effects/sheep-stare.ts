@@ -7,22 +7,15 @@ import {
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {
-	PlayerStatusEffect,
-	StatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class SheepStareEffect extends PlayerStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'sheep-stare',
-		name: 'Sheep Stare',
-		description:
-			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
-	}
-
-	override onApply(
+const SheepStareEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'sheep-stare',
+	name: 'Sheep Stare',
+	description:
+		'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -64,7 +57,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default SheepStareEffect

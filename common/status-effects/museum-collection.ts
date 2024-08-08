@@ -1,8 +1,5 @@
 import {CardComponent} from '../components'
-import {
-	Counter,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
 const MuseumCollectionEffect: Counter<CardComponent> = {
 	...statusEffect,

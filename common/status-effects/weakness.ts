@@ -4,10 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	Counter,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<CardComponent> = {
 	...statusEffect,

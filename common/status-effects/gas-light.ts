@@ -8,7 +8,6 @@ import {GameModel} from '../models/game-model'
 import {AttackDefs} from '../types/attack'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
-	CardStatusEffect,
 	StatusEffect,
 	hiddenStatusEffect,
 	systemStatusEffect,
@@ -28,10 +27,9 @@ function newGasLightAttack(
 	} satisfies AttackDefs
 }
 
-export class GasLightEffect extends CardStatusEffect {
-	props: StatusEffect = hiddenStatusEffect
-
-	override onApply(
+export const GasLightEffect: StatusEffect<CardComponent> = {
+	...hiddenStatusEffect,
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -65,18 +63,15 @@ export class GasLightEffect extends CardStatusEffect {
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
-export class GasLightTriggeredEffect extends CardStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'gas-light',
-		name: 'Gas Light',
-		description: 'This hermit will take 20 damage at the end of your turn.',
-	}
-
-	override onApply(
+export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
+	...systemStatusEffect,
+	icon: 'gas-light',
+	name: 'Gas Light',
+	description: 'This hermit will take 20 damage at the end of your turn.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -92,5 +87,5 @@ export class GasLightTriggeredEffect extends CardStatusEffect {
 			executeExtraAttacks(game, [attack])
 			effect.remove()
 		})
-	}
+	},
 }

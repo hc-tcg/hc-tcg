@@ -6,21 +6,14 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	StatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export class DeathloopReady extends CardStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'deathloop-ready',
-		name: 'Deathloop Ready',
-		description: 'This hermit will be revived on death.',
-	}
-
-	override onApply(
+export const DeathloopReady: StatusEffect<CardComponent> = {
+	...systemStatusEffect,
+	icon: 'deathloop-ready',
+	name: 'Deathloop Ready',
+	description: 'This hermit will be revived on death.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent<Card>, StatusEffect>,
 		target: CardComponent<Card>,
@@ -44,7 +37,7 @@ export class DeathloopReady extends CardStatusEffect {
 					StatusEffectComponent,
 					(_game, effect) =>
 						effect.target?.entity === targetHermit.entity &&
-						effect.statusEffect.props.icon === 'revived_by_deathloop',
+						effect.statusEffect.icon === 'revived_by_deathloop',
 				)
 				.forEach((effect) => effect.remove())
 
@@ -74,14 +67,12 @@ export class DeathloopReady extends CardStatusEffect {
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
-export class RevivedByDeathloopEffect extends CardStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'revived-by-deathloop',
-		name: 'Revived',
-		description: "This hermit has been revived by Scar's deathloop attack.",
-	}
+export const RevivedByDeathloopEffect: StatusEffect<CardComponent> = {
+	...systemStatusEffect,
+	icon: 'revived-by-deathloop',
+	name: 'Revived',
+	description: "This hermit has been revived by Scar's deathloop attack.",
 }

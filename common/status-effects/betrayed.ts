@@ -7,22 +7,15 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {
-	PlayerStatusEffect,
-	StatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class BetrayedEffect extends PlayerStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'betrayed',
-		name: 'Betrayed',
-		description:
-			'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
-	}
-
-	override onApply(
+const BetrayedEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'betrayed',
+	name: 'Betrayed',
+	description:
+		'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -39,11 +32,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
-			game.removeBlockedActions(
-				this.props.icon,
-				'CHANGE_ACTIVE_HERMIT',
-				'END_TURN',
-			)
+			game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 			// Return if the opponent has no AFK Hermits to attack
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -77,11 +66,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 			}
 
 			// The opponent needs to attack in this case, so prevent them switching or ending turn
-			game.addBlockedActions(
-				this.props.icon,
-				'CHANGE_ACTIVE_HERMIT',
-				'END_TURN',
-			)
+			game.addBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
@@ -122,11 +107,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 			}
 
 			// They attacked now, they can end turn or change hermits with Chorus Fruit
-			game.removeBlockedActions(
-				this.props.icon,
-				'CHANGE_ACTIVE_HERMIT',
-				'END_TURN',
-			)
+			game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 		})
 
 		observer.subscribe(player.hooks.afterAttack, () => {
@@ -136,7 +117,7 @@ class BetrayedEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default BetrayedEffect

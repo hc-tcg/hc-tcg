@@ -6,26 +6,19 @@ import {
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {
-	PlayerStatusEffect,
-	StatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export class AussiePingEffect extends PlayerStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'aussie-ping',
-		name: 'Weak Connection',
-		description:
-			'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
-		applyCondition: (_game, player) => {
-			if (!(player instanceof PlayerComponent)) return false
-			return !player.hasStatusEffect(AussiePingImmuneEffect)
-		},
-	}
-
-	override onApply(
+export const AussiePingEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'aussie-ping',
+	name: 'Weak Connection',
+	description:
+		'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
+	applyCondition: (_game, player) => {
+		if (!(player instanceof PlayerComponent)) return false
+		return !player.hasStatusEffect(AussiePingImmuneEffect)
+	},
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -79,18 +72,15 @@ export class AussiePingEffect extends PlayerStatusEffect {
 					.apply(player.entity)
 			}
 		})
-	}
+	},
 }
 
-export class AussiePingImmuneEffect extends PlayerStatusEffect {
-	props: StatusEffect = {
-		...systemStatusEffect,
-		icon: 'aussie-ping-immune',
-		name: 'Strong Connection',
-		description: 'You are immune to Aussie Ping for the duration of this turn.',
-	}
-
-	override onApply(
+export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'aussie-ping-immune',
+	name: 'Strong Connection',
+	description: 'You are immune to Aussie Ping for the duration of this turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -99,5 +89,5 @@ export class AussiePingImmuneEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			effect.remove()
 		})
-	}
+	},
 }
