@@ -5,7 +5,7 @@ import {
 } from '../components'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {Counter, StatusEffect, systemStatusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
 	...systemStatusEffect,

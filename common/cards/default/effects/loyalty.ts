@@ -19,7 +19,7 @@ const Loyalty: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!component.slot.inRow() || component.slot.row.health) return

@@ -5,7 +5,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {Counter, StatusEffect, systemStatusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 

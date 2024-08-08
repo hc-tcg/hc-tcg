@@ -1,11 +1,10 @@
-import {Card} from '../cards/base/types'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {Counter, statusEffect, StatusEffect} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
 	...statusEffect,
