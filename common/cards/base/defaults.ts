@@ -1,20 +1,20 @@
+import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
-import {Card, HasHealth, Hermit, isHealth, isHermit, isItem, Item} from './types'
 
-export const card: Card = {
-	isItem(): this is Item {
-		return isItem(this)
-	},
-	isHealth(): this is HasHealth {
-		return isHealth(this)
-	},
-	isHermit(): this is Hermit {
-		return isHermit(this)
-	},
-	onCreate(_game, _observer) {},
-	onAttach(_game, _component, _observer) {},
-	onDetach(_game, _component, _observer) {},
+export const card = {
+	onCreate(_game: GameModel, _component: CardComponent) {},
+	onAttach(
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
+	) {},
+	onDetach(
+		_game: GameModel,
+		_component: CardComponent,
+		_observer: ObserverComponent,
+	) {},
 }
 
 export const item = {
