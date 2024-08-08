@@ -116,15 +116,19 @@ export class CardComponent<CardType extends Card = Card> {
 	public isItem(): this is CardComponent<Item> {
 		return isItem(this.props)
 	}
+
 	public isSingleUse(): this is CardComponent<SingleUse> {
 		return isSingleUse(this.props)
 	}
+
 	public isAttach(): this is CardComponent<Attach> {
 		return isAttach(this.props)
 	}
+
 	public isHealth(): this is CardComponent<HasHealth> {
 		return isHealth(this.props)
 	}
+
 	public isHermit(): this is CardComponent<Hermit> {
 		return isHermit(this.props)
 	}

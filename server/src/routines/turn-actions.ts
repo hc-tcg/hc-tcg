@@ -27,9 +27,9 @@ function getAttack(
 	const attacks: Array<AttackModel> = []
 
 	// hermit attacks
-	if (!creator.card.isHermit()) return []
+	if (!creator.isHermit()) return []
 
-	const nextAttack = creator.card.getAttack(game, creator, hermitAttackType)
+	const nextAttack = creator.props.getAttack(game, creator, hermitAttackType)
 
 	if (nextAttack) attacks.push(nextAttack)
 
@@ -164,7 +164,7 @@ export function* playCardSaga(
 	const player = pickedSlot.player
 
 	// Do we meet requirements to place the card
-	const canAttach = card?.card.props.attachCondition(game, pickedSlot) || false
+	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'
@@ -204,7 +204,7 @@ export function* playCardSaga(
 				break
 			}
 			case 'attach': {
-				if (!card.card.isAttach())
+				if (!card.isAttach())
 					throw Error(
 						'Attempted to add card that implement attach to an attach slot: ' +
 							card.props.numericId,
