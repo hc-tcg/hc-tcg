@@ -1,6 +1,5 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -24,7 +23,7 @@ class Loyalty extends Card {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {player} = component
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!component.slot.inRow() || component.slot.row.health) return

@@ -1,7 +1,7 @@
 import {ViewerComponent} from 'common/components/viewer-component'
 import {
-	clientMessages,
 	RecievedClientMessage,
+	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'

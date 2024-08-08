@@ -1,7 +1,7 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import css from './game-modals.module.scss'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

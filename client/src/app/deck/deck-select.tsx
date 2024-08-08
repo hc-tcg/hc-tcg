@@ -16,7 +16,6 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
@@ -52,7 +51,6 @@ function SelectDeck({
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
-	const settings = useSelector(getSettings)
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)

@@ -1,7 +1,7 @@
 import {getOpenedModal} from 'logic/game/game-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
-import {localMessages, useMessageDispatch} from 'logic/messages'
 
 function ExitItem() {
 	const dispatch = useMessageDispatch()

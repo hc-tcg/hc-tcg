@@ -7,7 +7,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {localMessages, LocalMessageTable} from 'messages'
+import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
 	cancel,
