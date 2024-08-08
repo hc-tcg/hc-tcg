@@ -3,349 +3,349 @@
 $grid-size: 25px;
 
 .gameBoard {
-  display: flex;
-  flex-direction: column;
-  user-select: none;
-  padding-inline: 10px;
-  justify-content: center;
-  gap: 16px;
-  overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    padding-inline: 10px;
+    justify-content: center;
+    gap: 16px;
+    overflow: hidden;
 
-  @media (orientation: portrait) {
-    gap: 8px;
-  }
+    @media (orientation: portrait) {
+        gap: 8px;
+    }
 }
 
 .playerInfoSection {
-  display: flex;
-  margin-top: 10px;
-  gap: 10px;
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
 }
 
 .actualBoard {
-  display: flex;
-  gap: $grid-size * 2;
-  justify-content: center;
-  border: 2px solid lightblue;
-  background: var(--gray-900);
-  border-image-slice: 30;
-  border-image-width: 20px;
-  border-image-repeat: stretch stretch;
-  border-image-source: url("/images/game/border_frame.png");
-  border-style: solid;
-  padding: 20px;
+    display: flex;
+    gap: $grid-size * 2;
+    justify-content: center;
+    border: 2px solid lightblue;
+    background: var(--gray-900);
+    border-image-slice: 30;
+    border-image-width: 20px;
+    border-image-repeat: stretch stretch;
+    border-image-source: url("/images/game/border_frame.png");
+    border-style: solid;
+    padding: 20px;
 }
 
 .row {
-  // $size: 9.5px;
-  $size: $grid-size;
+    // $size: 9.5px;
+    $size: $grid-size;
 
-  display: grid;
-  border: 4px solid transparent;
-  grid-template-columns: repeat(13, $size);
-  grid-template-rows: repeat(6, $size);
-  grid-template-areas:
-    "item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
-    "item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
-    "item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
-    "item2 item2 health health health hermit hermit hermit hermit hermit hermit effect effect"
-    "item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect"
-    "item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect";
-
-  &.reversed {
+    display: grid;
+    border: 4px solid transparent;
+    grid-template-columns: repeat(13, $size);
+    grid-template-rows: repeat(6, $size);
     grid-template-areas:
-      "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
-      "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
-      "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item2 item2"
-      "effect effect hermit hermit hermit hermit hermit hermit health health health item2 item2"
-      "effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3"
-      "effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3";
-  }
+        "item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+        "item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+        "item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+        "item2 item2 health health health hermit hermit hermit hermit hermit hermit effect effect"
+        "item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect"
+        "item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect";
 
-  &:hover {
-    filter: brightness(110%);
-  }
+    &.reversed {
+        grid-template-areas:
+            "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
+            "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
+            "effect effect hermit hermit hermit hermit hermit hermit attach attach attach item2 item2"
+            "effect effect hermit hermit hermit hermit hermit hermit health health health item2 item2"
+            "effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3"
+            "effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3";
+    }
+
+    &:hover {
+        filter: brightness(110%);
+    }
 }
 
 .slot {
-  background: grey;
-  position: relative;
-  height: 100%;
-  width: 100%;
-  aspect-ratio: 1;
-  overflow: hidden;
-
-  .frame {
-    width: 100%;
+    background: grey;
+    position: relative;
     height: 100%;
-  }
+    width: 100%;
+    aspect-ratio: 1;
+    overflow: hidden;
 
-  &.available {
-    cursor: pointer;
-  }
-
-  &.item,
-  &.hermit,
-  &.single_use {
-    background: #aeb4b4;
-  }
-
-  &.health {
-    background: #6d6e64;
-  }
-
-  &.attach {
-    background: #353536;
-  }
-
-  &.effect {
-    background: #212121;
-
-    @media (orientation: landscape) {
-      width: 100%;
-      height: 400%;
+    .frame {
+        width: 100%;
+        height: 100%;
     }
 
-    @media (orientation: portrait) {
-      width: 200%;
-      height: 600%;
+    &.available {
+        cursor: pointer;
     }
-  }
 
-  &.pickable {
-    filter: brightness(105%);
+    &.item,
+    &.hermit,
+    &.single_use {
+        background: #aeb4b4;
+    }
+
+    &.health {
+        background: #6d6e64;
+    }
+
+    &.attach {
+        background: #353536;
+    }
+
+    &.effect {
+        background: #212121;
+
+        @media (orientation: landscape) {
+            width: 100%;
+            height: 400%;
+        }
+
+        @media (orientation: portrait) {
+            width: 200%;
+            height: 600%;
+        }
+    }
+
+    &.pickable {
+        filter: brightness(105%);
+
+        &.empty {
+            filter: brightness(130%);
+        }
+
+        &.hermit .empty {
+            filter: brightness(105%);
+        }
+
+        &.hermitSlot {
+            filter: brightness(100%);
+        }
+    }
+
+    &.unpickable {
+        filter: brightness(70%);
+
+        &.hermit {
+            filter: brightness(60%);
+        }
+
+        &.hermitSlot {
+            filter: brightness(65%);
+        }
+    }
 
     &.empty {
-      filter: brightness(130%);
+        padding: 5%;
     }
 
-    &.hermit .empty {
-      filter: brightness(105%);
+    &:hover {
+        .frame {
+            box-shadow: 0 0 5px #333;
+        }
+
+        &.attach .frame {
+            box-shadow: 0 0 3px #ddd;
+        }
     }
-
-    &.hermitSlot {
-      filter: brightness(100%);
-    }
-  }
-
-  &.unpickable {
-    filter: brightness(70%);
-
-    &.hermit {
-      filter: brightness(60%);
-    }
-
-    &.hermitSlot {
-      filter: brightness(65%);
-    }
-  }
-
-  &.empty {
-    padding: 5%;
-  }
-
-  &:hover {
-    .frame {
-      box-shadow: 0 0 5px #333;
-    }
-
-    &.attach .frame {
-      box-shadow: 0 0 3px #ddd;
-    }
-  }
 }
 
 .cardWrapper {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 .afk {
-  filter: brightness(0.9);
+    filter: brightness(0.9);
 }
 
 #left .slot.hermit.afk {
-  transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 #right .slot.hermit.afk {
-  transform: rotate(-90deg);
+    transform: rotate(-90deg);
 }
 
 .active {
-  $color: hsl(181deg, 61%, 66%);
+    $color: hsl(181deg, 61%, 66%);
 
-  border-color: $color;
-  filter: drop-shadow(0 0 8px $color);
+    border-color: $color;
+    filter: drop-shadow(0 0 8px $color);
 }
 
 // GRID AREAS
 
 #health {
-  grid-area: health;
-  aspect-ratio: 0;
+    grid-area: health;
+    aspect-ratio: 0;
 }
 
 #hermit {
-  grid-area: hermit;
+    grid-area: hermit;
 }
 
 #attach {
-  grid-area: attach;
+    grid-area: attach;
 }
 
 @for $i from 1 through 3 {
-  #item#{$i} {
-    grid-area: item#{$i};
-  }
+    #item#{$i} {
+        grid-area: item#{$i};
+    }
 }
 
 // MIDDLE SECTION
 
 .actions {
-  display: flex;
-  flex-direction: column;
-  background: var(--gray-900);
-  width: $grid-size * 8;
-  z-index: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--gray-900);
+    width: $grid-size * 8;
+    z-index: 1;
 }
 
 .opponentFollowup {
-  font-family: Minecraft, Unifont;
-  text-align: center;
-  color: white;
-  font-size: 12px;
+    font-family: Minecraft, Unifont;
+    text-align: center;
+    color: white;
+    font-size: 12px;
 }
 
 // STATUS EFFECTS
 .statusEffectContainer {
-  position: absolute;
-  top: 25px;
-  left: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 31px);
-  grid-template-rows: repeat(2, 45px);
-  pointer-events: none;
+    position: absolute;
+    top: 25px;
+    left: 8px;
+    display: grid;
+    grid-template-columns: repeat(3, 31px);
+    grid-template-rows: repeat(2, 45px);
+    pointer-events: none;
 }
 
 .statusEffectContainerForHermit {
-  position: absolute;
-  display: grid;
-  grid-template-rows: repeat(4, 25%);
-  pointer-events: none;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
+    position: absolute;
+    display: grid;
+    grid-template-rows: repeat(4, 25%);
+    pointer-events: none;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 
-  @media (orientation: landscape) {
-    border: #6d6e64 2px solid;
-    padding-left: 2px;
-  }
+    @media (orientation: landscape) {
+        border: #6d6e64 2px solid;
+        padding-left: 2px;
+    }
 
-  @media (orientation: portrait) {
-    border: #6d6e64 3px solid;
-  }
+    @media (orientation: portrait) {
+        border: #6d6e64 3px solid;
+    }
 }
 
 .damageStatusEffectContainer {
-  position: absolute;
-  bottom: 25px;
-  left: -20px;
+    position: absolute;
+    bottom: 25px;
+    left: -20px;
 }
 
 .protectedStatusEffect {
-  position: absolute;
-  right: 66px;
-  top: 20px;
-  width: 22px;
-  background: url("/images/status/protected.png") no-repeat;
-  height: 22px;
-  background-size: contain;
+    position: absolute;
+    right: 66px;
+    top: 20px;
+    width: 22px;
+    background: url("/images/status/protected.png") no-repeat;
+    height: 22px;
+    background-size: contain;
 }
 
 // UTILITIES
 
 .dynamicSpace {
-  flex: 1 1 0;
-  width: 0;
-  min-width: 0;
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
 }
 
 /////////////////////////////////////
 // DESKTOP / LANDSCAPE
 /////////////////////////////////////
 @media (orientation: landscape) {
-  .actualBoard {
-    gap: $grid-size;
-    justify-content: space-between;
-  }
-
-  .row {
-    $size: 25px;
-
-    grid-template-columns: repeat(24, $size) 27px;
-    grid-template-rows: repeat(4, $size);
-    grid-template-areas:
-      "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
-      "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
-      "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
-      "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect";
-
-    &.reversed {
-      grid-template-columns: 27px repeat(24, $size);
-      grid-template-areas:
-        "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
-        "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
-        "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
-        "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ";
+    .actualBoard {
+        gap: $grid-size;
+        justify-content: space-between;
     }
-  }
+
+    .row {
+        $size: 25px;
+
+        grid-template-columns: repeat(24, $size) 27px;
+        grid-template-rows: repeat(4, $size);
+        grid-template-areas:
+            "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+            "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+            "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+            "item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect";
+
+        &.reversed {
+            grid-template-columns: 27px repeat(24, $size);
+            grid-template-areas:
+                "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+                "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+                "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+                "effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ";
+        }
+    }
 }
 
 .expandImage {
-  pointer-events: all;
-  height: 16px;
-  width: 16px;
+    pointer-events: all;
+    height: 16px;
+    width: 16px;
 }
 
 .expandStatusEffects {
-  overflow: hidden;
-  background-color: rgba(10, 1, 15, 95%);
-  box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
-  color: rgb(161, 161, 161);
-  border-radius: 4px;
+    overflow: hidden;
+    background-color: rgba(10, 1, 15, 95%);
+    box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
+    color: rgb(161, 161, 161);
+    border-radius: 4px;
 
-  @media (orientation: landscape) {
-    padding: 8px;
-  }
+    @media (orientation: landscape) {
+        padding: 8px;
+    }
 
-  @media (orientation: portrait) {
-    padding: 12px;
-  }
+    @media (orientation: portrait) {
+        padding: 12px;
+    }
 }
 
 .expandStatusEffectGrid {
-  padding-top: 4px;
-  display: flex;
-  flex-direction: row;
+    padding-top: 4px;
+    display: flex;
+    flex-direction: row;
 
-  @media (orientation: landscape) {
-    gap: 8px;
-  }
+    @media (orientation: landscape) {
+        gap: 8px;
+    }
 
-  @media (orientation: portrait) {
-    gap: 16px;
-  }
+    @media (orientation: portrait) {
+        gap: 16px;
+    }
 }
 
 .expandStatusTitle {
-  color: white;
-  font-family: MinecraftBold;
+    color: white;
+    font-family: MinecraftBold;
 }
 
 .cardBack {
-  width: 100%;
-  height: 100%;
-  border: 2px #aeb4b4 solid;
+    width: 100%;
+    height: 100%;
+    border: 2px #aeb4b4 solid;
 }

@@ -1,16 +1,16 @@
 .tooltip {
-  position: absolute;
-  font-family: Minecraft, Unifont;
-  font-size: 16px;
-  width: max-content;
-  max-width: 29rem;
-  z-index: 110;
+    position: absolute;
+    font-family: Minecraft, Unifont;
+    font-size: 16px;
+    width: max-content;
+    max-width: 29rem;
+    z-index: 110;
 
-  &.showAboveModal {
-    z-index: 121;
-  }
+    &.showAboveModal {
+        z-index: 121;
+    }
 }
 
 .smallTooltip {
-  font-size: 14px;
+    font-size: 14px;
 }
