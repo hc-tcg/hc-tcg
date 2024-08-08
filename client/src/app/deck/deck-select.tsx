@@ -228,17 +228,15 @@ function SelectDeck({
 
 	//MISC
 	const playSwitchDeckSFX = () => {
-		if (settings.soundOn !== 'off') {
-			const pageTurn = [
-				'/sfx/Page_turn1.ogg',
-				'/sfx/Page_turn2.ogg',
-				'/sfx/Page_turn3.ogg',
-			]
-			dispatch({
-				type: localMessages.SOUND_PLAY,
-				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
-			})
-		}
+		const pageTurn = [
+			'/sfx/Page_turn1.ogg',
+			'/sfx/Page_turn2.ogg',
+			'/sfx/Page_turn3.ogg',
+		]
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+		})
 	}
 
 	return (

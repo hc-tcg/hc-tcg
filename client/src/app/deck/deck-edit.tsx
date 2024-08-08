@@ -213,7 +213,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			key: 'showAdvancedTooltips',
-			value: settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
+			value: !settings.showAdvancedTooltips,
 		})
 	}
 
@@ -419,7 +419,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<button
 								className={css.dropdownButton}
 								title={
-									settings.showAdvancedTooltips === 'on'
+									settings.showAdvancedTooltips
 										? 'Hide detailed tooltips (T)'
 										: 'Show detailed tooltips (T)'
 								}
@@ -427,7 +427,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<img
 									src={
-										settings.showAdvancedTooltips === 'on'
+										settings.showAdvancedTooltips
 											? '/images/toolbar/tooltips.png'
 											: '/images/toolbar/tooltips-off.png'
 									}

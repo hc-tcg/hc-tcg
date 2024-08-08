@@ -54,7 +54,7 @@ function* playSoundSaga(
 	try {
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
-		if (settings.soundVolume === '0') return
+		if (settings.soundVolume === 0) return
 
 		const sound = new Audio(action.path)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
@@ -73,8 +73,8 @@ function* settingSaga(): SagaIterator {
 			musicGainNode.gain.value = 0
 			soundGainNode.gain.value = 0
 		} else {
-			musicGainNode.gain.value = Number(settings.musicVolume) / 100
-			soundGainNode.gain.value = Number(settings.soundVolume) / 100
+			musicGainNode.gain.value = settings.musicVolume / 100
+			soundGainNode.gain.value = settings.soundVolume / 100
 		}
 	} catch (err) {
 		console.error(err)
