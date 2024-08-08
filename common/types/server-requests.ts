@@ -32,12 +32,12 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 	return t as WithoutFunctions<T>
 }
 
-export type LocalCardInstance<Props extends Card = Card> = {
-	readonly props: WithoutFunctions<Props>
+export type LocalCardInstance<CardType extends Card = Card> = {
+	readonly props: WithoutFunctions<CardType>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null
-	turnedOver: boolean
+	readonly turnedOver: boolean
 }
 
 export type LocalStatusEffectInstance<
