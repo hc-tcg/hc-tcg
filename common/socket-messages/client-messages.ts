@@ -15,6 +15,7 @@ export const clientMessages = messages({
 	JOIN_PRIVATE_GAME: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
+	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
 })
 
@@ -33,6 +34,7 @@ export type ClientMessages = [
 		action: AnyTurnActionData
 	},
 	{type: typeof clientMessages.FORFEIT},
+	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 ]
 

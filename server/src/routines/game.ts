@@ -24,11 +24,10 @@ import {
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
-import {actionChannel, all, call, delay, fork, race, take} from 'typed-redux-saga'
+import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {printHooksState} from '../utils'
 import {getLocalGameState} from '../utils/state-gen'
-import spectatorSaga from './background/spectators'
 
 import {
 	applyEffectSaga,

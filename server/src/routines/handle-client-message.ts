@@ -16,6 +16,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import spectatorLeaveSaga from './background/spectators'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -45,6 +46,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.JOIN_PRIVATE_GAME:
 			return yield* joinPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SPECTATOR_LEAVE:
+			return yield* spectatorLeaveSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CANCEL_PRIVATE_GAME:

@@ -1,18 +1,22 @@
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
-import {AnyAction} from 'redux-saga'
-import {takeEvery} from 'typed-redux-saga'
+import {
+	clientMessages,
+	RecievedClientMessage,
+} from 'common/socket-messages/client-messages'
+import {getGame} from 'selectors'
+import {select} from 'typed-redux-saga'
 
-function* spectatorLeaveSaga(game: GameModel, action: AnyAction) {
+function* spectatorLeaveSaga(
+	action: RecievedClientMessage<typeof clientMessages.SPECTATOR_LEAVE>,
+) {
+	let game = yield* select(getGame(action.playerId))
+	if (!game) return
+
 	let viewer = game.components.find(
 		ViewerComponent,
-		(_game, component) => component.playerId === action.id,
+		(_game, component) => component.playerId === action.playerId,
 	)
 	if (viewer) game.components.delete(viewer.entity)
 }
 
-function* spectatorSaga(game: GameModel) {
-	yield takeEvery('SPECTATOR_LEAVE', spectatorLeaveSaga, game)
-}
-
-export default spectatorSaga
+export default spectatorLeaveSaga
