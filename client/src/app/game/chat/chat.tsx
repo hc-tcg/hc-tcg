@@ -38,8 +38,10 @@ function Chat() {
 	useEffect(() => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'showChat',
-			value: false,
+			setting: {
+				key: 'showChat',
+				value: false,
+			},
 		})
 	}, [])
 
@@ -64,10 +66,12 @@ function Chat() {
 		if (!params.pressed) {
 			dispatch({
 				type: localMessages.SETTINGS_SET,
-				key: 'chatPosition',
-				value: {
-					x: chatPosSetting.x + chatPos.x,
-					y: chatPosSetting.y + chatPos.y,
+				setting: {
+					key: 'chatPosition',
+					value: {
+						x: chatPosSetting.x + chatPos.x,
+						y: chatPosSetting.y + chatPos.y,
+					},
 				},
 			})
 			setChatPos({
@@ -93,8 +97,10 @@ function Chat() {
 	const closeChat = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'showChat',
-			value: false,
+			setting: {
+				key: 'showChat',
+				value: false,
+			},
 		})
 	}
 
@@ -121,10 +127,12 @@ function Chat() {
 			onClick={(e) => {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
-					key: 'chatSize',
-					value: {
-						w: e.currentTarget.offsetWidth,
-						h: e.currentTarget.offsetHeight,
+					setting: {
+						key: 'chatSize',
+						value: {
+							w: e.currentTarget.offsetWidth,
+							h: e.currentTarget.offsetHeight,
+						},
 					},
 				})
 			}}
@@ -135,8 +143,10 @@ function Chat() {
 					onClick={() =>
 						dispatch({
 							type: localMessages.SETTINGS_SET,
-							key: 'showBattleLogs',
-							value: !showLog,
+							setting: {
+								key: 'showBattleLogs',
+								value: !showLog,
+							},
 						})
 					}
 					size="small"

@@ -212,8 +212,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	function toggleTooltips() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'showAdvancedTooltips',
-			value: !settings.showAdvancedTooltips,
+			setting: {
+				key: 'showAdvancedTooltips',
+				value: !settings.showAdvancedTooltips,
+			},
 		})
 	}
 

@@ -21,30 +21,38 @@ function Settings({setMenuSection}: Props) {
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'soundVolume',
-			value: ev.currentTarget.value,
+			setting: {
+				key: 'soundVolume',
+				value: parseInt(ev.currentTarget.value),
+			},
 		})
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'musicVolume',
-			value: ev.currentTarget.value,
+			setting: {
+				key: 'musicVolume',
+				value: parseInt(ev.currentTarget.value),
+			},
 		})
 	}
 	const handleMuteSound = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'muted',
-			value: !settings.muted,
+			setting: {
+				key: 'muted',
+				value: !settings.muted,
+			},
 		})
 	}
 
 	const handlePanoramaToggle = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'panoramaEnabled',
-			value: !settings.panoramaEnabled,
+			setting: {
+				key: 'panoramaEnabled',
+				value: !settings.panoramaEnabled,
+			},
 		})
 	}
 	const getBoolDescriptor = (value: boolean) => {

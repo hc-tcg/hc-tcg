@@ -16,16 +16,20 @@ function GameSettings({setMenuSection}: Props) {
 	const handleDialogsChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'confirmationDialogs',
-			value: !settings.confirmationDialogs,
+			setting: {
+				key: 'confirmationDialogs',
+				value: !settings.confirmationDialogs,
+			},
 		})
 	}
 	const handleGameSideToggle = () => {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'gameSide',
-			value: gameSide,
+			setting: {
+				key: 'gameSide',
+				value: gameSide,
+			},
 		})
 	}
 	const getDescriptor = (value: boolean) => {
@@ -34,15 +38,19 @@ function GameSettings({setMenuSection}: Props) {
 	const handleChatChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'disableChat',
-			value: !settings.disableChat,
+			setting: {
+				key: 'disableChat',
+				value: !settings.disableChat,
+			},
 		})
 	}
 	const handleProfanityChange = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
-			key: 'profanityFilter',
-			value: !settings.profanityFilter,
+			setting: {
+				key: 'profanityFilter',
+				value: !settings.profanityFilter,
+			},
 		})
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
@@ -55,8 +63,10 @@ function GameSettings({setMenuSection}: Props) {
 			})
 			dispatch({
 				type: localMessages.SETTINGS_SET,
-				key: 'minecraftName',
-				value: username,
+				setting: {
+					key: 'minecraftName',
+					value: username,
+				},
 			})
 			localStorage.setItem('minecraftName', username)
 		}

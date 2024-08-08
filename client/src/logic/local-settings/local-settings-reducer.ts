@@ -18,6 +18,10 @@ export type LocalSettings = {
 	minecraftName: string
 }
 
+export type LocalSetting = {
+	[Key in keyof LocalSettings]: {key: Key; value: LocalSettings[Key]}
+}[keyof LocalSettings]
+
 const defaultSettings: LocalSettings = {
 	soundVolume: 100,
 	musicVolume: 75,
@@ -60,7 +64,7 @@ const localSettingsReducer = (
 ): LocalSettings => {
 	switch (action.type) {
 		case localMessages.SETTINGS_SET:
-			return {...state, [action.key]: action.value}
+			return {...state, [action.setting.key]: action.setting.value}
 		case localMessages.SETTINGS_RESET:
 			return {
 				...state,
