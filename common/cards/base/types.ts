@@ -48,6 +48,7 @@ export type Card = {
 export type Item = Card & {
 	item: null
 	type: TypeT
+	description?: string
 	energy: Array<TypeT>
 }
 

@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import CardOld from '../../base/card'
+import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class InstantHealth extends CardOld {
+class InstantHealth extends Card {
 	pickCondition = query.every(query.slot.hermit, query.not(query.slot.empty))
 
 	props: SingleUse = {

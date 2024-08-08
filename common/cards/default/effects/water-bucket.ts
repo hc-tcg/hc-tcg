@@ -9,11 +9,11 @@ import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
 import {applySingleUse} from '../../../utils/board'
 import String from '../../alter-egos/effects/string'
-import CardOld from '../../base/card'
+import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
 import {Attach, SingleUse} from '../../base/types'
 
-class WaterBucket extends CardOld {
+class WaterBucket extends Card {
 	props: Attach & SingleUse = {
 		...attach,
 		...singleUse,

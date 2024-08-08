@@ -2,25 +2,22 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import CardOld from '../../base/card'
+import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Wolf extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'wolf',
-		numericId: 108,
-		name: 'Wolf',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
-		attachCondition: query.every(attach.attachCondition, query.slot.active),
-	}
-
-	override onAttach(
+const Wolf: Attach = {
+	...attach,
+	id: 'wolf',
+	numericId: 108,
+	name: 'Wolf',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
+	attachCondition: query.every(attach.attachCondition, query.slot.active),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -60,7 +57,7 @@ class Wolf extends CardOld {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-	}
+	},
 }
 
 export default Wolf

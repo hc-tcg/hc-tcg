@@ -10,20 +10,17 @@ import GoldArmor from '../../default/effects/gold-armor'
 import IronArmor from '../../default/effects/iron-armor'
 import NetheriteArmor from '../../default/effects/netherite-armor'
 
-class ThornsIII extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'thorns_iii',
-		numericId: 124,
-		name: 'Thorns III',
-		expansion: 'alter_egos',
-		rarity: 'ultra_rare',
-		tokens: 4,
-		description:
-			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 40hp damage.\nIgnores armour.",
-	}
-
-	override onAttach(
+const ThornsIII: Attach = {
+	...attach,
+	id: 'thorns_iii',
+	numericId: 124,
+	name: 'Thorns III',
+	expansion: 'alter_egos',
+	rarity: 'ultra_rare',
+	tokens: 4,
+	description:
+		"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 40hp damage.\nIgnores armour.",
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -69,7 +66,7 @@ class ThornsIII extends CardOld {
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			hasTriggered = false
 		})
-	}
+	},
 }
 
 export default ThornsIII

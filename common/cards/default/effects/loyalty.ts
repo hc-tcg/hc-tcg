@@ -5,20 +5,17 @@ import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Loyalty extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'loyalty',
-		numericId: 77,
-		name: 'Loyalty',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 0,
-		description:
-			'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
-	}
-
-	override onAttach(
+const Loyalty: Attach = {
+	...attach,
+	id: 'loyalty',
+	numericId: 77,
+	name: 'Loyalty',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 0,
+	description:
+		'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -38,7 +35,7 @@ class Loyalty extends CardOld {
 				)
 				.forEach((card) => card.draw())
 		})
-	}
+	},
 }
 
 export default Loyalty

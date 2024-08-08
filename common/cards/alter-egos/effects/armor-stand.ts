@@ -5,29 +5,26 @@ import CardOld from '../../base/card'
 import {attach, hermit} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 
-class ArmorStand extends CardOld {
-	props: Attach & HasHealth = {
-		...attach,
-		id: 'armor_stand',
-		numericId: 118,
-		name: 'Armour Stand',
-		expansion: 'alter_egos',
-		rarity: 'ultra_rare',
-		tokens: 2,
-		health: 50,
-		description:
-			'Use like a Hermit card with a maximum 50hp.\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\nIf this card is knocked out, it does not count as a knockout.',
-		sidebarDescriptions: [
-			{
-				type: 'glossary',
-				name: 'knockout',
-			},
-		],
-		attachCondition: hermit.attachCondition,
-		log: hermit.log,
-	}
-
-	override onAttach(
+const ArmorStand: Attach & HasHealth = {
+	...attach,
+	id: 'armor_stand',
+	numericId: 118,
+	name: 'Armour Stand',
+	expansion: 'alter_egos',
+	rarity: 'ultra_rare',
+	tokens: 2,
+	health: 50,
+	description:
+		'Use like a Hermit card with a maximum 50hp.\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\nIf this card is knocked out, it does not count as a knockout.',
+	sidebarDescriptions: [
+		{
+			type: 'glossary',
+			name: 'knockout',
+		},
+	],
+	attachCondition: hermit.attachCondition,
+	log: hermit.log,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -53,7 +50,7 @@ class ArmorStand extends CardOld {
 					card.discard()
 				})
 		})
-	}
+	},
 }
 
 export default ArmorStand

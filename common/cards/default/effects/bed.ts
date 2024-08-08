@@ -10,27 +10,24 @@ import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Bed extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'bed',
-		numericId: 2,
-		expansion: 'default',
-		name: 'Bed',
-		rarity: 'ultra_rare',
-		tokens: 2,
-		description:
-			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'sleeping',
-			},
-		],
-		attachCondition: query.every(attach.attachCondition, query.slot.active),
-	}
-
-	override onAttach(
+const Bed: Attach = {
+	...attach,
+	id: 'bed',
+	numericId: 2,
+	expansion: 'default',
+	name: 'Bed',
+	rarity: 'ultra_rare',
+	tokens: 2,
+	description:
+		'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'sleeping',
+		},
+	],
+	attachCondition: query.every(attach.attachCondition, query.slot.active),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -77,7 +74,7 @@ class Bed extends CardOld {
 				component.discard()
 			}
 		})
-	}
+	},
 }
 
 export default Bed
