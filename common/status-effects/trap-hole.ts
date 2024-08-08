@@ -9,12 +9,12 @@ import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export class TrapHoleEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		name: 'Trap Hole',
 		icon: 'trap-hole',

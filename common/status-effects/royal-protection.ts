@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
 class RoyalProtectionEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...statusEffect,
 		icon: 'royal_protection',
 		name: 'Royal Protection',

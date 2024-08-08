@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'invisibility-potion-heads',
 		name: 'Hidden!',
@@ -33,7 +33,7 @@ export class InvisibilityPotionHeadsEffect extends PlayerStatusEffect {
 }
 
 export class InvisibilityPotionTailsEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'invisibility-potion-tails',
 		name: 'Spotted!',

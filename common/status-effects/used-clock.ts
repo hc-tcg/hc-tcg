@@ -7,12 +7,12 @@ import {GameModel} from '../models/game-model'
 import {
 	Counter,
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class UsedClockEffect extends PlayerStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...systemStatusEffect,
 		icon: 'used-clock',
 		name: 'Clocked Out',

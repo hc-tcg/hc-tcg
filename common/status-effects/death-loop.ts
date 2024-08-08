@@ -8,12 +8,12 @@ import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export class DeathloopReady extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'deathloop-ready',
 		name: 'Deathloop Ready',
@@ -22,7 +22,7 @@ export class DeathloopReady extends CardStatusEffect {
 
 	override onApply(
 		game: GameModel,
-		effect: StatusEffectComponent<CardComponent<Card>, StatusEffectProps>,
+		effect: StatusEffectComponent<CardComponent<Card>, StatusEffect>,
 		target: CardComponent<Card>,
 		observer: ObserverComponent,
 	) {
@@ -78,7 +78,7 @@ export class DeathloopReady extends CardStatusEffect {
 }
 
 export class RevivedByDeathloopEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'revived-by-deathloop',
 		name: 'Revived',

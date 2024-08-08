@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export class TargetBlockEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'target-block',
 		name: 'Made the target!',

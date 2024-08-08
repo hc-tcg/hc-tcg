@@ -1,11 +1,11 @@
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
 class ProtectedEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...statusEffect,
 		icon: 'protected',
 		name: "Sheriff's Protection",

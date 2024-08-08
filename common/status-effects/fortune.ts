@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export default class FortuneEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		name: 'Fortune',
 		icon: 'fortune',

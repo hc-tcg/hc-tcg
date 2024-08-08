@@ -9,12 +9,12 @@ import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class SheepStareEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'sheep-stare',
 		name: 'Sheep Stare',

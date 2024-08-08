@@ -40,7 +40,7 @@ import TurnSkippedEffect from './turn-skipped'
 import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
-const effectClasses: Array<new () => StatusEffect> = [
+const effectClasses: Array<StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,

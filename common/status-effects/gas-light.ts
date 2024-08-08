@@ -9,7 +9,7 @@ import {AttackDefs} from '../types/attack'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	hiddenStatusEffect,
 	systemStatusEffect,
 } from './status-effect'
@@ -29,7 +29,7 @@ function newGasLightAttack(
 }
 
 export class GasLightEffect extends CardStatusEffect {
-	props: StatusEffectProps = hiddenStatusEffect
+	props: StatusEffect = hiddenStatusEffect
 
 	override onApply(
 		game: GameModel,
@@ -69,7 +69,7 @@ export class GasLightEffect extends CardStatusEffect {
 }
 
 export class GasLightTriggeredEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'gas-light',
 		name: 'Gas Light',

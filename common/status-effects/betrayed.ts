@@ -9,12 +9,12 @@ import {GameModel} from '../models/game-model'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class BetrayedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'betrayed',
 		name: 'Betrayed',

@@ -8,12 +8,12 @@ import {CoinFlipResult} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 export class AussiePingEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'aussie-ping',
 		name: 'Weak Connection',
@@ -83,7 +83,7 @@ export class AussiePingEffect extends PlayerStatusEffect {
 }
 
 export class AussiePingImmuneEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'aussie-ping-immune',
 		name: 'Strong Connection',

@@ -1,12 +1,12 @@
 import {CardComponent} from '../components'
 import {
 	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
 class DyedEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...statusEffect,
 		icon: 'dyed',
 		name: 'Dyed',

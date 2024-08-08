@@ -5,7 +5,7 @@ import {CardEntity, PlayerEntity} from '../../entities'
 import {
 	CardStatusEffect,
 	StatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 } from '../../status-effects/status-effect'
 
 let STATUS_EFFECTS: Record<any, CardStatusEffect>
@@ -55,7 +55,7 @@ export function targetEntity(
 }
 
 export function type(
-	...types: Array<StatusEffectProps['type']>
+	...types: Array<StatusEffect['type']>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => types.includes(statusEffect.props.type)
 }

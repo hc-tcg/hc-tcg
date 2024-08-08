@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	hiddenStatusEffect,
 } from './status-effect'
 
 class TurnSkippedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = hiddenStatusEffect
+	props: StatusEffect = hiddenStatusEffect
 
 	public override onApply(
 		game: GameModel,

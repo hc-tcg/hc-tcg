@@ -7,12 +7,12 @@ import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
-	StatusEffectProps,
+	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
 class WeaknessEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...statusEffect,
 		icon: 'weakness',
 		name: 'Weakness',

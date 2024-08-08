@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class OriginalXbEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'originalxb',
 		name: 'Get Good',

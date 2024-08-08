@@ -7,7 +7,7 @@ import type {
 import type {ComponentQuery} from '../components/query'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
-import {StatusEffectProps} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
 import {TurnActions} from './game-state'
@@ -41,7 +41,7 @@ export type LocalCardInstance<CardType extends Card = Card> = {
 }
 
 export type LocalStatusEffectInstance<
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffect = StatusEffect,
 > = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string

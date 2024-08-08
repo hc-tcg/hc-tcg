@@ -8,12 +8,12 @@ import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class ChromaKeyedEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...systemStatusEffect,
 		icon: 'chroma-keyed',
 		name: 'Chroma Keyed',

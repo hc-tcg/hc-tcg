@@ -8,14 +8,14 @@ import {GameModel} from '../models/game-model'
 import {
 	CardStatusEffect,
 	Counter,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
 
 export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...systemStatusEffect,
 		icon: 'primary-attack-disabled',
 		counter: 1,
@@ -48,7 +48,7 @@ export class MultiturnPrimaryAttackDisabledEffect extends CardStatusEffect {
 }
 
 export class MultiturnSecondaryAttackDisabledEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...systemStatusEffect,
 		icon: 'secondary-attack-disabled',
 		counter: 1,

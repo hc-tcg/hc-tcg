@@ -6,12 +6,12 @@ import {
 import {GameModel} from '../models/game-model'
 import {
 	PlayerStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 
 class CurseOfBindingEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
+	props: StatusEffect = {
 		...systemStatusEffect,
 		icon: 'binded',
 		name: 'Curse of Binding',

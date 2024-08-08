@@ -1,12 +1,12 @@
 import {
 	CardStatusEffect,
 	Counter,
-	StatusEffectProps,
+	StatusEffect,
 	statusEffect,
 } from './status-effect'
 
 class MuseumCollectionEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
+	props: StatusEffect & Counter = {
 		...statusEffect,
 		icon: 'museum-collection',
 		name: 'Museum Collection Size',
