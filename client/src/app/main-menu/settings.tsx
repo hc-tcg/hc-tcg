@@ -72,6 +72,9 @@ function Settings({setMenuSection}: Props) {
 		setUpdatesOpen(true)
 	}
 
+	const totalGamesPlayed = stats.w + stats.fw + stats.l + stats.fl
+	const winrate = ((stats.w + stats.fw) / totalGamesPlayed) * 100
+
 	return (
 		<>
 			{updatesOpen ? (
@@ -88,31 +91,36 @@ function Settings({setMenuSection}: Props) {
 				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
-				<div className={css.settings}>
-					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music Volume: {getPercentDescriptor(settings.musicVolume)}
-					</Slider>
-					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
-					</Slider>
-					<Button variant="stone" onClick={handleMuteSound}>
-						Sound: {getBoolDescriptor(!settings.muted)}
-					</Button>
-					<Button variant="stone" onClick={handlePanoramaToggle}>
-						Panorama: {getBoolDescriptor(settings.enablePanorama)}
-					</Button>
-					<Button variant="stone" onClick={handleGameSettings}>
-						Game Settings
-					</Button>
-					<Button variant="stone" onClick={handleDataSettings}>
-						Data Management
-					</Button>
-					<Button variant="stone" onClick={handleCredits}>
-						Credits
-					</Button>
-					<Button variant="stone" onClick={handleUpdates}>
-						Updates
-					</Button>
+				<h2>Settings</h2>
+				<div className={css.settingsBox}>
+					<div className={css.settings}>
+						<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+							Music Volume: {getPercentDescriptor(settings.musicVolume)}
+						</Slider>
+						<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+							Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
+						</Slider>
+						<Button variant="stone" onClick={handleMuteSound}>
+							Sound: {getBoolDescriptor(!settings.muted)}
+						</Button>
+						<Button variant="stone" onClick={handlePanoramaToggle}>
+							Panorama: {getBoolDescriptor(settings.enablePanorama)}
+						</Button>
+					</div>
+					<div className={css.settings}>
+						<Button variant="stone" onClick={handleGameSettings}>
+							Game Settings
+						</Button>
+						<Button variant="stone" onClick={handleDataSettings}>
+							Data Management
+						</Button>
+						<Button variant="stone" onClick={handleCredits}>
+							Credits
+						</Button>
+						<Button variant="stone" onClick={handleUpdates}>
+							Updates
+						</Button>
+					</div>
 				</div>
 
 				<h2>Statistics</h2>
@@ -141,6 +149,10 @@ function Settings({setMenuSection}: Props) {
 						<div className={css.stat}>
 							<span>Forfeit Losses</span>
 							<span>{stats.fl}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Winrate</span>
+							<span>{totalGamesPlayed > 0 ? winrate + '%' : 'N/A'}</span>
 						</div>
 					</div>
 				</div>

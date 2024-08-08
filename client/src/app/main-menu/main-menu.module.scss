@@ -13,8 +13,8 @@
 	right: 1vh;
 	display: grid;
 	grid-template-areas:
-		'name icon'
-		'deck icon';
+		"name icon"
+		"deck icon";
 	font-size: 1.5vh;
 	background-color: hsla(0deg, 0%, 0%, 35%);
 	padding: 0.75vh 1vh 0.75vh 1.5vh;
@@ -62,12 +62,12 @@ nav {
 	display: grid;
 	gap: 1vh;
 	grid-template-areas:
-		'public'
-		'private-create'
-		'private-join'
-		'deck'
-		'settings'
-		'logout';
+		"public"
+		"private-create"
+		"private-join"
+		"deck"
+		"settings"
+		"logout";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -126,6 +126,12 @@ nav {
 	gap: 1vh;
 	width: 100%;
 	margin-bottom: 2vh;
+}
+
+.settingsBox {
+	display: flex;
+	flex-direction: row;
+	gap: 1vh;
 }
 
 .stats {
@@ -255,10 +261,10 @@ nav {
 		gap: 2vh;
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
-			'public public'
-			'private-create private-join'
-			'deck deck'
-			'logout settings';
+			"public public"
+			"private-create private-join"
+			"deck deck"
+			"logout settings";
 	}
 }
 
