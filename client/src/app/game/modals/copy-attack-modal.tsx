@@ -49,7 +49,7 @@ function CopyAttackModal({closeModal}: Props) {
 			type: localMessages.GAME_TURN_ACTION,
 			action: {
 				type: 'MODAL_REQUEST',
-				modalResult: {cancel: 'true'},
+				modalResult: {cancel: true},
 			},
 		})
 		closeModal()

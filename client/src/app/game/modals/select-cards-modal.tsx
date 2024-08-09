@@ -62,7 +62,10 @@ function SelectCardsModal({closeModal}: Props) {
 				type: localMessages.GAME_TURN_ACTION,
 				action: {
 					type: 'MODAL_REQUEST',
-					modalResult: selected.map((card) => card.entity),
+					modalResult: {
+						result: true,
+						cards: selected.map((card) => card.entity),
+					},
 				},
 			})
 			closeModal()
