@@ -11,7 +11,6 @@ import {
 import {Message as ChatMessage} from 'common/types/game-state'
 import {
 	LocalCardInstance,
-	LocalModalResult,
 	PlayerInfo,
 	SlotInfo,
 } from 'common/types/server-requests'
@@ -64,7 +63,6 @@ export const localMessages = messages({
 	GAME_END_OVERLAY_HIDE: null,
 	GAME_COIN_FLIP_SET: null,
 	GAME_OPPONENT_CONNECTION_SET: null,
-	GAME_MODAL_REQUEST: null,
 	GAME_ACTIONS_HERMIT_CHANGE_CONFIRM: null,
 	CHAT_MESSAGE: null,
 	CHAT_UPDATE: null,
@@ -163,10 +161,6 @@ type Messages = [
 		coinFlip: LocalCurrentCoinFlip | null
 	},
 	{type: typeof localMessages.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
-	{
-		type: typeof localMessages.GAME_MODAL_REQUEST
-		modalResult: LocalModalResult
-	},
 	{
 		type: typeof localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM
 		confirmed: boolean
