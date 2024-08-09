@@ -14,10 +14,16 @@ import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
+import {AIClass} from '../types/virtual-ai'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
 	deck: Array<number | string | CardClass>
+}
+
+export type OpponentDefs = PlayerDefs & {
+	deck: Array<number | string | CardClass>
+	virtualAI: AIClass
 }
 
 /* Set up the components that will be referenced during the game. This includes:

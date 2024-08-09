@@ -1,9 +1,7 @@
-import {Entity, PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
-import {AI_CLASSES} from '.'
-import {AIClass, VirtualAI} from './virtual-action'
-
-export type AIEntity = Entity<AIComponent>
+import {AI_CLASSES} from '../../server/src/routines/virtual'
+import {AIEntity, PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
+import {AIClass, VirtualAI} from '../types/virtual-ai'
 
 export class AIComponent {
 	readonly game: GameModel
@@ -29,5 +27,9 @@ export class AIComponent {
 
 	public getTurnAction() {
 		return this.ai.getTurnAction(this.game, this)
+	}
+
+	public get player() {
+		return this.game.components.getOrError(this.playerEntity)
 	}
 }

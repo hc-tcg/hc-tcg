@@ -6,6 +6,7 @@ import {
 	PlayerComponent,
 	SlotComponent,
 } from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
@@ -40,7 +41,7 @@ import modalRequestSaga from './turn-actions/modal-request'
 import pickRequestSaga from './turn-actions/pick-request'
 import playCardSaga from './turn-actions/play-card'
 import removeEffectSaga from './turn-actions/remove-effect'
-import {AIComponent, virtualPlayerActionSaga} from './virtual'
+import {virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

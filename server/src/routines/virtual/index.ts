@@ -1,5 +1,5 @@
+import {AIClass, VirtualAI} from 'common/types/virtual-ai'
 import ExBossAI from './exboss-ai'
-import {AIClass, VirtualAI} from './virtual-action'
 
 const aiClasses: Array<AIClass> = [ExBossAI]
 
@@ -14,4 +14,3 @@ export const AI_CLASSES: Record<string, VirtualAI> = aiClasses.reduce(
 )
 
 export {default as virtualPlayerActionSaga} from './virtual-action'
-export {AIComponent, type AIEntity} from './ai-component'

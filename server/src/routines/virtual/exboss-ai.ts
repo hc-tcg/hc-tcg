@@ -8,6 +8,7 @@ import {
 	PlayerComponent,
 	StatusEffectComponent,
 } from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
@@ -15,10 +16,9 @@ import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
 import {AttackActionData, PlayCardActionData} from 'common/types/action-data'
 import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {VirtualAI, VirtualAIReturn} from 'common/types/virtual-ai'
 import {delay} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import {AIComponent} from './ai-component'
-import {VirtualAI, VirtualAIReturn} from './virtual-action'
 
 class ExBossAI implements VirtualAI {
 	get id(): string {

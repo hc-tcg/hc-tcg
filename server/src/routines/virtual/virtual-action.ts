@@ -1,6 +1,5 @@
-import {PlayerEntity} from 'common/entities'
+import {AIComponent} from 'common/components/ai-component'
 import {GameModel} from 'common/models/game-model'
-import {TurnAction} from 'common/types/game-state'
 import {
 	PlaintextNode,
 	concatFormattedTextNodes,
@@ -9,26 +8,10 @@ import {
 } from 'common/utils/formatting'
 import {delay, put} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import {AIComponent} from './ai-component'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
 }
-
-export type VirtualAIReturn = {
-	type: TurnAction
-	payload?: any
-	playerEntity: PlayerEntity
-}
-export interface VirtualAI {
-	get id(): string
-
-	getTurnAction(
-		game: GameModel,
-		component: AIComponent,
-	): Generator<any, VirtualAIReturn>
-}
-export type AIClass = new () => VirtualAI
 
 export default function* virtualPlayerActionSaga(
 	game: GameModel,

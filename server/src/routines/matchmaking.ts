@@ -1,16 +1,15 @@
-import {CARDS} from 'common/cards'
+import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
 } from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
-import {CardEntity, newEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
-import {VirtualPlayerModel} from 'common/models/virtual-player-model'
-import {WithoutFunctions} from 'common/types/server-requests'
+import {OpponentDefs} from 'common/utils/state-gen'
 import {
 	all,
 	cancel,
@@ -31,7 +30,7 @@ import {
 	getWinner,
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
-import {AIComponent} from './virtual'
+import ExBossAI from './virtual/exboss-ai'
 
 export type ClientMessage = {
 	type: string
@@ -274,7 +273,7 @@ function* leaveQueue(msg: ClientMessage) {
 
 function setupSolitareGame(
 	player: PlayerModel,
-	opponent: VirtualPlayerModel,
+	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
 		{
@@ -283,7 +282,7 @@ function setupSolitareGame(
 		},
 		{
 			model: opponent,
-			deck: opponent.deck.cards.map((card) => card.props.numericId),
+			deck: opponent.deck,
 		},
 		'solitare',
 	)
@@ -295,7 +294,7 @@ function setupSolitareGame(
 		playerOnLeft: playerEntities[0],
 	})
 
-	game.components.new(AIComponent, playerEntities[1], opponent.ai)
+	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
 	return game
 }
@@ -319,22 +318,15 @@ function* createBossGame(msg: ClientMessage) {
 
 	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
 
-	const EX_BOSS_PLAYER = new VirtualPlayerModel(
-		'EX',
-		'EvilXisuma',
-		'evilxisuma_boss',
-	)
-	EX_BOSS_PLAYER.deck.cards = [
-		{
-			props: WithoutFunctions(CARDS['evilxisuma_boss'].props),
-			entity: newEntity('card-entity') as CardEntity,
-			slot: null,
-			turnedOver: false,
-			attackHint: null,
-		},
-	]
+	const EX_BOSS = {
+		name: 'EX',
+		minecraftName: 'EvilXisuma',
+		censoredName: 'EX',
+		deck: [EvilXisumaBossHermitCard],
+		virtualAI: ExBossAI,
+	}
 
-	const newBossGame = setupSolitareGame(player, EX_BOSS_PLAYER)
+	const newBossGame = setupSolitareGame(player, EX_BOSS)
 	newBossGame.state.isBossGame = true
 	if (
 		newBossGame.components.find(

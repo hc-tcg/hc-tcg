@@ -6,6 +6,7 @@ import type {
 	SlotComponent,
 	StatusEffectComponent,
 } from './components'
+import {AIComponent} from './components/ai-component'
 import {ViewerComponent} from './components/viewer-component'
 
 /** A unique identifier for a component in the component table. This value is safe to
@@ -17,6 +18,7 @@ export type Entity<Wrapping> = string & {
 	__entity_type_do_not_use_ever_the_program_will_crash: Wrapping
 }
 
+export type AIEntity = Entity<AIComponent>
 export type PlayerEntity = Entity<PlayerComponent>
 export type SlotEntity = Entity<SlotComponent>
 export type RowEntity = Entity<RowComponent>
