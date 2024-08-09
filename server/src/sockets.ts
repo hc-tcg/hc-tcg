@@ -12,10 +12,10 @@ const isValidName = (name: string) => {
 
 const env = process.env.NODE_ENV || 'development'
 const isValidVersion = (clientVersion: string) => {
-	if (env === 'development') {
+    	if (env === 'development') {
 		return true
-	}
-	return version === clientVersion
+    	}
+    	return version === clientVersion
 }
 
 function startSocketIO(server: any) {
