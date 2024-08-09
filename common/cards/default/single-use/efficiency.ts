@@ -1,24 +1,20 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Efficiency extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'efficiency',
-		numericId: 17,
-		name: 'Efficiency',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			'Use an attack from your active Hermit without having the necessary item cards attached.',
-		showConfirmationModal: true,
-	}
-
-	override onAttach(
+const Efficiency: SingleUse = {
+	...singleUse,
+	id: 'efficiency',
+	numericId: 17,
+	name: 'Efficiency',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		'Use an attack from your active Hermit without having the necessary item cards attached.',
+	showConfirmationModal: true,
+	onAttach(
 		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -43,7 +39,7 @@ class Efficiency extends Card {
 				observer.unsubscribe(player.hooks.onTurnEnd)
 			})
 		})
-	}
+	},
 }
 
 export default Efficiency

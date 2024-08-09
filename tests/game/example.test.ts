@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
+import {Card} from 'common/cards/base/types'
 
-import {CardClass} from 'common/cards/base/card'
 import {GameModel} from 'common/models/game-model'
 
-function getTestPlayer(playerName: string, deck: Array<CardClass>) {
+function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {
 		model: {
 			name: playerName,

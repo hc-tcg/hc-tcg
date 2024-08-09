@@ -6,7 +6,6 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -20,33 +19,30 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-class GrianRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'grian_rare',
-		numericId: 35,
-		name: 'Grian',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'prankster',
-		health: 300,
-		primary: {
-			name: 'Borrow',
-			cost: ['prankster', 'prankster'],
-			damage: 50,
-			power:
-				"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
-		},
-		secondary: {
-			name: 'Start a War',
-			cost: ['prankster', 'prankster', 'prankster'],
-			damage: 100,
-			power: null,
-		},
-	}
-
-	override onAttach(
+const GrianRare: Hermit = {
+	...hermit,
+	id: 'grian_rare',
+	numericId: 35,
+	name: 'Grian',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'prankster',
+	health: 300,
+	primary: {
+		name: 'Borrow',
+		cost: ['prankster', 'prankster'],
+		damage: 50,
+		power:
+			"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
+	},
+	secondary: {
+		name: 'Start a War',
+		cost: ['prankster', 'prankster', 'prankster'],
+		damage: 100,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -122,7 +118,7 @@ class GrianRare extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default GrianRare

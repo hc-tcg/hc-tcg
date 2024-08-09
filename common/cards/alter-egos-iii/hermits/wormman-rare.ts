@@ -1,42 +1,39 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {ObserverEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import Card, {InstancedValue} from '../../base/card'
+import {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class WormManRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'wormman_rare',
-		numericId: 175,
-		name: 'Worm Man',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'prankster',
-		health: 260,
-		primary: {
-			name: 'Side Kick',
-			cost: ['prankster'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Total Anonymity',
-			shortName: 'T. Anonymity',
-			cost: ['prankster', 'prankster', 'any'],
-			damage: 90,
-			power:
-				'At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. This card must be revealed when either player interacts with the card, or when this Worm Man is knocked out.',
-		},
-	}
+const observers = new InstancedValue<Array<ObserverEntity>>(() => [])
 
-	observers = new InstancedValue<Array<ObserverEntity>>(() => [])
-
-	override onAttach(
+const WormManRare: Hermit = {
+	...hermit,
+	id: 'wormman_rare',
+	numericId: 175,
+	name: 'Worm Man',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'prankster',
+	health: 260,
+	primary: {
+		name: 'Side Kick',
+		cost: ['prankster'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Total Anonymity',
+		shortName: 'T. Anonymity',
+		cost: ['prankster', 'prankster', 'any'],
+		damage: 90,
+		power:
+			'At the end of your turn, you can choose to take a Hermit card from your hand and place it face down on an AFK slot. This card must be revealed when either player interacts with the card, or when this Worm Man is knocked out.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -50,15 +47,15 @@ class WormManRare extends Card {
 			game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
 
 			observer.subscribe(player.hooks.onAttach, (attachedComponent) => {
-				game.addBlockedActions(this.props.id, 'PLAY_HERMIT_CARD')
+				game.addBlockedActions(this.id, 'PLAY_HERMIT_CARD')
 				attachedComponent.turnedOver = true
 
 				const newObserver = game.components.new(
 					ObserverComponent,
 					attachedComponent.entity,
 				)
-				this.observers.set(component, [
-					...this.observers.get(component),
+				observers.set(component, [
+					...observers.get(component),
 					newObserver.entity,
 				])
 
@@ -78,16 +75,15 @@ class WormManRare extends Card {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			observer.unsubscribe(player.hooks.onAttach)
 		})
-	}
-
-	override onDetach(
+	},
+	onDetach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
 	): void {
 		const {player} = component
 
-		this.observers.get(component).forEach((observerEntity) => {
+		observers.get(component).forEach((observerEntity) => {
 			const observer = game.components.get(observerEntity)
 			if (!observer) return
 			observer.unsubscribe(player.hooks.onActiveRowChange)
@@ -96,7 +92,7 @@ class WormManRare extends Card {
 			if (!attachedCard || !(attachedCard instanceof CardComponent)) return
 			attachedCard.turnedOver = false
 		})
-	}
+	},
 }
 
 export default WormManRare

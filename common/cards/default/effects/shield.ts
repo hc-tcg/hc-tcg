@@ -1,24 +1,20 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Shield extends Card {
-	props: Attach = {
-		...attach,
-		id: 'shield',
-		numericId: 88,
-		name: 'Shield',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 2,
-		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
-	}
-
-	override onAttach(
+const Shield: Attach = {
+	...attach,
+	id: 'shield',
+	numericId: 88,
+	name: 'Shield',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 2,
+	description:
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -56,7 +52,7 @@ class Shield extends Card {
 				)
 			}
 		})
-	}
+	},
 }
 
 export default Shield

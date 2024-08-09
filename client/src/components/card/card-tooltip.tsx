@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {
-	CardProps,
+	Card,
 	hasDescription,
 	isAttach,
 	isHermit,
@@ -34,10 +34,10 @@ const HERMIT_TYPES: Record<string, string> = {
 }
 
 type Props = {
-	card: WithoutFunctions<CardProps>
+	card: WithoutFunctions<Card>
 }
 
-const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 	let text: FormattedTextNode = EmptyNode()
 	if (isHermit(card)) {
 		text = formatText(
@@ -61,7 +61,7 @@ const joinJsx = (array: Array<React.ReactNode>) => {
 }
 
 const getStrengthsAndWeaknesses = (
-	card: WithoutFunctions<CardProps>,
+	card: WithoutFunctions<Card>,
 ): React.ReactNode => {
 	if (!isHermit(card)) return null
 
@@ -97,7 +97,7 @@ const getStrengthsAndWeaknesses = (
 	return result
 }
 
-const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getName = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isItem(card)) {
 		return (
 			<div className={classNames(css.name, css[card.type])}>{card.name}</div>
@@ -112,7 +112,7 @@ const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 	ultra_rare: '★ Ultra Rare ★',
 }
 
-const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {
 	return (
 		<span className={classNames(css.rarity, css[card.rarity])}>
 			{' '}
@@ -121,7 +121,7 @@ const getRarity = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	)
 }
 
-const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getExpansion = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (card.expansion !== 'default') {
 		const expansion = card.expansion as
 			| 'default'
@@ -136,17 +136,17 @@ const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	}
 }
 
-const getAttach = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getAttach = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (!isAttach(card)) return null
 	return <div className={css.attach}>Attach</div>
 }
 
-const getSingleUse = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (!isSingleUse(card)) return null
 	return <div className={css.singleUse}>Single Use</div>
 }
 
-const getType = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isHermit(card)) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>
@@ -158,7 +158,7 @@ const getType = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const getSidebarDescriptions = (
-	card: WithoutFunctions<CardProps>,
+	card: WithoutFunctions<Card>,
 ): React.ReactNode => {
 	return (card.sidebarDescriptions || []).map((description, i) => {
 		if (description.type === 'statusEffect') {
@@ -166,9 +166,9 @@ const getSidebarDescriptions = (
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{STATUS_EFFECTS[statusEffect].props.name}</u>
+						<u>{STATUS_EFFECTS[statusEffect].name}</u>
 					</b>
-					<p>{STATUS_EFFECTS[statusEffect].props.description}</p>
+					<p>{STATUS_EFFECTS[statusEffect].description}</p>
 				</div>
 			)
 		}

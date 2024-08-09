@@ -3,26 +3,22 @@ import {GameModel} from '../../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Trident extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'trident',
-		numericId: 150,
-		name: 'Trident',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A30$',
-	}
-
-	override onAttach(
+const Trident: SingleUse = {
+	...singleUse,
+	id: 'trident',
+	numericId: 150,
+	name: 'Trident',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A30$',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -61,7 +57,7 @@ class Trident extends Card {
 				component.draw()
 			}
 		})
-	}
+	},
 }
 
 export default Trident

@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import ArmorStand from './armor-stand'
 import ChainmailArmor from './chainmail-armor'
 import CommandBlock from './command-block'
@@ -8,7 +8,7 @@ import ThornsII from './thorns_ii'
 import ThornsIII from './thorns_iii'
 import TurtleShell from './turtle-shell'
 
-const effectCardClasses: Array<CardClass> = [
+const effectCardClasses: Array<Card> = [
 	ArmorStand,
 	ChainmailArmor,
 	CommandBlock,

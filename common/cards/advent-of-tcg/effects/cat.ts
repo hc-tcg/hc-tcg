@@ -1,10 +1,10 @@
 import {CardComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Cat extends Card {
+class Cat extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'cat',

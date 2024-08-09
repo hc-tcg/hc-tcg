@@ -4,24 +4,16 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
-class WeaknessEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'weakness',
-		name: 'Weakness',
-		description: "This Hermit is weak to the opponent's active Hermit's type.",
-		counter: 3,
-		counterType: 'turns',
-	}
-
-	public override onApply(
+const WeaknessEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'weakness',
+	name: 'Weakness',
+	description: "This Hermit is weak to the opponent's active Hermit's type.",
+	counter: 3,
+	counterType: 'turns',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -29,7 +21,7 @@ class WeaknessEffect extends CardStatusEffect {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!effect.counter) return
@@ -47,7 +39,7 @@ class WeaknessEffect extends CardStatusEffect {
 				return
 			attack.createWeakness = 'always'
 		})
-	}
+	},
 }
 
 export default WeaknessEffect

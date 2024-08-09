@@ -6,32 +6,31 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class InstantHealthII extends Card {
-	pickCondition = query.every(query.slot.hermit, query.not(query.slot.empty))
+const pickCondition = query.every(
+	query.slot.hermit,
+	query.not(query.slot.empty),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'instant_health_ii',
-		numericId: 43,
-		name: 'Instant Health II',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description: 'Heal one of your Hermits 60hp.',
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.slot.playerHasActiveHermit,
-			query.exists(SlotComponent, this.pickCondition),
-		),
-		log: (values) =>
-			`${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
-	}
-
-	override onAttach(
+const InstantHealthII: SingleUse = {
+	...singleUse,
+	id: 'instant_health_ii',
+	numericId: 43,
+	name: 'Instant Health II',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description: 'Heal one of your Hermits 60hp.',
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.slot.playerHasActiveHermit,
+		query.exists(SlotComponent, pickCondition),
+	),
+	log: (values) =>
+		`${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -42,7 +41,7 @@ class InstantHealthII extends Card {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick an active or AFK Hermit',
-			canPick: this.pickCondition,
+			canPick: pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.onBoard()) return
 				// Apply
@@ -50,7 +49,7 @@ class InstantHealthII extends Card {
 				applySingleUse(game, pickedSlot)
 			},
 		})
-	}
+	},
 }
 
 export default InstantHealthII

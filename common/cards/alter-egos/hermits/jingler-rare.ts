@@ -2,39 +2,35 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class JinglerRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'jingler_rare',
-		numericId: 133,
-		name: 'Jingler',
-		expansion: 'alter_egos',
-		palette: 'alter_egos',
-		background: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'speedrunner',
-		health: 280,
-		primary: {
-			name: 'Jingled',
-			cost: ['speedrunner'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Deception',
-			cost: ['speedrunner', 'speedrunner', 'any'],
-			damage: 80,
-			power:
-				'Flip a coin.\nIf heads, your opponent must choose a card to discard from their hand.',
-		},
-	}
-
-	override onAttach(
+const JinglerRare: Hermit = {
+	...hermit,
+	id: 'jingler_rare',
+	numericId: 133,
+	name: 'Jingler',
+	expansion: 'alter_egos',
+	palette: 'alter_egos',
+	background: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'speedrunner',
+	health: 280,
+	primary: {
+		name: 'Jingled',
+		cost: ['speedrunner'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Deception',
+		cost: ['speedrunner', 'speedrunner', 'any'],
+		damage: 80,
+		power:
+			'Flip a coin.\nIf heads, your opponent must choose a card to discard from their hand.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -69,7 +65,7 @@ class JinglerRare extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default JinglerRare

@@ -9,49 +9,45 @@ import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
 import {applySingleUse} from '../../../utils/board'
 import String from '../../alter-egos/effects/string'
-import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
 import {Attach, SingleUse} from '../../base/types'
 
-class WaterBucket extends Card {
-	props: Attach & SingleUse = {
-		...attach,
-		...singleUse,
-		category: 'attach',
-		id: 'water_bucket',
-		expansion: 'default',
-		numericId: 105,
-		name: 'Water Bucket',
-		rarity: 'common',
-		tokens: 0,
-		description:
-			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
-		attachCondition: query.some(
-			attach.attachCondition,
-			singleUse.attachCondition,
-		),
-		log: (values) => {
-			if (values.pos.slotType === 'single_use')
-				return `${values.defaultLog} on $p${values.pick.name}$`
-			return `$p{You|${values.player}}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`
-		},
-	}
+function removeFireEffect(
+	game: GameModel,
+	slot: SlotComponent | null | undefined,
+) {
+	if (!slot) return
+	game.components
+		.filter(
+			StatusEffectComponent,
+			query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
+			query.effect.is(FireEffect),
+		)
+		.forEach((effect) => effect.remove())
+}
 
-	private static removeFireEffect(
-		game: GameModel,
-		slot: SlotComponent | null | undefined,
-	) {
-		if (!slot) return
-		game.components
-			.filter(
-				StatusEffectComponent,
-				query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
-				query.effect.is(FireEffect),
-			)
-			.forEach((effect) => effect.remove())
-	}
-
-	override onAttach(
+const WaterBucket: Attach & SingleUse = {
+	...attach,
+	...singleUse,
+	category: 'attach',
+	id: 'water_bucket',
+	expansion: 'default',
+	numericId: 105,
+	name: 'Water Bucket',
+	rarity: 'common',
+	tokens: 0,
+	description:
+		'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
+	attachCondition: query.some(
+		attach.attachCondition,
+		singleUse.attachCondition,
+	),
+	log: (values) => {
+		if (values.pos.slotType === 'single_use')
+			return `${values.defaultLog} on $p${values.pick.name}$`
+		return `$p{You|${values.player}}$ attached $e${WaterBucket.name}$ to $p${values.pos.hermitCard}$`
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -70,7 +66,7 @@ class WaterBucket extends Card {
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 
-					WaterBucket.removeFireEffect(game, pickedSlot)
+					removeFireEffect(game, pickedSlot)
 
 					game.components
 						.filter(
@@ -85,19 +81,19 @@ class WaterBucket extends Card {
 			})
 		} else if (component.slot.type === 'attach') {
 			// Straight away remove fire
-			WaterBucket.removeFireEffect(game, component.slot)
+			removeFireEffect(game, component.slot)
 
 			observer.subscribe(player.hooks.onDefence, (_attack) => {
 				if (!component.slot.inRow()) return
-				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 
 			observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 				if (!component.slot.inRow()) return
-				WaterBucket.removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				removeFireEffect(game, component.slot.row.getHermit()?.slot)
 			})
 		}
-	}
+	},
 }
 
 export default WaterBucket

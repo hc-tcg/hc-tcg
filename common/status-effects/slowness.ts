@@ -4,24 +4,16 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
-class SlownessEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'slowness',
-		name: 'Slowness',
-		description: 'This Hermit can only use their primary attack.',
-		counter: 1,
-		counterType: 'turns',
-	}
-
-	override onApply(
+const SlownessEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'slowness',
+	name: 'Slowness',
+	description: 'This Hermit can only use their primary attack.',
+	counter: 1,
+	counterType: 'turns',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -29,14 +21,14 @@ class SlownessEffect extends CardStatusEffect {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (
 				target.slot?.onBoard() &&
 				player.activeRowEntity === target.slot.row?.entity
 			)
-				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
+				game.addBlockedActions(this.icon, 'SECONDARY_ATTACK')
 		})
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
@@ -58,7 +50,7 @@ class SlownessEffect extends CardStatusEffect {
 			if (target.slot.row?.health) return
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default SlownessEffect

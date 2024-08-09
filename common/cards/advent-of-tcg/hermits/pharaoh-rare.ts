@@ -2,11 +2,11 @@ import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PharaohRare extends Card {
+class PharaohRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'pharaoh_rare',

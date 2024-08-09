@@ -6,30 +6,26 @@ import {
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Totem extends Card {
-	props: Attach = {
-		...attach,
-		id: 'totem',
-		numericId: 101,
-		name: 'Totem',
-		expansion: 'default',
-		rarity: 'ultra_rare',
-		tokens: 3,
-		description:
-			'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
-		sidebarDescriptions: [
-			{
-				type: 'glossary',
-				name: 'knockout',
-			},
-		],
-	}
-
-	override onAttach(
+const Totem: Attach = {
+	...attach,
+	id: 'totem',
+	numericId: 101,
+	name: 'Totem',
+	expansion: 'default',
+	rarity: 'ultra_rare',
+	tokens: 3,
+	description:
+		'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
+	sidebarDescriptions: [
+		{
+			type: 'glossary',
+			name: 'knockout',
+		},
+	],
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -77,7 +73,7 @@ class Totem extends Card {
 		observer.subscribeBefore(opponentPlayer.hooks.afterAttack, (attack) =>
 			reviveHook(attack),
 		)
-	}
+	},
 }
 
 export default Totem

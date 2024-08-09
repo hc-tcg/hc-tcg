@@ -8,53 +8,50 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
-import Card, {InstancedValue} from '../../base/card'
+import {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class RendogRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'rendog_rare',
-		numericId: 87,
-		name: 'Rendog',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'builder',
-		health: 250,
-		primary: {
-			name: "Comin' At Ya",
-			cost: ['builder'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Role Play',
-			cost: ['builder', 'builder', 'builder'],
-			damage: 0,
-			power: "Use an attack from any of your opponent's Hermits.",
-		},
-	}
+const pickCondition = query.every(
+	query.slot.opponent,
+	query.slot.hermit,
+	query.not(query.slot.empty),
+	query.not(query.slot.has(ArmorStand)),
+)
 
-	pickCondition = query.every(
-		query.slot.opponent,
-		query.slot.hermit,
-		query.not(query.slot.empty),
-		query.not(query.slot.has(ArmorStand)),
-	)
+const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 
-	mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
-
-	override getAttack(
+const RendogRare: Hermit = {
+	...hermit,
+	id: 'rendog_rare',
+	numericId: 87,
+	name: 'Rendog',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'builder',
+	health: 250,
+	primary: {
+		name: "Comin' At Ya",
+		cost: ['builder'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Role Play',
+		cost: ['builder', 'builder', 'builder'],
+		damage: 0,
+		power: "Use an attack from any of your opponent's Hermits.",
+	},
+	getAttack(
 		game: GameModel,
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	) {
 		if (hermitAttackType !== 'secondary')
-			return super.getAttack(game, component, hermitAttackType)
+			return hermit.getAttack.call(this, game, component, hermitAttackType)
 
-		const mockedAttack = this.mockedAttacks.get(component)
+		const mockedAttack = mockedAttacks.get(component)
 		if (!mockedAttack) return null
 
 		let newAttack = mockedAttack.getAttack()
@@ -68,9 +65,8 @@ class RendogRare extends Card {
 				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
 		)
 		return newAttack
-	}
-
-	override onAttach(
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -89,7 +85,7 @@ class RendogRare extends Card {
 					player: player.entity,
 					id: component.entity,
 					message: "Pick one of your opponent's Hermits",
-					canPick: this.pickCondition,
+					canPick: pickCondition,
 					onResult: (pickedSlot) => {
 						let pickedCard = pickedSlot.getCard() as CardComponent<Hermit>
 						if (!pickedCard) return
@@ -115,7 +111,7 @@ class RendogRare extends Card {
 								}
 
 								// Store the chosen attack to copy
-								this.mockedAttacks.set(
+								mockedAttacks.set(
 									component,
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
@@ -123,7 +119,7 @@ class RendogRare extends Card {
 								return 'SUCCESS'
 							},
 							onTimeout: () => {
-								this.mockedAttacks.set(
+								mockedAttacks.set(
 									component,
 									setupMockCard(game, component, pickedCard, 'primary'),
 								)
@@ -139,19 +135,18 @@ class RendogRare extends Card {
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			if (!game.components.exists(SlotComponent, this.pickCondition))
+			if (!game.components.exists(SlotComponent, pickCondition))
 				blockedActions.push('SECONDARY_ATTACK')
 			return blockedActions
 		})
-	}
-
-	override onDetach(
+	},
+	onDetach(
 		_game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
 	) {
-		this.mockedAttacks.clear(component)
-	}
+		mockedAttacks.clear(component)
+	},
 }
 
 export default RendogRare

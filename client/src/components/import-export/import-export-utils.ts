@@ -14,8 +14,8 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
 		const props = Object.values(CARDS).find(
-			(value) => value.props.numericId === b64[i],
-		)?.props
+			(value) => value.numericId === b64[i],
+		)
 		if (!props) continue
 		deck.push({
 			props: WithoutFunctions(props),

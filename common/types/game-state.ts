@@ -1,4 +1,4 @@
-import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {Attach, Card, HasHealth} from '../cards/base/types'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'
@@ -18,7 +18,7 @@ export type LocalRowState = {
 	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
 	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
-	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<Card> | null}>
 	health: number | null
 }
 

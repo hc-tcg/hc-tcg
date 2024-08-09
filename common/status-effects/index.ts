@@ -40,7 +40,7 @@ import TurnSkippedEffect from './turn-skipped'
 import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
-const effectClasses: Array<new () => StatusEffect> = [
+const effectClasses: Array<StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
@@ -81,10 +81,7 @@ const effectClasses: Array<new () => StatusEffect> = [
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
-	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
-		let effect = new effectClass()
-		if (!effect.props) return result
-		result[effectClass.name] = effect
-		result[effect.props.icon] = effect
+	effectClasses.reduce((result: Record<string, StatusEffect>, effect) => {
+		result[effect.name] = effect
 		return result
 	}, {})

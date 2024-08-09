@@ -1,23 +1,19 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class DiamondArmor extends Card {
-	props: Attach = {
-		...attach,
-		id: 'diamond_armor',
-		numericId: 13,
-		name: 'Diamond Armour',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		description:
-			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 30hp each turn.',
-	}
-
-	override onAttach(
+const DiamondArmor: Attach = {
+	...attach,
+	id: 'diamond_armor',
+	numericId: 13,
+	name: 'Diamond Armour',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	description:
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 30hp each turn.',
+	onAttach(
 		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -47,7 +43,7 @@ class DiamondArmor extends Card {
 		// Reset counter at the start of every turn
 		observer.subscribe(player.hooks.onTurnStart, resetCounter)
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, resetCounter)
-	}
+	},
 }
 
 export default DiamondArmor
