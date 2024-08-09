@@ -39,7 +39,7 @@ class TurtleShell extends Card {
 					query.card.row(query.row.hasCard(component.entity)),
 				)
 
-				if (hermitCard && newActiveHermit === hermitCard) {
+				if (hermitCard && newActiveHermit.entity === hermitCard.entity) {
 					activated = true
 				}
 			},
