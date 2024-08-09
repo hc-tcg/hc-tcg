@@ -10,6 +10,10 @@ export const getGameState = (state: RootState): LocalGameState | null => {
 	return getGame(state).localGameState
 }
 
+export const getIsSpectator = (state: RootState): boolean => {
+	return getGameState(state)?.isSpectator || false
+}
+
 export const getTime = (state: RootState) => {
 	return getGame(state).time
 }

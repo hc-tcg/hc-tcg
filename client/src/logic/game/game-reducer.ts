@@ -62,6 +62,7 @@ const gameReducer = (
 			return {...newGame}
 		case localMessages.GAME_START:
 		case localMessages.GAME_END:
+		case localMessages.GAME_SPECTATOR_LEAVE:
 			return {
 				...state,
 				localGameState: null,

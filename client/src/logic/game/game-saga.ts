@@ -35,6 +35,7 @@ import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
+import spectatorSaga from './tasks/spectators'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* sendMsg({
@@ -166,7 +167,7 @@ function* opponentConnectionSaga() {
 
 function* gameSaga(initialGameState?: LocalGameState) {
 	const backgroundTasks = yield* fork(() =>
-		all([fork(opponentConnectionSaga), fork(chatSaga)]),
+		all([fork(opponentConnectionSaga), fork(chatSaga), fork(spectatorSaga)]),
 	)
 
 	try {
@@ -178,6 +179,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(serverMessages.GAME_END)),
 			gameCrash: call(receiveMsg(serverMessages.GAME_CRASH)),
+			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {

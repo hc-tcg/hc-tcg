@@ -7,7 +7,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {localMessages} from 'messages'
+import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
 	cancel,
@@ -31,7 +31,8 @@ import gameSaga, {getTimerForSeconds} from './game'
 function setupGame(
 	player1: PlayerModel,
 	player2: PlayerModel,
-	code?: string,
+	gameCode?: string,
+	spectatorCode?: string,
 ): GameModel {
 	let game = new GameModel(
 		{
@@ -42,7 +43,8 @@ function setupGame(
 			model: player2,
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-		code,
+		gameCode,
+		spectatorCode,
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -69,7 +71,7 @@ function* gameManager(game: GameModel) {
 		const viewers = game.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
@@ -91,7 +93,10 @@ function* gameManager(game: GameModel) {
 			playerRemoved: take(
 				(action: any) =>
 					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(action.payload.id),
+					playerIds.includes(
+						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+							.player.id,
+					),
 			),
 			forfeit: take(
 				(action: any) =>
@@ -100,7 +105,7 @@ function* gameManager(game: GameModel) {
 			),
 		})
 
-		for (const viewer of viewers) {
+		for (const viewer of game.viewers) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
@@ -132,7 +137,7 @@ function* gameManager(game: GameModel) {
 		if (game.task) yield* cancel(game.task)
 		game.afterGameEnd.call()
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
@@ -286,19 +291,27 @@ export function* createPrivateGame(
 	}
 
 	// Add to private queue with code
-	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
+	const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
+	const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
 	root.privateQueue[gameCode] = {
 		createdTime: Date.now(),
 		playerId,
+		gameCode,
+		spectatorCode,
 	}
 
 	// Send code to player
 	broadcast([player], {
 		type: serverMessages.CREATE_PRIVATE_GAME_SUCCESS,
-		code: gameCode,
+		gameCode: gameCode,
+		spectatorCode: spectatorCode,
 	})
 
-	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
+	console.log(
+		`Private game created by ${player.name}.`,
+		`Code: ${gameCode}`,
+		`Spectator Code: ${spectatorCode}`,
+	)
 }
 
 export function* joinPrivateGame(
@@ -320,6 +333,30 @@ export function* joinPrivateGame(
 			player.name,
 		)
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	// Check if spectator game first
+	const spectatorGame = Object.values(root.games).find(
+		(game) => game.spectatorCode === code,
+	)
+
+	if (spectatorGame) {
+		const viewer = spectatorGame.components.new(ViewerComponent, {
+			player: player,
+			spectator: true,
+			playerOnLeft: spectatorGame.state.order[0],
+		})
+
+		console.log(
+			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+		)
+
+		broadcast([player], {
+			type: serverMessages.SPECTATE_PRIVATE_GAME_SUCCESS,
+			localGameState: getLocalGameState(spectatorGame, viewer),
+		})
+
 		return
 	}
 
@@ -345,7 +382,12 @@ export function* joinPrivateGame(
 			return
 		}
 
-		const newGame = setupGame(player, existingPlayer, code)
+		const newGame = setupGame(
+			player,
+			existingPlayer,
+			root.privateQueue[code].gameCode,
+			root.privateQueue[code].spectatorCode,
+		)
 		root.addGame(newGame)
 
 		// Remove this game from the queue, it's started

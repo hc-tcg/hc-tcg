@@ -3,13 +3,15 @@ import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
 	status: MatchmakingStatus
-	code: string | null
+	gameCode: string | null
+	spectatorCode: string | null
 	invalidCode: boolean
 }
 
 const defaultState: MatchmakingState = {
 	status: null,
-	code: null,
+	gameCode: null,
+	spectatorCode: null,
 	invalidCode: false,
 }
 
@@ -42,7 +44,8 @@ const matchmakingReducer = (
 		case localMessages.MATCHMAKING_CODE_RECIEVED:
 			return {
 				...state,
-				code: action.code,
+				gameCode: action.gameCode,
+				spectatorCode: action.spectatorCode,
 				status: 'private_waiting',
 			}
 		case localMessages.MATCHMAKING_CODE_INVALID:
@@ -54,21 +57,22 @@ const matchmakingReducer = (
 		case localMessages.MATCHMAKING_CODE_SET:
 			return {
 				...state,
-				code: action.code,
 				status: 'loading',
 			}
 		case localMessages.DISCONNECT:
 		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
-				code: null,
+				gameCode: null,
+				spectatorCode: null,
 				status: null,
 				invalidCode: false,
 			}
 		case localMessages.MATCHMAKING_CLEAR:
 			return {
 				...state,
-				code: null,
+				gameCode: null,
+				spectatorCode: null,
 				status: null,
 				invalidCode: false,
 			}

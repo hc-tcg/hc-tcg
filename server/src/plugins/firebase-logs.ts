@@ -42,11 +42,11 @@ export class FirebaseLogs {
 		if (!this.enabled) return false
 
 		root.hooks.newGame.add(this.id, (game) => {
-			if (game.code) {
+			if (game.gameCode) {
 				// @TODO for now still don't log private games
 				return
 			}
-			const type = game.code ? 'private' : 'public'
+			const type = game.gameCode ? 'private' : 'public'
 
 			const playerStates = game.components.filter(PlayerComponent)
 
@@ -85,7 +85,7 @@ export class FirebaseLogs {
 					world: CONFIG.world,
 				}
 				if (gameLog.type === 'private') {
-					ref = `/private-logs/${game.code}`
+					ref = `/private-logs/${game.gameCode}`
 				}
 
 				let pid0 = viewers[0].playerId

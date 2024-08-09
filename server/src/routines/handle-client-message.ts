@@ -4,6 +4,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {takeEvery} from 'typed-redux-saga'
 import {chatMessage} from './background/chat'
+import spectatorLeaveSaga from './background/spectators'
 import {
 	cancelPrivateGame,
 	createPrivateGame,
@@ -45,6 +46,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.JOIN_PRIVATE_GAME:
 			return yield* joinPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SPECTATOR_LEAVE:
+			return yield* spectatorLeaveSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CANCEL_PRIVATE_GAME:

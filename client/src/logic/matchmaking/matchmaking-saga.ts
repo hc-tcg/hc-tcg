@@ -28,7 +28,8 @@ function* createPrivateGameSaga() {
 			if (createGameResponse.success) {
 				yield* put<LocalMessage>({
 					type: localMessages.MATCHMAKING_CODE_RECIEVED,
-					code: createGameResponse.success.code,
+					gameCode: createGameResponse.success.gameCode,
+					spectatorCode: createGameResponse.success.spectatorCode,
 				})
 			} else {
 				// Something went wrong, go back to menu
@@ -60,7 +61,7 @@ function* createPrivateGameSaga() {
 	}
 
 	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
@@ -86,6 +87,9 @@ function* joinPrivateGameSaga() {
 					success: call(receiveMsg(serverMessages.JOIN_PRIVATE_GAME_SUCCESS)),
 					invalidCode: call(receiveMsg(serverMessages.INVALID_CODE)),
 					waitingForPlayer: call(receiveMsg(serverMessages.WAITING_FOR_PLAYER)),
+					specateSuccess: call(
+						receiveMsg(serverMessages.SPECTATE_PRIVATE_GAME_SUCCESS),
+					),
 					timeout: call(receiveMsg(serverMessages.PRIVATE_GAME_TIMEOUT)),
 				})
 
@@ -117,6 +121,8 @@ function* joinPrivateGameSaga() {
 					if (queueResponse.gameStart) {
 						yield* call(gameSaga)
 					}
+				} else if (result.specateSuccess) {
+					yield* call(gameSaga, result.specateSuccess.localGameState)
 				} else if (result.invalidCode) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CODE_INVALID,
