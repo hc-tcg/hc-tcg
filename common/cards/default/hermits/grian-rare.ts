@@ -61,7 +61,7 @@ class GrianRare extends Card {
 				CardComponent,
 				query.card.opponentPlayer,
 				query.card.active,
-				query.card.slot(query.slot.attach),
+				query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
 			)
 			if (!opponentAttachCard) return
 

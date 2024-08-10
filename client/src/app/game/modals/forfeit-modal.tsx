@@ -1,17 +1,16 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {forfeit} from 'logic/game/game-actions'
-import {useDispatch} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
 }
 function AttackModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
-		dispatch(forfeit())
+		dispatch({type: localMessages.GAME_FORFEIT})
 		closeModal()
 	}
 

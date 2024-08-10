@@ -14,11 +14,11 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
@@ -182,7 +182,7 @@ const ALL_CARDS = sortCards(
 )
 
 function EditDeck({back, title, saveDeck, deck}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
 	// STATE
@@ -210,12 +210,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 
 	function toggleTooltips() {
-		dispatch(
-			setSetting(
-				'showAdvancedTooltips',
-				settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
-			),
-		)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'showAdvancedTooltips',
+				value: !settings.showAdvancedTooltips,
+			},
+		})
 	}
 
 	//MISC
@@ -333,13 +334,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
 		saveDeck(deck, initialDeck)
 		dispatch({
-			type: 'SET_TOAST',
-			payload: {
-				open: true,
-				title: 'Deck Saved!',
-				description: `Saved ${deck.name}`,
-				image: `/images/types/type-${deck.icon}.png`,
-			},
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Deck Saved!',
+			description: `Saved ${deck.name}`,
+			image: `/images/types/type-${deck.icon}.png`,
 		})
 		back()
 	}
@@ -422,7 +421,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<button
 								className={css.dropdownButton}
 								title={
-									settings.showAdvancedTooltips === 'on'
+									settings.showAdvancedTooltips
 										? 'Hide detailed tooltips (T)'
 										: 'Show detailed tooltips (T)'
 								}
@@ -430,7 +429,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<img
 									src={
-										settings.showAdvancedTooltips === 'on'
+										settings.showAdvancedTooltips
 											? '/images/toolbar/tooltips.png'
 											: '/images/toolbar/tooltips-off.png'
 									}

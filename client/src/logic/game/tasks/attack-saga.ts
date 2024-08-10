@@ -1,5 +1,6 @@
-import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {attackToAttackAction} from 'common/types/turn-action-data'
 import {getPlayerState} from 'logic/game/game-selectors'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
@@ -8,13 +9,12 @@ import {
 	getOpponentActiveRow,
 	getPlayerActiveRow,
 } from '../../../app/game/game-selectors'
-import {startAttack} from '../game-actions'
 
-type AttackAction = ReturnType<typeof startAttack>
-
-export function* attackSaga(action: AttackAction): SagaIterator {
-	const {type} = action.payload
-	const actionType = attackToAttackAction[type]
+export function* attackSaga(
+	action: LocalMessageTable[typeof localMessages.GAME_ACTIONS_ATTACK],
+): SagaIterator {
+	const {attackType} = action
+	const actionType = attackToAttackAction[attackType]
 
 	const player = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)
@@ -22,13 +22,13 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	if (!player || !activeRow || !activeRow.hermit) return
 	if (!opponentActiveRow || !opponentActiveRow.hermit) return
 
-	const attackData: AttackActionData = {
-		type: actionType,
-		payload: {
+	yield put<LocalMessage>({
+		type: 'GAME_TURN_ACTION',
+		action: {
+			type: actionType,
 			player: player.entity,
 		},
-	}
-	yield put(attackData)
+	})
 }
 
 export default attackSaga

@@ -1,16 +1,8 @@
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
-import {PickSlotActionData} from 'common/types/action-data'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
-import {
-	endTurn,
-	endTurnAction,
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
 	getEndGameOverlay,
@@ -20,50 +12,29 @@ import {
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {
+	MODAL_COMPONENTS,
+	ModalVariant,
+} from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {playSound} from 'logic/sound/sound-actions'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useRef, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import Board from './board'
 import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
-import {
-	AttackModal,
-	ChangeHermitModal,
-	ConfirmModal,
-	EndTurnModal,
-	ForfeitModal,
-	SelectCardsModal,
-	UnmetConditionModal,
-} from './modals'
-import CopyAttackModal from './modals/copy-attack-modal'
-import {shouldShowEndTurnModal} from './modals/end-turn-modal'
 import Toolbar from './toolbar'
 
-const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
-	attack: AttackModal,
-	confirm: ConfirmModal,
-	forfeit: ForfeitModal,
-	'change-hermit-modal': ChangeHermitModal,
-	'end-turn': EndTurnModal,
-	'unmet-condition': UnmetConditionModal,
-
-	// Custom modals
-	copyAttack: CopyAttackModal,
-	selectCards: SelectCardsModal,
-}
-
 const renderModal = (
-	openedModal: {id: string; info: any} | null,
-	handleOpenModalId: (modalId: string | null) => void,
+	openedModal: {id: ModalVariant; info: any} | null,
+	handleOpenModalId: (modalId: ModalVariant | null) => void,
 ) => {
 	const closeModal = () => handleOpenModalId(null)
 	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
 		return null
 
-	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
+	const ModalComponent = MODAL_COMPONENTS[openedModal.id] as any
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
 }
 
@@ -76,7 +47,7 @@ function Game() {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const [filter, setFilter] = useState<string>('')
 
@@ -98,20 +69,24 @@ function Game() {
 		}
 	}, [handleKeys])
 
-	const handleOpenModal = (id: string | null) => {
-		dispatch(setOpenedModal(id))
+	const handleOpenModal = (id: ModalVariant | null) => {
+		dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: id})
 	}
 
 	const handleBoardClick = (
-		pickInfo: SlotInfo,
+		slotInfo: SlotInfo,
 		player: PlayerEntity,
 		row?: number,
 		index?: number,
 	) => {
-		console.log('Slot selected: ', pickInfo)
-
-		// This is a hack to make picked cards appear
-		dispatch(slotPicked(pickInfo, player, row, index))
+		console.log('Slot selected: ', slotInfo)
+		dispatch({
+			type: localMessages.GAME_SLOT_PICKED,
+			slotInfo,
+			player,
+			row,
+			index,
+		})
 	}
 
 	const selectCard = (card: LocalCardInstance) => {
@@ -121,68 +96,80 @@ function Game() {
 			if (card.slot === null) return
 
 			// Send pick card action with the hand info
-			const actionData: PickSlotActionData = {
-				type: 'PICK_REQUEST',
-				payload: {
+			dispatch({
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'PICK_REQUEST',
 					entity: card.slot,
 				},
-			}
-
-			dispatch(actionData)
+			})
 		} else {
 			if (equalCard(card, selectedCard)) {
-				dispatch(setSelectedCard(null))
+				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
 			} else {
 				console.log('Selecting card:', card)
-				dispatch(setSelectedCard(card))
+				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card})
 			}
 		}
 	}
 
 	if (availableActions.includes('PICK_REQUEST')) {
-		dispatch(setSelectedCard(null))
+		dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
 	}
 
 	function handleKeys(e: any) {
-		const chatIsClosed = settings.showChat === 'off'
-
 		if (e.key === 'Escape') {
-			dispatch(setSetting('showChat', 'off'))
+			dispatch({
+				type: localMessages.SETTINGS_SET,
+				setting: {
+					key: 'showChatWindow',
+					value: false,
+				},
+			})
 		}
 
 		if (e.key === 'c' || e.key === 'C') {
 			// We do not do anything if the chat is opened because then you couldn't type the C key.
 			// Users can still use ESC to close the window.
-			if (chatIsClosed) {
+			if (!settings.showChatWindow) {
 				e.stopImmediatePropagation()
 				e.preventDefault()
-				dispatch(setSetting('showChat', 'on'))
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'showChatWindow',
+						value: true,
+					},
+				})
 			}
 		}
 
-		if (chatIsClosed) {
+		if (!settings.showChatWindow) {
 			if (e.key === 'a' || e.key === 'A') {
-				dispatch(setOpenedModal('attack'))
+				dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 			}
 			if (e.key === 'e' || e.key === 'E') {
 				if (availableActions.includes('END_TURN')) {
-					if (shouldShowEndTurnModal(availableActions, settings)) {
-						dispatch(endTurnAction())
-					} else {
-						dispatch(endTurn())
-					}
+					dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 				}
 			}
 			if (e.key === 'm' || e.key === 'M') {
-				dispatch(setSetting('muted', !settings.muted))
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'muted',
+						value: !settings.muted,
+					},
+				})
 			}
 			if (e.key === 't' || e.key === 'T') {
-				dispatch(
-					setSetting(
-						'showAdvancedTooltips',
-						settings.showAdvancedTooltips === 'on' ? 'off' : 'on',
-					),
-				)
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'showAdvancedTooltips',
+						value: !settings.showAdvancedTooltips,
+					},
+				})
 			}
 		}
 	}
@@ -216,7 +203,7 @@ function Game() {
 			gameState.turn.turnNumber === 1 ||
 			gameState.turn.currentPlayerEntity === gameState.playerEntity
 		) {
-			dispatch(playSound('/sfx/Click.ogg'))
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.turn.currentPlayerEntity])
 
@@ -228,7 +215,7 @@ function Game() {
 			someCustom &&
 			gameState.turn.currentPlayerEntity !== gameState.playerEntity
 		) {
-			dispatch(playSound('/sfx/Click.ogg'))
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
 

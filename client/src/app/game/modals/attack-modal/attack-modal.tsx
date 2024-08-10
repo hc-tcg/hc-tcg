@@ -1,12 +1,12 @@
 import {SingleUse, isHermit} from 'common/cards/base/types'
 import Modal from 'components/modal'
-import {startAttack} from 'logic/game/game-actions'
 import {
 	getAvailableActions,
 	getPlayerEntity,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import Attack from './attack'
@@ -17,7 +17,7 @@ type Props = {
 
 function AttackModal({closeModal}: Props) {
 	// TODO - This whole file needs to be rafactored
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const availableActions = useSelector(getAvailableActions)
@@ -38,7 +38,7 @@ function AttackModal({closeModal}: Props) {
 	const singleUseInfo = singleUseCard ? singleUseCard : null
 
 	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
-		dispatch(startAttack(type))
+		dispatch({type: localMessages.GAME_ACTIONS_ATTACK, attackType: type})
 		closeModal()
 	}
 
