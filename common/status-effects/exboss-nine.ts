@@ -6,6 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {serverMessages} from '../socket-messages/server-messages'
 import {
 	CardStatusEffect,
 	Counter,
@@ -79,7 +80,8 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 
 			effect.remove()
 			effect.counter = null // Effects aren't deleted so counter must be invalidated
-			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {
+			broadcast(game.getPlayers(), {
+				type: serverMessages.VOICE_ANNOUNCE,
 				lines: [voiceLine],
 			})
 			game.battleLog.sendLogs()

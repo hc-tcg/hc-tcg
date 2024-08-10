@@ -5,8 +5,7 @@ import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MenuLayout from 'components/menu-layout'
-import {createBossGame} from 'logic/matchmaking/matchmaking-actions'
-import {useDispatch} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
 
 type Props = {
@@ -28,11 +27,11 @@ function removeDisabledExpansions(cardId: string) {
 }
 
 function BossLanding({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleCreateBossGame = () => {
 		setMenuSection('mainmenu')
-		dispatch(createBossGame())
+		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
 	}
 
 	const nonFunctionalCards = [

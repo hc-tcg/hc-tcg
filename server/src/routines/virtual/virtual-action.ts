@@ -1,5 +1,7 @@
 import {AIComponent} from 'common/components/ai-component'
 import {GameModel} from 'common/models/game-model'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {
 	PlaintextNode,
 	concatFormattedTextNodes,
@@ -22,10 +24,12 @@ export default function* virtualPlayerActionSaga(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
 	)
 	try {
-		const payload = yield* component.getTurnAction()
+		const action = yield* component.getTurnAction()
 		yield* put({
-			type: 'TURN_ACTION',
-			payload,
+			type: clientMessages.TURN_ACTION,
+			payload: {action, playerEntity: component.playerEntity},
+			action: action,
+			playerEntity: component.playerEntity,
 		})
 	} catch (e) {
 		game.chat.push({
@@ -39,6 +43,9 @@ export default function* virtualPlayerActionSaga(
 				id: component.playerEntity,
 			},
 		})
-		broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
+		broadcast(game.getPlayers(), {
+			type: serverMessages.CHAT_UPDATE,
+			messages: game.chat,
+		})
 	}
 }

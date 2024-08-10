@@ -12,11 +12,16 @@ import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
-import {AttackActionData, PlayCardActionData} from 'common/types/action-data'
 import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {VirtualAI, VirtualAIReturn} from 'common/types/virtual-ai'
+import {
+	AnyTurnActionData,
+	AttackActionData,
+	PlayCardActionData,
+} from 'common/types/turn-action-data'
+import {VirtualAI} from 'common/types/virtual-ai'
 import {delay} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
 
@@ -71,7 +76,7 @@ class ExBossAI implements VirtualAI {
 	*getTurnAction(
 		game: GameModel,
 		component: AIComponent,
-	): Generator<any, VirtualAIReturn> {
+	): Generator<any, AnyTurnActionData> {
 		const {playerEntity} = component
 
 		if (game.state.modalRequests.length)
@@ -81,8 +86,7 @@ class ExBossAI implements VirtualAI {
 				// Handles when challenger plays "Lantern"
 				return {
 					type: 'MODAL_REQUEST',
-					playerEntity,
-					payload: {result: true, cards: null},
+					modalResult: {result: true, cards: null},
 				}
 
 		const {currentPlayer} = game
@@ -101,15 +105,13 @@ class ExBossAI implements VirtualAI {
 					playerEntity: PlayerEntity
 				} = {
 					type: 'PLAY_HERMIT_CARD',
-					payload: {
-						slot,
-						card: {
-							props: WithoutFunctions(bossCard.card.props),
-							entity: bossCard.entity,
-							slot: bossCard.slotEntity,
-							turnedOver: false,
-							attackHint: null,
-						},
+					slot,
+					card: {
+						props: WithoutFunctions(bossCard.card.props),
+						entity: bossCard.entity,
+						slot: bossCard.slotEntity,
+						turnedOver: false,
+						attackHint: null,
 					},
 					playerEntity,
 				}
@@ -124,9 +126,7 @@ class ExBossAI implements VirtualAI {
 		if (attackType) {
 			const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
 				type: attackType,
-				payload: {
-					player: playerEntity,
-				},
+				player: playerEntity,
 				playerEntity,
 			}
 
@@ -140,7 +140,10 @@ class ExBossAI implements VirtualAI {
 				throw new Error(`EX's active hermit cannot be found, please report`)
 			const bossAttack = this.getBossAttack(currentPlayer)
 			supplyBossAttack(bossCard, bossAttack)
-			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: bossAttack})
+			broadcast(game.getPlayers(), {
+				type: serverMessages.VOICE_ANNOUNCE,
+				lines: bossAttack as string[],
+			})
 			yield* delay(bossAttack.length * 3000)
 			// Waits after announcing attack to perform the action
 			return attackAction
@@ -167,7 +170,7 @@ class ExBossAI implements VirtualAI {
 			yield* delay(10600)
 		}
 
-		return {type: 'END_TURN', playerEntity}
+		return {type: 'END_TURN'}
 	}
 }
 

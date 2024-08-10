@@ -1,16 +1,16 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import {createPrivateGame} from 'logic/matchmaking/matchmaking-actions'
-import {useDispatch} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function CreatePrivate({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
-	const handleNewPrivateGame = () => dispatch(createPrivateGame())
+	const handleNewPrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_CREATE})
 	const handleChallengeBoss = () => setMenuSection('boss-landing')
 
 	return (

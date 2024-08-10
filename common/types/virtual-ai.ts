@@ -1,13 +1,6 @@
 import {AIComponent} from '../components/ai-component'
-import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
-import {TurnAction} from './game-state'
-
-export type VirtualAIReturn = {
-	type: TurnAction
-	payload?: any
-	playerEntity: PlayerEntity
-}
+import {AnyTurnActionData} from './turn-action-data'
 
 export interface VirtualAI {
 	get id(): string
@@ -15,7 +8,7 @@ export interface VirtualAI {
 	getTurnAction(
 		game: GameModel,
 		component: AIComponent,
-	): Generator<any, VirtualAIReturn>
+	): Generator<any, AnyTurnActionData>
 }
 
 export type AIClass = new () => VirtualAI

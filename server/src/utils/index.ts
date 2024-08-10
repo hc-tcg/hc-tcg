@@ -4,7 +4,7 @@ import {GameModel} from 'common/models/game-model'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
-	return players.filter((p) => p.id !== playerId)[0]?.id
+	return players.filter((p) => p.id !== playerId).at(0)?.id || null
 }
 
 export function printHooksState(game: GameModel) {
