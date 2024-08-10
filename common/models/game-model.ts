@@ -8,11 +8,14 @@ import {
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
 import {PlayerEntity, SlotEntity} from '../entities'
+import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
 	ActionResult,
 	DefaultDictionary,
+	GameEndOutcomeT,
+	GameEndReasonT,
 	GameRules,
 	GameState,
 	Message,
@@ -65,10 +68,10 @@ export class GameModel {
 	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
-		deadPlayerIds: Array<string>
+		deadPlayerEntities: Array<string>
 		winner: string | null
-		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error' | null
-		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
+		outcome: GameEndOutcomeT | null
+		reason: GameEndReasonT | null
 	}
 
 	public rules: GameRules
@@ -87,7 +90,7 @@ export class GameModel {
 		this.task = null
 
 		this.endInfo = {
-			deadPlayerIds: [],
+			deadPlayerEntities: [],
 			winner: null,
 			outcome: null,
 			reason: null,
@@ -148,10 +151,9 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public broadcastToViewers(type: string, payload?: any) {
+	public broadcastToViewers(payload: ServerMessage) {
 		broadcast(
 			this.viewers.map((viewer) => viewer.player),
-			type,
 			payload,
 		)
 	}

@@ -2,6 +2,20 @@ import {CardComponent, PlayerComponent} from '../components'
 import {DEBUG_CONFIG} from '../config'
 import {CoinFlipResult} from '../types/game-state'
 
+/* Array of [coin flip number, weight of coinflip number] */
+const COIN_FLIP_WEIGHTS = [
+	[4, 8],
+	[5, 6],
+	[6, 4],
+	[7, 2],
+	[8, 1],
+]
+
+const COIN_FLIP_ARRAY = COIN_FLIP_WEIGHTS.reduce((acc, [count, weight]) => {
+	acc.push(...new Array(weight).fill(count))
+	return acc
+}, [])
+
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
@@ -30,7 +44,7 @@ export function flipCoin(
 	}
 
 	const coinFlipAmount =
-		Math.floor(Math.random() * (2 + (coinFlips.length >= 1 ? 1 : 0))) + 4
+		COIN_FLIP_ARRAY[Math.floor(Math.random() * COIN_FLIP_ARRAY.length)]
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 

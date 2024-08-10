@@ -53,6 +53,7 @@ class Cubfan135Rare extends Card {
 					query.slot.hermit,
 					query.not(query.slot.active),
 					query.not(query.slot.empty),
+					query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
 				)
 			)
 				return
@@ -60,7 +61,7 @@ class Cubfan135Rare extends Card {
 			game.addPickRequest({
 				player: player.entity,
 				id: component.entity,
-				message: 'Pick one of your Hermits to become the new active Hermit',
+				message: 'Pick one of your Hermits to become or stay as active Hermit',
 				canPick: query.every(
 					query.slot.currentPlayer,
 					query.slot.hermit,

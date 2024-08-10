@@ -191,7 +191,7 @@ const CardInstanceTooltip = ({card}: Props) => {
 
 	return (
 		<div className={css.cardTooltipContainer}>
-			{settings.showAdvancedTooltips === 'on' && (
+			{settings.showAdvancedTooltips && (
 				<div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>
 			)}
 			<div className={css.cardTooltip}>

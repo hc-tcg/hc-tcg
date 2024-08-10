@@ -1,24 +1,25 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
-import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
+import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
-import {showEndGameOverlay} from 'logic/game/game-actions'
 import {getOpponentName} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 
 type Props = {
-	outcome?: GameEndOutcomeT
-	reason?: GameEndReasonT
+	outcome?: GamePlayerEndOutcomeT
+	reason?: GameEndReasonT | null
 }
 
 const EndGameOverlay = ({outcome, reason}: Props) => {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const opponent = useSelector(getOpponentName)
 	let animation
 	let winCondition = false
+
 	const closeModal = () => {
-		dispatch(showEndGameOverlay(null))
+		dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
 	}
 
 	const OUTCOME_MSG = {
@@ -40,6 +41,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 		lives: 'lost all lives.',
 		cards: 'ran out of cards.',
 		time: 'ran out of time without an active hermit.',
+		error: 'there was an error',
 	}
 
 	switch (outcome) {

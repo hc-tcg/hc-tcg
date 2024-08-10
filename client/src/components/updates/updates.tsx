@@ -36,20 +36,22 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 			action={() => {}}
 			description={
 				<ul className={css.updatesList}>
-					{updates['updates'] ? (
-						updates['updates'].map((text, i) => {
-							return (
-								<>
-									<li
-										className={css.updateItem}
-										key={i + 1}
-										dangerouslySetInnerHTML={{__html: sanitize(toHTML(text))}}
-										ref={i === 0 ? latestUpdateElement : undefined}
-									/>
-									<hr key={-i} className={css.updateSeperator} />
-								</>
-							)
-						})
+					{updates ? (
+						Object.values(updates)
+							.flatMap((value) => value)
+							.map((text, i) => {
+								return (
+									<>
+										<li
+											className={css.updateItem}
+											key={i + 1}
+											dangerouslySetInnerHTML={{__html: sanitize(toHTML(text))}}
+											ref={i === 0 ? latestUpdateElement : undefined}
+										/>
+										<hr key={-i} className={css.updateSeperator} />
+									</>
+								)
+							})
 					) : (
 						<li className={css.updateItem}>Failed to load updates</li>
 					)}

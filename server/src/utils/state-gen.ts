@@ -370,7 +370,7 @@ function getLocalPlayerState(
 export function getLocalGameState(
 	game: GameModel,
 	viewer: ViewerComponent,
-): LocalGameState | null {
+): LocalGameState {
 	const playerState = game.components.find(
 		PlayerComponent,
 		(_game, player) => player.entity == viewer.playerOnLeft.entity,

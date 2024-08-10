@@ -1,13 +1,8 @@
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
-import {
-	PlaySoundT,
-	QueueVoiceT,
-	SectionChangeT,
-	VoiceTestT,
-} from './sound-actions'
 import {trackList} from './sound-config'
 
 const audioCtx = new AudioContext()
@@ -30,10 +25,10 @@ window.bgMusic = bgMusic
 // @ts-ignore
 window.audioCtx = audioCtx
 
-function* backgroundMusic(action: SectionChangeT): SagaIterator {
-	const section = action.payload
-
-	if (section !== 'game') {
+function* backgroundMusic(
+	action: LocalMessageTable[typeof localMessages.SOUND_SECTION_CHANGE],
+): SagaIterator {
+	if (action.section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
 		bgMusic.src = ''
@@ -55,13 +50,15 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	}
 }
 
-function* playSoundSaga(action: PlaySoundT): SagaIterator {
+function* playSoundSaga(
+	action: LocalMessageTable[typeof localMessages.SOUND_PLAY],
+): SagaIterator {
 	try {
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
-		if (settings.soundVolume === '0') return
+		if (settings.soundVolume === 0) return
 
-		const sound = new Audio(action.payload)
+		const sound = new Audio(action.path)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
 		sourceNode.connect(soundGainNode)
 		sound.onended = () => sourceNode.disconnect(soundGainNode)
@@ -75,14 +72,16 @@ const voiceAudio = new Audio()
 const voiceSourceNode = audioCtx.createMediaElementSource(voiceAudio)
 
 const voiceLineQueue: string[] = []
-function* playVoiceSaga(action: QueueVoiceT) {
+function* playVoiceSaga(
+	action: LocalMessageTable[typeof localMessages.QUEUE_VOICE],
+) {
 	try {
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
-		if (settings.voiceVolume === '0') return
+		if (settings.voiceVolume === 0) return
 
 		voiceLineQueue.push(
-			...action.payload.lines.map((fileName) => `/voice/${fileName}.ogg`),
+			...action.lines.map((fileName) => `/voice/${fileName}.ogg`),
 		)
 
 		if (voiceAudio.paused) {
@@ -106,7 +105,9 @@ function* playVoiceSaga(action: QueueVoiceT) {
 	}
 }
 
-function* playVoiceTest(_action: VoiceTestT) {
+function* playVoiceTest(
+	_action: LocalMessageTable[typeof localMessages.PLAY_VOICE_TEST],
+) {
 	if (!voiceAudio.paused) return
 	voiceAudio.src = '/voice/TEST.ogg'
 	voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
@@ -114,8 +115,10 @@ function* playVoiceTest(_action: VoiceTestT) {
 	voiceAudio.play()
 }
 
-function* stopVoiceChannel(action: SectionChangeT) {
-	if (voiceAudio.paused || action.payload === 'game') return
+function* stopVoiceChannel(
+	action: LocalMessageTable[typeof localMessages.SOUND_SECTION_CHANGE],
+) {
+	if (voiceAudio.paused || action.section === 'game') return
 	voiceAudio.pause()
 	voiceAudio.currentTime = 0
 	voiceSourceNode.disconnect(voiceGainNode)
@@ -130,9 +133,9 @@ function* settingSaga(): SagaIterator {
 			soundGainNode.gain.value = 0
 			voiceGainNode.gain.value = 0
 		} else {
-			musicGainNode.gain.value = Number(settings.musicVolume) / 100
-			soundGainNode.gain.value = Number(settings.soundVolume) / 100
-			voiceGainNode.gain.value = Number(settings.voiceVolume) / 100
+			musicGainNode.gain.value = settings.musicVolume / 100
+			soundGainNode.gain.value = settings.soundVolume / 100
+			voiceGainNode.gain.value = settings.voiceVolume / 100
 		}
 	} catch (err) {
 		console.error(err)
@@ -142,12 +145,12 @@ function* settingSaga(): SagaIterator {
 function* soundSaga(): SagaIterator {
 	// @ts-ignore
 	yield call(settingSaga)
-	yield takeEvery('SET_SETTING', settingSaga)
-	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
-	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
-	yield takeEvery('@sound/QUEUE_VOICE', playVoiceSaga)
-	yield takeLatest('PLAY_VOICE_TEST', playVoiceTest)
-	yield takeLatest('@sound/SECTION_CHANGE', stopVoiceChannel)
+	yield takeEvery(localMessages.SETTINGS_SET, settingSaga)
+	yield takeLatest(localMessages.SOUND_SECTION_CHANGE, backgroundMusic)
+	yield takeEvery(localMessages.SOUND_PLAY, playSoundSaga)
+	yield takeEvery(localMessages.QUEUE_VOICE, playVoiceSaga)
+	yield takeLatest(localMessages.PLAY_VOICE_TEST, playVoiceTest)
+	yield takeLatest(localMessages.SOUND_SECTION_CHANGE, stopVoiceChannel)
 	document.addEventListener(
 		'click',
 		() => {

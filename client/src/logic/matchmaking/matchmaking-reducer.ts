@@ -1,4 +1,4 @@
-import {AnyAction} from 'redux'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
@@ -15,66 +15,65 @@ const defaultState: MatchmakingState = {
 
 const matchmakingReducer = (
 	state = defaultState,
-	action: AnyAction,
+	action: LocalMessage,
 ): MatchmakingState => {
 	switch (action.type) {
-		case 'JOIN_QUEUE':
+		case localMessages.MATCHMAKING_QUEUE_JOIN:
 			return {
 				...state,
 				status: 'random_waiting',
 			}
-		case 'CREATE_BOSS_GAME':
-		case 'CREATE_PRIVATE_GAME':
+		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
+		case localMessages.MATCHMAKING_PRIVATE_GAME_CREATE:
 			return {
 				...state,
 				status: 'loading',
 			}
-		case 'JOIN_PRIVATE_GAME':
+		case localMessages.MATCHMAKING_PRIVATE_GAME_JOIN:
 			return {
 				...state,
 				status: 'private_code_needed',
 				invalidCode: false,
 			}
-		case 'WAITING_FOR_PLAYER':
+		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER:
 			return {
 				...state,
 				status: 'waiting_for_player',
 			}
-		case 'CODE_RECEIVED':
+		case localMessages.MATCHMAKING_CODE_RECIEVED:
 			return {
 				...state,
-				code: action.payload,
+				code: action.code,
 				status: 'private_waiting',
 			}
-		case 'INVALID_CODE':
+		case localMessages.MATCHMAKING_CODE_INVALID:
 			return {
 				...state,
 				status: 'private_code_needed',
 				invalidCode: true,
 			}
-		case 'SET_MATCHMAKING_CODE':
+		case localMessages.MATCHMAKING_CODE_SET:
 			return {
 				...state,
-				code: action.payload,
+				code: action.code,
 				status: 'loading',
 			}
-		case 'DISCONNECT':
-		case 'GAME_STATE':
-		case 'LEAVE_MATCHMAKING':
+		case localMessages.DISCONNECT:
+		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
 				code: null,
 				status: null,
 				invalidCode: false,
 			}
-		case 'CLEAR_MATCHMAKING':
+		case localMessages.MATCHMAKING_CLEAR:
 			return {
 				...state,
 				code: null,
 				status: null,
 				invalidCode: false,
 			}
-		case 'GAME_START':
+		case localMessages.GAME_START:
 			return {
 				...state,
 				status: 'starting',

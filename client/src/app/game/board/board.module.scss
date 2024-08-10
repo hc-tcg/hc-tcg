@@ -31,7 +31,7 @@ $grid-size: 25px;
 	border-image-slice: 30;
 	border-image-width: 20px;
 	border-image-repeat: stretch stretch;
-	border-image-source: url('/images/game/border_frame.png');
+	border-image-source: url("/images/game/border_frame.png");
 	border-style: solid;
 	padding: 20px;
 }
@@ -51,21 +51,21 @@ $grid-size: 25px;
 	grid-template-columns: repeat(13, $size);
 	grid-template-rows: repeat(6, $size);
 	grid-template-areas:
-		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect'
-		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect'
-		'item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit effect effect'
-		'item2 item2 health health health hermit hermit hermit hermit hermit hermit effect effect'
-		'item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect'
-		'item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect';
+		"item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+		"item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+		"item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit effect effect"
+		"item2 item2 health health health hermit hermit hermit hermit hermit hermit effect effect"
+		"item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect"
+		"item3 item3 health health health hermit hermit hermit hermit hermit hermit effect effect";
 
 	&.reversed {
 		grid-template-areas:
-			'effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
-			'effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
-			'effect effect hermit hermit hermit hermit hermit hermit attach attach attach item2 item2'
-			'effect effect hermit hermit hermit hermit hermit hermit health health health item2 item2'
-			'effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3'
-			'effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3';
+			"effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
+			"effect effect hermit hermit hermit hermit hermit hermit attach attach attach item1 item1"
+			"effect effect hermit hermit hermit hermit hermit hermit attach attach attach item2 item2"
+			"effect effect hermit hermit hermit hermit hermit hermit health health health item2 item2"
+			"effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3"
+			"effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3";
 	}
 
 	&:hover {
@@ -217,7 +217,7 @@ $grid-size: 25px;
 }
 
 .opponentFollowup {
-	font-family: Minecraft;
+	font-family: Minecraft, Unifont;
 	text-align: center;
 	color: white;
 	font-size: 12px;
@@ -265,7 +265,7 @@ $grid-size: 25px;
 	right: 66px;
 	top: 20px;
 	width: 22px;
-	background: url('/images/status/protected.png') no-repeat;
+	background: url("/images/status/protected.png") no-repeat;
 	height: 22px;
 	background-size: contain;
 }
@@ -293,18 +293,18 @@ $grid-size: 25px;
 		grid-template-columns: repeat(24, $size) 27px;
 		grid-template-rows: repeat(4, $size);
 		grid-template-areas:
-			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
-			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
-			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect'
-			'item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect';
+			"item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+			"item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+			"item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect"
+			"item3 item3 item3 item3 item2 item2 item2 item2 item1 item1 item1 item1 attach attach attach attach hermit hermit hermit hermit health health health health effect";
 
 		&.reversed {
 			grid-template-columns: 27px repeat(24, $size);
 			grid-template-areas:
-				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
-				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
-				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 '
-				'effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ';
+				"effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+				"effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+				"effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 "
+				"effect health health health health hermit hermit hermit hermit attach attach attach attach item1 item1 item1 item1 item2 item2 item2 item2 item3 item3 item3 item3 ";
 		}
 	}
 }

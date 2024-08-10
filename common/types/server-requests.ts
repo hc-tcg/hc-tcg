@@ -6,6 +6,7 @@ import type {
 } from '../components'
 import type {ComponentQuery} from '../components/query'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
@@ -15,7 +16,7 @@ export type PlayerInfo = {
 	playerName: string
 	censoredPlayerName: string
 	minecraftName: string
-	playerId: string
+	playerId: PlayerId
 	playerSecret: string
 	playerDeck: PlayerDeckT
 }
