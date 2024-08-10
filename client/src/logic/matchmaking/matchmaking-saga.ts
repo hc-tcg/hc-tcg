@@ -3,7 +3,6 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
-import {queueVoice} from 'logic/sound/sound-actions'
 import {
 	call,
 	cancelled,
@@ -31,7 +30,10 @@ function* createBossGameSaga() {
 			}
 
 			yield* call(receiveMsg, 'GAME_START')
-			yield* put(queueVoice(['EXSTART']))
+			yield* put<LocalMessage>({
+				type: localMessages.QUEUE_VOICE,
+				lines: ['EXSTART'],
+			})
 			yield* call(gameSaga)
 		} catch (err) {
 			console.error('Game crashed: ', err)

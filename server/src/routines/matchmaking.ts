@@ -141,7 +141,7 @@ function* gameManager(game: GameModel) {
 			})
 		}
 		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result) || null
+		game.endInfo.winner = getWinner(game, result)
 	} catch (err) {
 		console.log('Error: ', err)
 		game.endInfo.outcome = 'error'
