@@ -2,7 +2,7 @@ import {PlayerEntity, SlotEntity} from '../entities'
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
 import {AttackAction, PlayCardAction} from './game-state'
-import {LocalCardInstance} from './server-requests'
+import {LocalCardInstance, LocalModalResult} from './server-requests'
 
 export const slotToPlayCardAction: Record<CardCategoryT, PlayCardAction> = {
 	hermit: 'PLAY_HERMIT_CARD',
@@ -45,7 +45,7 @@ export type PickSlotActionData = {
 
 export type ModalResult = {
 	type: 'MODAL_REQUEST'
-	modalResult: any
+	modalResult: LocalModalResult
 }
 
 export type OtherTurnActions = {

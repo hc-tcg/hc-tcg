@@ -1,6 +1,6 @@
 import {LocalMessage, localMessages} from 'logic/messages'
 
-type FbdbState = {
+export type FbdbState = {
 	uuid: string
 	stats: {w: number; l: number; fw: number; fl: number; t: number}
 }

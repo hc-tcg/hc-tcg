@@ -21,30 +21,30 @@ function ChatItem() {
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
 	const dispatch = useMessageDispatch()
 
-	if (settings.showChat && lastSeen !== latestOpponentMessageTime) {
+	if (settings.showChatWindow && lastSeen !== latestOpponentMessageTime) {
 		setLastSeen(latestOpponentMessageTime)
 	}
 
 	const toggleChat = () => {
-		settings.showChat
+		settings.showChatWindow
 			? dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'showChat',
+						key: 'showChatWindow',
 						value: false,
 					},
 				})
 			: dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'showChat',
+						key: 'showChatWindow',
 						value: true,
 					},
 				})
 	}
 
 	const newMessage =
-		!settings.showChat &&
+		!settings.showChatWindow &&
 		lastSeen !== latestOpponentMessageTime &&
 		latestOpponentMessageTime !== 0
 

@@ -1,20 +1,7 @@
-FROM debian:bullseye
+FROM node:18.20-bookworm
 
-ARG NODE_VERSION=16.16.0
 ARG APP_VERSION
-ENV APP_VERSION=$APP_VERSION
-
-RUN apt-get update
-RUN apt-get install -y \
-  curl \
-  python-is-python3 \
-  pkg-config \
-  build-essential
-
-RUN curl https://get.volta.sh | bash
-ENV VOLTA_HOME /root/.volta
-ENV PATH /root/.volta/bin:$PATH
-RUN volta install node@${NODE_VERSION}
+ENV APP_VERSION $APP_VERSION
 
 #######################################################################
 

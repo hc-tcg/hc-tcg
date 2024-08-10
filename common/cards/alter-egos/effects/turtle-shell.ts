@@ -19,29 +19,37 @@ const TurtleShell: Attach = {
 		query.not(query.slot.active),
 	),
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
 		const {player} = component
-		let hasBeenActive = false
+		let activated = false
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (!component.slot.inRow()) return
-			if (player.activeRowEntity === component.slot.row.entity) {
-				hasBeenActive = true
-			}
-		})
+		observer.subscribe(
+			player.hooks.onActiveRowChange,
+			(_oldActiveHermit, newActiveHermit) => {
+				const hermitCard = game.components.find(
+					CardComponent,
+					query.card.isHermit,
+					query.card.row(query.row.hasCard(component.entity)),
+				)
+
+				if (hermitCard && newActiveHermit.entity === hermitCard.entity) {
+					activated = true
+				}
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (hasBeenActive) {
+			if (activated) {
 				component.discard()
 			}
 		})
 
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			if (!component.slot.inRow()) return
-			if (!hasBeenActive) return
+			if (!activated) return
 
 			if (!attack.isTargeting(component)) return
 			// Do not block backlash attacks

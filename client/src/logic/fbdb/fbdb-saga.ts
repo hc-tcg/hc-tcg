@@ -3,6 +3,7 @@ import {LocalMessage, localMessages} from 'logic/messages'
 import {receiveMsg} from 'logic/socket/socket-saga'
 import {SagaIterator, eventChannel} from 'redux-saga'
 import {call, put, takeEvery, takeLatest} from 'typed-redux-saga'
+import {FbdbState} from './fbdb-reducer'
 
 const createAuthChannel = () => {
 	return eventChannel((emitter: any) => {
@@ -30,7 +31,7 @@ function* authSaga(user: any): SagaIterator {
 }
 
 function* valueSaga(ss: any) {
-	const tmp = ss.val() || {wins: 0, l: 0, fw: 0, fl: 0, t: 0}
+	const tmp: FbdbState['stats'] = ss.val() || {w: 0, l: 0, fw: 0, fl: 0, t: 0}
 	if (!tmp.t) tmp.t = 0 // for old stats
 	yield put<LocalMessage>({type: localMessages.FIREBASE_STATS, ...tmp})
 	global.dbObj.stats = JSON.parse(JSON.stringify(tmp))
