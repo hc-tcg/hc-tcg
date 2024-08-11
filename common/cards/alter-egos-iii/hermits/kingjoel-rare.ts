@@ -45,52 +45,55 @@ class KingJoelRare extends Card {
 	) {
 		const {player} = component
 
-		const firstPickCondition = query.every(
-			query.slot.opponent,
-			query.not(query.slot.active),
-			query.slot.item,
-			query.not(query.slot.empty),
-		)
-
 		const secondPickCondition = query.every(
 			query.slot.currentPlayer,
 			query.not(query.slot.active),
 			query.slot.item,
 			query.slot.empty,
-			query.slot.row(query.row.hasHermit),
+			query.slot.row(query.row.hasHermit, (_game, row) => !!row.health),
 		)
 
-		let fistPickedCard: CardComponent | null = null
+		let firstPickedCard: CardComponent | null = null
 
 		observer.subscribe(player.hooks.onAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
-			if (!game.components.exists(SlotComponent, firstPickCondition)) return
-			if (!game.components.exists(SlotComponent, secondPickCondition)) return
+			const firstPickCondition = query.every(
+				query.slot.opponent,
+				query.not(query.slot.rowIs(player.opponentPlayer.activeRowEntity)), // Specified in case Knockback or Egg is used
+				query.slot.item,
+				query.not(query.slot.empty),
+				query.slot.row((_game, row) => !!row.health),
+			)
+			observer.oneShot(player.hooks.afterAttack, (_attack) => {
+				// Checked here in case afk hermits are knocked out by an attack
+				if (!game.components.exists(SlotComponent, firstPickCondition)) return
+				if (!game.components.exists(SlotComponent, secondPickCondition)) return
 
-			const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(player, component)
 
-			if (coinFlip[0] === 'tails') return
+				if (coinFlip[0] === 'tails') return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Pick an item card from your opponent's AFK Hermits",
-				canPick: firstPickCondition,
-				onResult(pickedSlot) {
-					fistPickedCard = pickedSlot.getCard()
-				},
-			})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: "Pick an item card from your opponent's AFK Hermits",
+					canPick: firstPickCondition,
+					onResult(pickedSlot) {
+						firstPickedCard = pickedSlot.getCard()
+					},
+				})
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick a slot to place the item card',
-				canPick: secondPickCondition,
-				onResult(pickedSlot) {
-					if (!fistPickedCard) return
-					fistPickedCard.attach(pickedSlot)
-				},
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick a slot to place the item card',
+					canPick: secondPickCondition,
+					onResult(pickedSlot) {
+						if (!firstPickedCard) return
+						firstPickedCard.attach(pickedSlot)
+					},
+				})
 			})
 		})
 	}
