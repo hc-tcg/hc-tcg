@@ -39,6 +39,7 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!attack.isTargeting(target)) return
+			if (attack.calculateDamage() === 0) return
 
 			// We have an extra take because status effects are executed at the end of the turn.
 			if (attack.type === 'status-effect' && target.slot.inRow()) {

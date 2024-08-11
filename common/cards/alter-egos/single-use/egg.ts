@@ -56,7 +56,7 @@ const Egg: SingleUse = {
 			})
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!afkHermitSlot?.inRow()) return
 			const activeHermit = player.getActiveHermit()
 			if (!attack.isAttacker(activeHermit?.entity)) return

@@ -5,7 +5,6 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse} from '../../../utils/board'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -67,7 +66,6 @@ const Cubfan135Rare: Hermit = {
 					if (!pickedSlot.inRow()) return
 					if (pickedSlot.row.entity !== player.activeRowEntity) {
 						player.changeActiveRow(pickedSlot.row)
-						applySingleUse(game, component.slot)
 					}
 				},
 			})

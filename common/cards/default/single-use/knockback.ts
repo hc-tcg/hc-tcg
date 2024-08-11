@@ -38,7 +38,11 @@ const Knockback: SingleUse = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			// Staus effects triggering knockback at the end of the turn leads to buggy
+			// behavior.
+			// https://discord.com/channels/1073763159187390584/1272110519930720310
+			if (attack.isType('status-effect')) return
 			applySingleUse(game)
 			// Only Apply this for the first attack
 			observer.unsubscribe(player.hooks.afterAttack)

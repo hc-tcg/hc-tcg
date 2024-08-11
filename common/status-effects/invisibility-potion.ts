@@ -17,7 +17,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribe(player.hooks.beforeDefence, (attack) => {
+		observer.subscribe(player.opponentPlayer.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
 			attack.multiplyDamage(effect.entity, 0)
 			effect.remove()
@@ -36,7 +36,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribe(player.hooks.beforeDefence, (attack) => {
+		observer.subscribe(player.opponentPlayer.hooks.beforeAttack, (attack) => {
 			if (!attack.isType('primary', 'secondary')) return
 			attack.multiplyDamage(effect.entity, 2)
 			effect.remove()

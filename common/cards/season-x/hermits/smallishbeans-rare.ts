@@ -2,6 +2,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
+import KingJoelRare from '../../alter-egos-iii/hermits/kingjoel-rare'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import SmallishbeansCommon from './smallishbeans-common'
@@ -47,7 +48,7 @@ const SmallishbeansRare: Hermit = {
 					SmallishbeansCommon,
 					SmallishbeansRare,
 					KingJoelCommon,
-					KingJoelCommon,
+					KingJoelRare,
 				),
 				query.not(query.card.active),
 			).length
