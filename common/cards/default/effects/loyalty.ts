@@ -27,7 +27,7 @@ class Loyalty extends Card {
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!component.slot.inRow() || component.slot.row.health) return
-			if (!attack.target) return
+			if (!attack.target || !attack.isTargeting(component)) return
 
 			game.components
 				.filter(
