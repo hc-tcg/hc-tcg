@@ -23,6 +23,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import MobileCardComponent from 'components/card/mobile-card-component'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -255,6 +256,16 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			(card) => card.props.category === 'single_use',
 		),
 	}
+
+	const cardsWithAmounts: Array<{card: LocalCardInstance; amount: number}> = []
+	sortCards(loadedDeck.cards).forEach((card) => {
+		const item = cardsWithAmounts.find((c) => c.card.props.id === card.props.id)
+		if (item) {
+			item.amount++
+			return
+		}
+		cardsWithAmounts.push({card: card, amount: 1})
+	})
 
 	//CARD LOGIC
 	const clearDeck = () => {
@@ -492,12 +503,42 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					width="half"
 					header={
 						<>
-							<p style={{textAlign: 'center'}}>My Cards</p>
+							<p className={css.hideOnMobile} style={{textAlign: 'center'}}>
+								My Cards
+							</p>
 							<div className={css.dynamicSpace} />
 							<div className={css.deckDetails}>
 								<p className={classNames(css.cardCount, css.dark)}>
 									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									<span className={css.hideOnMobile}>cards</span>
+								</p>
+								<p
+									className={classNames(
+										css.showOnMobile,
+										css.cardCount,
+										css.dark,
+									)}
+								>
+									{
+										loadedDeck.cards.filter(
+											(card) => card.props.category === 'hermit',
+										).length
+									}
+									H:
+									{
+										loadedDeck.cards.filter(
+											(card) =>
+												card.props.category === 'attach' ||
+												card.props.category === 'single_use',
+										).length
+									}
+									E:
+									{
+										loadedDeck.cards.filter(
+											(card) => card.props.category === 'item',
+										).length
+									}
+									I
 								</p>
 								<div
 									className={classNames(css.cardCount, css.dark, css.tokens)}
@@ -566,48 +607,63 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							</Button>
 						</div>
 
-						<div style={{zIndex: '-1'}}>
+						<div className={css.hideOnMobile}>
+							<div style={{zIndex: '-1'}}>
+								<Accordion
+									header={cardGroupHeader('Hermits', selectedCards.hermits)}
+								>
+									<CardList
+										cards={sortCards(selectedCards.hermits)}
+										wrap={true}
+										onClick={removeCard}
+									/>
+								</Accordion>
+							</div>
 							<Accordion
-								header={cardGroupHeader('Hermits', selectedCards.hermits)}
+								header={cardGroupHeader(
+									'Attachable Effects',
+									selectedCards.attachableEffects,
+								)}
 							>
 								<CardList
-									cards={sortCards(selectedCards.hermits)}
+									cards={sortCards(selectedCards.attachableEffects)}
+									wrap={true}
+									onClick={removeCard}
+								/>
+							</Accordion>
+							<Accordion
+								header={cardGroupHeader(
+									'Single Use Effects',
+									selectedCards.singleUseEffects,
+								)}
+							>
+								<CardList
+									cards={sortCards(selectedCards.singleUseEffects)}
+									wrap={true}
+									onClick={removeCard}
+								/>
+							</Accordion>
+							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
+								<CardList
+									cards={sortCards(selectedCards.items)}
 									wrap={true}
 									onClick={removeCard}
 								/>
 							</Accordion>
 						</div>
-						<Accordion
-							header={cardGroupHeader(
-								'Attachable Effects',
-								selectedCards.attachableEffects,
-							)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.attachableEffects)}
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
-						<Accordion
-							header={cardGroupHeader(
-								'Single Use Effects',
-								selectedCards.singleUseEffects,
-							)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.singleUseEffects)}
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
-						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
+
+						<div className={css.showOnMobile}>
+							Deck Cards
+							{cardsWithAmounts.map((item) => {
+								return (
+									<MobileCardComponent
+										card={item.card.props}
+										amount={item.amount}
+										onClick={() => removeCard(item.card)}
+									></MobileCardComponent>
+								)
+							})}
+						</div>
 					</div>
 				</DeckLayout.Sidebar>
 			</DeckLayout>

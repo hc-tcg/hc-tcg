@@ -391,10 +391,18 @@
 	}
 }
 
+.showOnMobile {
+	display: none;
+}
+
 /* MOBILE */
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
 		display: none;
+	}
+
+	.showOnMobile {
+		display: inherit;
 	}
 
 	.filterGroup {
