@@ -41,12 +41,14 @@ export class GasLightEffect extends CardStatusEffect {
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!attack.isTargeting(target)) return
-
-			// If the attack does no damage (after armor) gaslight doesn't activate
 			if (attack.calculateDamage() === 0) return
 
 			// We have an extra take because status effects are executed at the end of the turn.
-			if (attack.type === 'status-effect' && target.slot.inRow()) {
+			if (
+				attack.type === 'status-effect' &&
+				attack.calculateDamage() > 0 &&
+				target.slot.inRow()
+			) {
 				let attack = game
 					.newAttack(newGasLightAttack(effect, target.slot.row.entity))
 					.addDamage(effect.entity, 20)
