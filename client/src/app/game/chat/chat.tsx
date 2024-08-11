@@ -2,7 +2,11 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
-import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
+import {
+	getChatMessages,
+	getOpponentName,
+	getPlayerEntity,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -20,6 +24,7 @@ function Chat() {
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
+	const playerEntity = useSelector(getPlayerEntity)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
@@ -160,7 +165,8 @@ function Chat() {
 							minute: '2-digit',
 						})
 
-						const isOpponent = playerId !== line.sender.id
+						const isOpponent =
+							playerId !== line.sender.id && playerEntity !== line.sender.id
 						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>
