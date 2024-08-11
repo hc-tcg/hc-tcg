@@ -42,33 +42,37 @@ class Knockback extends Card {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isType('primary', 'secondary')) return
 			applySingleUse(game)
 			// Only Apply this for the first attack
-			observer.unsubscribe(player.hooks.afterAttack)
-		})
+			observer.unsubscribe(player.hooks.onAttack)
 
-		observer.subscribe(player.hooks.onApply, () => {
-			if (!game.components.exists(SlotComponent, this.pickCondition)) return
+			observer.oneShot(player.hooks.afterAttack, (_attack) => {
+				if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
-			let activeRow = opponentPlayer.activeRow
-			if (activeRow && activeRow.health) {
-				game.addPickRequest({
-					player: opponentPlayer.entity,
-					id: component.entity,
-					message: 'Choose a new active Hermit from your AFK Hermits',
-					canPick: this.pickCondition,
-					onResult(pickedSlot) {
-						if (!pickedSlot.inRow()) return
-						opponentPlayer.changeActiveRow(pickedSlot.row)
-					},
-					onTimeout: () => {
-						const slot = game.components.find(SlotComponent, this.pickCondition)
-						if (!slot?.inRow()) return
-						game.opponentPlayer.changeActiveRow(slot.row)
-					},
-				})
-			}
+				let activeRow = opponentPlayer.activeRow
+				if (activeRow && activeRow.health) {
+					game.addPickRequest({
+						player: opponentPlayer.entity,
+						id: component.entity,
+						message: 'Choose a new active Hermit from your AFK Hermits',
+						canPick: this.pickCondition,
+						onResult(pickedSlot) {
+							if (!pickedSlot.inRow()) return
+							opponentPlayer.changeActiveRow(pickedSlot.row)
+						},
+						onTimeout: () => {
+							const slot = game.components.find(
+								SlotComponent,
+								this.pickCondition,
+							)
+							if (!slot?.inRow()) return
+							game.opponentPlayer.changeActiveRow(slot.row)
+						},
+					})
+				}
+			})
 		})
 	}
 }

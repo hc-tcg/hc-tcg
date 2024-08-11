@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -33,7 +34,7 @@ class Egg extends Card {
 			singleUse.attachCondition,
 			query.exists(SlotComponent, this.pickCondition),
 		),
-		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
+		log: (values) => `${values.defaultLog} with {your|their} attack`,
 	}
 
 	override onAttach(
@@ -43,49 +44,54 @@ class Egg extends Card {
 	) {
 		const {player, opponentPlayer} = component
 
-		let afkHermitSlot: SlotComponent | null = null
-
-		observer.subscribe(player.hooks.getAttackRequests, () => {
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Pick one of your opponent's AFK Hermits",
-				canPick: this.pickCondition,
-				onResult(pickedSlot) {
-					afkHermitSlot = pickedSlot
-				},
-				onTimeout() {
-					// We didn't pick a target so do nothing
-				},
-			})
-		})
-
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!afkHermitSlot?.inRow()) return
+		observer.subscribe(player.hooks.onAttack, (attack) => {
 			const activeHermit = player.getActiveHermit()
 			if (!attack.isAttacker(activeHermit?.entity)) return
 
-			applySingleUse(game, afkHermitSlot)
+			applySingleUse(game)
 
 			// Do not apply single use more than once
 			observer.unsubscribe(player.hooks.onAttack)
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'heads') {
-				const eggAttack = game
-					.newAttack({
-						attacker: component.entity,
-						target: afkHermitSlot?.row.entity,
-						log: (values) =>
-							`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
-						type: 'effect',
-					})
-					.addDamage(component.entity, 10)
+			observer.oneShot(player.hooks.afterAttack, (_attack) => {
+				if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
-				attack.addNewAttack(eggAttack)
-			}
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: "Pick one of your opponent's AFK Hermits",
+					canPick: this.pickCondition,
+					onResult(pickedSlot) {
+						let afkHermitSlot = pickedSlot
+						if (!afkHermitSlot?.inRow()) return
+						const coinFlip = flipCoin(player, component)
+						if (coinFlip[0] === 'heads') {
+							const eggAttack = game
+								.newAttack({
+									attacker: component.entity,
+									player: player.entity, // Egg may have been stolen by Trap Hole
+									target: afkHermitSlot?.row.entity,
+									log: (values) =>
+										`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
+									type: 'effect',
+								})
+								.addDamage(component.entity, 10)
 
-			opponentPlayer.changeActiveRow(afkHermitSlot.row)
+							executeExtraAttacks(game, [eggAttack])
+						} else {
+							game.battleLog.addEntry(
+								player.entity,
+								`$p{You|${player.playerName}}$ flipped $btails$ on $eEgg$`,
+							)
+						}
+
+						opponentPlayer.changeActiveRow(afkHermitSlot.row)
+					},
+					onTimeout() {
+						// We didn't pick a target so do nothing
+					},
+				})
+			})
 		})
 	}
 }

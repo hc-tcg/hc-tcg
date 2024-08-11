@@ -61,6 +61,16 @@ export type AttackDefs =
 			createWeakness?: WeaknessType
 			log?: (values: AttackLog) => string
 	  }
+	| {
+			attacker?: Entity<CardComponent> | null | undefined
+			player: PlayerEntity
+			target?: RowEntity | null | undefined
+			type: AttackType
+			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
+			isBacklash?: boolean
+			createWeakness?: WeaknessType
+			log?: (values: AttackLog) => string
+	  }
 
 export type AttackHistoryType =
 	| 'add_damage'

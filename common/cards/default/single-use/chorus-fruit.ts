@@ -51,32 +51,31 @@ class ChorusFruit extends Card {
 	) {
 		const {player} = component
 
-		let switchedActiveHermit = false
-
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (switchedActiveHermit) return
-			switchedActiveHermit = true
+		observer.subscribe(player.hooks.onAttack, (attack) => {
+			if (!attack.isType('primary', 'secondary')) return
 
 			applySingleUse(game, component.slot)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick one of your Hermits to become the new active Hermit',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						player.changeActiveRow(pickedSlot.row)
-					} else {
-						switchedActiveHermit = false
-					}
-				},
-			})
+			observer.unsubscribe(player.hooks.onAttack)
+
+			observer.oneShot(player.hooks.afterAttack, () =>
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick one of your Hermits to become the new active Hermit',
+					canPick: query.every(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (pickedSlot.row.entity !== player.activeRowEntity) {
+							player.changeActiveRow(pickedSlot.row)
+						}
+					},
+				}),
+			)
 		})
 	}
 }
