@@ -5,7 +5,6 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -71,7 +70,6 @@ class Cubfan135Rare extends Card {
 					if (!pickedSlot.inRow()) return
 					if (pickedSlot.row.entity !== player.activeRowEntity) {
 						player.changeActiveRow(pickedSlot.row)
-						applySingleUse(game, component.slot)
 					}
 				},
 			})
