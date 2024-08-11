@@ -6,7 +6,7 @@ export function broadcast(
 ) {
 	players.forEach((player) => {
 		if (!player) return
-    const playerSocket = player.socket
+		const playerSocket = player.socket
 		if (playerSocket && playerSocket.connected) {
 			playerSocket.emit(message.type, message)
 		}
