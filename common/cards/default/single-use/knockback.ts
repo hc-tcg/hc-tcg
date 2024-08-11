@@ -42,7 +42,9 @@ class Knockback extends Card {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
+		observer.subscribe(player.hooks.afterAttack, (attack) => {
+			// Only hermit attacks are allowed to trigger chorus fruit.
+			if (!attack.isType('primary', 'secondary')) return
 			applySingleUse(game)
 			// Only Apply this for the first attack
 			observer.unsubscribe(player.hooks.afterAttack)
