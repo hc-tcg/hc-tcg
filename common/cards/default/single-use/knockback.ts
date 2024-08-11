@@ -43,7 +43,9 @@ class Knockback extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			// Only hermit attacks are allowed to trigger chorus fruit.
+			// Staus effects triggering knockback at the end of the turn leads to buggy
+			// behavior.
+			// https://discord.com/channels/1073763159187390584/1272110519930720310
 			if (attack.isType('status-effect')) return
 			applySingleUse(game)
 			// Only Apply this for the first attack
