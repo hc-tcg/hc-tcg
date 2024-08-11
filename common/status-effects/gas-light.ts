@@ -44,11 +44,7 @@ export class GasLightEffect extends CardStatusEffect {
 			if (attack.calculateDamage() === 0) return
 
 			// We have an extra take because status effects are executed at the end of the turn.
-			if (
-				attack.type === 'status-effect' &&
-				attack.calculateDamage() > 0 &&
-				target.slot.inRow()
-			) {
+			if (attack.type === 'status-effect' && target.slot.inRow()) {
 				let attack = game
 					.newAttack(newGasLightAttack(effect, target.slot.row.entity))
 					.addDamage(effect.entity, 20)
