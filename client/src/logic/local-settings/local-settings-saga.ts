@@ -1,4 +1,4 @@
-import {localMessages, LocalMessageTable} from 'logic/messages'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {takeEvery} from 'redux-saga/effects'
 
