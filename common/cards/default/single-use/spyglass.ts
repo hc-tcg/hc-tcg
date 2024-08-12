@@ -3,30 +3,26 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Spyglass extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'spyglass',
-		numericId: 91,
-		name: 'Spyglass',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 1,
-		description:
-			"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
-		showConfirmationModal: true,
-		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(game, _pos) => game.state.turn.turnNumber !== 1,
-		),
-	}
-
-	override onAttach(
+const Spyglass: SingleUse = {
+	...singleUse,
+	id: 'spyglass',
+	numericId: 91,
+	name: 'Spyglass',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 1,
+	description:
+		"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
+	showConfirmationModal: true,
+	log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(game, _pos) => game.state.turn.turnNumber !== 1,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -90,7 +86,7 @@ class Spyglass extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Spyglass

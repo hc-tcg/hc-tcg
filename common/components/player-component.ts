@@ -1,7 +1,7 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -241,7 +241,7 @@ export class PlayerComponent {
 		return cards
 	}
 
-	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
@@ -326,10 +326,10 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[
-						card,
-						this.game.getPickableSlots(card.card.props.attachCondition),
-					] as [CardComponent, Array<SlotEntity>],
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
+						CardComponent,
+						Array<SlotEntity>,
+					],
 			)
 	}
 }

@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import Anvil from './anvil'
 import BadOmen from './bad-omen'
 import Egg from './egg'
@@ -13,7 +13,7 @@ import SweepingEdge from './sweeping-edge'
 import TargetBlock from './target-block'
 import Trident from './trident'
 
-const singleUseCardClasses: Array<CardClass> = [
+const singleUseCardClasses: Array<Card> = [
 	Anvil,
 	BadOmen,
 	Egg,

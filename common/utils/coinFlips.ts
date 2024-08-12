@@ -28,7 +28,7 @@ export function flipCoin(
 	)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
+			`${card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
 		)
 		return []
 	}

@@ -5,26 +5,22 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import FortuneStatusEffect from '../../../status-effects/fortune'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
-class Fortune extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'fortune',
-		numericId: 26,
-		name: 'Fortune',
-		expansion: 'default',
-		rarity: 'ultra_rare',
-		tokens: 1,
-		description:
-			'Any coin flips on this turn are not required, as "heads" is assumed.',
-		showConfirmationModal: true,
-	}
-
-	override onAttach(
+const Fortune: SingleUse = {
+	...singleUse,
+	id: 'fortune',
+	numericId: 26,
+	name: 'Fortune',
+	expansion: 'default',
+	rarity: 'ultra_rare',
+	tokens: 1,
+	description:
+		'Any coin flips on this turn are not required, as "heads" is assumed.',
+	showConfirmationModal: true,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -36,7 +32,7 @@ class Fortune extends Card {
 				.new(StatusEffectComponent, FortuneStatusEffect, component.entity)
 				.apply(player.entity)
 		})
-	}
+	},
 }
 
 export default Fortune

@@ -1,37 +1,33 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class TinFoilChefRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'tinfoilchef_rare',
-		numericId: 98,
-		name: 'TFC',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'miner',
-		health: 300,
-		primary: {
-			name: 'True Hermit',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Branch Mine',
-			cost: ['miner', 'miner'],
-			damage: 80,
-			power:
-				'Flip a coin.\nIf heads, you draw an extra card at the end of your turn.',
-		},
-	}
-
-	override onAttach(
+const TinFoilChefRare: Hermit = {
+	...hermit,
+	id: 'tinfoilchef_rare',
+	numericId: 98,
+	name: 'TFC',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'miner',
+	health: 300,
+	primary: {
+		name: 'True Hermit',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Branch Mine',
+		cost: ['miner', 'miner'],
+		damage: 80,
+		power:
+			'Flip a coin.\nIf heads, you draw an extra card at the end of your turn.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -47,7 +43,7 @@ class TinFoilChefRare extends Card {
 
 			game.currentPlayer.draw(1)
 		})
-	}
+	},
 }
 
 export default TinFoilChefRare

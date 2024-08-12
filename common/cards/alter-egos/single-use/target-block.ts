@@ -8,35 +8,31 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class TargetBlock extends Card {
-	pickCondition = query.every(
-		query.slot.opponent,
-		query.slot.hermit,
-		query.not(query.slot.active),
-		query.not(query.slot.empty),
-	)
+const pickCondition = query.every(
+	query.slot.opponent,
+	query.slot.hermit,
+	query.not(query.slot.active),
+	query.not(query.slot.empty),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'target_block',
-		numericId: 149,
-		name: 'Target Block',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 3,
-		description:
-			"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition),
-		),
-	}
-
-	override onAttach(
+const TargetBlock: SingleUse = {
+	...singleUse,
+	id: 'target_block',
+	numericId: 149,
+	name: 'Target Block',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 3,
+	description:
+		"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.exists(SlotComponent, pickCondition),
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -47,7 +43,7 @@ class TargetBlock extends Card {
 			player: player.entity,
 			id: component.entity,
 			message: "Pick one of your opponent's AFK Hermits",
-			canPick: this.pickCondition,
+			canPick: pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.inRow()) return
 				// Apply the card
@@ -57,7 +53,7 @@ class TargetBlock extends Card {
 					.apply(pickedSlot.getCard()?.entity)
 			},
 		})
-	}
+	},
 }
 
 export default TargetBlock

@@ -138,7 +138,7 @@ export class BattleLogModel {
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
 
-		const logMessage = card.card.getLog({
+		const logMessage = card.props.getLog({
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
@@ -156,7 +156,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
-				id: pickedCard?.card.props.id || invalid,
+				id: pickedCard?.props.id || invalid,
 				name: pickedCard
 					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
 					: invalid,

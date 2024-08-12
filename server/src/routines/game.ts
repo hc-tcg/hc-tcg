@@ -150,19 +150,15 @@ function getAvailableActions(
 			)
 
 			// only add attack options if not sleeping
-			if (hermitCard && hermitCard.card.isHermit()) {
-				if (
-					hasEnoughEnergy(availableEnergy, hermitCard.card.props.primary.cost)
-				) {
+			if (hermitCard && hermitCard.isHermit()) {
+				if (hasEnoughEnergy(availableEnergy, hermitCard.props.primary.cost)) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (
-					hasEnoughEnergy(availableEnergy, hermitCard.card.props.secondary.cost)
-				) {
+				if (hasEnoughEnergy(availableEnergy, hermitCard.props.secondary.cost)) {
 					actions.push('SECONDARY_ATTACK')
 				}
 				if (su && !suUsed) {
-					if (su && su.card.props.hasAttack) {
+					if (su && su.props.hasAttack) {
 						actions.push('SINGLE_USE_ATTACK')
 					}
 				}
@@ -193,24 +189,21 @@ function getAvailableActions(
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.components.filter(
 					SlotComponent,
-					card.card.props.attachCondition,
+					card.props.attachCondition,
 				)
 
 				if (pickableSlots.length === 0) return reducer
 
-				if (card.card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
+				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
 					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-				if (card.card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
+				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
 					return [...reducer, 'PLAY_EFFECT_CARD']
 				}
-				if (card.card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
+				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
 					return [...reducer, 'PLAY_ITEM_CARD']
 				}
-				if (
-					card.card.isSingleUse() &&
-					!reducer.includes('PLAY_SINGLE_USE_CARD')
-				) {
+				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
 					return [...reducer, 'PLAY_SINGLE_USE_CARD']
 				}
 				return reducer
