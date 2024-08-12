@@ -27,7 +27,7 @@ export const getGamePlayerOutcome = (
 		return triggerPlayerId === playerId ? 'forfeit_loss' : 'forfeit_win'
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		const triggerPlayerId = endResult.playerRemoved.payload.id
+		const triggerPlayerId = endResult.playerRemoved.player.id
 		return triggerPlayerId === playerId ? 'leave_loss' : 'leave_win'
 	}
 	if (game.endInfo.deadPlayerEntities.length === 2) return 'tie'
