@@ -9,45 +9,44 @@ import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Biffa2001Rare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'biffa2001_rare',
-		numericId: 206,
-		name: 'Biffa',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'miner',
-		health: 290,
-		primary: {
-			name: 'O.H.O',
-			cost: ['miner'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: "Biffa's Museum",
-			cost: ['miner', 'any'],
-			damage: 70,
-			power:
-				'For each card you played or used this turn, this attack does 20 more damage.',
-		},
-	}
-
-	cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(() => {
+const cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(
+	() => {
 		return {}
-	})
+	},
+)
 
-	override onCreate(game: GameModel, component: CardComponent) {
-		if (Object.hasOwn(this.cardsPlayed.values, game.id)) return
-		this.cardsPlayed.set(game, {})
+const Biffa2001Rare: Hermit = {
+	...hermit,
+	id: 'biffa2001_rare',
+	numericId: 206,
+	name: 'Biffa',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'miner',
+	health: 290,
+	primary: {
+		name: 'O.H.O',
+		cost: ['miner'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: "Biffa's Museum",
+		cost: ['miner', 'any'],
+		damage: 70,
+		power:
+			'For each card you played or used this turn, this attack does 20 more damage.',
+	},
+
+	onCreate(game: GameModel, component: CardComponent) {
+		if (Object.hasOwn(cardsPlayed.values, game.id)) return
+		cardsPlayed.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
@@ -56,7 +55,7 @@ class Biffa2001Rare extends CardOld {
 			let oldHandSize = player.getHand().length
 
 			newObserver.subscribe(player.hooks.onTurnStart, () => {
-				this.cardsPlayed.get(game)[player.entity] = 0
+				cardsPlayed.get(game)[player.entity] = 0
 				oldHandSize = player.getHand().length
 				// Only display status effect if Biffa is on the board
 				if (
@@ -81,7 +80,7 @@ class Biffa2001Rare extends CardOld {
 				if (handSize === oldHandSize) return
 				oldHandSize = handSize
 				if (cardInstance.slot.type === 'single_use') return
-				const record = this.cardsPlayed.get(game)
+				const record = cardsPlayed.get(game)
 				record[player.entity] = (record[player.entity] || 0) + 1
 				if (museumEffect === null) {
 					// Create display status effect if first Biffa is placed on board
@@ -98,7 +97,7 @@ class Biffa2001Rare extends CardOld {
 
 			newObserver.subscribe(player.hooks.onApply, () => {
 				oldHandSize = player.getHand().length
-				const record = this.cardsPlayed.get(game)
+				const record = cardsPlayed.get(game)
 				record[player.entity] = (record[player.entity] || 0) + 1
 				if (museumEffect) museumEffect.counter = record[player.entity]! // see comment above
 			})
@@ -107,9 +106,8 @@ class Biffa2001Rare extends CardOld {
 				museumEffect?.remove()
 			})
 		})
-	}
-
-	override onAttach(
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -120,7 +118,7 @@ class Biffa2001Rare extends CardOld {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
-			const counter = this.cardsPlayed.get(game)[player.entity]
+			const counter = cardsPlayed.get(game)[player.entity]
 			if (counter === undefined) return
 
 			observer.subscribe(player.hooks.onApply, () => {
@@ -130,7 +128,7 @@ class Biffa2001Rare extends CardOld {
 						target: attack.targetEntity,
 						type: 'secondary',
 						log: (values) =>
-							`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.props.secondary.name}$`,
+							`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.secondary.name}$`,
 					})
 					.addDamage(component.entity, 20)
 				additionalAttack.shouldIgnoreCards.push(
@@ -146,7 +144,7 @@ class Biffa2001Rare extends CardOld {
 
 			attack.addDamage(component.entity, 20 * counter)
 		})
-	}
+	},
 }
 
 export default Biffa2001Rare

@@ -7,39 +7,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ProtectedEffect from '../../../status-effects/protected'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SolidaritygamingRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'solidaritygaming_rare',
-		numericId: 220,
-		name: 'Jimmy',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'prankster',
-		health: 270,
-		primary: {
-			name: 'The Law',
-			cost: ['prankster', 'any'],
-			damage: 70,
-			power:
-				'After your attack, choose one of your AFK Hermits to protect from damage on their first active turn.\nOnly one Hermit can be protected at a time.',
-		},
-		secondary: {
-			name: 'Not a toy',
-			cost: ['prankster', 'prankster', 'prankster'],
-			damage: 100,
-			power: null,
-		},
-	}
-
-	public override onAttach(
+const SolidaritygamingRare: Hermit = {
+	...hermit,
+	id: 'solidaritygaming_rare',
+	numericId: 220,
+	name: 'Jimmy',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'prankster',
+	health: 270,
+	primary: {
+		name: 'The Law',
+		cost: ['prankster', 'any'],
+		damage: 70,
+		power:
+			'After your attack, choose one of your AFK Hermits to protect from damage on their first active turn.\nOnly one Hermit can be protected at a time.',
+	},
+	secondary: {
+		name: 'Not a toy',
+		cost: ['prankster', 'prankster', 'prankster'],
+		damage: 100,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -73,7 +69,7 @@ class SolidaritygamingRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default SolidaritygamingRare

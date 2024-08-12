@@ -7,39 +7,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import DyedEffect from '../../../status-effects/dyed'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Smajor1995Rare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'smajor1995_rare',
-		numericId: 218,
-		name: 'Scott',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 0,
-		type: 'builder',
-		health: 270,
-		primary: {
-			name: 'Color Splash',
-			cost: ['any'],
-			damage: 30,
-			power: null,
-		},
-		secondary: {
-			name: 'To Dye For',
-			cost: ['any', 'any', 'any'],
-			damage: 70,
-			power:
-				'After your attack, select one of your AFK Hermits to use items of any type.',
-		},
-	}
-
-	public override onAttach(
+const Smajor1995Rare: Hermit = {
+	...hermit,
+	id: 'smajor1995_rare',
+	numericId: 218,
+	name: 'Scott',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 0,
+	type: 'builder',
+	health: 270,
+	primary: {
+		name: 'Color Splash',
+		cost: ['any'],
+		damage: 30,
+		power: null,
+	},
+	secondary: {
+		name: 'To Dye For',
+		cost: ['any', 'any', 'any'],
+		damage: 70,
+		power:
+			'After your attack, select one of your AFK Hermits to use items of any type.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -74,7 +70,7 @@ class Smajor1995Rare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Smajor1995Rare

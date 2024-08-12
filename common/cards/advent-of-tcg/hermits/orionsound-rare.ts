@@ -6,39 +6,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import MelodyEffect from '../../../status-effects/melody'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OrionSoundRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'orionsound_rare',
-		numericId: 213,
-		name: 'Oli',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'speedrunner',
-		health: 280,
-		primary: {
-			name: 'Melody',
-			cost: ['speedrunner'],
-			damage: 60,
-			power:
-				'Select an Active or AFK Hermit. Selected Hermit is healed by 10hp every turn until this Hermit is knocked out.',
-		},
-		secondary: {
-			name: 'Concert',
-			cost: ['speedrunner', 'speedrunner'],
-			damage: 80,
-			power: null,
-		},
-	}
-
-	public override onAttach(
+const OrionSoundRare: Hermit = {
+	...hermit,
+	id: 'orionsound_rare',
+	numericId: 213,
+	name: 'Oli',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'speedrunner',
+	health: 280,
+	primary: {
+		name: 'Melody',
+		cost: ['speedrunner'],
+		damage: 60,
+		power:
+			'Select an Active or AFK Hermit. Selected Hermit is healed by 10hp every turn until this Hermit is knocked out.',
+	},
+	secondary: {
+		name: 'Concert',
+		cost: ['speedrunner', 'speedrunner'],
+		damage: 80,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -67,7 +63,7 @@ class OrionSoundRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default OrionSoundRare

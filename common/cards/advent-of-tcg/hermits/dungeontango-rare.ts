@@ -5,39 +5,35 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DungeonTangoRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'dungeontango_rare',
-		numericId: 208,
-		name: 'DM tango',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'miner',
-		health: 280,
-		primary: {
-			name: 'Lackey',
-			cost: ['any'],
-			damage: 40,
-			power:
-				'Discard 1 item card attached to this Hermit to draw a random Hermit card from your deck. If you have no more Hermit cards, keep the item card attached.',
-		},
-		secondary: {
-			name: 'Ravager',
-			cost: ['miner', 'miner', 'any'],
-			damage: 90,
-			power: null,
-		},
-	}
-
-	override onAttach(
+const DungeonTangoRare: Hermit = {
+	...hermit,
+	id: 'dungeontango_rare',
+	numericId: 208,
+	name: 'DM tango',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'miner',
+	health: 280,
+	primary: {
+		name: 'Lackey',
+		cost: ['any'],
+		damage: 40,
+		power:
+			'Discard 1 item card attached to this Hermit to draw a random Hermit card from your deck. If you have no more Hermit cards, keep the item card attached.',
+	},
+	secondary: {
+		name: 'Ravager',
+		cost: ['miner', 'miner', 'any'],
+		damage: 90,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -81,7 +77,7 @@ class DungeonTangoRare extends CardOld {
 				})
 			},
 		)
-	}
+	},
 }
 
 export default DungeonTangoRare

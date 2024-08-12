@@ -6,39 +6,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class MonkeyfarmRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'monkeyfarm_rare',
-		numericId: 212,
-		name: 'Monkeyfarm',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'farm',
-		health: 250,
-		primary: {
-			name: 'Skull',
-			cost: ['farm'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Monkeystep',
-			cost: ['farm', 'farm'],
-			damage: 80,
-			power:
-				"Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
-		},
-	}
-
-	override onAttach(
+const MonkeyfarmRare: Hermit = {
+	...hermit,
+	id: 'monkeyfarm_rare',
+	numericId: 212,
+	name: 'Monkeyfarm',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'farm',
+	health: 250,
+	primary: {
+		name: 'Skull',
+		cost: ['farm'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Monkeystep',
+		cost: ['farm', 'farm'],
+		damage: 80,
+		power:
+			"Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -71,7 +67,7 @@ class MonkeyfarmRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default MonkeyfarmRare
