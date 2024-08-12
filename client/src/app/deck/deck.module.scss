@@ -393,16 +393,38 @@
 
 .showOnMobile {
 	display: none;
+	visibility: hidden;
+}
+
+.mobileDeckPreview {
+	display: none;
+	visibility: hidden;
 }
 
 /* MOBILE */
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
 		display: none;
+		visibility: hidden;
 	}
 
 	.showOnMobile {
 		display: inherit;
+		visibility: visible;
+	}
+
+	.deckList {
+		flex-grow: 1;
+	}
+
+	.mobileDeckPreview {
+		display: inherit;
+		visibility: visible;
+	}
+
+	.deckListBox {
+		display: flex;
+		flex-direction: row;
 	}
 
 	.filterGroup {

@@ -34,6 +34,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import MobileCardList from 'components/card-list/mobile-card-list'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -478,7 +479,15 @@ function SelectDeck({
 						</>
 					}
 				>
-					{deckList}
+					<div className={css.deckListBox}>
+						<div className={css.deckList}>{deckList}</div>
+						<div className={css.mobileDeckPreview}>
+							<MobileCardList
+								cards={sortCards(loadedDeck.cards)}
+								small={true}
+							/>
+						</div>
+					</div>
 				</DeckLayout.Sidebar>
 			</DeckLayout>
 		</>

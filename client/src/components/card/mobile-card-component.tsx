@@ -3,6 +3,7 @@ import Tooltip from 'components/tooltip'
 import CardInstanceTooltip, {getRarity} from './card-tooltip'
 import css from './card.module.scss'
 import {getDeckCost} from 'common/utils/ranks'
+import classNames from 'classnames'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -12,10 +13,11 @@ interface CardReactProps
 	cards: Array<LocalCardInstance>
 	tooltipAboveModal?: boolean
 	onClick?: () => void
+	small: boolean
 }
 
 const MobileCardComponent = (props: CardReactProps) => {
-	const {onClick, cards} = props
+	const {onClick, cards, small} = props
 
 	return (
 		<Tooltip
@@ -26,10 +28,20 @@ const MobileCardComponent = (props: CardReactProps) => {
 				<button onClick={onClick}>
 					<div className={css.MobileCardComponent}>
 						{cards[0].props.category === 'hermit' && (
-							<img
-								className={css.headInList}
-								src={`/images/hermits-emoji/${cards[0].props.id.split('_')[0]}.png`}
-							/>
+							<div>
+								<img
+									className={css.headInList}
+									src={`/images/hermits-emoji/${cards[0].props.id.split('_')[0]}.png`}
+								/>
+								{small && (
+									<div
+										className={classNames(
+											css.rarityStar,
+											css[cards[0].props.rarity],
+										)}
+									></div>
+								)}
+							</div>
 						)}
 						{(cards[0].props.category === 'attach' ||
 							cards[0].props.category === 'single_use') && (
@@ -44,14 +56,18 @@ const MobileCardComponent = (props: CardReactProps) => {
 								src={`/images/types/type-${cards[0].props.id.split('_')[1]}.png`}
 							/>
 						)}
-						<div>
-							{cards[0].props.name}{' '}
-							{cards[0].props.category === 'hermit' && (
-								<span>{getRarity(cards[0].props)}</span>
-							)}
-						</div>
+
+						{!small && (
+							<div>
+								{cards[0].props.name}{' '}
+								{cards[0].props.category === 'hermit' && (
+									<span>{getRarity(cards[0].props)}</span>
+								)}
+							</div>
+						)}
+
 						<div className={css.amount}>x{cards.length}</div>
-						<div className={css.tokens}>{getDeckCost(cards)}</div>
+						{!small && <div className={css.tokens}>{getDeckCost(cards)}</div>}
 					</div>
 				</button>
 			</div>

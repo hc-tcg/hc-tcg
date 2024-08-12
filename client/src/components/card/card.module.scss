@@ -94,3 +94,23 @@
 		background-color: #353838;
 	}
 }
+
+.rarityStar {
+	font-size: 1rem;
+	font-family: Unifont;
+	transform: translate(0.2rem, -0.8rem);
+	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
+		drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+
+	&.rare::before {
+		color: rgb(241, 172, 33);
+		position: absolute;
+		content: "✦";
+	}
+
+	&.ultra_rare::before {
+		color: rgb(85, 202, 194);
+		position: absolute;
+		content: "★";
+	}
+}

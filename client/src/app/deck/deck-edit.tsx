@@ -23,6 +23,7 @@ import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import MobileCardComponent from 'components/card/mobile-card-component'
+import MobileCardList from 'components/card-list/mobile-card-list'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -255,15 +256,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			(card) => card.props.category === 'single_use',
 		),
 	}
-
-	const cardsWithAmounts: Array<Array<LocalCardInstance>> = []
-	sortCards(loadedDeck.cards).forEach((card) => {
-		const item = cardsWithAmounts.find((c) => c[0].props.id === card.props.id)
-		if (item) return
-		cardsWithAmounts.push(
-			loadedDeck.cards.filter((c) => c.props.id === card.props.id),
-		)
-	})
 
 	//CARD LOGIC
 	const clearDeck = () => {
@@ -651,16 +643,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 						</div>
 
 						<div className={css.showOnMobile}>
-							Deck Cards
-							{cardsWithAmounts.map((cards) => {
-								return (
-									<MobileCardComponent
-										cards={cards}
-										onClick={() => removeCard(cards[0])}
-										key={cards[0].entity}
-									></MobileCardComponent>
-								)
-							})}
+							Deck Cards{' '}
+							<MobileCardList
+								cards={sortCards(loadedDeck.cards)}
+								onClick={removeCard}
+								small={false}
+							/>
 						</div>
 					</div>
 				</DeckLayout.Sidebar>

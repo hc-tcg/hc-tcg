@@ -97,3 +97,12 @@ $card-size: 118px;
 		filter: scale(0);
 	}
 }
+
+.mobileCardListSmall {
+	display: grid;
+	grid-auto-flow: row;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	align-items: center;
+	width: 40%;
+}
