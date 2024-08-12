@@ -5,33 +5,29 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 
-class BerryBush extends Card {
-	props: Attach & HasHealth = {
-		...attach,
-		id: 'berry_bush',
-		numericId: 200,
-		name: 'Sweet Berry Bush',
-		expansion: 'advent_of_tcg',
-		rarity: 'ultra_rare',
-		tokens: 2,
-		health: 50,
-		description:
-			"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
-		attachCondition: query.every(
-			query.slot.opponent,
-			query.slot.hermit,
-			query.slot.empty,
-			query.slot.playerHasActiveHermit,
-			query.slot.opponentHasActiveHermit,
-			query.not(query.slot.frozen),
-		),
-	}
-
-	override onAttach(
+const BerryBush: Attach & HasHealth = {
+	...attach,
+	id: 'berry_bush',
+	numericId: 200,
+	name: 'Sweet Berry Bush',
+	expansion: 'advent_of_tcg',
+	rarity: 'ultra_rare',
+	tokens: 2,
+	health: 50,
+	description:
+		"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+	attachCondition: query.every(
+		query.slot.opponent,
+		query.slot.hermit,
+		query.slot.empty,
+		query.slot.playerHasActiveHermit,
+		query.slot.opponentHasActiveHermit,
+		query.not(query.slot.frozen),
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -62,7 +58,7 @@ class BerryBush extends Card {
 				query.slot.rowIs(component.slot.row.entity),
 			)
 		})
-	}
+	},
 }
 
 export default BerryBush

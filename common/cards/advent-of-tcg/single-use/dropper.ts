@@ -4,7 +4,7 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
+import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 import FletchingTable from './fletching-table'

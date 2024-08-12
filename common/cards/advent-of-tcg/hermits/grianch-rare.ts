@@ -9,7 +9,7 @@ import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
 import {flipCoin} from '../../../utils/coinFlips'
-import CardOld from '../../base/card'
+import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 

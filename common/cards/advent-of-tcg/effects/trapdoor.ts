@@ -2,24 +2,20 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {getFormattedName} from '../../../utils/game'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Trapdoor extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'trapdoor',
-		numericId: 205,
-		name: 'Trapdoor',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
-	}
-
-	override onAttach(
+const Trapdoor: Attach = {
+	...attach,
+	id: 'trapdoor',
+	numericId: 205,
+	name: 'Trapdoor',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -31,9 +27,9 @@ class Trapdoor extends CardOld {
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			const target = attack.target
 			if (
-				target?.player.id !== player.id ||
+				target?.player.entity !== player.entity||
 				!(attack.attacker instanceof CardComponent) ||
-				attack.attacker.player.id !== opponentPlayer.id
+				attack.attacker.player.entity!== opponentPlayer.entity
 			)
 				return
 			if (attack.isType('status-effect') || attack.isBacklash) return
@@ -81,7 +77,7 @@ class Trapdoor extends CardOld {
 		observer.subscribe(player.hooks.afterDefence, (_attack) => {
 			totalReduction = 0
 		})
-	}
+	},
 }
 
 export default Trapdoor

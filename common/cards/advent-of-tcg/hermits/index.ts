@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import Biffa2001Rare from './biffa2001-rare'
 import BigBSt4tzRare from './bigbst4tz2-rare'
 import DungeonTangoRare from './dungeontango-rare'
@@ -14,7 +14,7 @@ import Smajor1995Rare from './smajor1995'
 import SmallishbeansRare from './smallishbeans-rare'
 import SolidaritygamingRare from './solidaritygaming-rare'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Card> = [
 	//Advent calendar cards
 	MonkeyfarmRare,
 	DungeonTangoRare,

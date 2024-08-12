@@ -5,24 +5,20 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Cat extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'cat',
-		numericId: 202,
-		name: 'Cat',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
-	}
-
-	override onAttach(
+const Cat: Attach = {
+	...attach,
+	id: 'cat',
+	numericId: 202,
+	name: 'Cat',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -81,7 +77,7 @@ class Cat extends CardOld {
 				onTimeout() {},
 			})
 		})
-	}
+	},
 }
 
 export default Cat

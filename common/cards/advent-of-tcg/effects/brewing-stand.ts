@@ -2,24 +2,20 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class BrewingStand extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'brewing_stand',
-		numericId: 201,
-		name: 'Brewing stand',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
-	}
-
-	override onAttach(
+const BrewingStand: Attach = {
+	...attach,
+	id: 'brewing_stand',
+	numericId: 201,
+	name: 'Brewing stand',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -36,7 +32,7 @@ class BrewingStand extends CardOld {
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Pick an item card to discard',
 				canPick: query.every(
@@ -53,7 +49,7 @@ class BrewingStand extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default BrewingStand
