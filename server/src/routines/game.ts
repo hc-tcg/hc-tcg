@@ -25,7 +25,7 @@ import {
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
 import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
-import {broadcast} from 'utils/comm'
+import {broadcast} from '../utils/comm'
 import {printHooksState} from '../utils'
 import {getLocalGameState} from '../utils/state-gen'
 
@@ -662,7 +662,7 @@ export function* turnSaga(game: GameModel) {
 	}
 
 	// If player has not used his single use card return it to hand
-	// otherwise move it to discarded pile
+			// otherwise move it to discarded pile
 	const singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),

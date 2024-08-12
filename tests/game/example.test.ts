@@ -1,18 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import {Card} from 'common/cards/base/types'
 
 import {GameModel} from 'common/models/game-model'
-
-function getTestPlayer(playerName: string, deck: Array<Card>) {
-	return {
-		model: {
-			name: playerName,
-			minecraftName: playerName,
-			censoredName: playerName,
-		},
-		deck,
-	}
-}
+import {getTestPlayer} from './utils'
 
 describe('example test module', () => {
 	test('example', () => {
