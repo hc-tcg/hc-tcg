@@ -54,8 +54,8 @@ class ShubbleYTRare extends CardOld {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Shelby: Place your top card on bottom of deck?',
-						modalDescription: '',
+						modalName: 'Shelby - Parallel World',
+						modalDescription: 'Place your top card on bottom of deck?',
 						cards: [topCard.entity],
 						selectionSize: 0,
 						primaryButton: {

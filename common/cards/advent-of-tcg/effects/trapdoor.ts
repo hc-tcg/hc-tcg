@@ -27,9 +27,9 @@ const Trapdoor: Attach = {
 		observer.subscribe(player.hooks.onDefence, (attack) => {
 			const target = attack.target
 			if (
-				target?.player.entity !== player.entity||
+				target?.player.entity !== player.entity ||
 				!(attack.attacker instanceof CardComponent) ||
-				attack.attacker.player.entity!== opponentPlayer.entity
+				attack.attacker.player.entity !== opponentPlayer.entity
 			)
 				return
 			if (attack.isType('status-effect') || attack.isBacklash) return
@@ -56,7 +56,7 @@ const Trapdoor: Attach = {
 						target: component.slot.rowEntity,
 						type: attack.type,
 						log: (values) =>
-							`(${values.damage} was intercepted by ${values.target} with ${getFormattedName(
+							` (${values.damage} was intercepted by ${values.target} with ${getFormattedName(
 								component.props.id,
 								true,
 							)})`,

@@ -47,7 +47,7 @@ class Brush extends CardOld {
 					payload: {
 						modalName: 'Brush',
 						modalDescription:
-							'Select cards you would like to draw sooner first.',
+							'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
 						cards: topCards.map((card) => card.entity),
 						selectionSize: 3,
 						primaryButton: {

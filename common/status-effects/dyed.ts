@@ -21,7 +21,7 @@ class DyedEffect extends CardStatusEffect {
 	}
 
 	override onApply(
-		game: GameModel,
+		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent,

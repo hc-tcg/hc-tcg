@@ -1,7 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
@@ -41,8 +40,8 @@ class Lantern extends CardOld {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Lantern: Choose 2 cards to draw immediately.',
-						modalDescription: '',
+						modalName: 'Lantern',
+						modalDescription: 'Choose 2 cards to draw immediately.',
 						cards: topCards.map((card) => card.entity),
 						selectionSize: 2,
 						primaryButton: {
@@ -65,12 +64,12 @@ class Lantern extends CardOld {
 					})
 
 					game.addModalRequest({
-						playerId: opponentPlayer.id,
+						player: opponentPlayer.entity,
 						data: {
 							modalId: 'selectCards',
 							payload: {
-								modalName: 'Lantern: Cards your opponent drew.',
-								modalDescription: '',
+								modalName: 'Lantern',
+								modalDescription: 'Cards your opponent drew.',
 								cards: modalResult.cards.map((card) => card.entity),
 								selectionSize: 0,
 								primaryButton: {

@@ -3,7 +3,8 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 } from '../../../components'
-import {PlayerEntity} from '../../../entities'
+import query from '../../../components/query'
+import {CardEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -37,27 +38,41 @@ class PixlriffsRare extends CardOld {
 		},
 	}
 
-	startingRow = new GameValue<Record<PlayerEntity, number | undefined>>(() => {
-		return {}
-	})
+	hermitStartingRow = new GameValue<Record<CardEntity, number | undefined>>(
+		() => {
+			return {}
+		},
+	)
 
 	public override onCreate(game: GameModel, component: CardComponent) {
-		if (Object.hasOwn(this.startingRow.values, game.id)) return
-		this.startingRow.set(game, {})
+		if (Object.hasOwn(this.hermitStartingRow.values, game.id)) return
+		this.hermitStartingRow.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
 		game.components.filter(PlayerComponent).forEach((player) => {
 			newObserver.subscribe(player.hooks.onTurnStart, () => {
-				const startingRowIndex = player.activeRow?.index
-				if (!startingRowIndex) {
-					newObserver.subscribe(player.hooks.onAttach, (_instance) => {
-						if (!player.activeRow) return
-						this.startingRow.get(game)[player.entity] = player.activeRow.index
-						newObserver.unsubscribe(player.hooks.onAttach)
+				game.components
+					.filter(
+						CardComponent,
+						query.card.currentPlayer,
+						query.card.slot(query.slot.hermit),
+					)
+					.forEach((hermitComponent) => {
+						if (!hermitComponent.slot.inRow()) return
+						this.hermitStartingRow.get(game)[hermitComponent.entity] =
+							hermitComponent.slot.row.index
 					})
-				}
-				this.startingRow.get(game)[player.entity] = startingRowIndex
+			})
+
+			newObserver.subscribe(player.hooks.onAttach, (instance) => {
+				if (!instance.slot.inRow() || instance.slot.type !== 'hermit') return
+				this.hermitStartingRow.get(game)[instance.entity] =
+					instance.slot.row.index
+			})
+
+			newObserver.subscribe(player.hooks.onDetach, (instance) => {
+				delete this.hermitStartingRow.get(game)[instance.entity]
 			})
 		})
 	}
@@ -73,13 +88,15 @@ class PixlriffsRare extends CardOld {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
 
-			const startingRowIndex = this.startingRow.get(game)[player.entity]
-			// Attacker should only be able to change rows with Ender Pearl and Ladder after a knockout
+			const startingRowIndex =
+				this.hermitStartingRow.get(game)[component.entity]
 			if (
 				startingRowIndex !== undefined &&
 				startingRowIndex !== player.activeRow?.index
-			)
+			) {
+				// TODO: Handle "Puppetry"/"Role Play" + Ender Pearl + "Jumpscare" + Naughty Regift to move, return to original row, then use "World Build" in the same turn
 				attack.addDamage(component.entity, 40)
+			}
 		})
 	}
 }
