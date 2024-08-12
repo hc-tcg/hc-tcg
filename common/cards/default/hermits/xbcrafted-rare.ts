@@ -1,37 +1,33 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class XBCraftedRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'xbcrafted_rare',
-		numericId: 110,
-		name: 'xB',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'explorer',
-		health: 270,
-		primary: {
-			name: 'Giggle',
-			cost: ['explorer'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Noice!',
-			cost: ['explorer', 'any'],
-			damage: 70,
-			power:
-				"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
-		},
-	}
-
-	override onAttach(
+const XBCraftedRare: Hermit = {
+	...hermit,
+	id: 'xbcrafted_rare',
+	numericId: 110,
+	name: 'xB',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'explorer',
+	health: 270,
+	primary: {
+		name: 'Giggle',
+		cost: ['explorer'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Noice!',
+		cost: ['explorer', 'any'],
+		damage: 70,
+		power:
+			"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
+	},
+	onAttach(
 		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -50,7 +46,7 @@ class XBCraftedRare extends Card {
 				),
 			)
 		})
-	}
+	},
 }
 
 export default XBCraftedRare

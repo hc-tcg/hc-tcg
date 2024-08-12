@@ -1,25 +1,21 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class IronSword extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'iron_sword',
-		numericId: 46,
-		name: 'Iron Sword',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 0,
-		description: "Do 20hp damage to your opponent's active Hermit.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A20$',
-	}
-
-	override onAttach(
+const IronSword: SingleUse = {
+	...singleUse,
+	id: 'iron_sword',
+	numericId: 46,
+	name: 'Iron Sword',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 0,
+	description: "Do 20hp damage to your opponent's active Hermit.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A20$',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -44,7 +40,7 @@ class IronSword extends Card {
 			if (!attack.isAttacker(component.entity)) return
 			applySingleUse(game)
 		})
-	}
+	},
 }
 
 export default IronSword

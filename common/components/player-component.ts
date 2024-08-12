@@ -1,7 +1,7 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -127,7 +127,10 @@ export class PlayerComponent {
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void
+			(
+				oldActiveHermit: CardComponent | null,
+				newActiveHermit: CardComponent,
+			) => void
 		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
@@ -238,7 +241,7 @@ export class PlayerComponent {
 		return cards
 	}
 
-	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
@@ -302,6 +305,13 @@ export class PlayerComponent {
 					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
+		} else {
+			let newHermit = newRow.getHermit()
+			if (!newHermit)
+				throw new Error(
+					'Should not be able to change from no active row to an active row with no hermits.',
+				)
+			this.hooks.onActiveRowChange.call(null, newHermit)
 		}
 
 		return true
@@ -316,10 +326,10 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[
-						card,
-						this.game.getPickableSlots(card.card.props.attachCondition),
-					] as [CardComponent, Array<SlotEntity>],
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
+						CardComponent,
+						Array<SlotEntity>,
+					],
 			)
 	}
 }

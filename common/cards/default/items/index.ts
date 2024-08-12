@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import BalancedItem from './balanced-common'
 import BalancedDoubleItem from './balanced-rare'
 import BuilderItem from './builder-common'
@@ -20,7 +20,7 @@ import SpeedrunnerDoubleItem from './speedrunner-rare'
 import TerraformItem from './terraform-common'
 import TerraformDoubleItem from './terraform-rare'
 
-const itemCardClasses: Array<CardClass> = [
+const itemCardClasses: Array<Card> = [
 	BuilderItem,
 	BuilderDoubleItem,
 	BalancedItem,

@@ -7,7 +7,6 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BetrayedEffect from '../../../status-effects/betrayed'
 import {PickRequest} from '../../../types/server-requests'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -16,33 +15,30 @@ import {Hermit} from '../../base/types'
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
 - TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
 */
-class HypnotizdRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'hypnotizd_rare',
-		numericId: 37,
-		name: 'Hypno',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'miner',
-		health: 270,
-		primary: {
-			name: 'MmHmm',
-			cost: ['miner'],
-			damage: 60,
-			power: null,
-		},
-		secondary: {
-			name: "Got 'Em",
-			cost: ['miner', 'any'],
-			damage: 70,
-			power:
-				"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
-		},
-	}
-
-	override onAttach(
+const HypnotizdRare: Hermit = {
+	...hermit,
+	id: 'hypnotizd_rare',
+	numericId: 37,
+	name: 'Hypno',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'miner',
+	health: 270,
+	primary: {
+		name: 'MmHmm',
+		cost: ['miner'],
+		damage: 60,
+		power: null,
+	},
+	secondary: {
+		name: "Got 'Em",
+		cost: ['miner', 'any'],
+		damage: 70,
+		power:
+			"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -130,7 +126,7 @@ class HypnotizdRare extends Card {
 				})
 			},
 		)
-	}
+	},
 }
 
 export default HypnotizdRare

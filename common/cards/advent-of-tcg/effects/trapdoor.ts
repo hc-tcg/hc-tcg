@@ -1,11 +1,11 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Trapdoor extends Card {
+class Trapdoor extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'trapdoor',

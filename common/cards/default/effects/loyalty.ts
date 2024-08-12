@@ -1,24 +1,20 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Loyalty extends Card {
-	props: Attach = {
-		...attach,
-		id: 'loyalty',
-		numericId: 77,
-		name: 'Loyalty',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 0,
-		description:
-			'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
-	}
-
-	override onAttach(
+const Loyalty: Attach = {
+	...attach,
+	id: 'loyalty',
+	numericId: 77,
+	name: 'Loyalty',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 0,
+	description:
+		'When the Hermit this card is attached to is knocked out, all attached item cards are returned to your hand.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -27,7 +23,7 @@ class Loyalty extends Card {
 
 		observer.subscribe(player.hooks.afterDefence, (attack) => {
 			if (!component.slot.inRow() || component.slot.row.health) return
-			if (!attack.target) return
+			if (!attack.target || !attack.isTargeting(component)) return
 
 			game.components
 				.filter(
@@ -38,7 +34,7 @@ class Loyalty extends Card {
 				)
 				.forEach((card) => card.draw())
 		})
-	}
+	},
 }
 
 export default Loyalty
