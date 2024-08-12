@@ -51,7 +51,7 @@ export const getWinner = (game: GameModel, endResult: any) => {
 		return getOpponentId(game, endResult.forfeit.playerId)
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		return getOpponentId(game, endResult.playerRemoved.payload.id)
+		return getOpponentId(game, endResult.playerRemoved.player.id)
 	}
 	if (game.endInfo.deadPlayerEntities.length === 2) return null
 	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
