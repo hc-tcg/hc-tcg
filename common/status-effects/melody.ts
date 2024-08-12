@@ -4,24 +4,17 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class MelodyEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...statusEffect,
-		icon: 'melody',
-		name: "Ollie's Melody",
-		description:
-			'This Hermit heals 10hp every turn until %CREATOR% is knocked out.',
-		applyCondition: (_game, card) =>
-			card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
-	}
-
-	override onApply(
+const MelodyEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	icon: 'melody',
+	name: "Ollie's Melody",
+	description:
+		'This Hermit heals 10hp every turn until %CREATOR% is knocked out.',
+	applyCondition: (_game, card) =>
+		card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -42,7 +35,7 @@ class MelodyEffect extends CardStatusEffect {
 			if (!attack.isTargeting(effect.creator) || attack.target?.health) return
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default MelodyEffect

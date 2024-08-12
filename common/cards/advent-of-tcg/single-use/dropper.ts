@@ -8,7 +8,7 @@ import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 import FletchingTable from './fletching-table'
 
-const Droppe: SingleUse = {
+const Dropper: SingleUse = {
 	...singleUse,
 	id: 'dropper',
 	numericId: 222,

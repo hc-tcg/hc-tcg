@@ -4,27 +4,20 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class NaughtyRegiftEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'regift',
-		name: 'Regift',
-		description: 'You may attack twice this turn.',
-		applyCondition: (_game, value) => {
-			return (
-				value instanceof PlayerComponent &&
-				!value.hasStatusEffect(NaughtyRegiftEffect)
-			)
-		},
-	}
-
-	override onApply(
+const NaughtyRegiftEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'regift',
+	name: 'Regift',
+	description: 'You may attack twice this turn.',
+	applyCondition: (_game, value) => {
+		return (
+			value instanceof PlayerComponent &&
+			!value.hasStatusEffect(NaughtyRegiftEffect)
+		)
+	},
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
@@ -50,7 +43,7 @@ class NaughtyRegiftEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default NaughtyRegiftEffect

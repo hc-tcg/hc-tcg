@@ -5,29 +5,21 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const soulmateEffectDamage = 140
 
-class SoulmateEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'soulmate',
-		name: 'Soulmate',
-		description: `If you knock out %CREATOR%, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
-		applyCondition: (_game, value) => {
-			return (
-				value instanceof PlayerComponent &&
-				!value.hasStatusEffect(SoulmateEffect)
-			)
-		},
-	}
-
-	override onApply(
+const SoulmateEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	icon: 'soulmate',
+	name: 'Soulmate',
+	description: `If you knock out %CREATOR%, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
+	applyCondition: (_game, value) => {
+		return (
+			value instanceof PlayerComponent && !value.hasStatusEffect(SoulmateEffect)
+		)
+	},
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
@@ -56,7 +48,7 @@ class SoulmateEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default SoulmateEffect

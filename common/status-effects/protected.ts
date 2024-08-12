@@ -5,30 +5,23 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class ProtectedEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...statusEffect,
-		icon: 'protected',
-		name: "Sheriff's Protection",
-		description:
-			'This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
-		applyCondition: (_game, target) => {
-			return (
-				target instanceof CardComponent &&
-				!target.getStatusEffect(ProtectedEffect)
-			)
-		},
-		applyLog: (values) =>
-			`${values.target} ${values.verb} selected for ${values.statusEffect}`,
-	}
-
-	override onApply(
+const ProtectedEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	icon: 'protected',
+	name: "Sheriff's Protection",
+	description:
+		'This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
+	applyCondition: (_game, target) => {
+		return (
+			target instanceof CardComponent &&
+			!target.getStatusEffect(ProtectedEffect)
+		)
+	},
+	applyLog: (values) =>
+		`${values.target} ${values.verb} selected for ${values.statusEffect}`,
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -78,7 +71,7 @@ class ProtectedEffect extends CardStatusEffect {
 			if (!attack.isTargeting(target) || attack.target?.health) return
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default ProtectedEffect

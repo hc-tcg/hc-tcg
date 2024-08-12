@@ -4,12 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
 const SmeltingEffect: Counter<CardComponent> = {
 	...statusEffect,
@@ -19,8 +14,7 @@ const SmeltingEffect: Counter<CardComponent> = {
 		'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
 	counter: 4,
 	counterType: 'turns',
-
-	override onApply(
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
@@ -28,7 +22,7 @@ const SmeltingEffect: Counter<CardComponent> = {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (effect.counter === null) return
@@ -50,7 +44,7 @@ const SmeltingEffect: Counter<CardComponent> = {
 				target.discard()
 			}
 		})
-	}
+	},
 }
 
 export default SmeltingEffect
