@@ -5,30 +5,26 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Glowstone extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'glowstone',
-		numericId: 224,
-		name: 'Glowstone',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"View the top 3 cards of your opponent's deck. Choose one for them to discard. The other 2 will be placed on the bottom of their deck in their original order.",
-		showConfirmationModal: true,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(_game, pos) =>
-				!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
-		),
-	}
-
-	override onAttach(
+const Glowstone: SingleUse = {
+	...singleUse,
+	id: 'glowstone',
+	numericId: 224,
+	name: 'Glowstone',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"View the top 3 cards of your opponent's deck. Choose one for them to discard. The other 2 will be placed on the bottom of their deck in their original order.",
+	showConfirmationModal: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(_game, pos) =>
+			!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -82,7 +78,7 @@ class Glowstone extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Glowstone

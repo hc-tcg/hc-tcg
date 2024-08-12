@@ -5,29 +5,25 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Brush extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'brush',
-		numericId: 221,
-		name: 'Brush',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 0,
-		description:
-			'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
-		showConfirmationModal: true,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(_game, pos) => pos.player.getDeck().length >= 3,
-		),
-	}
-
-	override onAttach(
+const Brush: SingleUse = {
+	...singleUse,
+	id: 'brush',
+	numericId: 221,
+	name: 'Brush',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 0,
+	description:
+		'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+	showConfirmationModal: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(_game, pos) => pos.player.getDeck().length >= 3,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -78,7 +74,7 @@ class Brush extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Brush

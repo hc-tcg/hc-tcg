@@ -6,38 +6,34 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class SplashPotionOfHarming extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'splash_potion_of_harming',
-		numericId: 226,
-		name: 'Splash potion of harming',
-		expansion: 'advent_of_tcg',
-		rarity: 'common',
-		tokens: 3,
-		description:
-			"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
-		hasAttack: true,
-		attackPreview: (game) => {
-			const targetAmount = this.getTargetHermits(game).length - 1
-			if (targetAmount === 0) return '$A40$'
-			return `$A40$ + $A20$ x ${targetAmount}`
-		},
-	}
+function getTargetHermits(game: GameModel) {
+	return game.components.filter(
+		RowComponent,
+		query.row.opponentPlayer,
+		query.row.hermitSlotOccupied,
+	)
+}
 
-	getTargetHermits(game: GameModel) {
-		return game.components.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			query.row.hermitSlotOccupied,
-		)
-	}
-
-	override onAttach(
+const SplashPotionOfHarming: SingleUse = {
+	...singleUse,
+	id: 'splash_potion_of_harming',
+	numericId: 226,
+	name: 'Splash potion of harming',
+	expansion: 'advent_of_tcg',
+	rarity: 'common',
+	tokens: 3,
+	description:
+		"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
+	hasAttack: true,
+	attackPreview: (game) => {
+		const targetAmount = getTargetHermits(game).length - 1
+		if (targetAmount === 0) return '$A40$'
+		return `$A40$ + $A20$ x ${targetAmount}`
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -46,7 +42,7 @@ class SplashPotionOfHarming extends CardOld {
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			const activeRow = opponentPlayer.activeRowEntity
-			const opponentRows = this.getTargetHermits(game).sort(
+			const opponentRows = getTargetHermits(game).sort(
 				(a, b) => a.index - b.index,
 			)
 
@@ -85,7 +81,7 @@ class SplashPotionOfHarming extends CardOld {
 
 			observer.unsubscribe(player.hooks.onAttack)
 		})
-	}
+	},
 }
 
 export default SplashPotionOfHarming

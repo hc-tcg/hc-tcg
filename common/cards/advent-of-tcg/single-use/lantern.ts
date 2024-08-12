@@ -4,25 +4,22 @@ import {GameModel} from '../../../models/game-model'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Lantern extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'lantern',
-		numericId: 225,
-		name: 'Lantern',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 3,
-		description:
-			'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
-		showConfirmationModal: true,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(_game, pos) => pos.player.getDeck().length >= 4,
-		),
-	}
-
-	override onAttach(
+const Lantern: SingleUse = {
+	...singleUse,
+	id: 'lantern',
+	numericId: 225,
+	name: 'Lantern',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 3,
+	description:
+		'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
+	showConfirmationModal: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(_game, pos) => pos.player.getDeck().length >= 4,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -93,7 +90,7 @@ class Lantern extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default Lantern
