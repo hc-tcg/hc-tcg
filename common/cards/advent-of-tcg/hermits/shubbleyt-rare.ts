@@ -4,39 +4,35 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ShubbleYTRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'shubbleyt_rare',
-		numericId: 217,
-		name: 'Shelby',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'terraform',
-		health: 300,
-		primary: {
-			name: 'Good Witch',
-			cost: ['terraform'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Parallel World',
-			cost: ['terraform', 'terraform'],
-			damage: 80,
-			power:
-				'After your attack, view the top card of your deck. You may choose to place it on the bottom of your deck.',
-		},
-	}
-
-	public override onAttach(
+const ShubbleYTRare: Hermit = {
+	...hermit,
+	id: 'shubbleyt_rare',
+	numericId: 217,
+	name: 'Shelby',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'terraform',
+	health: 300,
+	primary: {
+		name: 'Good Witch',
+		cost: ['terraform'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Parallel World',
+		cost: ['terraform', 'terraform'],
+		damage: 80,
+		power:
+			'After your attack, view the top card of your deck. You may choose to place it on the bottom of your deck.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -83,7 +79,7 @@ class ShubbleYTRare extends CardOld {
 				onTimeout() {},
 			})
 		})
-	}
+	},
 }
 
 export default ShubbleYTRare

@@ -6,39 +6,35 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class LDShadowLadyRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'ldshadowlady_rare',
-		numericId: 211,
-		name: 'Lizzie',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'terraform',
-		health: 290,
-		primary: {
-			name: 'Fairy Fort',
-			cost: ['terraform'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Evict',
-			cost: ['terraform', 'terraform', 'any'],
-			damage: 90,
-			power:
-				"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
-		},
-	}
-
-	override onAttach(
+const LDShadowLadyRare: Hermit = {
+	...hermit,
+	id: 'ldshadowlady_rare',
+	numericId: 211,
+	name: 'Lizzie',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'terraform',
+	health: 290,
+	primary: {
+		name: 'Fairy Fort',
+		cost: ['terraform'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Evict',
+		cost: ['terraform', 'terraform', 'any'],
+		damage: 90,
+		power:
+			"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -95,7 +91,7 @@ class LDShadowLadyRare extends CardOld {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default LDShadowLadyRare

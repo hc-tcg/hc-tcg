@@ -9,39 +9,35 @@ import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class GrianchRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'grianch_rare',
-		numericId: 209,
-		name: 'The Grianch',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'builder',
-		health: 250,
-		primary: {
-			name: 'Nice',
-			cost: ['builder', 'any'],
-			damage: 70,
-			power: 'Heal any AFK Hermit for 40hp.',
-		},
-		secondary: {
-			name: 'Naughty',
-			cost: ['builder', 'builder'],
-			damage: 80,
-			power:
-				'Flip a Coin.\nIf heads, you may attack an additional time.\nIf tails, your opponent may attack twice next round.\nWhen this attack is used with Fortune, only the first coin flip will be affected',
-		},
-	}
-
-	override onAttach(
+const GrianchRare: Hermit = {
+	...hermit,
+	id: 'grianch_rare',
+	numericId: 209,
+	name: 'The Grianch',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'builder',
+	health: 250,
+	primary: {
+		name: 'Nice',
+		cost: ['builder', 'any'],
+		damage: 70,
+		power: 'Heal any AFK Hermit for 40hp.',
+	},
+	secondary: {
+		name: 'Naughty',
+		cost: ['builder', 'builder'],
+		damage: 80,
+		power:
+			'Flip a Coin.\nIf heads, you may attack an additional time.\nIf tails, your opponent may attack twice next round.\nWhen this attack is used with Fortune, only the first coin flip will be affected',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -60,7 +56,7 @@ class GrianchRare extends CardOld {
 				game.battleLog.addEntry(
 					player.entity,
 					`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g40hp$ by $p${
-						component.card.props.name
+						component.props.name
 					}$`,
 				)
 			} else if (attack.type === 'secondary') {
@@ -131,7 +127,7 @@ class GrianchRare extends CardOld {
 				})
 			},
 		)
-	}
+	},
 }
 
 export default GrianchRare

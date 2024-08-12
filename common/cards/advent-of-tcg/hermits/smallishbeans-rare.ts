@@ -1,38 +1,34 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SmallishbeansAdventRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'smallishbeansadvent_rare',
-		numericId: 219,
-		name: 'Joel',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'pvp',
-		health: 280,
-		primary: {
-			name: '11ft',
-			cost: ['pvp', 'any'],
-			damage: 70,
-			power: null,
-		},
-		secondary: {
-			name: 'Lore',
-			cost: ['pvp', 'pvp', 'any'],
-			damage: 30,
-			power:
-				'Deal 20 extra damage for each item attached. Double items count twice.',
-		},
-	}
-
-	override onAttach(
+const SmallishbeansAdventRare: Hermit = {
+	...hermit,
+	id: 'smallishbeansadvent_rare',
+	numericId: 219,
+	name: 'Joel',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'pvp',
+	health: 280,
+	primary: {
+		name: '11ft',
+		cost: ['pvp', 'any'],
+		damage: 70,
+		power: null,
+	},
+	secondary: {
+		name: 'Lore',
+		cost: ['pvp', 'pvp', 'any'],
+		damage: 30,
+		power:
+			'Deal 20 extra damage for each item attached. Double items count twice.',
+	},
+	onAttach(
 		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -52,7 +48,7 @@ class SmallishbeansAdventRare extends CardOld {
 
 			attack.addDamage(component.entity, total * 20)
 		})
-	}
+	},
 }
 
 export default SmallishbeansAdventRare

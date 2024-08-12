@@ -6,39 +6,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PharaohRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'pharaoh_rare',
-		numericId: 214,
-		name: 'Pharaoh',
-		expansion: 'advent_of_tcg',
-		palette: 'pharoah',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'balanced',
-		health: 300,
-		primary: {
-			name: 'Targét',
-			cost: ['balanced'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Xibalba',
-			cost: ['balanced', 'balanced'],
-			damage: 80,
-			power:
-				'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
-		},
-	}
-
-	override onAttach(
+const PharaohRare: Hermit = {
+	...hermit,
+	id: 'pharaoh_rare',
+	numericId: 214,
+	name: 'Pharaoh',
+	expansion: 'advent_of_tcg',
+	palette: 'pharoah',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'balanced',
+	health: 300,
+	primary: {
+		name: 'Targét',
+		cost: ['balanced'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Xibalba',
+		cost: ['balanced', 'balanced'],
+		damage: 80,
+		power:
+			'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -104,7 +100,7 @@ class PharaohRare extends CardOld {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			pickedAfkSlot = null
 		})
-	}
+	},
 }
 
 export default PharaohRare
