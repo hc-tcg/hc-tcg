@@ -21,7 +21,7 @@ export class StatusEffectComponent<
 > {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
-	readonly statusEffect: StatusEffectType
+	readonly props: StatusEffectType
 	readonly order: number
 	readonly creatorEntity: CardEntity
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
@@ -36,16 +36,12 @@ export class StatusEffectComponent<
 	) {
 		this.game = game
 		this.entity = entity
-		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as any
+		this.props = STATUS_EFFECTS[statusEffect.name] as any
 		this.creatorEntity = creator
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
 		this.counter = null
 		this.observerEntity = null
-	}
-
-	public get props(): StatusEffectType {
-		return this.statusEffect as any
 	}
 
 	public get creator(): CardComponent {
@@ -69,12 +65,12 @@ export class StatusEffectComponent<
 
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
-		this.statusEffect.onApply(this.game, this as any, target as any, observer)
+		this.props.onApply(this.game, this as any, target as any, observer)
 
-		if (this.statusEffect.applyLog) {
+		if (this.props.applyLog) {
 			this.game.battleLog.addStatusEffectEntry(
 				this.entity,
-				this.statusEffect.applyLog,
+				this.props.applyLog,
 			)
 		}
 	}
@@ -83,16 +79,16 @@ export class StatusEffectComponent<
 		let observer = this.game.components.get(this.observerEntity)
 		if (!this.target || !observer) return
 		observer.unsubscribeFromEverything()
-		this.statusEffect.onRemoval(
+		this.props.onRemoval(
 			this.game,
 			this as any,
 			this.target as any,
 			observer,
 		)
-		if (this.statusEffect.removeLog) {
+		if (this.props.removeLog) {
 			this.game.battleLog.addStatusEffectEntry(
 				this.entity,
-				this.statusEffect.removeLog,
+				this.props.removeLog,
 			)
 		}
 		this.targetEntity = null

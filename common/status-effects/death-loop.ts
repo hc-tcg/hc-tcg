@@ -37,7 +37,7 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 					StatusEffectComponent,
 					(_game, effect) =>
 						effect.target?.entity === targetHermit.entity &&
-						effect.statusEffect.icon === 'revived_by_deathloop',
+						effect.props.icon === 'revived_by_deathloop',
 				)
 				.forEach((effect) => effect.remove())
 
