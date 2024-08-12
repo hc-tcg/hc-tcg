@@ -2,34 +2,30 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 import Clock from './clock'
 
-class Chest extends Card {
-	pickCondition = query.every(
-		query.card.currentPlayer,
-		query.card.slot(query.slot.discardPile),
-		query.not(query.card.is(Clock)),
-	)
+const pickCondition = query.every(
+	query.card.currentPlayer,
+	query.card.slot(query.slot.discardPile),
+	query.not(query.card.is(Clock)),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'chest',
-		numericId: 4,
-		name: 'Chest',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			'Choose one card from your discard pile and return it to your hand.',
-		attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
-			return game.components.exists(CardComponent, this.pickCondition)
-		}),
-	}
-
-	override onAttach(
+const Chest: SingleUse = {
+	...singleUse,
+	id: 'chest',
+	numericId: 4,
+	name: 'Chest',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		'Choose one card from your discard pile and return it to your hand.',
+	attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
+		return game.components.exists(CardComponent, pickCondition)
+	}),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -41,10 +37,10 @@ class Chest extends Card {
 			data: {
 				modalId: 'selectCards',
 				payload: {
-					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
-					modalDescription: '',
+					modalName: 'Chest',
+					modalDescription: 'Choose a card to retrieve from your discard pile.',
 					cards: game.components
-						.filter(CardComponent, this.pickCondition)
+						.filter(CardComponent, pickCondition)
 						.map((card) => card.entity),
 					selectionSize: 1,
 					primaryButton: {
@@ -76,7 +72,7 @@ class Chest extends Card {
 				// Do nothing
 			},
 		})
-	}
+	},
 }
 
 export default Chest

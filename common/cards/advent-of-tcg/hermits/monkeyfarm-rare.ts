@@ -6,11 +6,11 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class MonkeyfarmRare extends Card {
+class MonkeyfarmRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'monkeyfarm_rare',

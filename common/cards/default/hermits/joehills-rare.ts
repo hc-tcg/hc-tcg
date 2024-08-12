@@ -9,43 +9,39 @@ import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/mu
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class JoeHillsRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'joehills_rare',
-		numericId: 70,
-		name: 'Joe',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'farm',
-		health: 270,
-		primary: {
-			name: 'Grow Hills',
-			cost: ['farm'],
-			damage: 50,
-			power: null,
+const JoeHillsRare: Hermit = {
+	...hermit,
+	id: 'joehills_rare',
+	numericId: 70,
+	name: 'Joe',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'farm',
+	health: 270,
+	primary: {
+		name: 'Grow Hills',
+		cost: ['farm'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Time Skip',
+		cost: ['farm', 'farm', 'any'],
+		damage: 90,
+		power:
+			'Flip a coin.\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
+	},
+	sidebarDescriptions: [
+		{
+			type: 'glossary',
+			name: 'turnSkip',
 		},
-		secondary: {
-			name: 'Time Skip',
-			cost: ['farm', 'farm', 'any'],
-			damage: 90,
-			power:
-				'Flip a coin.\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
-		},
-		sidebarDescriptions: [
-			{
-				type: 'glossary',
-				name: 'turnSkip',
-			},
-		],
-	}
-
-	override onAttach(
+	],
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -60,7 +56,7 @@ class JoeHillsRare extends Card {
 				game.components.exists(
 					StatusEffectComponent,
 					query.effect.is(UsedClockEffect),
-					query.effect.targetEntity(component.entity),
+					query.effect.targetEntity(player.entity),
 				)
 			) {
 				return
@@ -97,7 +93,7 @@ class JoeHillsRare extends Card {
 						.apply(joe.entity),
 				)
 		})
-	}
+	},
 }
 
 export default JoeHillsRare

@@ -1,9 +1,9 @@
 import {isHermit} from 'common/cards/base/types'
 import {ModalData} from 'common/types/game-state'
 import Modal from 'components/modal'
-import {modalRequest} from 'logic/game/game-actions'
 import {getGameState} from 'logic/game/game-selectors'
-import {useDispatch, useSelector} from 'react-redux'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
 
@@ -11,7 +11,7 @@ type Props = {
 	closeModal: () => void
 }
 function CopyAttackModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
@@ -23,17 +23,35 @@ function CopyAttackModal({closeModal}: Props) {
 	const hermitFullName = opponentHermitInfo.props.id.split('_')[0]
 
 	const handlePrimary = () => {
-		dispatch(modalRequest({modalResult: {pick: 'primary'}}))
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {pick: 'primary'},
+			},
+		})
 		closeModal()
 	}
 
 	const handleSecondary = () => {
-		dispatch(modalRequest({modalResult: {pick: 'secondary'}}))
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {pick: 'secondary'},
+			},
+		})
 		closeModal()
 	}
 
 	const handleClose = () => {
-		dispatch(modalRequest({modalResult: {cancel: true}}))
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {cancel: true},
+			},
+		})
 		closeModal()
 	}
 

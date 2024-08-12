@@ -2,7 +2,6 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import DiamondArmor from './diamond-armor'
@@ -10,20 +9,17 @@ import GoldArmor from './gold-armor'
 import IronArmor from './iron-armor'
 import NetheriteArmor from './netherite-armor'
 
-class Thorns extends Card {
-	props: Attach = {
-		...attach,
-		id: 'thorns',
-		numericId: 96,
-		name: 'Thorns',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 2,
-		description:
-			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 20hp damage.\nIgnores armour.",
-	}
-
-	override onAttach(
+const Thorns: Attach = {
+	...attach,
+	id: 'thorns',
+	numericId: 96,
+	name: 'Thorns',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 2,
+	description:
+		"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 20hp damage.\nIgnores armour.",
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -69,7 +65,7 @@ class Thorns extends Card {
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			hasTriggered = false
 		})
-	}
+	},
 }
 
 export default Thorns

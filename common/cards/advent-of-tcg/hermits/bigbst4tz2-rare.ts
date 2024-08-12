@@ -11,7 +11,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class BigBSt4tzRare extends Card {
+class BigBSt4tzRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'bigbst4tz2_rare',

@@ -3,39 +3,64 @@ import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function Settings({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
-	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
+
+	const totalGames = stats.w + stats.l + stats.fw + stats.fl + stats.t
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'soundVolume',
+				value: parseInt(ev.currentTarget.value),
+			},
+		})
 	}
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch(setSetting('musicVolume', ev.currentTarget.value))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'musicVolume',
+				value: parseInt(ev.currentTarget.value),
+			},
+		})
 	}
 	const handleMuteSound = () => {
-		dispatch(setSetting('muted', !settings.muted))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'muted',
+				value: !settings.muted,
+			},
+		})
 	}
 
 	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'panoramaEnabled',
+				value: !settings.panoramaEnabled,
+			},
+		})
 	}
-	const getBoolDescriptor = (value?: boolean) => {
+	const getBoolDescriptor = (value: boolean) => {
 		return value ? 'Enabled' : 'Disabled'
 	}
-	const getPercDescriptor = (value?: string) => {
-		if (value !== '0') return `${value}%`
+	const getPercentDescriptor = (value: number) => {
+		if (value !== 0) return `${value}%`
 		return 'Disabled'
 	}
 	const handleGameSettings = () => setMenuSection('game-settings')
@@ -47,6 +72,9 @@ function Settings({setMenuSection}: Props) {
 	const handleUpdates = () => {
 		setUpdatesOpen(true)
 	}
+
+	const winrate =
+		Math.round(((stats.w + stats.fw) / (totalGames - stats.t)) * 10000) / 100
 
 	return (
 		<>
@@ -64,31 +92,36 @@ function Settings({setMenuSection}: Props) {
 				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
-				<div className={css.settings}>
-					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music: {getPercDescriptor(settings.musicVolume)}
-					</Slider>
-					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sounds: {getPercDescriptor(settings.soundVolume)}
-					</Slider>
-					<Button variant="stone" onClick={handleMuteSound}>
-						Muted: {getBoolDescriptor(settings.muted)}
-					</Button>
-					<Button variant="stone" onClick={handlePanoramaToggle}>
-						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-					</Button>
-					<Button variant="stone" onClick={handleGameSettings}>
-						Game Settings
-					</Button>
-					<Button variant="stone" onClick={handleDataSettings}>
-						Data Management
-					</Button>
-					<Button variant="stone" onClick={handleCredits}>
-						Credits
-					</Button>
-					<Button variant="stone" onClick={handleUpdates}>
-						Updates
-					</Button>
+				<h2>Settings</h2>
+				<div className={css.settingsBox}>
+					<div className={css.settings}>
+						<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+							Music Volume: {getPercentDescriptor(settings.musicVolume)}
+						</Slider>
+						<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+							Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
+						</Slider>
+						<Button variant="stone" onClick={handleMuteSound}>
+							Sound: {getBoolDescriptor(!settings.muted)}
+						</Button>
+						<Button variant="stone" onClick={handlePanoramaToggle}>
+							Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+						</Button>
+					</div>
+					<div className={css.settings}>
+						<Button variant="stone" onClick={handleGameSettings}>
+							Game Settings
+						</Button>
+						<Button variant="stone" onClick={handleDataSettings}>
+							Data Management
+						</Button>
+						<Button variant="stone" onClick={handleCredits}>
+							Credits
+						</Button>
+						<Button variant="stone" onClick={handleUpdates}>
+							Updates
+						</Button>
+					</div>
 				</div>
 
 				<h2>Statistics</h2>
@@ -117,6 +150,10 @@ function Settings({setMenuSection}: Props) {
 						<div className={css.stat}>
 							<span>Forfeit Losses</span>
 							<span>{stats.fl}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Winrate</span>
+							<span>{totalGames > stats.t ? winrate + '%' : 'N/A'}</span>
 						</div>
 					</div>
 				</div>

@@ -1,4 +1,4 @@
-import type {CardProps} from '../cards/base/types'
+import type {Card} from '../cards/base/types'
 import type {
 	CardComponent,
 	SlotComponent,
@@ -6,7 +6,8 @@ import type {
 } from '../components'
 import type {ComponentQuery} from '../components/query'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
-import {StatusEffectProps} from '../status-effects/status-effect'
+import {PlayerId} from '../models/player-model'
+import {StatusEffect} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
 import {TurnActions} from './game-state'
@@ -15,7 +16,7 @@ export type PlayerInfo = {
 	playerName: string
 	censoredPlayerName: string
 	minecraftName: string
-	playerId: string
+	playerId: PlayerId
 	playerSecret: string
 	playerDeck: PlayerDeckT
 }
@@ -31,16 +32,16 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 	return t as WithoutFunctions<T>
 }
 
-export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	readonly props: WithoutFunctions<Props>
+export type LocalCardInstance<CardType extends Card = Card> = {
+	readonly props: WithoutFunctions<CardType>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null
-	turnedOver: boolean
+	readonly turnedOver: boolean
 }
 
 export type LocalStatusEffectInstance<
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffect = StatusEffect,
 > = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string

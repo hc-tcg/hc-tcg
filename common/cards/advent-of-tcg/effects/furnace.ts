@@ -10,7 +10,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Furnace extends Card {
+class Furnace extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'furnace',

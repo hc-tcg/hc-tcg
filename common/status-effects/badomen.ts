@@ -4,24 +4,17 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {Counter, statusEffect} from './status-effect'
 
-class BadOmenEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'badomen',
-		name: 'Bad Omen',
-		description: 'All coinflips are tails.',
-		counter: 3,
-		counterType: 'turns',
-	}
+const BadOmenEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'badomen',
+	name: 'Bad Omen',
+	description: 'All coinflips are tails.',
+	counter: 3,
+	counterType: 'turns',
 
-	override onApply(
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -29,7 +22,7 @@ class BadOmenEffect extends CardStatusEffect {
 	) {
 		const {player, opponentPlayer} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
@@ -52,7 +45,7 @@ class BadOmenEffect extends CardStatusEffect {
 			}
 			return coinFlips
 		})
-	}
+	},
 }
 
 export default BadOmenEffect

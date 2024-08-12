@@ -80,10 +80,12 @@ export class BattleLogModel {
 			if (!playerEntity) continue
 
 			this.game.chat.push({
+				sender: {
+					type: 'system',
+					id: playerEntity,
+				},
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
-				sender: playerEntity,
-				systemMessage: true,
 			})
 		}
 
@@ -97,7 +99,10 @@ export class BattleLogModel {
 			),
 		)
 
-		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
+		broadcast(this.game.getPlayers(), {
+			type: 'CHAT_UPDATE',
+			messages: this.game.chat,
+		})
 	}
 
 	private genCardName(
@@ -133,7 +138,7 @@ export class BattleLogModel {
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
 
-		const logMessage = card.card.getLog({
+		const logMessage = card.props.getLog({
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
@@ -151,7 +156,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
-				id: pickedCard?.card.props.id || invalid,
+				id: pickedCard?.props.id || invalid,
 				name: pickedCard
 					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
 					: invalid,
@@ -321,13 +326,18 @@ export class BattleLogModel {
 
 	public addTurnEndEntry() {
 		this.game.chat.push({
+			sender: {
+				type: 'system',
+				id: this.game.opponentPlayer.entity,
+			},
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.entity,
-			systemMessage: true,
 		})
 
-		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
+		broadcast(this.game.getPlayers(), {
+			type: 'CHAT_UPDATE',
+			messages: this.game.chat,
+		})
 	}
 
 	public addStatusEffectEntry(

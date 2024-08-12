@@ -30,12 +30,14 @@
 	},
 	"json": {
 		"formatter": {
-			"enabled": true
+			"enabled": true,
+			"indentStyle": "tab"
 		}
 	},
 	"css": {
 		"formatter": {
-			"enabled": true
+			"enabled": true,
+			"indentStyle": "tab"
 		}
 	}
 }

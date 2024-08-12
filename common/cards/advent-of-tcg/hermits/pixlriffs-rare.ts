@@ -9,7 +9,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PixlriffsRare extends Card {
+class PixlriffsRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'pixlriffs_rare',

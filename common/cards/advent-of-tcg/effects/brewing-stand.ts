@@ -2,11 +2,11 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class BrewingStand extends Card {
+class BrewingStand extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'brewing_stand',

@@ -6,7 +6,7 @@ import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Trapdoor extends Card {
+class Trapdoor extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'trapdoor',

@@ -6,29 +6,25 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Composter extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'composter',
-		numericId: 7,
-		name: 'Composter',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 0,
-		description:
-			'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
-		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			(_game, pos) => pos.player.getHand().length >= 2,
-		),
-	}
-
-	override onAttach(
+const Composter: SingleUse = {
+	...singleUse,
+	id: 'composter',
+	numericId: 7,
+	name: 'Composter',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 0,
+	description:
+		'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
+	log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(_game, pos) => pos.player.getHand().length >= 2,
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		_observer: ObserverComponent,
@@ -67,7 +63,7 @@ class Composter extends Card {
 				player.draw(2)
 			},
 		})
-	}
+	},
 }
 
 export default Composter

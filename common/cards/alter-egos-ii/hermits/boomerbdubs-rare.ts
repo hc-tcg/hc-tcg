@@ -8,40 +8,36 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class BoomerBdubsRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'boomerbdubs_rare',
-		numericId: 228,
-		name: 'Boomer Bdubs',
-		shortName: 'Boomer B.',
-		expansion: 'alter_egos_ii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'redstone',
-		health: 290,
-		primary: {
-			name: 'Boom',
-			cost: ['any'],
-			damage: 30,
-			power: null,
-		},
-		secondary: {
-			name: 'Watch This',
-			cost: ['redstone', 'redstone'],
-			damage: 80,
-			power:
-				'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
-		},
-	}
-
-	public override onAttach(
+const BoomerBdubsRare: Hermit = {
+	...hermit,
+	id: 'boomerbdubs_rare',
+	numericId: 228,
+	name: 'Boomer Bdubs',
+	shortName: 'Boomer B.',
+	expansion: 'alter_egos_ii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'redstone',
+	health: 290,
+	primary: {
+		name: 'Boom',
+		cost: ['any'],
+		damage: 30,
+		power: null,
+	},
+	secondary: {
+		name: 'Watch This',
+		cost: ['redstone', 'redstone'],
+		damage: 80,
+		power:
+			'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -74,7 +70,7 @@ class BoomerBdubsRare extends Card {
 					data: {
 						modalId: 'selectCards',
 						payload: {
-							modalName: 'Boomer BDubs: Coin Flip',
+							modalName: 'Boomer BDubs - Watch This',
 							modalDescription: 'Do you want to flip a coin for your attack?',
 							cards: [],
 							selectionSize: 0,
@@ -135,7 +131,7 @@ class BoomerBdubsRare extends Card {
 
 			attack.addDamage(component.entity, extraDamage)
 		})
-	}
+	},
 }
 
 export default BoomerBdubsRare

@@ -7,6 +7,7 @@ import {
 	LocalStatusEffectInstance,
 } from 'common/types/server-requests'
 import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import HealthSlot from './board-health'
 import Slot from './board-slot'
@@ -46,10 +47,12 @@ const BoardRow = ({
 	active,
 	statusEffects,
 }: BoardRowProps) => {
+	const settings = useSelector(getSettings)
 	const localGameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
 
 	let shouldDim = !!(
+		settings.slotHighlightingEnabled &&
 		(selectedCard || localGameState?.currentPickableSlots) &&
 		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
 	)

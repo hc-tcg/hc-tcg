@@ -13,7 +13,7 @@ import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Biffa2001Rare extends Card {
+class Biffa2001Rare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'biffa2001_rare',

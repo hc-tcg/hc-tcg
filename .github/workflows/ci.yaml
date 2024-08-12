@@ -33,7 +33,7 @@ jobs:
         run: npm run server:tsc
 
       - name: Run biome
-        run: npx run check
+        run: npm run lint
 
   unittest:
     name: Run Unit Tests
@@ -44,6 +44,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
 
       - name: Run tests
         run: npm run test

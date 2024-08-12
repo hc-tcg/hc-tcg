@@ -65,7 +65,7 @@ export function loadSavedDeck(deck: SavedDeckT | null): PlayerDeckT | null {
 			let cardInfo = CARDS[card.cardId]
 			if (!cardInfo) return null
 			return {
-				props: WithoutFunctions(cardInfo.props),
+				props: WithoutFunctions(cardInfo),
 				entity: card.cardInstance,
 			}
 		})

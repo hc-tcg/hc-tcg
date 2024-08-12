@@ -4,11 +4,11 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ShubbleYTRare extends Card {
+class ShubbleYTRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'shubbleyt_rare',
