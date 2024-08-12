@@ -5,6 +5,7 @@ import {
 	statusChangedSaga,
 } from './background/connection-status'
 import {playerConnectedSaga, playerDisconnectedSaga} from './player'
+import { safeCall } from 'utils'
 
 function* handler(message: LocalMessage) {
 	switch (message.type) {
@@ -35,5 +36,5 @@ function* handler(message: LocalMessage) {
 }
 
 export default function* handleLocalMessage() {
-	yield* takeEvery('*', handler)
+	yield* takeEvery('*', safeCall, handler)
 }

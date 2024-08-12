@@ -16,6 +16,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import {safeCall} from 'utils'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -59,5 +60,5 @@ function* handler(message: RecievedClientMessage) {
 }
 
 export default function* handleClientMessage() {
-	yield* takeEvery('*', handler)
+	yield* takeEvery('*', safeCall, handler)
 }
