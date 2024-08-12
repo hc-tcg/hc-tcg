@@ -75,6 +75,7 @@
 	margin: 0.3rem;
 	background-color: #1a1d1d;
 	border-radius: 8px;
+	border: #1a1d1d 2px solid;
 	font-family: Minecraft;
 	font-size: 1rem;
 	color: var(--text-light);
@@ -82,5 +83,14 @@
 	.amount {
 		flex-grow: 1;
 		text-align: right;
+	}
+
+	.tokens {
+		color: var(--ultra-rare);
+	}
+
+	&:hover {
+		border: var(--text-light) 2px solid;
+		background-color: #353838;
 	}
 }

@@ -257,14 +257,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		),
 	}
 
-	const cardsWithAmounts: Array<{card: LocalCardInstance; amount: number}> = []
+	const cardsWithAmounts: Array<Array<LocalCardInstance>> = []
 	sortCards(loadedDeck.cards).forEach((card) => {
-		const item = cardsWithAmounts.find((c) => c.card.props.id === card.props.id)
-		if (item) {
-			item.amount++
-			return
-		}
-		cardsWithAmounts.push({card: card, amount: 1})
+		const item = cardsWithAmounts.find((c) => c[0].props.id === card.props.id)
+		if (item) return
+		cardsWithAmounts.push(
+			loadedDeck.cards.filter((c) => c.props.id === card.props.id),
+		)
 	})
 
 	//CARD LOGIC
@@ -654,12 +653,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 						<div className={css.showOnMobile}>
 							Deck Cards
-							{cardsWithAmounts.map((item) => {
+							{cardsWithAmounts.map((cards) => {
 								return (
 									<MobileCardComponent
-										card={item.card.props}
-										amount={item.amount}
-										onClick={() => removeCard(item.card)}
+										cards={cards}
+										onClick={() => removeCard(cards[0])}
+										key={cards[0].entity}
 									></MobileCardComponent>
 								)
 							})}

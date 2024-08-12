@@ -1,54 +1,57 @@
-import {CardProps} from 'common/cards/base/types'
-import {WithoutFunctions} from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip, {getRarity} from './card-tooltip'
 import css from './card.module.scss'
+import {getDeckCost} from 'common/utils/ranks'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: WithoutFunctions<CardProps>
-	amount: number
+	cards: Array<LocalCardInstance>
 	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
 const MobileCardComponent = (props: CardReactProps) => {
-	const {onClick, card, amount} = props
+	const {onClick, cards} = props
 
 	return (
 		<Tooltip
-			tooltip={<CardInstanceTooltip card={props.card} />}
+			tooltip={<CardInstanceTooltip card={props.cards[0].props} />}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
-				<button onClick={() => onClick}>
+				<button onClick={onClick}>
 					<div className={css.MobileCardComponent}>
-						{card.category === 'hermit' && (
+						{cards[0].props.category === 'hermit' && (
 							<img
 								className={css.headInList}
-								src={`/images/hermits-emoji/${card.id.split('_')[0]}.png`}
+								src={`/images/hermits-emoji/${cards[0].props.id.split('_')[0]}.png`}
 							/>
 						)}
-						{(card.category === 'attach' || card.category === 'single_use') && (
+						{(cards[0].props.category === 'attach' ||
+							cards[0].props.category === 'single_use') && (
 							<img
 								className={css.headInList}
-								src={`/images/effects/${card.id}.png`}
+								src={`/images/effects/${cards[0].props.id}.png`}
 							/>
 						)}
-						{card.category === 'item' && (
+						{cards[0].props.category === 'item' && (
 							<img
 								className={css.headInList}
-								src={`/images/types/type-${card.id.split('_')[1]}.png`}
+								src={`/images/types/type-${cards[0].props.id.split('_')[1]}.png`}
 							/>
 						)}
 						<div>
-							{card.name}{' '}
-							{card.category === 'hermit' && <span>{getRarity(card)}</span>}
+							{cards[0].props.name}{' '}
+							{cards[0].props.category === 'hermit' && (
+								<span>{getRarity(cards[0].props)}</span>
+							)}
 						</div>
-						<div className={css.amount}>x{amount}</div>
+						<div className={css.amount}>x{cards.length}</div>
+						<div className={css.tokens}>{getDeckCost(cards)}</div>
 					</div>
 				</button>
 			</div>
