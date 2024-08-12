@@ -1,11 +1,11 @@
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {all, call, takeEvery} from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import {
 	sendGameStateOnReconnect,
 	statusChangedSaga,
 } from './background/connection-status'
 import {playerConnectedSaga, playerDisconnectedSaga} from './player'
-import { safeCall } from 'utils'
 
 function* handler(message: LocalMessage) {
 	switch (message.type) {
