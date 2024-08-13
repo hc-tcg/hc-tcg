@@ -33,3 +33,21 @@
 	overflow-y: scroll;
 	padding: 1rem;
 }
+
+.mobile {
+	display: none;
+	visibility: hidden;
+}
+
+// Mobile
+@media screen and (max-width: 800px) {
+	.mobile {
+		display: inherit;
+		visibility: inherit;
+	}
+
+	.desktop {
+		display: none;
+		visibility: hidden;
+	}
+}

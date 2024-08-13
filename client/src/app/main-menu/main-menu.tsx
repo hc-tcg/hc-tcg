@@ -79,7 +79,7 @@ function MainMenu({setMenuSection}: Props) {
 							Join Private Game
 						</Button>
 						<Button variant="stone" id={css.deck} onClick={handleDeck}>
-							Customize Deck
+							Browse Decks
 						</Button>
 						<Button variant="stone" id={css.settings} onClick={handleSettings}>
 							More

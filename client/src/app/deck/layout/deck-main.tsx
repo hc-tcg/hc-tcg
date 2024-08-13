@@ -1,17 +1,30 @@
 import {ReactNode} from 'react'
 import css from './deck-main.module.scss'
+import classNames from 'classnames'
 
 type Props = {
 	children: ReactNode
+	mobileChildren?: ReactNode
 	header?: ReactNode
 }
 
-function DeckMain({children, header}: Props) {
+function DeckMain({children, header, mobileChildren}: Props) {
 	return (
 		<section className={css.deck}>
-			<div className={css.header}>{header}</div>
+			<div
+				className={classNames(css.header, mobileChildren ? css.desktop : '')}
+			>
+				{header}
+			</div>
 
-			<div className={css.body}>{children}</div>
+			<div className={classNames(css.body, mobileChildren ? css.desktop : '')}>
+				{children}
+			</div>
+			{mobileChildren && (
+				<div className={css.mobile}>
+					<div className={css.body}>{mobileChildren}</div>
+				</div>
+			)}
 		</section>
 	)
 }

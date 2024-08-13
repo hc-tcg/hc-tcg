@@ -26,7 +26,9 @@ const MobileCardComponent = (props: CardReactProps) => {
 		>
 			<div className={css.MobileCardComponentContainer}>
 				<button onClick={onClick}>
-					<div className={css.MobileCardComponent}>
+					<div
+						className={classNames(css.MobileCardComponent, small && css.small)}
+					>
 						{cards[0].props.category === 'hermit' && (
 							<div>
 								<img

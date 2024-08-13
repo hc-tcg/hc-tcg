@@ -194,3 +194,9 @@
 		color: #de9292;
 	}
 }
+
+@media (max-width: 800px) {
+	.cardTooltipContainer {
+		max-width: 100vw;
+	}
+}

@@ -414,7 +414,12 @@
 	}
 
 	.deckList {
-		flex-grow: 1;
+		width: 50%;
+		min-width: 50%;
+		max-width: 50%;
+		background-color: #2b2c2c;
+		border-radius: 0.5vh;
+		height: 70vh;
 	}
 
 	.mobileDeckPreview {
@@ -425,6 +430,8 @@
 	.deckListBox {
 		display: flex;
 		flex-direction: row;
+		height: 100%;
+		gap: 1vh;
 	}
 
 	.filterGroup {
