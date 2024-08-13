@@ -43,8 +43,6 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	printBoardState(game)
-
 	yield* endTurn(game)
 
 	yield* playCard(
@@ -56,8 +54,6 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 			query.slot.hermit,
 		)!,
 	)
-
-	printBoardState(game)
 
 	yield* endTurn(game)
 
@@ -86,8 +82,10 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 	printBoardState(game)
 	yield* endTurn(game)
 
+	printBoardState(game)
 	yield* attack(game, 'primary')
 
+	printBoardState(game)
 	yield* endTurn(game)
 
 	printBoardState(game)
