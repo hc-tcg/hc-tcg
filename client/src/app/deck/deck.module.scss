@@ -401,6 +401,11 @@
 	visibility: hidden;
 }
 
+.mobileSelector {
+	height: 100%;
+	overflow: hidden;
+}
+
 /* MOBILE */
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
@@ -419,7 +424,7 @@
 		max-width: 50%;
 		background-color: #2b2c2c;
 		border-radius: 0.5vh;
-		height: 70vh;
+		min-height: 100%;
 	}
 
 	.mobileDeckPreview {
@@ -432,6 +437,7 @@
 		flex-direction: row;
 		height: 100%;
 		gap: 1vh;
+		flex-grow: 1;
 	}
 
 	.filterGroup {

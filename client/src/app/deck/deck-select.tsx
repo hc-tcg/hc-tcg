@@ -332,7 +332,12 @@ function SelectDeck({
 						</>
 					}
 					mobileChildren={
-						<div>
+						<div className={css.mobileSelector}>
+							<div>
+								Selected Deck: {loadedDeck.name} Cards:{' '}
+								{loadedDeck.cards.length} Tokens:{' '}
+								{getDeckCost(loadedDeck.cards)}
+							</div>
 							<div className={css.filterGroup}>
 								<Button
 									variant="default"
@@ -368,6 +373,29 @@ function SelectDeck({
 										<span>Delete</span>
 									</Button>
 								)}
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setMode('create')}
+								>
+									New Deck
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setShowImportModal(!showImportModal)}
+								>
+									<ExportIcon reversed />
+									Import
+								</Button>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setShowMassExportModal(!showMassExportModal)}
+								>
+									<ExportIcon />
+									<span>Mass Export</span>
+								</Button>
 							</div>
 							<div className={css.deckListBox}>
 								<div className={css.deckList}>{deckList}</div>
