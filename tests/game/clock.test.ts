@@ -1,5 +1,4 @@
-import assert from 'assert'
-import {describe, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Clock from 'common/cards/default/single-use/clock'
 import {SlotComponent, StatusEffectComponent} from 'common/components'
@@ -45,20 +44,20 @@ function* testClockHelperSaga(game: GameModel) {
 
 	yield* applyEffect(game)
 
-	assert(
+	expect(
 		game.components.find(
 			StatusEffectComponent,
 			query.effect.targetEntity(game.opponentPlayer.entity),
 			query.effect.is(TurnSkippedEffect),
 		),
-	)
-	assert(
+	).toBeTruthy()
+	expect(
 		game.components.find(
 			StatusEffectComponent,
 			query.effect.targetEntity(game.currentPlayer.entity),
 			query.effect.is(UsedClockEffect),
 		),
-	)
+	).toBeTruthy()
 }
 
 describe('Test Clock', () => {
