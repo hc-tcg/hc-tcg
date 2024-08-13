@@ -27,7 +27,7 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			hookValue.listeners.forEach(([observer, _], i) => {
+			hookValue.listeners.forEach(([observer, _args, _key], i) => {
 				let target = game.components.get(
 					game.components.get(observer)?.wrappingEntity || null,
 				)

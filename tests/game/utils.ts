@@ -50,7 +50,7 @@ export function* playCard(
 		type: localMessages.GAME_TURN_ACTION,
 		playerEntity: game.currentPlayer.entity,
 		action: {
-			type: slotToPlayCardAction[slot.type],
+			type: slotToPlayCardAction[card.props.category],
 			card: getLocalCard(game, card),
 			slot: slot.entity,
 		},
@@ -69,7 +69,7 @@ export function* applyEffect(game: GameModel) {
 
 export function* attack(
 	game: GameModel,
-	attack: 'primary' | 'secondary' | 'single_use',
+	attack: 'primary' | 'secondary' | 'single-use',
 ) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
