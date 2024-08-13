@@ -558,7 +558,6 @@ function* turnActionsSaga(game: GameModel) {
 						// There are no active requests left, and we're in the middle of an attack. Execute it now.
 						const turnAction: AttackActionData = {
 							type: attackToAttackAction[currentAttack],
-							player: game.currentPlayer.entity,
 						}
 						yield* call(attackSaga, game, turnAction, false)
 					}

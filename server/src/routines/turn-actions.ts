@@ -336,7 +336,6 @@ export function* modalRequestSaga(
 			// There are no active requests left, and we're in the middle of an attack. Execute it now.
 			const turnAction: AttackActionData = {
 				type: attackToAttackAction[game.state.turn.currentAttack],
-				player: game.currentPlayer.entity,
 			}
 			const attackResult = yield* attackSaga(game, turnAction, false)
 
@@ -396,7 +395,6 @@ export function* pickRequestSaga(
 		// There are no active requests left, and we're in the middle of an attack. Execute it now.
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
-			player: game.currentPlayer.entity,
 		}
 		const attackResult = yield* attackSaga(game, turnAction, false)
 

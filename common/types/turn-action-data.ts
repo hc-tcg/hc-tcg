@@ -35,7 +35,6 @@ export type ChangeActiveHermitActionData = {
 
 export type AttackActionData = {
 	type: AttackAction
-	player: PlayerEntity
 }
 
 export type PickSlotActionData = {

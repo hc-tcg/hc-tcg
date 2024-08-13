@@ -1,7 +1,10 @@
 import {Card} from 'common/cards/base/types'
 import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
 import {GameModel, GameSettings} from 'common/models/game-model'
-import {slotToPlayCardAction} from 'common/types/turn-action-data'
+import {
+	attackToAttackAction,
+	slotToPlayCardAction,
+} from 'common/types/turn-action-data'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
@@ -60,6 +63,19 @@ export function* applyEffect(game: GameModel) {
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'APPLY_EFFECT',
+		},
+	})
+}
+
+export function* attack(
+	game: GameModel,
+	attack: 'primary' | 'secondary' | 'single_use',
+) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: attackToAttackAction[attack],
 		},
 	})
 }
