@@ -2,42 +2,38 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {CardEntity, RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import GoldenAxe from '../../default/single-use/golden-axe'
 
-class DwarfImpulseRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'dwarfimpulse_rare',
-		numericId: 152,
-		name: 'Dwarf Impulse',
-		shortName: 'D. Impulse',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'miner',
-		health: 260,
-		primary: {
-			name: 'Barrel Roll',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Can I Axe You A Question?',
-			shortName: 'Axe A Question',
-			cost: ['miner', 'miner'],
-			damage: 80,
-			power:
-				"When used with a Golden Axe effect card, all effect cards attached to your opponent's Hermits are ignored, and you can choose one of your opponent's AFK Hermits to take all damage from Golden Axe.",
-		},
-	}
-
-	override onAttach(
+const DwarfImpulseRare: Hermit = {
+	...hermit,
+	id: 'dwarfimpulse_rare',
+	numericId: 152,
+	name: 'Dwarf Impulse',
+	shortName: 'D. Impulse',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'miner',
+	health: 260,
+	primary: {
+		name: 'Barrel Roll',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Can I Axe You A Question?',
+		shortName: 'Axe A Question',
+		cost: ['miner', 'miner'],
+		damage: 80,
+		power:
+			"When used with a Golden Axe effect card, all effect cards attached to your opponent's Hermits are ignored, and you can choose one of your opponent's AFK Hermits to take all damage from Golden Axe.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -112,7 +108,7 @@ class DwarfImpulseRare extends Card {
 			goldenAxeRedirect = null
 			goldenAxeEntity = null
 		})
-	}
+	},
 }
 
 export default DwarfImpulseRare

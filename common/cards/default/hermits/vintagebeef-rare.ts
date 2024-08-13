@@ -6,37 +6,33 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class VintageBeefRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'vintagebeef_rare',
-		numericId: 103,
-		name: 'Beef',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'builder',
-		health: 290,
-		primary: {
-			name: 'Pojk',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Beefy Tunes',
-			cost: ['builder', 'builder'],
-			damage: 80,
-			power:
-				'Flip a coin.\nIf heads, all status effects are removed from your active and AFK Hermits.',
-		},
-	}
-
-	override onAttach(
+const VintageBeefRare: Hermit = {
+	...hermit,
+	id: 'vintagebeef_rare',
+	numericId: 103,
+	name: 'Beef',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'builder',
+	health: 290,
+	primary: {
+		name: 'Pojk',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Beefy Tunes',
+		cost: ['builder', 'builder'],
+		damage: 80,
+		power:
+			'Flip a coin.\nIf heads, all status effects are removed from your active and AFK Hermits.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -63,7 +59,7 @@ class VintageBeefRare extends Card {
 
 			removeFrom.forEach((effect) => effect.remove())
 		})
-	}
+	},
 }
 
 export default VintageBeefRare

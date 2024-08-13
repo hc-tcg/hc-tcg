@@ -1,40 +1,36 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class HorseHeadHypnoRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'horseheadhypno_rare',
-		numericId: 158,
-		name: 'Horse Head Hypno',
-		shortName: 'H. H. Hypno',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'builder',
-		health: 260,
-		primary: {
-			name: 'Nice Guy',
-			cost: ['builder'],
-			damage: 60,
-			power: null,
-		},
-		secondary: {
-			name: 'Restock',
-			cost: ['builder', 'builder', 'any'],
-			damage: 90,
-			power:
-				'After this attack, choose one Item card from your discard pile and return it to your hand.',
-		},
-	}
-
-	override onAttach(
+const HorseHeadHypnoRare: Hermit = {
+	...hermit,
+	id: 'horseheadhypno_rare',
+	numericId: 158,
+	name: 'Horse Head Hypno',
+	shortName: 'H. H. Hypno',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'builder',
+	health: 260,
+	primary: {
+		name: 'Nice Guy',
+		cost: ['builder'],
+		damage: 60,
+		power: null,
+	},
+	secondary: {
+		name: 'Restock',
+		cost: ['builder', 'builder', 'any'],
+		damage: 90,
+		power:
+			'After this attack, choose one Item card from your discard pile and return it to your hand.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -58,9 +54,9 @@ class HorseHeadHypnoRare extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName:
-							'Horse Head Hypno: Choose an item card to retrieve from your discard pile.',
-						modalDescription: '',
+						modalName: 'Horse Head Hypno - Restock',
+						modalDescription:
+							'Choose an item card to retrieve from your discard pile.',
 						cards: game.components
 							.filter(CardComponent, modalCondition)
 							.map((card) => card.entity),
@@ -90,7 +86,7 @@ class HorseHeadHypnoRare extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default HorseHeadHypnoRare

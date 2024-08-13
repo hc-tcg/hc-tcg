@@ -1,47 +1,66 @@
+import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
+import {PlayerId} from 'common/models/player-model'
+import {GamePlayerEndOutcomeT} from 'common/types/game-state'
 import {getOpponentId} from '../utils'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
-//@ts-ignore
-export const getGameOutcome = (game, endResult) => {
+export const getGameOutcome = (game: GameModel, endResult: any) => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) return 'forfeit'
 	if (Object.hasOwn(endResult, 'playerRemoved')) return 'forfeit'
-	if (game.endInfo.deadPlayerIds.length === 2) return 'tie'
+	if (game.endInfo.deadPlayerEntities.length === 2) return 'tie'
 	return 'player_won'
 }
 
-//@ts-ignore
-export const getGamePlayerOutcome = (game, endResult, playerId) => {
+export const getGamePlayerOutcome = (
+	game: GameModel,
+	endResult: any,
+	playerId: PlayerId,
+): GamePlayerEndOutcomeT => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		const triggerPlayerId = endResult.forfeit.playerId
 		return triggerPlayerId === playerId ? 'forfeit_loss' : 'forfeit_win'
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		const triggerPlayerId = endResult.playerRemoved.payload.id
+		const triggerPlayerId = endResult.playerRemoved.player.id
 		return triggerPlayerId === playerId ? 'leave_loss' : 'leave_win'
 	}
-	if (game.endInfo.deadPlayerIds.length === 2) return 'tie'
-	const deadId = game.endInfo.deadPlayerIds[0]
-	if (!deadId) return 'unknown'
-	if (deadId === playerId) return 'you_lost'
+	if (game.endInfo.deadPlayerEntities.length === 2) return 'tie'
+	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
+	if (!deadPlayerEntity) return 'unknown'
+
+	let deadPlayer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) =>
+			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+	)
+	if (!deadPlayer) return 'unknown'
+
+	if (deadPlayer.playerId === playerId) return 'you_lost'
 	return 'you_won'
 }
 
-//@ts-ignore
-export const getWinner = (game, endResult) => {
+export const getWinner = (game: GameModel, endResult: any) => {
 	if (Object.hasOwn(endResult, 'timeout')) return null
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		return getOpponentId(game, endResult.forfeit.playerId)
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		return getOpponentId(game, endResult.playerRemoved.payload.id)
+		return getOpponentId(game, endResult.playerRemoved.player.id)
 	}
-	if (game.endInfo.deadPlayerIds.length === 2) return null
-	const deadId = game.endInfo.deadPlayerIds[0]
-	if (!deadId) return null
-	return getOpponentId(game, deadId)
+	if (game.endInfo.deadPlayerEntities.length === 2) return null
+	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
+	if (!deadPlayerEntity) return null
+	let deadPlayer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) =>
+			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+	)
+	if (!deadPlayer) return null
+	return getOpponentId(game, deadPlayer.playerId)
 }

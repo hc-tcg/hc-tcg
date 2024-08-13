@@ -1,8 +1,7 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import type {PlayerModel} from '../models/player-model'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -17,6 +16,13 @@ import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+
+/** The minimal information that must be known about a player to start a game */
+export type PlayerDefs = {
+	name: string
+	minecraftName: string
+	censoredName: string
+}
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -121,7 +127,10 @@ export class PlayerComponent {
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void
+			(
+				oldActiveHermit: CardComponent | null,
+				newActiveHermit: CardComponent,
+			) => void
 		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
@@ -130,7 +139,7 @@ export class PlayerComponent {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
@@ -232,7 +241,7 @@ export class PlayerComponent {
 		return cards
 	}
 
-	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
@@ -296,6 +305,13 @@ export class PlayerComponent {
 					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
+		} else {
+			let newHermit = newRow.getHermit()
+			if (!newHermit)
+				throw new Error(
+					'Should not be able to change from no active row to an active row with no hermits.',
+				)
+			this.hooks.onActiveRowChange.call(null, newHermit)
 		}
 
 		return true
@@ -310,10 +326,10 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[
-						card,
-						this.game.getPickableSlots(card.card.props.attachCondition),
-					] as [CardComponent, Array<SlotEntity>],
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
+						CardComponent,
+						Array<SlotEntity>,
+					],
 			)
 	}
 }

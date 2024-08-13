@@ -1,10 +1,10 @@
 import {CardComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Cat extends Card {
+class Cat extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'cat',
@@ -38,8 +38,8 @@ class Cat extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Cat: Draw a card from the bottom of your deck?',
-						modalDescription: '',
+						modalName: 'Cat',
+						modalDescription: 'Draw a card from the bottom of your deck?',
 						cards: [player.pile[0].toLocalCardInstance()],
 						selectionSize: 0,
 						primaryButton: {

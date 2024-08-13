@@ -3,27 +3,25 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
-import {
-	createPrivateGame,
-	joinPrivateGame,
-	joinQueue,
-} from 'logic/matchmaking/matchmaking-actions'
-import {logout} from 'logic/session/session-actions'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () => dispatch(joinQueue())
-	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
-	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
-	const handleLogOut = () => dispatch(logout())
+	const handleJoinQueue = () =>
+		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+	const handleCreatePrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_CREATE})
+	const handleJoinPrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_JOIN})
+	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 

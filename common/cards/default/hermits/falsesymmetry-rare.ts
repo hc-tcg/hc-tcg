@@ -1,36 +1,32 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class FalseSymmetryRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'falsesymmetry_rare',
-		numericId: 23,
-		name: 'False',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'builder',
-		health: 250,
-		primary: {
-			name: 'High Noon',
-			cost: ['builder'],
-			damage: 60,
-			power: null,
-		},
-		secondary: {
-			name: 'Supremacy',
-			cost: ['builder', 'any'],
-			damage: 70,
-			power: 'Flip a coin.\nIf heads, heal this Hermit 40hp.',
-		},
-	}
-
-	override onAttach(
+const FalseSymmetryRare: Hermit = {
+	...hermit,
+	id: 'falsesymmetry_rare',
+	numericId: 23,
+	name: 'False',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'builder',
+	health: 250,
+	primary: {
+		name: 'High Noon',
+		cost: ['builder'],
+		damage: 60,
+		power: null,
+	},
+	secondary: {
+		name: 'Supremacy',
+		cost: ['builder', 'any'],
+		damage: 70,
+		power: 'Flip a coin.\nIf heads, heal this Hermit 40hp.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -52,7 +48,7 @@ class FalseSymmetryRare extends Card {
 				`$p${component.props.name}$ healed $g40hp$`,
 			)
 		})
-	}
+	},
 }
 
 export default FalseSymmetryRare

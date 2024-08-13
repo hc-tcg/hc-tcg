@@ -17,7 +17,9 @@ export type StatusEffectLog = {
 	statusEffect: string
 }
 
-export type StatusEffectProps = {
+export type StatusEffect<
+	T extends CardComponent | PlayerComponent = CardComponent | PlayerComponent,
+> = {
 	/** The icon of the status effect, not including the file extension */
 	icon: string
 	name: string
@@ -26,33 +28,66 @@ export type StatusEffectProps = {
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
 	applyCondition: ComponentQuery<CardComponent | PlayerComponent>
+	/**
+	 * Called when this statusEffect has its target set
+	 */
+	onApply(
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: T,
+		_observer: ObserverComponent,
+	): void
+	/**
+	 * Called when the statusEffect is removed, from either timeout or other means
+	 */
+	onRemoval(
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: T,
+		_observer: ObserverComponent,
+	): void
 }
 
-export type Counter = StatusEffectProps & {
+export type Counter<
+	T extends CardComponent | PlayerComponent = CardComponent | PlayerComponent,
+> = StatusEffect<T> & {
 	counter: number
 	counterType: 'turns' | 'number'
 }
 
 export const statusEffect = {
-	type: 'normal' as StatusEffectProps['type'],
+	type: 'normal' as StatusEffect['type'],
 	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} ${values.verb} inflicted with ${values.statusEffect}`,
 	removeLog: (values: StatusEffectLog) =>
 		`${values.statusEffect} on ${values.target} wore off`,
+	onApply(
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: CardComponent | PlayerComponent,
+		_observer: ObserverComponent,
+	) {},
+	onRemoval(
+		_game: GameModel,
+		_effect: StatusEffectComponent,
+		_target: CardComponent | PlayerComponent,
+		_observer: ObserverComponent,
+	) {},
 }
 
 export const systemStatusEffect = {
-	type: 'system' as StatusEffectProps['type'],
+	...statusEffect,
+	type: 'system' as StatusEffect['type'],
 	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const hiddenStatusEffect = {
-	type: 'hiddenSystem' as StatusEffectProps['type'],
+	...statusEffect,
+	type: 'hiddenSystem' as StatusEffect['type'],
 	icon: '',
-	name: '',
 	description: '',
 	applyCondition: query.anything,
 	applyLog: null,
@@ -60,7 +95,8 @@ export const hiddenStatusEffect = {
 }
 
 export const damageEffect = {
-	type: 'damage' as StatusEffectProps['type'],
+	...statusEffect,
+	type: 'damage' as StatusEffect['type'],
 	applyCondition: (game: GameModel, target: CardComponent | PlayerComponent) =>
 		target instanceof CardComponent &&
 		!game.components.exists(
@@ -74,93 +110,8 @@ export const damageEffect = {
 		`${values.statusEffect} on ${values.target} wore off`,
 }
 
-export function isCounter(props: StatusEffectProps | null): props is Counter {
-	return props !== null && 'counter' in props
-}
-
-export abstract class StatusEffect<
-	T = CardComponent | PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps,
-> {
-	public abstract props: Props
-
-	/**
-	 * Called when this statusEffect has its target set
-	 */
-	public onApply(
-		_game: GameModel,
-		_effect: StatusEffectComponent,
-		_target: T,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called when the statusEffect is removed, from either timeout or other means
-	 */
-	public onRemoval(
-		_game: GameModel,
-		_effect: StatusEffectComponent,
-		_target: T,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
-}
-
-/** A status effect with a card as the target. You should create a card status effect if the effect only
- * effects one card on the game board */
-export abstract class CardStatusEffect extends StatusEffect<CardComponent> {
-	/**
-	 * Called when this statusEffect has its target set
-	 */
-	override onApply(
-		_game: GameModel,
-		_effect: StatusEffectComponent<CardComponent>,
-		_target: CardComponent,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called when the statusEffect is removed, from either timeout or other means
-	 */
-	override onRemoval(
-		_game: GameModel,
-		_effect: StatusEffectComponent<CardComponent>,
-		_target: CardComponent,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
-}
-
-/** A status effect effect with the player as the target. You should create a player status effect if the
- * effect effects all cards on the board */
-export abstract class PlayerStatusEffect extends StatusEffect<PlayerComponent> {
-	/**
-	 * Called when this statusEffect has its target set
-	 */
-	override onApply(
-		_game: GameModel,
-		_effect: StatusEffectComponent<PlayerComponent>,
-		_player: PlayerComponent,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called when the statusEffect is removed, from either timeout or other means
-	 */
-	override onRemoval(
-		_game: GameModel,
-		_effect: StatusEffectComponent<PlayerComponent>,
-		_player: PlayerComponent,
-		_observer: ObserverComponent,
-	) {
-		// default is do nothing
-	}
+export function isCounter<T extends CardComponent | PlayerComponent>(
+	effect: StatusEffect<T>,
+): effect is Counter<T> {
+	return 'counter' in effect
 }

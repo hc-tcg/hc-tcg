@@ -1,4 +1,5 @@
 import {CONFIG} from 'common/config'
+import {LocalMessage, localMessages} from 'messages'
 import {Server} from 'socket.io'
 import store from './be-store'
 import version from './version'
@@ -43,9 +44,10 @@ function startSocketIO(server: any) {
 		// TODO - use playerSecret to verify requests
 		// TODO - Validate json of all requests
 
-		store.dispatch({
-			type: 'CLIENT_CONNECTED',
-			payload: {socket, ...socket.handshake.auth},
+		store.dispatch<LocalMessage>({
+			type: localMessages.CLIENT_CONNECTED,
+			socket,
+			...(socket.handshake.auth as any),
 		})
 		socket.onAny((_event, message) => {
 			if (!message?.type) return
@@ -53,8 +55,8 @@ function startSocketIO(server: any) {
 		})
 		socket.on('disconnect', () => {
 			store.dispatch({
-				type: 'CLIENT_DISCONNECTED',
-				payload: {socket},
+				type: localMessages.CLIENT_DISCONNECTED,
+				socket,
 			})
 		})
 	})

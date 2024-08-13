@@ -1,3 +1,4 @@
+import {Card} from '../cards/base/types'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -6,14 +7,18 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
+import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
-import {PlayerModel} from '../models/player-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
+
+export type PlayerSetupDefs = {
+	model: PlayerDefs
+	deck: Array<number | string | Card>
+}
 
 /* Set up the components that will be referenced during the game. This includes:
  * - The player objects
@@ -22,38 +27,27 @@ import {GameState} from '../types/game-state'
  */
 export function setupComponents(
 	components: ComponentTable,
-	player1: PlayerModel,
-	player2: PlayerModel,
+	player1: PlayerSetupDefs,
+	player2: PlayerSetupDefs,
 ) {
-	let player1Component = components.new(PlayerComponent, player1)
-	let player2Component = components.new(PlayerComponent, player2)
+	let player1Component = components.new(PlayerComponent, player1.model)
+	let player2Component = components.new(PlayerComponent, player2.model)
 
-	components.new(ViewerComponent, {
-		playerOnLeft: player1Component.entity,
-		player: player1,
-		spectator: false,
-	})
-	components.new(ViewerComponent, {
-		playerOnLeft: player2Component.entity,
-		player: player2,
-		spectator: false,
-	})
-
-	setupEcsForPlayer(components, player1, player1Component.entity)
-	setupEcsForPlayer(components, player2, player2Component.entity)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
 	components: ComponentTable,
-	playerModel: PlayerModel,
 	playerEntity: PlayerEntity,
+	deck: Array<number | string | Card>,
 ) {
-	for (const card of playerModel.deck.cards) {
+	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',
 		})
-		components.new(CardComponent, card.props.numericId, slot.entity)
+		components.new(CardComponent, card, slot.entity)
 	}
 
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {

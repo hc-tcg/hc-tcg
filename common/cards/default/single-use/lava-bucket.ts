@@ -6,34 +6,30 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class LavaBucket extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'lava_bucket',
-		numericId: 74,
-		name: 'Lava Bucket',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 3,
-		description: "Burn your opponent's active Hermit.",
-		showConfirmationModal: true,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.slot.opponentHasActiveHermit,
-		),
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'fire',
-			},
-		],
-	}
-
-	override onAttach(
+const LavaBucket: SingleUse = {
+	...singleUse,
+	id: 'lava_bucket',
+	numericId: 74,
+	name: 'Lava Bucket',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 3,
+	description: "Burn your opponent's active Hermit.",
+	showConfirmationModal: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.slot.opponentHasActiveHermit,
+	),
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'fire',
+		},
+	],
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -45,7 +41,7 @@ class LavaBucket extends Card {
 				.new(StatusEffectComponent, FireEffect, component.entity)
 				.apply(opponentPlayer.getActiveHermit()?.entity)
 		})
-	}
+	},
 }
 
 export default LavaBucket

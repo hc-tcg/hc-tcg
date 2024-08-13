@@ -36,37 +36,42 @@
 
 @font-face {
 	font-family: Minecraft;
-	src: url('/fonts/MinecraftRegular-Bmg3.otf');
+	src: url("/fonts/MinecraftRegular-Bmg3.otf");
+}
+
+@font-face {
+	font-family: Unifont;
+	src: url("/fonts/unifont-15.1.05.otf");
 }
 
 @font-face {
 	font-family: MinecraftBold;
-	src: url('/fonts/MinecraftBold-nMK1.otf');
+	src: url("/fonts/MinecraftBold-nMK1.otf");
 }
 
 @font-face {
 	font-family: MinecraftItalic;
-	src: url('/fonts/MinecraftItalic-R8Mo.otf');
+	src: url("/fonts/MinecraftItalic-R8Mo.otf");
 }
 
 @font-face {
 	font-family: Minecrafter;
-	src: url('/fonts/Minecrafter.Reg.ttf');
+	src: url("/fonts/Minecrafter.Reg.ttf");
 }
 
 @font-face {
 	font-family: BangersRegular;
-	src: url('/fonts/BangersRegular.otf');
+	src: url("/fonts/BangersRegular.otf");
 }
 
 @font-face {
 	font-family: BangersBold;
-	src: url('/fonts/BangersBold.otf');
+	src: url("/fonts/BangersBold.otf");
 }
 
 @font-face {
 	font-family: Badaboom;
-	src: url('/fonts/badaboom-bb.regular.otf');
+	src: url("/fonts/badaboom-bb.regular.otf");
 }
 
 * {
@@ -85,8 +90,9 @@ main {
 
 body {
 	margin: 0;
-	font-family: Minecraft, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-family: Minecraft, Unifont, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans",
+		"Helvetica Neue", sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: 1rem;
@@ -98,7 +104,8 @@ body {
 }
 
 code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+		monospace;
 }
 
 h1,
@@ -118,14 +125,14 @@ button {
 }
 
 input:not([type]),
-input[type='text'] {
+input[type="text"] {
 	width: 200px;
 	padding: 0 10px;
 	height: 30px;
 	line-height: 1;
 	vertical-align: bottom;
 	border: 2px solid #000;
-	font-family: Minecraft;
+	font-family: Minecraft, Unifont;
 }
 
 input:focus-visible {

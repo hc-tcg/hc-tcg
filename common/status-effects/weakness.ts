@@ -1,24 +1,27 @@
-import {PlayerStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {Counter, statusEffect} from './status-effect'
 
-export class WeakToBalancedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...statusEffect,
-		icon: 'weak',
-		name: 'Modified Weakness',
-		description: 'This hermit has modified weakness to Balanced type Hermits.',
-	}
-
-	public override onApply(
-		game: GameModel,
+const WeaknessEffect: Counter<CardComponent> = {
+	...statusEffect,
+	icon: 'weakness',
+	name: 'Weakness',
+	description: "This Hermit is weak to the opponent's active Hermit's type.",
+	counter: 3,
+	counterType: 'turns',
+	onApply(
+		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!effect.counter) return
@@ -29,8 +32,14 @@ export class WeakToBalancedEffect extends PlayerStatusEffect {
 
 		observer.subscribe(player.hooks.beforeDefence, (attack) => {
 			if (!target.slot.inRow()) return
-			if (attack.targetEntity !== target.slot.rowEntity || attack.createWeakness === 'never') return
+			if (
+				attack.targetEntity !== target.slot.rowEntity ||
+				attack.createWeakness === 'never'
+			)
+				return
 			attack.createWeakness = 'always'
 		})
-	}
+	},
 }
+
+export default WeaknessEffect

@@ -5,7 +5,7 @@ import type {
 	StatusEffectEntity,
 } from '../entities'
 import {GameModel} from '../models/game-model'
-import {StatusEffect, StatusEffectProps} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
 import {PlayerComponent} from './player-component'
@@ -17,11 +17,11 @@ export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent =
 		| CardComponent
 		| PlayerComponent,
-	Props extends StatusEffectProps = StatusEffectProps,
+	StatusEffectType extends StatusEffect<TargetT> = StatusEffect<TargetT>,
 > {
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
-	readonly statusEffect: StatusEffect<Props>
+	readonly props: StatusEffectType
 	readonly order: number
 	readonly creatorEntity: CardEntity
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
@@ -31,24 +31,17 @@ export class StatusEffectComponent<
 	constructor(
 		game: GameModel,
 		entity: StatusEffectEntity,
-		statusEffect: new () => StatusEffect<TargetT>,
+		statusEffect: StatusEffect<TargetT>,
 		creator: CardEntity,
 	) {
 		this.game = game
 		this.entity = entity
-		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<
-			any,
-			Props
-		>
+		this.props = STATUS_EFFECTS[statusEffect.name] as any
 		this.creatorEntity = creator
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
 		this.counter = null
 		this.observerEntity = null
-	}
-
-	public get props(): Props {
-		return this.statusEffect.props as any
 	}
 
 	public get creator(): CardComponent {
@@ -72,13 +65,10 @@ export class StatusEffectComponent<
 
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
-		this.statusEffect.onApply(this.game, this as any, target as any, observer)
+		this.props.onApply(this.game, this, target, observer)
 
-		if (this.statusEffect.props.applyLog) {
-			this.game.battleLog.addStatusEffectEntry(
-				this.entity,
-				this.statusEffect.props.applyLog,
-			)
+		if (this.props.applyLog) {
+			this.game.battleLog.addStatusEffectEntry(this.entity, this.props.applyLog)
 		}
 	}
 
@@ -86,16 +76,11 @@ export class StatusEffectComponent<
 		let observer = this.game.components.get(this.observerEntity)
 		if (!this.target || !observer) return
 		observer.unsubscribeFromEverything()
-		this.statusEffect.onRemoval(
-			this.game,
-			this as any,
-			this.target as any,
-			observer,
-		)
-		if (this.statusEffect.props.removeLog) {
+		this.props.onRemoval(this.game, this as any, this.target as any, observer)
+		if (this.props.removeLog) {
 			this.game.battleLog.addStatusEffectEntry(
 				this.entity,
-				this.statusEffect.props.removeLog,
+				this.props.removeLog,
 			)
 		}
 		this.targetEntity = null

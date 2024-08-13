@@ -1,11 +1,11 @@
 import {CardComponent} from '../../../components'
 import {query} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Brush extends Card {
+class Brush extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'brush',
@@ -36,9 +36,9 @@ class Brush extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Brush: Choose cards to place on the top of your deck.',
+						modalName: 'Brush',
 						modalDescription:
-							'Select cards you would like to draw sooner first.',
+							'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
 						cards: player.pile
 							.slice(0, 3)
 							.map((card) => card.toLocalCardInstance()),

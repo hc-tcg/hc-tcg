@@ -1,11 +1,11 @@
 import {CardComponent} from '../../../components'
 import {query} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Lantern extends Card {
+class Lantern extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'lantern',
@@ -36,8 +36,8 @@ class Lantern extends Card {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Lantern: Choose 2 cards to draw immediately.',
-						modalDescription: '',
+						modalName: 'Lantern',
+						modalDescription: 'Choose 2 cards to draw immediately.',
 						cards: player.pile
 							.slice(0, 4)
 							.map((card) => card.toLocalCardInstance()),
@@ -68,8 +68,8 @@ class Lantern extends Card {
 						data: {
 							modalId: 'selectCards',
 							payload: {
-								modalName: 'Lantern: Cards your opponent drew.',
-								modalDescription: '',
+								modalName: 'Lantern',
+								modalDescription: 'Cards your opponent drew.',
 								cards: modalResult.cards,
 								selectionSize: 0,
 								primaryButton: {

@@ -1,7 +1,6 @@
-import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {Attach, Card, HasHealth} from '../cards/base/types'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
-import type {BattleLogModel} from '../models/battle-log-model'
 import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'
@@ -19,7 +18,7 @@ export type LocalRowState = {
 	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
 	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
-	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<Card> | null}>
 	health: number | null
 }
 
@@ -140,6 +139,13 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
+	| 'timeout'
+	| 'forfeit'
+	| 'tie'
+	| 'player_won'
+	| 'error'
+
+export type GamePlayerEndOutcomeT =
 	| 'client_crash'
 	| 'server_crash'
 	| 'timeout'
@@ -153,7 +159,7 @@ export type GameEndOutcomeT =
 	| 'you_lost'
 	| null
 
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
@@ -205,34 +211,20 @@ export type LocalGameState = {
 	}
 }
 
+type MessageSender =
+	| {
+			type: 'viewer'
+			id: PlayerId
+	  }
+	| {
+			type: 'system'
+			id: PlayerEntity
+	  }
+
 export type Message = {
-	/** Chat messages are tied to the player id, while battle log messages are tied to entity.
-	 * This allows us to seperate the concept of players and viewers.
-	 */
-	sender: PlayerId | PlayerEntity
-	systemMessage: boolean
+	sender: MessageSender
 	message: FormattedTextNode
 	createdAt: number
-}
-
-// state sent to client
-export type LocalGameRoot = {
-	localGameState: LocalGameState | null
-	time: number
-
-	selectedCard: LocalCardInstance | null
-	openedModal: {
-		id: string
-		info: null
-	} | null
-	endGameOverlay: {
-		reason: GameEndReasonT
-		outcome: GameEndOutcomeT
-	} | null
-	chat: Array<Message>
-	battleLog: BattleLogModel | null
-	currentCoinFlip: CurrentCoinFlip | null
-	opponentConnected: boolean
 }
 
 export type GameLog = {
