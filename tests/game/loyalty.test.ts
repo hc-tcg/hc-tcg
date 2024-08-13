@@ -81,7 +81,6 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* endTurn(game)
 
 	yield* attack(game, 'primary')
-	console.log(game.currentPlayer.getHand())
 
 	yield* endTurn(game)
 
