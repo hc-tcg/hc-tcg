@@ -92,7 +92,7 @@ function* testClockHelperSaga(game: GameModel) {
 
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'APPLY_EFFECT',
 		},

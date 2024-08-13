@@ -235,10 +235,10 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 		const action = actionAny as LocalMessage
 		return (
 			action.type === localMessages.GAME_TURN_ACTION &&
-			'entity' in action &&
+			'playerEntity' in action &&
 			'action' in action &&
 			action.action.type === actionType &&
-			action.entity === playerEntity
+			action.playerEntity === playerEntity
 		)
 	}
 }
