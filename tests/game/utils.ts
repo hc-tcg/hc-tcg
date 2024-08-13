@@ -95,25 +95,21 @@ const defaultGameSettings = {
 	maxTurnTime: 90 * 1000,
 	extraActionTime: 30 * 1000,
 	showHooksState: {
-		enabled: true,
+		enabled: false,
 		clearConsole: false,
 	},
 	blockedActions: [],
 	availableActions: [],
 	autoEndTurn: false,
 	disableDeckOut: true,
-	startWithAllCards: true,
+	startWithAllCards: false,
 	unlimitedCards: false,
 	oneShotMode: false,
 	disableDamage: false,
-	noItemRequirements: true,
+	noItemRequirements: false,
 }
 
-/** Test a saga against a game. The game is created with sane default settings.
- * Test games will put all cards in your hand to begin with and do not allow players
- * deck out. Additionally item requirements are disabbledd.
- * These defaults are chosen because it makes it the easiest to verify card interactions.
- */
+/** Test a saga against a game. The game is created with default settings similar to what would be found in production. */
 export function testGame(
 	options: {
 		saga: any

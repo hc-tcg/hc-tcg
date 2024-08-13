@@ -63,10 +63,13 @@ function* testClockHelperSaga(game: GameModel) {
 
 describe('Test Clock', () => {
 	test('Test Clock', () => {
-		testGame({
-			saga: testClockHelperSaga,
-			playerOneDeck: [EthosLabCommon],
-			playerTwoDeck: [EthosLabCommon, Clock],
-		})
+		testGame(
+			{
+				saga: testClockHelperSaga,
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon, Clock],
+			},
+			{startWithAllCards: true},
+		)
 	})
 })

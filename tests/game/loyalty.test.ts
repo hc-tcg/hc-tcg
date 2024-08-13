@@ -6,7 +6,6 @@ import BalancedItem from 'common/cards/default/items/balanced-common'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {printBoardState} from 'server/utils'
 import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
@@ -79,16 +78,12 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	printBoardState(game)
 	yield* endTurn(game)
 
-	printBoardState(game)
 	yield* attack(game, 'primary')
 
-	printBoardState(game)
 	yield* endTurn(game)
 
-	printBoardState(game)
 	// The player should only have retrieved one item from the game board in there hand.
 	// The rest of the cards have been played.
 	assert(game.currentPlayer.getHand().length === 1)
@@ -108,6 +103,7 @@ describe('Test Loyalty', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 			},
+			{oneShotMode: true, noItemRequirements: true, startWithAllCards: true},
 		)
 	})
 })
