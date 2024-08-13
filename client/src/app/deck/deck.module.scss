@@ -391,14 +391,60 @@
 	}
 }
 
+.showOnMobile {
+	display: none;
+	visibility: hidden;
+}
+
+.mobileDeckPreview {
+	display: none;
+	visibility: hidden;
+}
+
+.mobileSelector {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: 1vh;
+}
+
 /* MOBILE */
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
 		display: none;
+		visibility: hidden;
+	}
+
+	.showOnMobile {
+		display: inherit;
+		visibility: visible;
+	}
+
+	.deckList {
+		width: 50%;
+		min-width: 50%;
+		max-width: 50%;
+		background-color: #2b2c2c;
+		border-radius: 0.5vh;
+		min-height: 100%;
+	}
+
+	.mobileDeckPreview {
+		display: inherit;
+		visibility: visible;
+	}
+
+	.deckListBox {
+		display: flex;
+		flex-direction: row;
+		height: 100%;
+		gap: 1vh;
+		flex-grow: 1;
 	}
 
 	.filterGroup {
 		justify-content: center;
+		gap: 0rem;
 	}
 }
 

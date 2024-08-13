@@ -34,6 +34,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import MobileCardList from 'components/card-list/mobile-card-list'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -330,6 +331,78 @@ function SelectDeck({
 							</div>
 						</>
 					}
+					mobileChildren={
+						<div className={css.mobileSelector}>
+							<div className={css.deckListBox}>
+								<div className={css.deckList}>{deckList}</div>
+								<div className={css.mobileDeckPreview}>
+									<MobileCardList
+										cards={sortCards(loadedDeck.cards)}
+										small={true}
+									/>
+								</div>
+							</div>
+							<div className={css.filterGroup}>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setMode('edit')}
+									leftSlot={<EditIcon />}
+								>
+									<span>Edit</span>
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setShowDuplicateDeckModal(true)}
+									leftSlot={CopyIcon()}
+								>
+									<span>Copy</span>
+								</Button>
+								{savedDecks.length > 1 && (
+									<Button
+										variant="error"
+										size="small"
+										leftSlot={<DeleteIcon />}
+										onClick={() => setShowDeleteDeckModal(true)}
+									>
+										<span>Delete</span>
+									</Button>
+								)}
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setMode('create')}
+								>
+									New Deck
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setShowImportModal(!showImportModal)}
+								>
+									<ExportIcon reversed />
+									Import
+								</Button>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setShowExportModal(!showExportModal)}
+									leftSlot={<ExportIcon />}
+								>
+									<span>Export</span>
+								</Button>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setShowMassExportModal(!showMassExportModal)}
+								>
+									<ExportIcon />
+									<span>Mass Export</span>
+								</Button>
+							</div>
+						</div>
+					}
 				>
 					<div className={css.filterGroup}>
 						<Button
@@ -338,9 +411,7 @@ function SelectDeck({
 							onClick={() => setMode('edit')}
 							leftSlot={<EditIcon />}
 						>
-							<span>
-								Edit<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Edit Deck</span>
 						</Button>
 						<Button
 							variant="default"
@@ -348,9 +419,7 @@ function SelectDeck({
 							onClick={() => setShowExportModal(!showExportModal)}
 							leftSlot={<ExportIcon />}
 						>
-							<span>
-								Export<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Export Deck</span>
 						</Button>
 						<Button
 							variant="primary"
@@ -358,9 +427,7 @@ function SelectDeck({
 							onClick={() => setShowDuplicateDeckModal(true)}
 							leftSlot={CopyIcon()}
 						>
-							<span>
-								Duplicate<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Copy Deck</span>
 						</Button>
 						{savedDecks.length > 1 && (
 							<Button
@@ -369,9 +436,7 @@ function SelectDeck({
 								leftSlot={<DeleteIcon />}
 								onClick={() => setShowDeleteDeckModal(true)}
 							>
-								<span>
-									Delete<span className={css.hideOnMobile}> Deck</span>
-								</span>
+								<span>Delete Deck</span>
 							</Button>
 						)}
 					</div>
@@ -424,6 +489,7 @@ function SelectDeck({
 					</Accordion>
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
+					showDropdown={false}
 					header={
 						<>
 							<img
