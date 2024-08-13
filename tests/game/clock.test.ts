@@ -2,14 +2,8 @@ import {describe, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Clock from 'common/cards/default/single-use/clock'
 import {GameModel} from 'common/models/game-model'
-import {
-	findCardInHand,
-	getTestPlayer,
-	testAgainstGameSaga,
-	testSagas,
-} from './utils'
-import gameSaga from 'server/routines/game'
-import {call, put} from 'typed-redux-saga'
+import {findCardInHand, getTestPlayer, testAgainstGameSaga} from './utils'
+import {put} from 'typed-redux-saga'
 import {localMessages, LocalMessage} from 'server/messages'
 import {SlotComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'

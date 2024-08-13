@@ -10,11 +10,7 @@ import query from 'common/components/query'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {
-	ClientMessage,
-	ClientMessageTable,
-	clientMessages,
-} from 'common/socket-messages/client-messages'
+import {ClientMessage} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {TypeT} from 'common/types/cards'
 import {ActionResult, TurnAction, TurnActions} from 'common/types/game-state'
@@ -233,7 +229,8 @@ function getAvailableActions(
 }
 
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (action: LocalMessage | ClientMessage) => {
+	return (actionAny: any) => {
+		const action = actionAny as LocalMessage | ClientMessage
 		return (
 			action.type === localMessages.TURN_ACTION &&
 			'entity' in action &&
@@ -327,7 +324,6 @@ function* turnActionSaga(
 	game: GameModel,
 	turnAction: LocalMessageTable[typeof localMessages.TURN_ACTION],
 ) {
-	console.log(turnAction)
 	const actionType = turnAction.action.type
 
 	let endTurn = false
@@ -394,7 +390,6 @@ function* turnActionSaga(
 			)
 			break
 		case 'END_TURN':
-			console.log('ENDING TURN')
 			endTurn = true
 			break
 		default:
