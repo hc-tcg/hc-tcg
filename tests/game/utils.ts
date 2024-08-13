@@ -81,13 +81,17 @@ export function* attack(
 }
 
 function testSagas(rootSaga: any, testingSaga: any) {
-	const sagaMiddleware = createSagaMiddleware()
+	const sagaMiddleware = createSagaMiddleware({
+		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
+		onError: (_err, {sagaStack: _}) => {},
+	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
 	let saga = sagaMiddleware.run(function* () {
 		yield* race([rootSaga, testingSaga])
 	})
+
 	if (saga.error()) {
-		throw saga.error()
+		throw new Error(`${saga.error()}`)
 	}
 }
 
