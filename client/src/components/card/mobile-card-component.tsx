@@ -13,11 +13,12 @@ interface CardReactProps
 	cards: Array<LocalCardInstance>
 	tooltipAboveModal?: boolean
 	onClick?: () => void
+	onAdditionClick?: () => void
 	small: boolean
 }
 
 const MobileCardComponent = (props: CardReactProps) => {
-	const {onClick, cards, small} = props
+	const {onClick, onAdditionClick, cards, small} = props
 
 	return (
 		<Tooltip
@@ -25,7 +26,7 @@ const MobileCardComponent = (props: CardReactProps) => {
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
-				<button onClick={onClick}>
+				<button onClick={onClick} className={css.mainButton}>
 					<div
 						className={classNames(css.MobileCardComponent, small && css.small)}
 					>
@@ -72,6 +73,11 @@ const MobileCardComponent = (props: CardReactProps) => {
 						{!small && <div className={css.tokens}>{getDeckCost(cards)}</div>}
 					</div>
 				</button>
+				{!small && (
+					<button onClick={onAdditionClick} className={css.plusIcon}>
+						+
+					</button>
+				)}
 			</div>
 		</Tooltip>
 	)

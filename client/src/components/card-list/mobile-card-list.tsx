@@ -6,11 +6,12 @@ type CardListProps = {
 	cards: Array<LocalCardInstance>
 	tooltipAboveModal?: boolean
 	onClick?: (card: LocalCardInstance) => void
+	onAdditionClick?: (card: LocalCardInstance) => void
 	small: boolean
 }
 
 const MobileCardList = (props: CardListProps) => {
-	const {onClick, cards, tooltipAboveModal, small} = props
+	const {onClick, onAdditionClick, cards, tooltipAboveModal, small} = props
 
 	const cardsWithAmounts: Array<Array<LocalCardInstance>> = []
 	cards.forEach((card) => {
@@ -26,6 +27,9 @@ const MobileCardList = (props: CardListProps) => {
 					<MobileCardComponent
 						cards={cards}
 						onClick={onClick ? () => onClick(cards[0]) : undefined}
+						onAdditionClick={
+							onAdditionClick ? () => onAdditionClick(cards[0]) : undefined
+						}
 						key={cards[0].entity}
 						tooltipAboveModal={tooltipAboveModal}
 						small={small}

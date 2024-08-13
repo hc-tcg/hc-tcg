@@ -62,7 +62,7 @@
 .MobileCardComponentContainer {
 	display: flex;
 
-	button {
+	.mainButton {
 		flex-grow: 1;
 	}
 }
@@ -92,6 +92,27 @@
 	.tokens {
 		color: var(--ultra-rare);
 	}
+
+	&:hover {
+		border: var(--text-light) 2px solid;
+		background-color: #353838;
+	}
+}
+
+.plusIcon {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	padding-right: 1rem;
+	padding-left: 1rem;
+	margin: 0.3rem;
+	background-color: #1a1d1d;
+	border-radius: 8px;
+	border: #1a1d1d 2px solid;
+	font-family: Minecraft;
+	font-size: 1rem;
+	color: var(--text-light);
 
 	&:hover {
 		border: var(--text-light) 2px solid;

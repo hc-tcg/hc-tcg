@@ -198,5 +198,23 @@
 @media (max-width: 800px) {
 	.cardTooltipContainer {
 		max-width: 100vw;
+		font-size: 12px;
+	}
+
+	.smallText {
+		font-size: 12px;
+	}
+
+	.topLine {
+		gap: 8px;
+		font-size: 16px;
+	}
+
+	.description {
+		font-size: 16px;
+	}
+
+	.cardTooltip.small {
+		font-size: 14px;
 	}
 }

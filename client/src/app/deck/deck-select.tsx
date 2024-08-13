@@ -333,10 +333,14 @@ function SelectDeck({
 					}
 					mobileChildren={
 						<div className={css.mobileSelector}>
-							<div>
-								Selected Deck: {loadedDeck.name} Cards:{' '}
-								{loadedDeck.cards.length} Tokens:{' '}
-								{getDeckCost(loadedDeck.cards)}
+							<div className={css.deckListBox}>
+								<div className={css.deckList}>{deckList}</div>
+								<div className={css.mobileDeckPreview}>
+									<MobileCardList
+										cards={sortCards(loadedDeck.cards)}
+										small={true}
+									/>
+								</div>
 							</div>
 							<div className={css.filterGroup}>
 								<Button
@@ -346,14 +350,6 @@ function SelectDeck({
 									leftSlot={<EditIcon />}
 								>
 									<span>Edit</span>
-								</Button>
-								<Button
-									variant="default"
-									size="small"
-									onClick={() => setShowExportModal(!showExportModal)}
-									leftSlot={<ExportIcon />}
-								>
-									<span>Export</span>
 								</Button>
 								<Button
 									variant="primary"
@@ -391,20 +387,19 @@ function SelectDeck({
 								<Button
 									variant="default"
 									size="small"
+									onClick={() => setShowExportModal(!showExportModal)}
+									leftSlot={<ExportIcon />}
+								>
+									<span>Export</span>
+								</Button>
+								<Button
+									variant="default"
+									size="small"
 									onClick={() => setShowMassExportModal(!showMassExportModal)}
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
 								</Button>
-							</div>
-							<div className={css.deckListBox}>
-								<div className={css.deckList}>{deckList}</div>
-								<div className={css.mobileDeckPreview}>
-									<MobileCardList
-										cards={sortCards(loadedDeck.cards)}
-										small={true}
-									/>
-								</div>
 							</div>
 						</div>
 					}

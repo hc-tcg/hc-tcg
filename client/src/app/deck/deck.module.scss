@@ -402,8 +402,10 @@
 }
 
 .mobileSelector {
+	display: flex;
+	flex-direction: column;
 	height: 100%;
-	overflow: hidden;
+	gap: 1vh;
 }
 
 /* MOBILE */

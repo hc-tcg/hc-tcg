@@ -649,6 +649,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								cards={sortCards(loadedDeck.cards)}
 								onClick={removeCard}
 								small={false}
+								onAdditionClick={addCard}
 							/>
 						</div>
 					</div>
