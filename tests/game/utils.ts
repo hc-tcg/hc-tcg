@@ -1,6 +1,6 @@
 import {Card} from 'common/cards/base/types'
 import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
-import {GameModel} from 'common/models/game-model'
+import {GameModel, GameSettings} from 'common/models/game-model'
 import {slotToPlayCardAction} from 'common/types/turn-action-data'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
@@ -72,28 +72,41 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	})
 }
 
-/** Test a saga against a game. The game is created with sane default settings. */
-export function testGame(options: {
-	saga: any
-	playerOneDeck: Array<Card>
-	playerTwoDeck: Array<Card>
-}) {
+const defaultGameSettings = {
+	maxTurnTime: 90 * 1000,
+	extraActionTime: 30 * 1000,
+	showHooksState: {
+		enabled: true,
+		clearConsole: false,
+	},
+	blockedActions: [],
+	availableActions: [],
+	autoEndTurn: false,
+	disableDeckOut: true,
+	startWithAllCards: true,
+	unlimitedCards: false,
+	oneShotMode: false,
+}
+
+/** Test a saga against a game. The game is created with sane default settings.
+ * Test games will put all cards in your hand to begin with and do not allow players
+ * deck out. These defaults are chosen because it makes it the easiest to verify
+ * card interactions.
+ */
+export function testGame(
+	options: {
+		saga: any
+		playerOneDeck: Array<Card>
+		playerTwoDeck: Array<Card>
+	},
+	settings: Partial<GameSettings> = {},
+) {
 	let game = new GameModel(
 		getTestPlayer('player1', options.playerOneDeck),
 		getTestPlayer('player2', options.playerTwoDeck),
 		{
-			maxTurnTime: 90 * 1000,
-			extraActionTime: 30 * 1000,
-			showHooksState: {
-				enabled: true,
-				clearConsole: false,
-			},
-			blockedActions: [],
-			availableActions: [],
-			autoEndTurn: false,
-			disableDeckOut: true,
-			startWithAllCards: true,
-			unlimitedCards: false,
+			...defaultGameSettings,
+			...settings,
 		},
 		{randomizeOrder: false},
 	)

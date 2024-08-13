@@ -52,7 +52,7 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	}
 }
 
-type GameSettings = {
+export type GameSettings = {
 	maxTurnTime: number
 	extraActionTime: number
 	showHooksState: {
@@ -65,6 +65,7 @@ type GameSettings = {
 	disableDeckOut: boolean
 	startWithAllCards: boolean
 	unlimitedCards: boolean
+	oneShotMode: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -78,6 +79,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		disableDeckOut: DEBUG_CONFIG.disableDeckOut,
 		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
 		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
+		oneShotMode: DEBUG_CONFIG.oneShotMode,
 	}
 }
 

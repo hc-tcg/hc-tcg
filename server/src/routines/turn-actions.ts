@@ -1,7 +1,6 @@
 import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {DEBUG_CONFIG} from 'common/config'
 import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
@@ -40,7 +39,7 @@ function getAttack(
 		if (otherAttack) attacks.push(otherAttack)
 	})
 
-	if (DEBUG_CONFIG.oneShotMode) {
+	if (game.settings.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
 			attacks[i].addDamage('debug', 1001)
 		}
