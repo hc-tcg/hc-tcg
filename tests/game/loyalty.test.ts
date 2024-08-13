@@ -83,9 +83,11 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 
 	yield* endTurn(game)
 
-	// The player should only have retrieved one item from the game board in there hand.
-	// The rest of the cards have been played.
-	expect(game.currentPlayer.getHand().length).toBe(1)
+	// The player should only have one balanced item that they got returned to their hand
+	// by loyalty.
+	expect(game.currentPlayer.getHand().map((card) => card.props)).toStrictEqual([
+		BalancedItem,
+	])
 }
 
 describe('Test Loyalty', () => {
