@@ -7,52 +7,42 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import TurnSkippedEffect from 'common/status-effects/turn-skipped'
 import UsedClockEffect from 'common/status-effects/used-clock'
-import {LocalMessage, localMessages} from 'server/messages'
-import {getLocalCard} from 'server/utils/state-gen'
-import {put} from 'typed-redux-saga'
 import {applyEffect, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testClockHelperSaga(game: GameModel) {
-	let card
-	card = findCardInHand(game.currentPlayer, EthosLabCommon)
+	playCard(
+		game,
+		findCardInHand(game.currentPlayer, EthosLabCommon),
+		game.components.find(
+			SlotComponent,
+			query.slot.currentPlayer,
+			query.slot.hermit,
+		)!,
+	)
 
-	let playInSlot
-
-	playInSlot = game.components.find(
-		SlotComponent,
-		query.slot.currentPlayer,
-		query.slot.hermit,
-		query.slot.row(query.row.index(0)),
-	)!
-
-	playCard(game, card, playInSlot)
 	endTurn(game)
 
-	card = findCardInHand(game.currentPlayer, EthosLabCommon)
-	playInSlot = game.components.find(
-		SlotComponent,
-		query.slot.currentPlayer,
-		query.slot.hermit,
-		query.slot.row(query.row.index(0)),
-	)!
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'PLAY_HERMIT_CARD',
-			card: getLocalCard(game, card),
-			slot: playInSlot.entity,
-		},
-	})
+	playCard(
+		game,
+		findCardInHand(game.currentPlayer, EthosLabCommon),
+		game.components.find(
+			SlotComponent,
+			query.slot.currentPlayer,
+			query.slot.hermit,
+			query.slot.row(query.row.index(0)),
+		)!,
+	)
 
 	// Clock can not be played on turn one.
 	endTurn(game)
 	endTurn(game)
 
-	card = findCardInHand(game.currentPlayer, Clock)
-	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)!
-	playCard(game, card, singleUseSlot)
+	playCard(
+		game,
+		findCardInHand(game.currentPlayer, Clock),
+		game.components.find(SlotComponent, query.slot.singleUse)!,
+	)
+
 	applyEffect(game)
 
 	assert(
