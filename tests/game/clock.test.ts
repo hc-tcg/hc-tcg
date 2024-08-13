@@ -2,7 +2,7 @@ import {describe, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Clock from 'common/cards/default/single-use/clock'
 import {GameModel} from 'common/models/game-model'
-import {findCardInHand, getTestPlayer, testAgainstGameSaga} from './utils'
+import {findCardInHand, getTestPlayer, testGame} from './utils'
 import {put} from 'typed-redux-saga'
 import {localMessages, LocalMessage} from 'server/messages'
 import {SlotComponent, StatusEffectComponent} from 'common/components'
@@ -116,11 +116,10 @@ function* testClockHelperSaga(game: GameModel) {
 
 describe('Test Clock', () => {
 	test('Test Clock', function* () {
-		let game = new GameModel(
-			getTestPlayer('player1', [EthosLabCommon]),
-			getTestPlayer('player2', [EthosLabCommon, Clock]),
-			{randomizeOrder: false},
-		)
-		testAgainstGameSaga(game, testClockHelperSaga)
+		testGame({
+			saga: testClockHelperSaga,
+			playerOneDeck: [EthosLabCommon],
+			playerTwoDeck: [EthosLabCommon, Clock],
+		})
 	})
 })

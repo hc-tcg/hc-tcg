@@ -33,6 +33,31 @@ export function testSagas(rootSaga: any, testingSaga: any) {
 	})
 }
 
-export function testAgainstGameSaga(game: GameModel, testingSaga: any) {
-	testSagas(call(gameSaga, game), call(testingSaga, game))
+/** Test a saga against a game. The game is created with sane default settings. */
+export function testGame(options: {
+	saga: any
+	playerOneDeck: Array<Card>
+	playerTwoDeck: Array<Card>
+}) {
+	let game = new GameModel(
+		getTestPlayer('player1', options.playerOneDeck),
+		getTestPlayer('player2', options.playerTwoDeck),
+		{
+			maxTurnTime: 90 * 1000,
+			extraActionTime: 30 * 1000,
+			showHooksState: {
+				enabled: true,
+				clearConsole: false,
+			},
+			blockedActions: [],
+			availableActions: [],
+			autoEndTurn: false,
+			disableDeckOut: true,
+			startWithAllCards: true,
+			unlimitedCards: false,
+		},
+		{randomizeOrder: false},
+	)
+
+	testSagas(call(gameSaga, game), call(options.saga, game))
 }

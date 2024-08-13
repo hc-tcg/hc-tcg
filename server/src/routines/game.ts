@@ -7,7 +7,6 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {ClientMessage} from 'common/socket-messages/client-messages'
@@ -41,8 +40,11 @@ import {LocalMessage, localMessages, LocalMessageTable} from '../messages'
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
-export const getTimerForSeconds = (seconds: number): number => {
-	const maxTime = CONFIG.limits.maxTurnTime * 1000
+export const getTimerForSeconds = (
+	game: GameModel,
+	seconds: number,
+): number => {
+	const maxTime = game.settings.maxTurnTime * 1000
 	return Date.now() - maxTime + seconds * 1000
 }
 
@@ -440,7 +442,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	try {
 		while (true) {
-			if (DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
+			if (game.settings.showHooksState.enabled) printHooksState(game)
 
 			// Available actions code
 			const availableEnergy = getAvailableEnergy(game)
@@ -452,14 +454,14 @@ function* turnActionsSaga(game: GameModel) {
 			// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
-			blockedActions.push(...DEBUG_CONFIG.blockedActions)
+			blockedActions.push(...game.settings.blockedActions)
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter(
 				(action) => !blockedActions.includes(action),
 			)
 
-			availableActions.push(...DEBUG_CONFIG.availableActions)
+			availableActions.push(...game.settings.availableActions)
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
@@ -474,7 +476,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.turn.availableActions = availableActions
 
 			if (
-				DEBUG_CONFIG.autoEndTurn &&
+				game.settings.autoEndTurn &&
 				availableActions.includes('END_TURN') &&
 				availableActions.length === 1
 			) {
@@ -484,13 +486,13 @@ function* turnActionsSaga(game: GameModel) {
 			// Timer calculation
 			game.state.timer.turnStartTime =
 				game.state.timer.turnStartTime || Date.now()
-			let maxTime = CONFIG.limits.maxTurnTime * 1000
+			let maxTime = game.settings.maxTurnTime * 1000
 			let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
 			if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
 				game.state.timer.opponentActionStartTime =
 					game.state.timer.opponentActionStartTime || Date.now()
-				maxTime = CONFIG.limits.extraActionTime * 1000
+				maxTime = game.settings.extraActionTime * 1000
 				remainingTime =
 					game.state.timer.opponentActionStartTime + maxTime - Date.now()
 			}
@@ -550,7 +552,7 @@ function* turnActionsSaga(game: GameModel) {
 
 					// Reset timer to max time
 					game.state.timer.turnStartTime = Date.now()
-					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+					game.state.timer.turnRemaining = game.settings.maxTurnTime
 
 					// Execute attack now if there's a current attack
 					if (!game.hasActiveRequests() && !!currentAttack) {
@@ -603,7 +605,7 @@ export function* turnSaga(game: GameModel) {
 	opponentPlayer.singleUseCardUsed = false
 
 	game.state.timer.turnStartTime = Date.now()
-	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime * 1000
+	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
 	// Call turn start hooks
 
@@ -686,9 +688,9 @@ export function* turnSaga(game: GameModel) {
 
 function* checkDeckedOut(game: GameModel) {
 	if (
-		DEBUG_CONFIG.disableDeckOut ||
-		DEBUG_CONFIG.startWithAllCards ||
-		DEBUG_CONFIG.unlimitedCards
+		game.settings.disableDeckOut ||
+		game.settings.startWithAllCards ||
+		game.settings.unlimitedCards
 	)
 		return []
 	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {
