@@ -108,7 +108,6 @@ describe('Test Loyalty', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 			},
-			{oneShotMode: true},
 		)
 	})
 })
