@@ -1,16 +1,16 @@
+import assert from 'assert'
 import {describe, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Clock from 'common/cards/default/single-use/clock'
-import {GameModel} from 'common/models/game-model'
-import {findCardInHand, testGame} from './utils'
-import {put} from 'typed-redux-saga'
-import {localMessages, LocalMessage} from 'server/messages'
 import {SlotComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
-import {getLocalCard} from 'server/utils/state-gen'
-import assert from 'assert'
+import {GameModel} from 'common/models/game-model'
 import TurnSkippedEffect from 'common/status-effects/turn-skipped'
 import UsedClockEffect from 'common/status-effects/used-clock'
+import {LocalMessage, localMessages} from 'server/messages'
+import {getLocalCard} from 'server/utils/state-gen'
+import {put} from 'typed-redux-saga'
+import {applyEffect, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testClockHelperSaga(game: GameModel) {
 	let card
@@ -25,23 +25,8 @@ function* testClockHelperSaga(game: GameModel) {
 		query.slot.row(query.row.index(0)),
 	)!
 
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'PLAY_HERMIT_CARD',
-			card: getLocalCard(game, card),
-			slot: playInSlot.entity,
-		},
-	})
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'END_TURN',
-		},
-	})
+	playCard(game, card, playInSlot)
+	endTurn(game)
 
 	card = findCardInHand(game.currentPlayer, EthosLabCommon)
 	playInSlot = game.components.find(
@@ -62,41 +47,13 @@ function* testClockHelperSaga(game: GameModel) {
 	})
 
 	// Clock can not be played on turn one.
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'END_TURN',
-		},
-	})
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'END_TURN',
-		},
-	})
+	endTurn(game)
+	endTurn(game)
 
 	card = findCardInHand(game.currentPlayer, Clock)
 	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)!
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'PLAY_SINGLE_USE_CARD',
-			card: getLocalCard(game, card),
-			slot: singleUseSlot.entity,
-		},
-	})
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'APPLY_EFFECT',
-		},
-	})
+	playCard(game, card, singleUseSlot)
+	applyEffect(game)
 
 	assert(
 		game.components.find(

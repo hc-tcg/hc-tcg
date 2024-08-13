@@ -1,10 +1,14 @@
 import {Card} from 'common/cards/base/types'
-import {PlayerComponent} from 'common/components'
+import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
+import {slotToPlayCardAction} from 'common/types/turn-action-data'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import {LocalMessage, localMessages} from 'server/messages'
+import game from 'server/routines/game'
 import gameSaga from 'server/routines/game'
-import {call, race} from 'typed-redux-saga'
+import {getLocalCard} from 'server/utils/state-gen'
+import {call, put, race} from 'typed-redux-saga'
 
 export function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {
@@ -25,7 +29,43 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 	return cardInHand
 }
 
-export function testSagas(rootSaga: any, testingSaga: any) {
+export function* endTurn(game: GameModel) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'END_TURN',
+		},
+	})
+}
+
+export function* playCard(
+	game: GameModel,
+	card: CardComponent,
+	slot: SlotComponent,
+) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: slotToPlayCardAction[slot.type],
+			card: getLocalCard(game, card),
+			slot: slot.entity,
+		},
+	})
+}
+
+export function* applyEffect(game: GameModel) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'APPLY_EFFECT',
+		},
+	})
+}
+
+function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware()
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
 	sagaMiddleware.run(function* () {
