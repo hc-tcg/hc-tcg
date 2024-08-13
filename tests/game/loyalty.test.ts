@@ -6,8 +6,8 @@ import BalancedItem from 'common/cards/default/items/balanced-common'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import {printBoardState} from 'server/utils'
 import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
-import { printBoardState } from 'server/utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* playCard(
