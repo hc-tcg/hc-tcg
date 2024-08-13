@@ -120,6 +120,10 @@ export function testGame(
 	},
 	settings: Partial<GameSettings> = {},
 ) {
+	console.log({
+		...defaultGameSettings,
+		...settings,
+	})
 	let game = new GameModel(
 		getTestPlayer('player1', options.playerOneDeck),
 		getTestPlayer('player2', options.playerTwoDeck),
