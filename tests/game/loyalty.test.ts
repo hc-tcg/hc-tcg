@@ -86,8 +86,6 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 
 	// The player should only have retrieved one item from the game board in there hand.
 	// The rest of the cards have been played.
-	console.log(game.currentPlayer.playerName)
-	console.log(game.currentPlayer.getHand().length)
 	assert(game.currentPlayer.getHand().length === 1)
 }
 
