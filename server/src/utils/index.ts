@@ -192,6 +192,11 @@ export function printBoardState(game: GameModel) {
 					query.slot.row(query.row.index(i)),
 				)
 				.forEach(printSlot)
+			buffer.push('Hand:')
+			game.components
+				.filter(SlotComponent, query.slot.player(playerEntity), query.slot.hand)
+				.forEach(printSlot)
+
 			buffer.push('\n')
 		}
 		buffer.push('\n\n')
