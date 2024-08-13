@@ -90,7 +90,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 }
 
 describe('Test Loyalty', () => {
-	test('Test Loyalty', () => {
+	test('Test Loyalty only returns item cards from attached hermit.', () => {
 		testGame(
 			{
 				saga: testLoyaltyHelperSaga,
