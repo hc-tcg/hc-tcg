@@ -7,6 +7,7 @@ import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
+import { printBoardState } from 'server/utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* playCard(
@@ -42,6 +43,8 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
+	printBoardState(game)
+
 	yield* endTurn(game)
 
 	yield* playCard(
@@ -53,6 +56,8 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 			query.slot.hermit,
 		)!,
 	)
+
+	printBoardState(game)
 
 	yield* endTurn(game)
 
@@ -78,12 +83,14 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
+	printBoardState(game)
 	yield* endTurn(game)
 
 	yield* attack(game, 'primary')
 
 	yield* endTurn(game)
 
+	printBoardState(game)
 	// The player should only have retrieved one item from the game board in there hand.
 	// The rest of the cards have been played.
 	assert(game.currentPlayer.getHand().length === 1)

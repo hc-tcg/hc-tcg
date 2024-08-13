@@ -152,7 +152,17 @@ export function printBoardState(game: GameModel) {
 	const printSlot = (slot: SlotComponent) => {
 		let card = slot.getCard()
 		if (card) {
+			if (
+				slot.inRow() &&
+				slot.row.entity === slot.player.activeRowEntity &&
+				slot.type === 'hermit'
+			) {
+				buffer.push('*')
+			}
 			buffer.push(card.props.id.slice(0, 20).padEnd(21))
+			if (slot.type === 'hermit' && slot.inRow() && slot.row.health) {
+				buffer.push(slot.row.health)
+			}
 		} else {
 			buffer.push('_'.padEnd(21))
 		}
