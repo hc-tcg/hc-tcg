@@ -146,6 +146,7 @@ export function printHooksState(game: GameModel) {
 	}
 }
 
+/** A utility to print a game board state in the command line. This is intended to be used for developing tests. */
 export function printBoardState(game: GameModel) {
 	let buffer = []
 
