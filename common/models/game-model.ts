@@ -76,11 +76,16 @@ export class GameModel {
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
-		code?: string,
+		options?: {
+			code?: string
+			randomizeOrder?: false
+		},
 	) {
+		options = options ?? {}
+
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code || null
+		this.internalCode = options.code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -97,7 +102,7 @@ export class GameModel {
 		this.afterGameEnd = new Hook<string, () => void>()
 		setupComponents(this.components, player1, player2)
 
-		this.state = getGameState(this)
+		this.state = getGameState(this, options.randomizeOrder)
 	}
 
 	public get currentPlayerEntity() {

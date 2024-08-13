@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {DEBUG_CONFIG} from 'common/config'
@@ -134,15 +135,13 @@ export function* playCardSaga(
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
-	if (!slotEntity || !localCard) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(slotEntity && localCard)
 
 	const card = game.components.find(
 		CardComponent,
 		query.card.entity(localCard.entity),
 	)
-	if (!card) return 'FAILURE_INVALID_DATA'
+	assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
 
@@ -153,11 +152,10 @@ export function* playCardSaga(
 		)
 	}
 
-	// You are not supposed to be able to select a slot with a card in it, but network issues can allow
-	// this to happen.
-	if (pickedSlot.getCard()) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(
+		!pickedSlot.getCard(),
+		'You can not play a card in a slot with a card in it',
+	)
 
 	const row = pickedSlot.row
 	const rowIndex = pickedSlot.index
@@ -167,7 +165,10 @@ export function* playCardSaga(
 	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
 	// It's the wrong kind of slot or does not satisfy the condition
-	if (!canAttach) return 'FAILURE_INVALID_SLOT'
+	assert(
+		canAttach,
+		'You can not play a card in a slot it cannot be attached to or at a time it can not be played.',
+	)
 
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client

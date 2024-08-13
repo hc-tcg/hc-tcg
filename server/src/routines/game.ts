@@ -11,6 +11,7 @@ import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {
+	ClientMessage,
 	ClientMessageTable,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
@@ -38,6 +39,7 @@ import {
 	playCardSaga,
 	removeEffectSaga,
 } from './turn-actions'
+import {LocalMessage, localMessages, LocalMessageTable} from '../messages'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -231,10 +233,15 @@ function getAvailableActions(
 }
 
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (action: any) =>
-		action.type === 'TURN_ACTION' &&
-		action.payload.action.type === actionType &&
-		action.payload.playerEntity === playerEntity
+	return (action: LocalMessage | ClientMessage) => {
+		return (
+			action.type === localMessages.TURN_ACTION &&
+			'entity' in action &&
+			'action' in action &&
+			action.action.type === actionType &&
+			action.entity === playerEntity
+		)
+	}
 }
 
 // return false in case one player is dead
@@ -318,14 +325,15 @@ function* sendGameState(game: GameModel) {
 
 function* turnActionSaga(
 	game: GameModel,
-	turnAction: ClientMessageTable[typeof clientMessages.TURN_ACTION],
+	turnAction: LocalMessageTable[typeof localMessages.TURN_ACTION],
 ) {
+	console.log(turnAction)
 	const actionType = turnAction.action.type
 
 	let endTurn = false
 
 	const availableActions =
-		turnAction.playerEntity === game.currentPlayer.entity
+		turnAction.entity === game.currentPlayer.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -386,6 +394,7 @@ function* turnActionSaga(
 			)
 			break
 		case 'END_TURN':
+			console.log('ENDING TURN')
 			endTurn = true
 			break
 		default:
@@ -576,11 +585,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			// Run action logic
-			const result = yield* call(
-				turnActionSaga,
-				game,
-				raceResult.turnAction.payload,
-			)
+			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
 			if (result === 'END_TURN') {
 				break
@@ -662,7 +667,7 @@ export function* turnSaga(game: GameModel) {
 	}
 
 	// If player has not used his single use card return it to hand
-			// otherwise move it to discarded pile
+	// otherwise move it to discarded pile
 	const singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),

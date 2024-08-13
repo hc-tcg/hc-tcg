@@ -1,6 +1,8 @@
+import {PlayerEntity} from 'common/entities'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {PlayerDeckT} from 'common/types/deck'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
 
 export const localMessages = messages({
 	CLIENT_CONNECTED: null,
@@ -9,6 +11,7 @@ export const localMessages = messages({
 	PLAYER_DISCONNECTED: null,
 	PLAYER_RECONNECTED: null,
 	PLAYER_REMOVED: null,
+	TURN_ACTION: null,
 })
 
 type Messages = [
@@ -26,6 +29,11 @@ type Messages = [
 	{type: typeof localMessages.PLAYER_DISCONNECTED; player: PlayerModel},
 	{type: typeof localMessages.PLAYER_RECONNECTED; player: PlayerModel},
 	{type: typeof localMessages.PLAYER_REMOVED; player: PlayerModel},
+	{
+		type: typeof localMessages.TURN_ACTION
+		action: AnyTurnActionData
+		entity: PlayerEntity
+	},
 ]
 
 export type LocalMessage = Message<Messages>

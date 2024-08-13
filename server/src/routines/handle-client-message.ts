@@ -2,7 +2,7 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
-import {takeEvery} from 'typed-redux-saga'
+import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {chatMessage} from './background/chat'
 import {
@@ -17,6 +17,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import {LocalMessage} from 'messages'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -55,6 +56,10 @@ function* handler(message: RecievedClientMessage) {
 		case clientMessages.CHAT_MESSAGE:
 			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.TURN_ACTION:
+			yield* put<LocalMessage>(
+				(message as RecievedClientMessage<typeof message.type>).payload,
 			)
 	}
 }
