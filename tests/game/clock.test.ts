@@ -10,7 +10,7 @@ import UsedClockEffect from 'common/status-effects/used-clock'
 import {applyEffect, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testClockHelperSaga(game: GameModel) {
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
@@ -20,9 +20,9 @@ function* testClockHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	endTurn(game)
+	yield* endTurn(game)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
@@ -34,16 +34,16 @@ function* testClockHelperSaga(game: GameModel) {
 	)
 
 	// Clock can not be played on turn one.
-	endTurn(game)
-	endTurn(game)
+	yield* endTurn(game)
+	yield* endTurn(game)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, Clock),
 		game.components.find(SlotComponent, query.slot.singleUse)!,
 	)
 
-	applyEffect(game)
+	yield* applyEffect(game)
 
 	assert(
 		game.components.find(
@@ -62,7 +62,7 @@ function* testClockHelperSaga(game: GameModel) {
 }
 
 describe('Test Clock', () => {
-	test('Test Clock', function* () {
+	test('Test Clock', () => {
 		testGame({
 			saga: testClockHelperSaga,
 			playerOneDeck: [EthosLabCommon],

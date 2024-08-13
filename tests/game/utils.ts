@@ -83,9 +83,12 @@ export function* attack(
 function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware()
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
-	sagaMiddleware.run(function* () {
+	let saga = sagaMiddleware.run(function* () {
 		yield* race([rootSaga, testingSaga])
 	})
+	if (saga.error()) {
+		throw saga.error()
+	}
 }
 
 const defaultGameSettings = {

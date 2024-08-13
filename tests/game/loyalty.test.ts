@@ -1,14 +1,15 @@
-import {GameModel} from 'common/models/game-model'
-import test, {describe} from 'node:test'
-import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
+import assert from 'assert'
+import {describe, test} from '@jest/globals'
 import Loyalty from 'common/cards/default/effects/loyalty'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
-import query from 'common/components/query'
 import {SlotComponent} from 'common/components'
+import query from 'common/components/query'
+import {GameModel} from 'common/models/game-model'
+import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
@@ -19,7 +20,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, Loyalty),
 		game.components.find(
@@ -30,7 +31,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, BalancedItem),
 		game.components.find(
@@ -41,9 +42,9 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	endTurn(game)
+	yield* endTurn(game)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
@@ -53,9 +54,9 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	endTurn(game)
+	yield* endTurn(game)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
@@ -66,7 +67,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	playCard(
+	yield* playCard(
 		game,
 		findCardInHand(game.currentPlayer, BalancedItem),
 		game.components.find(
@@ -77,17 +78,33 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 		)!,
 	)
 
-	endTurn(game)
+	yield* endTurn(game)
 
-	attack(game, 'primary')
+	yield* attack(game, 'primary')
+	console.log(game.currentPlayer.getHand())
+
+	yield* endTurn(game)
+
+	// The player should only have retrieved one item from the game board in there hand.
+	// The rest of the cards have been played.
+	assert(game.currentPlayer.getHand().length === 1)
 }
 
-describe('Test Clock', () => {
-	test('Test Clock', function* () {
-		testGame({
-			saga: testLoyaltyHelperSaga,
-			playerOneDeck: [EthosLabCommon, Loyalty, BalancedItem, BalancedItem],
-			playerTwoDeck: [EthosLabCommon],
-		})
+describe('Test Loyalty', () => {
+	test('Test Loyalty', () => {
+		testGame(
+			{
+				saga: testLoyaltyHelperSaga,
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					Loyalty,
+					BalancedItem,
+					BalancedItem,
+				],
+				playerTwoDeck: [EthosLabCommon],
+			},
+			{oneShotMode: true},
+		)
 	})
 })
