@@ -2,7 +2,7 @@ import {describe, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Clock from 'common/cards/default/single-use/clock'
 import {GameModel} from 'common/models/game-model'
-import {findCardInHand, getTestPlayer, testGame} from './utils'
+import {findCardInHand, testGame} from './utils'
 import {put} from 'typed-redux-saga'
 import {localMessages, LocalMessage} from 'server/messages'
 import {SlotComponent, StatusEffectComponent} from 'common/components'
@@ -26,8 +26,8 @@ function* testClockHelperSaga(game: GameModel) {
 	)!
 
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'PLAY_HERMIT_CARD',
 			card: getLocalCard(game, card),
@@ -36,8 +36,8 @@ function* testClockHelperSaga(game: GameModel) {
 	})
 
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'END_TURN',
 		},
@@ -52,8 +52,8 @@ function* testClockHelperSaga(game: GameModel) {
 	)!
 
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'PLAY_HERMIT_CARD',
 			card: getLocalCard(game, card),
@@ -63,15 +63,15 @@ function* testClockHelperSaga(game: GameModel) {
 
 	// Clock can not be played on turn one.
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'END_TURN',
 		},
 	})
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'END_TURN',
 		},
@@ -81,8 +81,8 @@ function* testClockHelperSaga(game: GameModel) {
 	let singleUseSlot = game.components.find(SlotComponent, query.slot.singleUse)!
 
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
-		entity: game.currentPlayer.entity,
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'PLAY_SINGLE_USE_CARD',
 			card: getLocalCard(game, card),
@@ -91,7 +91,7 @@ function* testClockHelperSaga(game: GameModel) {
 	})
 
 	yield* put<LocalMessage>({
-		type: localMessages.TURN_ACTION,
+		type: localMessages.GAME_TURN_ACTION,
 		entity: game.currentPlayer.entity,
 		action: {
 			type: 'APPLY_EFFECT',

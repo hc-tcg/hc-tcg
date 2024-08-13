@@ -67,7 +67,7 @@ type GameSettings = {
 	unlimitedCards: boolean
 }
 
-export function gameSettingsFromEnv() {
+export function gameSettingsFromEnv(): GameSettings {
 	return {
 		maxTurnTime: CONFIG.limits.maxTurnTime,
 		extraActionTime: CONFIG.limits.extraActionTime,
@@ -75,6 +75,7 @@ export function gameSettingsFromEnv() {
 		blockedActions: DEBUG_CONFIG.blockedActions,
 		availableActions: DEBUG_CONFIG.availableActions,
 		autoEndTurn: DEBUG_CONFIG.autoEndTurn,
+		disableDeckOut: DEBUG_CONFIG.disableDeckOut,
 		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
 		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
 	}

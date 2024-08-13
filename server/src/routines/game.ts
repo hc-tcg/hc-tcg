@@ -232,9 +232,9 @@ function getAvailableActions(
 
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
 	return (actionAny: any) => {
-		const action = actionAny as LocalMessage | ClientMessage
+		const action = actionAny as LocalMessage
 		return (
-			action.type === localMessages.TURN_ACTION &&
+			action.type === localMessages.GAME_TURN_ACTION &&
 			'entity' in action &&
 			'action' in action &&
 			action.action.type === actionType &&
@@ -324,14 +324,14 @@ function* sendGameState(game: GameModel) {
 
 function* turnActionSaga(
 	game: GameModel,
-	turnAction: LocalMessageTable[typeof localMessages.TURN_ACTION],
+	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
 
 	let endTurn = false
 
 	const availableActions =
-		turnAction.entity === game.currentPlayer.entity
+		turnAction.playerEntity === game.currentPlayer.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 

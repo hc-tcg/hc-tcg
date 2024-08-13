@@ -17,7 +17,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {LocalMessage} from 'messages'
+import {LocalMessage, localMessages} from 'messages'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -58,9 +58,12 @@ function* handler(message: RecievedClientMessage) {
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.TURN_ACTION:
-			yield* put<LocalMessage>(
-				(message as RecievedClientMessage<typeof message.type>).payload,
-			)
+			let actionMessage = message as RecievedClientMessage<typeof message.type>
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_TURN_ACTION,
+				action: actionMessage.payload.action,
+				playerEntity: actionMessage.payload.playerEntity,
+			})
 	}
 }
 

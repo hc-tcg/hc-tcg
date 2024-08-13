@@ -11,7 +11,7 @@ export const localMessages = messages({
 	PLAYER_DISCONNECTED: null,
 	PLAYER_RECONNECTED: null,
 	PLAYER_REMOVED: null,
-	TURN_ACTION: null,
+	GAME_TURN_ACTION: null,
 })
 
 type Messages = [
@@ -30,9 +30,9 @@ type Messages = [
 	{type: typeof localMessages.PLAYER_RECONNECTED; player: PlayerModel},
 	{type: typeof localMessages.PLAYER_REMOVED; player: PlayerModel},
 	{
-		type: typeof localMessages.TURN_ACTION
+		type: typeof localMessages.GAME_TURN_ACTION
 		action: AnyTurnActionData
-		entity: PlayerEntity
+		playerEntity: PlayerEntity
 	},
 ]
 

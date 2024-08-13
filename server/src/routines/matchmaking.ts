@@ -1,6 +1,6 @@
 import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
+import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -42,7 +42,8 @@ function setupGame(
 			model: player2,
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-		code,
+		gameSettingsFromEnv(),
+		{code},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
