@@ -66,6 +66,8 @@ export type GameSettings = {
 	startWithAllCards: boolean
 	unlimitedCards: boolean
 	oneShotMode: boolean
+	disableDamage: boolean
+	noItemRequirements: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -80,6 +82,8 @@ export function gameSettingsFromEnv(): GameSettings {
 		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
 		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
 		oneShotMode: DEBUG_CONFIG.oneShotMode,
+		disableDamage: DEBUG_CONFIG.disableDamage,
+		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
 	}
 }
 

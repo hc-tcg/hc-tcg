@@ -105,12 +105,14 @@ const defaultGameSettings = {
 	startWithAllCards: true,
 	unlimitedCards: false,
 	oneShotMode: false,
+	disableDamage: false,
+	noItemRequirements: true,
 }
 
 /** Test a saga against a game. The game is created with sane default settings.
  * Test games will put all cards in your hand to begin with and do not allow players
- * deck out. These defaults are chosen because it makes it the easiest to verify
- * card interactions.
+ * deck out. Additionally item requirements are disabbledd.
+ * These defaults are chosen because it makes it the easiest to verify card interactions.
  */
 export function testGame(
 	options: {

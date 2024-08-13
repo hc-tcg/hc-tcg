@@ -51,8 +51,16 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			// Return if no energy
 			if (
 				!activeHermit.isHermit() ||
-				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
-					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
+				(!hasEnoughEnergy(
+					energy,
+					activeHermit.props.primary.cost,
+					game.settings.noItemRequirements,
+				) &&
+					!hasEnoughEnergy(
+						energy,
+						activeHermit.props.secondary.cost,
+						game.settings.noItemRequirements,
+					))
 			) {
 				return
 			}

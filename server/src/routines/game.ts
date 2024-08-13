@@ -150,10 +150,22 @@ function getAvailableActions(
 
 			// only add attack options if not sleeping
 			if (hermitCard && hermitCard.isHermit()) {
-				if (hasEnoughEnergy(availableEnergy, hermitCard.props.primary.cost)) {
+				if (
+					hasEnoughEnergy(
+						availableEnergy,
+						hermitCard.props.primary.cost,
+						game.settings.noItemRequirements,
+					)
+				) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (hasEnoughEnergy(availableEnergy, hermitCard.props.secondary.cost)) {
+				if (
+					hasEnoughEnergy(
+						availableEnergy,
+						hermitCard.props.secondary.cost,
+						game.settings.noItemRequirements,
+					)
+				) {
 					actions.push('SECONDARY_ATTACK')
 				}
 				if (su && !suUsed) {

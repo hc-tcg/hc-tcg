@@ -53,10 +53,6 @@ export function* attackSaga(
 	turnAction: AttackActionData,
 	checkForRequests = true,
 ): Generator<any, GenericActionResult> {
-	if (!turnAction?.type) {
-		return 'FAILURE_INVALID_DATA'
-	}
-
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
 	const activeInstance = game.components.find(
@@ -65,7 +61,8 @@ export function* attackSaga(
 		query.card.isHermit,
 		query.card.active,
 	)
-	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
+
+	assert(activeInstance, 'You can not attack without an active hermit.')
 
 	if (checkForRequests) {
 		// First allow cards to add attack requests
