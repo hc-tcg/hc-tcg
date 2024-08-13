@@ -8,6 +8,7 @@ import {GameModel} from 'common/models/game-model'
 import TurnSkippedEffect from 'common/status-effects/turn-skipped'
 import UsedClockEffect from 'common/status-effects/used-clock'
 import {applyEffect, endTurn, findCardInHand, playCard, testGame} from './utils'
+import { printBoardState } from 'server/utils'
 
 function* testClockHelperSaga(game: GameModel) {
 	yield* playCard(
@@ -44,6 +45,8 @@ function* testClockHelperSaga(game: GameModel) {
 	)
 
 	yield* applyEffect(game)
+
+	printBoardState(game)
 
 	assert(
 		game.components.find(

@@ -1,5 +1,5 @@
-import {CardComponent} from 'common/components'
-import {DEBUG_CONFIG} from 'common/config'
+import {CardComponent, SlotComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
@@ -105,7 +105,7 @@ export function printHooksState(game: GameModel) {
 	}
 
 	// Print to console
-	if (DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
+	if (game.settings.showHooksState.clearConsole) console.clear()
 	const turnInfo = `TURN: ${game.state.turn.turnNumber}, CURRENT PLAYER: ${currentPlayer.playerName}`
 	console.log(colorize(drawBox(turnInfo, 60), 'cyan'))
 
@@ -144,6 +144,65 @@ export function printHooksState(game: GameModel) {
 
 		console.log('\n')
 	}
+}
+
+export function printBoardState(game: GameModel) {
+	let buffer = []
+
+	const printSlot = (slot: SlotComponent) => {
+		let card = slot.getCard()
+		if (card) {
+			buffer.push(card.props.id.slice(0, 20).padEnd(21))
+		} else {
+			buffer.push('_'.padEnd(21))
+		}
+	}
+
+	for (const playerEntity of game.state.order) {
+		const player = game.components.get(playerEntity)
+		let isTurn = game.currentPlayer.entity === playerEntity
+		buffer.push(player?.playerName || '')
+		buffer.push('\t')
+		buffer.push(isTurn ? 'Active' : 'Inactive')
+		buffer.push('\n')
+
+		for (let i = 0; i < 5; i++) {
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.item,
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.attach,
+
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.hermit,
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			buffer.push('\n')
+		}
+		buffer.push('\n\n')
+	}
+
+	buffer.push('Single Use Slot: ')
+	game.components.filter(SlotComponent, query.slot.singleUse).forEach(printSlot)
+	buffer.push(`Single Use Activated: ${game.currentPlayer.singleUseCardUsed}`)
+	buffer.push('\n')
+
+	console.log(buffer.join(''))
 }
 
 /** Call a function and log errors if they are found. This function is used to prevent errors from reaching
