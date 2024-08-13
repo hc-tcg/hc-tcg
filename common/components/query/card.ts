@@ -84,7 +84,7 @@ export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 
 export function is(...cardTypes: Array<Card>): ComponentQuery<CardComponent> {
 	return (_game, card) =>
-		cardTypes.map((t) => CARDS[t.name].numericId).includes(card.props.numericId)
+		cardTypes.map((t) => CARDS[t.id].numericId).includes(card.props.numericId)
 }
 
 export function entity(cardEntity: CardEntity): ComponentQuery<CardComponent> {
