@@ -102,7 +102,8 @@ $card-size: 118px;
 	display: grid;
 	grid-auto-flow: row;
 	grid-template-columns: repeat(2, 1fr);
-	grid-template-rows: repeat(10, 1fr);
+	grid-template-rows: repeat(12, 1fr);
 	justify-content: left;
 	align-items: start;
+	width: 100%;
 }
