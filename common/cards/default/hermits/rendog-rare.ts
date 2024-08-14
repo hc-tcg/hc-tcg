@@ -102,12 +102,12 @@ const RendogRare: Hermit = {
 								},
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return 'FAILURE_INVALID_DATA'
+								if (!modalResult) return
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return 'SUCCESS'
+									return
 								}
 
 								// Store the chosen attack to copy
@@ -116,7 +116,7 @@ const RendogRare: Hermit = {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return 'SUCCESS'
+								return
 							},
 							onTimeout: () => {
 								mockedAttacks.set(

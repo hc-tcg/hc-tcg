@@ -50,23 +50,22 @@ const Chest: SingleUse = {
 				},
 			},
 			onResult(modalResult) {
-				if (!modalResult) return 'FAILURE_INVALID_DATA'
+				if (!modalResult) return
 				if (!modalResult.result) {
 					// Allow player to cancel using Chest
 					component.draw()
-					return 'SUCCESS'
+					return
 				}
-				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].props.id === 'clock')
-					return 'FAILURE_CANNOT_COMPLETE'
+				if (!modalResult.cards) return
+				if (modalResult.cards.length !== 1) return
+				if (modalResult.cards[0].props.id === 'clock') return
 
 				applySingleUse(game)
 
 				let card = game.components.get(modalResult.cards[0].entity)
 				card?.draw()
 
-				return 'SUCCESS'
+				return
 			},
 			onTimeout() {
 				// Do nothing

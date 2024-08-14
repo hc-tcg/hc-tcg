@@ -57,20 +57,20 @@ const Spyglass: SingleUse = {
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!canDiscard) return 'SUCCESS'
+					if (!modalResult) return
+					if (!canDiscard) return
 
 					if (!modalResult.cards || modalResult.cards.length !== 1)
-						return 'FAILURE_INVALID_DATA'
+						return
 
 					let card = game.components.get(modalResult.cards[0].entity)
-					if (!card) return 'FAILURE_INVALID_DATA'
+					if (!card) return
 
 					card.discard()
 
 					game.battleLog.addEntry(player.entity, getEntry(card))
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					if (canDiscard) {

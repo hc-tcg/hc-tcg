@@ -84,7 +84,7 @@ const EvilXisumaRare: Hermit = {
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || !modalResult.pick) return
 
 					const actionToBlock =
 						modalResult.pick === 'primary'
@@ -95,7 +95,7 @@ const EvilXisumaRare: Hermit = {
 					game.components
 						.new(StatusEffectComponent, actionToBlock, component.entity)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one

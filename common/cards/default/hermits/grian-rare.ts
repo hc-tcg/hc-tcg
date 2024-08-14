@@ -102,8 +102,7 @@ const GrianRare: Hermit = {
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined)
-						return 'FAILURE_INVALID_DATA'
+					if (!modalResult || modalResult.result === undefined) return
 
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
@@ -111,7 +110,7 @@ const GrianRare: Hermit = {
 						opponentAttachCard.discard(component.player.entity)
 					}
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					opponentAttachCard.discard(component.player.entity)

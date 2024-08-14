@@ -87,8 +87,8 @@ const IskallmanRare: Hermit = {
 						},
 					},
 					onResult(modalResult) {
-						if (!modalResult) return 'SUCCESS'
-						if (!modalResult.result) return 'SUCCESS'
+						if (!modalResult) return
+						if (!modalResult.result) return
 						game.addPickRequest({
 							player: player.entity,
 							id: component.entity,
@@ -102,7 +102,7 @@ const IskallmanRare: Hermit = {
 							},
 						})
 
-						return 'SUCCESS'
+						return
 					},
 					onTimeout() {
 						return
