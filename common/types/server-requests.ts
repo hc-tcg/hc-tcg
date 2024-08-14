@@ -88,8 +88,8 @@ export namespace LocalSelectCards {
 
 	export type Data = {
 		type: 'selectCards'
-		modalName: string
-		modalDescription: string
+		name: string
+		description: string
 		cards: Array<LocalCardInstance>
 		selectionSize: number
 		primaryButton?: {
@@ -117,8 +117,8 @@ export namespace LocalSelectCards {
 export namespace LocalCopyAttack {
 	export type Data = {
 		type: 'copyAttack'
-		modalName: string
-		modalDescription: string
+		name: string
+		description: string
 		hermitCard: LocalCardInstance
 		blockedActions: TurnActions
 	}

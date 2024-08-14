@@ -86,12 +86,12 @@ function SelectCardsModal({closeModal}: Props) {
 
 	return (
 		<Modal
-			title={modalData.modalName}
+			title={modalData.name}
 			closeModal={handleClose}
 			showCloseButton={cancelable}
 		>
 			<div className={css.description}>
-				{modalData.modalDescription}
+				{modalData.description}
 				{cards.length > 0 && (
 					<div className={css.cards}>
 						<div className={css.cardsListContainer}>

@@ -63,8 +63,8 @@ export namespace CopyAttack {
 
 	export type Data = {
 		type: 'copyAttack'
-		modalName: string
-		modalDescription: string
+		name: string
+		description: string
 		hermitCard: CardEntity
 	}
 

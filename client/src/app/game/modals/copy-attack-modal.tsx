@@ -61,10 +61,10 @@ function CopyAttackModal({closeModal}: Props) {
 		!modalData.blockedActions.includes('SECONDARY_ATTACK')
 
 	return (
-		<Modal closeModal={handleClose} title={modalData.modalName}>
+		<Modal closeModal={handleClose} title={modalData.name}>
 			<div className={css.confirmModal}>
 				<div className={css.description}>
-					{modalData.modalDescription}
+					{modalData.description}
 				</div>
 				<div className={css.description}>
 					{isPrimaryAvailable && (

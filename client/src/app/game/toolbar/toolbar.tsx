@@ -17,8 +17,8 @@ function Toolbar() {
 		if (!gameState) return
 		gameState.currentModalData = {
 			type: 'selectCards',
-			modalName: 'Discarded',
-			modalDescription:
+			name: 'Discarded',
+			description:
 				gameState.discarded.length === 0
 					? 'There are no cards in your discard pile.'
 					: '',
