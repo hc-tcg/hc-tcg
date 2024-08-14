@@ -8,6 +8,7 @@ import {StatusEffect, hiddenStatusEffect} from './status-effect'
 
 const TurnSkippedEffect: StatusEffect<PlayerComponent> = {
 	...hiddenStatusEffect,
+	name: 'Turn Skipped',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

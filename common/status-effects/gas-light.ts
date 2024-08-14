@@ -29,6 +29,7 @@ function newGasLightAttack(
 
 export const GasLightEffect: StatusEffect<CardComponent> = {
 	...hiddenStatusEffect,
+	name: 'Gas Light Applied',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

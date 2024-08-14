@@ -88,7 +88,6 @@ export const hiddenStatusEffect = {
 	...statusEffect,
 	type: 'hiddenSystem' as StatusEffect['type'],
 	icon: '',
-	name: '',
 	description: '',
 	applyCondition: query.anything,
 	applyLog: null,

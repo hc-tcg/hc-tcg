@@ -3,6 +3,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {takeEvery} from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import {chatMessage} from './background/chat'
 import {
 	cancelPrivateGame,
@@ -59,5 +60,5 @@ function* handler(message: RecievedClientMessage) {
 }
 
 export default function* handleClientMessage() {
-	yield* takeEvery('*', handler)
+	yield* takeEvery('*', safeCall, handler)
 }

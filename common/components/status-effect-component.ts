@@ -65,7 +65,7 @@ export class StatusEffectComponent<
 
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
-		this.props.onApply(this.game, this as any, target as any, observer)
+		this.props.onApply(this.game, this, target, observer)
 
 		if (this.props.applyLog) {
 			this.game.battleLog.addStatusEffectEntry(this.entity, this.props.applyLog)

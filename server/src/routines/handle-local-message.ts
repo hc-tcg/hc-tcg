@@ -1,5 +1,6 @@
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {all, call, takeEvery} from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import {
 	sendGameStateOnReconnect,
 	statusChangedSaga,
@@ -35,5 +36,5 @@ function* handler(message: LocalMessage) {
 }
 
 export default function* handleLocalMessage() {
-	yield* takeEvery('*', handler)
+	yield* takeEvery('*', safeCall, handler)
 }
