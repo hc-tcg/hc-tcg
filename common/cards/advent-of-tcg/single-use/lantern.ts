@@ -33,7 +33,7 @@ class Lantern extends CardOld {
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modall: {
 					type: 'selectCards',
 					payload: {
 						modalName: 'Lantern',
@@ -65,7 +65,7 @@ class Lantern extends CardOld {
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
-						data: {
+						modall: {
 							type: 'selectCards',
 							payload: {
 								modalName: 'Lantern',

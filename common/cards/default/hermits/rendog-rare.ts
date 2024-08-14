@@ -92,10 +92,10 @@ const RendogRare: Hermit = {
 
 						game.addModalRequest({
 							player: player.entity,
-							data: {
+							modal: {
 								type: 'copyAttack',
-								modalName: 'Rendog: Choose an attack to copy',
-								modalDescription:
+								name: 'Rendog: Choose an attack to copy',
+								description:
 									"Which of the Hermit's attacks do you want to copy?",
 								hermitCard: pickedCard.entity,
 							},

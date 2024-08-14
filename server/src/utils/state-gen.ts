@@ -402,7 +402,7 @@ export function getLocalGameState(
 
 	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
-		currentModalData = getLocalModalData(game, currentModalRequest.data)
+		currentModalData = getLocalModalData(game, currentModalRequest.modal)
 	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message

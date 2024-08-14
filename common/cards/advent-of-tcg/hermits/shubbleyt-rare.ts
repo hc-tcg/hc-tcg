@@ -41,7 +41,7 @@ class ShubbleYTRare extends CardOld {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modall: {
 					type: 'selectCards',
 					payload: {
 						modalName: 'Shelby - Parallel World',

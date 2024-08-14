@@ -33,7 +33,7 @@ class Brush extends CardOld {
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modall: {
 					type: 'selectCards',
 					payload: {
 						modalName: 'Brush',

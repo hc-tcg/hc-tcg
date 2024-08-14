@@ -82,10 +82,10 @@ const GrianRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modal: {
 					type: 'selectCards',
-					modalName: 'Grian - Borrow',
-					modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+					name: 'Grian - Borrow',
+					description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
 					cards: [opponentAttachCard.entity],
 					selectionSize: 0,
 					primaryButton: canAttach

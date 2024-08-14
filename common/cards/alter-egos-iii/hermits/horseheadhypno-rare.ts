@@ -51,10 +51,10 @@ const HorseHeadHypnoRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modal: {
 					type: 'selectCards',
-					modalName: 'Horse Head Hypno - Restock',
-					modalDescription:
+					name: 'Horse Head Hypno - Restock',
+					description:
 						'Choose an item card to retrieve from your discard pile.',
 					cards: game.components
 						.filter(CardComponent, modalCondition)

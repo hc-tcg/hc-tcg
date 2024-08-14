@@ -74,10 +74,10 @@ const EvilXisumaRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modal: {
 					type: 'copyAttack',
-					modalName: 'Evil X: Disable an attack for 1 turn',
-					modalDescription:
+					name: 'Evil X: Disable an attack for 1 turn',
+					description:
 						"Which of the opponent's attacks do you want to disable?",
 					hermitCard: opponentActiveHermit.entity,
 				},

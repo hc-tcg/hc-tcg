@@ -35,10 +35,10 @@ const Chest: SingleUse = {
 
 		game.addModalRequest({
 			player: player.entity,
-			data: {
+			modal: {
 				type: 'selectCards',
-				modalName: 'Chest',
-				modalDescription: 'Choose a card to retrieve from your discard pile.',
+				name: 'Chest',
+				description: 'Choose a card to retrieve from your discard pile.',
 				cards: game.components
 					.filter(CardComponent, pickCondition)
 					.map((card) => card.entity),

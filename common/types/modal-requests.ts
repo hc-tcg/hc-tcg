@@ -9,7 +9,7 @@ export namespace SelectCards {
 	export type Request = {
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
-		data: Data
+		modal: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
@@ -21,9 +21,9 @@ export namespace SelectCards {
 	export type Data = {
 		type: 'selectCards'
 		/** The name of the modal */
-		modalName: string
+		name: string
 		/** The description of the modal */
-		modalDescription: string
+		description: string
 		cards: Array<CardEntity>
 		/** The amount of cards the player can select. Set to 0 if they do not need to slect cards. */
 		selectionSize: number
@@ -54,7 +54,7 @@ export namespace CopyAttack {
 	export type Request = {
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
-		data: Data
+		modal: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */

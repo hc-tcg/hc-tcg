@@ -35,7 +35,7 @@ class Cat extends CardOld {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modall: {
 					type: 'selectCards',
 					payload: {
 						modalName: 'Cat',

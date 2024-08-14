@@ -58,10 +58,10 @@ const EvilJevinRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
+				modal: {
 					type: 'selectCards',
-					modalName: 'Evil Jevin - Emerge',
-					modalDescription:
+					name: 'Evil Jevin - Emerge',
+					description:
 						'Choose a Hermit card to retrieve from your discard pile.',
 					cards: pickableCards,
 					selectionSize: 1,
