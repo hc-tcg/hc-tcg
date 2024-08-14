@@ -88,7 +88,7 @@ function SelectCardsModal({closeModal}: Props) {
 		<Modal
 			title={modalData.name}
 			closeModal={handleClose}
-			showCloseButton={cancelable === true}
+			showCloseButton={cancelable}
 		>
 			<div className={css.description}>
 				{modalData.description}

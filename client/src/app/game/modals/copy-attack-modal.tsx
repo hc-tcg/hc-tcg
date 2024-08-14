@@ -63,7 +63,7 @@ function CopyAttackModal({closeModal}: Props) {
 		<Modal
 			closeModal={handleClose}
 			title={modalData.name}
-			showCloseButton={modalData.cancelable === true}
+			showCloseButton={modalData.cancelable}
 		>
 			<div className={css.confirmModal}>
 				<div className={css.description}>{modalData.description}</div>
