@@ -75,6 +75,7 @@ const IskallmanRare: Hermit = {
 						description: 'Do you want to give 50hp to an AFK Hermit?',
 						cards: [],
 						selectionSize: 0,
+						cancelable: true,
 						primaryButton: {
 							text: 'Yes',
 							variant: 'default',

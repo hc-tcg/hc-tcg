@@ -65,6 +65,7 @@ const EvilJevinRare: Hermit = {
 						'Choose a Hermit card to retrieve from your discard pile.',
 					cards: pickableCards,
 					selectionSize: 1,
+					cancelable: false,
 					primaryButton: {
 						text: 'Draw Card',
 						variant: 'default',

@@ -27,6 +27,8 @@ export namespace SelectCards {
 		cards: Array<CardEntity>
 		/** The amount of cards the player can select. Set to 0 if they do not need to slect cards. */
 		selectionSize: number
+		/** Show a close button on this modal. */
+		cancelable: boolean
 		primaryButton?: {
 			text: string
 			variant?: ButtonVariant
@@ -35,8 +37,6 @@ export namespace SelectCards {
 			text: string
 			variant?: ButtonVariant
 		} | null
-		/** Show a close button on this modal. Defaults to false. */
-		cancelable?: boolean
 	}
 
 	export type Result =
@@ -66,8 +66,8 @@ export namespace CopyAttack {
 		name: string
 		description: string
 		hermitCard: CardEntity
-		/** Show a close button on this modal. Defaults to true. */
-		cancelable?: boolean
+		/** Show a close button on this modal. */
+		cancelable: boolean
 	}
 
 	export type Result =

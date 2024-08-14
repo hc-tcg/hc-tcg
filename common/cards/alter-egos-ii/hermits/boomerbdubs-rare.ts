@@ -73,6 +73,7 @@ const BoomerBdubsRare: Hermit = {
 						description: 'Do you want to flip a coin for your attack?',
 						cards: [],
 						selectionSize: 0,
+						cancelable: false,
 						primaryButton: {
 							text: 'Yes',
 							variant: 'default',

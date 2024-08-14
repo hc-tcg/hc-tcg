@@ -49,6 +49,7 @@ const Spyglass: SingleUse = {
 					description: canDiscard ? ': Select 1 card to discard' : '',
 					cards: opponentPlayer.getHand().map((card) => card.entity),
 					selectionSize: canDiscard ? 1 : 0,
+					cancelable: true,
 					primaryButton: {
 						text: canDiscard ? 'Confirm Selection' : 'Close',
 						variant: 'default',
