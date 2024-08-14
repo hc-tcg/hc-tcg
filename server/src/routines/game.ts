@@ -714,6 +714,9 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 function* gameSaga(game: GameModel) {
+	console.info(
+		`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
+	)
 	while (true) {
 		game.state.turn.turnNumber++
 		const result = yield* call(turnSaga, game)
