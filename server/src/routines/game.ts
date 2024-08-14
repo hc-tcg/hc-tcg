@@ -412,7 +412,7 @@ function* turnActionSaga(
 		}
 	} catch (e) {
 		if (game.settings.logErrorsToStderr) {
-			console.error(`${game.logHeader} ${e}`)
+			console.error(`${game.logHeader} ${(e as Error).stack}`.trimStart())
 		} else {
 			throw e
 		}

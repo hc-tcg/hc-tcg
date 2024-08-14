@@ -30,6 +30,7 @@ function Modal({
 	function pointerDownHandler(event: any) {
 		event.preventDefault()
 	}
+
 	return (
 		<Dialog onOpenChange={closeModal} defaultOpen>
 			<DialogPortal container={document.getElementById('modal')}>
@@ -38,7 +39,13 @@ function Modal({
 					className={cn(css.modal, {[css.center]: centered})}
 					aria-describedby={description}
 					onPointerDownOutside={pointerDownHandler}
-					onEscapeKeyDown={closeModal}
+					onEscapeKeyDown={(ev) => {
+						if (showCloseButton) {
+							closeModal()
+						} else {
+							ev.preventDefault()
+						}
+					}}
 				>
 					{title && <DialogTitle className={css.title}>{title}</DialogTitle>}
 					{/* When tabbing around it is more convient to click the buttons only */}
