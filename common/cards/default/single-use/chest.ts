@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'

@@ -55,17 +55,14 @@ function CopyAttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
-	let isPrimaryAvailable =
-		!modalData.blockedActions.includes('PRIMARY_ATTACK')
+	let isPrimaryAvailable = !modalData.blockedActions.includes('PRIMARY_ATTACK')
 	let isSecondaryAvailable =
 		!modalData.blockedActions.includes('SECONDARY_ATTACK')
 
 	return (
 		<Modal closeModal={handleClose} title={modalData.name}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					{modalData.description}
-				</div>
+				<div className={css.description}>{modalData.description}</div>
 				<div className={css.description}>
 					{isPrimaryAvailable && (
 						<Attack

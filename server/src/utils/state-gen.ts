@@ -207,10 +207,7 @@ export function getLocalCard<CardType extends Card>(
 	}
 }
 
-function getLocalModalData(
-	game: GameModel,
-	modal: ModalData,
-): LocalModalData {
+function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 	if (modal.type == 'selectCards') {
 		return {
 			...modal,
