@@ -72,6 +72,7 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
+			`${game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
 			'Total games:',

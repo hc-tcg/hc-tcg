@@ -408,7 +408,7 @@ function* turnActionSaga(
 		}
 	} catch (e) {
 		if (game.settings.logErrorsToStderr) {
-			console.error(e)
+			console.error(`${game.logHeader} ${e}`)
 		} else {
 			throw e
 		}

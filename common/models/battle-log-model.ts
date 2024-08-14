@@ -87,6 +87,8 @@ export class BattleLogModel {
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
 			})
+
+			console.info(`${this.game.logHeader} ${firstEntry.description}`)
 		}
 
 		await new Promise((e) =>

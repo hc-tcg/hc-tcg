@@ -151,6 +151,10 @@ export class GameModel {
 		this.state = getGameState(this, options.randomizeOrder)
 	}
 
+	public get logHeader() {
+		return `Game ${this.id}:`
+	}
+
 	public get currentPlayerEntity() {
 		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
