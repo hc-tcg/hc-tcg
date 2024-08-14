@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -80,10 +81,10 @@ const EvilXisumaRare: Hermit = {
 					description:
 						"Which of the opponent's attacks do you want to disable?",
 					hermitCard: opponentActiveHermit.entity,
-					cancelable: true,
+					cancelable: false,
 				},
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.pick) return
+					assert(modalResult.pick)
 
 					const actionToBlock =
 						modalResult.pick === 'primary'

@@ -35,7 +35,7 @@ export namespace SelectCards {
 			text: string
 			variant?: ButtonVariant
 		} | null
-		/** Show a close button on this modal */
+		/** Show a close button on this modal. Defaults to false. */
 		cancelable?: boolean
 	}
 
@@ -66,7 +66,7 @@ export namespace CopyAttack {
 		name: string
 		description: string
 		hermitCard: CardEntity
-		/** Show a close button on this modal */
+		/** Show a close button on this modal. Defaults to true. */
 		cancelable?: boolean
 	}
 

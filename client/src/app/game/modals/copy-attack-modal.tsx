@@ -6,7 +6,6 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
-import {ModalNotice} from 'components/modal/modal'
 
 type Props = {
 	closeModal: () => void
