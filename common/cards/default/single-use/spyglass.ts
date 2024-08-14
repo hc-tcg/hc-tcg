@@ -60,8 +60,7 @@ const Spyglass: SingleUse = {
 					if (!modalResult) return
 					if (!canDiscard) return
 
-					if (!modalResult.cards || modalResult.cards.length !== 1)
-						return
+					if (!modalResult.cards || modalResult.cards.length !== 1) return
 
 					let card = game.components.get(modalResult.cards[0].entity)
 					if (!card) return
