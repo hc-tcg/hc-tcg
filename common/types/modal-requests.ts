@@ -66,6 +66,8 @@ export namespace CopyAttack {
 		name: string
 		description: string
 		hermitCard: CardEntity
+		/** Show a close button on this modal */
+		cancelable?: boolean
 	}
 
 	export type Result =

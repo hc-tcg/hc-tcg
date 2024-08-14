@@ -214,7 +214,6 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 			cards: modal.cards.map((entity) =>
 				getLocalCard(game, game.components.get(entity)!),
 			),
-			cancelable: modal.cancelable ?? false,
 		}
 	} else if (modal.type === 'copyAttack') {
 		let hermitCard = game.components.get(modal.hermitCard)!

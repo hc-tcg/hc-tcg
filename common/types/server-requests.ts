@@ -100,7 +100,7 @@ export namespace LocalSelectCards {
 			text: string
 			variant?: ButtonVariant
 		} | null
-		cancelable: boolean
+		cancelable?: boolean
 	}
 
 	export type Result =
@@ -121,6 +121,7 @@ export namespace LocalCopyAttack {
 		description: string
 		hermitCard: LocalCardInstance
 		blockedActions: TurnActions
+		cancelable?: boolean
 	}
 
 	export type Result =

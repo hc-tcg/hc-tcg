@@ -80,6 +80,7 @@ const EvilXisumaRare: Hermit = {
 					description:
 						"Which of the opponent's attacks do you want to disable?",
 					hermitCard: opponentActiveHermit.entity,
+					cancelable: true,
 				},
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.pick) return

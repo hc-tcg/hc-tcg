@@ -6,6 +6,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import Attack from './attack-modal/attack'
 import css from './game-modals.module.scss'
+import {ModalNotice} from 'components/modal/modal'
 
 type Props = {
 	closeModal: () => void
@@ -60,7 +61,11 @@ function CopyAttackModal({closeModal}: Props) {
 		!modalData.blockedActions.includes('SECONDARY_ATTACK')
 
 	return (
-		<Modal closeModal={handleClose} title={modalData.name}>
+		<Modal
+			closeModal={handleClose}
+			title={modalData.name}
+			showCloseButton={modalData.cancelable === true}
+		>
 			<div className={css.confirmModal}>
 				<div className={css.description}>{modalData.description}</div>
 				<div className={css.description}>
