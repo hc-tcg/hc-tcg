@@ -50,8 +50,6 @@ const Chest: SingleUse = {
 				cancelable: true,
 			},
 			onResult(modalResult) {
-				assert(modalResult)
-
 				if (!modalResult.result) {
 					// Allow player to cancel using Chest
 					component.draw()

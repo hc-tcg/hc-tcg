@@ -100,8 +100,6 @@ const GrianRare: Hermit = {
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined) return
-
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
 					} else {
