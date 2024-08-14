@@ -18,12 +18,13 @@ function SelectCardsModal({closeModal}: Props) {
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
-	if (!modalData || modalData.modalId !== 'selectCards') return null
+	if (!modalData || modalData.type !== 'selectCards') return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
-	const cards: Array<LocalCardInstance> = modalData.payload.cards
-	const selectionSize = modalData.payload.selectionSize
-	const primaryButton = modalData.payload.primaryButton
-	const secondaryButton = modalData.payload.secondaryButton
+	const cards: Array<LocalCardInstance> = modalData.cards
+	const selectionSize = modalData.selectionSize
+	const primaryButton = modalData.primaryButton
+	const secondaryButton = modalData.secondaryButton
+	const cancelable = modalData.cancelable
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
 		if (selectionSize === 0) return
@@ -84,9 +85,13 @@ function SelectCardsModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
+		<Modal
+			title={modalData.name}
+			closeModal={handleClose}
+			showCloseButton={cancelable}
+		>
 			<div className={css.description}>
-				{modalData.payload.modalDescription}
+				{modalData.description}
 				{cards.length > 0 && (
 					<div className={css.cards}>
 						<div className={css.cardsListContainer}>
@@ -117,6 +122,7 @@ function SelectCardsModal({closeModal}: Props) {
 						variant={primaryButton.variant}
 						size="medium"
 						onClick={handlePrimary}
+						disabled={selected.length < selectionSize}
 					>
 						{primaryButton.text}
 					</Button>

@@ -67,21 +67,20 @@ const BoomerBdubsRare: Hermit = {
 
 				game.addModalRequest({
 					player: player.entity,
-					data: {
-						modalId: 'selectCards',
-						payload: {
-							modalName: 'Boomer BDubs - Watch This',
-							modalDescription: 'Do you want to flip a coin for your attack?',
-							cards: [],
-							selectionSize: 0,
-							primaryButton: {
-								text: 'Yes',
-								variant: 'default',
-							},
-							secondaryButton: {
-								text: 'No',
-								variant: 'default',
-							},
+					modal: {
+						type: 'selectCards',
+						name: 'Boomer BDubs - Watch This',
+						description: 'Do you want to flip a coin for your attack?',
+						cards: [],
+						selectionSize: 0,
+						cancelable: false,
+						primaryButton: {
+							text: 'Yes',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'No',
+							variant: 'default',
 						},
 					},
 					onResult(modalResult) {

@@ -13,7 +13,6 @@ import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	ActionResult,
 	DefaultDictionary,
 	GameEndOutcomeT,
 	GameEndReasonT,
@@ -150,6 +149,10 @@ export class GameModel {
 		})
 
 		this.state = getGameState(this, options.randomizeOrder)
+	}
+
+	public get logHeader() {
+		return `Game ${this.id}:`
 	}
 
 	public get currentPlayerEntity() {
@@ -300,10 +303,6 @@ export class GameModel {
 			allBlockedActions.push(...actions)
 		})
 		return allBlockedActions
-	}
-
-	public setLastActionResult(action: TurnAction, result: ActionResult) {
-		this.state.lastActionResult = {action, result}
 	}
 
 	public addPickRequest(newRequest: PickRequest, before = false) {

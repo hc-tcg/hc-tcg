@@ -58,28 +58,27 @@ const EvilJevinRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Evil Jevin - Emerge',
-						modalDescription:
-							'Choose a Hermit card to retrieve from your discard pile.',
-						cards: pickableCards,
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Draw Card',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'Do Nothing',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Evil Jevin - Emerge',
+					description:
+						'Choose a Hermit card to retrieve from your discard pile.',
+					cards: pickableCards,
+					selectionSize: 1,
+					cancelable: false,
+					primaryButton: {
+						text: 'Draw Card',
+						variant: 'default',
+					},
+					secondaryButton: {
+						text: 'Do Nothing',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult?.result) return 'SUCCESS'
-					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-					if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
+					if (!modalResult?.result) return
+					if (!modalResult.cards) return
+					if (modalResult.cards.length !== 1) return
 
 					let card = game.components.get(modalResult.cards[0].entity)
 					card?.draw()

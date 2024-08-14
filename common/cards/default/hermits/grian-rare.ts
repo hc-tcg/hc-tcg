@@ -82,36 +82,32 @@ const GrianRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Grian - Borrow',
-						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
-						cards: [opponentAttachCard.entity],
-						selectionSize: 0,
-						primaryButton: canAttach
-							? {
-									text: 'Attach',
-									variant: 'default',
-								}
-							: null,
-						secondaryButton: {
-							text: 'Discard',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Grian - Borrow',
+					description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+					cards: [opponentAttachCard.entity],
+					selectionSize: 0,
+					cancelable: false,
+					primaryButton: canAttach
+						? {
+								text: 'Attach',
+								variant: 'default',
+							}
+						: null,
+					secondaryButton: {
+						text: 'Discard',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined)
-						return 'FAILURE_INVALID_DATA'
-
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
 					} else {
 						opponentAttachCard.discard(component.player.entity)
 					}
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					opponentAttachCard.discard(component.player.entity)

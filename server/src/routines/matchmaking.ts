@@ -71,7 +71,8 @@ function* gameManager(game: GameModel) {
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType = game.code ? 'Private' : 'Public'
-		console.log(
+		console.info(
+			`${game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
 			'Total games:',

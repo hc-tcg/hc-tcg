@@ -92,22 +92,21 @@ const RendogRare: Hermit = {
 
 						game.addModalRequest({
 							player: player.entity,
-							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Rendog: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+							modal: {
+								type: 'copyAttack',
+								name: 'Rendog: Choose an attack to copy',
+								description:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
+								cancelable: true,
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return 'FAILURE_INVALID_DATA'
+								if (!modalResult) return
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return 'SUCCESS'
+									return
 								}
 
 								// Store the chosen attack to copy
@@ -116,7 +115,7 @@ const RendogRare: Hermit = {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return 'SUCCESS'
+								return
 							},
 							onTimeout: () => {
 								mockedAttacks.set(

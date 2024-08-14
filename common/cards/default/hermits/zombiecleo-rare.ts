@@ -99,24 +99,23 @@ const ZombieCleoRare: Hermit = {
 
 						game.addModalRequest({
 							player: player.entity,
-							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Cleo: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+							modal: {
+								type: 'copyAttack',
+								name: 'Cleo: Choose an attack to copy',
+								description:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
+								cancelable: true,
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return 'FAILURE_INVALID_DATA'
+								if (!modalResult) return
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return 'SUCCESS'
+									return
 								}
-								if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
+								if (!modalResult.pick) return
 
 								// Store the card to copy when creating the attack
 								mockedAttacks.set(
@@ -124,7 +123,7 @@ const ZombieCleoRare: Hermit = {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return 'SUCCESS'
+								return
 							},
 							onTimeout: () => {
 								mockedAttacks.set(

@@ -69,26 +69,25 @@ const IskallmanRare: Hermit = {
 
 				game.addModalRequest({
 					player: player.entity,
-					data: {
-						modalId: 'selectCards',
-						payload: {
-							modalName: 'IskallMAN - Good Deed',
-							modalDescription: 'Do you want to give 50hp to an AFK Hermit?',
-							cards: [],
-							selectionSize: 0,
-							primaryButton: {
-								text: 'Yes',
-								variant: 'default',
-							},
-							secondaryButton: {
-								text: 'No',
-								variant: 'default',
-							},
+					modal: {
+						type: 'selectCards',
+						name: 'IskallMAN - Good Deed',
+						description: 'Do you want to give 50hp to an AFK Hermit?',
+						cards: [],
+						selectionSize: 0,
+						cancelable: false,
+						primaryButton: {
+							text: 'Yes',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'No',
+							variant: 'default',
 						},
 					},
 					onResult(modalResult) {
-						if (!modalResult) return 'SUCCESS'
-						if (!modalResult.result) return 'SUCCESS'
+						if (!modalResult) return
+						if (!modalResult.result) return
 						game.addPickRequest({
 							player: player.entity,
 							id: component.entity,
@@ -102,7 +101,7 @@ const IskallmanRare: Hermit = {
 							},
 						})
 
-						return 'SUCCESS'
+						return
 					},
 					onTimeout() {
 						return

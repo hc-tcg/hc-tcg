@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -74,17 +75,16 @@ const EvilXisumaRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'copyAttack',
-					payload: {
-						modalName: 'Evil X: Disable an attack for 1 turn',
-						modalDescription:
-							"Which of the opponent's attacks do you want to disable?",
-						hermitCard: opponentActiveHermit.entity,
-					},
+				modal: {
+					type: 'copyAttack',
+					name: 'Evil X: Disable an attack for 1 turn',
+					description:
+						"Which of the opponent's attacks do you want to disable?",
+					hermitCard: opponentActiveHermit.entity,
+					cancelable: false,
 				},
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+					assert(modalResult.pick)
 
 					const actionToBlock =
 						modalResult.pick === 'primary'
@@ -95,7 +95,7 @@ const EvilXisumaRare: Hermit = {
 					game.components
 						.new(StatusEffectComponent, actionToBlock, component.entity)
 						.apply(opponentPlayer.getActiveHermit()?.entity)
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
