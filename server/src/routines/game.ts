@@ -398,6 +398,10 @@ function* turnActionSaga(
 				break
 			case 'END_TURN':
 				endTurn = true
+				// Turn end actions are not in the battle log, so we log them to stdout manually.
+				console.info(
+					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
+				)
 				break
 			default:
 				// Unknown action type, ignore it completely
