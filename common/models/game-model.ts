@@ -7,6 +7,7 @@ import {
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
+import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
@@ -51,10 +52,51 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	}
 }
 
+export type GameSettings = {
+	maxTurnTime: number
+	extraActionTime: number
+	showHooksState: {
+		enabled: boolean
+		clearConsole: boolean
+	}
+	blockedActions: Array<TurnAction>
+	availableActions: Array<TurnAction>
+	autoEndTurn: boolean
+	disableDeckOut: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	oneShotMode: boolean
+	disableDamage: boolean
+	noItemRequirements: boolean
+	shuffleDeck: boolean
+	logErrorsToStderr: boolean
+}
+
+export function gameSettingsFromEnv(): GameSettings {
+	return {
+		maxTurnTime: CONFIG.limits.maxTurnTime,
+		extraActionTime: CONFIG.limits.extraActionTime,
+		showHooksState: DEBUG_CONFIG.showHooksState,
+		blockedActions: DEBUG_CONFIG.blockedActions,
+		availableActions: DEBUG_CONFIG.availableActions,
+		autoEndTurn: DEBUG_CONFIG.autoEndTurn,
+		disableDeckOut: DEBUG_CONFIG.disableDeckOut,
+		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
+		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
+		oneShotMode: DEBUG_CONFIG.oneShotMode,
+		disableDamage: DEBUG_CONFIG.disableDamage,
+		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
+		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
+		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
+	}
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
 	private internalCode: string | null
+
+	public readonly settings: GameSettings
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
@@ -76,11 +118,19 @@ export class GameModel {
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
-		code?: string,
+		settings: GameSettings,
+		options?: {
+			code?: string
+			randomizeOrder?: false
+		},
 	) {
+		options = options ?? {}
+
+		this.settings = settings
+
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code || null
+		this.internalCode = options.code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -95,9 +145,11 @@ export class GameModel {
 
 		this.components = new ComponentTable(this)
 		this.afterGameEnd = new Hook<string, () => void>()
-		setupComponents(this.components, player1, player2)
+		setupComponents(this.components, player1, player2, {
+			shuffleDeck: settings.shuffleDeck,
+		})
 
-		this.state = getGameState(this)
+		this.state = getGameState(this, options.randomizeOrder)
 	}
 
 	public get currentPlayerEntity() {

@@ -1,6 +1,6 @@
+import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {DEBUG_CONFIG} from 'common/config'
 import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
@@ -39,7 +39,7 @@ function getAttack(
 		if (otherAttack) attacks.push(otherAttack)
 	})
 
-	if (DEBUG_CONFIG.oneShotMode) {
+	if (game.settings.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
 			attacks[i].addDamage('debug', 1001)
 		}
@@ -53,10 +53,6 @@ export function* attackSaga(
 	turnAction: AttackActionData,
 	checkForRequests = true,
 ): Generator<any, GenericActionResult> {
-	if (!turnAction?.type) {
-		return 'FAILURE_INVALID_DATA'
-	}
-
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
 	const activeInstance = game.components.find(
@@ -65,7 +61,8 @@ export function* attackSaga(
 		query.card.isHermit,
 		query.card.active,
 	)
-	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
+
+	assert(activeInstance, 'You can not attack without an active hermit.')
 
 	if (checkForRequests) {
 		// First allow cards to add attack requests
@@ -134,15 +131,13 @@ export function* playCardSaga(
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
-	if (!slotEntity || !localCard) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(slotEntity && localCard)
 
 	const card = game.components.find(
 		CardComponent,
 		query.card.entity(localCard.entity),
 	)
-	if (!card) return 'FAILURE_INVALID_DATA'
+	assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
 
@@ -153,11 +148,10 @@ export function* playCardSaga(
 		)
 	}
 
-	// You are not supposed to be able to select a slot with a card in it, but network issues can allow
-	// this to happen.
-	if (pickedSlot.getCard()) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(
+		!pickedSlot.getCard(),
+		'You can not play a card in a slot with a card in it',
+	)
 
 	const row = pickedSlot.row
 	const rowIndex = pickedSlot.index
@@ -167,7 +161,10 @@ export function* playCardSaga(
 	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
 	// It's the wrong kind of slot or does not satisfy the condition
-	if (!canAttach) return 'FAILURE_INVALID_SLOT'
+	assert(
+		canAttach,
+		'You can not play a card in a slot it cannot be attached to or at a time it can not be played.',
+	)
 
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client
@@ -336,7 +333,6 @@ export function* modalRequestSaga(
 			// There are no active requests left, and we're in the middle of an attack. Execute it now.
 			const turnAction: AttackActionData = {
 				type: attackToAttackAction[game.state.turn.currentAttack],
-				player: game.currentPlayer.entity,
 			}
 			const attackResult = yield* attackSaga(game, turnAction, false)
 
@@ -396,7 +392,6 @@ export function* pickRequestSaga(
 		// There are no active requests left, and we're in the middle of an attack. Execute it now.
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
-			player: game.currentPlayer.entity,
 		}
 		const attackResult = yield* attackSaga(game, turnAction, false)
 

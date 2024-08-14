@@ -7,13 +7,8 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {
-	ClientMessageTable,
-	clientMessages,
-} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {TypeT} from 'common/types/cards'
 import {ActionResult, TurnAction, TurnActions} from 'common/types/game-state'
@@ -25,10 +20,11 @@ import {
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
 import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
-import {broadcast} from 'utils/comm'
 import {printHooksState} from '../utils'
+import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 
+import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -43,8 +39,11 @@ import {
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
-export const getTimerForSeconds = (seconds: number): number => {
-	const maxTime = CONFIG.limits.maxTurnTime * 1000
+export const getTimerForSeconds = (
+	game: GameModel,
+	seconds: number,
+): number => {
+	const maxTime = game.settings.maxTurnTime * 1000
 	return Date.now() - maxTime + seconds * 1000
 }
 
@@ -151,10 +150,22 @@ function getAvailableActions(
 
 			// only add attack options if not sleeping
 			if (hermitCard && hermitCard.isHermit()) {
-				if (hasEnoughEnergy(availableEnergy, hermitCard.props.primary.cost)) {
+				if (
+					hasEnoughEnergy(
+						availableEnergy,
+						hermitCard.props.primary.cost,
+						game.settings.noItemRequirements,
+					)
+				) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (hasEnoughEnergy(availableEnergy, hermitCard.props.secondary.cost)) {
+				if (
+					hasEnoughEnergy(
+						availableEnergy,
+						hermitCard.props.secondary.cost,
+						game.settings.noItemRequirements,
+					)
+				) {
 					actions.push('SECONDARY_ATTACK')
 				}
 				if (su && !suUsed) {
@@ -231,10 +242,16 @@ function getAvailableActions(
 }
 
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (action: any) =>
-		action.type === 'TURN_ACTION' &&
-		action.payload.action.type === actionType &&
-		action.payload.playerEntity === playerEntity
+	return (actionAny: any) => {
+		const action = actionAny as LocalMessage
+		return (
+			action.type === localMessages.GAME_TURN_ACTION &&
+			'playerEntity' in action &&
+			'action' in action &&
+			action.action.type === actionType &&
+			action.playerEntity === playerEntity
+		)
+	}
 }
 
 // return false in case one player is dead
@@ -318,7 +335,7 @@ function* sendGameState(game: GameModel) {
 
 function* turnActionSaga(
 	game: GameModel,
-	turnAction: ClientMessageTable[typeof clientMessages.TURN_ACTION],
+	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
 
@@ -350,48 +367,59 @@ function* turnActionSaga(
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 
-	switch (actionType) {
-		case 'PLAY_HERMIT_CARD':
-		case 'PLAY_ITEM_CARD':
-		case 'PLAY_EFFECT_CARD':
-		case 'PLAY_SINGLE_USE_CARD':
-			result = yield* call(playCardSaga, game, turnAction.action)
-			break
-		case 'SINGLE_USE_ATTACK':
-		case 'PRIMARY_ATTACK':
-		case 'SECONDARY_ATTACK':
-			result = yield* call(attackSaga, game, turnAction.action)
-			break
-		case 'CHANGE_ACTIVE_HERMIT':
-			result = yield* call(changeActiveHermitSaga, game, turnAction.action)
-			break
-		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, turnAction.action)
-			break
-		case 'REMOVE_EFFECT':
-			result = yield* call(removeEffectSaga, game)
-			break
-		case 'PICK_REQUEST':
-			result = yield* call(
-				pickRequestSaga,
-				game,
-				(turnAction.action as PickSlotActionData)?.entity,
-			)
-			break
-		case 'MODAL_REQUEST':
-			result = yield* call(
-				modalRequestSaga,
-				game,
-				turnAction?.action?.modalResult,
-			)
-			break
-		case 'END_TURN':
-			endTurn = true
-			break
-		default:
-			// Unknown action type, ignore it completely
-			game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
-			return
+	try {
+		switch (actionType) {
+			case 'PLAY_HERMIT_CARD':
+			case 'PLAY_ITEM_CARD':
+			case 'PLAY_EFFECT_CARD':
+			case 'PLAY_SINGLE_USE_CARD':
+				result = yield* call(playCardSaga, game, turnAction.action)
+				break
+			case 'SINGLE_USE_ATTACK':
+			case 'PRIMARY_ATTACK':
+			case 'SECONDARY_ATTACK':
+				result = yield* call(attackSaga, game, turnAction.action)
+				break
+			case 'CHANGE_ACTIVE_HERMIT':
+				result = yield* call(changeActiveHermitSaga, game, turnAction.action)
+				break
+			case 'APPLY_EFFECT':
+				result = yield* call(applyEffectSaga, game, turnAction.action)
+				break
+			case 'REMOVE_EFFECT':
+				result = yield* call(removeEffectSaga, game)
+				break
+			case 'PICK_REQUEST':
+				result = yield* call(
+					pickRequestSaga,
+					game,
+					(turnAction.action as PickSlotActionData)?.entity,
+				)
+				break
+			case 'MODAL_REQUEST':
+				result = yield* call(
+					modalRequestSaga,
+					game,
+					turnAction?.action?.modalResult,
+				)
+				break
+			case 'END_TURN':
+				endTurn = true
+				break
+			default:
+				// Unknown action type, ignore it completely
+				throw new Error(
+					'Recieved an action that does not exist. This is impossible.',
+				)
+				game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
+				return
+		}
+	} catch (e) {
+		if (game.settings.logErrorsToStderr) {
+			console.error(e)
+		} else {
+			throw e
+		}
 	}
 
 	// Set action result to be sent back to client
@@ -436,7 +464,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	try {
 		while (true) {
-			if (DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
+			if (game.settings.showHooksState.enabled) printHooksState(game)
 
 			// Available actions code
 			const availableEnergy = getAvailableEnergy(game)
@@ -448,14 +476,14 @@ function* turnActionsSaga(game: GameModel) {
 			// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
-			blockedActions.push(...DEBUG_CONFIG.blockedActions)
+			blockedActions.push(...game.settings.blockedActions)
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter(
 				(action) => !blockedActions.includes(action),
 			)
 
-			availableActions.push(...DEBUG_CONFIG.availableActions)
+			availableActions.push(...game.settings.availableActions)
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
@@ -470,7 +498,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.turn.availableActions = availableActions
 
 			if (
-				DEBUG_CONFIG.autoEndTurn &&
+				game.settings.autoEndTurn &&
 				availableActions.includes('END_TURN') &&
 				availableActions.length === 1
 			) {
@@ -480,13 +508,13 @@ function* turnActionsSaga(game: GameModel) {
 			// Timer calculation
 			game.state.timer.turnStartTime =
 				game.state.timer.turnStartTime || Date.now()
-			let maxTime = CONFIG.limits.maxTurnTime * 1000
+			let maxTime = game.settings.maxTurnTime * 1000
 			let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
 			if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
 				game.state.timer.opponentActionStartTime =
 					game.state.timer.opponentActionStartTime || Date.now()
-				maxTime = CONFIG.limits.extraActionTime * 1000
+				maxTime = game.settings.extraActionTime * 1000
 				remainingTime =
 					game.state.timer.opponentActionStartTime + maxTime - Date.now()
 			}
@@ -546,14 +574,13 @@ function* turnActionsSaga(game: GameModel) {
 
 					// Reset timer to max time
 					game.state.timer.turnStartTime = Date.now()
-					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+					game.state.timer.turnRemaining = game.settings.maxTurnTime
 
 					// Execute attack now if there's a current attack
 					if (!game.hasActiveRequests() && !!currentAttack) {
 						// There are no active requests left, and we're in the middle of an attack. Execute it now.
 						const turnAction: AttackActionData = {
 							type: attackToAttackAction[currentAttack],
-							player: game.currentPlayer.entity,
 						}
 						yield* call(attackSaga, game, turnAction, false)
 					}
@@ -576,11 +603,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			// Run action logic
-			const result = yield* call(
-				turnActionSaga,
-				game,
-				raceResult.turnAction.payload,
-			)
+			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
 			if (result === 'END_TURN') {
 				break
@@ -603,7 +626,7 @@ export function* turnSaga(game: GameModel) {
 	opponentPlayer.singleUseCardUsed = false
 
 	game.state.timer.turnStartTime = Date.now()
-	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime * 1000
+	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
 	// Call turn start hooks
 
@@ -686,9 +709,9 @@ export function* turnSaga(game: GameModel) {
 
 function* checkDeckedOut(game: GameModel) {
 	if (
-		DEBUG_CONFIG.disableDeckOut ||
-		DEBUG_CONFIG.startWithAllCards ||
-		DEBUG_CONFIG.unlimitedCards
+		game.settings.disableDeckOut ||
+		game.settings.startWithAllCards ||
+		game.settings.unlimitedCards
 	)
 		return []
 	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {

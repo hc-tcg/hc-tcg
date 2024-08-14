@@ -189,7 +189,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 	}
 }
 
-function getLocalCard<CardType extends Card>(
+export function getLocalCard<CardType extends Card>(
 	game: GameModel,
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {

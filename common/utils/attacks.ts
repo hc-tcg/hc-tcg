@@ -198,8 +198,12 @@ export function executeExtraAttacks(
 
 // Things not directly related to the attack loop
 
-export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
-	if (DEBUG_CONFIG.noItemRequirements) return true
+export function hasEnoughEnergy(
+	energy: Array<TypeT>,
+	cost: Array<TypeT>,
+	noItemRequirements: boolean,
+) {
+	if (noItemRequirements) return true
 
 	const remainingEnergy = energy.slice()
 
