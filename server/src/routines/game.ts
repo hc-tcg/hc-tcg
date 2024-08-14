@@ -11,7 +11,7 @@ import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {TypeT} from 'common/types/cards'
-import {ActionResult, TurnAction, TurnActions} from 'common/types/game-state'
+import {TurnAction, TurnActions} from 'common/types/game-state'
 import {
 	AttackActionData,
 	PickSlotActionData,
@@ -361,11 +361,8 @@ function* turnActionSaga(
 		].includes(actionType) &&
 		!availableActions.includes(actionType)
 	) {
-		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
 	}
-
-	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 
 	try {
 		switch (actionType) {
@@ -373,35 +370,31 @@ function* turnActionSaga(
 			case 'PLAY_ITEM_CARD':
 			case 'PLAY_EFFECT_CARD':
 			case 'PLAY_SINGLE_USE_CARD':
-				result = yield* call(playCardSaga, game, turnAction.action)
+				yield* call(playCardSaga, game, turnAction.action)
 				break
 			case 'SINGLE_USE_ATTACK':
 			case 'PRIMARY_ATTACK':
 			case 'SECONDARY_ATTACK':
-				result = yield* call(attackSaga, game, turnAction.action)
+				yield* call(attackSaga, game, turnAction.action)
 				break
 			case 'CHANGE_ACTIVE_HERMIT':
-				result = yield* call(changeActiveHermitSaga, game, turnAction.action)
+				yield* call(changeActiveHermitSaga, game, turnAction.action)
 				break
 			case 'APPLY_EFFECT':
-				result = yield* call(applyEffectSaga, game, turnAction.action)
+				yield* call(applyEffectSaga, game, turnAction.action)
 				break
 			case 'REMOVE_EFFECT':
-				result = yield* call(removeEffectSaga, game)
+				yield* call(removeEffectSaga, game)
 				break
 			case 'PICK_REQUEST':
-				result = yield* call(
+				yield* call(
 					pickRequestSaga,
 					game,
 					(turnAction.action as PickSlotActionData)?.entity,
 				)
 				break
 			case 'MODAL_REQUEST':
-				result = yield* call(
-					modalRequestSaga,
-					game,
-					turnAction?.action?.modalResult,
-				)
+				yield* call(modalRequestSaga, game, turnAction?.action?.modalResult)
 				break
 			case 'END_TURN':
 				endTurn = true
@@ -411,7 +404,6 @@ function* turnActionSaga(
 				throw new Error(
 					'Recieved an action that does not exist. This is impossible.',
 				)
-				game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 				return
 		}
 	} catch (e) {
@@ -421,9 +413,6 @@ function* turnActionSaga(
 			throw e
 		}
 	}
-
-	// Set action result to be sent back to client
-	game.setLastActionResult(actionType, result)
 
 	let deadPlayers = []
 	deadPlayers.push(...(yield* call(checkDeckedOut, game)))

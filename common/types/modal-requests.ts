@@ -1,6 +1,5 @@
 import {CardComponent} from '../components'
 import {CardEntity, PlayerEntity} from '../entities'
-import {ActionResult} from './game-state'
 
 export type ModalRequest = SelectCards.Request | CopyAttack.Request
 export type ModalData = SelectCards.Data | CopyAttack.Data
@@ -12,7 +11,7 @@ export namespace SelectCards {
 		player: PlayerEntity
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
+		onResult: (modalResult: Result | undefined) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}
@@ -54,7 +53,7 @@ export namespace CopyAttack {
 		player: PlayerEntity
 		data: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
+		onResult: (modalResult: Result | undefined) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}

@@ -151,7 +151,6 @@ export function getGameState(
 			currentAttack: null,
 		},
 		order: playerEntities.map((x) => x.entity),
-		lastActionResult: null,
 
 		pickRequests: [],
 		modalRequests: [],

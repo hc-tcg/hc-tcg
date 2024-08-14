@@ -475,8 +475,6 @@ export function getLocalGameState(
 		// The entity for the player on the the right of the screen
 		opponentPlayerEntity: players[viewer.playerOnRight.entity].entity,
 
-		lastActionResult: game.state.lastActionResult,
-
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()
 			.map(([card, place]) => [getLocalCard(game, card), place]),
