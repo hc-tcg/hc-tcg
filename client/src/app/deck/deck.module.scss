@@ -399,6 +399,8 @@
 .mobileDeckPreview {
 	display: none;
 	visibility: hidden;
+	overflow: scroll;
+	width: 45%;
 }
 
 .mobileSelector {
@@ -406,6 +408,57 @@
 	flex-direction: column;
 	height: 100%;
 	gap: 1vh;
+}
+
+.mobileDeckStats {
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
+	gap: 0.5rem;
+	width: 40%;
+}
+
+.mobileDeckName {
+	background-color: #2b2c2c;
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.mobileDeckNameText {
+	font-weight: 600;
+	flex-grow: 1;
+
+	&.invalid {
+		filter: drop-shadow(1px 0px 0 var(--color-error))
+			drop-shadow(-1px 0px 0 var(--color-error))
+			drop-shadow(0px 1px 0 var(--color-error))
+			drop-shadow(0px -1px 0 var(--color-error));
+	}
+}
+
+.mobileDeckStat {
+	background-color: var(--gray-500);
+	border-radius: 6px;
+	width: 100%;
+	text-align: center;
+	padding: 0.5rem 0.75rem;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.mobileErrorIcon {
+	padding-left: 0.5rem;
+	filter: drop-shadow(1px 0px 0 var(--color-error))
+		drop-shadow(-1px 0px 0 var(--color-error))
+		drop-shadow(0px 1px 0 var(--color-error))
+		drop-shadow(0px -1px 0 var(--color-error));
+}
+
+.deckListContainer {
+	flex-grow: 1;
 }
 
 /* MOBILE */
@@ -421,12 +474,12 @@
 	}
 
 	.deckList {
-		width: 50%;
-		min-width: 50%;
-		max-width: 50%;
+		width: 100%;
+		min-width: 100%;
+		max-width: 100%;
 		background-color: #2b2c2c;
-		border-radius: 0.5vh;
-		min-height: 100%;
+		height: 100%;
+		overflow: scroll;
 	}
 
 	.mobileDeckPreview {
@@ -437,14 +490,15 @@
 	.deckListBox {
 		display: flex;
 		flex-direction: row;
-		height: 100%;
 		gap: 1vh;
 		flex-grow: 1;
+		overflow: hidden;
 	}
 
 	.filterGroup {
 		justify-content: center;
 		gap: 0rem;
+		margin-bottom: 0px;
 	}
 }
 

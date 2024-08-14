@@ -91,3 +91,10 @@
 		width: 80%;
 	}
 }
+
+// MOBILE
+@media (max-width: 800px) {
+	.sidebar {
+		border: 0px solid black;
+	}
+}

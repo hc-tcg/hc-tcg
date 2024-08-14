@@ -333,13 +333,48 @@ function SelectDeck({
 					}
 					mobileChildren={
 						<div className={css.mobileSelector}>
+							<div className={css.mobileDeckName}>
+								<div className={css.deckImage}>
+									<img
+										src={
+											'../images/types/type-' +
+											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
+											'.png'
+										}
+										alt="deck-icon"
+									/>
+								</div>
+								<span
+									className={classNames(
+										css.mobileDeckNameText,
+										validationMessage && css.invalid,
+									)}
+								>
+									{loadedDeck.name}
+								</span>
+								{validationMessage && (
+									<span className={css.mobileErrorIcon}>
+										<ErrorIcon />
+									</span>
+								)}
+								<div className={css.mobileDeckStats}>
+									<div className={css.mobileDeckStat}>
+										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
+									</div>
+									<div className={classNames(css.mobileDeckStat, css.tokens)}>
+										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}
+									</div>
+								</div>
+							</div>
 							<div className={css.deckListBox}>
-								<div className={css.deckList}>{deckList}</div>
 								<div className={css.mobileDeckPreview}>
 									<MobileCardList
 										cards={sortCards(loadedDeck.cards)}
 										small={true}
 									/>
+								</div>
+								<div className={css.deckListContainer}>
+									<div className={css.deckList}>{deckList}</div>
 								</div>
 							</div>
 							<div className={css.filterGroup}>
@@ -489,7 +524,7 @@ function SelectDeck({
 					</Accordion>
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
-					showDropdown={false}
+					showHeader={false}
 					header={
 						<>
 							<img

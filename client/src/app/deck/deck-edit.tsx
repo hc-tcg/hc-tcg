@@ -491,7 +491,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
 					width="half"
-					showDropdown={true}
+					showHeader={true}
 					header={
 						<>
 							<p className={css.hideOnMobile} style={{textAlign: 'center'}}>
