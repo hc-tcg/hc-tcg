@@ -60,7 +60,7 @@ const HorseHeadHypnoRare: Hermit = {
 						.filter(CardComponent, modalCondition)
 						.map((card) => card.entity),
 					selectionSize: 1,
-					cancelable: false, 
+					cancelable: false,
 					primaryButton: {
 						text: 'Draw Card',
 						variant: 'default',
