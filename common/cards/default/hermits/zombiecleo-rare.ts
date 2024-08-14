@@ -105,7 +105,7 @@ const ZombieCleoRare: Hermit = {
 								description:
 									"Which of the Hermit's attacks do you want to copy?",
 								hermitCard: pickedCard.entity,
-								cancelable: false,
+								cancelable: true,
 							},
 							onResult: (modalResult) => {
 								if (!modalResult) return

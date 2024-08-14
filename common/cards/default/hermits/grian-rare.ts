@@ -88,7 +88,7 @@ const GrianRare: Hermit = {
 					description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
 					cards: [opponentAttachCard.entity],
 					selectionSize: 0,
-					cancelable: true,
+					cancelable: false,
 					primaryButton: canAttach
 						? {
 								text: 'Attach',
