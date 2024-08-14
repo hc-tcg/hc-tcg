@@ -29,7 +29,7 @@ class Glowstone extends CardOld {
 			game.addModalRequest({
 				player: player.entity,
 				data: {
-					modalId: 'selectCards',
+					type'selectCards',
 					payload: {
 						modalName: 'Glowstone: Choose the card for your opponent to draw.',
 						modalDescription:

@@ -15,9 +15,9 @@ function CopyAttackModal({closeModal}: Props) {
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
-	if (!modalData || modalData.modalId !== 'copyAttack') return null
+	if (!modalData || modalData.type !== 'copyAttack') return null
 
-	const opponentHermitInfo = modalData.payload.hermitCard
+	const opponentHermitInfo = modalData.hermitCard
 	if (!isHermit(opponentHermitInfo.props)) return null
 
 	const hermitFullName = opponentHermitInfo.props.id.split('_')[0]
@@ -56,15 +56,15 @@ function CopyAttackModal({closeModal}: Props) {
 	}
 
 	let isPrimaryAvailable =
-		!modalData.payload.blockedActions.includes('PRIMARY_ATTACK')
+		!modalData.blockedActions.includes('PRIMARY_ATTACK')
 	let isSecondaryAvailable =
-		!modalData.payload.blockedActions.includes('SECONDARY_ATTACK')
+		!modalData.blockedActions.includes('SECONDARY_ATTACK')
 
 	return (
-		<Modal closeModal={handleClose} title={modalData.payload.modalName}>
+		<Modal closeModal={handleClose} title={modalData.modalName}>
 			<div className={css.confirmModal}>
 				<div className={css.description}>
-					{modalData.payload.modalDescription}
+					{modalData.modalDescription}
 				</div>
 				<div className={css.description}>
 					{isPrimaryAvailable && (

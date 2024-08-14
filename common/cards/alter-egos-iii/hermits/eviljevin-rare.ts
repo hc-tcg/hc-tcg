@@ -59,21 +59,19 @@ const EvilJevinRare: Hermit = {
 			game.addModalRequest({
 				player: player.entity,
 				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Evil Jevin - Emerge',
-						modalDescription:
-							'Choose a Hermit card to retrieve from your discard pile.',
-						cards: pickableCards,
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Draw Card',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'Do Nothing',
-							variant: 'default',
-						},
+					type: 'selectCards',
+					modalName: 'Evil Jevin - Emerge',
+					modalDescription:
+						'Choose a Hermit card to retrieve from your discard pile.',
+					cards: pickableCards,
+					selectionSize: 1,
+					primaryButton: {
+						text: 'Draw Card',
+						variant: 'default',
+					},
+					secondaryButton: {
+						text: 'Do Nothing',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {

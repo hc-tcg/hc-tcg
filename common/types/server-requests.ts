@@ -87,21 +87,20 @@ export namespace LocalSelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: 'selectCards'
-		payload: {
-			modalName: string
-			modalDescription: string
-			cards: Array<LocalCardInstance>
-			selectionSize: number
-			primaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-			secondaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-		}
+		type: 'selectCards'
+		modalName: string
+		modalDescription: string
+		cards: Array<LocalCardInstance>
+		selectionSize: number
+		primaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		secondaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		cancelable: boolean
 	}
 
 	export type Result =
@@ -117,13 +116,11 @@ export namespace LocalSelectCards {
 
 export namespace LocalCopyAttack {
 	export type Data = {
-		modalId: 'copyAttack'
-		payload: {
-			modalName: string
-			modalDescription: string
-			hermitCard: LocalCardInstance
-			blockedActions: TurnActions
-		}
+		type: 'copyAttack'
+		modalName: string
+		modalDescription: string
+		hermitCard: LocalCardInstance
+		blockedActions: TurnActions
 	}
 
 	export type Result =

@@ -293,7 +293,7 @@ export function* modalRequestSaga(
 	)
 
 	// Call the bound function with the pick result
-	if (modalRequest.data.modalId === 'selectCards') {
+	if (modalRequest.data.type === 'selectCards') {
 		let modalRequest_ = modalRequest as SelectCards.Request
 		let modal = modalResult as LocalSelectCards.Result
 		modalRequest_.onResult({
@@ -302,7 +302,7 @@ export function* modalRequestSaga(
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as SelectCards.Result)
-	} else if (modalRequest.data.modalId === 'copyAttack') {
+	} else if (modalRequest.data.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
 		modalRequest_.onResult(modal)

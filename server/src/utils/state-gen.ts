@@ -207,19 +207,20 @@ export function getLocalCard<CardType extends Card>(
 	}
 }
 
-function getLocalModalDataPayload(
+function getLocalModalData(
 	game: GameModel,
 	modal: ModalData,
-): LocalModalData['payload'] {
-	if (modal.modalId == 'selectCards') {
+): LocalModalData {
+	if (modal.type == 'selectCards') {
 		return {
-			...modal.payload,
-			cards: modal.payload.cards.map((entity) =>
+			...modal,
+			cards: modal.cards.map((entity) =>
 				getLocalCard(game, game.components.get(entity)!),
 			),
+			cancelable: modal.cancelable ?? false,
 		}
-	} else if (modal.modalId === 'copyAttack') {
-		let hermitCard = game.components.get(modal.payload.hermitCard)!
+	} else if (modal.type === 'copyAttack') {
+		let hermitCard = game.components.get(modal.hermitCard)!
 		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
 			[[]],
 			(observerEntity) => {
@@ -258,20 +259,13 @@ function getLocalModalDataPayload(
 		}
 
 		return {
-			...modal.payload,
+			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
 			blockedActions: blockedActions,
 		}
 	}
 
 	throw new Error('Uknown modal type')
-}
-
-function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
-	return {
-		modalId: modal.modalId,
-		payload: getLocalModalDataPayload(game, modal),
-	} as LocalModalData
 }
 
 function getLocalCoinFlip(

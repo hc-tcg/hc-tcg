@@ -70,20 +70,18 @@ const IskallmanRare: Hermit = {
 				game.addModalRequest({
 					player: player.entity,
 					data: {
-						modalId: 'selectCards',
-						payload: {
-							modalName: 'IskallMAN - Good Deed',
-							modalDescription: 'Do you want to give 50hp to an AFK Hermit?',
-							cards: [],
-							selectionSize: 0,
-							primaryButton: {
-								text: 'Yes',
-								variant: 'default',
-							},
-							secondaryButton: {
-								text: 'No',
-								variant: 'default',
-							},
+						type: 'selectCards',
+						modalName: 'IskallMAN - Good Deed',
+						modalDescription: 'Do you want to give 50hp to an AFK Hermit?',
+						cards: [],
+						selectionSize: 0,
+						primaryButton: {
+							text: 'Yes',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'No',
+							variant: 'default',
 						},
 					},
 					onResult(modalResult) {

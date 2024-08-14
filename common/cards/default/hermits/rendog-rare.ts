@@ -93,13 +93,11 @@ const RendogRare: Hermit = {
 						game.addModalRequest({
 							player: player.entity,
 							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Rendog: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+								type: 'copyAttack',
+								modalName: 'Rendog: Choose an attack to copy',
+								modalDescription:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
 							},
 							onResult: (modalResult) => {
 								if (!modalResult) return

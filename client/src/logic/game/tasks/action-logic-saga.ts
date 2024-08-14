@@ -20,8 +20,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const player = yield* select(getPlayerEntity)
 	const pState = gameState.players[player]
 
-	if (gameState.currentModalData && gameState.currentModalData.modalId) {
-		const id = gameState.currentModalData?.modalId
+	if (gameState.currentModalData && gameState.currentModalData.type) {
+		const id = gameState.currentModalData?.type
 		yield put<LocalMessage>({
 			type: localMessages.GAME_MODAL_OPENED_SET,
 			id,

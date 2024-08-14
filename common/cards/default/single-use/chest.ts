@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
@@ -35,22 +36,22 @@ const Chest: SingleUse = {
 		game.addModalRequest({
 			player: player.entity,
 			data: {
-				modalId: 'selectCards',
-				payload: {
-					modalName: 'Chest',
-					modalDescription: 'Choose a card to retrieve from your discard pile.',
-					cards: game.components
-						.filter(CardComponent, pickCondition)
-						.map((card) => card.entity),
-					selectionSize: 1,
-					primaryButton: {
-						text: 'Confirm Selection',
-						variant: 'default',
-					},
+				type: 'selectCards',
+				modalName: 'Chest',
+				modalDescription: 'Choose a card to retrieve from your discard pile.',
+				cards: game.components
+					.filter(CardComponent, pickCondition)
+					.map((card) => card.entity),
+				selectionSize: 1,
+				primaryButton: {
+					text: 'Confirm Selection',
+					variant: 'default',
 				},
+				cancelable: true,
 			},
 			onResult(modalResult) {
-				if (!modalResult) return
+				assert(modalResult)
+
 				if (!modalResult.result) {
 					// Allow player to cancel using Chest
 					component.draw()

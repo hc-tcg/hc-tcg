@@ -52,23 +52,21 @@ const HorseHeadHypnoRare: Hermit = {
 			game.addModalRequest({
 				player: player.entity,
 				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Horse Head Hypno - Restock',
-						modalDescription:
-							'Choose an item card to retrieve from your discard pile.',
-						cards: game.components
-							.filter(CardComponent, modalCondition)
-							.map((card) => card.entity),
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Draw Card',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'Do Nothing',
-							variant: 'default',
-						},
+					type: 'selectCards',
+					modalName: 'Horse Head Hypno - Restock',
+					modalDescription:
+						'Choose an item card to retrieve from your discard pile.',
+					cards: game.components
+						.filter(CardComponent, modalCondition)
+						.map((card) => card.entity),
+					selectionSize: 1,
+					primaryButton: {
+						text: 'Draw Card',
+						variant: 'default',
+					},
+					secondaryButton: {
+						text: 'Do Nothing',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {

@@ -100,13 +100,11 @@ const ZombieCleoRare: Hermit = {
 						game.addModalRequest({
 							player: player.entity,
 							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Cleo: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+								type: 'copyAttack',
+								modalName: 'Cleo: Choose an attack to copy',
+								modalDescription:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
 							},
 							onResult: (modalResult) => {
 								if (!modalResult) return
