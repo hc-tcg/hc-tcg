@@ -367,48 +367,59 @@ function* turnActionSaga(
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
 
-	switch (actionType) {
-		case 'PLAY_HERMIT_CARD':
-		case 'PLAY_ITEM_CARD':
-		case 'PLAY_EFFECT_CARD':
-		case 'PLAY_SINGLE_USE_CARD':
-			result = yield* call(playCardSaga, game, turnAction.action)
-			break
-		case 'SINGLE_USE_ATTACK':
-		case 'PRIMARY_ATTACK':
-		case 'SECONDARY_ATTACK':
-			result = yield* call(attackSaga, game, turnAction.action)
-			break
-		case 'CHANGE_ACTIVE_HERMIT':
-			result = yield* call(changeActiveHermitSaga, game, turnAction.action)
-			break
-		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, turnAction.action)
-			break
-		case 'REMOVE_EFFECT':
-			result = yield* call(removeEffectSaga, game)
-			break
-		case 'PICK_REQUEST':
-			result = yield* call(
-				pickRequestSaga,
-				game,
-				(turnAction.action as PickSlotActionData)?.entity,
-			)
-			break
-		case 'MODAL_REQUEST':
-			result = yield* call(
-				modalRequestSaga,
-				game,
-				turnAction?.action?.modalResult,
-			)
-			break
-		case 'END_TURN':
-			endTurn = true
-			break
-		default:
-			// Unknown action type, ignore it completely
-			game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
-			return
+	try {
+		switch (actionType) {
+			case 'PLAY_HERMIT_CARD':
+			case 'PLAY_ITEM_CARD':
+			case 'PLAY_EFFECT_CARD':
+			case 'PLAY_SINGLE_USE_CARD':
+				result = yield* call(playCardSaga, game, turnAction.action)
+				break
+			case 'SINGLE_USE_ATTACK':
+			case 'PRIMARY_ATTACK':
+			case 'SECONDARY_ATTACK':
+				result = yield* call(attackSaga, game, turnAction.action)
+				break
+			case 'CHANGE_ACTIVE_HERMIT':
+				result = yield* call(changeActiveHermitSaga, game, turnAction.action)
+				break
+			case 'APPLY_EFFECT':
+				result = yield* call(applyEffectSaga, game, turnAction.action)
+				break
+			case 'REMOVE_EFFECT':
+				result = yield* call(removeEffectSaga, game)
+				break
+			case 'PICK_REQUEST':
+				result = yield* call(
+					pickRequestSaga,
+					game,
+					(turnAction.action as PickSlotActionData)?.entity,
+				)
+				break
+			case 'MODAL_REQUEST':
+				result = yield* call(
+					modalRequestSaga,
+					game,
+					turnAction?.action?.modalResult,
+				)
+				break
+			case 'END_TURN':
+				endTurn = true
+				break
+			default:
+				// Unknown action type, ignore it completely
+				throw new Error(
+					'Recieved an action that does not exist. This is impossible.',
+				)
+				game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
+				return
+		}
+	} catch (e) {
+		if (game.settings.logErrorsToStderr) {
+			console.error(e)
+		} else {
+			throw e
+		}
 	}
 
 	// Set action result to be sent back to client

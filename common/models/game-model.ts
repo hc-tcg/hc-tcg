@@ -68,6 +68,8 @@ export type GameSettings = {
 	oneShotMode: boolean
 	disableDamage: boolean
 	noItemRequirements: boolean
+	shuffleDeck: boolean
+	logErrorsToStderr: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -84,6 +86,8 @@ export function gameSettingsFromEnv(): GameSettings {
 		oneShotMode: DEBUG_CONFIG.oneShotMode,
 		disableDamage: DEBUG_CONFIG.disableDamage,
 		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
+		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
+		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 	}
 }
 
@@ -141,7 +145,9 @@ export class GameModel {
 
 		this.components = new ComponentTable(this)
 		this.afterGameEnd = new Hook<string, () => void>()
-		setupComponents(this.components, player1, player2)
+		setupComponents(this.components, player1, player2, {
+			shuffleDeck: settings.shuffleDeck,
+		})
 
 		this.state = getGameState(this, options.randomizeOrder)
 	}

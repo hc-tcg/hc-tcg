@@ -29,12 +29,13 @@ export function setupComponents(
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
+	options: {shuffleDeck: boolean},
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
@@ -42,10 +43,11 @@ function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
+	options: {shuffleDeck: boolean},
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'random',
+			position: options.shuffleDeck ? 'random' : 'back',
 		})
 		components.new(CardComponent, card, slot.entity)
 	}
