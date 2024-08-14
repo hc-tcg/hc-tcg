@@ -111,9 +111,14 @@ const defaultGameSettings = {
 	oneShotMode: false,
 	disableDamage: false,
 	noItemRequirements: false,
+	shuffleDeck: false,
+	logErrorsToStderr: false,
 }
 
-/** Test a saga against a game. The game is created with default settings similar to what would be found in production. */
+/**
+ * Test a saga against a game. The game is created with default settings similar to what would be found in production.
+ * Note that decks are not shuffled in test games.
+ */
 export function testGame(
 	options: {
 		saga: any
