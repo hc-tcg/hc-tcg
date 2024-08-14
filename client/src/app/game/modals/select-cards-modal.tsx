@@ -84,7 +84,11 @@ function SelectCardsModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
+		<Modal
+			title={modalData.payload.modalName}
+			closeModal={handleClose}
+			showCloseButton={false}
+		>
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				{cards.length > 0 && (
@@ -117,6 +121,7 @@ function SelectCardsModal({closeModal}: Props) {
 						variant={primaryButton.variant}
 						size="medium"
 						onClick={handlePrimary}
+						disabled={selected.length < selectionSize}
 					>
 						{primaryButton.text}
 					</Button>
