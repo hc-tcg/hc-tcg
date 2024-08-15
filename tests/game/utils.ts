@@ -135,7 +135,7 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	})
 
 	if (saga.error()) {
-		throw new Error(`${saga.error()}`)
+		throw saga.error()
 	}
 }
 
