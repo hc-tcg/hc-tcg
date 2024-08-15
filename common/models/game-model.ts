@@ -69,6 +69,7 @@ export type GameSettings = {
 	noItemRequirements: boolean
 	shuffleDeck: boolean
 	logErrorsToStderr: boolean
+	logBoardState: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -87,6 +88,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
 		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
+		logBoardState: DEBUG_CONFIG.logBoardState,
 	}
 }
 

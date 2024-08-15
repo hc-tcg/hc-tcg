@@ -20,7 +20,7 @@ import {
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
 import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
-import {printHooksState} from '../utils'
+import {printBoardState, printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 
@@ -418,6 +418,11 @@ function* turnActionSaga(
 		}
 	}
 
+	// We log endTurn at the start of the turn so the state updates properly.
+	if (game.settings.logBoardState && !endTurn) {
+		printBoardState(game)
+	}
+
 	let deadPlayers = []
 	deadPlayers.push(...(yield* call(checkDeckedOut, game)))
 	deadPlayers.push(...(yield* call(checkHermitHealth, game)))
@@ -622,8 +627,11 @@ export function* turnSaga(game: GameModel) {
 	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
 	// Call turn start hooks
-
 	currentPlayer.hooks.onTurnStart.call()
+
+	if (game.settings.logBoardState) {
+		printBoardState(game)
+	}
 
 	// Check for dead hermits on turn start
 	if (game.state.turn.turnNumber > 2) {

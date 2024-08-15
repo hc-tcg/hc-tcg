@@ -157,6 +157,7 @@ const defaultGameSettings = {
 	noItemRequirements: false,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
+	logBoardState: true,
 }
 
 /**
