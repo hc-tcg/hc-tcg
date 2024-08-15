@@ -4,7 +4,6 @@ import DwarfImpulseRare from 'common/cards/alter-egos-iii/hermits/dwarfimpulse-r
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
 import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import EthosLabRare from 'common/cards/default/hermits/ethoslab-rare'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
@@ -17,7 +16,6 @@ import {
 	playCard,
 	testGame,
 } from './utils'
-import {printBoardState} from 'server/utils'
 
 function* testDwarfImpulseHelperSaga(game: GameModel) {
 	yield* playCard(
@@ -92,10 +90,9 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 			SlotComponent,
 			query.slot.hermit,
 			query.slot.opponent,
+			query.not(query.slot.active),
 		)!,
 	)
-
-	printBoardState(game)
 
 	// Dwarf impulse should have disabled wolf, so it should not have triggered.
 	expect(
@@ -106,6 +103,7 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 		)?.health,
 	).toEqual(DwarfImpulseRare.health)
 
+	// Verify that the attack went through and lightning rod worked properly.
 	expect(
 		game.components.find(
 			RowComponent,
