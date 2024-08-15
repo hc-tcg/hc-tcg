@@ -50,7 +50,7 @@ const ZombieCleoRare: Hermit = {
 		hermitAttackType: HermitAttackType,
 	) {
 		if (hermitAttackType !== 'secondary')
-			return this.getAttack.call(this, game, component, hermitAttackType)
+			return hermit.getAttack.call(this, game, component, hermitAttackType)
 
 		const mockedAttack = mockedAttacks.get(component)
 		if (!mockedAttack) return null
@@ -67,7 +67,6 @@ const ZombieCleoRare: Hermit = {
 		)
 		return newAttack
 	},
-
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
