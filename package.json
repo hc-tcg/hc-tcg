@@ -55,7 +55,6 @@
 	"scripts": {
 		"start": "npm run server",
 		"dev": "npm run client:dev & npm run server:dev",
-		"husky": "husky install",
 		"clean": "rm -rf client/dist && rm -rf server/dist",
 		"build": "npm run client:build && npm run server:build",
 		"server": "tsx --tsconfig server/tsconfig.json server/src",
