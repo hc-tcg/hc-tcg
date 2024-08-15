@@ -60,7 +60,7 @@
 		"husky": "husky install",
 		"clean": "rm -rf client/dist && rm -rf server/dist",
 		"build": "npm run client:build && npm run server:build",
-		"server": "node server/dist/index.js",
+		"server": "node --enable-source-maps server/dist/index.js",
 		"server:build": "npm run server:tsc && node esbuild.js",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:tsc": "tsc --p server/tsconfig.json",
