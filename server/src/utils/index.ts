@@ -185,7 +185,7 @@ export function printBoardState(game: GameModel) {
 				)
 			}
 		} else {
-			buffer.push('_'.padEnd(21))
+			buffer.push('_'.padEnd(11))
 		}
 	}
 
