@@ -33,6 +33,7 @@ function* testPrimaryDoesNotCrash(game: GameModel) {
 
 	yield* attack(game, 'primary')
 
+	// Verify that the attack worked.
 	expect(
 		game.components.find(
 			RowComponent,
