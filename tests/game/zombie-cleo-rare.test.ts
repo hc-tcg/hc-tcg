@@ -1,10 +1,10 @@
-import {describe, test, expect} from '@jest/globals'
-import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
-import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
-import {GameModel} from 'common/models/game-model'
+import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
+import {GameModel} from 'common/models/game-model'
+import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
 	yield* playCard(
