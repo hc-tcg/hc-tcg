@@ -9,7 +9,6 @@ import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {printBoardState} from 'server/utils'
 import {
 	attack,
 	changeActiveHermit,
@@ -48,8 +47,6 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 			query.not(query.slot.active),
 		)!,
 	)
-
-	printBoardState(game)
 
 	// Dwarf impulse should have disabled wolf, so it should not have triggered.
 	expect(
