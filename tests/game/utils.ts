@@ -1,5 +1,6 @@
 import {Card} from 'common/cards/base/types'
 import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {
 	attackToAttackAction,
@@ -57,6 +58,23 @@ export function* playCard(
 	})
 }
 
+export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
+	let cardComponent = findCardInHand(game.currentPlayer, card)
+
+	yield* playCard(
+		game,
+		cardComponent,
+		game.components.find(
+			SlotComponent,
+			query.slot.currentPlayer,
+			(_game, slot) =>
+				(!slot.inRow() && index === undefined) ||
+				(slot.inRow() && slot.row.index === index),
+			(_game, slot) => slot.type === cardComponent.props.category,
+		)!,
+	)
+}
+
 export function* applyEffect(game: GameModel) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
@@ -80,6 +98,32 @@ export function* attack(
 	})
 }
 
+export function* changeActiveHermit(game: GameModel, index: number) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'CHANGE_ACTIVE_HERMIT',
+			entity: game.components.findEntity(
+				SlotComponent,
+				query.slot.currentPlayer,
+				query.slot.rowIndex(index),
+			)!,
+		},
+	})
+}
+
+export function* pick(game: GameModel, slot: SlotComponent) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'PICK_REQUEST',
+			entity: slot.entity,
+		},
+	})
+}
+
 function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
@@ -91,7 +135,7 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	})
 
 	if (saga.error()) {
-		throw new Error(`${saga.error()}`)
+		throw saga.error()
 	}
 }
 

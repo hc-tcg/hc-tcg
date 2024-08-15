@@ -341,7 +341,8 @@ export function* pickRequestSaga(
 		SlotComponent,
 		query.slot.entity(pickResult),
 	)
-	assert(slotInfo)
+
+	assert(slotInfo, 'The slot that is picked must be in the ECS')
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
