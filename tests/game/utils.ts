@@ -98,6 +98,21 @@ export function* attack(
 	})
 }
 
+export function* changeActiveHermit(game: GameModel, index: number) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'CHANGE_ACTIVE_HERMIT',
+			entity: game.components.findEntity(
+				SlotComponent,
+				query.slot.currentPlayer,
+				query.slot.rowIndex(index),
+			)!,
+		},
+	})
+}
+
 export function* pick(game: GameModel, slot: SlotComponent) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,

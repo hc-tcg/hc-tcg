@@ -4,32 +4,27 @@ import DwarfImpulseRare from 'common/cards/alter-egos-iii/hermits/dwarfimpulse-r
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
 import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import TangoTekCommon from 'common/cards/default/hermits/tangotek-common'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {
-	attack,
-	endTurn,
-	findCardInHand,
-	pick,
-	playCard,
-	playCardFromHand,
-	testGame,
-} from './utils'
-import TangoTekCommon from 'common/cards/default/hermits/tangotek-common'
+import {attack, changeActiveHermit, endTurn, pick, playCardFromHand, testGame} from './utils'
+import { printBoardState } from 'server/utils'
 
 function* testDwarfImpulseHelperSaga(game: GameModel) {
-	yield* playCardFromHand(game, TangoTekCommon, 0)
+	yield* playCardFromHand(game, DwarfImpulseRare, 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, TangoTekCommon, 0)
-	yield* playCardFromHand(game, FiveAMPearlRare, 1)
+	yield* playCardFromHand(game, FiveAMPearlRare, 0)
+	yield* playCardFromHand(game, TangoTekCommon, 1)
 	yield* playCardFromHand(game, EthosLabCommon, 2)
 
+	yield* playCardFromHand(game, Wolf, 0)
 	yield* playCardFromHand(game, LightningRod, 2)
-	yield* playCardFromHand(game, Wolf, 2)
+
+	yield* changeActiveHermit(game, 1)
 
 	yield* endTurn(game)
 
@@ -47,6 +42,8 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 		)!,
 	)
 
+	printBoardState(game)
+
 	// Dwarf impulse should have disabled wolf, so it should not have triggered.
 	expect(
 		game.components.find(
@@ -61,7 +58,7 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 		game.components.find(
 			RowComponent,
 			query.row.opponentPlayer,
-			query.row.index(1),
+			query.row.index(2),
 		)?.health,
 	).toEqual(EthosLabCommon.health - (80 + 40))
 }
