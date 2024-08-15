@@ -38,11 +38,10 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 	expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
 
 	yield* endTurn(game)
+	yield* endTurn(game)
 
 	// The status should now be timed out.
 	expect(game.getAllBlockedActions()).not.toContain('SECONDARY_ATTACK')
-
-	yield* endTurn(game)
 
 	expect(
 		game.components.exists(
@@ -51,6 +50,8 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		),
 	).toBeFalsy()
+
+	yield* endTurn(game)
 }
 
 describe('Test Evil X', () => {
