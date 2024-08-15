@@ -27,6 +27,7 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 
 	yield* endTurn(game)
 
+	expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
 	expect(
 		game.components.exists(
 			StatusEffectComponent,
@@ -35,14 +36,11 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 		),
 	).toBeTruthy()
 
-	expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
-
 	yield* endTurn(game)
 	yield* endTurn(game)
 
 	// The status should now be timed out.
 	expect(game.getAllBlockedActions()).not.toContain('SECONDARY_ATTACK')
-
 	expect(
 		game.components.exists(
 			StatusEffectComponent,
