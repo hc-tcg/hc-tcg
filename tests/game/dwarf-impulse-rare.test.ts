@@ -14,73 +14,26 @@ import {
 	findCardInHand,
 	pick,
 	playCard,
+	playCardFromHand,
 	testGame,
 } from './utils'
+import TangoTekCommon from 'common/cards/default/hermits/tangotek-common'
 
 function* testDwarfImpulseHelperSaga(game: GameModel) {
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, DwarfImpulseRare),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-		)!,
-	)
+	yield* playCardFromHand(game, TangoTekCommon, 0)
 
 	yield* endTurn(game)
 
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, FiveAMPearlRare),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-			query.slot.rowIndex(0),
-		)!,
-	)
+	yield* playCardFromHand(game, TangoTekCommon, 0)
+	yield* playCardFromHand(game, FiveAMPearlRare, 1)
+	yield* playCardFromHand(game, EthosLabCommon, 2)
 
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, EthosLabCommon),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-			query.slot.rowIndex(1),
-		)!,
-	)
-
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, Wolf),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.attach,
-			query.slot.rowIndex(0),
-		)!,
-	)
-
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, LightningRod),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.attach,
-			query.slot.rowIndex(1),
-		)!,
-	)
+	yield* playCardFromHand(game, LightningRod, 2)
+	yield* playCardFromHand(game, Wolf, 2)
 
 	yield* endTurn(game)
 
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, GoldenAxe),
-		game.components.find(SlotComponent, query.slot.singleUse)!,
-	)
+	yield* playCardFromHand(game, GoldenAxe)
 
 	yield* attack(game, 'secondary')
 
@@ -119,7 +72,13 @@ describe('Test Dwarf Impulse Rare', () => {
 			{
 				saga: testDwarfImpulseHelperSaga,
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
-				playerTwoDeck: [FiveAMPearlRare, EthosLabCommon, LightningRod, Wolf],
+				playerTwoDeck: [
+					TangoTekCommon,
+					FiveAMPearlRare,
+					EthosLabCommon,
+					LightningRod,
+					Wolf,
+				],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)

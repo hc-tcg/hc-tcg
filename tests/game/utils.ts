@@ -1,5 +1,6 @@
 import {Card} from 'common/cards/base/types'
 import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
+import query from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {
 	attackToAttackAction,
@@ -55,6 +56,23 @@ export function* playCard(
 			slot: slot.entity,
 		},
 	})
+}
+
+export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
+	let cardComponent = findCardInHand(game.currentPlayer, card)
+
+	yield* playCard(
+		game,
+		cardComponent,
+		game.components.find(
+			SlotComponent,
+			query.slot.currentPlayer,
+			(_game, slot) =>
+				(!slot.inRow() && index === undefined) ||
+				(slot.inRow() && slot.row.index === index),
+			(_game, slot) => slot.type === cardComponent.props.category,
+		)!,
+	)
 }
 
 export function* applyEffect(game: GameModel) {
