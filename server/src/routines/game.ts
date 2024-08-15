@@ -24,6 +24,7 @@ import {printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 
+import assert from 'assert'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectSaga,
@@ -34,7 +35,6 @@ import {
 	playCardSaga,
 	removeEffectSaga,
 } from './turn-actions'
-import assert from 'assert'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -361,7 +361,7 @@ function* turnActionSaga(
 				'MODAL_REQUEST',
 				'END_TURN',
 			].includes(actionType) || availableActions.includes(actionType),
-			"Players cannot be able to use a blocked action.",
+			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
 		)
 
 		switch (actionType) {
