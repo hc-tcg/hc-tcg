@@ -9,6 +9,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 const FortuneEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
 	name: 'Fortune',
+	id: 'fortune',
 	icon: 'fortune',
 	description: 'Any coin flips this turn will roll heads.',
 	onApply(

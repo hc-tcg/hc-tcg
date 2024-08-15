@@ -9,6 +9,7 @@ import {StatusEffect, damageEffect} from './status-effect'
 
 const PoisonEffect: StatusEffect<CardComponent> = {
 	...damageEffect,
+	id: 'poison',
 	icon: 'poison',
 	name: 'Poison',
 	description:

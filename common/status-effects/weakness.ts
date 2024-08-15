@@ -8,6 +8,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
 	description: "This Hermit is weak to the opponent's active Hermit's type.",

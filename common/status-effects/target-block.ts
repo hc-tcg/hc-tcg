@@ -8,6 +8,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'target-block',
 	icon: 'target-block',
 	name: 'Made the target!',
 	description: 'This hermit will take all damage this turn.',

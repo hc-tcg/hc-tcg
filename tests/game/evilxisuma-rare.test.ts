@@ -5,7 +5,6 @@ import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
-import {printBoardState} from 'server/utils'
 import {
 	attack,
 	endTurn,
@@ -21,20 +20,37 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 	yield* playCardFromHand(game, EthosLabCommon, 0)
 	yield* endTurn(game)
 
-	printBoardState(game)
 	yield* attack(game, 'secondary')
 	yield* finishModalRequest(game, {
 		pick: 'secondary',
 	})
 
+	yield* endTurn(game)
+
 	expect(
 		game.components.exists(
 			StatusEffectComponent,
 			query.effect.is(SecondaryAttackDisabledEffect),
+			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		),
 	).toBeTruthy()
 
+	expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
+
 	yield* endTurn(game)
+
+	// The status should now be timed out.
+	expect(game.getAllBlockedActions()).not.toContain('SECONDARY_ATTACK')
+
+	yield* endTurn(game)
+
+	expect(
+		game.components.exists(
+			StatusEffectComponent,
+			query.effect.is(SecondaryAttackDisabledEffect),
+			query.effect.targetIsCardAnd(query.card.currentPlayer),
+		),
+	).toBeFalsy()
 }
 
 describe('Test Evil X', () => {

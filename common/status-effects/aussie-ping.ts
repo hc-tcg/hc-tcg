@@ -10,6 +10,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'aussie-ping',
 	icon: 'aussie-ping',
 	name: 'Weak Connection',
 	description:
@@ -77,6 +78,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 
 export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'aussie-ping-immune',
 	icon: 'aussie-ping-immune',
 	name: 'Strong Connection',
 	description: 'You are immune to Aussie Ping for the duration of this turn.',

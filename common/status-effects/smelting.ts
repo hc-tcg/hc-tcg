@@ -3,6 +3,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const SmeltingEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'smelting',
 	icon: 'smelting',
 	name: 'Smelting',
 	description:

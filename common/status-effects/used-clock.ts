@@ -8,6 +8,7 @@ import {Counter, systemStatusEffect} from './status-effect'
 
 const UsedClockEffect: Counter<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'used-clock',
 	icon: 'used-clock',
 	name: 'Clocked Out',
 	description: "Your opponent's turns cannot be skipped consecutively.",

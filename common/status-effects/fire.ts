@@ -9,6 +9,7 @@ import {StatusEffect, damageEffect} from './status-effect'
 
 const FireEffect: StatusEffect<CardComponent> = {
 	...damageEffect,
+	id: 'fire',
 	icon: 'fire',
 	name: 'Burn',
 	description:

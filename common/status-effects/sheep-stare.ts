@@ -11,6 +11,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const SheepStareEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'sheep-stare',
 	icon: 'sheep-stare',
 	name: 'Sheep Stare',
 	description:

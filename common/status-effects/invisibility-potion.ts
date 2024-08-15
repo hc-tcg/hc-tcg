@@ -8,6 +8,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'invisibility-potion-heads',
 	icon: 'invisibility-potion-heads',
 	name: 'Hidden!',
 	description: "Your opponent's next attack will miss.",
@@ -27,6 +28,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 
 export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'invisibility-potion-tails',
 	icon: 'invisibility-potion-tails',
 	name: 'Spotted!',
 	description: "Your opponent's next attack will deal double damage.",

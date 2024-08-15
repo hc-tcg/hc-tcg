@@ -8,6 +8,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'slowness',
 	icon: 'slowness',
 	name: 'Slowness',
 	description: 'This Hermit can only use their primary attack.',
