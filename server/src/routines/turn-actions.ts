@@ -327,7 +327,7 @@ export function* pickRequestSaga(
 	pickResult?: SlotEntity,
 ): Generator<any, void> {
 	// First validate data sent from client
-	assert(!pickResult || !pickResult)
+	assert(pickResult, 'Pick results cannot have an emtpy body.')
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
