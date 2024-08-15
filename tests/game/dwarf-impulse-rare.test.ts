@@ -9,8 +9,15 @@ import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {attack, changeActiveHermit, endTurn, pick, playCardFromHand, testGame} from './utils'
-import { printBoardState } from 'server/utils'
+import {printBoardState} from 'server/utils'
+import {
+	attack,
+	changeActiveHermit,
+	endTurn,
+	pick,
+	playCardFromHand,
+	testGame,
+} from './utils'
 
 function* testDwarfImpulseHelperSaga(game: GameModel) {
 	yield* playCardFromHand(game, DwarfImpulseRare, 0)
