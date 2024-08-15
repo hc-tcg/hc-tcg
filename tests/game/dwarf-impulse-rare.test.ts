@@ -9,7 +9,15 @@ import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
+import {
+	attack,
+	endTurn,
+	findCardInHand,
+	pick,
+	playCard,
+	testGame,
+} from './utils'
+import {printBoardState} from 'server/utils'
 
 function* testDwarfImpulseHelperSaga(game: GameModel) {
 	yield* playCard(
@@ -37,7 +45,7 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 
 	yield* playCard(
 		game,
-		findCardInHand(game.currentPlayer, EthosLabRare),
+		findCardInHand(game.currentPlayer, EthosLabCommon),
 		game.components.find(
 			SlotComponent,
 			query.slot.currentPlayer,
@@ -52,7 +60,7 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 		game.components.find(
 			SlotComponent,
 			query.slot.currentPlayer,
-			query.slot.hermit,
+			query.slot.attach,
 			query.slot.rowIndex(0),
 		)!,
 	)
@@ -63,7 +71,7 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 		game.components.find(
 			SlotComponent,
 			query.slot.currentPlayer,
-			query.slot.hermit,
+			query.slot.attach,
 			query.slot.rowIndex(1),
 		)!,
 	)
@@ -78,6 +86,17 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 
 	yield* attack(game, 'secondary')
 
+	yield* pick(
+		game,
+		game.components.find(
+			SlotComponent,
+			query.slot.hermit,
+			query.slot.opponent,
+		)!,
+	)
+
+	printBoardState(game)
+
 	// Dwarf impulse should have disabled wolf, so it should not have triggered.
 	expect(
 		game.components.find(
@@ -86,6 +105,14 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 			query.row.active,
 		)?.health,
 	).toEqual(DwarfImpulseRare.health)
+
+	expect(
+		game.components.find(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.index(1),
+		)?.health,
+	).toEqual(EthosLabCommon.health - (80 + 40))
 }
 
 describe('Test Dwarf Impulse Rare', () => {
@@ -96,7 +123,7 @@ describe('Test Dwarf Impulse Rare', () => {
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [FiveAMPearlRare, EthosLabCommon, LightningRod, Wolf],
 			},
-			{startWithAllCards: true},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })

@@ -80,6 +80,17 @@ export function* attack(
 	})
 }
 
+export function* pick(game: GameModel, slot: SlotComponent) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'PICK_REQUEST',
+			entity: slot.entity,
+		},
+	})
+}
+
 function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
