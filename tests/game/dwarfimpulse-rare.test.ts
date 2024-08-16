@@ -6,7 +6,7 @@ import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import TangoTekCommon from 'common/cards/default/hermits/tangotek-common'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
-import {RowComponent, SlotComponent} from 'common/components'
+import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {
@@ -40,12 +40,9 @@ function* testDwarfImpulseHelperSaga(game: GameModel) {
 
 	yield* pick(
 		game,
-		game.components.find(
-			SlotComponent,
-			query.slot.hermit,
-			query.slot.opponent,
-			query.not(query.slot.active),
-		)!,
+		query.slot.hermit,
+		query.slot.opponent,
+		query.not(query.slot.active),
 	)
 
 	// Dwarf impulse should have disabled wolf, so it should not have triggered.

@@ -1,6 +1,6 @@
 import {Card} from 'common/cards/base/types'
-import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
-import query from 'common/components/query'
+import {PlayerComponent, SlotComponent} from 'common/components'
+import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
@@ -14,7 +14,7 @@ import gameSaga from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
-export function getTestPlayer(playerName: string, deck: Array<Card>) {
+function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {
 		model: {
 			name: playerName,
@@ -33,6 +33,7 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 	return cardInHand
 }
 
+/** End the current player's turn. */
 export function* endTurn(game: GameModel) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
@@ -43,39 +44,31 @@ export function* endTurn(game: GameModel) {
 	})
 }
 
-export function* playCard(
-	game: GameModel,
-	card: CardComponent,
-	slot: SlotComponent,
-) {
+/** Play a card from your hand to a row on the game board */
+export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
+	let cardComponent = findCardInHand(game.currentPlayer, card)
+
+	const slot = game.components.find(
+		SlotComponent,
+		query.slot.currentPlayer,
+		(_game, slot) =>
+			(!slot.inRow() && index === undefined) ||
+			(slot.inRow() && slot.row.index === index),
+		(_game, slot) => slot.type === cardComponent.props.category,
+	)!
+
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
 		playerEntity: game.currentPlayer.entity,
 		action: {
-			type: slotToPlayCardAction[card.props.category],
-			card: getLocalCard(game, card),
+			type: slotToPlayCardAction[cardComponent.props.category],
+			card: getLocalCard(game, cardComponent),
 			slot: slot.entity,
 		},
 	})
 }
 
-export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
-	let cardComponent = findCardInHand(game.currentPlayer, card)
-
-	yield* playCard(
-		game,
-		cardComponent,
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			(_game, slot) =>
-				(!slot.inRow() && index === undefined) ||
-				(slot.inRow() && slot.row.index === index),
-			(_game, slot) => slot.type === cardComponent.props.category,
-		)!,
-	)
-}
-
+/** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
 export function* applyEffect(game: GameModel) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
@@ -86,6 +79,7 @@ export function* applyEffect(game: GameModel) {
 	})
 }
 
+/** Attack with the current player. */
 export function* attack(
 	game: GameModel,
 	attack: 'primary' | 'secondary' | 'single-use',
@@ -99,6 +93,7 @@ export function* attack(
 	})
 }
 
+/** Change the active hermit row for the current player. */
 export function* changeActiveHermit(game: GameModel, index: number) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
@@ -114,17 +109,22 @@ export function* changeActiveHermit(game: GameModel, index: number) {
 	})
 }
 
-export function* pick(game: GameModel, slot: SlotComponent) {
+/** Pick a slot for a pick request */
+export function* pick(
+	game: GameModel,
+	...slot: Array<ComponentQuery<SlotComponent>>
+) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'PICK_REQUEST',
-			entity: slot.entity,
+			entity: game.components.find(SlotComponent, ...slot)!.entity,
 		},
 	})
 }
 
+/** Respond to a modal request. */
 export function* finishModalRequest(
 	game: GameModel,
 	modalResult: LocalModalResult,
@@ -189,8 +189,8 @@ export function testGame(
 	settings: Partial<GameSettings> = {},
 ) {
 	let game = new GameModel(
-		getTestPlayer('player1', options.playerOneDeck),
-		getTestPlayer('player2', options.playerTwoDeck),
+		getTestPlayer('playerOne', options.playerOneDeck),
+		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
 			...defaultGameSettings,
 			...settings,
