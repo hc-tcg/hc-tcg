@@ -19,7 +19,7 @@ function* testClockHelperSaga(game: GameModel) {
 	yield* endTurn(game)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, Clock, 0)
+	yield* playCardFromHand(game, Clock)
 
 	yield* applyEffect(game)
 
