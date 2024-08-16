@@ -29,6 +29,7 @@ function newGasLightAttack(
 
 export const GasLightEffect: StatusEffect<CardComponent> = {
 	...hiddenStatusEffect,
+	id: 'gas-light',
 	name: 'Gas Light Applied',
 	onApply(
 		game: GameModel,
@@ -70,6 +71,7 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 
 export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'gas-light-triggered',
 	icon: 'gas-light',
 	name: 'Gas Light',
 	description: 'This hermit will take 20 damage at the end of your turn.',

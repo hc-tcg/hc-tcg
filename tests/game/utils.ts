@@ -2,6 +2,7 @@ import {Card} from 'common/cards/base/types'
 import {CardComponent, PlayerComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
+import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,
 	slotToPlayCardAction,
@@ -124,6 +125,20 @@ export function* pick(game: GameModel, slot: SlotComponent) {
 	})
 }
 
+export function* finishModalRequest(
+	game: GameModel,
+	modalResult: LocalModalResult,
+) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'MODAL_REQUEST',
+			modalResult,
+		},
+	})
+}
+
 function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
@@ -155,6 +170,7 @@ const defaultGameSettings = {
 	oneShotMode: false,
 	disableDamage: false,
 	noItemRequirements: false,
+	forceCoinFlip: false,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 }

@@ -11,6 +11,7 @@ import {Counter, systemStatusEffect} from './status-effect'
 
 export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 	...systemStatusEffect,
+	id: 'multiturn-primary-attack-disabled',
 	icon: 'primary-attack-disabled',
 	counter: 1,
 	counterType: 'turns',
@@ -41,6 +42,7 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 
 export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 	...systemStatusEffect,
+	id: 'multiturn-secondary-attack-disabled',
 	icon: 'secondary-attack-disabled',
 	counter: 1,
 	counterType: 'turns',

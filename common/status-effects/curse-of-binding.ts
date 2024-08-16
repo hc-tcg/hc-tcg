@@ -8,6 +8,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const CurseOfBindingEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'binded',
 	icon: 'binded',
 	name: 'Curse of Binding',
 	description: 'You can not switch your active hermit this turn.',

@@ -8,6 +8,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const SleepingEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'sleeping',
 	icon: 'sleeping',
 	name: 'Sleep',
 	description:

@@ -11,6 +11,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'trap-hole',
 	name: 'Trap Hole',
 	icon: 'trap-hole',
 	description:

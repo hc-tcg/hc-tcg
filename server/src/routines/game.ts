@@ -24,6 +24,7 @@ import {printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 
+import assert from 'assert'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectSaga,
@@ -346,25 +347,23 @@ function* turnActionSaga(
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
-	// We don't check if slot actions are available because the playCardSaga will verify that.
-	if (
-		[
-			'SINGLE_USE_ATTACK',
-			'PRIMARY_ATTACK',
-			'SECONDARY_ATTACK',
-			'CHANGE_ACTIVE_HERMIT',
-			'APPLY_EFFECT',
-			'REMOVE_EFFECT',
-			'PICK_REQUEST',
-			'MODAL_REQUEST',
-			'END_TURN',
-		].includes(actionType) &&
-		!availableActions.includes(actionType)
-	) {
-		return
-	}
-
 	try {
+		// We don't check if slot actions are available because the playCardSaga will verify that.
+		assert(
+			![
+				'SINGLE_USE_ATTACK',
+				'PRIMARY_ATTACK',
+				'SECONDARY_ATTACK',
+				'CHANGE_ACTIVE_HERMIT',
+				'APPLY_EFFECT',
+				'REMOVE_EFFECT',
+				'PICK_REQUEST',
+				'MODAL_REQUEST',
+				'END_TURN',
+			].includes(actionType) || availableActions.includes(actionType),
+			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
+		)
+
 		switch (actionType) {
 			case 'PLAY_HERMIT_CARD':
 			case 'PLAY_ITEM_CARD':

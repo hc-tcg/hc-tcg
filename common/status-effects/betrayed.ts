@@ -11,6 +11,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const BetrayedEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'betrayed',
 	icon: 'betrayed',
 	name: 'Betrayed',
 	description:

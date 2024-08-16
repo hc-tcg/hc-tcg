@@ -8,6 +8,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 
 const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
+	id: 'royal-protection',
 	icon: 'royal_protection',
 	name: 'Royal Protection',
 	description:

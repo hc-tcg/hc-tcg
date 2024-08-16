@@ -67,6 +67,7 @@ export type GameSettings = {
 	oneShotMode: boolean
 	disableDamage: boolean
 	noItemRequirements: boolean
+	forceCoinFlip: boolean
 	shuffleDeck: boolean
 	logErrorsToStderr: boolean
 }
@@ -85,6 +86,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		oneShotMode: DEBUG_CONFIG.oneShotMode,
 		disableDamage: DEBUG_CONFIG.disableDamage,
 		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
+		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
 		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 	}

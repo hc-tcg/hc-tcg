@@ -9,6 +9,7 @@ import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
 	...systemStatusEffect,
+	id: 'chroma-keyed',
 	icon: 'chroma-keyed',
 	name: 'Chroma Keyed',
 	description:

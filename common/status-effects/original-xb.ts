@@ -8,6 +8,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const OriginalXbEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'originalxb',
 	icon: 'originalxb',
 	name: 'Get Good',
 	description: 'Draw an additional card at the end of your turn.',

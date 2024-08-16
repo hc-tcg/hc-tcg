@@ -10,6 +10,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const DeathloopReady: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'deathloop-ready',
 	icon: 'deathloop-ready',
 	name: 'Deathloop Ready',
 	description: 'This hermit will be revived on death.',
@@ -72,6 +73,7 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 
 export const RevivedByDeathloopEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'revived-by-deathloop',
 	icon: 'revived-by-deathloop',
 	name: 'Revived',
 	description: "This hermit has been revived by Scar's deathloop attack.",
