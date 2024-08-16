@@ -173,6 +173,7 @@ const defaultGameSettings = {
 	forceCoinFlip: false,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
+	logBoardState: true,
 }
 
 /**

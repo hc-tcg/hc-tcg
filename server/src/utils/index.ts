@@ -1,4 +1,8 @@
-import {CardComponent, SlotComponent} from 'common/components'
+import {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 
@@ -150,34 +154,53 @@ export function printHooksState(game: GameModel) {
 export function printBoardState(game: GameModel) {
 	let buffer = []
 
+	buffer.push(game.logHeader + '\n')
+
 	const printSlot = (slot: SlotComponent) => {
 		let card = slot.getCard()
+
 		if (card) {
+			let name = card.props.name
+
 			if (
 				slot.inRow() &&
 				slot.row.entity === slot.player.activeRowEntity &&
 				slot.type === 'hermit'
 			) {
-				buffer.push('*')
+				name = '*' + name + ' ' + card.props.rarity[0].toUpperCase()
 			}
-			buffer.push(card.props.id.slice(0, 20).padEnd(21))
+
+			buffer.push(name.slice(0, 10).padEnd(11))
 			if (slot.type === 'hermit' && slot.inRow() && slot.row.health) {
 				buffer.push(slot.row.health)
+
+				buffer.push(
+					...game.components
+						.filter(
+							StatusEffectComponent,
+							query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
+						)
+						.map((e) => e.props.name)
+						.join(', '),
+				)
 			}
 		} else {
-			buffer.push('_'.padEnd(21))
+			buffer.push('_'.padEnd(11))
 		}
 	}
 
 	for (const playerEntity of game.state.order) {
 		const player = game.components.get(playerEntity)
 		let isTurn = game.currentPlayer.entity === playerEntity
+		buffer.push('\t')
 		buffer.push(player?.playerName || '')
 		buffer.push('\t')
 		buffer.push(isTurn ? 'Active' : 'Inactive')
 		buffer.push('\n')
 
 		for (let i = 0; i < 5; i++) {
+			buffer.push('\t')
+
 			game.components
 				.filter(
 					SlotComponent,
@@ -206,7 +229,8 @@ export function printBoardState(game: GameModel) {
 			buffer.push('\n')
 		}
 
-		buffer.push('Hand:')
+		buffer.push('\t')
+		buffer.push('Hand: ')
 		game.components
 			.filter(
 				SlotComponent,
@@ -215,16 +239,26 @@ export function printBoardState(game: GameModel) {
 				query.not(query.slot.empty),
 			)
 			.forEach(printSlot)
+		buffer.push('\n')
 
+		buffer.push('\t')
+		buffer.push('Status Effects: ')
+		buffer.push(
+			...game.components
+				.filter(StatusEffectComponent, query.effect.targetEntity(playerEntity))
+				.map((e) => e.props.name)
+				.join(', '),
+		)
 		buffer.push('\n\n')
 	}
 
+	buffer.push('\t')
 	buffer.push('Single Use Slot: ')
 	game.components.filter(SlotComponent, query.slot.singleUse).forEach(printSlot)
 	buffer.push(`Single Use Activated: ${game.currentPlayer.singleUseCardUsed}`)
 	buffer.push('\n')
 
-	console.log(buffer.join(''))
+	console.info(buffer.join(''))
 }
 
 /** Call a function and log errors if they are found. This function is used to prevent errors from reaching
@@ -234,6 +268,6 @@ export function* safeCall(fun: any, ...args: any[]): any {
 	try {
 		return yield* fun(...args)
 	} catch (e) {
-		console.log(e)
+		console.error(e)
 	}
 }
