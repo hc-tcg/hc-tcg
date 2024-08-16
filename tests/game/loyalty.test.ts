@@ -2,80 +2,22 @@ import {describe, expect, test} from '@jest/globals'
 import Loyalty from 'common/cards/default/effects/loyalty'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
-import {SlotComponent} from 'common/components'
-import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, findCardInHand, playCard, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, EthosLabCommon),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-			query.slot.row(query.row.index(0)),
-		)!,
-	)
-
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, Loyalty),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.attach,
-			query.slot.row(query.row.index(0)),
-		)!,
-	)
-
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, BalancedItem),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-			query.slot.row(query.row.hasHermit),
-		)!,
-	)
+	yield* playCardFromHand(game, EthosLabCommon, 0)
+	yield* playCardFromHand(game, Loyalty, 0)
+	yield* playCardFromHand(game, BalancedItem, 0, 0)
 
 	yield* endTurn(game)
 
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, EthosLabCommon),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-		)!,
-	)
+	yield* playCardFromHand(game, EthosLabCommon, 0)
 
 	yield* endTurn(game)
 
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, EthosLabCommon),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.hermit,
-			query.slot.row(query.row.index(1)),
-		)!,
-	)
-
-	yield* playCard(
-		game,
-		findCardInHand(game.currentPlayer, BalancedItem),
-		game.components.find(
-			SlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-			query.slot.row(query.row.index(1)),
-		)!,
-	)
+	yield* playCardFromHand(game, EthosLabCommon, 1)
+	yield* playCardFromHand(game, BalancedItem, 1, 0)
 
 	yield* endTurn(game)
 
