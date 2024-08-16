@@ -1,4 +1,4 @@
-import {Card} from 'common/cards/base/types'
+import {Attach, Card, Hermit, Item, SingleUse} from 'common/cards/base/types'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
@@ -45,6 +45,12 @@ export function* endTurn(game: GameModel) {
 }
 
 /** Play a card from your hand to a row on the game board */
+export function playCardFromHand(game: GameModel, card: SingleUse): any
+export function playCardFromHand(
+	game: GameModel,
+	card: Hermit | Attach | Item,
+	index: number,
+): any
 export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
 	let cardComponent = findCardInHand(game.currentPlayer, card)
 
