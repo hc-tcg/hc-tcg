@@ -8,7 +8,7 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* playCardFromHand(game, EthosLabCommon, 0)
 	yield* playCardFromHand(game, Loyalty, 0)
-	yield* playCardFromHand(game, BalancedItem, 0)
+	yield* playCardFromHand(game, BalancedItem, 0, 0)
 
 	yield* endTurn(game)
 
@@ -17,7 +17,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* endTurn(game)
 
 	yield* playCardFromHand(game, EthosLabCommon, 1)
-	yield* playCardFromHand(game, BalancedItem, 1)
+	yield* playCardFromHand(game, BalancedItem, 1, 0)
 
 	yield* endTurn(game)
 

@@ -48,10 +48,21 @@ export function* endTurn(game: GameModel) {
 export function playCardFromHand(game: GameModel, card: SingleUse): any
 export function playCardFromHand(
 	game: GameModel,
-	card: Hermit | Attach | Item,
+	card: Hermit | Attach,
+	row: number,
+): any
+export function playCardFromHand(
+	game: GameModel,
+	card: Item,
+	row: number,
 	index: number,
 ): any
-export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
+export function* playCardFromHand(
+	game: GameModel,
+	card: Card,
+	row?: number,
+	index?: number,
+) {
 	let cardComponent = findCardInHand(game.currentPlayer, card)
 
 	const slot = game.components.find(
@@ -59,7 +70,9 @@ export function* playCardFromHand(game: GameModel, card: Card, index?: number) {
 		query.slot.currentPlayer,
 		(_game, slot) =>
 			(!slot.inRow() && index === undefined) ||
-			(slot.inRow() && slot.row.index === index),
+			(slot.inRow() && slot.row.index === row),
+		(_game, slot) =>
+			index === undefined || (slot.inRow() && slot.index === index),
 		(_game, slot) => slot.type === cardComponent.props.category,
 	)!
 
