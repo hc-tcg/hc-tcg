@@ -1,18 +1,21 @@
-import {AnyAction} from 'redux'
+import {LocalMessage, localMessages} from 'logic/messages'
 
 type SocketState = null | 'connecting' | 'connected'
 
 const defaultState: SocketState = null
 
-const loginReducer = (state = defaultState, action: AnyAction): SocketState => {
+const loginReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): SocketState => {
 	switch (action.type) {
-		case 'SOCKET_CONNECTING':
+		case localMessages.SOCKET_CONNECTING:
 			return 'connecting'
-		case 'SOCKET_CONNECT':
+		case localMessages.SOCKET_CONNECT:
 			return 'connected'
-		case 'SOCKET_DISCONNECT':
+		case localMessages.SOCKET_DISCONNECT:
 			return null
-		case 'CONNECT_ERROR':
+		case localMessages.SOCKET_CONNECT_ERROR:
 			return null
 		default:
 			return state

@@ -11,7 +11,7 @@ export const currentPlayer: ComponentQuery<PlayerComponent> = (game, player) =>
 	player.entity === game.currentPlayerEntity
 
 export function hasStatusEffect(
-	statusEffect: new () => StatusEffect
+	statusEffect: StatusEffect,
 ): ComponentQuery<PlayerComponent> {
 	return (_game, player) => {
 		return !!player.hasStatusEffect(statusEffect)

@@ -1,18 +1,22 @@
 import classnames from 'classnames'
-import {LocalRowState} from 'common/types/game-state'
-import Card from 'components/card'
-import css from './board.module.scss'
+import {SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
-import {useSelector} from 'react-redux'
+import {LocalRowState} from 'common/types/game-state'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+} from 'common/types/server-requests'
+import Card from 'components/card'
 import {
 	getCardsCanBePlacedIn,
 	getGameState,
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useSelector} from 'react-redux'
 import StatusEffectContainer from './board-status-effects'
-import {SlotEntity} from 'common/entities'
+import css from './board.module.scss'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -24,23 +28,37 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
 }
-const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotProps) => {
+const Slot = ({
+	type,
+	entity,
+	onClick,
+	card,
+	active,
+	statusEffects,
+	cssId,
+}: SlotProps) => {
+	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-	console.log('UPDATING SELF')
 
-	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
+	const frameImg =
+		type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
-		if (pickRequestPickableCard !== null && pickRequestPickableCard !== undefined) {
+		if (
+			pickRequestPickableCard !== null &&
+			pickRequestPickableCard !== undefined
+		) {
 			return pickRequestPickableCard
 		}
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(([card, _]) => card?.entity == selectedCard.entity)[0][1]
+		return cardsCanBePlacedIn.filter(
+			([card, _]) => card?.entity == selectedCard.entity,
+		)[0][1]
 	}
 
 	const getIsPickable = () => {
@@ -57,11 +75,14 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	let isClickable = false
 
 	if (
-		(localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) ||
+		(localGameState &&
+			localGameState.playerEntity ===
+				localGameState.turn.currentPlayerEntity) ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()
-		somethingPickable = selectedCard !== null || pickRequestPickableCard !== null
+		somethingPickable =
+			selectedCard !== null || pickRequestPickableCard !== null
 		isClickable = somethingPickable && isPickable
 	}
 
@@ -70,12 +91,15 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 	}
 
 	return (
-		<div
+		<button
 			onClick={isClickable ? onClick : () => {}}
+			disabled={!isClickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.pickable]: isPickable && somethingPickable,
-				[css.unpickable]: !isPickable && somethingPickable,
+				[css.pickable]:
+					isPickable && somethingPickable && settings.slotHighlightingEnabled,
+				[css.unpickable]:
+					!isPickable && somethingPickable && settings.slotHighlightingEnabled,
 				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !card,
@@ -95,7 +119,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
 			<StatusEffectContainer statusEffects={statusEffects || []} />
-		</div>
+		</button>
 	)
 }
 

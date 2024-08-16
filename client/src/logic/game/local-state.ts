@@ -1,38 +1,41 @@
+import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
-import {slotPicked} from './game-actions'
+import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
+import {hasEnoughEnergy} from 'common/utils/attacks'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
-import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
-import {ChangeActiveHermitActionData} from 'common/types/action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
-type SlotPickedAction = ReturnType<typeof slotPicked>
-
 /** Make the client look like a card has been placed in a slot */
-export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: LocalCardInstance) {
+export function* localPutCardInSlot(
+	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
+	selectedCard: LocalCardInstance,
+) {
 	let gameState = yield* select(getGameState)
 	if (!gameState) throw new Error('Can not find game state')
 
 	let playerState = Object.values(gameState?.players || {}).find(
-		(player) => player.entity === action.payload.player
+		(player) => player.entity === action.player,
 	)
 	if (!playerState) throw new Error('Player state not found.')
 
 	let board = playerState?.board
-	let slot = action.payload.slot
+	let slot = action.slotInfo
 	if (!board) return
 
-	let row = action.payload.row
-	let index = action.payload.index
+	let row = action.row
+	let index = action.index
 
 	if (slot.slotType === 'single_use') {
 		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
 	}
 	if (slot.slotType === 'hermit' && row !== undefined) {
 		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-		board.rows[row].health = (selectedCard as LocalCardInstance<HasHealth>).props.health
+		board.rows[row].health = (
+			selectedCard as LocalCardInstance<HasHealth>
+		).props.health
 
 		if (!board.activeRow) {
 			board.activeRow = board.rows[row].entity
@@ -45,7 +48,10 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
 	}
 	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
-		board.rows[row].items[index] = {slot: slot.slotEntity, card: selectedCard as any}
+		board.rows[row].items[index] = {
+			slot: slot.slotEntity,
+			card: selectedCard as any,
+		}
 
 		// When we place a item card, lets update the available actions to include what we have enough
 		// energy for.
@@ -54,11 +60,15 @@ export function* localPutCardInSlot(action: SlotPickedAction, selectedCard: Loca
 			if (!item.card || !isItem(item.card.props)) return []
 			return item.card.props.energy
 		})
-		if (hermit.card && isHermit(hermit.card.props) && isItem(selectedCard.props)) {
-			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy)) {
+		if (
+			hermit.card &&
+			isHermit(hermit.card.props) &&
+			isItem(selectedCard.props)
+		) {
+			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false)) {
 				gameState.turn.availableActions.push('PRIMARY_ATTACK')
 			}
-			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy)) {
+			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false)) {
 				gameState.turn.availableActions.push('SECONDARY_ATTACK')
 			}
 		}
@@ -74,7 +84,7 @@ export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
 	if (!localPlayerState?.hand) return
 
 	localPlayerState.hand = localPlayerState.hand.filter(
-		(card) => card.entity !== selectedCard.entity
+		(card) => card.entity !== selectedCard.entity,
 	)
 
 	yield* put({type: 'UPDATE_GAME'})
@@ -94,7 +104,10 @@ export function* localRemoveEffect() {
 	let playerState = yield* select(getPlayerState)
 
 	if (playerState?.board) {
-		playerState.board.singleUse = {slot: playerState?.board.singleUse.slot, card: null}
+		playerState.board.singleUse = {
+			slot: playerState?.board.singleUse.slot,
+			card: null,
+		}
 	}
 
 	yield* put({type: 'UPDATE_GAME'})
@@ -107,7 +120,7 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 	if (playerState?.board) {
 		// Rows are changed by sending a hermit slot.
 		for (let row of playerState.board.rows) {
-			if (row.hermit.slot === action.payload.entity) {
+			if (row.hermit.slot === action.entity) {
 				playerState.board.activeRow = row.entity
 				break
 			}
@@ -125,7 +138,7 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 					'PLAY_ITEM_CARD',
 					'PLAY_EFFECT_CARD',
 					'PLAY_SINGLE_USE_CARD',
-				].includes(action)
+				].includes(action),
 		)
 
 	yield* put({type: 'UPDATE_GAME'})
@@ -135,8 +148,8 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 export function* localEndTurn() {
 	let localPlayerState = yield* select(getGameState)
 	if (localPlayerState?.turn) {
-		localPlayerState.turn.currentPlayerEntity = localPlayerState?.opponentPlayerEntity
-		localPlayerState.turn.currentPlayerId = localPlayerState?.opponentPlayerId
+		localPlayerState.turn.currentPlayerEntity =
+			localPlayerState?.opponentPlayerEntity
 		localPlayerState.turn.turnNumber++
 	}
 

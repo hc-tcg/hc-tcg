@@ -1,9 +1,9 @@
-import {query, slot} from '../../../components/query'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
+import {query} from '../../../components/query'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class FletchingTable extends Card {
+class FletchingTable extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'fletching_table',

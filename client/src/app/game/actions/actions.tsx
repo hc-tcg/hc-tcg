@@ -1,23 +1,21 @@
-import css from './actions.module.scss'
 import cn from 'classnames'
-import Slot from '../board/board-slot'
-import {useSelector, useDispatch} from 'react-redux'
-import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
+import {LocalGameState} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import Button from 'components/button'
+import CoinFlip from 'components/coin-flip'
 import {
-	getPlayerStateById,
 	getAvailableActions,
 	getCurrentCoinFlip,
-	getGameState,
-	getPlayerState,
 	getCurrentPickMessage,
+	getGameState,
+	getPlayerEntity,
+	getPlayerState,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
-import CoinFlip from 'components/coin-flip'
-import Button from 'components/button'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {SlotInfo} from 'common/types/server-requests'
-import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
+import Slot from '../board/board-slot'
+import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -27,25 +25,27 @@ type Props = {
 }
 
 const Actions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
+	const currentPlayer = useSelector(
+		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
+	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
-	const playerId = useSelector(getPlayerId)
+	const playerEntity = useSelector(getPlayerEntity)
 	const boardState = currentPlayer?.board
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
-	const turn = localGameState.turn.currentPlayerId === playerId
+	const turn = localGameState.turn.currentPlayerEntity === playerEntity
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
 		const waitingForOpponent =
-			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') &&
+			availableActions.length === 1
 		let turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
 		if (pickMessage) turnMsg = 'Pick a card'
 		const endTurn = availableActions.includes('END_TURN')
@@ -115,14 +115,10 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(attackAction())
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 		function handleEndTurn() {
-			if (shouldShowEndTurnModal(availableActions, settings)) {
-				dispatch(endTurnAction())
-			} else {
-				dispatch(endTurn())
-			}
+			dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 		}
 
 		const attackOptions =

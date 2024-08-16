@@ -1,20 +1,20 @@
+import {Hermit} from '../../base/types'
 // common cards
 import BeetlejhostCommon from './beetlejhost-common'
 import EvilJevinCommon from './eviljevin-common'
-import PoultryManCommon from './poultryman-common'
+import EvilXisumaRare from './evilxisuma_rare'
+import GoatfatherRare from './goatfather-rare'
+import HelsknightRare from './helsknight-rare'
+import HotguyRare from './hotguy-rare'
+import HumanCleoRare from './humancleo-rare'
+import JinglerRare from './jingler-rare'
 // rare & ultra rare cards
 import LlamadadRare from './llamadad-rare'
 import PotatoBoyRare from './potatoboy-rare'
-import GoatfatherRare from './goatfather-rare'
-import HotguyRare from './hotguy-rare'
-import JinglerRare from './jingler-rare'
-import EvilXisumaRare from './evilxisuma_rare'
-import HelsknightRare from './helsknight-rare'
+import PoultryManCommon from './poultryman-common'
 import RenbobRare from './renbob-rare'
-import HumanCleoRare from './humancleo-rare'
-import {CardClass} from '../../base/card'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Hermit> = [
 	// AE Cards
 	BeetlejhostCommon,
 	EvilJevinCommon,

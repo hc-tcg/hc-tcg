@@ -1,5 +1,5 @@
-import css from './menu-layout.module.scss'
 import {ReactNode} from 'react'
+import css from './menu-layout.module.scss'
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	back: () => void

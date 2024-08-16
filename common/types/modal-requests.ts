@@ -1,7 +1,5 @@
 import {CardComponent} from '../components'
-import {CardEntity} from '../entities'
-import {PlayerId} from '../models/player-model'
-import {ActionResult} from './game-state'
+import {CardEntity, PlayerEntity} from '../entities'
 
 export type ModalRequest = SelectCards.Request | CopyAttack.Request
 export type ModalData = SelectCards.Data | CopyAttack.Data
@@ -10,10 +8,10 @@ export type ModalResult = SelectCards.Result | CopyAttack.Result
 export namespace SelectCards {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: PlayerId
-		data: Data
+		player: PlayerEntity
+		modal: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
+		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}
@@ -21,21 +19,24 @@ export namespace SelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: 'selectCards'
-		payload: {
-			modalName: string
-			modalDescription: string
-			cards: Array<CardEntity>
-			selectionSize: number
-			primaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-			secondaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-		}
+		type: 'selectCards'
+		/** The name of the modal */
+		name: string
+		/** The description of the modal */
+		description: string
+		cards: Array<CardEntity>
+		/** The amount of cards the player can select. Set to 0 if they do not need to slect cards. */
+		selectionSize: number
+		/** Show a close button on this modal. */
+		cancelable: boolean
+		primaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		secondaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
 	}
 
 	export type Result =
@@ -52,21 +53,21 @@ export namespace SelectCards {
 export namespace CopyAttack {
 	export type Request = {
 		/** The id of the player to request the pick from */
-		playerId: PlayerId
-		data: Data
+		player: PlayerEntity
+		modal: Data
 		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result | undefined) => ActionResult
+		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}
 
 	export type Data = {
-		modalId: 'copyAttack'
-		payload: {
-			modalName: string
-			modalDescription: string
-			hermitCard: CardEntity
-		}
+		type: 'copyAttack'
+		name: string
+		description: string
+		hermitCard: CardEntity
+		/** Show a close button on this modal. */
+		cancelable: boolean
 	}
 
 	export type Result =

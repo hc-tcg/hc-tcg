@@ -18,7 +18,13 @@ const SpeakerIcon = ({level}: Props) => {
 	}
 
 	return (
-		<svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<svg
+			width="12"
+			height="11"
+			viewBox="0 0 12 11"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
 			<path d="M6 1H5V2H4V3H2V4H0V6H2V7H4V8H5V9H6V1Z" fill="white" />
 			<path d="M2 6H0V7H2V8H4V9H5V10H6V9H5V8H4V7H2V6Z" fill="#BEBEBE" />
 
@@ -29,12 +35,19 @@ const SpeakerIcon = ({level}: Props) => {
 					<path d="M9 8V3H10V8H9Z" fill={level2} />
 					<path d="M9 8V9H8V8H9Z" fill={level2} />
 				</g>
-				<path id="3" d="M10 0H9V1H10V2H11V9H10V10H9V11H10V10H11V9H12V2H11V1H10V0Z" fill={level3} />
+				<path
+					id="3"
+					d="M10 0H9V1H10V2H11V9H10V10H9V11H10V10H11V9H12V2H11V1H10V0Z"
+					fill={level3}
+				/>
 			</g>
 			<g display={level > 0 ? 'none' : 'block'}>
 				<path d="M7 3H8V4H7V3Z" fill="white" />
 				<path d="M9 5H8V4H9V5Z" fill="white" />
-				<path d="M10 5H9V6H8V7H7V8H8V7H9V6H10V7H11V8H12V7H11V6H10V5Z" fill="white" />
+				<path
+					d="M10 5H9V6H8V7H7V8H8V7H9V6H10V7H11V8H12V7H11V6H10V5Z"
+					fill="white"
+				/>
 				<path d="M11 4V5H10V4H11Z" fill="white" />
 				<path d="M11 4V3H12V4H11Z" fill="white" />
 			</g>

@@ -1,35 +1,39 @@
-import css from './toolbar.module.scss'
-import {useSelector, useDispatch} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
-import {setOpenedModal} from 'logic/game/game-actions'
-import ChatItem from './chat-item'
-import SoundItem from './sound-item'
-import ForfeitItem from './forfeit-item'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
+import ChatItem from './chat-item'
+import ForfeitItem from './forfeit-item'
+import SoundItem from './sound-item'
+import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	const handleDiscarded = () => {
 		if (!gameState) return
 		gameState.currentModalData = {
-			modalId: 'selectCards',
-			payload: {
-				modalName: 'Discarded',
-				modalDescription:
-					gameState.discarded.length === 0 ? 'There are no cards in your discard pile.' : '',
-				cards: gameState.discarded,
-				selectionSize: 0,
-				primaryButton: {
-					text: 'Close',
-					variant: 'default',
-				},
+			type: 'selectCards',
+			name: 'Discarded',
+			description:
+				gameState.discarded.length === 0
+					? 'There are no cards in your discard pile.'
+					: '',
+			cards: gameState.discarded,
+			selectionSize: 0,
+			primaryButton: {
+				text: 'Close',
+				variant: 'default',
 			},
+			cancelable: true,
 		}
-		dispatch(setOpenedModal(gameState.currentModalData.modalId))
+		dispatch({
+			type: localMessages.GAME_MODAL_OPENED_SET,
+			id: gameState.currentModalData.type,
+		})
 	}
 
 	if (!gameState) return null
@@ -48,7 +52,7 @@ function Toolbar() {
 			</button>
 
 			{/* Toggle Chat */}
-			{settings.disableChat === 'off' && <ChatItem />}
+			{settings.chatEnabled && <ChatItem />}
 
 			{/* Toggle Tooltips */}
 			<TooltipsItem />

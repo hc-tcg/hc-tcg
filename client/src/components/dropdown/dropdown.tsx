@@ -20,9 +20,15 @@ const Dropdown = ({button, label, options, action}: Props) => {
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger asChild>{button}</DropdownMenu.Trigger>
 			<DropdownMenu.Portal>
-				<DropdownMenu.Content className={css.DropdownMenuContent} sideOffset={0} align="start">
+				<DropdownMenu.Content
+					className={css.DropdownMenuContent}
+					sideOffset={0}
+					align="start"
+				>
 					<DropdownMenu.Arrow className={css.DropdownMenuArrow} />
-					<DropdownMenu.Label className={css.DropdownMenuLabel}>{label}</DropdownMenu.Label>
+					<DropdownMenu.Label className={css.DropdownMenuLabel}>
+						{label}
+					</DropdownMenu.Label>
 					{options.map((option) => (
 						<DropdownMenu.RadioItem
 							value={option.name}

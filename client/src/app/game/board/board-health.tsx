@@ -1,10 +1,10 @@
+import cn from 'classnames'
 import {LocalRowState} from 'common/types/game-state'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import HealthDisplayModule from 'components/card/health-card-svg'
+import StatusEffect from 'components/status-effects/status-effect'
 import slotCss from './board.module.scss'
 import cardCss from './board.module.scss'
-import cn from 'classnames'
-import {LocalStatusEffectInstance} from 'common/types/server-requests'
-import StatusEffect from 'components/status-effects/status-effect'
 
 type HealthSlotProps = {
 	shouldDim: boolean
@@ -12,16 +12,28 @@ type HealthSlotProps = {
 	damageStatusEffect: LocalStatusEffectInstance | undefined
 }
 
-const HealthSlot = ({shouldDim, rowState, damageStatusEffect}: HealthSlotProps) => {
+const HealthSlot = ({
+	shouldDim,
+	rowState,
+	damageStatusEffect,
+}: HealthSlotProps) => {
 	return (
 		<div
 			id={slotCss.health}
-			className={cn(slotCss.cardWrapper, slotCss.health, slotCss.slot, cardCss.card, {
-				[slotCss.unpickable]: shouldDim,
-			})}
+			className={cn(
+				slotCss.cardWrapper,
+				slotCss.health,
+				slotCss.slot,
+				cardCss.card,
+				{
+					[slotCss.unpickable]: shouldDim,
+				},
+			)}
 		>
 			{rowState.health && (
-				<HealthDisplayModule health={rowState.hermit.card?.turnedOver ? null : rowState.health} />
+				<HealthDisplayModule
+					health={rowState.hermit.card?.turnedOver ? null : rowState.health}
+				/>
 			)}
 			{damageStatusEffect && (
 				<div className={slotCss.damageStatusEffectContainer}>

@@ -1,40 +1,48 @@
-import type {CardProps} from '../cards/base/types'
+import type {Card} from '../cards/base/types'
+import type {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 import type {ComponentQuery} from '../components/query'
-import type {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
-import {StatusEffectProps} from '../status-effects/status-effect'
+import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
+import {PlayerId} from '../models/player-model'
+import {StatusEffect} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
-import {PlayerId} from '../models/player-model'
-import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {TurnActions} from './game-state'
 
 export type PlayerInfo = {
 	playerName: string
 	censoredPlayerName: string
 	minecraftName: string
-	playerId: string
+	playerId: PlayerId
 	playerSecret: string
 	playerDeck: PlayerDeckT
 }
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
-	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
+	[Property in keyof Type]: Type[Property] extends Function
+		? never
+		: Type[Property]
 }
 
 export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 	return t as WithoutFunctions<T>
 }
 
-export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	readonly props: WithoutFunctions<Props>
+export type LocalCardInstance<CardType extends Card = Card> = {
+	readonly props: WithoutFunctions<CardType>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null
-	turnedOver: boolean
+	readonly turnedOver: boolean
 }
 
-export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
+export type LocalStatusEffectInstance<
+	Props extends StatusEffect = StatusEffect,
+> = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
 	readonly target:
@@ -57,7 +65,7 @@ export type SlotInfo = {
 
 export type PickRequest = {
 	/** The id of the player to request the pick from */
-	playerId: PlayerId
+	player: PlayerEntity
 	/** The id of the card that called the pick request */
 	id: Entity<CardComponent | StatusEffectComponent>
 	/** The message to display to the player */
@@ -79,21 +87,20 @@ export namespace LocalSelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: 'selectCards'
-		payload: {
-			modalName: string
-			modalDescription: string
-			cards: Array<LocalCardInstance>
-			selectionSize: number
-			primaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-			secondaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-		}
+		type: 'selectCards'
+		name: string
+		description: string
+		cards: Array<LocalCardInstance>
+		selectionSize: number
+		primaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		secondaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		cancelable: boolean
 	}
 
 	export type Result =
@@ -109,13 +116,12 @@ export namespace LocalSelectCards {
 
 export namespace LocalCopyAttack {
 	export type Data = {
-		modalId: 'copyAttack'
-		payload: {
-			modalName: string
-			modalDescription: string
-			hermitCard: LocalCardInstance
-			blockedActions: TurnActions
-		}
+		type: 'copyAttack'
+		name: string
+		description: string
+		hermitCard: LocalCardInstance
+		blockedActions: TurnActions
+		cancelable: boolean
 	}
 
 	export type Result =

@@ -1,19 +1,21 @@
 import {CARDS} from 'common/cards'
-import {encode, decode} from 'js-base64'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {CardEntity} from 'common/entities'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {decode, encode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
 		var b64 = decode(hash)
 			.split('')
 			.map((char) => char.charCodeAt(0))
-	} catch (err) {
+	} catch (_err) {
 		return []
 	}
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
-		const props = Object.values(CARDS).find((value) => value.props.numericId === b64[i])?.props
+		const props = Object.values(CARDS).find(
+			(value) => value.numericId === b64[i],
+		)
 		if (!props) continue
 		deck.push({
 			props: WithoutFunctions(props),
@@ -26,7 +28,9 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	return deck
 }
 
-export const getHashFromDeck = (pickedCards: Array<LocalCardInstance>): string => {
+export const getHashFromDeck = (
+	pickedCards: Array<LocalCardInstance>,
+): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
 		if (!pickedCards[i].props) {

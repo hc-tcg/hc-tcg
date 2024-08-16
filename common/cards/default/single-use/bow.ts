@@ -1,48 +1,52 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
 import {RowEntity} from '../../../entities'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class Bow extends Card {
-	pickCondition = query.every(
-		query.slot.opponent,
-		query.slot.hermit,
-		query.not(query.slot.empty),
-		query.not(query.slot.active)
-	)
+const pickCondition = query.every(
+	query.slot.opponent,
+	query.slot.hermit,
+	query.not(query.slot.empty),
+	query.not(query.slot.active),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'bow',
-		numericId: 3,
-		name: 'Bow',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 1,
-		description: "Do 40hp damage to one of your opponent's AFK Hermits.",
-		hasAttack: true,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition)
-		),
-		attackPreview: (_game) => `$A40$`,
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+const Bow: SingleUse = {
+	...singleUse,
+	id: 'bow',
+	numericId: 3,
+	name: 'Bow',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 1,
+	description: "Do 40hp damage to one of your opponent's AFK Hermits.",
+	hasAttack: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.exists(SlotComponent, pickCondition),
+	),
+	attackPreview: (_game) => '$A40$',
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
 		let pickedRow: RowEntity | null = null
 
 		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
-				canPick: this.pickCondition,
+				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
 					pickedRow = pickedSlot.rowEntity
@@ -68,7 +72,7 @@ class Bow extends Card {
 			if (attack.attacker?.entity !== component.entity) return
 			applySingleUse(game, component.slot)
 		})
-	}
+	},
 }
 
 export default Bow

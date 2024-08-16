@@ -1,12 +1,12 @@
+import {CardComponent} from '../../../components'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class SplashPotionOfHarming extends Card {
+class SplashPotionOfHarming extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'splash_potion_of_harming',
@@ -20,7 +20,11 @@ class SplashPotionOfHarming extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.getAttack.add(component, () => {
@@ -62,7 +66,7 @@ class SplashPotionOfHarming extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.getAttack.remove(component)
 		player.hooks.onAttack.remove(component)

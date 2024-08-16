@@ -1,16 +1,21 @@
 import {
-	AttackHistory,
-	AttackHistoryType,
-	AttackDefs,
-	AttackType,
-	WeaknessType,
-	AttackLog,
-	AttackerEntity,
-} from '../types/attack'
-import {CardComponent, PlayerComponent, RowComponent, StatusEffectComponent} from '../components'
-import {GameModel} from './game-model'
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	StatusEffectComponent,
+} from '../components'
 import {ComponentQuery} from '../components/query'
 import {PlayerEntity, RowEntity} from '../entities'
+import {
+	AttackDefs,
+	AttackHistory,
+	AttackHistoryType,
+	AttackLog,
+	AttackType,
+	AttackerEntity,
+	WeaknessType,
+} from '../types/attack'
+import {GameModel} from './game-model'
 
 export class AttackModel {
 	private readonly game: GameModel
@@ -75,7 +80,11 @@ export class AttackModel {
 	// Helpers
 
 	/** Adds a change to the attack's history */
-	private addHistory(source: AttackerEntity, type: AttackHistoryType, value?: any) {
+	private addHistory(
+		source: AttackerEntity,
+		type: AttackHistoryType,
+		value?: any,
+	) {
 		this.history.push({
 			source,
 			type,
@@ -116,7 +125,10 @@ export class AttackModel {
 
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
-		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
+		return Math.max(
+			this.damage * this.damageMultiplier - this.damageReduction,
+			0,
+		)
 	}
 
 	/** Returns the damage this attack will do */

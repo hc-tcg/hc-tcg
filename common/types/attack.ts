@@ -4,7 +4,11 @@ import {Entity, PlayerEntity, RowEntity} from '../entities'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
-export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'status-effect'
+export type AttackType =
+	| HermitAttackType
+	| 'effect'
+	| 'weakness'
+	| 'status-effect'
 
 export type WeaknessType = 'always' | 'ifWeak' | 'never'
 
@@ -33,7 +37,9 @@ export type AttackLog = {
 	previousLog?: string
 }
 
-export type AttackerEntity = Entity<CardComponent | StatusEffectComponent> | 'debug'
+export type AttackerEntity =
+	| Entity<CardComponent | StatusEffectComponent>
+	| 'debug'
 
 export type AttackDefs =
 	| {

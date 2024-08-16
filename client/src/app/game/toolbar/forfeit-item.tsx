@@ -1,14 +1,15 @@
-import {useDispatch, useSelector} from 'react-redux'
-import {setOpenedModal} from 'logic/game/game-actions'
 import {getOpenedModal} from 'logic/game/game-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 
 function ForfeitItem() {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const openedModal = useSelector(getOpenedModal)
 
 	const handleForfeit = () => {
-		if (!openedModal) dispatch(setOpenedModal('forfeit'))
+		if (!openedModal)
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'forfeit'})
 	}
 
 	return (

@@ -1,43 +1,45 @@
-import {StatusEffectProps, Counter, statusEffect, CardStatusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {Counter, statusEffect} from './status-effect'
 
-class SleepingEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'sleeping',
-		name: 'Sleep',
-		description:
-			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
-		counter: 3,
-		counterType: 'turns',
-	}
-
-	override onApply(
+const SleepingEffect: Counter<CardComponent> = {
+	...statusEffect,
+	id: 'sleeping',
+	icon: 'sleeping',
+	name: 'Sleep',
+	description:
+		'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
+	counter: 3,
+	counterType: 'turns',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
-		effect.counter = this.props.counter
+		effect.counter = this.counter
 
 		if (!target.slot.inRow()) return
 		if (!target.isHealth()) return
 
 		game.addBlockedActions(
-			this.props.icon,
+			this.icon,
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
-			'CHANGE_ACTIVE_HERMIT'
+			'CHANGE_ACTIVE_HERMIT',
 		)
 
 		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
 			player.entity,
-			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`
+			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`,
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
@@ -51,10 +53,10 @@ class SleepingEffect extends CardStatusEffect {
 
 			if (player.activeRowEntity === target.slot.row.entity) {
 				game.addBlockedActions(
-					this.props.icon,
+					this.icon,
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
-					'CHANGE_ACTIVE_HERMIT'
+					'CHANGE_ACTIVE_HERMIT',
 				)
 			}
 		})
@@ -62,7 +64,7 @@ class SleepingEffect extends CardStatusEffect {
 		observer.subscribe(player.hooks.afterDefence, (_attack) => {
 			if (!target.isAlive()) effect.remove()
 		})
-	}
+	},
 }
 
 export default SleepingEffect

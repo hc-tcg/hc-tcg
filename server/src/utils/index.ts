@@ -1,6 +1,10 @@
-import {DEBUG_CONFIG} from 'common/config'
+import {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
+import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {CardComponent} from 'common/components'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
@@ -27,8 +31,10 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			hookValue.listeners.forEach(([observer, _], i) => {
-				let target = game.components.get(game.components.get(observer)?.wrappingEntity || null)
+			hookValue.listeners.forEach(([observer, _args, _key], i) => {
+				let target = game.components.get(
+					game.components.get(observer)?.wrappingEntity || null,
+				)
 				if (!(target instanceof CardComponent)) return
 				const pos = target.slot
 				const inBoard = Boolean(pos)
@@ -56,7 +62,7 @@ export function printHooksState(game: GameModel) {
 				if (aRow === null) return -1
 				if (bRow === null) return 1
 				return aRow - bRow
-			})
+			}),
 		)
 	}
 
@@ -103,7 +109,7 @@ export function printHooksState(game: GameModel) {
 	}
 
 	// Print to console
-	if (DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
+	if (game.settings.showHooksState.clearConsole) console.clear()
 	const turnInfo = `TURN: ${game.state.turn.turnNumber}, CURRENT PLAYER: ${currentPlayer.playerName}`
 	console.log(colorize(drawBox(turnInfo, 60), 'cyan'))
 
@@ -113,7 +119,8 @@ export function printHooksState(game: GameModel) {
 		const row = info.row
 		const attachedStatus = info.board
 			? colorize('ATTACHED', 'green')
-			: colorize('DETACHED', 'brightRed') + colorize(colorize('!', 'blink'), 'brightRed')
+			: colorize('DETACHED', 'brightRed') +
+				colorize(colorize('!', 'blink'), 'brightRed')
 		const slotIndex = slot?.type === 'item' ? ':' + slot.index : ''
 		const slotType = slot?.type ? slot.type : ''
 		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
@@ -122,7 +129,7 @@ export function printHooksState(game: GameModel) {
 			console.log(
 				`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
 					info.card.cardId
-				} - ${attachedStatus}`
+				} - ${attachedStatus}`,
 			)
 			console.log(colorize(drawLine(60), 'white'))
 		}
@@ -140,5 +147,127 @@ export function printHooksState(game: GameModel) {
 		}
 
 		console.log('\n')
+	}
+}
+
+/** A utility to print a game board state in the command line. This is intended to be used for developing tests. */
+export function printBoardState(game: GameModel) {
+	let buffer = []
+
+	buffer.push(game.logHeader + '\n')
+
+	const printSlot = (slot: SlotComponent) => {
+		let card = slot.getCard()
+
+		if (card) {
+			let name = card.props.name
+
+			if (
+				slot.inRow() &&
+				slot.row.entity === slot.player.activeRowEntity &&
+				slot.type === 'hermit'
+			) {
+				name = '*' + name + ' ' + card.props.rarity[0].toUpperCase()
+			}
+
+			buffer.push(name.slice(0, 10).padEnd(11))
+			if (slot.type === 'hermit' && slot.inRow() && slot.row.health) {
+				buffer.push(slot.row.health)
+
+				buffer.push(
+					...game.components
+						.filter(
+							StatusEffectComponent,
+							query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
+						)
+						.map((e) => e.props.name)
+						.join(', '),
+				)
+			}
+		} else {
+			buffer.push('_'.padEnd(11))
+		}
+	}
+
+	for (const playerEntity of game.state.order) {
+		const player = game.components.get(playerEntity)
+		let isTurn = game.currentPlayer.entity === playerEntity
+		buffer.push('\t')
+		buffer.push(player?.playerName || '')
+		buffer.push('\t')
+		buffer.push(isTurn ? 'Active' : 'Inactive')
+		buffer.push('\n')
+
+		for (let i = 0; i < 5; i++) {
+			buffer.push('\t')
+
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.item,
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.attach,
+
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			game.components
+				.filter(
+					SlotComponent,
+					query.slot.player(playerEntity),
+					query.slot.hermit,
+					query.slot.row(query.row.index(i)),
+				)
+				.forEach(printSlot)
+			buffer.push('\n')
+		}
+
+		buffer.push('\t')
+		buffer.push('Hand: ')
+		game.components
+			.filter(
+				SlotComponent,
+				query.slot.player(playerEntity),
+				query.slot.hand,
+				query.not(query.slot.empty),
+			)
+			.forEach(printSlot)
+		buffer.push('\n')
+
+		buffer.push('\t')
+		buffer.push('Status Effects: ')
+		buffer.push(
+			...game.components
+				.filter(StatusEffectComponent, query.effect.targetEntity(playerEntity))
+				.map((e) => e.props.name)
+				.join(', '),
+		)
+		buffer.push('\n\n')
+	}
+
+	buffer.push('\t')
+	buffer.push('Single Use Slot: ')
+	game.components.filter(SlotComponent, query.slot.singleUse).forEach(printSlot)
+	buffer.push(`Single Use Activated: ${game.currentPlayer.singleUseCardUsed}`)
+	buffer.push('\n')
+
+	console.info(buffer.join(''))
+}
+
+/** Call a function and log errors if they are found. This function is used to prevent errors from reaching
+ * the root of the tree.
+ */
+export function* safeCall(fun: any, ...args: any[]): any {
+	try {
+		return yield* fun(...args)
+	} catch (e) {
+		console.error(e)
 	}
 }

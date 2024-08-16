@@ -1,11 +1,12 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
-import {GameLog} from 'common/types/game-state'
-import {Database} from 'firebase-admin/lib/database/database'
-import {CONFIG} from 'common/config'
-import {ServiceAccount} from 'firebase-admin/app'
-import {RootModel} from 'common/models/root-model'
 import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
+import {CONFIG} from 'common/config'
+import {RootModel} from 'common/models/root-model'
+import {GameLog} from 'common/types/game-state'
+import {ServiceAccount} from 'firebase-admin/app'
+import {Database} from 'firebase-admin/lib/database/database'
 
 export class FirebaseLogs {
 	public id: string = 'firebase_logs'
@@ -22,14 +23,16 @@ export class FirebaseLogs {
 		}
 
 		try {
-			const serviceAccount: ServiceAccount = JSON.parse(process.env.FIREBASE_KEY || '')
+			const serviceAccount: ServiceAccount = JSON.parse(
+				process.env.FIREBASE_KEY || '',
+			)
 			const admin = require('firebase-admin')
 			admin.initializeApp({
 				credential: admin.credential.cert(serviceAccount),
 				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
 			})
 			this.db = admin.database()
-		} catch (err) {
+		} catch (_err) {
 			console.log('No valid firebase key. Statistics will not be stored.')
 			this.enabled = false
 		}
@@ -45,36 +48,36 @@ export class FirebaseLogs {
 			}
 			const type = game.code ? 'private' : 'public'
 
-			const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
-
-			function getHand(pState: PlayerComponent) {
-				return pState.getHand()
-			}
+			const playerStates = game.components.filter(PlayerComponent)
 
 			this.gameLogs[game.id] = {
 				type,
-				startHand1: getHand(playerStates[0]),
-				startHand2: getHand(playerStates[1]),
+				startHand1: playerStates[0].getHand(),
+				startHand2: playerStates[1].getHand(),
 				startTimestamp: new Date().getTime(),
-				startDeck: game.getPlayerIds()[0] == playerStates[0].id ? 'deck1' : 'deck2',
+				startDeck:
+					game.state.order[0] == playerStates[0].entity ? 'deck1' : 'deck2',
 			}
 		})
 
 		root.hooks.gameRemoved.add(this.id, (game) => {
 			try {
-				const playerStates: Array<PlayerComponent> = game.components.filter(PlayerComponent)
+				const viewers = game.components.filter(ViewerComponent)
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 
-				if (!game.endInfo.outcome || ['error', 'timeout'].includes(game.endInfo.outcome)) {
+				if (
+					!game.endInfo.outcome ||
+					['error', 'timeout'].includes(game.endInfo.outcome)
+				) {
 					delete this.gameLogs[game.id]
 					return
 				}
 
 				let ref = '/logs'
 				let summaryObj: any = {
-					startHand1: gameLog.startHand1,
-					startHand2: gameLog.startHand2,
+					startHand1: gameLog.startHand1.map((card) => card.props.id),
+					startHand2: gameLog.startHand2.map((card) => card.props.id),
 					startTimestamp: gameLog.startTimestamp,
 					startDeck: gameLog.startDeck,
 					endTimestamp: new Date().getTime(),
@@ -84,18 +87,20 @@ export class FirebaseLogs {
 				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
-				let pid0 = playerStates[0].id
+
+				let pid0 = viewers[0].playerId
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid0,
 				})
 				summaryObj.deck1 = root.players[pid0]?.deck
 
-				let pid1 = playerStates[1].id
+				let pid1 = viewers[1].playerId
 				root.players[pid1]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
 				})
+
 				summaryObj.deck2 = root.players[pid1]?.deck
 				if (game.endInfo.winner === pid0) {
 					summaryObj.outcome = 'deck1win'

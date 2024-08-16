@@ -1,15 +1,15 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import {useState, useRef} from 'react'
-import Button from 'components/button'
-import {PlayerDeckT} from 'common/types/deck'
-import Dropdown from 'components/dropdown'
-import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
-import DropdownCSS from '../../app/deck/deck.module.scss'
-import css from './import-export.module.scss'
-import {getDeckFromHash} from './import-export-utils'
 import {TypeT} from 'common/types/cards'
-import {saveDeck} from 'logic/saved-decks/saved-decks'
+import {PlayerDeckT} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
+import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
+import Button from 'components/button'
+import Dropdown from 'components/dropdown'
+import {saveDeck} from 'logic/saved-decks/saved-decks'
+import {useRef, useState} from 'react'
+import DropdownCSS from '../../app/deck/deck.module.scss'
+import {getDeckFromHash} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -18,7 +18,12 @@ type Props = {
 	handleMassImport: () => void
 }
 
-export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Props) => {
+export const ImportModal = ({
+	setOpen,
+	onClose,
+	importDeck,
+	handleMassImport,
+}: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
@@ -65,7 +70,9 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 				const deck = getDeckFromHash(lineComponents[2].replace('\r', ''))
 				if (deck.length === 0) return
 
-				const filteredName = lineComponents[0].match(`^[a-zA-Z0-9 ]*$`)?.toString()
+				const filteredName = lineComponents[0]
+					.match('^[a-zA-Z0-9 ]*$')
+					?.toString()
 				if (!filteredName) {
 					return
 				}
@@ -73,7 +80,9 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 				importedSomething = true
 				saveDeck({
 					name: filteredName,
-					icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as TypeT) : 'any',
+					icon: DECK_ICONS.includes(lineComponents[1])
+						? (lineComponents[1] as TypeT)
+						: 'any',
 					cards: deck,
 				})
 			})
@@ -121,14 +130,19 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
+					<AlertDialog.Description
+						asChild
+						className={ModalCSS.AlertDialogDescription}
+					>
 						<div>
 							{/* IMPORT SECTION */}
 							<div>
 								<div className={css.importControls}>
-									<p
-										className={css.instructions}
-									>{`To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.`}</p>
+									<p className={css.instructions}>
+										{
+											'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
+										}
+									</p>
 									<div className={css.name}>
 										<Dropdown
 											button={
@@ -155,13 +169,17 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 										style={{flexGrow: 1}}
 									/>
 
-									<p
-										className={css.instructions}
-									>{`Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.`}</p>
+									<p className={css.instructions}>
+										{
+											'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
+										}
+									</p>
 
-									<p
-										className={css.warning}
-									>{`Note that this will overwrite any decks with the same name.`}</p>
+									<p className={css.warning}>
+										{
+											'Note that this will overwrite any decks with the same name.'
+										}
+									</p>
 								</div>
 							</div>
 						</div>
@@ -172,7 +190,9 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 						<input
 							id="file-input"
 							type="file"
-							onChange={(e) => importFromFile(e.target.files ? e.target.files[0] : undefined)}
+							onChange={(e) =>
+								importFromFile(e.target.files ? e.target.files[0] : undefined)
+							}
 							style={{display: 'none'}}
 						/>
 					</div>

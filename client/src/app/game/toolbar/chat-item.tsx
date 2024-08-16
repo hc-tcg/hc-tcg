@@ -1,36 +1,50 @@
-import css from './toolbar.module.scss'
-import {useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
-import {getChatMessages, getOpponentId} from 'logic/game/game-selectors'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
 import ChatIcon from 'components/svgs/ChatIcon'
 import ChatIconNotify from 'components/svgs/ChatIconNotify'
+import {getChatMessages} from 'logic/game/game-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {useState} from 'react'
+import {useSelector} from 'react-redux'
+import css from './toolbar.module.scss'
 
 function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)
 	const settings = useSelector(getSettings)
-	const opponentId = useSelector(getOpponentId)
+	const playerId = useSelector(getPlayerId)
+
 	const latestOpponentMessageTime =
 		chatMessages.filter((msg) => {
-			return msg.sender === opponentId && msg.systemMessage === false
+			return msg.sender.type === 'viewer' && msg.sender.id !== playerId
 		})[0]?.createdAt || 0
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
-	if (settings.showChat === 'on' && lastSeen !== latestOpponentMessageTime) {
+	if (settings.showChatWindow && lastSeen !== latestOpponentMessageTime) {
 		setLastSeen(latestOpponentMessageTime)
 	}
 
 	const toggleChat = () => {
-		settings.showChat === 'on'
-			? dispatch(setSetting('showChat', 'off'))
-			: dispatch(setSetting('showChat', 'on'))
+		settings.showChatWindow
+			? dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'showChatWindow',
+						value: false,
+					},
+				})
+			: dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'showChatWindow',
+						value: true,
+					},
+				})
 	}
 
 	const newMessage =
-		settings.showChat !== 'on' &&
+		!settings.showChatWindow &&
 		lastSeen !== latestOpponentMessageTime &&
 		latestOpponentMessageTime !== 0
 

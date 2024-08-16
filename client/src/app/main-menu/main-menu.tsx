@@ -1,25 +1,27 @@
-import {useDispatch, useSelector} from 'react-redux'
-import {joinQueue, createPrivateGame, joinPrivateGame} from 'logic/matchmaking/matchmaking-actions'
-import {logout} from 'logic/session/session-actions'
-import {getSession, getUpdates} from 'logic/session/session-selectors'
-import css from './main-menu.module.scss'
-import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
-import {useState} from 'react'
+import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getSession, getUpdates} from 'logic/session/session-selectors'
+import {useState} from 'react'
+import {useSelector} from 'react-redux'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () => dispatch(joinQueue())
-	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
-	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
-	const handleLogOut = () => dispatch(logout())
+	const handleJoinQueue = () =>
+		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+	const handleCreatePrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_CREATE})
+	const handleJoinPrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_JOIN})
+	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 
@@ -27,14 +29,18 @@ function MainMenu({setMenuSection}: Props) {
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
-	const welcomeMessage = playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
+	const welcomeMessage =
+		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
 
 	return (
 		<>
 			{!latestUpdateView ||
 			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
 				parseInt(latestUpdateView) ? (
-				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
+				<UpdatesModal
+					updatesOpen={updatesOpen}
+					setUpdatesOpen={setUpdatesOpen}
+				/>
 			) : (
 				<></>
 			)}
@@ -58,10 +64,18 @@ function MainMenu({setMenuSection}: Props) {
 						<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 							Public Game
 						</Button>
-						<Button variant="stone" id={css.privateCreate} onClick={handleCreatePrivateGame}>
+						<Button
+							variant="stone"
+							id={css.privateCreate}
+							onClick={handleCreatePrivateGame}
+						>
 							Create Private Game
 						</Button>
-						<Button variant="stone" id={css.privateJoin} onClick={handleJoinPrivateGame}>
+						<Button
+							variant="stone"
+							id={css.privateJoin}
+							onClick={handleJoinPrivateGame}
+						>
 							Join Private Game
 						</Button>
 						<Button variant="stone" id={css.deck} onClick={handleDeck}>

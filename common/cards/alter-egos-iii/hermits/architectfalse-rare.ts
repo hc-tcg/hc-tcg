@@ -11,7 +11,6 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -21,41 +20,41 @@ type AttackInfo = {
 	turn: number
 }
 
-class ArchitectFalseRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'architectfalse_rare',
-		numericId: 156,
-		name: 'Grand Architect',
-		shortName: 'G. Architect',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 3,
-		type: 'explorer',
-		health: 250,
-		primary: {
-			name: 'Seeing Double',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Amnesia',
-			cost: ['explorer', 'explorer', 'explorer'],
-			damage: 100,
-			power: 'Your opponent can not use the same attack they used on their previous turn.',
-		},
-	}
+const lastAttackInfo = new GameValue<
+	Record<PlayerEntity, AttackInfo | undefined>
+>(() => {
+	return {}
+})
 
-	lastAttackInfo = new GameValue<Record<PlayerEntity, AttackInfo | undefined>>(() => {
-		return {}
-	})
-
-	override onCreate(game: GameModel, component: CardComponent) {
-		if (Object.hasOwn(this.lastAttackInfo.values, game.id)) return
-		this.lastAttackInfo.set(game, {})
+const ArchitectFalseRare: Hermit = {
+	...hermit,
+	id: 'architectfalse_rare',
+	numericId: 156,
+	name: 'Grand Architect',
+	shortName: 'G. Architect',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 3,
+	type: 'explorer',
+	health: 250,
+	primary: {
+		name: 'Seeing Double',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Amnesia',
+		cost: ['explorer', 'explorer', 'explorer'],
+		damage: 100,
+		power:
+			'Your opponent can not use the same attack they used on their previous turn.',
+	},
+	onCreate(game: GameModel, component: CardComponent) {
+		if (game.id in lastAttackInfo.values) return
+		lastAttackInfo.set(game, {})
 
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
@@ -63,16 +62,19 @@ class ArchitectFalseRare extends Card {
 			newObserver.subscribe(player.hooks.onAttack, (attack) => {
 				if (!(attack.attacker instanceof CardComponent)) return
 				if (!attack.isType('primary', 'secondary')) return
-				this.lastAttackInfo.get(game)[player.entity] = {
+				lastAttackInfo.get(game)[player.entity] = {
 					attacker: attack.attacker,
 					attackType: attack.type,
 					turn: game.state.turn.turnNumber,
 				}
-			})
+			}),
 		)
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent): void {
+	},
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
 		observer.subscribe(player.hooks.beforeAttack, (attack) => {
@@ -83,20 +85,29 @@ class ArchitectFalseRare extends Card {
 			)
 				return
 
-			const lastAttackInfo = this.lastAttackInfo.get(game)[attack.target.playerId]
-			if (!lastAttackInfo || lastAttackInfo.turn !== game.state.turn.turnNumber - 1) return
+			const lastAttack = lastAttackInfo.get(game)[attack.target.playerId]
+			if (!lastAttack || lastAttack.turn !== game.state.turn.turnNumber - 1)
+				return
 
-			if (lastAttackInfo.attackType === 'primary') {
+			if (lastAttack.attackType === 'primary') {
 				game.components
-					.new(StatusEffectComponent, PrimaryAttackDisabledEffect, component.entity)
-					.apply(lastAttackInfo.attacker.entity)
-			} else if (lastAttackInfo.attackType === 'secondary') {
+					.new(
+						StatusEffectComponent,
+						PrimaryAttackDisabledEffect,
+						component.entity,
+					)
+					.apply(lastAttack.attacker.entity)
+			} else if (lastAttack.attackType === 'secondary') {
 				game.components
-					.new(StatusEffectComponent, SecondaryAttackDisabledEffect, component.entity)
-					.apply(lastAttackInfo.attacker.entity)
+					.new(
+						StatusEffectComponent,
+						SecondaryAttackDisabledEffect,
+						component.entity,
+					)
+					.apply(lastAttack.attacker.entity)
 			}
 		})
-	}
+	},
 }
 
 export default ArchitectFalseRare

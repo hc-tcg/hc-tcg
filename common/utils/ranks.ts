@@ -17,13 +17,16 @@ export function getCardRank(tokens: TokenCostT): RankT {
 }
 
 export function getDeckCost(deckCards: Array<LocalCardInstance>) {
-	let wildCards = deckCards.filter((card) => card.props.id === 'item_any_common').length
+	let wildCards = deckCards.filter(
+		(card) => card.props.id === 'item_any_common',
+	).length
 	let wildCost = Math.max(wildCards - 3, 0)
 
 	return (
 		deckCards.reduce(
-			(cost, card) => (cost += card.props.tokens !== 'wild' ? card.props.tokens : 0),
-			0
+			(cost, card) =>
+				(cost += card.props.tokens !== 'wild' ? card.props.tokens : 0),
+			0,
 		) + wildCost
 	)
 }

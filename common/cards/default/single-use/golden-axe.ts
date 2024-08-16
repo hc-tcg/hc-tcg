@@ -1,29 +1,27 @@
-import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class GoldenAxe extends Card {
-	selectionAvailable = false
-
-	props: SingleUse = {
-		...singleUse,
-		id: 'golden_axe',
-		numericId: 31,
-		name: 'Golden Axe',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A40$',
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+const GoldenAxe: SingleUse = {
+	...singleUse,
+	id: 'golden_axe',
+	numericId: 31,
+	name: 'Golden Axe',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A40$',
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
@@ -46,10 +44,16 @@ class GoldenAxe extends Card {
 			}
 
 			attack.shouldIgnoreCards.push(
-				query.card.slot(query.every(query.slot.opponent, query.slot.attach, query.slot.active))
+				query.card.slot(
+					query.every(
+						query.slot.opponent,
+						query.slot.attach,
+						query.slot.active,
+					),
+				),
 			)
 		})
-	}
+	},
 }
 
 export default GoldenAxe

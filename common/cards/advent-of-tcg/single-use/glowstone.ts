@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class Glowstone extends Card {
+class Glowstone extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'glowstone',
@@ -18,24 +18,27 @@ class Glowstone extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
-				playerId: player.id,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Glowstone: Choose the card for your opponent to draw.',
-						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
-						cards: opponentPlayer.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Confirm Selection',
-							variant: 'default',
-						},
-					},
+				player: player.entity,
+				type: 'selectCards',
+				modalName: 'Glowstone: Choose the card for your opponent to draw.',
+				modalDescription:
+					'The other two cards will be placed on the bottom of their deck.',
+				cards: opponentPlayer.pile
+					.slice(0, 3)
+					.map((card) => card.toLocalCardInstance()),
+				selectionSize: 1,
+				primaryButton: {
+					text: 'Confirm Selection',
+					variant: 'default',
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
@@ -66,7 +69,7 @@ class Glowstone extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

@@ -1,18 +1,18 @@
-import Shield from './shield'
-import IronArmor from './iron-armor'
-import GoldArmor from './gold-armor'
-import DiamondArmor from './diamond-armor'
-import NetheriteArmor from './netherite-armor'
-import Wolf from './wolf'
-import Totem from './totem'
+import {Card} from '../../base/types'
 import Bed from './bed'
-import Thorns from './thorns'
+import DiamondArmor from './diamond-armor'
+import GoldArmor from './gold-armor'
+import IronArmor from './iron-armor'
 import Loyalty from './loyalty'
-import WaterBucket from './water-bucket'
 import MilkBucket from './milk-bucket'
-import {CardClass} from '../../base/card'
+import NetheriteArmor from './netherite-armor'
+import Shield from './shield'
+import Thorns from './thorns'
+import Totem from './totem'
+import WaterBucket from './water-bucket'
+import Wolf from './wolf'
 
-const effectCardClasses: Array<CardClass> = [
+const effectCardClasses: Array<Card> = [
 	Bed,
 	Wolf,
 	GoldArmor,

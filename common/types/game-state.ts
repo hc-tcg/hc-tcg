@@ -1,17 +1,16 @@
-import type {Attach, CardProps, HasHealth} from '../cards/base/types'
-import type {BattleLogModel} from '../models/battle-log-model'
+import type {Attach, Card, HasHealth} from '../cards/base/types'
+import type {CardComponent} from '../components'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'
+import {ModalRequest} from './modal-requests'
 import type {
 	LocalCardInstance,
-	LocalStatusEffectInstance,
 	LocalModalData,
+	LocalStatusEffectInstance,
 	PickRequest,
 } from './server-requests'
-import type {CardComponent} from '../components'
-import type {PlayerId} from '../models/player-model'
-import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
-import {ModalRequest} from './modal-requests'
 
 type NewType = SlotEntity
 
@@ -19,7 +18,7 @@ export type LocalRowState = {
 	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
 	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
-	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<Card> | null}>
 	health: number | null
 }
 
@@ -48,27 +47,6 @@ export type BattleLogT = {
 	description: string
 }
 
-export type GenericActionResult =
-	| 'SUCCESS'
-	| 'FAILURE_INVALID_DATA'
-	| 'FAILURE_NOT_APPLICABLE'
-	| 'FAILURE_ACTION_NOT_AVAILABLE'
-	| 'FAILURE_CANNOT_COMPLETE'
-	| 'FAILURE_UNKNOWN_ERROR'
-
-export type PlayCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_UNMET_CONDITION'
-	| 'FAILURE_UNMET_CONDITION_SILENT'
-
-export type PickCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_WRONG_PICK'
-
-export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
-
 export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
@@ -84,7 +62,6 @@ export type TurnState = {
 
 export type LocalTurnState = {
 	turnNumber: number
-	currentPlayerId: PlayerId
 	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
@@ -95,11 +72,6 @@ export type GameState = {
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
-
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
 
 	timer: {
 		turnStartTime: number
@@ -114,7 +86,10 @@ export type PlayCardAction =
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
 
-export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+export type AttackAction =
+	| 'SINGLE_USE_ATTACK'
+	| 'PRIMARY_ATTACK'
+	| 'SECONDARY_ATTACK'
 
 export type TurnAction =
 	| PlayCardAction
@@ -135,6 +110,13 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
+	| 'timeout'
+	| 'forfeit'
+	| 'tie'
+	| 'player_won'
+	| 'error'
+
+export type GamePlayerEndOutcomeT =
 	| 'client_crash'
 	| 'server_crash'
 	| 'timeout'
@@ -148,10 +130,9 @@ export type GameEndOutcomeT =
 	| 'you_lost'
 	| null
 
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
-	id: PlayerId
 	entity: PlayerEntity
 	playerName: string
 	minecraftName: string
@@ -178,22 +159,17 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerId
-	opponentPlayerId: PlayerId
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
-
-	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<SlotEntity>]> | null
+	currentCardsCanBePlacedIn: Array<
+		[LocalCardInstance, Array<SlotEntity>]
+	> | null
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
 
-	players: Record<PlayerId, LocalPlayerState>
+	players: Record<PlayerEntity, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number
@@ -201,31 +177,20 @@ export type LocalGameState = {
 	}
 }
 
+type MessageSender =
+	| {
+			type: 'viewer'
+			id: PlayerId
+	  }
+	| {
+			type: 'system'
+			id: PlayerEntity
+	  }
+
 export type Message = {
-	sender: PlayerId
-	systemMessage: boolean
+	sender: MessageSender
 	message: FormattedTextNode
 	createdAt: number
-}
-
-// state sent to client
-export type LocalGameRoot = {
-	localGameState: LocalGameState | null
-	time: number
-
-	selectedCard: LocalCardInstance | null
-	openedModal: {
-		id: string
-		info: null
-	} | null
-	endGameOverlay: {
-		reason: GameEndReasonT
-		outcome: GameEndOutcomeT
-	} | null
-	chat: Array<Message>
-	battleLog: BattleLogModel | null
-	currentCoinFlip: CurrentCoinFlip | null
-	opponentConnected: boolean
 }
 
 export type GameLog = {

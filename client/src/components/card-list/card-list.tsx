@@ -2,8 +2,8 @@ import cn from 'classnames'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
-import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
@@ -18,15 +18,28 @@ type CardListProps = {
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, unpickable, selected, picked, disableAnimations} = props
+	const {
+		wrap,
+		onClick,
+		cards,
+		disabled,
+		unpickable,
+		selected,
+		picked,
+		disableAnimations,
+	} = props
 
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
 			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
 			: false
-		const isPicked = !!picked?.find((pickedCard) => card.entity === pickedCard.entity)
+		const isPicked = !!picked?.find(
+			(pickedCard) => card.entity === pickedCard.entity,
+		)
 		const isDisabled = !!disabled?.find((id) => id == card.props.id)
-		const isUnpickable = !!unpickable?.find((findCard) => findCard.entity === card.entity)
+		const isUnpickable = !!unpickable?.find(
+			(findCard) => findCard.entity === card.entity,
+		)
 
 		let cardComponent = (
 			<CardComponent
@@ -57,14 +70,19 @@ const CardList = (props: CardListProps) => {
 						exitActive: css.exitActive,
 					}}
 				>
-					<div className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+					<div
+						className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}
+					>
 						{cardComponent}
 					</div>
 				</CSSTransition>
 			)
 		} else {
 			return (
-				<div key={card.entity} className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}>
+				<div
+					key={card.entity}
+					className={cn({[css.autoscale]: wrap, [css.defaultSize]: !wrap})}
+				>
 					{cardComponent}
 				</div>
 			)
@@ -78,7 +96,9 @@ const CardList = (props: CardListProps) => {
 			</TransitionGroup>
 		)
 	} else {
-		return <div className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</div>
+		return (
+			<div className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</div>
+		)
 	}
 }
 

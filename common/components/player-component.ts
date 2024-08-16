@@ -1,20 +1,29 @@
-import type {GameModel} from '../models/game-model'
-import type {PlayerId, PlayerModel} from '../models/player-model'
-import type {CoinFlipResult, CurrentCoinFlip, TurnActions} from '../types/game-state'
-import type {TypeT} from '../types/cards'
-import type {AttackModel} from '../models/attack-model'
-import type {HermitAttackType} from '../types/attack'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {AttackModel} from '../models/attack-model'
+import type {GameModel} from '../models/game-model'
+import {StatusEffect} from '../status-effects/status-effect'
+import type {HermitAttackType} from '../types/attack'
+import type {TypeT} from '../types/cards'
+import type {
+	CoinFlipResult,
+	CurrentCoinFlip,
+	TurnActions,
+} from '../types/game-state'
+import {GameHook, WaterfallHook} from '../types/hooks'
 import {CardComponent} from './card-component'
 import query from './query'
 import {ComponentQuery} from './query'
-import {DEBUG_CONFIG} from '../config'
-import {GameHook, WaterfallHook} from '../types/hooks'
-import {HandSlotComponent, SlotComponent} from './slot-component'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
-import {StatusEffectComponent} from './status-effect-component'
 import {RowComponent} from './row-component'
 import {PickRequest} from '../types/server-requests'
+import {SlotComponent} from './slot-component'
+import {StatusEffectComponent} from './status-effect-component'
+
+/** The minimal information that must be known about a player to start a game */
+export type PlayerDefs = {
+	name: string
+	minecraftName: string
+	censoredName: string
+}
 
 export class PlayerComponent {
 	readonly game: GameModel
@@ -23,8 +32,6 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-
-	readonly id: PlayerId
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -38,7 +45,9 @@ export class PlayerComponent {
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
-		availableEnergy: WaterfallHook<(availableEnergy: Array<TypeT>) => Array<TypeT>>
+		availableEnergy: WaterfallHook<
+			(availableEnergy: Array<TypeT>) => Array<TypeT>
+		>
 
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
@@ -62,7 +71,10 @@ export class PlayerComponent {
 		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
 		 */
 		getAttackRequests: GameHook<
-			(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
+			(
+				activeInstance: CardComponent,
+				hermitAttackType: HermitAttackType,
+			) => void
 		>
 
 		/** Hook that returns attacks to execute */
@@ -104,17 +116,26 @@ export class PlayerComponent {
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
-			(card: CardComponent, coinFlips: Array<CoinFlipResult>) => Array<CoinFlipResult>
+			(
+				card: CardComponent,
+				coinFlips: Array<CoinFlipResult>,
+			) => Array<CoinFlipResult>
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
 		beforeActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => boolean
+			(
+				oldActiveHermit: CardComponent,
+				newActiveHermit: CardComponent,
+			) => boolean
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void
+			(
+				oldActiveHermit: CardComponent | null,
+				newActiveHermit: CardComponent,
+			) => void
 		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
@@ -123,13 +144,12 @@ export class PlayerComponent {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.id = player.id
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
@@ -172,9 +192,12 @@ export class PlayerComponent {
 	get opponentPlayer() {
 		let player = this.game.components.find(
 			PlayerComponent,
-			(_game, player) => player.entity !== this.entity
+			(_game, player) => player.entity !== this.entity,
 		)
-		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
+		if (!player)
+			throw new Error(
+				'Both players should be added to ECS before fetching opponent.',
+			)
 		return player
 	}
 
@@ -184,7 +207,7 @@ export class PlayerComponent {
 			CardComponent,
 			query.card.slot(query.slot.hermit),
 			query.card.active,
-			query.card.player(this.entity)
+			query.card.player(this.entity),
 		)
 	}
 
@@ -193,7 +216,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.deck)
+			query.card.slot(query.slot.deck),
 		)
 	}
 
@@ -202,7 +225,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.hand)
+			query.card.slot(query.slot.hand),
 		)
 	}
 
@@ -211,7 +234,7 @@ export class PlayerComponent {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
-			query.card.slot(query.slot.discardPile)
+			query.card.slot(query.slot.discardPile),
 		)
 	}
 
@@ -225,11 +248,11 @@ export class PlayerComponent {
 		return cards
 	}
 
-	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
-			query.effect.targetEntity(this.entity)
+			query.effect.targetEntity(this.entity),
 		)
 	}
 
@@ -248,9 +271,12 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
-			const results = this.hooks.beforeActiveRowChange.call(oldHermit, newHermit)
+			const results = this.hooks.beforeActiveRowChange.call(
+				oldHermit,
+				newHermit,
+			)
 			if (results.includes(false)) return false
 		}
 
@@ -259,14 +285,19 @@ export class PlayerComponent {
 			const newHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(newRow.entity))
+				query.card.slot(query.slot.rowIs(newRow.entity)),
 			)
 			const oldHermit = this.game.components.findEntity(
 				CardComponent,
 				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(currentActiveRow?.entity))
+				query.card.slot(query.slot.rowIs(currentActiveRow?.entity)),
 			)
-			this.game.battleLog.addChangeRowEntry(this, newRow.entity, oldHermit, newHermit)
+			this.game.battleLog.addChangeRowEntry(
+				this,
+				newRow.entity,
+				oldHermit,
+				newHermit,
+			)
 		}
 
 		// Change the active row
@@ -278,9 +309,16 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!oldHermit || !newHermit)
 				throw new Error(
-					'Should not be able to change from an active row with no hermits or to an active row with no hermits.'
+					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
+		} else {
+			let newHermit = newRow.getHermit()
+			if (!newHermit)
+				throw new Error(
+					'Should not be able to change from no active row to an active row with no hermits.',
+				)
+			this.hooks.onActiveRowChange.call(null, newHermit)
 		}
 
 		return true
@@ -291,12 +329,14 @@ export class PlayerComponent {
 	}
 
 	/** Force the player to switch their active hermit due to knockback. If the hermit is immune to knockback, return null. */
-	public createKnockbackPickRequest(component: CardComponent): PickRequest | null {
+	public createKnockbackPickRequest(
+		component: CardComponent,
+	): PickRequest | null {
 		const pickCondition = query.every(
 			query.not(query.slot.active),
 			query.not(query.slot.empty),
 			query.slot.opponent,
-			query.slot.hermit
+			query.slot.hermit,
 		)
 
 		if (!this.game.components.exists(SlotComponent, pickCondition)) return null
@@ -304,7 +344,7 @@ export class PlayerComponent {
 		if (!this.canBeKnockedBack()) return null
 
 		return {
-			playerId: this.id,
+			player: this.entity,
 			id: component.entity,
 			message: 'Choose a new active Hermit from your AFK Hermits.',
 			canPick: pickCondition,
@@ -313,7 +353,10 @@ export class PlayerComponent {
 				this.changeActiveRow(pickedSlot.row)
 			},
 			onTimeout: () => {
-				let rowComponent = this.game.components.find(RowComponent, query.not(query.row.active))
+				let rowComponent = this.game.components.find(
+					RowComponent,
+					query.not(query.row.active),
+				)
 				if (!rowComponent) return
 				this.changeActiveRow(rowComponent)
 			},
@@ -323,13 +366,16 @@ export class PlayerComponent {
 	/** Get an array of [card, slot the card can be placed in] for each card in the player's hand. */
 	public getCardsCanBePlacedIn() {
 		return this.game.components
-			.filter(CardComponent, query.card.slot(query.slot.hand, query.slot.player(this.entity)))
+			.filter(
+				CardComponent,
+				query.card.slot(query.slot.hand, query.slot.player(this.entity)),
+			)
 			.map(
 				(card) =>
-					[card, this.game.getPickableSlots(card.card.props.attachCondition)] as [
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
 						CardComponent,
 						Array<SlotEntity>,
-					]
+					],
 			)
 	}
 }

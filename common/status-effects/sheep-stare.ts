@@ -1,28 +1,26 @@
-import {PlayerStatusEffect, StatusEffectProps, systemStatusEffect} from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CoinFlipResult} from '../types/game-state'
-import {flipCoin} from '../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import {GameModel} from '../models/game-model'
+import {CoinFlipResult} from '../types/game-state'
+import {flipCoin} from '../utils/coinFlips'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class SheepStareEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'sheep-stare',
-		name: 'Sheep Stare',
-		description:
-			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
-	}
-
-	override onApply(
+const SheepStareEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'sheep-stare',
+	icon: 'sheep-stare',
+	name: 'Sheep Stare',
+	description:
+		'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 		const activeHermit = player.getActiveHermit()
@@ -33,11 +31,20 @@ class SheepStareEffect extends PlayerStatusEffect {
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
 				if (!activeHermit) return
-				const coinFlip = flipCoin(player.opponentPlayer, effect.creator, 1, player)
+				const coinFlip = flipCoin(
+					player.opponentPlayer,
+					effect.creator,
+					1,
+					player,
+				)
 				coinFlipResult = coinFlip[0]
 			}
 
-			if (!(attack.attacker instanceof CardComponent) || !attack.attacker.slot.inRow()) return
+			if (
+				!(attack.attacker instanceof CardComponent) ||
+				!attack.attacker.slot.inRow()
+			)
+				return
 
 			if (coinFlipResult === 'heads') {
 				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
@@ -51,7 +58,7 @@ class SheepStareEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default SheepStareEffect

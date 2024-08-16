@@ -3,9 +3,14 @@ import {CardComponent, RowComponent} from '..'
 import {CardEntity, PlayerEntity, RowEntity} from '../../entities'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>
-	[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
+	[
+		game.currentPlayer.activeRowEntity,
+		game.opponentPlayer.activeRowEntity,
+	].includes(row.entity)
 
-export function player(player: PlayerEntity | null): ComponentQuery<RowComponent> {
+export function player(
+	player: PlayerEntity | null,
+): ComponentQuery<RowComponent> {
 	return (_game, row) => {
 		if (!player) return false
 		return row.playerId === player
@@ -23,12 +28,15 @@ export const hasHermit: ComponentQuery<RowComponent> = (game, row) =>
 	game.components.exists(
 		CardComponent,
 		query.card.isHermit,
-		query.card.slot(query.slot.rowIs(row.entity))
+		query.card.slot(query.slot.rowIs(row.entity)),
 	)
 
 /** Check if a row has a card attached to its hermit slot */
 export const hermitSlotOccupied: ComponentQuery<RowComponent> = (game, row) =>
-	game.components.exists(CardComponent, query.card.slot(query.slot.rowIs(row.entity)))
+	game.components.exists(
+		CardComponent,
+		query.card.slot(query.slot.rowIs(row.entity)),
+	)
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {
@@ -42,7 +50,9 @@ export function index(rowIndex: number): ComponentQuery<RowComponent> {
 	return (_game, row) => row.index === rowIndex
 }
 
-export function entity(rowEntity: RowEntity | null | undefined): ComponentQuery<RowComponent> {
+export function entity(
+	rowEntity: RowEntity | null | undefined,
+): ComponentQuery<RowComponent> {
 	return (_game, row) => {
 		if (!rowEntity) return false
 		return row.entity === rowEntity
@@ -50,7 +60,9 @@ export function entity(rowEntity: RowEntity | null | undefined): ComponentQuery<
 }
 
 /** Check if a row is next to a row satisfying a condition on the same player */
-export function adjacent(adjacentRow: ComponentQuery<RowComponent>): ComponentQuery<RowComponent> {
+export function adjacent(
+	adjacentRow: ComponentQuery<RowComponent>,
+): ComponentQuery<RowComponent> {
 	return (game, row) => {
 		return game.components
 			.filter(RowComponent, adjacentRow, player(row.player.entity))

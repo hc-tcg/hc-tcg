@@ -1,6 +1,6 @@
-import css from './coin-flip.module.scss'
 import classnames from 'classnames'
 import {CoinFlipResult} from 'common/types/game-state'
+import css from './coin-flip.module.scss'
 
 export type Props = {
 	name: string
@@ -19,7 +19,9 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 	const coins = tosses.map((face, index) => {
 		const coinPics = pics.slice()
 		const flipOffset =
-			index === longestFlipIndex ? 0 : Math.floor(Math.random() * (tosses.length + 1))
+			index === longestFlipIndex
+				? 0
+				: Math.floor(Math.random() * (tosses.length + 1))
 		const evenIterations = Math.floor((amount - flipOffset) / 2)
 		const extraFlip = (amount - flipOffset) % 2 !== 0
 
@@ -34,11 +36,11 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 						? {
 								animationIterationCount: `${evenIterations}, 1, 1`,
 								animationDelay: `0s, ${evenIterations * 0.7}s, ${evenIterations * 0.7 + 0.35}s`,
-						  }
+							}
 						: {
 								animationIterationCount: `${evenIterations}, 0, 0`,
-								animationDelay: `0s`,
-						  }
+								animationDelay: '0s',
+							}
 				}
 			>
 				<div className={classnames(css.face, css.front)}>

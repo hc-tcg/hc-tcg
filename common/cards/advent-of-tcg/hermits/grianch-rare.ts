@@ -1,12 +1,12 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
 
-class GrianchRare extends Card {
+class GrianchRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'grianch_rare',
@@ -34,19 +34,32 @@ class GrianchRare extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
+			if (
+				attack.id !== componentKey ||
+				attack.type !== 'secondary' ||
+				!attacker
+			)
+				return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') {
-				opponentPlayer.hooks.afterAttack.add(component, (attack) => {
-					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+				opponentPlayer.hooks.afterAttack.add(component, (_attack) => {
+					game.removeCompletedActions(
+						'PRIMARY_ATTACK',
+						'SECONDARY_ATTACK',
+						'SINGLE_USE_ATTACK',
+					)
 					opponentPlayer.hooks.afterAttack.remove(component)
 				})
 				return
@@ -58,12 +71,16 @@ class GrianchRare extends Card {
 		player.hooks.afterAttack.add(component, (attack) => {
 			if (attack.id !== componentKey || attack.type !== 'primary') return
 
-			const pickCondition = slot.every(slot.not(slot.active), slot.not(slot.empty), slot.hermit)
+			const pickCondition = slot.every(
+				slot.not(slot.active),
+				slot.not(slot.empty),
+				slot.hermit,
+			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
@@ -74,7 +91,7 @@ class GrianchRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 		player.hooks.afterAttack.remove(component)

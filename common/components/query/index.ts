@@ -2,11 +2,11 @@ import type {GameModel} from '../../models/game-model'
 import type {Component} from '../../types/ecs'
 import type {TurnAction} from '../../types/game-state'
 
-import * as slot from './slot'
-import * as row from './row'
-import * as effect from './effect'
 import * as card from './card'
+import * as effect from './effect'
 import * as player from './player'
+import * as row from './row'
+import * as slot from './slot'
 
 export type ComponentQuery<Value> = (game: GameModel, value: Value) => boolean
 
@@ -24,14 +24,24 @@ let query = {
 	nothing: function nothing<T>(_game: GameModel, _value: T) {
 		return false
 	},
-	every: function every<T>(...options: Array<ComponentQuery<T>>): ComponentQuery<T> {
+	every: function every<T>(
+		...options: Array<ComponentQuery<T>>
+	): ComponentQuery<T> {
 		return (game, value) => {
-			return options.reduce((place, combinator) => place && combinator(game, value), true)
+			return options.reduce(
+				(place, combinator) => place && combinator(game, value),
+				true,
+			)
 		}
 	},
-	some: function some<T>(...options: Array<ComponentQuery<T>>): ComponentQuery<T> {
+	some: function some<T>(
+		...options: Array<ComponentQuery<T>>
+	): ComponentQuery<T> {
 		return (game, value) => {
-			return options.reduce((place, combinator) => place || combinator(game, value), false)
+			return options.reduce(
+				(place, combinator) => place || combinator(game, value),
+				false,
+			)
 		}
 	},
 	not: function not<T>(condition: ComponentQuery<T>): ComponentQuery<T> {
@@ -46,10 +56,14 @@ let query = {
 	): ComponentQuery<U> {
 		return (game, _value) => game.components.exists(type, ...predicates)
 	},
-	value: function value<T>(getQuery: (value: T) => ComponentQuery<T>): ComponentQuery<T> {
+	value: function value<T>(
+		getQuery: (value: T) => ComponentQuery<T>,
+	): ComponentQuery<T> {
 		return (game, value) => getQuery(value)(game, value)
 	},
-	actionAvailable: function actionAvailable<T>(action: TurnAction): ComponentQuery<T> {
+	actionAvailable: function actionAvailable<T>(
+		action: TurnAction,
+	): ComponentQuery<T> {
 		return (game, _value) => game.state.turn.availableActions.includes(action)
 	},
 }

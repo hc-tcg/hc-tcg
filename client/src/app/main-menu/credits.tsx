@@ -1,6 +1,6 @@
-import css from './main-menu.module.scss'
-import MenuLayout from 'components/menu-layout'
 import Credit from 'components/credit'
+import MenuLayout from 'components/menu-layout'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void

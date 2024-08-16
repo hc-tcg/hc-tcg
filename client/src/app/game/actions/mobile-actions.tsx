@@ -1,23 +1,21 @@
-import css from './actions.module.scss'
 import cn from 'classnames'
-import Slot from '../board/board-slot'
-import {useSelector, useDispatch} from 'react-redux'
-import {endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
+import classNames from 'classnames'
+import {LocalGameState} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import Button from 'components/button'
+import CoinFlip from 'components/coin-flip'
 import {
-	getPlayerStateById,
 	getAvailableActions,
 	getCurrentCoinFlip,
+	getCurrentPickMessage,
 	getGameState,
 	getPlayerState,
-	getCurrentPickMessage,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
-import {LocalGameState} from 'common/types/game-state'
-import CoinFlip from 'components/coin-flip'
-import Button from 'components/button'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {SlotInfo} from 'common/types/server-requests'
-import {shouldShowEndTurnModal} from '../modals/end-turn-modal'
-import classNames from 'classnames'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
+import Slot from '../board/board-slot'
+import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
@@ -26,7 +24,9 @@ type Props = {
 }
 
 const MobileActions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
+	const currentPlayer = useSelector(
+		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
+	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const boardState = currentPlayer?.board
@@ -35,17 +35,12 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
-		if (shouldShowEndTurnModal(availableActions, settings)) {
-			dispatch(endTurnAction())
-		} else {
-			dispatch(endTurn())
-		}
+		dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 	}
 
 	let endTurnButton = (
@@ -62,7 +57,8 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const Status = () => {
 		const waitingForOpponent =
-			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') &&
+			availableActions.length === 1
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 		const endTurn = availableActions.includes('END_TURN')
 
@@ -126,7 +122,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(setOpenedModal('attack'))
+			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 
 		const attackOptions =
@@ -158,10 +154,16 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 				{SingleUseSlot()}
 			</div>
 
-			{status && <div className={classNames(css.actionSection, css.status)}>{status}</div>}
+			{status && (
+				<div className={classNames(css.actionSection, css.status)}>
+					{status}
+				</div>
+			)}
 
 			{status === null && (
-				<div className={classNames(css.actionSection, css.buttons)}>{ActionButtons()}</div>
+				<div className={classNames(css.actionSection, css.buttons)}>
+					{ActionButtons()}
+				</div>
 			)}
 		</div>
 	)

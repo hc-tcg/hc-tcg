@@ -8,13 +8,13 @@ import IskallmanRare from '../../alter-egos-ii/hermits/iskallman-rare'
 import OriginalXbCommon from '../../alter-egos-ii/hermits/originalxb-common'
 import OverseerRare from '../../alter-egos-ii/hermits/overseer-rare'
 import PrincessGemCommon from '../../alter-egos-ii/hermits/princessgem-common'
-import ShadEECommon from './shadee-common'
 import SpookyStressCommon from '../../alter-egos-ii/hermits/spookystress-common'
 import SteampunkTangoCommon from '../../alter-egos-ii/hermits/steampunktango-common'
 import WormManCommon from '../../alter-egos-ii/hermits/wormman-common'
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
+import ShadEECommon from './shadee-common'
 
-const hermitCardClasses: Array<CardClass> = [
+const hermitCardClasses: Array<Card> = [
 	ArchitectFalseCommon,
 	BoomerBdubsRare,
 	DwarfImpulseCommon,
