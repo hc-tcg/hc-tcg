@@ -38,7 +38,7 @@ const PrincessGemRare: Hermit = {
 	sidebarDescriptions: [
 		{
 			type: 'statusEffect',
-			name: 'royal_protection',
+			name: 'royal-protection',
 		},
 	],
 	onAttach(
