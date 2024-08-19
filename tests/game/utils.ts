@@ -1,12 +1,8 @@
-import {Attach, Card, Hermit, Item, SingleUse} from 'common/cards/base/types'
+import {Card, Item} from 'common/cards/base/types'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
-import { SlotTypeT } from 'common/types/cards'
-<<<<<<< HEAD
-=======
-import {CardCategoryT} from 'common/types/cards'
->>>>>>> 9baf7c1d (Fix evil X)
+import {SlotTypeT} from 'common/types/cards'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,

@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {StatusEffectComponent} from 'common/components'
@@ -12,7 +13,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
-import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
 	yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
