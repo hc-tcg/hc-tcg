@@ -96,7 +96,9 @@ const DwarfImpulseRare: Hermit = {
 			)
 				return
 
-			attack.targetEntity = goldenAxeRedirect
+			if (attack.isAttacker(goldenAxeEntity)) {
+				attack.targetEntity = goldenAxeRedirect
+			}
 
 			attack.shouldIgnoreCards.push(
 				query.card.slot(
