@@ -9,12 +9,12 @@ import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 function* testOneHermit(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ImpulseSVRare, 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 1)
+	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
+	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
 
 	yield* attack(game, 'secondary')
 
@@ -24,14 +24,14 @@ function* testOneHermit(game: GameModel) {
 }
 
 function* testManyHermits(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ImpulseSVRare, 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 1)
-	yield* playCardFromHand(game, BdoubleO100Common, 2)
-	yield* playCardFromHand(game, TangoTekRare, 3)
+	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
+	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
+	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 2)
+	yield* playCardFromHand(game, TangoTekRare, 'hermit', 3)
 
 	yield* attack(game, 'secondary')
 

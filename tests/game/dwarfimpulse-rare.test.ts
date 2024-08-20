@@ -25,16 +25,16 @@ describe('Test Dwarf Impulse Rare', () => {
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
 				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 0)
+					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 0)
-					yield* playCardFromHand(game, FiveAMPearlRare, 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe)
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
 
 					yield* attack(game, 'secondary')
 
@@ -76,22 +76,22 @@ describe('Test Dwarf Impulse Rare', () => {
 					Wolf,
 				],
 				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 0)
+					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FiveAMPearlRare, 0)
-					yield* playCardFromHand(game, TangoTekCommon, 1)
-					yield* playCardFromHand(game, EthosLabCommon, 2)
+					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 0)
+					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 
-					yield* playCardFromHand(game, Wolf, 0)
-					yield* playCardFromHand(game, LightningRod, 2)
+					yield* playCardFromHand(game, Wolf, 'attach', 0)
+					yield* playCardFromHand(game, LightningRod, 'attach', 2)
 
 					yield* changeActiveHermit(game, 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe)
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
 
 					yield* attack(game, 'secondary')
 

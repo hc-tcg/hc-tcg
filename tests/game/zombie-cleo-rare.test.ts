@@ -7,11 +7,11 @@ import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
-	yield* playCardFromHand(game, ZombieCleoRare, 0)
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
