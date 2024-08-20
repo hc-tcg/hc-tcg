@@ -59,7 +59,7 @@ export function playCardFromHand(
 ): any
 export function playCardFromHand(
 	game: GameModel,
-	card: Item,
+	card: Card,
 	slotType: 'item',
 	row: number,
 	index: number,
