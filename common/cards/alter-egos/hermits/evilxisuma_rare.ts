@@ -52,13 +52,6 @@ const EvilXisumaRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			if (!game.components.exists(CardComponent, opponentActiveHermitQuery)) {
-				blockedActions.push('SECONDARY_ATTACK')
-			}
-			return blockedActions
-		})
-
 		observer.subscribe(player.hooks.afterAttack, (attack) => {
 			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 				return
