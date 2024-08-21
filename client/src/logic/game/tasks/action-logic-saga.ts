@@ -26,7 +26,11 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			type: localMessages.GAME_MODAL_OPENED_SET,
 			id,
 		})
-	} else if (!pState.board.singleUseCardUsed && pState.board.singleUse.card) {
+	} else if (
+		!pState.board.singleUseCardUsed &&
+		pState.board.singleUse.card &&
+		gameState.turn.currentPlayerEntity === player
+	) {
 		yield call(singleUseSaga, pState.board.singleUse.card)
 	}
 }
