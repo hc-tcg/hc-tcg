@@ -11,6 +11,7 @@ import DyedEffect from './dyed'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
@@ -78,6 +79,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	IgnoreAttachSlotEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

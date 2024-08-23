@@ -1,6 +1,10 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -35,6 +39,10 @@ const GoldenAxe: SingleUse = {
 				})
 				.addDamage(component.entity, 40)
 
+			game.components
+				.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
+
 			return axeAttack
 		})
 
@@ -42,16 +50,6 @@ const GoldenAxe: SingleUse = {
 			if (attack.isAttacker(component.entity)) {
 				applySingleUse(game)
 			}
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.opponent,
-						query.slot.attach,
-						query.slot.active,
-					),
-				),
-			)
 		})
 	},
 }

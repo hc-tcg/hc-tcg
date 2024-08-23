@@ -1,4 +1,4 @@
-import {Card, Item} from 'common/cards/base/types'
+import {Card} from 'common/cards/base/types'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
@@ -209,7 +209,7 @@ const defaultGameSettings = {
  */
 export function testGame(
 	options: {
-		saga: any
+		saga: (game: GameModel) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
