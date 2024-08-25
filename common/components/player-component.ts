@@ -258,6 +258,12 @@ export class PlayerComponent {
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
 
+		// Can't change to opponent's row
+		if (newRow.playerId !== this.entity)
+			throw new Error(
+				"Should not be able to change to another player's row to make active",
+			)
+
 		// Call before active row change hooks - if any of the results are false do not change
 		if (currentActiveRow) {
 			let oldHermit = currentActiveRow.getHermit()

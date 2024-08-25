@@ -65,6 +65,8 @@ const IJevinRare: Hermit = {
 					let rowComponent = game.components.find(
 						RowComponent,
 						query.not(query.row.active),
+						query.row.opponentPlayer,
+						query.row.hermitSlotOccupied,
 					)
 					if (!rowComponent) return
 					opponentPlayer.changeActiveRow(rowComponent)
