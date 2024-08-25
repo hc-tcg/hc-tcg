@@ -4,8 +4,9 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import IronSword from 'common/cards/default/single-use/iron-sword'
-import {RowComponent} from 'common/components'
+import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
+import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test Gemini Tay', () => {
@@ -41,6 +42,17 @@ describe('Test Gemini Tay', () => {
 							40 /* Golden Axe */ -
 							20 /* Iron Sword*/,
 					)
+
+					yield* endTurn(game)
+
+					// We expect that the iron armor attached to etho to no longer be disabled.
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(IgnoreAttachSlotEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toBeFalsy()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
