@@ -143,7 +143,7 @@ export function* pick(
 ) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
+		playerEntity: game.state.pickRequests[0].player,
 		action: {
 			type: 'PICK_REQUEST',
 			entity: game.components.find(SlotComponent, ...slot)!.entity,
@@ -158,7 +158,7 @@ export function* finishModalRequest(
 ) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
+		playerEntity: game.state.modalRequests[0].player,
 		action: {
 			type: 'MODAL_REQUEST',
 			modalResult,
