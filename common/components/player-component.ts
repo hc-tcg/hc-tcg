@@ -1,3 +1,4 @@
+import assert from 'assert'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -257,6 +258,11 @@ export class PlayerComponent {
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
+
+		assert(
+			newRow.playerId === this.entity,
+			"Should not be able to change to another player's row to make active",
+		)
 
 		// Call before active row change hooks - if any of the results are false do not change
 		if (currentActiveRow) {
