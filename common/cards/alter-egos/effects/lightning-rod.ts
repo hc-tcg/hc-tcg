@@ -5,22 +5,21 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class LightningRod extends Card {
-	props: Attach = {
-		...attach,
-		id: 'lightning_rod',
-		numericId: 121,
-		name: 'Lightning Rod',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after use. Only one of these cards can be attached to your Hermits at a time.",
-		attachCondition: query.every(
+const LightningRod: Attach = {
+	...attach,
+	id: 'lightning_rod',
+	numericId: 121,
+	name: 'Lightning Rod',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after use. Only one of these cards can be attached to your Hermits at a time.",
+	attachCondition: (game, pos) =>
+		query.every(
 			attach.attachCondition,
 			query.not(
 				query.exists(
@@ -30,10 +29,8 @@ class LightningRod extends Card {
 					query.slot.has(LightningRod),
 				),
 			),
-		),
-	}
-
-	override onAttach(
+		)(game, pos),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -56,7 +53,7 @@ class LightningRod extends Card {
 			if (!used) return
 			component.discard()
 		})
-	}
+	},
 }
 
 export default LightningRod

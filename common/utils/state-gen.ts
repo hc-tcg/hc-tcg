@@ -1,4 +1,4 @@
-import {CardClass} from '../cards/base/card'
+import {Card} from '../cards/base/types'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -17,7 +17,7 @@ import {GameState} from '../types/game-state'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
-	deck: Array<number | string | CardClass>
+	deck: Array<number | string | Card>
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -29,23 +29,25 @@ export function setupComponents(
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
+	options: {shuffleDeck: boolean},
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
-	deck: Array<number | string | CardClass>,
+	deck: Array<number | string | Card>,
+	options: {shuffleDeck: boolean},
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'random',
+			position: options.shuffleDeck ? 'random' : 'back',
 		})
 		components.new(CardComponent, card, slot.entity)
 	}
@@ -127,11 +129,16 @@ function setupEcsForPlayer(
 	})
 }
 
-export function getGameState(game: GameModel): GameState {
+export function getGameState(
+	game: GameModel,
+	randomizeOrder: boolean = true,
+): GameState {
 	const playerEntities = game.components.filter(PlayerComponent)
 
-	if (Math.random() >= 0.5) {
-		playerEntities.reverse()
+	if (randomizeOrder !== false) {
+		if (Math.random() >= 0.5) {
+			playerEntities.reverse()
+		}
 	}
 
 	const gameState: GameState = {
@@ -144,7 +151,6 @@ export function getGameState(game: GameModel): GameState {
 			currentAttack: null,
 		},
 		order: playerEntities.map((x) => x.entity),
-		lastActionResult: null,
 
 		pickRequests: [],
 		modalRequests: [],

@@ -16,24 +16,23 @@ function Toolbar() {
 	const handleDiscarded = () => {
 		if (!gameState) return
 		gameState.currentModalData = {
-			modalId: 'selectCards',
-			payload: {
-				modalName: 'Discarded',
-				modalDescription:
-					gameState.discarded.length === 0
-						? 'There are no cards in your discard pile.'
-						: '',
-				cards: gameState.discarded,
-				selectionSize: 0,
-				primaryButton: {
-					text: 'Close',
-					variant: 'default',
-				},
+			type: 'selectCards',
+			name: 'Discarded',
+			description:
+				gameState.discarded.length === 0
+					? 'There are no cards in your discard pile.'
+					: '',
+			cards: gameState.discarded,
+			selectionSize: 0,
+			primaryButton: {
+				text: 'Close',
+				variant: 'default',
 			},
+			cancelable: true,
 		}
 		dispatch({
 			type: localMessages.GAME_MODAL_OPENED_SET,
-			id: gameState.currentModalData.modalId,
+			id: gameState.currentModalData.type,
 		})
 	}
 

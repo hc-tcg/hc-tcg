@@ -5,31 +5,24 @@ import {
 } from '../components'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
-class ChromaKeyedEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...systemStatusEffect,
-		icon: 'chroma-keyed',
-		name: 'Chroma Keyed',
-		description:
-			'You deal 10hp less damage for each level of this status effect.',
-		counter: 1,
-		counterType: 'number',
-	}
-
-	public override onApply(
+const ChromaKeyedEffect: Counter<CardComponent> = {
+	...systemStatusEffect,
+	id: 'chroma-keyed',
+	icon: 'chroma-keyed',
+	name: 'Chroma Keyed',
+	description:
+		'You deal 10hp less damage for each level of this status effect.',
+	counter: 1,
+	counterType: 'number',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		let chromaUsedThisTurn = true
 
@@ -58,7 +51,7 @@ class ChromaKeyedEffect extends CardStatusEffect {
 			if (!chromaUsedThisTurn) effect.remove()
 			chromaUsedThisTurn = false
 		})
-	}
+	},
 }
 
 export default ChromaKeyedEffect

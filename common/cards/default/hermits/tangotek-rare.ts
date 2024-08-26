@@ -5,37 +5,33 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class TangoTekRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'tangotek_rare',
-		numericId: 95,
-		name: 'Tango',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'farm',
-		health: 290,
-		primary: {
-			name: 'Skadoodle',
-			cost: ['farm'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Extra Flee',
-			cost: ['farm', 'farm', 'farm'],
-			damage: 100,
-			power:
-				'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\nYour opponent chooses their active Hermit first.',
-		},
-	}
-
-	override onAttach(
+const TangoTekRare: Hermit = {
+	...hermit,
+	id: 'tangotek_rare',
+	numericId: 95,
+	name: 'Tango',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'farm',
+	health: 290,
+	primary: {
+		name: 'Skadoodle',
+		cost: ['farm'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Extra Flee',
+		cost: ['farm', 'farm', 'farm'],
+		damage: 100,
+		power:
+			'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\nYour opponent chooses their active Hermit first.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -57,7 +53,6 @@ class TangoTekRare extends Card {
 				query.slot.hermit,
 				query.not(query.slot.active),
 				query.not(query.slot.empty),
-				query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
 			)
 
 			// Check if we are blocked from changing by anything other than the game
@@ -117,7 +112,7 @@ class TangoTekRare extends Card {
 				})
 			}
 		})
-	}
+	},
 }
 
 export default TangoTekRare

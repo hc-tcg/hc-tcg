@@ -8,36 +8,32 @@ import {GameModel} from '../../../models/game-model'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Egg extends Card {
-	pickCondition = query.every(
-		query.slot.opponent,
-		query.slot.hermit,
-		query.not(query.slot.active),
-		query.not(query.slot.empty),
-	)
+const pickCondition = query.every(
+	query.slot.opponent,
+	query.slot.hermit,
+	query.not(query.slot.active),
+	query.not(query.slot.empty),
+)
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'egg',
-		numericId: 140,
-		name: 'Egg',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.exists(SlotComponent, this.pickCondition),
-		),
-		log: (values) => `${values.defaultLog} with {your|their} attack`,
-	}
-
-	override onAttach(
+const Egg: SingleUse = {
+	...singleUse,
+	id: 'egg',
+	numericId: 140,
+	name: 'Egg',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.exists(SlotComponent, pickCondition),
+	),
+	log: (values) => `${values.defaultLog} with {your|their} attack`,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -54,13 +50,13 @@ class Egg extends Card {
 			observer.unsubscribe(player.hooks.onAttack)
 
 			observer.oneShot(player.hooks.afterAttack, (_attack) => {
-				if (!game.components.exists(SlotComponent, this.pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
 				game.addPickRequest({
 					player: player.entity,
 					id: component.entity,
 					message: "Pick one of your opponent's AFK Hermits",
-					canPick: this.pickCondition,
+					canPick: pickCondition,
 					onResult(pickedSlot) {
 						let afkHermitSlot = pickedSlot
 						if (!afkHermitSlot?.inRow()) return
@@ -93,7 +89,7 @@ class Egg extends Card {
 				})
 			})
 		})
-	}
+	},
 }
 
 export default Egg

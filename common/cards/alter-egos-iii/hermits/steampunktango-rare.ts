@@ -1,40 +1,36 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SteampunkTangoRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'steampunktango_rare',
-		numericId: 174,
-		name: 'Steampunk Tango',
-		shortName: 'S. Tango',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'terraform',
-		health: 270,
-		primary: {
-			name: 'Porkchop Power',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Assembly line',
-			cost: ['terraform', 'terraform'],
-			damage: 80,
-			power:
-				'For each of your AFK Hermits on the game board, do an additional 10hp damage.',
-		},
-	}
-
-	override onAttach(
+const SteampunkTangoRare: Hermit = {
+	...hermit,
+	id: 'steampunktango_rare',
+	numericId: 174,
+	name: 'Steampunk Tango',
+	shortName: 'S. Tango',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'terraform',
+	health: 270,
+	primary: {
+		name: 'Porkchop Power',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Assembly line',
+		cost: ['terraform', 'terraform'],
+		damage: 80,
+		power:
+			'For each of your AFK Hermits on the game board, do an additional 10hp damage.',
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -54,7 +50,7 @@ class SteampunkTangoRare extends Card {
 
 			attack.addDamage(component.entity, afkHermits * 10)
 		})
-	}
+	},
 }
 
 export default SteampunkTangoRare

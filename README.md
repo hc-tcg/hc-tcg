@@ -60,6 +60,8 @@ You can also configure debug settings using `common/config/debug-config.json`. T
 | unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
 | blockedActions        | Block specific actions every turn.                                          |
 | availableActions      | Make specific actions available every turn.                                 |
+| shuffleDeck           | Shuffe the player's decks at the start of the game.													|
+| logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
 | showHooksState        | Show hooks in the console.                                                  |
 | autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
 

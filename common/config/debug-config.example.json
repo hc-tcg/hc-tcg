@@ -10,6 +10,9 @@
 	"unlimitedCards": false,
 	"blockedActions": [],
 	"availableActions": [],
+	"shuffleDeck": true,
+	"logErrorsToStderr": true,
+	"logBoardState": true,
 	"showHooksState": {
 		"enabled": false,
 		"clearConsole": true

@@ -26,7 +26,6 @@ export function* attackSaga(
 		type: 'GAME_TURN_ACTION',
 		action: {
 			type: actionType,
-			player: player.entity,
 		},
 	})
 }

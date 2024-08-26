@@ -5,23 +5,17 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {executeExtraAttacks} from '../utils/attacks'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	damageEffect,
-} from './status-effect'
+import {StatusEffect, damageEffect} from './status-effect'
 
-class PoisonEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...damageEffect,
-		icon: 'poison',
-		name: 'Poison',
-		description:
-			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
-		applyLog: (values) => `${values.target} was $ePoisoned$`,
-	}
-
-	override onApply(
+const PoisonEffect: StatusEffect<CardComponent> = {
+	...damageEffect,
+	id: 'poison',
+	icon: 'poison',
+	name: 'Poison',
+	description:
+		"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
+	applyLog: (values) => `${values.target} was $ePoisoned$`,
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -55,7 +49,7 @@ class PoisonEffect extends CardStatusEffect {
 			if (!attack.isTargeting(target) || attack.target?.health) return
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default PoisonEffect

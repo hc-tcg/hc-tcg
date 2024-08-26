@@ -4,21 +4,15 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export class TargetBlockEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'target-block',
-		name: 'Made the target!',
-		description: 'This hermit will take all damage this turn.',
-	}
-
-	override onApply(
+export const TargetBlockEffect: StatusEffect<CardComponent> = {
+	...systemStatusEffect,
+	id: 'target-block',
+	icon: 'target-block',
+	name: 'Made the target!',
+	description: 'This hermit will take all damage this turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -35,5 +29,5 @@ export class TargetBlockEffect extends CardStatusEffect {
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }

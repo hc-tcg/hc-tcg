@@ -7,22 +7,16 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {flipCoin} from '../utils/coinFlips'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export class TrapHoleEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		name: 'Trap Hole',
-		icon: 'trap-hole',
-		description:
-			'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
-	}
-
-	public override onApply(
+export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'trap-hole',
+	name: 'Trap Hole',
+	icon: 'trap-hole',
+	description:
+		'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -58,5 +52,5 @@ export class TrapHoleEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }

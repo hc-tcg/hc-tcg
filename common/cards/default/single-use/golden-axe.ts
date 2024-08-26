@@ -1,29 +1,27 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class GoldenAxe extends Card {
-	selectionAvailable = false
-
-	props: SingleUse = {
-		...singleUse,
-		id: 'golden_axe',
-		numericId: 31,
-		name: 'Golden Axe',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A40$',
-	}
-
-	override onAttach(
+const GoldenAxe: SingleUse = {
+	...singleUse,
+	id: 'golden_axe',
+	numericId: 31,
+	name: 'Golden Axe',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A40$',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -41,6 +39,10 @@ class GoldenAxe extends Card {
 				})
 				.addDamage(component.entity, 40)
 
+			game.components
+				.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
+
 			return axeAttack
 		})
 
@@ -48,18 +50,8 @@ class GoldenAxe extends Card {
 			if (attack.isAttacker(component.entity)) {
 				applySingleUse(game)
 			}
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.opponent,
-						query.slot.attach,
-						query.slot.active,
-					),
-				),
-			)
 		})
-	}
+	},
 }
 
 export default GoldenAxe

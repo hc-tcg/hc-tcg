@@ -6,7 +6,6 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -20,33 +19,30 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-class GrianRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'grian_rare',
-		numericId: 35,
-		name: 'Grian',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'prankster',
-		health: 300,
-		primary: {
-			name: 'Borrow',
-			cost: ['prankster', 'prankster'],
-			damage: 50,
-			power:
-				"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
-		},
-		secondary: {
-			name: 'Start a War',
-			cost: ['prankster', 'prankster', 'prankster'],
-			damage: 100,
-			power: null,
-		},
-	}
-
-	override onAttach(
+const GrianRare: Hermit = {
+	...hermit,
+	id: 'grian_rare',
+	numericId: 35,
+	name: 'Grian',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'prankster',
+	health: 300,
+	primary: {
+		name: 'Borrow',
+		cost: ['prankster', 'prankster'],
+		damage: 50,
+		power:
+			"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
+	},
+	secondary: {
+		name: 'Start a War',
+		cost: ['prankster', 'prankster', 'prankster'],
+		damage: 100,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -86,43 +82,39 @@ class GrianRare extends Card {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Grian - Borrow',
-						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
-						cards: [opponentAttachCard.entity],
-						selectionSize: 0,
-						primaryButton: canAttach
-							? {
-									text: 'Attach',
-									variant: 'default',
-								}
-							: null,
-						secondaryButton: {
-							text: 'Discard',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Grian - Borrow',
+					description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+					cards: [opponentAttachCard.entity],
+					selectionSize: 0,
+					cancelable: false,
+					primaryButton: canAttach
+						? {
+								text: 'Attach',
+								variant: 'default',
+							}
+						: null,
+					secondaryButton: {
+						text: 'Discard',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined)
-						return 'FAILURE_INVALID_DATA'
-
 					if (modalResult.result) {
 						if (attachSlot) opponentAttachCard.attach(attachSlot)
 					} else {
 						opponentAttachCard.discard(component.player.entity)
 					}
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					opponentAttachCard.discard(component.player.entity)
 				},
 			})
 		})
-	}
+	},
 }
 
 export default GrianRare

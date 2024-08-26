@@ -1,5 +1,4 @@
 import {CardComponent, PlayerComponent} from '../components'
-import {DEBUG_CONFIG} from '../config'
 import {CoinFlipResult} from '../types/game-state'
 
 /* Array of [coin flip number, weight of coinflip number] */
@@ -22,13 +21,13 @@ export function flipCoin(
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
-	const forceHeads = DEBUG_CONFIG.forceCoinFlip
+	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.game.components.get(
 		playerTossingCoin.activeRowEntity,
 	)
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
+			`${card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
 		)
 		return []
 	}

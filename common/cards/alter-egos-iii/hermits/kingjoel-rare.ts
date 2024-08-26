@@ -6,39 +6,35 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class KingJoelRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'kingjoel_rare',
-		numericId: 163,
-		name: 'King Joel',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'builder',
-		health: 280,
-		primary: {
-			name: 'Diss Track',
-			cost: ['builder'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Steal',
-			cost: ['builder', 'builder'],
-			damage: 80,
-			power:
-				"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
-		},
-	}
-
-	override onAttach(
+const KingJoelRare: Hermit = {
+	...hermit,
+	id: 'kingjoel_rare',
+	numericId: 163,
+	name: 'King Joel',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'builder',
+	health: 280,
+	primary: {
+		name: 'Diss Track',
+		cost: ['builder'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Steal',
+		cost: ['builder', 'builder'],
+		damage: 80,
+		power:
+			"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -94,7 +90,7 @@ class KingJoelRare extends Card {
 				},
 			})
 		})
-	}
+	},
 }
 
 export default KingJoelRare

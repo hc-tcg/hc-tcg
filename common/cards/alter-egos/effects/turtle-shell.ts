@@ -1,28 +1,24 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class TurtleShell extends Card {
-	props: Attach = {
-		...attach,
-		id: 'turtle_shell',
-		numericId: 125,
-		name: 'Turtle Shell',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
-		attachCondition: query.every(
-			attach.attachCondition,
-			query.not(query.slot.active),
-		),
-	}
-
-	override onAttach(
+const TurtleShell: Attach = {
+	...attach,
+	id: 'turtle_shell',
+	numericId: 125,
+	name: 'Turtle Shell',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
+	attachCondition: query.every(
+		attach.attachCondition,
+		query.not(query.slot.active),
+	),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -64,7 +60,7 @@ class TurtleShell extends Card {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
-	}
+	},
 }
 
 export default TurtleShell

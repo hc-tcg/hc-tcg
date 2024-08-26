@@ -198,8 +198,12 @@ export function executeExtraAttacks(
 
 // Things not directly related to the attack loop
 
-export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
-	if (DEBUG_CONFIG.noItemRequirements) return true
+export function hasEnoughEnergy(
+	energy: Array<TypeT>,
+	cost: Array<TypeT>,
+	noItemRequirements: boolean,
+) {
+	if (noItemRequirements) return true
 
 	const remainingEnergy = energy.slice()
 
@@ -279,7 +283,7 @@ export function setupMockCard(
 ): MockedAttack {
 	let observer = game.components.new(ObserverComponent, component.entity)
 
-	mocking.card.onAttach(game, component, observer)
+	mocking.props.onAttach(game, component, observer)
 
 	component.player.hooks.getAttackRequests.callSome(
 		[component, attackType],
@@ -287,7 +291,7 @@ export function setupMockCard(
 	)
 
 	observer.subscribe(component.player.hooks.onTurnEnd, () => {
-		mocking.card.onDetach(game, component, observer)
+		mocking.props.onDetach(game, component, observer)
 		observer.unsubscribeFromEverything()
 	})
 
@@ -298,7 +302,7 @@ export function setupMockCard(
 				? mocking.props.primary.name
 				: mocking.props.secondary.name,
 		getAttack: () => {
-			return mocking.card.getAttack(game, component, attackType)
+			return mocking.props.getAttack(game, component, attackType)
 		},
 	}
 }
