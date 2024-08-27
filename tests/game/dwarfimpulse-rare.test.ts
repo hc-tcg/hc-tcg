@@ -6,9 +6,10 @@ import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import TangoTekCommon from 'common/cards/default/hermits/tangotek-common'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
-import {RowComponent} from 'common/components'
+import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {
 	attack,
 	changeActiveHermit,
@@ -59,6 +60,16 @@ describe('Test Dwarf Impulse Rare', () => {
 							query.row.index(1),
 						)!.health,
 					).toBe(FiveAMPearlRare.health - 40)
+
+					yield* endTurn(game)
+
+					expect(
+						game.components.filter(
+							StatusEffectComponent,
+							query.effect.is(IgnoreAttachSlotEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toStrictEqual([])
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

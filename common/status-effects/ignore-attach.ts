@@ -11,7 +11,12 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	name: 'Ignore Attach Effect',
 	description:
 		'Any attach effect on this hermit ignores damage for the rest of this turn.',
-
+	applyCondition(_game, value) {
+		return (
+			value instanceof CardComponent &&
+			!value.getStatusEffect(IgnoreAttachSlotEffect)
+		)
+	},
 	onApply(game: GameModel, effect, target, observer) {
 		const {currentPlayer} = game
 
