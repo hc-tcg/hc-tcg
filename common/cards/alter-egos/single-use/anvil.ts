@@ -7,7 +7,7 @@ import {
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -33,9 +33,14 @@ const Anvil: SingleUse = {
 		'Do 30hp damage to the Hermit directly opposite your active Hermit on the game board, and 10hp damage to each Hermit below it.',
 	hasAttack: true,
 	attackPreview: (game) => {
-		const targetAmount = getTargetHermits(game, game.currentPlayer).length - 1
-		if (targetAmount === 0) return '$A30$'
-		return `$A30$ + $A10$ x ${targetAmount}`
+		const targets = getTargetHermits(game, game.currentPlayer)
+		if (targets.length === 0) return '$A0$'
+		if (targets[0].index === game.currentPlayer.activeRow!.index) {
+			return targets.length === 1
+				? '$A30$'
+				: `$A30$ + $A10$ x ${targets.length - 1}`
+		}
+		return `$A10$ x ${targets.length}`
 	},
 	onAttach(
 		game: GameModel,
@@ -45,7 +50,7 @@ const Anvil: SingleUse = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			return getTargetHermits(game, player).reduce(
+			const attack = getTargetHermits(game, player).reduce(
 				(attacks: null | AttackModel, row) => {
 					if (!row.getHermit()) return attacks
 
@@ -54,10 +59,12 @@ const Anvil: SingleUse = {
 							attacker: component.entity,
 							target: row.entity,
 							type: 'effect',
-							log: (values) =>
-								row.index === player.activeRow?.index
-									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: `, ${values.target} for ${values.damage} damage`,
+							log:
+								attacks === null
+									? (values) =>
+											`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+									: (values) =>
+											`, ${values.target} for ${values.damage} damage`,
 						})
 						.addDamage(
 							component.entity,
@@ -72,13 +79,25 @@ const Anvil: SingleUse = {
 				},
 				null,
 			)
+			if (attack === null) {
+				// No valid targets
+				game.battleLog.addEntry(
+					component.player.entity,
+					`$p{You|${component.player.playerName}}$ used $eAnvil$ and missed`,
+				)
+				applySingleUse(game)
+			}
+			return attack
 		})
 
 		observer.subscribeWith(
-			player.hooks.afterAttack,
-			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(_attack) => {
-				applySingleUse(game, component.slot)
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.isAttacker(component.entity)) {
+					applySingleUse(game, component.slot)
+					observer.unsubscribe(player.hooks.beforeAttack)
+				}
 			},
 		)
 	},
