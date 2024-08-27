@@ -49,6 +49,7 @@ const Totem: Attach = {
 				.filter(
 					StatusEffectComponent,
 					query.effect.targetEntity(targetHermit?.entity),
+					query.effect.type('normal', 'damage'),
 				)
 				.forEach((ail) => {
 					ail.remove()

@@ -113,24 +113,31 @@ function shouldIgnoreCard(
 }
 
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
-	// STEP 1 - Call before attack and defence for all attacks
-	runBeforeAttackHooks(game, attacks)
-	runBeforeDefenceHooks(game, attacks)
+	const allAttacks: Array<AttackModel> = []
 
-	// STEP 3 - Execute all attacks
-	attacks.forEach((attack) => {
-		attack.target?.damage(attack.calculateDamage())
-		let weaknessAttack = createWeaknessAttack(game, attack)
-		if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+	while (attacks.length > 0) {
+		// STEP 1 - Call before attack and defence for all attacks
+		runBeforeAttackHooks(game, attacks)
+		runBeforeDefenceHooks(game, attacks)
 
-		if (attack.nextAttacks.length > 0) {
-			executeAttacks(game, attack.nextAttacks)
-		}
-	})
+		const nextAttacks: Array<AttackModel> = []
+		// STEP 3 - Execute all attacks
+		attacks.forEach((attack) => {
+			attack.target?.damage(attack.calculateDamage())
+			let weaknessAttack = createWeaknessAttack(game, attack)
+			if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+
+			if (attack.nextAttacks.length > 0) {
+				nextAttacks.push(...attack.nextAttacks)
+			}
+		})
+		allAttacks.push(...attacks)
+		attacks = nextAttacks
+	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
-	runAfterAttackHooks(game, attacks)
-	runAfterDefenceHooks(game, attacks)
+	runAfterAttackHooks(game, allAttacks)
+	runAfterDefenceHooks(game, allAttacks)
 }
 
 export function executeExtraAttacks(
