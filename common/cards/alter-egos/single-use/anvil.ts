@@ -33,7 +33,7 @@ const Anvil: SingleUse = {
 	hasAttack: true,
 	attackPreview: (game) => {
 		const targets = getTargetHermits(game, game.currentPlayer)
-		if (targets.length === 0) return '0'
+		if (targets.length === 0) return '$A0$'
 		if (targets[0].index === game.currentPlayer.activeRow!.index) {
 			return targets.length === 1
 				? '$A30$'
