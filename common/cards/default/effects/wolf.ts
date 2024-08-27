@@ -29,7 +29,7 @@ const Wolf: Attach = {
 			activated = false
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_CREATE_BACKLASH,
 			(attack) => {

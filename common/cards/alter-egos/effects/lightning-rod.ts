@@ -40,7 +40,7 @@ const LightningRod: Attach = {
 
 		let used = false
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			opponentPlayer.hooks.beforeAttack,
 			beforeAttack.LIGHTNING_ROD_REDIRECT,
 			(attack) => {

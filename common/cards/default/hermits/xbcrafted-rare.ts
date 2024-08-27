@@ -40,7 +40,7 @@ const XBCraftedRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.PUSH_IGNORE_CARDS,
 			(attack) => {

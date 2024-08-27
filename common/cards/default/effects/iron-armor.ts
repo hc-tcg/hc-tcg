@@ -23,7 +23,7 @@ const IronArmor: Attach = {
 
 		let damageBlocked = 0
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_REDUCE_DAMAGE,
 			(attack) => {

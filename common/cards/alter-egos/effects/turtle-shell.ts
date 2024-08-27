@@ -48,7 +48,7 @@ const TurtleShell: Attach = {
 			}
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_BLOCK_DAMAGE,
 			(attack) => {

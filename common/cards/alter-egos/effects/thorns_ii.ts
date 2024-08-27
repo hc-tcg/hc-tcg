@@ -27,7 +27,7 @@ const ThornsII: Attach = {
 		const {player, opponentPlayer} = component
 		let hasTriggered = false
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_CREATE_BACKLASH,
 			(attack) => {

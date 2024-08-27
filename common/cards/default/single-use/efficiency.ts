@@ -27,7 +27,7 @@ const Efficiency: SingleUse = {
 				return ['any', 'any', 'any']
 			})
 
-			observer.subscribeWith(
+			observer.subscribeWithPriority(
 				player.hooks.afterAttack,
 				afterAttack.UPDATE_POST_ATTACK_STATE,
 				(_attack) => {

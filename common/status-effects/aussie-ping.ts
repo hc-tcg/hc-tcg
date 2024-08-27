@@ -28,7 +28,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_MODIFY_DAMAGE,
 			(attack) => {
@@ -52,7 +52,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			() => {

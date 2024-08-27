@@ -24,7 +24,7 @@ const Shield: Attach = {
 		let damageBlocked = 0
 
 		// Note that we are using beforeDefence because we want to activate on any attack to us, not just from the opponent
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_REDUCE_DAMAGE,
 			(attack) => {
@@ -42,7 +42,7 @@ const Shield: Attach = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterDefence,
 			afterDefence.DISCARD_SHIELD,
 			(attack) => {

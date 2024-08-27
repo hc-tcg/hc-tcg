@@ -41,7 +41,7 @@ const GoatfatherRare: Hermit = {
 		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = component
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_MODIFY_DAMAGE,
 			(attack) => {

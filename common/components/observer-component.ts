@@ -57,7 +57,7 @@ export class ObserverComponent {
 	 * If you are looking for a hook that will be called after the observer is destroyed (the card is removed
 	 * from the board), please use a status effect instead.
 	 */
-	public subscribeWith<
+	public subscribeWithPriority<
 		Args extends (...any: any) => any,
 		Priorities extends PrioritiesT,
 	>(

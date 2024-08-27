@@ -112,7 +112,7 @@ const IskallmanRare: Hermit = {
 		)
 
 		// Heals the afk hermit *before* we actually do damage
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {

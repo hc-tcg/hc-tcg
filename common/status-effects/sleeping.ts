@@ -62,7 +62,7 @@ const SleepingEffect: Counter<CardComponent> = {
 			}
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterDefence,
 			afterDefence.ON_ROW_DEATH,
 			(_attack) => {

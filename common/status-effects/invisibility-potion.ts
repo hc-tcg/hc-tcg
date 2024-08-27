@@ -19,7 +19,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.opponentPlayer.hooks.beforeAttack,
 			beforeAttack.EFFECT_MODIFY_DAMAGE,
 			(attack) => {
@@ -43,7 +43,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.opponentPlayer.hooks.beforeAttack,
 			beforeAttack.EFFECT_MODIFY_DAMAGE,
 			(attack) => {

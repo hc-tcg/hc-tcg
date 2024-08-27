@@ -42,7 +42,7 @@ const PoePoeSkizzRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {

@@ -121,7 +121,7 @@ const BoomerBdubsRare: Hermit = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_MODIFY_DAMAGE,
 			(attack) => {

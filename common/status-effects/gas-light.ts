@@ -40,7 +40,7 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 	) {
 		let {player, opponentPlayer} = target
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterDefence,
 			afterDefence.TRIGGER_GAS_LIGHT,
 			(attack) => {

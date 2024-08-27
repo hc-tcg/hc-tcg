@@ -115,7 +115,7 @@ const Crossbow: SingleUse = {
 			return attack
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {

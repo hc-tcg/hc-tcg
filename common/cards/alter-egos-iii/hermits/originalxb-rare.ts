@@ -41,7 +41,7 @@ const OriginalXBRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {

@@ -20,7 +20,7 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	onApply(game: GameModel, effect, target, observer) {
 		const {currentPlayer} = game
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			currentPlayer.hooks.beforeAttack,
 			beforeAttack.PUSH_IGNORE_CARDS,
 			(attack) => {

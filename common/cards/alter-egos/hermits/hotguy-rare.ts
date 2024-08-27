@@ -38,7 +38,7 @@ const HotguyRare: Hermit = {
 
 		let usingSecondaryAttack = false
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
@@ -47,7 +47,7 @@ const HotguyRare: Hermit = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_MODIFY_DAMAGE,
 			(attack) => {

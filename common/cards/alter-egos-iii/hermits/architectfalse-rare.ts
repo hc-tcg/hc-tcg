@@ -60,7 +60,7 @@ const ArchitectFalseRare: Hermit = {
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
 		game.components.filter(PlayerComponent).forEach((player) =>
-			newObserver.subscribeWith(
+			newObserver.subscribeWithPriority(
 				player.hooks.beforeAttack,
 				beforeAttack.HERMIT_APPLY_ATTACK,
 				(attack) => {
@@ -82,7 +82,7 @@ const ArchitectFalseRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {

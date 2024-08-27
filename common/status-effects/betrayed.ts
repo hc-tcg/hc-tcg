@@ -108,7 +108,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {

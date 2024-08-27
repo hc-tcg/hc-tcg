@@ -40,7 +40,7 @@ const VintageBeefRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {

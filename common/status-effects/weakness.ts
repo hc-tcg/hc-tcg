@@ -32,7 +32,7 @@ const WeaknessEffect: Counter<CardComponent> = {
 			if (effect.counter === 0) effect.remove()
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.FORCE_WEAKNESS_ATTACK,
 			(attack) => {

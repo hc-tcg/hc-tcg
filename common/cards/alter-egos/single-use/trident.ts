@@ -40,7 +40,7 @@ const Trident: SingleUse = {
 				.addDamage(component.entity, 30)
 		})
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {

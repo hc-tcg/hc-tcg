@@ -24,7 +24,7 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 		const {player, opponentPlayer} = target
 
 		// Add before so health can be checked reliably
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			opponentPlayer.hooks.afterAttack,
 			afterAttack.DEATHLOOP_REVIVE,
 			(attack) => {

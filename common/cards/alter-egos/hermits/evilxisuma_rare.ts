@@ -53,7 +53,7 @@ const EvilXisumaRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {

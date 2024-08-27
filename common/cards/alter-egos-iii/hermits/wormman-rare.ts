@@ -41,7 +41,7 @@ const WormManRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {

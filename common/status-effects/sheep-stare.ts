@@ -25,7 +25,7 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
@@ -53,7 +53,7 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			() => {

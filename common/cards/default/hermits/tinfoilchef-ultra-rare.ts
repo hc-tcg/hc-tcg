@@ -45,7 +45,7 @@ const TinFoilChefUltraRare: Hermit = {
 			query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
 		)
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {

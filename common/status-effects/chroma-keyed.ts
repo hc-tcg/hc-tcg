@@ -27,7 +27,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 
 		let chromaUsedThisTurn = true
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			target.player.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack: AttackModel) => {

@@ -35,7 +35,7 @@ const Docm77Rare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_MODIFY_DAMAGE,
 			(attack) => {

@@ -21,7 +21,7 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	) {
 		let {opponentPlayer} = target
 		// Redirect all future attacks this turn
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			opponentPlayer.hooks.beforeAttack,
 			beforeAttack.TARGET_BLOCK_REDIRECT,
 			(attack) => {

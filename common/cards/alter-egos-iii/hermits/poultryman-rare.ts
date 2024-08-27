@@ -39,7 +39,7 @@ const PoultryManRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
 			afterAttack.HERMIT_REMOVE_SINGLE_USE,
 			(attack) => {

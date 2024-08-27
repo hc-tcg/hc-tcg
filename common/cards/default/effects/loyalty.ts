@@ -22,7 +22,7 @@ const Loyalty: Attach = {
 	) {
 		const {player} = component
 
-		observer.subscribeWith(
+		observer.subscribeWithPriority(
 			player.hooks.afterDefence,
 			afterDefence.ON_ROW_DEATH,
 			(attack) => {

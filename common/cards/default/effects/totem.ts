@@ -69,7 +69,7 @@ const Totem: Attach = {
 		game.components
 			.filter(PlayerComponent)
 			.forEach((player) =>
-				observer.subscribeWith(
+				observer.subscribeWithPriority(
 					player.hooks.afterAttack,
 					afterAttack.TOTEM_REVIVE,
 					(attack) => reviveHook(attack),
