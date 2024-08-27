@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -38,22 +39,26 @@ const MumboJumboRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const coinFlip = flipCoin(player, component, 2)
-			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			const pranksterAmount = game.components.filter(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.afk,
-				query.card.type('prankster'),
-			).length
+				const coinFlip = flipCoin(player, component, 2)
+				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
+				const pranksterAmount = game.components.filter(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.afk,
+					query.card.type('prankster'),
+				).length
 
-			attack.addDamage(component.entity, headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
-		})
+				attack.addDamage(component.entity, headsAmount * 20)
+				if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
+			},
+		)
 	},
 }
 

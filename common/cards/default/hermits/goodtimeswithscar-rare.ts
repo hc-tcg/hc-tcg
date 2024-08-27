@@ -8,6 +8,7 @@ import {
 	DeathloopReady,
 	RevivedByDeathloopEffect,
 } from '../../../status-effects/death-loop'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -47,17 +48,21 @@ const GoodTimesWithScarRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			// If this component is not blocked from reviving, make possible next turn
-			if (component.getStatusEffect(DeathloopReady, RevivedByDeathloopEffect))
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				// If this component is not blocked from reviving, make possible next turn
+				if (component.getStatusEffect(DeathloopReady, RevivedByDeathloopEffect))
+					return
 
-			game.components
-				.new(StatusEffectComponent, DeathloopReady, component.entity)
-				.apply(component.entity)
-		})
+				game.components
+					.new(StatusEffectComponent, DeathloopReady, component.entity)
+					.apply(component.entity)
+			},
+		)
 	},
 }
 

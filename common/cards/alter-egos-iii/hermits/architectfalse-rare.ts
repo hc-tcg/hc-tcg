@@ -11,6 +11,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -59,15 +60,19 @@ const ArchitectFalseRare: Hermit = {
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
 		game.components.filter(PlayerComponent).forEach((player) =>
-			newObserver.subscribe(player.hooks.onAttack, (attack) => {
-				if (!(attack.attacker instanceof CardComponent)) return
-				if (!attack.isType('primary', 'secondary')) return
-				lastAttackInfo.get(game)[player.entity] = {
-					attacker: attack.attacker,
-					attackType: attack.type,
-					turn: game.state.turn.turnNumber,
-				}
-			}),
+			newObserver.subscribeWith(
+				player.hooks.beforeAttack,
+				beforeAttack.HERMIT_APPLY_ATTACK,
+				(attack) => {
+					if (!(attack.attacker instanceof CardComponent)) return
+					if (!attack.isType('primary', 'secondary')) return
+					lastAttackInfo.get(game)[player.entity] = {
+						attacker: attack.attacker,
+						attackType: attack.type,
+						turn: game.state.turn.turnNumber,
+					}
+				},
+			),
 		)
 	},
 	onAttach(
@@ -77,36 +82,40 @@ const ArchitectFalseRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (
-				!attack.isAttacker(component.entity) ||
-				attack.type !== 'secondary' ||
-				attack.target === null
-			)
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (
+					!attack.isAttacker(component.entity) ||
+					attack.type !== 'secondary' ||
+					attack.target === null
+				)
+					return
 
-			const lastAttack = lastAttackInfo.get(game)[attack.target.playerId]
-			if (!lastAttack || lastAttack.turn !== game.state.turn.turnNumber - 1)
-				return
+				const lastAttack = lastAttackInfo.get(game)[attack.target.playerId]
+				if (!lastAttack || lastAttack.turn !== game.state.turn.turnNumber - 1)
+					return
 
-			if (lastAttack.attackType === 'primary') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						PrimaryAttackDisabledEffect,
-						component.entity,
-					)
-					.apply(lastAttack.attacker.entity)
-			} else if (lastAttack.attackType === 'secondary') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						SecondaryAttackDisabledEffect,
-						component.entity,
-					)
-					.apply(lastAttack.attacker.entity)
-			}
-		})
+				if (lastAttack.attackType === 'primary') {
+					game.components
+						.new(
+							StatusEffectComponent,
+							PrimaryAttackDisabledEffect,
+							component.entity,
+						)
+						.apply(lastAttack.attacker.entity)
+				} else if (lastAttack.attackType === 'secondary') {
+					game.components
+						.new(
+							StatusEffectComponent,
+							SecondaryAttackDisabledEffect,
+							component.entity,
+						)
+						.apply(lastAttack.attacker.entity)
+				}
+			},
+		)
 	},
 }
 

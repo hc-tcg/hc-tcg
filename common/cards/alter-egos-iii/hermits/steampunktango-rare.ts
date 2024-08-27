@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -37,19 +38,23 @@ const SteampunkTangoRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const afkHermits = game.components.filter(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.slot(query.slot.hermit),
-				query.not(query.card.active),
-			).length
+				const afkHermits = game.components.filter(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.slot(query.slot.hermit),
+					query.not(query.card.active),
+				).length
 
-			attack.addDamage(component.entity, afkHermits * 10)
-		})
+				attack.addDamage(component.entity, afkHermits * 10)
+			},
+		)
 	},
 }
 

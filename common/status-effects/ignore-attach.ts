@@ -1,6 +1,7 @@
 import {CardComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {beforeAttack} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
@@ -14,18 +15,22 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	onApply(game: GameModel, effect, target, observer) {
 		const {currentPlayer} = game
 
-		observer.subscribeBefore(currentPlayer.hooks.beforeAttack, (attack) => {
-			if (!target.slot.inRow()) return
+		observer.subscribeWith(
+			currentPlayer.hooks.beforeAttack,
+			beforeAttack.PUSH_IGNORE_CARDS,
+			(attack) => {
+				if (!target.slot.inRow()) return
 
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.attach,
-						query.slot.rowIs(target.slot.rowEntity),
+				attack.shouldIgnoreCards.push(
+					query.card.slot(
+						query.every(
+							query.slot.attach,
+							query.slot.rowIs(target.slot.rowEntity),
+						),
 					),
-				),
-			)
-		})
+				)
+			},
+		)
 
 		observer.subscribe(currentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()

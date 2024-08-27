@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -37,39 +38,44 @@ const Cubfan135Rare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (
-				!game.components.exists(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.active),
-					query.not(query.slot.empty),
-					query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
+				if (
+					!game.components.exists(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.active),
+						query.not(query.slot.empty),
+						query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
+					)
 				)
-			)
-				return
+					return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick one of your Hermits to become or stay as active Hermit',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						player.changeActiveRow(pickedSlot.row)
-					}
-				},
-			})
-		})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message:
+						'Pick one of your Hermits to become or stay as active Hermit',
+					canPick: query.every(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (pickedSlot.row.entity !== player.activeRowEntity) {
+							player.changeActiveRow(pickedSlot.row)
+						}
+					},
+				})
+			},
+		)
 	},
 }
 

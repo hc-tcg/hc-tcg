@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -39,15 +40,19 @@ const LightningRod: Attach = {
 
 		let used = false
 
-		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
-			if (!component.slot?.onBoard() || !component.slot.row) return
-			if (attack.type === 'status-effect' || attack.isBacklash) return
-			if (game.currentPlayer.entity !== opponentPlayer.entity) return
-			if (attack.target?.player.entity !== player.entity) return
+		observer.subscribeWith(
+			opponentPlayer.hooks.beforeAttack,
+			beforeAttack.LIGHTNING_ROD_REDIRECT,
+			(attack) => {
+				if (!component.slot?.onBoard() || !component.slot.row) return
+				if (attack.type === 'status-effect' || attack.isBacklash) return
+				if (game.currentPlayer.entity !== opponentPlayer.entity) return
+				if (attack.target?.player.entity !== player.entity) return
 
-			attack.redirect(component.entity, component.slot.row?.entity)
-			used = true
-		})
+				attack.redirect(component.entity, component.slot.row?.entity)
+				used = true
+			},
+		)
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (!used) return

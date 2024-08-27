@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {beforeAttack} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const TargetBlockEffect: StatusEffect<CardComponent> = {
@@ -20,11 +21,15 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	) {
 		let {opponentPlayer} = target
 		// Redirect all future attacks this turn
-		observer.subscribe(opponentPlayer.hooks.beforeAttack, (attack) => {
-			if (attack.isType('status-effect') || attack.isBacklash) return
-			if (!target.slot.inRow()) return
-			attack.redirect(effect.entity, target.slot.row.entity)
-		})
+		observer.subscribeWith(
+			opponentPlayer.hooks.beforeAttack,
+			beforeAttack.TARGET_BLOCK_REDIRECT,
+			(attack) => {
+				if (attack.isType('status-effect') || attack.isBacklash) return
+				if (!target.slot.inRow()) return
+				attack.redirect(effect.entity, target.slot.row.entity)
+			},
+		)
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()

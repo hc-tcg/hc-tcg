@@ -8,6 +8,7 @@ import {GameModel} from '../../../models/game-model'
 import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/multiturn-attack-disabled'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -48,51 +49,55 @@ const JoeHillsRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (
-				game.components.exists(
-					StatusEffectComponent,
-					query.effect.is(UsedClockEffect),
-					query.effect.targetEntity(player.entity),
+				if (
+					game.components.exists(
+						StatusEffectComponent,
+						query.effect.is(UsedClockEffect),
+						query.effect.targetEntity(player.entity),
+					)
+				) {
+					return
+				}
+
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] !== 'heads') return
+
+				attack.updateLog(
+					(values) =>
+						` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`,
 				)
-			) {
-				return
-			}
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] !== 'heads') return
+				game.components
+					.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
+					.apply(opponentPlayer.entity)
+				game.components
+					.new(StatusEffectComponent, UsedClockEffect, component.entity)
+					.apply(player.entity)
 
-			attack.updateLog(
-				(values) =>
-					` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`,
-			)
-
-			game.components
-				.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
-				.apply(opponentPlayer.entity)
-			game.components
-				.new(StatusEffectComponent, UsedClockEffect, component.entity)
-				.apply(player.entity)
-
-			game.components
-				.filter(
-					CardComponent,
-					query.card.currentPlayer,
-					query.card.is(JoeHillsRare),
-				)
-				.forEach((joe) =>
-					game.components
-						.new(
-							StatusEffectComponent,
-							MultiturnSecondaryAttackDisabledEffect,
-							component.entity,
-						)
-						.apply(joe.entity),
-				)
-		})
+				game.components
+					.filter(
+						CardComponent,
+						query.card.currentPlayer,
+						query.card.is(JoeHillsRare),
+					)
+					.forEach((joe) =>
+						game.components
+							.new(
+								StatusEffectComponent,
+								MultiturnSecondaryAttackDisabledEffect,
+								component.entity,
+							)
+							.apply(joe.entity),
+					)
+			},
+		)
 	},
 }
 

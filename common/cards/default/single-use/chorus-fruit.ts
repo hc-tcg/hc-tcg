@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import {afterAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -47,14 +48,16 @@ const ChorusFruit: SingleUse = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
+		observer.subscribeWith(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
 
-			applySingleUse(game, component.slot)
+				applySingleUse(game, component.slot)
 
-			observer.unsubscribe(player.hooks.onAttack)
+				observer.unsubscribe(player.hooks.afterAttack)
 
-			observer.oneShot(player.hooks.afterAttack, () =>
 				game.addPickRequest({
 					player: player.entity,
 					id: component.entity,
@@ -70,9 +73,9 @@ const ChorusFruit: SingleUse = {
 							player.changeActiveRow(pickedSlot.row)
 						}
 					},
-				}),
-			)
-		})
+				})
+			},
+		)
 	},
 }
 

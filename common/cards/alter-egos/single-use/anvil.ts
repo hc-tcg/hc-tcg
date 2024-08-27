@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -73,9 +74,13 @@ const Anvil: SingleUse = {
 			)
 		})
 
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
-			applySingleUse(game, component.slot)
-		})
+		observer.subscribeWith(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				applySingleUse(game, component.slot)
+			},
+		)
 	},
 }
 

@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -44,13 +45,17 @@ const BdoubleO100Rare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			game.components
-				.new(StatusEffectComponent, SleepingEffect, component.entity)
-				.apply(component.entity)
-		})
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				game.components
+					.new(StatusEffectComponent, SleepingEffect, component.entity)
+					.apply(component.entity)
+			},
+		)
 	},
 }
 

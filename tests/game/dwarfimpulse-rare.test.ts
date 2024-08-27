@@ -99,7 +99,7 @@ describe('Test Dwarf Impulse Rare', () => {
 						game,
 						query.slot.hermit,
 						query.slot.opponent,
-						query.not(query.slot.active),
+						query.slot.rowIndex(0),
 					)
 
 					// Dwarf impulse should have disabled wolf, so it should not have triggered.
@@ -111,14 +111,21 @@ describe('Test Dwarf Impulse Rare', () => {
 						)?.health,
 					).toEqual(DwarfImpulseRare.health)
 
-					// Verify that the attack went through and lightning rod worked properly.
+					// Verify that the attack went through and lightning rod was ignored properly.
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
-							query.row.index(2),
+							query.row.index(1),
 						)?.health,
-					).toEqual(EthosLabCommon.health - (80 + 40))
+					).toEqual(TangoTekCommon.health - (80 + 20)) // Type advantage Miner -> Redstone
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toEqual(FiveAMPearlRare.health - 40)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

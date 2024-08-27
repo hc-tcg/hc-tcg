@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -36,10 +37,14 @@ const NetheriteSword: SingleUse = {
 			return swordAttack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			applySingleUse(game)
-		})
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				applySingleUse(game)
+			},
+		)
 	},
 }
 

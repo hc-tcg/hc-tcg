@@ -5,6 +5,7 @@ import {
 } from '../components'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
+import {afterAttack} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
@@ -26,26 +27,30 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 
 		let chromaUsedThisTurn = true
 
-		observer.subscribe(target.player.hooks.onAttack, (attack: AttackModel) => {
-			if (
-				[
-					attack.isAttacker(target.entity) && attack.type === 'primary',
-					!attack.isAttacker(target.entity) &&
-						attack.isType('primary', 'secondary'),
-				].some(Boolean)
-			) {
-				effect.remove()
-				return
-			}
+		observer.subscribeWith(
+			target.player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(attack: AttackModel) => {
+				if (
+					[
+						attack.isAttacker(target.entity) && attack.type === 'primary',
+						!attack.isAttacker(target.entity) &&
+							attack.isType('primary', 'secondary'),
+					].some(Boolean)
+				) {
+					effect.remove()
+					return
+				}
 
-			if (effect.counter === null) return
+				if (effect.counter === null) return
 
-			if (attack.isAttacker(target.entity) && attack.type === 'secondary') {
-				attack.reduceDamage(effect.entity, effect.counter * 10)
-				effect.counter++
-				chromaUsedThisTurn = true
-			}
-		})
+				if (attack.isAttacker(target.entity) && attack.type === 'secondary') {
+					attack.reduceDamage(effect.entity, effect.counter * 10)
+					effect.counter++
+					chromaUsedThisTurn = true
+				}
+			},
+		)
 
 		observer.subscribe(target.player.hooks.onTurnEnd, () => {
 			if (!chromaUsedThisTurn) effect.remove()

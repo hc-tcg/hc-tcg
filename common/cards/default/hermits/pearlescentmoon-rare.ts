@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {AussiePingEffect} from '../../../status-effects/aussie-ping'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -44,13 +45,17 @@ const PearlescentMoonRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			game.components
-				.new(StatusEffectComponent, AussiePingEffect, component.entity)
-				.apply(opponentPlayer.entity)
-		})
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				game.components
+					.new(StatusEffectComponent, AussiePingEffect, component.entity)
+					.apply(opponentPlayer.entity)
+			},
+		)
 	},
 }
 

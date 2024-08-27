@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {beforeDefence} from '../types/priorities'
 import {StatusEffect, statusEffect} from './status-effect'
 
 const RoyalProtectionEffect: StatusEffect<CardComponent> = {
@@ -20,14 +21,18 @@ const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		observer.subscribe(target.player.hooks.beforeDefence, (attack) => {
-			if (!attack.isTargeting(target)) return
+		observer.subscribeWith(
+			target.player.hooks.beforeDefence,
+			beforeDefence.HERMIT_BLOCK_DAMAGE,
+			(attack) => {
+				if (!attack.isTargeting(target)) return
 
-			// Do not block backlash attacks
-			if (attack.isBacklash) return
+				// Do not block backlash attacks
+				if (attack.isBacklash) return
 
-			attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
-		})
+				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+			},
+		)
 
 		observer.subscribe(target.player.hooks.onTurnStart, () => {
 			effect.remove()

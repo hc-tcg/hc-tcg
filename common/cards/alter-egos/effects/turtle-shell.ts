@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeDefence} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -47,19 +48,25 @@ const TurtleShell: Attach = {
 			}
 		})
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!component.slot.inRow()) return
-			if (!activated) return
+		observer.subscribeWith(
+			player.hooks.beforeDefence,
+			beforeDefence.EFFECT_BLOCK_DAMAGE,
+			(attack) => {
+				if (!component.slot.inRow()) return
+				if (!activated) return
 
-			if (!attack.isTargeting(component)) return
-			// Do not block backlash attacks
-			if (attack.isBacklash) return
+				if (!attack.isTargeting(component)) return
+				// Do not block backlash attacks
+				if (attack.isBacklash) return
 
-			if (attack.getDamage() > 0) {
-				// Block all damage
-				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
-			}
-		})
+				if (attack.getDamage() > 0) {
+					// Block all damage
+					attack
+						.multiplyDamage(component.entity, 0)
+						.lockDamage(component.entity)
+				}
+			},
+		)
 	},
 }
 

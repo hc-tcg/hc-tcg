@@ -5,6 +5,7 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
+import {afterAttack, beforeAttack} from '../types/priorities'
 import {flipCoin} from '../utils/coinFlips'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -27,39 +28,47 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-			if (!attack.attacker) return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+				if (!attack.attacker) return
 
-			// No need to flip a coin for multiple attacks
-			if (!coinFlipResult) {
-				const coinFlip = flipCoin(
-					player.opponentPlayer,
-					effect.creator,
-					1,
-					player,
-				)
-				coinFlipResult = coinFlip[0]
-			}
-
-			if (coinFlipResult === 'heads') {
-				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
-			}
-		})
-
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (!coinFlipResult) return
-			effect.remove()
-			if (coinFlipResult === 'heads') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						AussiePingImmuneEffect,
-						effect.creator.entity,
+				// No need to flip a coin for multiple attacks
+				if (!coinFlipResult) {
+					const coinFlip = flipCoin(
+						player.opponentPlayer,
+						effect.creator,
+						1,
+						player,
 					)
-					.apply(player.entity)
-			}
-		})
+					coinFlipResult = coinFlip[0]
+				}
+
+				if (coinFlipResult === 'heads') {
+					attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+				}
+			},
+		)
+
+		observer.subscribeWith(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			() => {
+				if (!coinFlipResult) return
+				effect.remove()
+				if (coinFlipResult === 'heads') {
+					game.components
+						.new(
+							StatusEffectComponent,
+							AussiePingImmuneEffect,
+							effect.creator.entity,
+						)
+						.apply(player.entity)
+				}
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnEnd, (_) => {
 			effect.remove()

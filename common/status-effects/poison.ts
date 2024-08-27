@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
@@ -45,10 +46,14 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!attack.isTargeting(target) || attack.target?.health) return
-			effect.remove()
-		})
+		observer.subscribeWith(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (!attack.isTargeting(target) || attack.target?.health) return
+				effect.remove()
+			},
+		)
 	},
 }
 

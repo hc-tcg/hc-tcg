@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -36,28 +37,32 @@ const ShadeEERare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const playerAfkHermits = game.components.filter(
-				CardComponent,
-				query.card.player(player.entity),
-				query.card.slot(query.slot.hermit),
-				query.card.afk,
-			).length
+				const playerAfkHermits = game.components.filter(
+					CardComponent,
+					query.card.player(player.entity),
+					query.card.slot(query.slot.hermit),
+					query.card.afk,
+				).length
 
-			const opponentAfkHermits = game.components.filter(
-				CardComponent,
-				query.card.player(opponentPlayer.entity),
-				query.card.slot(query.slot.hermit),
-				query.card.afk,
-			).length
+				const opponentAfkHermits = game.components.filter(
+					CardComponent,
+					query.card.player(opponentPlayer.entity),
+					query.card.slot(query.slot.hermit),
+					query.card.afk,
+				).length
 
-			if (playerAfkHermits < opponentAfkHermits) {
-				attack.addDamage(component.entity, 40)
-			}
-		})
+				if (playerAfkHermits < opponentAfkHermits) {
+					attack.addDamage(component.entity, 40)
+				}
+			},
+		)
 	},
 }
 

@@ -108,7 +108,7 @@ export class PriorityHook<
 	Src extends PrioritiesT = PrioritySrc<Priorities>,
 > {
 	public listeners: Array<
-		[priority: number, instance: ObserverEntity, listener: Args]
+		[instance: ObserverEntity, listener: Args, priority: number]
 	> = []
 
 	/** Adds a new listener to this hook */
@@ -117,8 +117,8 @@ export class PriorityHook<
 		priority: Priority<Src>,
 		listener: Args,
 	) {
-		this.listeners.push([priority, instance, listener])
-		this.listeners.sort((a, b) => a[0] - b[0])
+		this.listeners.push([instance, listener, priority])
+		this.listeners.sort((a, b) => a[2] - b[2])
 	}
 
 	/**
@@ -126,7 +126,7 @@ export class PriorityHook<
 	 */
 	public remove(instance: ObserverEntity) {
 		this.listeners = this.listeners.filter(
-			([_priority, hookListener]) => hookListener !== instance,
+			([hookListener]) => hookListener !== instance,
 		)
 	}
 
@@ -134,7 +134,7 @@ export class PriorityHook<
 	 * Calls all the added listeners. Returns an array of the results
 	 */
 	public call(...params: Parameters<Args>) {
-		return this.listeners.map(([_priority, _listener, call]) => call(...params))
+		return this.listeners.map(([_listener, call]) => call(...params))
 	}
 
 	/**
@@ -144,7 +144,7 @@ export class PriorityHook<
 		params: Parameters<Args>,
 		predicate: (instance: ObserverEntity) => boolean,
 	) {
-		return this.listeners.flatMap(([_, instance, listener]) =>
+		return this.listeners.flatMap(([instance, listener]) =>
 			predicate(instance) ? [listener(...params)] : [],
 		)
 	}

@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -34,16 +35,20 @@ const EthosLabUltraRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!(attack.attacker instanceof CardComponent)) return
-			if (!attack.attacker.slot.inRow()) return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!(attack.attacker instanceof CardComponent)) return
+				if (!attack.attacker.slot.inRow()) return
 
-			const coinFlip = flipCoin(player, attack.attacker, 3)
-			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.addDamage(component.entity, headsAmount * 20)
-		})
+				const coinFlip = flipCoin(player, attack.attacker, 3)
+				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
+				attack.addDamage(component.entity, headsAmount * 20)
+			},
+		)
 	},
 }
 

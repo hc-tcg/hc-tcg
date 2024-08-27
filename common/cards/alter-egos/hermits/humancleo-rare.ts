@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import BetrayedEffect from '../../../status-effects/betrayed'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -41,19 +42,23 @@ const HumanCleoRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const coinFlip = flipCoin(player, component, 2)
+				const coinFlip = flipCoin(player, component, 2)
 
-			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			if (headsAmount < 2) return
+				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
+				if (headsAmount < 2) return
 
-			game.components
-				.new(StatusEffectComponent, BetrayedEffect, component.entity)
-				.apply(opponentPlayer.entity)
-		})
+				game.components
+					.new(StatusEffectComponent, BetrayedEffect, component.entity)
+					.apply(opponentPlayer.entity)
+			},
+		)
 	},
 }
 

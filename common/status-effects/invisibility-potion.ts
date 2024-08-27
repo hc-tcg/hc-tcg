@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {beforeAttack} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
@@ -18,11 +19,15 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribe(player.opponentPlayer.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
-			attack.multiplyDamage(effect.entity, 0)
-			effect.remove()
-		})
+		observer.subscribeWith(
+			player.opponentPlayer.hooks.beforeAttack,
+			beforeAttack.EFFECT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
+				attack.multiplyDamage(effect.entity, 0)
+				effect.remove()
+			},
+		)
 	},
 }
 
@@ -38,10 +43,14 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribe(player.opponentPlayer.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
-			attack.multiplyDamage(effect.entity, 2)
-			effect.remove()
-		})
+		observer.subscribeWith(
+			player.opponentPlayer.hooks.beforeAttack,
+			beforeAttack.EFFECT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
+				attack.multiplyDamage(effect.entity, 2)
+				effect.remove()
+			},
+		)
 	},
 }

@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -38,13 +39,15 @@ const Knockback: SingleUse = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
-			applySingleUse(game)
-			// Only Apply this for the first attack
-			observer.unsubscribe(player.hooks.onAttack)
+		observer.subscribeWith(
+			player.hooks.afterAttack,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
+				applySingleUse(game)
+				// Only Apply this for the first attack
+				observer.unsubscribe(player.hooks.afterAttack)
 
-			observer.oneShot(player.hooks.afterAttack, (_attack) => {
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 
 				let activeRow = opponentPlayer.activeRow
@@ -65,8 +68,8 @@ const Knockback: SingleUse = {
 						},
 					})
 				}
-			})
-		})
+			},
+		)
 	},
 }
 

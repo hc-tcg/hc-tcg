@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -75,21 +76,25 @@ const KeralisRare: Hermit = {
 		)
 
 		// Heals the afk hermit *before* we actually do damage
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (!pickedAfkSlot?.inRow()) return
-			pickedAfkSlot.row.heal(100)
-			let hermit = pickedAfkSlot.row.getHermit()
+				if (!pickedAfkSlot?.inRow()) return
+				pickedAfkSlot.row.heal(100)
+				let hermit = pickedAfkSlot.row.getHermit()
 
-			game.battleLog.addEntry(
-				player.entity,
-				`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
-					hermit?.props.name
-				}$`,
-			)
-		})
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
+						hermit?.props.name
+					}$`,
+				)
+			},
+		)
 	},
 }
 

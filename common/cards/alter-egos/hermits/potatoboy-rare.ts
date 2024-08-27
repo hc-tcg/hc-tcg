@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -39,27 +40,31 @@ const PotatoBoyRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
-				return
-			game.components
-				.filter(
-					RowComponent,
-					query.row.currentPlayer,
-					query.row.adjacent(query.row.active),
-					query.row.hasHermit,
-				)
-				.forEach((row) => {
-					row.heal(40)
-					let hermit = row.getHermit()
-					game.battleLog.addEntry(
-						player.entity,
-						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
-							component.props.name
-						}$`,
+		observer.subscribeWith(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+					return
+				game.components
+					.filter(
+						RowComponent,
+						query.row.currentPlayer,
+						query.row.adjacent(query.row.active),
+						query.row.hasHermit,
 					)
-				})
-		})
+					.forEach((row) => {
+						row.heal(40)
+						let hermit = row.getHermit()
+						game.battleLog.addEntry(
+							player.entity,
+							`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
+								component.props.name
+							}$`,
+						)
+					})
+			},
+		)
 	},
 }
 
