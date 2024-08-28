@@ -34,7 +34,7 @@ const XBCraftedRare: Hermit = {
 			"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
@@ -54,10 +54,10 @@ const XBCraftedRare: Hermit = {
 						query.card.slot(query.slot.attach),
 					),
 				)
-				_game.components
+				game.components
 					.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
 					.apply(
-						_game.components.findEntity(
+						game.components.findEntity(
 							CardComponent,
 							query.card.opponentPlayer,
 							query.card.slot(query.slot.hermit, query.slot.active),

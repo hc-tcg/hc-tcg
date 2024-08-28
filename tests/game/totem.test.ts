@@ -1,10 +1,21 @@
 import {describe, expect, test} from '@jest/globals'
+import Thorns from 'common/cards/default/effects/thorns'
+import Totem from 'common/cards/default/effects/totem'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GoodTimesWithScarRare from 'common/cards/default/hermits/goodtimeswithscar-rare'
+import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
+import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'
+import Bow from 'common/cards/default/single-use/bow'
+import LavaBucket from 'common/cards/default/single-use/lava-bucket'
+import TNT from 'common/cards/default/single-use/tnt'
 import {
 	CardComponent,
 	RowComponent,
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import {RevivedByDeathloopEffect} from 'common/status-effects/death-loop'
+import FireEffect from 'common/status-effects/fire'
 import {
 	applyEffect,
 	attack,
@@ -13,17 +24,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
-import GoodTimesWithScarRare from 'common/cards/default/hermits/goodtimeswithscar-rare'
-import Totem from 'common/cards/default/effects/totem'
-import TNT from 'common/cards/default/single-use/tnt'
-import Thorns from 'common/cards/default/effects/thorns'
-import {RevivedByDeathloopEffect} from 'common/status-effects/death-loop'
-import Bow from 'common/cards/default/single-use/bow'
-import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'
-import LavaBucket from 'common/cards/default/single-use/lava-bucket'
-import FireEffect from 'common/status-effects/fire'
 
 describe('Test Totem of Undying', () => {
 	test('Test Totem with TNT', () => {

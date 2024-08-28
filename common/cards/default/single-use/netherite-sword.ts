@@ -39,7 +39,7 @@ const NetheriteSword: SingleUse = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_APPLY_ATTACK,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
 				applySingleUse(game)
