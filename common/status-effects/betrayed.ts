@@ -34,7 +34,12 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
-			game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			game.removeBlockedActions(
+				this.icon,
+				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
+				'END_TURN',
+			)
 
 			// Return if the opponent has no AFK Hermits to attack
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -75,8 +80,13 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 				return
 			}
 
-			// The opponent needs to attack in this case, so prevent them switching or ending turn
-			game.addBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			// The opponent needs to attack in this case, so prevent them switching, using only a single use attack, or ending turn
+			game.addBlockedActions(
+				this.icon,
+				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
+				'END_TURN',
+			)
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
@@ -113,14 +123,18 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
-				observer.unsubscribe(player.hooks.beforeAttack)
 
 				if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
 					attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
 				}
 
 				// They attacked now, they can end turn or change hermits with Chorus Fruit
-				game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+				game.removeBlockedActions(
+					this.icon,
+					'CHANGE_ACTIVE_HERMIT',
+					'SINGLE_USE_ATTACK',
+					'END_TURN',
+				)
 				effect.remove()
 			},
 		)
