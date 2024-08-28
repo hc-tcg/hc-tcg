@@ -29,9 +29,10 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 			player.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
+				if (!attack.isAttacker(player.getActiveHermit()?.entity)) return
+
 				// No need to flip a coin for multiple attacks
 				if (!coinFlipResult) {
-					if (!player.getActiveHermit()) return
 					const coinFlip = flipCoin(
 						player.opponentPlayer,
 						effect.creator,
