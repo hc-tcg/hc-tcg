@@ -49,8 +49,9 @@ const PoultryManRare: Hermit = {
 			)
 
 			if (singleUse) {
-				observer.oneShot(player.hooks.afterAttack, () => {
+				observer.subscribe(player.hooks.afterAttack, () => {
 					singleUse.draw(player.entity)
+					observer.unsubscribe(player.hooks.afterAttack)
 				})
 			}
 		})
