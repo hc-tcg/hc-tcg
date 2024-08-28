@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import Bow from '../../default/single-use/bow'
@@ -58,6 +58,14 @@ const HotguyRare: Hermit = {
 				) {
 					attack.addDamage(attack.attacker.entity, attack.getDamage())
 				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				usingSecondaryAttack = false
 			},
 		)
 	},
