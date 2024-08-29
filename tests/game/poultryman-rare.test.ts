@@ -45,7 +45,7 @@ describe('Test Poutry Man Rare', () => {
           yield* endTurn(game)
           yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
 					yield* attack(game, 'secondary')
 
           // Hand should only contain Egg.
