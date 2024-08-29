@@ -71,7 +71,7 @@ const Egg: SingleUse = {
 							const eggAttack = game
 								.newAttack({
 									attacker: component.entity,
-									player: player.entity, // Egg may have been stolen by Trap Hole
+									player: player.entity,
 									target: afkHermitSlot?.row.entity,
 									log: (values) =>
 										`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,

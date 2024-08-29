@@ -32,6 +32,7 @@ const Trident: SingleUse = {
 			return game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -52,7 +53,7 @@ const Trident: SingleUse = {
 			},
 		)
 
-		observer.subscribe(player.hooks.onApply, () => {
+		observer.subscribe(player.hooks.afterApply, () => {
 			if (coinflipResult === 'heads') {
 				component.draw()
 			}

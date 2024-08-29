@@ -33,6 +33,7 @@ const GoldenAxe: SingleUse = {
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>

@@ -27,6 +27,7 @@ const DiamondSword: SingleUse = {
 			const swordAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>

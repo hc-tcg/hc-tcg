@@ -96,6 +96,7 @@ const Crossbow: SingleUse = {
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
+							player: player.entity,
 							target: target,
 							type: 'effect',
 							log: (values) =>

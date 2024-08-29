@@ -33,7 +33,7 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$`
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {

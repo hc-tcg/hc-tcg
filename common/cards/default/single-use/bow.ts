@@ -59,6 +59,7 @@ const Bow: SingleUse = {
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: pickedRow,
 					type: 'effect',
 					log: (values) =>

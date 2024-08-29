@@ -44,6 +44,7 @@ export type AttackerEntity =
 export type AttackDefs =
 	| {
 			attacker?: Entity<StatusEffectComponent> | null | undefined
+			/** Status effects must specify the attacking player. */
 			player: PlayerEntity
 			target?: RowEntity | null | undefined
 			type: 'status-effect'
@@ -63,9 +64,10 @@ export type AttackDefs =
 	  }
 	| {
 			attacker?: Entity<CardComponent> | null | undefined
+			/** Single-use cards must include the player, because they may be stolen by Trap Hole. */
 			player: PlayerEntity
 			target?: RowEntity | null | undefined
-			type: AttackType
+			type: 'effect'
 			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
 			isBacklash?: boolean
 			createWeakness?: WeaknessType

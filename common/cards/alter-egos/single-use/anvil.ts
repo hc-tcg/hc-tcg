@@ -57,6 +57,7 @@ const Anvil: SingleUse = {
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
+							player: player.entity,
 							target: row.entity,
 							type: 'effect',
 							log:
