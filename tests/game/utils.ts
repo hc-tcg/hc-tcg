@@ -195,6 +195,7 @@ const defaultGameSettings = {
 	startWithAllCards: false,
 	unlimitedCards: false,
 	oneShotMode: false,
+	extraStartingCards: [],
 	disableDamage: false,
 	noItemRequirements: false,
 	forceCoinFlip: false,
