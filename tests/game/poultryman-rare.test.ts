@@ -1,16 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import {
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from './utils'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
 import Egg from 'common/cards/alter-egos/single-use/egg'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import query from 'common/components/query'
+import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
 
 describe('Test Poutry Man Rare', () => {
 	test('Poultry Man only recycles Egg.', () => {
@@ -39,21 +33,20 @@ describe('Test Poutry Man Rare', () => {
 
 					expect(game.opponentPlayer.activeRow?.index).toBe(1)
 
-          // Hand should contain Egg and Golden Axe.
-          expect(game.currentPlayer.getHand()?.length).toBe(2)
+					// Hand should contain Egg and Golden Axe.
+					expect(game.currentPlayer.getHand()?.length).toBe(2)
 
-          yield* endTurn(game)
-          yield* endTurn(game)
+					yield* endTurn(game)
+					yield* endTurn(game)
 
 					yield* playCardFromHand(game, GoldenAxe, 'single_use')
 					yield* attack(game, 'secondary')
 
-          // Hand should only contain Egg.
-          expect(game.currentPlayer.getHand()?.length).toBe(1)
+					// Hand should only contain Egg.
+					expect(game.currentPlayer.getHand()?.length).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
-
