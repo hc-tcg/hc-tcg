@@ -1,23 +1,22 @@
-export type PrioritiesT = readonly {readonly stage: string}[]
+export type PrioritiesT = Record<string, null>
 export type Priority<T extends PrioritiesT> = number & {
 	__priority_type_do_not_use_or_program_will_crash: T
 }
+/** Warning! Typescript can not differentiate between dictionaries with the same keys in different orders
+ *  @example {A: null, B: null} <=> {B: null, A: null} */
 export type PriorityDict<T extends PrioritiesT> = {
-	readonly [stage in T[number]['stage']]: Priority<T>
+	readonly [stage in keyof T]: Priority<T>
 }
 export type PrioritySrc<T> = T extends PriorityDict<infer Priorities>
 	? Priorities
 	: never
 
 function createPriorityDictionary<T extends PrioritiesT>(
-	priorities: Exclude<T, {stage: string}[]>,
+	priorities: T,
 ): PriorityDict<T> {
-	return priorities.reduce(
-		(r, {stage}, i) => {
-			if (stage in r)
-				throw new Error(
-					'Priority dictionary should not include duplicate stages',
-				)
+	const stages = Object.keys(priorities) as Array<keyof T & string>
+	return stages.reduce(
+		(r, stage, i) => {
 			r[stage] = i
 			return r
 		},
@@ -25,70 +24,62 @@ function createPriorityDictionary<T extends PrioritiesT>(
 	) as any
 }
 
-/**
- * @member PUSH_IGNORE_CARDS: rare xB, Ignore Attach effect
- * @member HERMIT_SET_TARGET: Hermits updating the intended target of attacks
- * @member HERMIT_CHANGE_TARGET: Betrayed effect, Sheep Stare effect
- * @member LIGHTNING_ROD_REDIRECT
- * @member TARGET_BLOCK_REDIRECT
- * @member HERMIT_MODIFY_DAMAGE: Hermits changing the damage of an attack or adding sub-attacks
- * @member EFFECT_MODIFY_DAMAGE: Invisibility effects
- * @member HERMIT_APPLY_ATTACK: Hermits applying their effect to the board
- * @member APPLY_SINGLE_USE_ATTACK: Single use attack cards: Bow, Swords, etc.
- */
-export const beforeAttack = createPriorityDictionary([
-	{stage: 'PUSH_IGNORE_CARDS'},
-	{stage: 'HERMIT_SET_TARGET'},
-	{stage: 'HERMIT_CHANGE_TARGET'},
-	{stage: 'LIGHTNING_ROD_REDIRECT'},
-	{stage: 'TARGET_BLOCK_REDIRECT'},
-	{stage: 'HERMIT_MODIFY_DAMAGE'},
-	{stage: 'EFFECT_MODIFY_DAMAGE'},
-	{stage: 'HERMIT_APPLY_ATTACK'},
-	{stage: 'APPLY_SINGLE_USE_ATTACK'},
-] as const)
+export const beforeAttack = createPriorityDictionary({
+	/** Listeners adding queries to `attack.shouldIgnoreCards` */
+	IGNORE_CARDS: null,
+	/** Hermit cards updating the intended target of attacks created with a default target */
+	HERMIT_SET_TARGET: null,
+	/** Hermit abilities that set what target should be attacked instead */
+	HERMIT_CHANGE_TARGET: null,
+	/** Lightning Rod redirecting all damage from attacks */
+	LIGHTNING_ROD_REDIRECT: null,
+	/** Target Block redirecting all damage from attacks, effect overrules Lightning Rod  */
+	TARGET_BLOCK_REDIRECT: null,
+	/** Hermit abilities modifying how much damage an attack should do, and/or adding sub-attacks */
+	HERMIT_MODIFY_DAMAGE: null,
+	/** Effect cards such as Invisibility modifying how much damage an attack should do */
+	EFFECT_MODIFY_DAMAGE: null,
+	/** Hermit attack abilities that modify state before any damage is dealt */
+	HERMIT_APPLY_ATTACK: null,
+	/** Any attacking single-use cards must call `applySingleUse` at this stage */
+	APPLY_SINGLE_USE_ATTACK: null,
+})
 
-/**
- * @member HERMIT_BLOCK_DAMAGE: Royal Protection effect
- * @member EFFECT_BLOCK_DAMAGE: Turtle Shell, Chainmail
- * @member FORCE_WEAKNESS_ATTACK: Weakness effect
- * @member EFFECT_REDUCE_DAMAGE: Armor, Shield
- * @member EFFECT_REMOVE_STATUS: Milk Bucket, Water Bucket
- * @member EFFECT_CREATE_BACKLASH: Wolf, Thorns
- */
-export const beforeDefence = createPriorityDictionary([
-	{stage: 'HERMIT_BLOCK_DAMAGE'},
-	{stage: 'EFFECT_BLOCK_DAMAGE'},
-	{stage: 'FORCE_WEAKNESS_ATTACK'},
-	{stage: 'EFFECT_REDUCE_DAMAGE'},
-	{stage: 'EFFECT_REMOVE_STATUS'},
-	{stage: 'EFFECT_CREATE_BACKLASH'},
-] as const)
+export const beforeDefence = createPriorityDictionary({
+	/** Hermits blocking all damage done by certain attacks */
+	HERMIT_BLOCK_DAMAGE: null,
+	/** Effect cards blocking all damage done by certain attacks */
+	EFFECT_BLOCK_DAMAGE: null,
+	/** Weakness effect modifying an attack to always create a weakness attack */
+	FORCE_WEAKNESS_ATTACK: null,
+	/** Effect cards can reduce the final damage of attacks */
+	EFFECT_REDUCE_DAMAGE: null,
+	/** Effects such as buckets can remove status effects created by an attack */
+	EFFECT_REMOVE_STATUS: null,
+	/** Effects reacting to the whether the attack's target will be damaged */
+	EFFECT_CREATE_BACKLASH: null,
+})
 
-/**
- * @member DEATHLOOP_REVIVE
- * @member TOTEM_REVIVE
- * @member HERMIT_ATTACK_REQUESTS: rare Evil X, rare Tango, rare King Joel, etc.
- * @member EFFECT_POST_ATTACK_REQUESTS: Chorus Fruit, Knockback, Egg
- * @member UPDATE_POST_ATTACK_STATE: Sheep Stare effect, Aussie Ping effect, Efficiency
- * @member HERMIT_REMOVE_SINGLE_USE: rare Gem, rare Poultry Man
- */
-export const afterAttack = createPriorityDictionary([
-	{stage: 'DEATHLOOP_REVIVE'},
-	{stage: 'TOTEM_REVIVE'},
-	{stage: 'HERMIT_ATTACK_REQUESTS'},
-	{stage: 'EFFECT_POST_ATTACK_REQUESTS'},
-	{stage: 'UPDATE_POST_ATTACK_STATE'},
-	{stage: 'HERMIT_REMOVE_SINGLE_USE'},
-] as const)
+export const afterAttack = createPriorityDictionary({
+	/** Deathloop may revive their row (does not trigger an attached Totem when present) */
+	DEATHLOOP_REVIVE: null,
+	/** Totems may revive their row and be discarded */
+	TOTEM_REVIVE: null,
+	/** Hermit attacks add any requests dependent on the new board state */
+	HERMIT_ATTACK_REQUESTS: null,
+	/** Effect cards that take effect after attacking can add their requests */
+	EFFECT_POST_ATTACK_REQUESTS: null,
+	/** Listeners updating board or private state after attacks executed */
+	UPDATE_POST_ATTACK_STATE: null,
+	/** When it is safe for Hermit attacks to remove the card in the single use slot */
+	HERMIT_REMOVE_SINGLE_USE: null,
+})
 
-/**
- * @member DISCARD_SHIELD: Discards Shield
- * @member TRIGGER_GAS_LIGHT: Marks target hermit to take damage at end of turn
- * @member ON_ROW_DEATH: Loyalty and status effects handling a row knock-out
- */
-export const afterDefence = createPriorityDictionary([
-	{stage: 'DISCARD_SHIELD'},
-	{stage: 'TRIGGER_GAS_LIGHT'},
-	{stage: 'ON_ROW_DEATH'},
-] as const)
+export const afterDefence = createPriorityDictionary({
+	/** Shield can now discard itself if it blocked any damage */
+	DISCARD_SHIELD: null,
+	/** Gas Light effect reacting to target taking damage, to be damaged at end of turn */
+	TRIGGER_GAS_LIGHT: null,
+	/** Listeners can confidently execute after a row has been knocked-out */
+	ON_ROW_DEATH: null,
+})

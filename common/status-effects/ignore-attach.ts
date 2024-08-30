@@ -22,7 +22,7 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 
 		observer.subscribeWithPriority(
 			currentPlayer.hooks.beforeAttack,
-			beforeAttack.PUSH_IGNORE_CARDS,
+			beforeAttack.IGNORE_CARDS,
 			(attack) => {
 				if (!target.slot.inRow()) return
 

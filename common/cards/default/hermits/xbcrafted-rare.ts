@@ -42,7 +42,7 @@ const XBCraftedRare: Hermit = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.PUSH_IGNORE_CARDS,
+			beforeAttack.IGNORE_CARDS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return

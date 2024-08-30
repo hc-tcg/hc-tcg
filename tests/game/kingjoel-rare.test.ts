@@ -50,6 +50,7 @@ describe('Test rare King Joel Steal', () => {
 							CardComponent,
 							query.card.is(BalancedItem),
 							query.card.currentPlayer,
+							query.card.attached,
 						),
 					).toBeTruthy()
 				},
@@ -58,7 +59,7 @@ describe('Test rare King Joel Steal', () => {
 		)
 	})
 
-	test('Test Steal with Egg', () => {
+	test('Test Steal pick request runs before Egg pick request.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Iskall85Common, BalancedItem],
@@ -99,6 +100,7 @@ describe('Test rare King Joel Steal', () => {
 							CardComponent,
 							query.card.is(BalancedItem),
 							query.card.currentPlayer,
+							query.card.attached,
 						),
 					).toBeTruthy()
 
