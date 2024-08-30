@@ -9,7 +9,6 @@ import {
 } from '../components'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
@@ -18,6 +17,13 @@ import {GameState} from '../types/game-state'
 export type PlayerSetupDefs = {
 	model: PlayerDefs
 	deck: Array<number | string | Card>
+}
+
+type ComponentSetupOptions = {
+	shuffleDeck: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	extraStartingCards: Array<string>
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -29,7 +35,7 @@ export function setupComponents(
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
-	options: {shuffleDeck: boolean},
+	options: ComponentSetupOptions,
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
@@ -43,7 +49,7 @@ function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
-	options: {shuffleDeck: boolean},
+	options: ComponentSetupOptions,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
@@ -114,12 +120,10 @@ function setupEcsForPlayer(
 	}
 
 	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards
-			? sortedCards.length
-			: 7
+		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
+	for (let i = 0; i < options.extraStartingCards.length; i++) {
+		const id = options.extraStartingCards[i]
 		let slot = components.new(HandSlotComponent, playerEntity)
 		components.new(CardComponent, id, slot.entity)
 	}
