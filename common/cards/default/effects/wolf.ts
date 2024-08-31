@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {executeExtraAttacks} from '../../../utils/attacks'
+import {beforeDefence} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -29,33 +29,38 @@ const Wolf: Attach = {
 			activated = false
 		})
 
-		observer.subscribe(opponentPlayer.hooks.afterAttack, (attack) => {
-			if (attack.isType('status-effect') || attack.isBacklash) return
-			// Only on opponents turn
-			if (game.currentPlayerEntity !== opponentPlayer.entity) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.EFFECT_CREATE_BACKLASH,
+			(attack) => {
+				if (attack.isType('status-effect') || attack.isBacklash) return
+				// Only on opponents turn
+				if (game.currentPlayerEntity !== opponentPlayer.entity) return
 
-			// Make sure they are targeting this player
-			if (attack.target?.player.entity !== player.entity) return
+				// Make sure they are targeting this player
+				if (attack.player !== opponentPlayer) return
+				if (attack.target?.player.entity !== player.entity) return
 
-			// Make sure the attack is doing some damage
-			if (attack.calculateDamage() <= 0) return
+				// Make sure the attack is doing some damage
+				if (attack.calculateDamage() <= 0) return
 
-			if (activated) return
-			activated = true
+				if (activated) return
+				activated = true
 
-			const backlashAttack = game
-				.newAttack({
-					attacker: component.entity,
-					target: opponentPlayer.activeRowEntity,
-					type: 'effect',
-					isBacklash: true,
-					log: (values) =>
-						`${values.target} took ${values.damage} damage from $eWolf$`,
-				})
-				.addDamage(component.entity, 20)
+				const backlashAttack = game
+					.newAttack({
+						attacker: component.entity,
+						target: opponentPlayer.activeRowEntity,
+						type: 'effect',
+						isBacklash: true,
+						log: (values) =>
+							`${values.target} took ${values.damage} damage from $eWolf$`,
+					})
+					.addDamage(component.entity, 20)
 
-			executeExtraAttacks(game, [backlashAttack])
-		})
+				attack.addNewAttack(backlashAttack)
+			},
+		)
 	},
 }
 

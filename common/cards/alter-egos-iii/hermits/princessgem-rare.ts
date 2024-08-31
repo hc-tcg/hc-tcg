@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import RoyalProtectionEffect from '../../../status-effects/royal-protection'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -48,32 +49,40 @@ const PrincessGemRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const pickCondition = query.every(
-				query.slot.currentPlayer,
-				query.slot.hermit,
-				query.not(query.slot.empty),
-				query.not(query.slot.active),
-				query.not(query.slot.hasStatusEffect(RoyalProtectionEffect)),
-			)
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.empty),
+					query.not(query.slot.active),
+					query.not(query.slot.hasStatusEffect(RoyalProtectionEffect)),
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick one of your AFK Hermits',
-				canPick: pickCondition,
-				onResult: (pickedSlot) => {
-					game.components
-						.new(StatusEffectComponent, RoyalProtectionEffect, component.entity)
-						.apply(pickedSlot.getCard()?.entity)
-				},
-			})
-		})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick one of your AFK Hermits',
+					canPick: pickCondition,
+					onResult: (pickedSlot) => {
+						game.components
+							.new(
+								StatusEffectComponent,
+								RoyalProtectionEffect,
+								component.entity,
+							)
+							.apply(pickedSlot.getCard()?.entity)
+					},
+				})
+			},
+		)
 	},
 }
 

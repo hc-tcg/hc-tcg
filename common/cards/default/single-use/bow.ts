@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -58,6 +59,7 @@ const Bow: SingleUse = {
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: pickedRow,
 					type: 'effect',
 					log: (values) =>
@@ -68,10 +70,14 @@ const Bow: SingleUse = {
 			return bowAttack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.attacker?.entity !== component.entity) return
-			applySingleUse(game, component.slot)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.attacker?.entity !== component.entity) return
+				applySingleUse(game, component.slot)
+			},
+		)
 	},
 }
 

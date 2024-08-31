@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {GasLightEffect} from '../../../status-effects/gas-light'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -39,22 +40,26 @@ const SkizzlemanRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			game.components
-				.filter(
-					CardComponent,
-					query.card.opponentPlayer,
-					query.card.afk,
-					query.card.slot(query.slot.hermit),
-				)
-				.map((card) => {
-					game.components
-						.new(StatusEffectComponent, GasLightEffect, component.entity)
-						.apply(card.entity)
-				})
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				game.components
+					.filter(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.afk,
+						query.card.slot(query.slot.hermit),
+					)
+					.map((card) => {
+						game.components
+							.new(StatusEffectComponent, GasLightEffect, component.entity)
+							.apply(card.entity)
+					})
+			},
+		)
 	},
 }
 

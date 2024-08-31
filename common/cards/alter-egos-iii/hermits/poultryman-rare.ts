@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import Egg from '../../alter-egos/single-use/egg'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -38,22 +39,22 @@ const PoultryManRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const singleUse = game.components.find(
-				CardComponent,
-				query.card.slot(query.slot.singleUse),
-				query.card.is(Egg),
-			)
-
-			if (singleUse) {
-				observer.oneShot(player.hooks.afterAttack, () => {
-					singleUse.draw(player.entity)
-				})
-			}
-		})
+				game.components
+					.find(
+						CardComponent,
+						query.card.slot(query.slot.singleUse),
+						query.card.is(Egg),
+					)
+					?.draw(player.entity)
+			},
+		)
 	},
 }
 

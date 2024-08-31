@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -39,26 +40,30 @@ const VintageBeefRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			let removeFrom = game.components.filter(
-				StatusEffectComponent,
-				query.effect.type('normal', 'damage'),
-				query.effect.targetIsCardAnd(
-					query.card.currentPlayer,
-					query.card.slot(query.slot.hermit),
-				),
-			)
+				let removeFrom = game.components.filter(
+					StatusEffectComponent,
+					query.effect.type('normal', 'damage'),
+					query.effect.targetIsCardAnd(
+						query.card.currentPlayer,
+						query.card.slot(query.slot.hermit),
+					),
+				)
 
-			if (removeFrom.length === 0) return
+				if (removeFrom.length === 0) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] !== 'heads') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] !== 'heads') return
 
-			removeFrom.forEach((effect) => effect.remove())
-		})
+				removeFrom.forEach((effect) => effect.remove())
+			},
+		)
 	},
 }
 

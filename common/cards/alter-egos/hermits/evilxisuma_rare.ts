@@ -10,6 +10,7 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -52,56 +53,60 @@ const EvilXisumaRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-
-			const coinFlip = flipCoin(player, component)
-
-			if (coinFlip[0] !== 'heads') return
-
-			let opponentActiveHermit = game.components.find(
-				CardComponent,
-				opponentActiveHermitQuery,
-			)
-			if (!opponentActiveHermit) return
-
-			game.addModalRequest({
-				player: player.entity,
-				modal: {
-					type: 'copyAttack',
-					name: 'Evil X: Disable an attack for 1 turn',
-					description:
-						"Which of the opponent's attacks do you want to disable?",
-					hermitCard: opponentActiveHermit.entity,
-					cancelable: false,
-				},
-				onResult(modalResult) {
-					assert(modalResult.pick)
-
-					const actionToBlock =
-						modalResult.pick === 'primary'
-							? PrimaryAttackDisabledEffect
-							: SecondaryAttackDisabledEffect
-
-					// This will add a blocked action for the duration of their turn
-					game.components
-						.new(StatusEffectComponent, actionToBlock, component.entity)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				},
-				onTimeout() {
-					// Disable the secondary attack if we didn't choose one
-					game.components
-						.new(
-							StatusEffectComponent,
-							SecondaryAttackDisabledEffect,
-							component.entity,
-						)
-						.apply(opponentPlayer.getActiveHermit()?.entity)
-				},
-			})
-		})
+
+				const coinFlip = flipCoin(player, component)
+
+				if (coinFlip[0] !== 'heads') return
+
+				let opponentActiveHermit = game.components.find(
+					CardComponent,
+					opponentActiveHermitQuery,
+				)
+				if (!opponentActiveHermit) return
+
+				game.addModalRequest({
+					player: player.entity,
+					modal: {
+						type: 'copyAttack',
+						name: 'Evil X: Disable an attack for 1 turn',
+						description:
+							"Which of the opponent's attacks do you want to disable?",
+						hermitCard: opponentActiveHermit.entity,
+						cancelable: false,
+					},
+					onResult(modalResult) {
+						assert(modalResult.pick)
+
+						const actionToBlock =
+							modalResult.pick === 'primary'
+								? PrimaryAttackDisabledEffect
+								: SecondaryAttackDisabledEffect
+
+						// This will add a blocked action for the duration of their turn
+						game.components
+							.new(StatusEffectComponent, actionToBlock, component.entity)
+							.apply(opponentPlayer.getActiveHermit()?.entity)
+						return
+					},
+					onTimeout() {
+						// Disable the secondary attack if we didn't choose one
+						game.components
+							.new(
+								StatusEffectComponent,
+								SecondaryAttackDisabledEffect,
+								component.entity,
+							)
+							.apply(opponentPlayer.getActiveHermit()?.entity)
+					},
+				})
+			},
+		)
 	},
 }
 
