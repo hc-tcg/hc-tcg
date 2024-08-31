@@ -1,4 +1,4 @@
-import type {CardProps} from '../cards/base/types'
+import type {Card} from '../cards/base/types'
 import type {
 	CardComponent,
 	SlotComponent,
@@ -7,7 +7,7 @@ import type {
 import type {ComponentQuery} from '../components/query'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
-import {StatusEffectProps} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {PlayerDeckT} from './deck'
 import {TurnActions} from './game-state'
@@ -32,16 +32,16 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 	return t as WithoutFunctions<T>
 }
 
-export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	readonly props: WithoutFunctions<Props>
+export type LocalCardInstance<CardType extends Card = Card> = {
+	readonly props: WithoutFunctions<CardType>
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null
-	turnedOver: boolean
+	readonly turnedOver: boolean
 }
 
 export type LocalStatusEffectInstance<
-	Props extends StatusEffectProps = StatusEffectProps,
+	Props extends StatusEffect = StatusEffect,
 > = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
@@ -87,21 +87,20 @@ export namespace LocalSelectCards {
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
 
 	export type Data = {
-		modalId: 'selectCards'
-		payload: {
-			modalName: string
-			modalDescription: string
-			cards: Array<LocalCardInstance>
-			selectionSize: number
-			primaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-			secondaryButton?: {
-				text: string
-				variant?: ButtonVariant
-			} | null
-		}
+		type: 'selectCards'
+		name: string
+		description: string
+		cards: Array<LocalCardInstance>
+		selectionSize: number
+		primaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		secondaryButton?: {
+			text: string
+			variant?: ButtonVariant
+		} | null
+		cancelable: boolean
 	}
 
 	export type Result =
@@ -117,13 +116,12 @@ export namespace LocalSelectCards {
 
 export namespace LocalCopyAttack {
 	export type Data = {
-		modalId: 'copyAttack'
-		payload: {
-			modalName: string
-			modalDescription: string
-			hermitCard: LocalCardInstance
-			blockedActions: TurnActions
-		}
+		type: 'copyAttack'
+		name: string
+		description: string
+		hermitCard: LocalCardInstance
+		blockedActions: TurnActions
+		cancelable: boolean
 	}
 
 	export type Result =

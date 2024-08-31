@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import {CardProps} from 'common/cards/base/types'
+import {Card as CardObject} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
@@ -13,7 +13,7 @@ interface CardReactProps
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: WithoutFunctions<CardProps>
+	card: WithoutFunctions<CardObject>
 	selected?: boolean
 	picked?: boolean
 	unpickable?: boolean

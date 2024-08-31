@@ -10,6 +10,7 @@ await build({
 	format: 'esm',
 	bundle: true,
 	outfile: 'server/dist/index.js',
+	sourcemap: true,
 	plugins: [
 		copy({
 			assets: [

@@ -5,40 +5,37 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class KingJoelRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'kingjoel_rare',
-		numericId: 163,
-		name: 'King Joel',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'builder',
-		health: 280,
-		primary: {
-			name: 'Diss Track',
-			cost: ['builder'],
-			damage: 50,
-			power: null,
-		},
-		secondary: {
-			name: 'Steal',
-			cost: ['builder', 'builder'],
-			damage: 80,
-			power:
-				"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
-		},
-	}
-
-	override onAttach(
+const KingJoelRare: Hermit = {
+	...hermit,
+	id: 'kingjoel_rare',
+	numericId: 163,
+	name: 'King Joel',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'builder',
+	health: 280,
+	primary: {
+		name: 'Diss Track',
+		cost: ['builder'],
+		damage: 50,
+		power: null,
+	},
+	secondary: {
+		name: 'Steal',
+		cost: ['builder', 'builder'],
+		damage: 80,
+		power:
+			"Flip a coin.\nIf heads, choose an item card attached to one of your opponent's AFK Hermits and attach it to one of your AFK Hermits.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -50,50 +47,55 @@ class KingJoelRare extends Card {
 			query.not(query.slot.active),
 			query.slot.item,
 			query.not(query.slot.empty),
+			query.slot.row((_game, row) => !!row.health),
 		)
-
 		const secondPickCondition = query.every(
 			query.slot.currentPlayer,
 			query.not(query.slot.active),
 			query.slot.item,
 			query.slot.empty,
-			query.slot.row(query.row.hasHermit),
+			query.slot.row(query.row.hasHermit, (_game, row) => !!row.health),
 		)
 
-		let fistPickedCard: CardComponent | null = null
+		let firstPickedCard: CardComponent | null = null
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!game.components.exists(SlotComponent, firstPickCondition)) return
-			if (!game.components.exists(SlotComponent, secondPickCondition)) return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const coinFlip = flipCoin(player, component)
+				if (!game.components.exists(SlotComponent, firstPickCondition)) return
+				if (!game.components.exists(SlotComponent, secondPickCondition)) return
 
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Pick an item card from your opponent's AFK Hermits",
-				canPick: firstPickCondition,
-				onResult(pickedSlot) {
-					fistPickedCard = pickedSlot.getCard()
-				},
-			})
+				if (coinFlip[0] === 'tails') return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick a slot to place the item card',
-				canPick: secondPickCondition,
-				onResult(pickedSlot) {
-					if (!fistPickedCard) return
-					fistPickedCard.attach(pickedSlot)
-				},
-			})
-		})
-	}
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: "Pick an item card from your opponent's AFK Hermits",
+					canPick: firstPickCondition,
+					onResult(pickedSlot) {
+						firstPickedCard = pickedSlot.getCard()
+					},
+				})
+
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick a slot to place the item card',
+					canPick: secondPickCondition,
+					onResult(pickedSlot) {
+						if (!firstPickedCard) return
+						firstPickedCard.attach(pickedSlot)
+					},
+				})
+			},
+		)
+	},
 }
 
 export default KingJoelRare

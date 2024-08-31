@@ -33,7 +33,7 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$`
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
@@ -87,6 +87,15 @@ export class BattleLogModel {
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
 			})
+
+			console.info(`${this.game.logHeader} ${firstEntry.description}`)
+		}
+
+		// We skip waiting for the logs to send if there are no players. This is because
+		// the coin flip delay confuses jest. Additionally we don't want to wait longer
+		// than what is needed in tests.
+		if (this.game.getPlayers().length === 0) {
+			return
 		}
 
 		await new Promise((e) =>
@@ -138,7 +147,7 @@ export class BattleLogModel {
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
 
-		const logMessage = card.card.getLog({
+		const logMessage = card.props.getLog({
 			player: player.playerName,
 			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
@@ -156,7 +165,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickedRow !== null ? `${pickedRow.index + 1}` : invalid,
-				id: pickedCard?.card.props.id || invalid,
+				id: pickedCard?.props.id || invalid,
 				name: pickedCard
 					? this.genCardName(pickedSlot?.player, pickedCard, pickedRow)
 					: invalid,

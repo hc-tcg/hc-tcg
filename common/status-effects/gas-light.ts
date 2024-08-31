@@ -6,10 +6,10 @@ import {
 import {RowEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {AttackDefs} from '../types/attack'
+import {afterDefence} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
-	CardStatusEffect,
-	StatusEffectProps,
+	StatusEffect,
 	hiddenStatusEffect,
 	systemStatusEffect,
 } from './status-effect'
@@ -28,10 +28,11 @@ function newGasLightAttack(
 	} satisfies AttackDefs
 }
 
-export class GasLightEffect extends CardStatusEffect {
-	props: StatusEffectProps = hiddenStatusEffect
-
-	override onApply(
+export const GasLightEffect: StatusEffect<CardComponent> = {
+	...hiddenStatusEffect,
+	id: 'gas-light',
+	name: 'Gas Light Applied',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -39,44 +40,47 @@ export class GasLightEffect extends CardStatusEffect {
 	) {
 		let {player, opponentPlayer} = target
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!attack.isTargeting(target)) return
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.TRIGGER_GAS_LIGHT,
+			(attack) => {
+				if (!attack.isTargeting(target)) return
+				if (attack.calculateDamage() === 0) return
 
-			// We have an extra take because status effects are executed at the end of the turn.
-			if (attack.type === 'status-effect' && target.slot.inRow()) {
-				let attack = game
-					.newAttack(newGasLightAttack(effect, target.slot.row.entity))
-					.addDamage(effect.entity, 20)
+				// We have an extra take because status effects are executed at the end of the turn.
+				if (attack.type === 'status-effect' && target.slot.inRow()) {
+					let attack = game
+						.newAttack(newGasLightAttack(effect, target.slot.row.entity))
+						.addDamage(effect.entity, 20)
+					effect.remove()
+					executeExtraAttacks(game, [attack])
+					return
+				}
+
+				game.components
+					.new(
+						StatusEffectComponent,
+						GasLightTriggeredEffect,
+						effect.creator.entity,
+					)
+					.apply(target.entity)
 				effect.remove()
-				executeExtraAttacks(game, [attack])
-				return
-			}
-
-			game.components
-				.new(
-					StatusEffectComponent,
-					GasLightTriggeredEffect,
-					effect.creator.entity,
-				)
-				.apply(target.entity)
-			effect.remove()
-		})
+			},
+		)
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
-export class GasLightTriggeredEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'gas-light',
-		name: 'Gas Light',
-		description: 'This hermit will take 20 damage at the end of your turn.',
-	}
-
-	override onApply(
+export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
+	...systemStatusEffect,
+	id: 'gas-light-triggered',
+	icon: 'gas-light',
+	name: 'Gas Light',
+	description: 'This hermit will take 20 damage at the end of your turn.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -92,5 +96,5 @@ export class GasLightTriggeredEffect extends CardStatusEffect {
 			executeExtraAttacks(game, [attack])
 			effect.remove()
 		})
-	}
+	},
 }

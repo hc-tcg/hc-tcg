@@ -1,7 +1,8 @@
+import assert from 'assert'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
-import {PlayerStatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -9,7 +10,13 @@ import type {
 	CurrentCoinFlip,
 	TurnActions,
 } from '../types/game-state'
-import {GameHook, WaterfallHook} from '../types/hooks'
+import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
+import {
+	afterAttack,
+	afterDefence,
+	beforeAttack,
+	beforeDefence,
+} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {ComponentQuery} from './query'
@@ -80,26 +87,31 @@ export class PlayerComponent {
 		/** Hook that returns attacks to execute */
 		getAttack: GameHook<() => AttackModel | null>
 		/** Hook called before the main attack loop, for every attack from our side of the board */
-		beforeAttack: GameHook<(attack: AttackModel) => void>
+		beforeAttack: PriorityHook<
+			(attack: AttackModel) => void,
+			typeof beforeAttack
+		>
 		/** Hook called before the main attack loop, for every attack targeting our side of the board */
-		beforeDefence: GameHook<(attack: AttackModel) => void>
-		/** Hook called for every attack from our side of the board */
-		onAttack: GameHook<(attack: AttackModel) => void>
-		/** Hook called for every attack that targets our side of the board */
-		onDefence: GameHook<(attack: AttackModel) => void>
+		beforeDefence: PriorityHook<
+			(attack: AttackModel) => void,
+			typeof beforeDefence
+		>
 		/**
 		 * Hook called after the main attack loop is completed, for every attack from our side of the board.
 		 * Attacks added from this hook will not be executed.
 		 *
 		 * This is called after actions are marked as completed and blocked
 		 */
-		afterAttack: GameHook<(attack: AttackModel) => void>
+		afterAttack: PriorityHook<(attack: AttackModel) => void, typeof afterAttack>
 		/**
 		 * Hook called after the main attack loop, for every attack targeting our side of the board
 		 *
 		 * This is called after actions are marked as completed and blocked
 		 */
-		afterDefence: GameHook<(attack: AttackModel) => void>
+		afterDefence: PriorityHook<
+			(attack: AttackModel) => void,
+			typeof afterDefence
+		>
 
 		/**
 		 * Hook called at the start of the turn
@@ -128,7 +140,10 @@ export class PlayerComponent {
 		>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<
-			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void
+			(
+				oldActiveHermit: CardComponent | null,
+				newActiveHermit: CardComponent,
+			) => void
 		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
@@ -161,12 +176,10 @@ export class PlayerComponent {
 			afterApply: new GameHook(),
 			getAttackRequests: new GameHook(),
 			getAttack: new GameHook(),
-			beforeAttack: new GameHook(),
-			beforeDefence: new GameHook(),
-			onAttack: new GameHook(),
-			onDefence: new GameHook(),
-			afterAttack: new GameHook(),
-			afterDefence: new GameHook(),
+			beforeAttack: new PriorityHook(),
+			beforeDefence: new PriorityHook(),
+			afterAttack: new PriorityHook(),
+			afterDefence: new PriorityHook(),
 			onTurnStart: new GameHook(),
 			onTurnEnd: new GameHook(),
 			onCoinFlip: new GameHook(),
@@ -247,7 +260,7 @@ export class PlayerComponent {
 		return cards
 	}
 
-	public hasStatusEffect(effect: new () => PlayerStatusEffect) {
+	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(effect),
@@ -263,6 +276,11 @@ export class PlayerComponent {
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
+
+		assert(
+			newRow.playerId === this.entity,
+			"Should not be able to change to another player's row to make active",
+		)
 
 		// Call before active row change hooks - if any of the results are false do not change
 		if (currentActiveRow) {
@@ -311,6 +329,13 @@ export class PlayerComponent {
 					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
 			this.hooks.onActiveRowChange.call(oldHermit, newHermit)
+		} else {
+			let newHermit = newRow.getHermit()
+			if (!newHermit)
+				throw new Error(
+					'Should not be able to change from no active row to an active row with no hermits.',
+				)
+			this.hooks.onActiveRowChange.call(null, newHermit)
 		}
 
 		return true
@@ -325,10 +350,10 @@ export class PlayerComponent {
 			)
 			.map(
 				(card) =>
-					[
-						card,
-						this.game.getPickableSlots(card.card.props.attachCondition),
-					] as [CardComponent, Array<SlotEntity>],
+					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
+						CardComponent,
+						Array<SlotEntity>,
+					],
 			)
 	}
 }

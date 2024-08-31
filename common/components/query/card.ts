@@ -6,14 +6,10 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '..'
-import type Card from '../../cards/base/card'
-import {CardClass} from '../../cards/base/card'
+import {Card} from '../../cards/base/types'
 import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../../entities'
-import {CardStatusEffect} from '../../status-effects/status-effect'
+import {StatusEffect} from '../../status-effects/status-effect'
 import {TypeT} from '../../types/cards'
-
-let CARDS: Record<string, Card>
-import('../../cards').then((mod) => (CARDS = mod.CARDS))
 
 export const isHermit: ComponentQuery<CardComponent> = (_game, card) =>
 	card.isHermit()
@@ -83,13 +79,9 @@ export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
-export function is(
-	...cardTypes: Array<CardClass>
-): ComponentQuery<CardComponent> {
+export function is(...cardTypes: Array<Card>): ComponentQuery<CardComponent> {
 	return (_game, card) =>
-		cardTypes
-			.map((t) => CARDS[t.name].props.numericId)
-			.includes(card.props.numericId)
+		cardTypes.map((t) => t.numericId).includes(card.props.numericId)
 }
 
 export function entity(cardEntity: CardEntity): ComponentQuery<CardComponent> {
@@ -108,7 +100,7 @@ export const afk: ComponentQuery<CardComponent> = (game, card) =>
 	query.every(attached, query.not(slot(query.slot.active)))(game, card)
 
 export const hasStatusEffect = (
-	statusEffect: new () => CardStatusEffect,
+	statusEffect: StatusEffect<CardComponent>,
 ): ComponentQuery<CardComponent> => {
 	return (game, card) => {
 		return game.components.exists(

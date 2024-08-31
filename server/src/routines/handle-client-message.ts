@@ -2,7 +2,9 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
-import {takeEvery} from 'typed-redux-saga'
+import {LocalMessage, localMessages} from 'messages'
+import {put, takeEvery} from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import {chatMessage} from './background/chat'
 import {
 	cancelPrivateGame,
@@ -60,9 +62,16 @@ function* handler(message: RecievedClientMessage) {
 			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
 			)
+		case clientMessages.TURN_ACTION:
+			let actionMessage = message as RecievedClientMessage<typeof message.type>
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_TURN_ACTION,
+				action: actionMessage.payload.action,
+				playerEntity: actionMessage.payload.playerEntity,
+			})
 	}
 }
 
 export default function* handleClientMessage() {
-	yield* takeEvery('*', handler)
+	yield* takeEvery('*', safeCall, handler)
 }

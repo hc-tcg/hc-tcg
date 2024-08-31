@@ -1,5 +1,4 @@
 import {ViewerComponent} from 'common/components/viewer-component'
-import {CONFIG} from 'common/config'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
@@ -20,7 +19,7 @@ export function* sendGameStateOnReconnect(
 	yield* delay(500)
 
 	if (game.state.timer.turnStartTime) {
-		const maxTime = CONFIG.limits.maxTurnTime * 1000
+		const maxTime = game.settings.maxTurnTime * 1000
 		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 		const graceTime = 1000
 		game.state.timer.turnRemaining = remainingTime + graceTime
@@ -55,6 +54,9 @@ export function* statusChangedSaga(
 	const opponentId = getOpponentId(game, playerId)
 	if (!opponentId) return
 	const connectionStatus = game.players[playerId]?.socket.connected
+
+	if (!game.players[opponentId]) return
+
 	broadcast([game.players[opponentId]], {
 		type: serverMessages.OPPONENT_CONNECTION,
 		isConnected: connectionStatus,

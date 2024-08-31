@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import Bed from './bed'
 import DiamondArmor from './diamond-armor'
 import GoldArmor from './gold-armor'
@@ -12,7 +12,7 @@ import Totem from './totem'
 import WaterBucket from './water-bucket'
 import Wolf from './wolf'
 
-const effectCardClasses: Array<CardClass> = [
+const effectCardClasses: Array<Card> = [
 	Bed,
 	Wolf,
 	GoldArmor,

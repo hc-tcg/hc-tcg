@@ -16,12 +16,21 @@ type Props = {
 	closeModal: () => void
 	title?: string
 	centered?: boolean
+	showCloseButton?: boolean
 }
 
-function Modal({children, description, closeModal, title, centered}: Props) {
+function Modal({
+	children,
+	description,
+	closeModal,
+	title,
+	centered,
+	showCloseButton = true,
+}: Props) {
 	function pointerDownHandler(event: any) {
 		event.preventDefault()
 	}
+
 	return (
 		<Dialog onOpenChange={closeModal} defaultOpen>
 			<DialogPortal container={document.getElementById('modal')}>
@@ -30,13 +39,21 @@ function Modal({children, description, closeModal, title, centered}: Props) {
 					className={cn(css.modal, {[css.center]: centered})}
 					aria-describedby={description}
 					onPointerDownOutside={pointerDownHandler}
-					onEscapeKeyDown={closeModal}
+					onEscapeKeyDown={(ev) => {
+						if (showCloseButton) {
+							closeModal()
+						} else {
+							ev.preventDefault()
+						}
+					}}
 				>
 					{title && <DialogTitle className={css.title}>{title}</DialogTitle>}
 					{/* When tabbing around it is more convient to click the buttons only */}
-					<DialogClose className={css.close} tabIndex={-1}>
-						<img src="/images/CloseX.svg" alt="close" />
-					</DialogClose>
+					{showCloseButton && (
+						<DialogClose className={css.close} tabIndex={-1}>
+							<img src="/images/CloseX.svg" alt="close" />
+						</DialogClose>
+					)}
 					{children}
 				</DialogContent>
 			</DialogPortal>

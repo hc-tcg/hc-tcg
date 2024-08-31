@@ -1,4 +1,4 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 import Bow from './bow'
 import Chest from './chest'
 import ChorusFruit from './chorus-fruit'
@@ -30,7 +30,7 @@ import SplashPotionOfPoison from './splash-potion-of-poison'
 import Spyglass from './spyglass'
 import TNT from './tnt'
 
-const singleUseCardClasses: Array<CardClass> = [
+const singleUseCardClasses: Array<Card> = [
 	InstantHealth,
 	SplashPotionOfHealing,
 	InstantHealthII,

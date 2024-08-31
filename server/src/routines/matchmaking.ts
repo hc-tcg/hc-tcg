@@ -7,7 +7,7 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
+import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -51,7 +51,8 @@ function setupGame(
 			model: player2,
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-		code,
+		gameSettingsFromEnv(),
+		{code},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -80,7 +81,8 @@ function* gameManager(game: GameModel) {
 
 		const gameType =
 			playerIds.length === 2 ? (game.code ? 'Private' : 'Public') : 'PvE'
-		console.log(
+		console.info(
+			`${game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
 			'Total games:',
@@ -122,7 +124,7 @@ function* gameManager(game: GameModel) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
 				if (!game.endInfo.reason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -297,7 +299,8 @@ function setupSolitareGame(
 			model: opponent,
 			deck: opponent.deck,
 		},
-		'solitare',
+		gameSettingsFromEnv(),
+		{code: 'solitare', randomizeOrder: false},
 	)
 
 	const playerEntities = game.components.filterEntities(PlayerComponent)

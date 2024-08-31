@@ -4,31 +4,25 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class OriginalXbEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'originalxb',
-		name: 'Get Good',
-		description: 'Draw an additional card at the end of your turn.',
-	}
-
-	override onApply(
+const OriginalXbEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'originalxb',
+	icon: 'originalxb',
+	name: 'Get Good',
+	description: 'Draw an additional card at the end of your turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
-		observer.oneShot(player.hooks.onTurnEnd, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			player.draw(1)
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default OriginalXbEffect

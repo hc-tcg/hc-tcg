@@ -4,24 +4,19 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	damageEffect,
-} from './status-effect'
+import {StatusEffect, damageEffect} from './status-effect'
 
-class FireEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...damageEffect,
-		icon: 'fire',
-		name: 'Burn',
-		description:
-			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
-		applyLog: (values) => `${values.target} was $eBurned$`,
-	}
-
-	override onApply(
+const FireEffect: StatusEffect<CardComponent> = {
+	...damageEffect,
+	id: 'fire',
+	icon: 'fire',
+	name: 'Burn',
+	description:
+		"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
+	applyLog: (values) => `${values.target} was $eBurned$`,
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
@@ -44,10 +39,14 @@ class FireEffect extends CardStatusEffect {
 			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
-		observer.subscribe(player.hooks.afterDefence, (_attack) => {
-			if (!target.isAlive()) effect.remove()
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(_attack) => {
+				if (!target.isAlive()) effect.remove()
+			},
+		)
+	},
 }
 
 export default FireEffect

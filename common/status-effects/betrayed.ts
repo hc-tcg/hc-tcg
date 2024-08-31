@@ -6,23 +6,18 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {beforeAttack} from '../types/priorities'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class BetrayedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'betrayed',
-		name: 'Betrayed',
-		description:
-			'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
-	}
-
-	override onApply(
+const BetrayedEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'betrayed',
+	icon: 'betrayed',
+	name: 'Betrayed',
+	description:
+		'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -40,8 +35,9 @@ class BetrayedEffect extends PlayerStatusEffect {
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
 			game.removeBlockedActions(
-				this.props.icon,
+				this.icon,
 				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
 				'END_TURN',
 			)
 
@@ -62,8 +58,16 @@ class BetrayedEffect extends PlayerStatusEffect {
 			// Return if no energy
 			if (
 				!activeHermit.isHermit() ||
-				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
-					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
+				(!hasEnoughEnergy(
+					energy,
+					activeHermit.props.primary.cost,
+					game.settings.noItemRequirements,
+				) &&
+					!hasEnoughEnergy(
+						energy,
+						activeHermit.props.secondary.cost,
+						game.settings.noItemRequirements,
+					))
 			) {
 				return
 			}
@@ -76,10 +80,11 @@ class BetrayedEffect extends PlayerStatusEffect {
 				return
 			}
 
-			// The opponent needs to attack in this case, so prevent them switching or ending turn
+			// The opponent needs to attack in this case, so prevent them switching, using only a single use attack, or ending turn
 			game.addBlockedActions(
-				this.props.icon,
+				this.icon,
 				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
 				'END_TURN',
 			)
 		}
@@ -113,30 +118,31 @@ class BetrayedEffect extends PlayerStatusEffect {
 			},
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
-			observer.unsubscribe(player.hooks.beforeAttack)
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_CHANGE_TARGET,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
 
-			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
-				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
-			}
+				if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
+					attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
+				}
 
-			// They attacked now, they can end turn or change hermits with Chorus Fruit
-			game.removeBlockedActions(
-				this.props.icon,
-				'CHANGE_ACTIVE_HERMIT',
-				'END_TURN',
-			)
-		})
-
-		observer.subscribe(player.hooks.afterAttack, () => {
-			effect.remove()
-		})
+				// They attacked now, they can end turn or change hermits with Chorus Fruit
+				game.removeBlockedActions(
+					this.icon,
+					'CHANGE_ACTIVE_HERMIT',
+					'SINGLE_USE_ATTACK',
+					'END_TURN',
+				)
+				effect.remove()
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default BetrayedEffect

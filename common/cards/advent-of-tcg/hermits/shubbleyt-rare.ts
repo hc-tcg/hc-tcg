@@ -1,10 +1,10 @@
 import {CardComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ShubbleYTRare extends Card {
+class ShubbleYTRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'shubbleyt_rare',
@@ -41,8 +41,8 @@ class ShubbleYTRare extends Card {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Shelby - Parallel World',
 						modalDescription: 'Place your top card on bottom of deck?',
