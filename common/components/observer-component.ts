@@ -51,12 +51,7 @@ export class ObserverComponent {
 		this.hooks.push(hook)
 	}
 
-	/** Subscribe to a priority hook with this observer. This hook will be removed when the observer is destroyed.
-	 * Cards and status effects will destroy their own observers, so you as the user do not need to
-	 * worry about this!
-	 * If you are looking for a hook that will be called after the observer is destroyed (the card is removed
-	 * from the board), please use a status effect instead.
-	 */
+	/** Subscribe to a priority hook with this observer. Functions similarly to `subscribe`. */
 	public subscribeWithPriority<
 		Args extends (...any: any) => any,
 		Priorities extends PrioritiesT,
