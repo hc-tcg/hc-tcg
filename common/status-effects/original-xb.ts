@@ -18,7 +18,7 @@ const OriginalXbEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
-		observer.oneShot(player.hooks.onTurnEnd, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			player.draw(1)
 			effect.remove()
 		})

@@ -64,20 +64,6 @@ export class ObserverComponent {
 		this.hooks.push(hook)
 	}
 
-	/** Subscribe a specific hook and run the hook once. This hook is removed after it is called.
-	 * This hook is not removed when the observer is detached.
-	 */
-	public oneShot<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
-		fun: Args,
-	) {
-		// @ts-ignore
-		let proxy = hook.add(this.entity, (...args) => {
-			hook.removeByProxy(proxy)
-			return fun(...args)
-		})
-	}
-
 	/** Stop listening to a specific hook */
 	public unsubscribe(hook: Hook<ObserverEntity, any> | PriorityHook<any, any>) {
 		hook.remove(this.entity)

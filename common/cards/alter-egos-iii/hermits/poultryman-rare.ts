@@ -46,13 +46,22 @@ const PoultryManRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				game.components
-					.find(
-						CardComponent,
-						query.card.slot(query.slot.singleUse),
-						query.card.is(Egg),
+				const singleUse = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+					query.card.is(Egg),
+				)
+
+				if (singleUse) {
+					observer.subscribeWithPriority(
+						player.hooks.afterAttack,
+						afterAttack.UPDATE_POST_ATTACK_STATE,
+						() => {
+							singleUse.draw(player.entity)
+							observer.unsubscribe(player.hooks.afterAttack)
+						},
 					)
-					?.draw(player.entity)
+				}
 			},
 		)
 	},
