@@ -2,6 +2,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -44,22 +45,26 @@ const TinFoilChefUltraRare: Hermit = {
 			query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (opponentPlayer.activeRow === null) return
-			// Can't discard two effect cards on the same hermit
-			if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
-			if (!game.components.exists(CardComponent, targetCardQuery)) return
+				if (opponentPlayer.activeRow === null) return
+				// Can't discard two effect cards on the same hermit
+				if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
+				if (!game.components.exists(CardComponent, targetCardQuery)) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
-			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
+				hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
 
-			game.components.find(CardComponent, targetCardQuery)?.discard()
-		})
+				game.components.find(CardComponent, targetCardQuery)?.discard()
+			},
+		)
 	},
 }
 

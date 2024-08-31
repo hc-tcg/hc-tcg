@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -32,6 +33,7 @@ const GoldenAxe: SingleUse = {
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -46,11 +48,15 @@ const GoldenAxe: SingleUse = {
 			return axeAttack
 		})
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity)) {
-				applySingleUse(game)
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.isAttacker(component.entity)) {
+					applySingleUse(game)
+				}
+			},
+		)
 	},
 }
 

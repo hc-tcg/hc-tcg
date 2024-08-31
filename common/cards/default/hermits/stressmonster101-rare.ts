@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -33,30 +34,34 @@ const StressMonster101Rare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (
-				!attack.isAttacker(component.entity) ||
-				attack.type !== 'secondary' ||
-				attack.isBacklash
-			)
-				return
-			if (!component.slot.inRow()) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (
+					!attack.isAttacker(component.entity) ||
+					attack.type !== 'secondary' ||
+					attack.isBacklash
+				)
+					return
+				if (!component.slot.inRow()) return
 
-			const backlashAttack = game.newAttack({
-				attacker: component.entity,
-				target: player.activeRowEntity,
-				type: 'secondary',
-				isBacklash: true,
-				log: (values) => ` and took ${values.damage} backlash damage`,
-			})
-			const attackDamage = component.slot.row.health
-			console.log(attackDamage)
-			if (attackDamage === null) return
-			attack.addDamage(component.entity, attackDamage)
-			backlashAttack.addDamage(component.entity, attackDamage)
+				const backlashAttack = game.newAttack({
+					attacker: component.entity,
+					target: player.activeRowEntity,
+					type: 'secondary',
+					isBacklash: true,
+					log: (values) => ` and took ${values.damage} backlash damage`,
+				})
+				const attackDamage = component.slot.row.health
+				console.log(attackDamage)
+				if (attackDamage === null) return
+				attack.addDamage(component.entity, attackDamage)
+				backlashAttack.addDamage(component.entity, attackDamage)
 
-			attack.addNewAttack(backlashAttack)
-		})
+				attack.addNewAttack(backlashAttack)
+			},
+		)
 	},
 }
 

@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
@@ -38,9 +39,13 @@ const FireEffect: StatusEffect<CardComponent> = {
 			executeExtraAttacks(game, [statusEffectAttack])
 		})
 
-		observer.subscribe(player.hooks.afterDefence, (_attack) => {
-			if (!target.isAlive()) effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(_attack) => {
+				if (!target.isAlive()) effect.remove()
+			},
+		)
 	},
 }
 

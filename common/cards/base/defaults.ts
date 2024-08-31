@@ -67,6 +67,8 @@ export const hermit = {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	): AttackModel | null {
+		if (hermitAttackType === 'single-use') return null
+
 		const attack = game.newAttack({
 			attacker: component.entity,
 			target: game.components.findEntity(

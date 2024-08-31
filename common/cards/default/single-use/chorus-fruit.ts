@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import {afterAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -47,33 +48,34 @@ const ChorusFruit: SingleUse = {
 	) {
 		const {player} = component
 
-		let switchedActiveHermit = false
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (switchedActiveHermit) return
-			switchedActiveHermit = true
+				applySingleUse(game, component.slot)
 
-			applySingleUse(game, component.slot)
+				observer.unsubscribe(player.hooks.afterAttack)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick one of your Hermits to become the new active Hermit',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						player.changeActiveRow(pickedSlot.row)
-					} else {
-						switchedActiveHermit = false
-					}
-				},
-			})
-		})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick one of your Hermits to become the new active Hermit',
+					canPick: query.every(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (pickedSlot.row.entity !== player.activeRowEntity) {
+							player.changeActiveRow(pickedSlot.row)
+						}
+					},
+				})
+			},
+		)
 	},
 }
 

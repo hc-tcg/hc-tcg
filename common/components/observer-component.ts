@@ -1,6 +1,7 @@
 import {Entity, ObserverEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
-import type {Hook} from '../types/hooks'
+import type {Hook, PriorityHook} from '../types/hooks'
+import {PrioritiesT, Priority, PriorityDict} from '../types/priorities'
 import type {CardComponent} from './card-component'
 import type {StatusEffectComponent} from './status-effect-component'
 
@@ -12,7 +13,7 @@ export class ObserverComponent {
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<CardComponent | StatusEffectComponent>
-	private hooks: Array<Hook<any, any>>
+	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
 	constructor(
 		game: GameModel,
@@ -50,8 +51,21 @@ export class ObserverComponent {
 		this.hooks.push(hook)
 	}
 
+	/** Subscribe to a priority hook with this observer. Functions similarly to `subscribe`. */
+	public subscribeWithPriority<
+		Args extends (...any: any) => any,
+		Priorities extends PrioritiesT,
+	>(
+		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
+		priority: Priority<Priorities>,
+		fun: Args,
+	) {
+		hook.add(this.entity, priority, fun)
+		this.hooks.push(hook)
+	}
+
 	/** Stop listening to a specific hook */
-	public unsubscribe(hook: Hook<ObserverEntity, any>) {
+	public unsubscribe(hook: Hook<ObserverEntity, any> | PriorityHook<any, any>) {
 		hook.remove(this.entity)
 	}
 

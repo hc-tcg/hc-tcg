@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -37,34 +38,38 @@ const JinglerRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (opponentPlayer.getHand().length === 0) return
+				if (opponentPlayer.getHand().length === 0) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
-			game.addPickRequest({
-				player: opponentPlayer.entity,
-				id: component.entity,
-				message: 'Pick 1 card from your hand to discard',
-				canPick: query.slot.hand,
-				onResult(pickedSlot) {
-					pickedSlot.getCard()?.discard()
-				},
-				onTimeout() {
-					game.components
-						.find(
-							CardComponent,
-							query.card.slot(query.slot.hand),
-							query.card.opponentPlayer,
-						)
-						?.discard()
-				},
-			})
-		})
+				game.addPickRequest({
+					player: opponentPlayer.entity,
+					id: component.entity,
+					message: 'Pick 1 card from your hand to discard',
+					canPick: query.slot.hand,
+					onResult(pickedSlot) {
+						pickedSlot.getCard()?.discard()
+					},
+					onTimeout() {
+						game.components
+							.find(
+								CardComponent,
+								query.card.slot(query.slot.hand),
+								query.card.opponentPlayer,
+							)
+							?.discard()
+					},
+				})
+			},
+		)
 	},
 }
 

@@ -59,52 +59,6 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	}
 }
 
-/**
- * Call attack hooks for each attack that has an attacker
- */
-function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
-	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-		const attack = attacks[attackIndex]
-		if (!attack.attacker) continue
-
-		// The hooks we call are determined by the source of the attack
-		const player = attack.player
-
-		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack], (observer) => {
-			let entity = game.components.get(
-				game.components.get(observer)?.wrappingEntity || null,
-			)
-			if (entity instanceof CardComponent)
-				return !shouldIgnoreCard(attack, game, entity)
-			return true
-		})
-	}
-}
-
-/**
- * Call defence hooks, based on each attack's target
- */
-function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
-	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-		const attack = attacks[attackIndex]
-		if (!attack.target) continue
-
-		// The hooks we call are determined by the target of the attack
-		const player = attack.target.player
-
-		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack], (observer) => {
-			let entity = game.components.get(
-				game.components.get(observer)?.wrappingEntity || null,
-			)
-			if (entity instanceof CardComponent)
-				return !shouldIgnoreCard(attack, game, entity)
-			return true
-		})
-	}
-}
-
 function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
@@ -159,28 +113,31 @@ function shouldIgnoreCard(
 }
 
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
-	// STEP 1 - Call before attack and defence for all attacks
-	runBeforeAttackHooks(game, attacks)
-	runBeforeDefenceHooks(game, attacks)
+	const allAttacks: Array<AttackModel> = []
 
-	// STEP 2 - Call on attack and defence for all attacks
-	runOnAttackHooks(game, attacks)
-	runOnDefenceHooks(game, attacks)
+	while (attacks.length > 0) {
+		// STEP 1 - Call before attack and defence for all attacks
+		runBeforeAttackHooks(game, attacks)
+		runBeforeDefenceHooks(game, attacks)
 
-	// STEP 3 - Execute all attacks
-	attacks.forEach((attack) => {
-		attack.target?.damage(attack.calculateDamage())
-		let weaknessAttack = createWeaknessAttack(game, attack)
-		if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+		const nextAttacks: Array<AttackModel> = []
+		// STEP 3 - Execute all attacks
+		attacks.forEach((attack) => {
+			attack.target?.damage(attack.calculateDamage())
+			let weaknessAttack = createWeaknessAttack(game, attack)
+			if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
-		if (attack.nextAttacks.length > 0) {
-			executeAttacks(game, attack.nextAttacks)
-		}
-	})
+			if (attack.nextAttacks.length > 0) {
+				nextAttacks.push(...attack.nextAttacks)
+			}
+		})
+		allAttacks.push(...attacks)
+		attacks = nextAttacks
+	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
-	runAfterAttackHooks(game, attacks)
-	runAfterDefenceHooks(game, attacks)
+	runAfterAttackHooks(game, allAttacks)
+	runAfterDefenceHooks(game, allAttacks)
 }
 
 export function executeExtraAttacks(

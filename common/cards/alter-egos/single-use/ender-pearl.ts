@@ -58,7 +58,8 @@ const EnderPearl: SingleUse = {
 				// Do 10 damage
 				const attack = game
 					.newAttack({
-						attacker: pickedSlot.getCard()?.entity,
+						attacker: component.entity,
+						player: player.entity,
 						target: player.activeRowEntity,
 						type: 'effect',
 						isBacklash: true,

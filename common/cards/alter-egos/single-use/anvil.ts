@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -56,6 +57,7 @@ const Anvil: SingleUse = {
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
+							player: player.entity,
 							target: row.entity,
 							type: 'effect',
 							log:
@@ -89,12 +91,16 @@ const Anvil: SingleUse = {
 			return attack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (attack.isAttacker(component.entity)) {
-				applySingleUse(game, component.slot)
-				observer.unsubscribe(player.hooks.onAttack)
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.isAttacker(component.entity)) {
+					applySingleUse(game, component.slot)
+					observer.unsubscribe(player.hooks.beforeAttack)
+				}
+			},
+		)
 	},
 }
 
