@@ -5,6 +5,7 @@
 	z-index: 119;
 	backdrop-filter: blur(2px);
 	animation: overlayShow 500ms cubic-bezier(0.16, 1, 0.3, 1);
+	pointer-events: none;
 }
 
 .modal {
