@@ -19,7 +19,7 @@ function Modal({
 }: Props) {
 	const childrenRef = useRef(null)
 
-	let focusableModalElements: any = null
+	let focusableModalElements: any = []
 	let firstElement: any = null
 	let lastElement: any = null
 
@@ -28,6 +28,7 @@ function Modal({
 		focusableModalElements = (childrenRef as any).current.querySelectorAll(
 			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
 		)
+		if (focusableModalElements.length === 0) return
 		focusableModalElements[focusableModalElements.length - 1].focus()
 		firstElement = focusableModalElements[0]
 		lastElement = focusableModalElements[focusableModalElements.length - 1]
@@ -40,10 +41,26 @@ function Modal({
 
 		// https://dev.to/mohitkyadav/how-to-trap-focus-in-react-3in8
 		if (e.key === 'Tab') {
-			if (!e.shiftKey && document.activeElement === lastElement) {
+  		console.info([...focusableModalElements.values()])
+			if (
+				![...focusableModalElements.values()].includes(
+					document.activeElement,
+				) &&
+				lastElement
+			) {
+				lastElement.focus()
+			} else if (
+				!e.shiftKey &&
+				document.activeElement === lastElement &&
+				firstElement
+			) {
 				firstElement.focus()
 				e.preventDefault()
-			} else if (e.shiftKey && document.activeElement === firstElement) {
+			} else if (
+				e.shiftKey &&
+				document.activeElement === firstElement &&
+				lastElement
+			) {
 				lastElement.focus()
 				e.preventDefault()
 			}
