@@ -62,9 +62,9 @@ const ZombieCleoRare: Hermit = {
 		newAttack.updateLog((values) => {
 			if (
 				values.attack.getDamageMultiplier() === 0 ||
-				values.attack.target === null
+				values.attack.target?.getHermit() === null
 			) {
-				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked and missed`
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
 			}
 			return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 				values.target
