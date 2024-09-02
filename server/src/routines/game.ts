@@ -714,10 +714,7 @@ function* checkDeckedOut(game: GameModel) {
 		game.settings.unlimitedCards
 	)
 		return []
-	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {
-		if (player.deckedOut) return [player]
-		return []
-	})
+	return [game.currentPlayer, game.opponentPlayer].filter((player) => player.deckedOut)
 }
 
 function* gameSaga(game: GameModel) {

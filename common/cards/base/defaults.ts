@@ -78,10 +78,17 @@ export const hermit = {
 			),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
-			log: (values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+			log: (values) => {
+				if (
+					values.attack.getDamageMultiplier() === 0 ||
+					values.attack.target === null
+				) {
+					return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked and missed`
+				}
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with ${values.attackName} for ${values.damage} damage`,
+				} with ${values.attackName} for ${values.damage} damage`
+			},
 		})
 
 		if (attack.type === 'primary') {

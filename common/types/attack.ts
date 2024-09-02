@@ -1,6 +1,7 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 import {ComponentQuery} from '../components/query'
 import {Entity, PlayerEntity, RowEntity} from '../entities'
+import { AttackModel } from '../models/attack-model'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
@@ -35,6 +36,8 @@ export type AttackLog = {
 	coinFlip: string | null
 	/**The previously defined log entry.*/
 	previousLog?: string
+	/**The attack */
+	attack: AttackModel
 }
 
 export type AttackerEntity =
