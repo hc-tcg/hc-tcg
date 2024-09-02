@@ -28,7 +28,7 @@ type ComponentSetupOptions = {
 }
 
 export type OpponentDefs = PlayerDefs & {
-	deck: Array<number | string | CardClass>
+	deck: Array<number | string | Card>
 	virtualAI: AIClass
 }
 

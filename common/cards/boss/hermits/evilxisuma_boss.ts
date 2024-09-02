@@ -16,8 +16,15 @@ import {
 import PoisonEffect from '../../../status-effects/poison'
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
+import {
+	afterAttack,
+	afterDefence,
+	beforeAttack,
+	beforeDefence,
+} from '../../../types/priorities'
 import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
-import {CardClass, InstancedValue} from '../../base/card'
+import {InstancedValue} from '../../base/card'
+import {Hermit} from '../../base/types'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
 type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'
@@ -99,39 +106,37 @@ function destroyCard(game: GameModel, card: CardComponent) {
 	game.components.delete(card.entity)
 }
 
-class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
-	constructor(cardClass: CardClass) {
-		super(cardClass)
+/** Determines whether the player attempting to use this is the boss */
+function isBeingMocked(game: GameModel, component: CardComponent) {
+	return (
+		game.components.filter(
+			RowComponent,
+			query.row.player(component.slot.player.entity),
+		).length !== 1
+	)
+}
 
-		this.props = {
-			...this.props, // EvilXisumaRareHermitCard.props
-			id: 'evilxisuma_boss',
-			numericId: -1,
-			expansion: 'boss',
-			health: 300,
-		}
-	}
+const damageDisabled = new InstancedValue<boolean>(() => false)
 
-	/** Determines whether the player attempting to use this is the boss */
-	private isBeingMocked(game: GameModel, component: CardComponent) {
-		return (
-			game.components.filter(
-				RowComponent,
-				query.row.player(component.slot.player.entity),
-			).length !== 1
-		)
-	}
+const EvilXisumaBossHermitCard: Hermit = {
+	...EvilXisumaRareHermitCard,
+	id: 'evilxisuma_boss',
+	numericId: -1,
+	expansion: 'boss',
+	health: 300,
 
-	damageDisabled = new InstancedValue<boolean>(() => false)
-
-	override getAttack(
+	getAttack(
 		game: GameModel,
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	) {
 		// Players who imitate this card should use regular attacks and not the boss'
-		if (this.isBeingMocked(game, component)) {
-			return super.getAttack(game, component, hermitAttackType)
+		if (isBeingMocked(game, component)) {
+			return EvilXisumaRareHermitCard.getAttack(
+				game,
+				component,
+				hermitAttackType,
+			)
 		}
 
 		const bossAttack = bossAttacks.get(component)
@@ -158,7 +163,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 				MultiturnSecondaryAttackDisabledEffect,
 			),
 		)
-		this.damageDisabled.set(component, disabled)
+		damageDisabled.set(component, disabled)
 
 		if (bossAttack[2] === 'EFFECTCARD') {
 			// Remove effect card before attack is executed to mimic Curse of Vanishing
@@ -198,15 +203,15 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		}
 
 		return attack
-	}
+	},
 
-	override onAttach(
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		if (this.isBeingMocked(game, component)) {
-			super.onAttach(game, component, observer)
+		if (isBeingMocked(game, component)) {
+			EvilXisumaRareHermitCard.onAttach(game, component, observer)
 			return
 		}
 
@@ -231,86 +236,94 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			return availableEnergy.length ? availableEnergy : ['balanced', 'balanced']
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			if (attack.type !== 'primary' && attack.type !== 'secondary') return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
-			const bossAttack = bossAttacks.get(component)
+				const bossAttack = bossAttacks.get(component)
 
-			if (bossAttack[1] !== undefined) {
-				switch (bossAttack[1]) {
-					case 'HEAL150':
-						// Heal for 150 damage
-						if (component.slot.inRow()) component.slot.row.heal(150)
-						break
-					case 'ABLAZE':
-						// Set opponent ablaze
-						if (this.damageDisabled.get(component)) break
-						const opponentActiveHermit = game.components.findEntity(
-							CardComponent,
-							query.card.isHermit,
-							query.card.row(query.row.active),
-						)
-						if (opponentActiveHermit)
-							game.components
-								.new(StatusEffectComponent, FireEffect, component.entity)
-								.apply(opponentActiveHermit)
-						break
+				if (bossAttack[1] !== undefined) {
+					switch (bossAttack[1]) {
+						case 'HEAL150':
+							// Heal for 150 damage
+							if (component.slot.inRow()) component.slot.row.heal(150)
+							break
+						case 'ABLAZE':
+							// Set opponent ablaze
+							if (damageDisabled.get(component)) break
+							const opponentActiveHermit = game.components.findEntity(
+								CardComponent,
+								query.card.isHermit,
+								query.card.row(query.row.active),
+							)
+							if (opponentActiveHermit)
+								game.components
+									.new(StatusEffectComponent, FireEffect, component.entity)
+									.apply(opponentActiveHermit)
+							break
+					}
 				}
-			}
 
-			this.damageDisabled.clear(component)
-		})
+				damageDisabled.clear(component)
+			},
+		)
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			if (attack.type !== 'primary' && attack.type !== 'secondary') return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
-			const bossAttack = bossAttacks.get(component)
-			if (bossAttack[2] === 'ITEMCARD') {
-				// Remove an item card attached to the opponent's active Hermit
-				const pickCondition = query.every(
-					query.slot.opponent,
-					query.slot.active,
-					query.slot.item,
-					query.not(query.slot.empty),
-					(_game, slot) => slot.getCard()?.isItem() === true,
-				)
-				if (
-					opponentPlayer.activeRow?.health &&
-					game.components.exists(SlotComponent, pickCondition)
-				) {
-					game.addPickRequest({
-						player: opponentPlayer.entity,
-						id: component.entity,
-						message: 'Choose an item to discard from your active Hermit.',
-						canPick: pickCondition,
-						onResult(pickedSlot) {
-							if (!pickedSlot.inRow()) return
+				const bossAttack = bossAttacks.get(component)
+				if (bossAttack[2] === 'ITEMCARD') {
+					// Remove an item card attached to the opponent's active Hermit
+					const pickCondition = query.every(
+						query.slot.opponent,
+						query.slot.active,
+						query.slot.item,
+						query.not(query.slot.empty),
+						(_game, slot) => slot.getCard()?.isItem() === true,
+					)
+					if (
+						opponentPlayer.activeRow?.health &&
+						game.components.exists(SlotComponent, pickCondition)
+					) {
+						game.addPickRequest({
+							player: opponentPlayer.entity,
+							id: component.entity,
+							message: 'Choose an item to discard from your active Hermit.',
+							canPick: pickCondition,
+							onResult(pickedSlot) {
+								if (!pickedSlot.inRow()) return
 
-							const playerRow = pickedSlot.row
+								const playerRow = pickedSlot.row
 
-							const hermitCard = playerRow.getHermit()
-							if (!hermitCard || !playerRow.health) return
+								const hermitCard = playerRow.getHermit()
+								if (!hermitCard || !playerRow.health) return
 
-							const card = pickedSlot.getCard()
-							if (!card || !card.isItem()) return
+								const card = pickedSlot.getCard()
+								if (!card || !card.isItem()) return
 
-							card.discard()
+								card.discard()
 
-							return 'SUCCESS'
-						},
-						onTimeout() {
-							// Discard the first available item card
-							game.components
-								.find(CardComponent, query.card.slot(pickCondition))
-								?.discard()
-						},
-					})
+								return 'SUCCESS'
+							},
+							onTimeout() {
+								// Discard the first available item card
+								game.components
+									.find(CardComponent, query.card.slot(pickCondition))
+									?.discard()
+							},
+						})
+					}
 				}
-			}
-			bossAttacks.clear(component)
-		})
+				bossAttacks.clear(component)
+			},
+		)
 
 		observer.subscribe(opponentPlayer.hooks.afterApply, () => {
 			// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
@@ -324,50 +337,58 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			removeImmuneEffects(game, component.slot)
 		})
 		let lastAttackDisabledByAmnesia = false
-		observer.subscribe(player.hooks.onDefence, (_attack) => {
-			removeImmuneEffects(game, component.slot)
-			// Prevent Grand Architect's "Amnesia" disabling boss damage consecutively
-			// Evil Xisuma's "Derp Coin" disables after a modal request, so this shouldn't nerf consecutive heads
-			const amnesiaEffect = game.components.find(
-				StatusEffectComponent<CardComponent>,
-				query.effect.targetIsCardAnd(query.card.entity(component.entity)),
-				query.effect.is(
-					MultiturnPrimaryAttackDisabledEffect,
-					MultiturnSecondaryAttackDisabledEffect,
-				),
-			)
-			if (lastAttackDisabledByAmnesia) {
-				if (amnesiaEffect) amnesiaEffect.remove()
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.EFFECT_REMOVE_STATUS,
+			(_attack) => {
+				removeImmuneEffects(game, component.slot)
+				// Prevent Grand Architect's "Amnesia" disabling boss damage consecutively
+				// Evil Xisuma's "Derp Coin" disables after a modal request, so this shouldn't nerf consecutive heads
+				const amnesiaEffect = game.components.find(
+					StatusEffectComponent<CardComponent>,
+					query.effect.targetIsCardAnd(query.card.entity(component.entity)),
+					query.effect.is(
+						MultiturnPrimaryAttackDisabledEffect,
+						MultiturnSecondaryAttackDisabledEffect,
+					),
+				)
+				if (lastAttackDisabledByAmnesia) {
+					if (amnesiaEffect) amnesiaEffect.remove()
 
-				lastAttackDisabledByAmnesia = false
-			} else if (amnesiaEffect) {
-				lastAttackDisabledByAmnesia = true
-			}
-		})
+					lastAttackDisabledByAmnesia = false
+				} else if (amnesiaEffect) {
+					lastAttackDisabledByAmnesia = true
+				}
+			},
+		)
 
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
-		observer.subscribeBefore(player.hooks.afterDefence, () => {
-			if (
-				!component.slot.inRow() ||
-				component.slot.row.health === null ||
-				component.slot.row.health > 0
-			)
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			() => {
+				if (
+					!component.slot.inRow() ||
+					component.slot.row.health === null ||
+					component.slot.row.health > 0
+				)
+					return
 
-			if (player.lives > 1) {
-				// TODO: Death entry appears in log before the attack entry
-				game.battleLog.addDeathEntry(player.entity, component.slot.row.entity)
+				if (player.lives > 1) {
+					// TODO: Death entry appears in log before the attack entry
+					game.battleLog.addDeathEntry(player.entity, component.slot.row.entity)
 
-				component.slot.row.health = 300
-				player.lives -= 1
+					component.slot.row.health = 300
+					player.lives -= 1
 
-				// Reward card
-				opponentPlayer.draw(1)
-			} else {
-				observer.unsubscribe(player.hooks.afterDefence)
-			}
-		})
-	}
+					// Reward card
+					opponentPlayer.draw(1)
+				} else {
+					observer.unsubscribe(player.hooks.afterDefence)
+				}
+			},
+		)
+	},
 }
 
 export default EvilXisumaBossHermitCard

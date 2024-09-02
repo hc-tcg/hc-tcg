@@ -7,35 +7,29 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {serverMessages} from '../socket-messages/server-messages'
-import {
-	CardStatusEffect,
-	Counter,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
-class ExBossNineStatusEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...systemStatusEffect,
-		icon: 'exboss-nine',
-		name: 'Boss Rules',
-		description:
-			"At the end of EX's ninth turn, an additional move will be performed.",
-		counter: 8, // Starts at 8 and triggers at 0 turns remaining
-		counterType: 'turns',
-	}
+const ExBossNineStatusEffect: Counter<CardComponent> = {
+	...systemStatusEffect,
+	id: 'exboss-nine',
+	icon: 'exboss-nine',
+	name: 'Boss Rules',
+	description:
+		"At the end of EX's ninth turn, an additional move will be performed.",
+	counter: 8, // Starts at 8 and triggers at 0 turns remaining
+	counterType: 'turns',
 
-	override onApply(
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = target
-		if (effect.counter === null) effect.counter = this.props.counter
+		if (effect.counter === null) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (effect.counter === null) effect.counter = this.props.counter
+			if (effect.counter === null) effect.counter = this.counter
 			effect.counter -= 1
 		})
 
@@ -86,7 +80,7 @@ class ExBossNineStatusEffect extends CardStatusEffect {
 			})
 			game.battleLog.sendLogs()
 		})
-	}
+	},
 }
 
 export default ExBossNineStatusEffect

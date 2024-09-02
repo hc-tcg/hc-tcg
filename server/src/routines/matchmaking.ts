@@ -346,16 +346,6 @@ export function* createBossGame(
 
 	const newBossGame = setupSolitareGame(player, EX_BOSS)
 	newBossGame.state.isBossGame = true
-	if (
-		newBossGame.components.find(
-			ViewerComponent,
-			(game, viewer) =>
-				!viewer.spectator &&
-				viewer.playerOnLeftEntity === game.currentPlayerEntity, // if there is a non-spectator viewer component for the 0th player (goes second)
-		)
-	) {
-		newBossGame.state.order.reverse()
-	}
 
 	function destroyRow(row: RowComponent) {
 		newBossGame.components

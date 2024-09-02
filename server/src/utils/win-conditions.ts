@@ -47,14 +47,13 @@ export const getGamePlayerOutcome = (
 	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
 	if (!deadPlayerEntity) return 'unknown'
 
-	let deadPlayer = game.components.find(
+	const referencePlayer = game.components.find(
 		ViewerComponent,
-		(_game, viewer) =>
-			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+		(_game, viewer) => viewer.playerId === playerId,
 	)
-	if (!deadPlayer) return 'unknown'
+	if (!referencePlayer) return 'unknown'
 
-	if (deadPlayer.playerId === playerId) return 'you_lost'
+	if (deadPlayerEntity === referencePlayer.playerOnLeftEntity) return 'you_lost'
 	return 'you_won'
 }
 
@@ -69,11 +68,11 @@ export const getWinner = (game: GameModel, endResult: EndResult) => {
 	if (game.endInfo.deadPlayerEntities.length === 2) return null
 	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
 	if (!deadPlayerEntity) return null
-	let deadPlayer = game.components.find(
+	let winner = game.components.find(
 		ViewerComponent,
 		(_game, viewer) =>
-			!viewer.spectator && viewer.playerOnLeft.entity === deadPlayerEntity,
+			!viewer.spectator && viewer.playerOnLeft.entity !== deadPlayerEntity,
 	)
-	if (!deadPlayer) return null
-	return getOpponentId(game, deadPlayer.playerId)
+	if (!winner) return null
+	return winner.playerId
 }

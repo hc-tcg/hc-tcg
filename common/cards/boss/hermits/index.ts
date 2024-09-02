@@ -1,7 +1,7 @@
-import {CardClass} from '../../base/card'
+import {Card} from '../../base/types'
 // boss cards
 import EvilXisumaBossHermitCard from './evilxisuma_boss'
 
-const hermitCardClasses: Array<CardClass> = [EvilXisumaBossHermitCard]
+const hermitCardClasses: Array<Card> = [EvilXisumaBossHermitCard]
 
 export default hermitCardClasses

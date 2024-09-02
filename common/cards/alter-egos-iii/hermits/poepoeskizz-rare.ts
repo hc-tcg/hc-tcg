@@ -68,11 +68,13 @@ const PoePoeSkizzRare: Hermit = {
 
 						game.swapRows(pickedSlot.row, component.slot.row)
 
-						// TODO: Let Jumpscare always damage boss if boss has only a single row, this attack will likely be refactored soon for normal play
 						const jumpscareTarget = game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
-							query.row.index(component.slot.row.index),
+							game.components.filter(RowComponent, query.row.opponentPlayer)
+								.length > 1
+								? query.row.index(component.slot.row.index)
+								: query.anything, // Lets Jumpscare always damage opponent, if opponent only has a single row and player can move
 						)
 
 						if (!jumpscareTarget || !jumpscareTarget.getHermit()) return

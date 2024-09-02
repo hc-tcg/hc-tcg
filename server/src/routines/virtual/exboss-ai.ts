@@ -80,9 +80,7 @@ class ExBossAI implements VirtualAI {
 		const {playerEntity} = component
 
 		if (game.state.modalRequests.length)
-			if (
-				game.state.modalRequests[0].data.payload.modalName.startsWith('Lantern')
-			)
+			if (game.state.modalRequests[0].modal.name.startsWith('Lantern'))
 				// Handles when challenger plays "Lantern"
 				return {
 					type: 'MODAL_REQUEST',
@@ -107,7 +105,7 @@ class ExBossAI implements VirtualAI {
 					type: 'PLAY_HERMIT_CARD',
 					slot,
 					card: {
-						props: WithoutFunctions(bossCard.card.props),
+						props: WithoutFunctions(bossCard.props),
 						entity: bossCard.entity,
 						slot: bossCard.slotEntity,
 						turnedOver: false,
@@ -126,7 +124,6 @@ class ExBossAI implements VirtualAI {
 		if (attackType) {
 			const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
 				type: attackType,
-				player: playerEntity,
 				playerEntity,
 			}
 

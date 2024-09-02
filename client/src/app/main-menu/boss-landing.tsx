@@ -14,7 +14,7 @@ type Props = {
 
 function createUICardInstance(cardId: string): LocalCardInstance {
 	return {
-		props: WithoutFunctions(CARDS[cardId].props),
+		props: WithoutFunctions(CARDS[cardId]),
 		entity: cardId as CardEntity,
 		slot: null,
 		turnedOver: false,
@@ -23,7 +23,7 @@ function createUICardInstance(cardId: string): LocalCardInstance {
 }
 
 function removeDisabledExpansions(cardId: string) {
-	return !EXPANSIONS[CARDS[cardId].props.expansion].disabled
+	return !EXPANSIONS[CARDS[cardId].expansion].disabled
 }
 
 function BossLanding({setMenuSection}: Props) {
