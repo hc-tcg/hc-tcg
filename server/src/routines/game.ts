@@ -714,7 +714,9 @@ function* checkDeckedOut(game: GameModel) {
 		game.settings.unlimitedCards
 	)
 		return []
-	return [game.currentPlayer, game.opponentPlayer].filter((player) => player.deckedOut)
+	return [game.currentPlayer, game.opponentPlayer].filter(
+		(player) => player.deckedOut,
+	)
 }
 
 function* gameSaga(game: GameModel) {
