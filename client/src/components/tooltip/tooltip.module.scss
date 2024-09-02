@@ -1,4 +1,6 @@
-.tooltip {
+.tooltipBody {
+  visibility: hidden;
+  opacity: 0;
 	position: absolute;
 	font-family: Minecraft, Unifont;
 	font-size: 16px;
@@ -11,6 +13,15 @@
 	}
 }
 
-.smallTooltip {
-	font-size: 14px;
+.tooltipBodyWrapper {
+  position: relative;
+	left: -14.5rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 29rem;
+}
+
+.tooltip:hover .tooltipBody {
+  visibility: visible;
+  opacity: 1;
 }
