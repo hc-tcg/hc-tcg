@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {StatusEffectComponent} from 'common/components'
@@ -14,10 +15,10 @@ import {
 } from './utils'
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
-	yield* playCardFromHand(game, EvilXisumaRare, 0)
+	yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 	yield* endTurn(game)
 
 	yield* attack(game, 'secondary')
@@ -61,6 +62,25 @@ describe('Test Evil X', () => {
 				playerTwoDeck: [EthosLabCommon],
 			},
 			{startWithAllCards: true, forceCoinFlip: true, noItemRequirements: true},
+		)
+	})
+	test('Test Evil X secondary does not open popup if there are no opponent active hermits', () => {
+		testGame(
+			{
+				playerOneDeck: [ArmorStand],
+				playerTwoDeck: [EvilXisumaRare],
+				saga: function* (game: GameModel) {
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+
+					// We expect that there is no modal requests because Evil X found that the opponent has no attacks to disable.
+					expect(game.state.modalRequests).toStrictEqual([])
+				},
+			},
+			{noItemRequirements: true, startWithAllCards: true, forceCoinFlip: true},
 		)
 	})
 })

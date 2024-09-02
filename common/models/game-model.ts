@@ -65,6 +65,7 @@ export type GameSettings = {
 	startWithAllCards: boolean
 	unlimitedCards: boolean
 	oneShotMode: boolean
+	extraStartingCards: Array<string>
 	disableDamage: boolean
 	noItemRequirements: boolean
 	forceCoinFlip: boolean
@@ -85,6 +86,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
 		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
 		oneShotMode: DEBUG_CONFIG.oneShotMode,
+		extraStartingCards: DEBUG_CONFIG.extraStartingCards,
 		disableDamage: DEBUG_CONFIG.disableDamage,
 		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
 		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
@@ -150,6 +152,9 @@ export class GameModel {
 		this.afterGameEnd = new Hook<string, () => void>()
 		setupComponents(this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
+			startWithAllCards: settings.startWithAllCards,
+			unlimitedCards: settings.unlimitedCards,
+			extraStartingCards: settings.extraStartingCards,
 		})
 
 		this.state = getGameState(this, options.randomizeOrder)

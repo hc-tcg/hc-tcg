@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {singleUse} from '../../base/defaults'
@@ -31,6 +32,7 @@ const Trident: SingleUse = {
 			return game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -39,20 +41,19 @@ const Trident: SingleUse = {
 				.addDamage(component.entity, 30)
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			applySingleUse(game)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+				coinflipResult = flipCoin(player, component)[0]
 
-			coinflipResult = flipCoin(player, component)[0]
+				applySingleUse(game)
+			},
+		)
 
-			applySingleUse(game)
-		})
-
-		observer.subscribe(player.hooks.onApply, () => {
+		observer.subscribe(player.hooks.afterApply, () => {
 			if (coinflipResult === 'heads') {
 				component.draw()
 			}

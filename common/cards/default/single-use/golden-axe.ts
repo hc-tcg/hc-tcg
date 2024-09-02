@@ -1,6 +1,11 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -28,6 +33,7 @@ const GoldenAxe: SingleUse = {
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -35,24 +41,22 @@ const GoldenAxe: SingleUse = {
 				})
 				.addDamage(component.entity, 40)
 
+			game.components
+				.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
+
 			return axeAttack
 		})
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity)) {
-				applySingleUse(game)
-			}
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.opponent,
-						query.slot.attach,
-						query.slot.active,
-					),
-				),
-			)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.isAttacker(component.entity)) {
+					applySingleUse(game)
+				}
+			},
+		)
 	},
 }
 

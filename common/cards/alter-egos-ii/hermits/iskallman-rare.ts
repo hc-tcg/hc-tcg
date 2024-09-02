@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -111,38 +112,42 @@ const IskallmanRare: Hermit = {
 		)
 
 		// Heals the afk hermit *before* we actually do damage
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (
-				!attack.isAttacker(component.entity) ||
-				attack.type !== 'secondary' ||
-				attack.isBacklash
-			)
-				return
-			if (!pickedAfkHermit?.inRow()) return
-
-			const backlashAttack = game.newAttack({
-				attacker: component.entity,
-				target: player.activeRowEntity,
-				type: 'effect',
-				isBacklash: true,
-			})
-
-			backlashAttack.addDamage(component.entity, 50)
-			backlashAttack.shouldIgnoreCards.push(query.anything)
-			attack.addNewAttack(backlashAttack)
-
-			const hermitInfo = pickedAfkHermit.getCard()
-
-			if (hermitInfo) {
-				pickedAfkHermit.row.heal(50)
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${component.props.name}$ took $b50hp$ damage, and healed $p${hermitInfo.props.name} (${
-						(pickedAfkHermit.row.index || 0) + 1
-					})$ by $g50hp$`,
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (
+					!attack.isAttacker(component.entity) ||
+					attack.type !== 'secondary' ||
+					attack.isBacklash
 				)
-			}
-		})
+					return
+				if (!pickedAfkHermit?.inRow()) return
+
+				const backlashAttack = game.newAttack({
+					attacker: component.entity,
+					target: player.activeRowEntity,
+					type: 'effect',
+					isBacklash: true,
+				})
+
+				backlashAttack.addDamage(component.entity, 50)
+				backlashAttack.shouldIgnoreCards.push(query.anything)
+				attack.addNewAttack(backlashAttack)
+
+				const hermitInfo = pickedAfkHermit.getCard()
+
+				if (hermitInfo) {
+					pickedAfkHermit.row.heal(50)
+					game.battleLog.addEntry(
+						player.entity,
+						`$p${component.props.name}$ took $b50hp$ damage, and healed $p${hermitInfo.props.name} (${
+							(pickedAfkHermit.row.index || 0) + 1
+						})$ by $g50hp$`,
+					)
+				}
+			},
+		)
 	},
 }
 

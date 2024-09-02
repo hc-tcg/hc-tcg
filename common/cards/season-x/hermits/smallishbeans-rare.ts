@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 import KingJoelRare from '../../alter-egos-iii/hermits/kingjoel-rare'
 import {hermit} from '../../base/defaults'
@@ -37,24 +38,28 @@ const SmallishbeansRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const joelQuantity = game.components.filter(
-				CardComponent,
-				query.card.attached,
-				query.card.is(
-					SmallishbeansCommon,
-					SmallishbeansRare,
-					KingJoelCommon,
-					KingJoelRare,
-				),
-				query.not(query.card.active),
-			).length
+				const joelQuantity = game.components.filter(
+					CardComponent,
+					query.card.attached,
+					query.card.is(
+						SmallishbeansCommon,
+						SmallishbeansRare,
+						KingJoelCommon,
+						KingJoelRare,
+					),
+					query.not(query.card.active),
+				).length
 
-			attack.addDamage(component.entity, joelQuantity * 10)
-		})
+				attack.addDamage(component.entity, joelQuantity * 10)
+			},
+		)
 	},
 }
 

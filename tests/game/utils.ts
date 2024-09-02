@@ -1,7 +1,8 @@
-import {Attach, Card, Hermit, Item, SingleUse} from 'common/cards/base/types'
+import {Card} from 'common/cards/base/types'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
+import {SlotTypeT} from 'common/types/cards'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,
@@ -45,21 +46,28 @@ export function* endTurn(game: GameModel) {
 }
 
 /** Play a card from your hand to a row on the game board */
-export function playCardFromHand(game: GameModel, card: SingleUse): any
 export function playCardFromHand(
 	game: GameModel,
-	card: Hermit | Attach,
+	card: Card,
+	slotType: 'single_use',
+): any
+export function playCardFromHand(
+	game: GameModel,
+	card: Card,
+	slotType: 'hermit' | 'attach',
 	row: number,
 ): any
 export function playCardFromHand(
 	game: GameModel,
-	card: Item,
+	card: Card,
+	slotType: 'item',
 	row: number,
 	index: number,
 ): any
 export function* playCardFromHand(
 	game: GameModel,
 	card: Card,
+	slotType: SlotTypeT,
 	row?: number,
 	index?: number,
 ) {
@@ -73,7 +81,7 @@ export function* playCardFromHand(
 			(slot.inRow() && slot.row.index === row),
 		(_game, slot) =>
 			index === undefined || (slot.inRow() && slot.index === index),
-		(_game, slot) => slot.type === cardComponent.props.category,
+		(_game, slot) => slot.type === slotType,
 	)!
 
 	yield* put<LocalMessage>({
@@ -135,7 +143,7 @@ export function* pick(
 ) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
+		playerEntity: game.state.pickRequests[0].player,
 		action: {
 			type: 'PICK_REQUEST',
 			entity: game.components.find(SlotComponent, ...slot)!.entity,
@@ -150,7 +158,7 @@ export function* finishModalRequest(
 ) {
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
+		playerEntity: game.state.modalRequests[0].player,
 		action: {
 			type: 'MODAL_REQUEST',
 			modalResult,
@@ -187,6 +195,7 @@ const defaultGameSettings = {
 	startWithAllCards: false,
 	unlimitedCards: false,
 	oneShotMode: false,
+	extraStartingCards: [],
 	disableDamage: false,
 	noItemRequirements: false,
 	forceCoinFlip: false,
@@ -201,7 +210,7 @@ const defaultGameSettings = {
  */
 export function testGame(
 	options: {
-		saga: any
+		saga: (game: GameModel) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
