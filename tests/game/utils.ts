@@ -198,7 +198,7 @@ const defaultGameSettings = {
 	extraStartingCards: [],
 	disableDamage: false,
 	noItemRequirements: false,
-	forceCoinFlip: false,
+	forceCoinFlip: true,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 	logBoardState: true,
