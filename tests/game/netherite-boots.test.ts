@@ -88,7 +88,7 @@ describe('Test Netherite Boots', () => {
 		)
 	})
 
-	test('Test Netherite Boots prevents knockback', () => {
+	test('Test Netherite Boots prevents knockback from ', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TangoTekCommon, NetheriteBoots],
