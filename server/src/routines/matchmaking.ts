@@ -90,7 +90,9 @@ function* gameManager(game: GameModel) {
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
-			playerRemoved: take(
+			playerRemoved: take<
+				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+			>(
 				(action: any) =>
 					action.type === localMessages.PLAYER_REMOVED &&
 					playerIds.includes(
@@ -98,7 +100,7 @@ function* gameManager(game: GameModel) {
 							.player.id,
 					),
 			),
-			forfeit: take(
+			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
 				(action: any) =>
 					action.type === clientMessages.FORFEIT &&
 					playerIds.includes(
@@ -121,7 +123,7 @@ function* gameManager(game: GameModel) {
 						.forEach((player) => (player.coinFlips = []))
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
+			const outcome = getGamePlayerOutcome(game, result, viewer)
 			// assert(game.endInfo.reason, 'Games can not end without a reason')
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,
