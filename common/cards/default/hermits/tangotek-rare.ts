@@ -71,24 +71,8 @@ const TangoTekRare: Hermit = {
 						opponentInactiveRowsPickCondition,
 					)
 				) {
-					game.addPickRequest({
-						player: opponentPlayer.entity,
-						id: component.entity,
-						message: 'Pick a new active Hermit from your afk hermits',
-						canPick: opponentInactiveRowsPickCondition,
-						onResult(pickedSlot) {
-							if (!pickedSlot.inRow()) return
-							opponentPlayer.changeActiveRow(pickedSlot.row)
-						},
-						onTimeout() {
-							let newActiveRow = game.components.find(
-								SlotComponent,
-								opponentInactiveRowsPickCondition,
-							)
-							if (!newActiveRow?.inRow()) return
-							opponentPlayer.changeActiveRow(newActiveRow.row)
-						},
-					})
+					let pick = opponentPlayer.createKnockbackPickRequest(component)
+					if (pick) game.addPickRequest(pick)
 				}
 
 				// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
