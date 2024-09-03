@@ -57,7 +57,7 @@ describe('Test Netherite Boots', () => {
 		)
 	})
 
-	test('Test Netherite Boots Prevents Knockback', () => {
+	test('Test Netherite Boots prevents knockback from Egg.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TangoTekCommon, NetheriteBoots],
@@ -72,6 +72,43 @@ describe('Test Netherite Boots', () => {
 					yield* playCardFromHand(game, Egg, 'single_use')
 
 					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+					)
+
+					expect(
+						game.components.find(RowComponent, query.row.active)?.index,
+					).toBe(0)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test Netherite Boots prevents knockback', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, TangoTekCommon, NetheriteBoots],
+				playerTwoDeck: [EthosLabCommon, Egg],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, NetheriteBoots, 'attach', 0)
+					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Egg, 'single_use')
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+					)
 
 					expect(
 						game.components.find(RowComponent, query.row.active)?.index,

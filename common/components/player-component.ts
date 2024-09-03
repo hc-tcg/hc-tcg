@@ -344,6 +344,12 @@ export class PlayerComponent {
 		return this.hooks.getImmuneToKnockback.call().every((x) => x === false)
 	}
 
+	/** Change the player's row with a knockback effect, for example egg */
+	public knockback(newRow: RowComponent | null): boolean {
+		if (!this.canBeKnockedBack()) return false
+		return this.changeActiveRow(newRow)
+	}
+
 	/** Force the player to switch their active hermit due to knockback. If the hermit is immune to knockback, return null. */
 	public createKnockbackPickRequest(
 		component: CardComponent,
