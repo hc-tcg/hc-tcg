@@ -24,7 +24,6 @@ describe('Test Diamond Boots', () => {
 
 					yield* endTurn(game)
 
-					// We are immune to burn so we do not take damage from it.
 					expect(
 						game.components.find(
 							RowComponent,

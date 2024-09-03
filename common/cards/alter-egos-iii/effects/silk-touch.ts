@@ -4,6 +4,7 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import query from '../../../components/query'
+import {currentPlayer} from '../../../components/query/card'
 import {GameModel} from '../../../models/game-model'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -38,6 +39,11 @@ const SilkTouch: Attach = {
 		})
 
 		observer.subscribe(player.hooks.beforeTurnEnd, () => {
+			if (
+				!component.slot.inRow() ||
+				component.slot.row.entity !== player.activeRowEntity
+			)
+				return
 			if (!singleUseCard) return
 			if (!singleUseCard.canBeRecovered) return
 
