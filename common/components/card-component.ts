@@ -75,7 +75,7 @@ export class CardComponent<CardType extends Card = Card> {
 		}
 
 		this.turnedOver = false
-		this.canBeRecovered = false
+		this.canBeRecovered = true
 
 		this.hooks = {
 			onChangeSlot: new GameHook(),

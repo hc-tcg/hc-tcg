@@ -4,7 +4,6 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import query from '../../../components/query'
-import {currentPlayer} from '../../../components/query/card'
 import {GameModel} from '../../../models/game-model'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
