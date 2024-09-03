@@ -51,7 +51,11 @@ describe('Test Netherite Boots', () => {
 							query.row.active,
 							query.row.currentPlayer,
 						)?.health,
-					).toBe(EthosLabCommon.health - EthosLabCommon.secondary.damage)
+					).toBe(
+						EthosLabCommon.health -
+							EthosLabCommon.secondary.damage +
+							20 /* Blocked by netherite boots */,
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -89,7 +93,7 @@ describe('Test Netherite Boots', () => {
 		)
 	})
 
-	test('Test Netherite Boots prevents knockback from ', () => {
+	test('Test Netherite Boots prevents knockback from Knockback book.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TangoTekCommon, NetheriteBoots],
@@ -112,7 +116,7 @@ describe('Test Netherite Boots', () => {
 		)
 	})
 
-	test('Test Netherite Boots prevent damage redirect', () => {
+	test('Test Netherite Boots prevent damage redirect.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteBoots],

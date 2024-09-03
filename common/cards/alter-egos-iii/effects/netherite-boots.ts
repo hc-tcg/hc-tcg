@@ -44,7 +44,7 @@ const NetheriteBoots: Attach = {
 				if (
 					!attack.isTargeting(component) ||
 					(attack.isType('status-effect') &&
-						!(attack.attacker?.props.id == FireEffect.id))
+						attack.attacker?.props.id === FireEffect.id)
 				) {
 					attack.multiplyDamage(component.entity, 0)
 					return

@@ -23,6 +23,13 @@ const DiamondBoots: Attach = {
 
 		let damageBlocked = 0
 
+		observer.subscribe(player.hooks.getImmuneToKnockback, () => {
+			return (
+				component.slot.inRow() &&
+				component.slot.rowEntity == player.activeRowEntity
+			)
+		})
+
 		observer.subscribeWithPriority(
 			player.hooks.beforeDefence,
 			beforeDefence.EFFECT_BLOCK_DAMAGE,
@@ -36,12 +43,6 @@ const DiamondBoots: Attach = {
 							.multiplyDamage(component.entity, 0)
 							.lockDamage(component.entity)
 					}
-				}
-
-				if (attack.getHistory('redirect').pop()) {
-					attack
-						.multiplyDamage(component.entity, 0)
-						.lockDamage(component.entity)
 				}
 
 				if (damageBlocked < 10) {
