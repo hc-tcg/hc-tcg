@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React, {memo, useEffect, useRef, useState} from 'react'
+import React from 'react'
 import css from './tooltip.module.scss'
 
 type Props = {

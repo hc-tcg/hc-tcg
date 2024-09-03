@@ -1,12 +1,12 @@
-import {GameModel} from '../../../models/game-model'
 import {
 	CardComponent,
 	DeckSlotComponent,
 	ObserverComponent,
 } from '../../../components'
-import {Attach} from '../../base/types'
-import {attach} from '../../base/defaults'
 import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 const SilkTouch: Attach = {
 	...attach,

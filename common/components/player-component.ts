@@ -17,11 +17,11 @@ import {
 	beforeAttack,
 	beforeDefence,
 } from '../types/priorities'
+import {PickRequest} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import query from './query'
 import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
-import {PickRequest} from '../types/server-requests'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
 

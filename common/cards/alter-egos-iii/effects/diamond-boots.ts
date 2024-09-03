@@ -1,8 +1,8 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
-import {Attach} from '../../base/types'
-import {attach} from '../../base/defaults'
+import {GameModel} from '../../../models/game-model'
 import {beforeDefence} from '../../../types/priorities'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 const DiamondBoots: Attach = {
 	...attach,
