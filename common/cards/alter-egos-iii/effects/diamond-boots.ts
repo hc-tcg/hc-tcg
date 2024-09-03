@@ -2,6 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import {beforeDefence} from '../../../types/priorities'
 
 const DiamondBoots: Attach = {
 	...attach,
@@ -22,31 +23,37 @@ const DiamondBoots: Attach = {
 
 		let damageBlocked = 0
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect'))
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.EFFECT_BLOCK_DAMAGE,
+			(attack) => {
+				if (!attack.isTargeting(component) || attack.isType('status-effect'))
+					return
 
-			if (attack.attacker instanceof CardComponent) {
-				if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
+				if (attack.attacker instanceof CardComponent) {
+					if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
+						attack
+							.multiplyDamage(component.entity, 0)
+							.lockDamage(component.entity)
+					}
+				}
+
+				if (attack.getHistory('redirect').pop()) {
 					attack
 						.multiplyDamage(component.entity, 0)
 						.lockDamage(component.entity)
 				}
-			}
 
-			if (attack.getHistory('redirect').pop()) {
-				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
-			}
-
-			if (damageBlocked < 10) {
-				const damageReduction = Math.min(
-					attack.calculateDamage(),
-					10 - damageBlocked,
-				)
-				damageBlocked += damageReduction
-				attack.reduceDamage(component.entity, damageReduction)
-			}
-		})
+				if (damageBlocked < 10) {
+					const damageReduction = Math.min(
+						attack.calculateDamage(),
+						10 - damageBlocked,
+					)
+					damageBlocked += damageReduction
+					attack.reduceDamage(component.entity, damageReduction)
+				}
+			},
+		)
 
 		const resetCounter = () => {
 			damageBlocked = 0

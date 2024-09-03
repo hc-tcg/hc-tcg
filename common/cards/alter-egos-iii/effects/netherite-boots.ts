@@ -3,6 +3,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 import FireEffect from '../../../status-effects/fire'
+import {beforeDefence} from '../../../types/priorities'
 
 const NetheriteBoots: Attach = {
 	...attach,
@@ -36,44 +37,50 @@ const NetheriteBoots: Attach = {
 			)
 		})
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (
-				!attack.isTargeting(component) ||
-				(attack.isType('status-effect') &&
-					!(attack.attacker?.props.id == FireEffect.id))
-			) {
-				attack.multiplyDamage(component.entity, 0)
-				return
-			}
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.EFFECT_BLOCK_DAMAGE,
+			(attack) => {
+				if (
+					!attack.isTargeting(component) ||
+					(attack.isType('status-effect') &&
+						!(attack.attacker?.props.id == FireEffect.id))
+				) {
+					attack.multiplyDamage(component.entity, 0)
+					return
+				}
 
-			if (attack.attacker instanceof CardComponent) {
-				if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
+				if (attack.attacker instanceof CardComponent) {
+					if (attack.attacker.isSingleUse() || attack.attacker.isAttach()) {
+						attack
+							.multiplyDamage(component.entity, 0)
+							.lockDamage(component.entity)
+					}
+				}
+
+				let suRedirect = false
+
+				const lastTargetChange = attack.getHistory('redirect').pop()
+				if (lastTargetChange) {
+					suRedirect = true
+				}
+
+				if (attack.isType('effect') || suRedirect) {
 					attack
 						.multiplyDamage(component.entity, 0)
 						.lockDamage(component.entity)
 				}
-			}
 
-			let suRedirect = false
-
-			const lastTargetChange = attack.getHistory('redirect').pop()
-			if (lastTargetChange) {
-				suRedirect = true
-			}
-
-			if (attack.isType('effect') || suRedirect) {
-				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
-			}
-
-			if (damageBlocked < 20) {
-				const damageReduction = Math.min(
-					attack.calculateDamage(),
-					20 - damageBlocked,
-				)
-				damageBlocked += damageReduction
-				attack.reduceDamage(component.entity, damageReduction)
-			}
-		})
+				if (damageBlocked < 20) {
+					const damageReduction = Math.min(
+						attack.calculateDamage(),
+						20 - damageBlocked,
+					)
+					damageBlocked += damageReduction
+					attack.reduceDamage(component.entity, damageReduction)
+				}
+			},
+		)
 
 		const resetCounter = () => {
 			damageBlocked = 0

@@ -152,6 +152,9 @@ export class PlayerComponent {
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+
+		/** Hook called to check if the current player is immune to knockback. */
+		getImmuneToKnockback: GameHook<() => boolean>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
@@ -189,6 +192,7 @@ export class PlayerComponent {
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
 			freezeSlots: new GameHook(),
+			getImmuneToKnockback: new GameHook(),
 		}
 	}
 
