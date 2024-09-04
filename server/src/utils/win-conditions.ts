@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId} from 'common/models/player-model'
@@ -8,7 +9,6 @@ import {
 import {GamePlayerEndOutcomeT} from 'common/types/game-state'
 import {LocalMessageTable, localMessages} from 'messages'
 import {getOpponentId} from '../utils'
-import assert from 'assert'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
