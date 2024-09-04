@@ -8,6 +8,7 @@ import {
 import {GamePlayerEndOutcomeT} from 'common/types/game-state'
 import {LocalMessageTable, localMessages} from 'messages'
 import {getOpponentId} from '../utils'
+import assert from 'assert'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -47,13 +48,15 @@ export const getGamePlayerOutcome = (
 ): GamePlayerEndOutcomeT => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) {
-		const triggerPlayerId = endResult.forfeit!.playerId
+		assert(endResult.forfeit)
+		const triggerPlayerId = endResult.forfeit.playerId
 		return triggerPlayerId === getPlayerIdFromViewer(game, viewer)
 			? 'forfeit_loss'
 			: 'forfeit_win'
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		const triggerPlayerId = endResult.playerRemoved!.player.id
+		assert(endResult.playerRemoved)
+		const triggerPlayerId = endResult.playerRemoved.player.id
 		return triggerPlayerId === getPlayerIdFromViewer(game, viewer)
 			? 'leave_loss'
 			: 'leave_win'
@@ -69,10 +72,12 @@ export const getGamePlayerOutcome = (
 export const getWinner = (game: GameModel, endResult: EndResult) => {
 	if (Object.hasOwn(endResult, 'timeout')) return null
 	if (Object.hasOwn(endResult, 'forfeit')) {
-		return getOpponentId(game, endResult.forfeit!.playerId)
+		assert(endResult.forfeit)
+		return getOpponentId(game, endResult.forfeit.playerId)
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		return getOpponentId(game, endResult.playerRemoved!.player.id)
+		assert(endResult.playerRemoved)
+		return getOpponentId(game, endResult.playerRemoved.player.id)
 	}
 	if (game.endInfo.deadPlayerEntities.length === 2) return null
 	const deadPlayerEntity = game.endInfo.deadPlayerEntities[0]
