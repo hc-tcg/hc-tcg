@@ -201,6 +201,12 @@ export type GameLog = {
 	startDeck: string
 }
 
+export type UsedHermitAttackInfo = {
+	readonly attackType: 'primary' | 'secondary'
+	readonly attacker: CardComponent
+	readonly turn: number
+}
+
 export abstract class DefaultDictionary<Keys, Type> {
 	default: () => Type
 	values: Record<string, Type> = {}
