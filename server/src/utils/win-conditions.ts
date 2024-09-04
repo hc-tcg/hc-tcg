@@ -69,6 +69,7 @@ export const getGamePlayerOutcome = (
 	return 'you_won'
 }
 
+/** Gets the winning player's id if both players have corresponding PlayerModels */
 export const getWinner = (game: GameModel, endResult: EndResult) => {
 	if (Object.hasOwn(endResult, 'timeout')) return null
 	if (Object.hasOwn(endResult, 'forfeit')) {
