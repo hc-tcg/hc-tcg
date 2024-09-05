@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
@@ -14,7 +15,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
-import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
 	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
