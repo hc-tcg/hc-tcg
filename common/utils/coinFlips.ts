@@ -22,15 +22,6 @@ export function flipCoin(
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
 	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
-	const activeRowIndex = playerTossingCoin.game.components.get(
-		playerTossingCoin.activeRowEntity,
-	)
-	if (activeRowIndex === null) {
-		console.log(
-			`${card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
-		)
-		return []
-	}
 
 	let coinFlips: Array<CoinFlipResult> = []
 	for (let i = 0; i < times; i++) {

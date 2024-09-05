@@ -636,8 +636,11 @@ export function* turnSaga(game: GameModel) {
 	if (game.state.turn.turnNumber > 2) {
 		const turnStartDeadPlayers = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayers.length) {
-			game.endInfo.reason =
-				turnStartDeadPlayers[0].lives <= 0 ? 'lives' : 'hermits'
+			game.endInfo.reason = turnStartDeadPlayers.every(
+				(deadPlayer) => deadPlayer.lives <= 0,
+			)
+				? 'lives'
+				: 'hermits'
 			game.endInfo.deadPlayerEntities = turnStartDeadPlayers.map(
 				(player) => player.entity,
 			)
@@ -668,19 +671,21 @@ export function* turnSaga(game: GameModel) {
 	}
 	game.state.modalRequests = []
 
-	let deadPlayers: Array<PlayerComponent> = []
-	deadPlayers.push(...(yield* call(checkHermitHealth, game)))
-	deadPlayers.push(...(yield* call(checkDeckedOut, game)))
-
+	const deadPlayers: PlayerComponent[] = yield* call(checkHermitHealth, game)
 	if (deadPlayers.length) {
-		if (deadPlayers[0].deckedOut) {
-			game.endInfo.reason = 'cards'
-		} else if (deadPlayers[0].lives <= 0) {
+		if (deadPlayers.every((player) => player.lives <= 0)) {
 			game.endInfo.reason = 'lives'
 		} else {
 			game.endInfo.reason = 'hermits'
 		}
 		game.endInfo.deadPlayerEntities = deadPlayers.map((player) => player.entity)
+		return 'GAME_END'
+	}
+
+	const deckedOutPlayers: PlayerEntity[] = yield* call(checkDeckedOut, game)
+	if (deckedOutPlayers.length) {
+		game.endInfo.reason = 'cards'
+		game.endInfo.deadPlayerEntities = deckedOutPlayers
 		return 'GAME_END'
 	}
 
@@ -714,10 +719,10 @@ function* checkDeckedOut(game: GameModel) {
 		game.settings.unlimitedCards
 	)
 		return []
-	return [game.currentPlayer, game.opponentPlayer].flatMap((player) => {
-		if (player.deckedOut) return [player]
-		return []
-	})
+	return game.components.filterEntities(
+		PlayerComponent,
+		(_game, player) => player.deckedOut,
+	)
 }
 
 function* gameSaga(game: GameModel) {

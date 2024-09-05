@@ -114,8 +114,8 @@ export class GameModel {
 	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
-		deadPlayerEntities: Array<string>
-		winner: string | null
+		deadPlayerEntities: Array<PlayerEntity>
+		winner: PlayerId | null
 		outcome: GameEndOutcomeT | null
 		reason: GameEndReasonT | null
 	}

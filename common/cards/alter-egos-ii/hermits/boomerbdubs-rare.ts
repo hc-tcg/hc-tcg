@@ -92,7 +92,7 @@ const BoomerBdubsRare: Hermit = {
 
 						if (flip === 'tails') {
 							flippedTails = true
-							return
+							return 'SUCCESS'
 						}
 
 						extraDamage += 20
