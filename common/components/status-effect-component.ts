@@ -36,7 +36,7 @@ export class StatusEffectComponent<
 	) {
 		this.game = game
 		this.entity = entity
-		this.props = STATUS_EFFECTS[statusEffect.name] as any
+		this.props = STATUS_EFFECTS[statusEffect.id] as any
 		this.creatorEntity = creator
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
@@ -65,7 +65,7 @@ export class StatusEffectComponent<
 
 		this.observerEntity = observer.entity
 		this.targetEntity = target.entity
-		this.props.onApply(this.game, this as any, target as any, observer)
+		this.props.onApply(this.game, this, target, observer)
 
 		if (this.props.applyLog) {
 			this.game.battleLog.addStatusEffectEntry(this.entity, this.props.applyLog)

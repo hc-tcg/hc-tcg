@@ -7,6 +7,7 @@ import query from '../../../components/query'
 import {RowEntity} from '../../../entities'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
@@ -95,6 +96,7 @@ const Crossbow: SingleUse = {
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
+							player: player.entity,
 							target: target,
 							type: 'effect',
 							log: (values) =>
@@ -114,14 +116,18 @@ const Crossbow: SingleUse = {
 			return attack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-			applySingleUse(game)
+				applySingleUse(game)
 
-			// Do not apply single use more than once
-			observer.unsubscribe(player.hooks.onAttack)
-		})
+				// Do not apply single use more than once
+				observer.unsubscribe(player.hooks.beforeAttack)
+			},
+		)
 	},
 }
 

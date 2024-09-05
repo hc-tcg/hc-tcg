@@ -39,25 +39,23 @@ const Glowstone: SingleUse = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName:
-							'Glowstone: Choose the card for your opponent to discard.',
-						modalDescription:
-							'The other two cards will be placed on the bottom of their deck.',
-						cards: topCards.map((card) => card.entity),
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Confirm Selection',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Glowstone: Choose the card for your opponent to discard.',
+					description:
+						'The other two cards will be placed on the bottom of their deck.',
+					cards: topCards.map((card) => card.entity),
+					selectionSize: 1,
+					primaryButton: {
+						text: 'Confirm Selection',
+						variant: 'default',
 					},
+					cancelable: false,
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
+					if (!modalResult) return
+					if (!modalResult.cards) return
+					if (modalResult.cards.length !== 1) return
 
 					const drawCard = modalResult.cards[0]
 

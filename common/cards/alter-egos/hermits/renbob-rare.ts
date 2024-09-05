@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -40,19 +41,23 @@ const RenbobRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!component.slot.inRow()) return
-			attack.setTarget(
-				component.entity,
-				game.components.find(
-					RowComponent,
-					query.row.opponentPlayer,
-					query.row.index(component.slot.row.index),
-				)?.entity || null,
-			)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_SET_TARGET,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!component.slot.inRow()) return
+				attack.setTarget(
+					component.entity,
+					game.components.find(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.row.index(component.slot.row.index),
+					)?.entity || null,
+				)
+			},
+		)
 	},
 }
 

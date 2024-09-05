@@ -4,10 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'slowness',
 	icon: 'slowness',
 	name: 'Slowness',
 	description: 'This Hermit can only use their primary attack.',
@@ -41,15 +43,19 @@ const SlownessEffect: Counter<CardComponent> = {
 			}
 		})
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (
-				!target.slot?.onBoard() ||
-				attack.target?.entity !== target.slot.row?.entity
-			)
-				return
-			if (target.slot.row?.health) return
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (
+					!target.slot?.onBoard() ||
+					attack.target?.entity !== target.slot.row?.entity
+				)
+					return
+				if (target.slot.row?.health) return
+				effect.remove()
+			},
+		)
 	},
 }
 

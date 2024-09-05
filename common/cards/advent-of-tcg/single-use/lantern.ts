@@ -34,18 +34,17 @@ const Lantern: SingleUse = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Lantern',
-						modalDescription: 'Choose 2 cards to draw immediately.',
-						cards: topCards.map((card) => card.entity),
-						selectionSize: 2,
-						primaryButton: {
-							text: 'Confirm Selection',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Lantern',
+					description: 'Choose 2 cards to draw immediately.',
+					cards: topCards.map((card) => card.entity),
+					selectionSize: 2,
+					primaryButton: {
+						text: 'Confirm Selection',
+						variant: 'default',
 					},
+					cancelable: false,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
@@ -62,18 +61,17 @@ const Lantern: SingleUse = {
 
 					game.addModalRequest({
 						player: opponentPlayer.entity,
-						data: {
-							modalId: 'selectCards',
-							payload: {
-								modalName: 'Lantern',
-								modalDescription: 'Cards your opponent drew.',
-								cards: modalResult.cards.map((card) => card.entity),
-								selectionSize: 0,
-								primaryButton: {
-									text: 'Close',
-									variant: 'default',
-								},
+						modal: {
+							type: 'selectCards',
+							name: 'Lantern',
+							description: 'Cards your opponent drew.',
+							cards: modalResult.cards.map((card) => card.entity),
+							selectionSize: 0,
+							primaryButton: {
+								text: 'Close',
+								variant: 'default',
 							},
+							cancelable: true,
 						},
 						onResult() {
 							return 'SUCCESS'

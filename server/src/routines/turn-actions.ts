@@ -1,11 +1,10 @@
+import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {DEBUG_CONFIG} from 'common/config'
 import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
-import {ActionResult, GenericActionResult} from 'common/types/game-state'
 import {CopyAttack, SelectCards} from 'common/types/modal-requests'
 import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
 import {
@@ -39,7 +38,7 @@ function getAttack(
 		if (otherAttack) attacks.push(otherAttack)
 	})
 
-	if (DEBUG_CONFIG.oneShotMode) {
+	if (game.settings.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
 			attacks[i].addDamage('debug', 1001)
 		}
@@ -52,11 +51,7 @@ export function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
 	checkForRequests = true,
-): Generator<any, GenericActionResult> {
-	if (!turnAction?.type) {
-		return 'FAILURE_INVALID_DATA'
-	}
-
+): Generator<any, void> {
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
 	const activeInstance = game.components.find(
@@ -65,7 +60,8 @@ export function* attackSaga(
 		query.card.isHermit,
 		query.card.active,
 	)
-	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
+
+	assert(activeInstance, 'You can not attack without an active hermit.')
 
 	if (checkForRequests) {
 		// First allow cards to add attack requests
@@ -76,7 +72,7 @@ export function* attackSaga(
 			// The code for picking new actions will automatically send the right action back to client
 			state.turn.currentAttack = hermitAttackType
 
-			return 'SUCCESS'
+			return
 		}
 	}
 
@@ -123,41 +119,35 @@ export function* attackSaga(
 	if (currentPlayer.coinFlips.length === 0) {
 		game.battleLog.sendLogs()
 	}
-
-	return 'SUCCESS'
 }
 
 export function* playCardSaga(
 	game: GameModel,
 	turnAction: PlayCardActionData,
-): Generator<any, ActionResult> {
+): Generator<any, void> {
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
-	if (!slotEntity || !localCard) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(slotEntity && localCard)
 
 	const card = game.components.find(
 		CardComponent,
 		query.card.entity(localCard.entity),
 	)
-	if (!card) return 'FAILURE_INVALID_DATA'
+	assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
 
 	const pickedSlot = game.components.get(slotEntity)
-	if (!pickedSlot || !pickedSlot.onBoard()) {
-		throw new Error(
-			'A slot that is not on the board can not be picked: ' + pickedSlot,
-		)
-	}
+	assert(
+		pickedSlot && pickedSlot.onBoard(),
+		'A slot that is not on the board can not be picked: ' + pickedSlot,
+	)
 
-	// You are not supposed to be able to select a slot with a card in it, but network issues can allow
-	// this to happen.
-	if (pickedSlot.getCard()) {
-		return 'FAILURE_INVALID_DATA'
-	}
+	assert(
+		!pickedSlot.getCard(),
+		'You can not play a card in a slot with a card in it',
+	)
 
 	const row = pickedSlot.row
 	const rowIndex = pickedSlot.index
@@ -167,7 +157,10 @@ export function* playCardSaga(
 	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
 	// It's the wrong kind of slot or does not satisfy the condition
-	if (!canAttach) return 'FAILURE_INVALID_SLOT'
+	assert(
+		canAttach,
+		'You can not play a card in a slot it cannot be attached to or at a time it can not be played.',
+	)
 
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client
@@ -176,17 +169,19 @@ export function* playCardSaga(
 	if (pickedSlot.type === 'single_use') {
 		card.attach(pickedSlot)
 	} else {
-		// All other positions requires us to have selected a valid row
-		if (!row || rowIndex === null) return 'FAILURE_CANNOT_COMPLETE'
+		assert(
+			row && rowIndex !== null,
+			'Placing a card on the board requires there to be a row.',
+		)
 
 		switch (pickedSlot.type) {
 			case 'hermit': {
 				currentPlayer.hasPlacedHermit = true
-				if (!card.isHealth())
-					throw Error(
-						'Attempted to add card that does not implement health to hermit slot: ' +
-							card.props.numericId,
-					)
+				assert(
+					card.isHealth(),
+					'Can not place a card that does not implement health to hermit slot: ' +
+						card.props.numericId,
+				)
 
 				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
@@ -204,11 +199,11 @@ export function* playCardSaga(
 				break
 			}
 			case 'attach': {
-				if (!card.isAttach())
-					throw Error(
-						'Attempted to add card that implement attach to an attach slot: ' +
-							card.props.numericId,
-					)
+				assert(
+					card.isAttach(),
+					'Attempted to add card that implement attach to an attach slot: ' +
+						card.props.numericId,
+				)
 				card.attach(pickedSlot)
 				break
 			}
@@ -226,20 +221,13 @@ export function* playCardSaga(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
-
-	return 'SUCCESS'
 }
 
-export function* applyEffectSaga(
-	game: GameModel,
-): Generator<any, GenericActionResult> {
-	const result = applySingleUse(game, null)
-	return result
+export function* applyEffectSaga(game: GameModel): Generator<any, void> {
+	applySingleUse(game, null)
 }
 
-export function* removeEffectSaga(
-	game: GameModel,
-): Generator<never, GenericActionResult> {
+export function* removeEffectSaga(game: GameModel): Generator<never, void> {
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
@@ -253,14 +241,12 @@ export function* removeEffectSaga(
 	}
 
 	singleUseCard?.draw()
-
-	return 'SUCCESS'
 }
 
 export function* changeActiveHermitSaga(
 	game: GameModel,
 	turnAction: ChangeActiveHermitActionData,
-): Generator<any, GenericActionResult> {
+): Generator<any, void> {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
@@ -268,15 +254,14 @@ export function* changeActiveHermitSaga(
 		SlotComponent,
 		query.slot.entity(turnAction?.entity),
 	)
-	if (!pickedSlot?.onBoard()) return 'FAILURE_INVALID_DATA'
+	assert(pickedSlot?.inRow(), 'Active hermits must be on the board.')
 	const row = pickedSlot.row
-	if (!row) return 'FAILURE_INVALID_DATA'
 
 	const hadActiveHermit = currentPlayer.activeRowEntity !== null
 
 	// Change row
 	const result = currentPlayer.changeActiveRow(row)
-	if (!result) return 'FAILURE_CANNOT_COMPLETE'
+	assert(result, 'Active row change actions should not be allowed to fail')
 
 	if (hadActiveHermit) {
 		// We switched from one hermit to another, mark this action as completed
@@ -294,91 +279,74 @@ export function* changeActiveHermitSaga(
 			'PLAY_SINGLE_USE_CARD',
 		)
 	}
-
-	return 'SUCCESS'
 }
 
 export function* modalRequestSaga(
 	game: GameModel,
 	modalResult: LocalSelectCards.Result | LocalCopyAttack.Result,
-): Generator<any, ActionResult> {
+): Generator<any, void> {
 	const modalRequest = game.state.modalRequests[0]
-	if (!modalRequest) {
-		console.log(
-			'Client sent modal result without request! Result:',
-			modalResult,
-		)
-		return 'FAILURE_NOT_APPLICABLE'
-	}
+
+	assert(
+		modalRequest,
+		`Client sent modal result without request! Result: ${modalResult}`,
+	)
 
 	// Call the bound function with the pick result
-	let result: ActionResult = 'FAILURE_INVALID_DATA'
-	if (modalRequest.data.modalId === 'selectCards') {
+	if (modalRequest.modal.type === 'selectCards') {
 		let modalRequest_ = modalRequest as SelectCards.Request
 		let modal = modalResult as LocalSelectCards.Result
-		result = modalRequest_.onResult({
+		modalRequest_.onResult({
 			...modal,
 			cards: modal.cards
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as SelectCards.Result)
-	} else if (modalRequest.data.modalId === 'copyAttack') {
+	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
-		result = modalRequest_.onResult(modal)
+		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 
-	if (result === 'SUCCESS') {
-		// We completed the modal request, remove it
-		game.state.modalRequests.shift()
+	// We completed the modal request, remove it
+	game.state.modalRequests.shift()
 
-		if (!game.hasActiveRequests() && game.state.turn.currentAttack) {
-			// There are no active requests left, and we're in the middle of an attack. Execute it now.
-			const turnAction: AttackActionData = {
-				type: attackToAttackAction[game.state.turn.currentAttack],
-				player: game.currentPlayer.entity,
-			}
-			const attackResult = yield* attackSaga(game, turnAction, false)
-
-			game.state.turn.currentAttack = null
-
-			return attackResult
+	if (!game.hasActiveRequests() && game.state.turn.currentAttack) {
+		// There are no active requests left, and we're in the middle of an attack. Execute it now.
+		const turnAction: AttackActionData = {
+			type: attackToAttackAction[game.state.turn.currentAttack],
 		}
-	}
+		yield* attackSaga(game, turnAction, false)
 
-	return result
+		game.state.turn.currentAttack = null
+	}
 }
 
 export function* pickRequestSaga(
 	game: GameModel,
 	pickResult?: SlotEntity,
-): Generator<any, ActionResult> {
+): Generator<any, void> {
 	// First validate data sent from client
-	if (!pickResult || !pickResult) return 'FAILURE_INVALID_DATA'
+	assert(pickResult, 'Pick results cannot have an emtpy body.')
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
-	if (!pickRequest) {
-		// There's no pick request active.
-		console.log(
-			'Client sent pick result without request! Pick info:',
-			pickResult,
-		)
-		return 'FAILURE_NOT_APPLICABLE'
-	}
+	assert(
+		pickRequest,
+		`Client sent pick result without request! Pick info: ${pickResult}`,
+	)
 
 	// Call the bound function with the pick result
 	let slotInfo = game.components.find(
 		SlotComponent,
 		query.slot.entity(pickResult),
 	)
-	if (!slotInfo) return 'FAILURE_INVALID_DATA'
+
+	assert(slotInfo, 'The slot that is picked must be in the ECS')
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
-	if (!canPick) {
-		return 'FAILURE_INVALID_SLOT'
-	}
+	assert(canPick, 'Invalid slots can not be picked.')
 
 	const card = slotInfo.getCard()
 
@@ -396,7 +364,6 @@ export function* pickRequestSaga(
 		// There are no active requests left, and we're in the middle of an attack. Execute it now.
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
-			player: game.currentPlayer.entity,
 		}
 		const attackResult = yield* attackSaga(game, turnAction, false)
 
@@ -405,5 +372,5 @@ export function* pickRequestSaga(
 		return attackResult
 	}
 
-	return 'SUCCESS'
+	return
 }

@@ -6,6 +6,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -39,38 +40,44 @@ const IJevinRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const pickCondition = query.every(
-				query.not(query.slot.active),
-				query.not(query.slot.empty),
-				query.slot.opponent,
-				query.slot.hermit,
-			)
+				const pickCondition = query.every(
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+					query.slot.opponent,
+					query.slot.hermit,
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				player: opponentPlayer.entity, // For opponent player to pick
-				id: component.entity,
-				message: 'Choose a new active Hermit from your AFK Hermits.',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					opponentPlayer.changeActiveRow(pickedSlot.row)
-				},
-				onTimeout() {
-					let rowComponent = game.components.find(
-						RowComponent,
-						query.not(query.row.active),
-					)
-					if (!rowComponent) return
-					opponentPlayer.changeActiveRow(rowComponent)
-				},
-			})
-		})
+				game.addPickRequest({
+					player: opponentPlayer.entity, // For opponent player to pick
+					id: component.entity,
+					message: 'Choose a new active Hermit from your AFK Hermits.',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						opponentPlayer.changeActiveRow(pickedSlot.row)
+					},
+					onTimeout() {
+						let rowComponent = game.components.find(
+							RowComponent,
+							query.not(query.row.active),
+							query.row.opponentPlayer,
+							query.row.hermitSlotOccupied,
+						)
+						if (!rowComponent) return
+						opponentPlayer.changeActiveRow(rowComponent)
+					},
+				})
+			},
+		)
 	},
 }
 

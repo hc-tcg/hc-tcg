@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -35,11 +36,13 @@ const GeminiTayRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			observer.subscribe(player.hooks.afterAttack, (_attack) => {
 				// Discard the single-use card.
 				game.components
 					.find(CardComponent, query.card.slot(query.slot.singleUse))
@@ -50,10 +53,8 @@ const GeminiTayRare: Hermit = {
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false
-
-				observer.unsubscribe(player.hooks.afterAttack)
-			})
-		})
+			},
+		)
 	},
 }
 

@@ -8,6 +8,7 @@ import {
 
 const MuseumCollectionEffect: StatusEffect<PlayerComponent> & Counter = {
 	...statusEffect,
+	id: 'museum-collection',
 	icon: 'museum-collection',
 	name: 'Museum Collection Size',
 	description:

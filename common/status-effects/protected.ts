@@ -9,6 +9,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 
 const ProtectedEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
+	id: 'protected',
 	icon: 'protected',
 	name: "Sheriff's Protection",
 	description:

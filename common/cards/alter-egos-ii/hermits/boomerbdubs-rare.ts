@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -67,21 +68,20 @@ const BoomerBdubsRare: Hermit = {
 
 				game.addModalRequest({
 					player: player.entity,
-					data: {
-						modalId: 'selectCards',
-						payload: {
-							modalName: 'Boomer BDubs - Watch This',
-							modalDescription: 'Do you want to flip a coin for your attack?',
-							cards: [],
-							selectionSize: 0,
-							primaryButton: {
-								text: 'Yes',
-								variant: 'default',
-							},
-							secondaryButton: {
-								text: 'No',
-								variant: 'default',
-							},
+					modal: {
+						type: 'selectCards',
+						name: 'Boomer BDubs - Watch This',
+						description: 'Do you want to flip a coin for your attack?',
+						cards: [],
+						selectionSize: 0,
+						cancelable: false,
+						primaryButton: {
+							text: 'Yes',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'No',
+							variant: 'default',
 						},
 					},
 					onResult(modalResult) {
@@ -121,16 +121,22 @@ const BoomerBdubsRare: Hermit = {
 			},
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (flippedTails === true) {
-				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
-				return
-			}
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (flippedTails === true) {
+					attack
+						.multiplyDamage(component.entity, 0)
+						.lockDamage(component.entity)
+					return
+				}
 
-			attack.addDamage(component.entity, extraDamage)
-		})
+				attack.addDamage(component.entity, extraDamage)
+			},
+		)
 	},
 }
 

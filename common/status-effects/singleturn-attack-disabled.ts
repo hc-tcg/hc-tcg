@@ -11,6 +11,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'primary-attack-disabled',
 	icon: 'primary-attack-disabled',
 	name: 'Primary Attack Disabled',
 	description: "This hermit's primary attack is disabled for this turn.",
@@ -34,6 +35,7 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 
 export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
+	id: 'secondary-attack-disabled',
 	icon: 'secondary-attack-disabled',
 	name: 'Secondary Attack Disabled',
 	description: "This hermit's secondary attack is disabled for this turn.",

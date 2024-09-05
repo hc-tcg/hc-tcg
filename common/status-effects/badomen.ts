@@ -8,6 +8,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const BadOmenEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'badomen',
 	icon: 'badomen',
 	name: 'Bad Omen',
 	description: 'All coinflips are tails.',

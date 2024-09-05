@@ -34,39 +34,36 @@ const Chest: SingleUse = {
 
 		game.addModalRequest({
 			player: player.entity,
-			data: {
-				modalId: 'selectCards',
-				payload: {
-					modalName: 'Chest',
-					modalDescription: 'Choose a card to retrieve from your discard pile.',
-					cards: game.components
-						.filter(CardComponent, pickCondition)
-						.map((card) => card.entity),
-					selectionSize: 1,
-					primaryButton: {
-						text: 'Confirm Selection',
-						variant: 'default',
-					},
+			modal: {
+				type: 'selectCards',
+				name: 'Chest',
+				description: 'Choose a card to retrieve from your discard pile.',
+				cards: game.components
+					.filter(CardComponent, pickCondition)
+					.map((card) => card.entity),
+				selectionSize: 1,
+				primaryButton: {
+					text: 'Confirm Selection',
+					variant: 'default',
 				},
+				cancelable: true,
 			},
 			onResult(modalResult) {
-				if (!modalResult) return 'FAILURE_INVALID_DATA'
 				if (!modalResult.result) {
 					// Allow player to cancel using Chest
 					component.draw()
-					return 'SUCCESS'
+					return
 				}
-				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].props.id === 'clock')
-					return 'FAILURE_CANNOT_COMPLETE'
+				if (!modalResult.cards) return
+				if (modalResult.cards.length !== 1) return
+				if (modalResult.cards[0].props.id === 'clock') return
 
 				applySingleUse(game)
 
 				let card = game.components.get(modalResult.cards[0].entity)
 				card?.draw()
 
-				return 'SUCCESS'
+				return
 			},
 			onTimeout() {
 				// Do nothing

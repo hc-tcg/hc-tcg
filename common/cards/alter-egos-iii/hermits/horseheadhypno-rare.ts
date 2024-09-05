@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -37,30 +38,33 @@ const HorseHeadHypnoRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const modalCondition = query.every(
-				query.card.currentPlayer,
-				query.card.slot(query.slot.discardPile),
-				query.card.isItem,
-			)
+				const modalCondition = query.every(
+					query.card.currentPlayer,
+					query.card.slot(query.slot.discardPile),
+					query.card.isItem,
+				)
 
-			if (!game.components.exists(CardComponent, modalCondition)) return
+				if (!game.components.exists(CardComponent, modalCondition)) return
 
-			game.addModalRequest({
-				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Horse Head Hypno - Restock',
-						modalDescription:
+				game.addModalRequest({
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+						name: 'Horse Head Hypno - Restock',
+						description:
 							'Choose an item card to retrieve from your discard pile.',
 						cards: game.components
 							.filter(CardComponent, modalCondition)
 							.map((card) => card.entity),
 						selectionSize: 1,
+						cancelable: false,
 						primaryButton: {
 							text: 'Draw Card',
 							variant: 'default',
@@ -70,22 +74,22 @@ const HorseHeadHypnoRare: Hermit = {
 							variant: 'default',
 						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult?.result) return 'SUCCESS'
-					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-					if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
+					onResult(modalResult) {
+						if (!modalResult?.result) return
+						if (!modalResult.cards) return
+						if (modalResult.cards.length !== 1) return
 
-					let card = game.components.get(modalResult.cards[0].entity)
-					card?.draw()
+						let card = game.components.get(modalResult.cards[0].entity)
+						card?.draw()
 
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					// Do nothing
-				},
-			})
-		})
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						// Do nothing
+					},
+				})
+			},
+		)
 	},
 }
 

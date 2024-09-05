@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -24,11 +25,10 @@ const TNT: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			applySingleUse(game)
-
 			const tntAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -39,6 +39,7 @@ const TNT: SingleUse = {
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: player.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
@@ -50,6 +51,16 @@ const TNT: SingleUse = {
 
 			return tntAttack
 		})
+
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				applySingleUse(game)
+				observer.unsubscribe(player.hooks.beforeAttack)
+			},
+		)
 	},
 }
 

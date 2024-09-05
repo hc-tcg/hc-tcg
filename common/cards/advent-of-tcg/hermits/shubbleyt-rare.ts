@@ -47,8 +47,8 @@ const ShubbleYTRare: Hermit = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Shelby - Parallel World',
 						modalDescription: 'Place your top card on bottom of deck?',

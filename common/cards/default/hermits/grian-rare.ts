@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -49,46 +50,49 @@ const GrianRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+					return
 
-			const opponentAttachCard = game.components.find(
-				CardComponent,
-				query.card.opponentPlayer,
-				query.card.active,
-				query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
-			)
-			if (!opponentAttachCard) return
+				const opponentAttachCard = game.components.find(
+					CardComponent,
+					query.card.opponentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
+				)
+				if (!opponentAttachCard) return
 
-			const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(player, component)
 
-			if (coinFlip[0] === 'tails') return
+				if (coinFlip[0] === 'tails') return
 
-			const attachSlot = game.components.find(
-				SlotComponent,
-				query.slot.currentPlayer,
-				query.slot.active,
-				query.slot.attach,
-			)
-			const canAttach = game.components.find(
-				SlotComponent,
-				query.slot.currentPlayer,
-				query.not(query.slot.frozen),
-				query.slot.attach,
-				query.slot.active,
-				query.slot.empty,
-			)
+				const attachSlot = game.components.find(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.active,
+					query.slot.attach,
+				)
+				const canAttach = game.components.find(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.not(query.slot.frozen),
+					query.slot.attach,
+					query.slot.active,
+					query.slot.empty,
+				)
 
-			game.addModalRequest({
-				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Grian - Borrow',
-						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+				game.addModalRequest({
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+						name: 'Grian - Borrow',
+						description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
 						cards: [opponentAttachCard.entity],
 						selectionSize: 0,
+						cancelable: false,
 						primaryButton: canAttach
 							? {
 									text: 'Attach',
@@ -100,24 +104,21 @@ const GrianRare: Hermit = {
 							variant: 'default',
 						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult || modalResult.result === undefined)
-						return 'FAILURE_INVALID_DATA'
+					onResult(modalResult) {
+						if (modalResult.result) {
+							if (attachSlot) opponentAttachCard.attach(attachSlot)
+						} else {
+							opponentAttachCard.discard(component.player.entity)
+						}
 
-					if (modalResult.result) {
-						if (attachSlot) opponentAttachCard.attach(attachSlot)
-					} else {
+						return
+					},
+					onTimeout() {
 						opponentAttachCard.discard(component.player.entity)
-					}
-
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					opponentAttachCard.discard(component.player.entity)
-				},
-			})
-		})
+					},
+				})
+			},
+		)
 	},
 }
 

@@ -4,10 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {beforeDefence} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
 	description: "This Hermit is weak to the opponent's active Hermit's type.",
@@ -30,15 +32,19 @@ const WeaknessEffect: Counter<CardComponent> = {
 			if (effect.counter === 0) effect.remove()
 		})
 
-		observer.subscribe(player.hooks.beforeDefence, (attack) => {
-			if (!target.slot.inRow()) return
-			if (
-				attack.targetEntity !== target.slot.rowEntity ||
-				attack.createWeakness === 'never'
-			)
-				return
-			attack.createWeakness = 'always'
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.FORCE_WEAKNESS_ATTACK,
+			(attack) => {
+				if (!target.slot.inRow()) return
+				if (
+					attack.targetEntity !== target.slot.rowEntity ||
+					attack.createWeakness === 'never'
+				)
+					return
+				attack.createWeakness = 'always'
+			},
+		)
 	},
 }
 

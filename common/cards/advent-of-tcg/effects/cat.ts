@@ -38,8 +38,8 @@ const Cat: Attach = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Cat',
 						modalDescription: 'Draw a card from the bottom of your deck?',

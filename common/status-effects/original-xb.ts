@@ -8,6 +8,7 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const OriginalXbEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'originalxb',
 	icon: 'originalxb',
 	name: 'Get Good',
 	description: 'Draw an additional card at the end of your turn.',
@@ -17,7 +18,7 @@ const OriginalXbEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
-		observer.oneShot(player.hooks.onTurnEnd, () => {
+		observer.subscribe(player.hooks.onTurnEnd, () => {
 			player.draw(1)
 			effect.remove()
 		})

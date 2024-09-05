@@ -38,8 +38,8 @@ const Brush: SingleUse = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Brush',
 						modalDescription:

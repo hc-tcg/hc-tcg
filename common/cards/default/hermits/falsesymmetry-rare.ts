@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -33,21 +34,25 @@ const FalseSymmetryRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const coinFlip = flipCoin(player, component)[0]
+				const coinFlip = flipCoin(player, component)[0]
 
-			if (coinFlip === 'tails') return
+				if (coinFlip === 'tails') return
 
-			// Heal 40hp
-			component.slot.inRow() && component.slot.row.heal(40)
-			game.battleLog.addEntry(
-				player.entity,
-				`$p${component.props.name}$ healed $g40hp$`,
-			)
-		})
+				// Heal 40hp
+				component.slot.inRow() && component.slot.row.heal(40)
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${component.props.name}$ healed $g40hp$`,
+				)
+			},
+		)
 	},
 }
 

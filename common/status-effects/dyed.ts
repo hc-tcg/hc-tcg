@@ -8,6 +8,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 
 const DyedEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
+	id: 'dyed',
 	icon: 'dyed',
 	name: 'Dyed',
 	description: 'This Hermit can use items of any type.',

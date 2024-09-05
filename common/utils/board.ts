@@ -1,12 +1,12 @@
+import assert from 'assert'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {GenericActionResult} from '../types/game-state'
 
 export function applySingleUse(
 	game: GameModel,
 	slotInfo: SlotComponent | null = null,
-): GenericActionResult {
+): void {
 	const {currentPlayer} = game
 
 	const suCard = game.components.find(
@@ -14,7 +14,10 @@ export function applySingleUse(
 		query.card.slot(query.slot.singleUse),
 	)
 
-	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
+	assert(
+		suCard,
+		'Can not apply single use card if there is not a single use on the board',
+	)
 
 	currentPlayer.hooks.beforeApply.call()
 
@@ -30,5 +33,5 @@ export function applySingleUse(
 
 	currentPlayer.hooks.afterApply.call()
 
-	return 'SUCCESS'
+	return
 }

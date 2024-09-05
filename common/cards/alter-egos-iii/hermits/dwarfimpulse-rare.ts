@@ -1,7 +1,13 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {CardEntity, RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import GoldenAxe from '../../default/single-use/golden-axe'
@@ -83,31 +89,48 @@ const DwarfImpulseRare: Hermit = {
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
 						goldenAxeRedirect = pickedSlot.rowEntity
+						game.components
+							.filterEntities(
+								CardComponent,
+								query.card.slot(
+									query.every(
+										query.slot.opponent,
+										query.slot.hermit,
+										query.not(query.slot.active),
+									),
+								),
+							)
+							.forEach((hermit) =>
+								game.components
+									.new(
+										StatusEffectComponent,
+										IgnoreAttachSlotEffect,
+										component.entity,
+									)
+									.apply(hermit),
+							)
 					},
 				})
 			},
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(goldenAxeEntity) || !goldenAxeRedirect) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_SET_TARGET,
+			(attack) => {
+				if (!goldenAxeRedirect || !attack.isAttacker(goldenAxeEntity)) return
+				attack.setTarget(component.entity, goldenAxeRedirect)
+			},
+		)
 
-			attack.targetEntity = goldenAxeRedirect
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.opponent,
-						query.slot.attach,
-						query.not(query.slot.active),
-					),
-				),
-			)
-		})
-
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
-			goldenAxeRedirect = null
-			goldenAxeEntity = null
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				goldenAxeRedirect = null
+				goldenAxeEntity = null
+			},
+		)
 	},
 }
 

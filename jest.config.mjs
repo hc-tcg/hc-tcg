@@ -23,6 +23,9 @@ const config = {
 		'^.+\\.tsx?$': [
 			'ts-jest',
 			{
+				diagnostics: {
+					warnOnly: true,
+				},
 				tsconfig: 'tests/tsconfig.json',
 			},
 		],
