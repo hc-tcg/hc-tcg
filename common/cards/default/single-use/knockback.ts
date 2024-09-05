@@ -52,21 +52,8 @@ const Knockback: SingleUse = {
 
 				let activeRow = opponentPlayer.activeRow
 				if (activeRow && activeRow.health) {
-					game.addPickRequest({
-						player: opponentPlayer.entity,
-						id: component.entity,
-						message: 'Choose a new active Hermit from your AFK Hermits',
-						canPick: pickCondition,
-						onResult(pickedSlot) {
-							if (!pickedSlot.inRow()) return
-							opponentPlayer.changeActiveRow(pickedSlot.row)
-						},
-						onTimeout: () => {
-							const slot = game.components.find(SlotComponent, pickCondition)
-							if (!slot?.inRow()) return
-							game.opponentPlayer.changeActiveRow(slot.row)
-						},
-					})
+					let pick = opponentPlayer.createKnockbackPickRequest(component)
+					if (pick) game.addPickRequest(pick)
 				}
 			},
 		)

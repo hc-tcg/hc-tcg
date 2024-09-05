@@ -4,12 +4,11 @@ import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
-import Clock from './clock'
 
 const pickCondition = query.every(
 	query.card.currentPlayer,
 	query.card.slot(query.slot.discardPile),
-	query.not(query.card.is(Clock)),
+	query.card.canBeRecovered,
 )
 
 const Chest: SingleUse = {

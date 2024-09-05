@@ -18,6 +18,7 @@ import {
 	beforeAttack,
 	beforeDefence,
 } from '../types/priorities'
+import {PickRequest} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import query from './query'
 import {ComponentQuery} from './query'
@@ -119,6 +120,8 @@ export class PlayerComponent {
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
 		 */
 		onTurnStart: GameHook<() => void>
+		/** Hook called before the turn ends and cards are drawn. */
+		beforeTurnEnd: GameHook<() => void>
 		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
 
@@ -150,6 +153,9 @@ export class PlayerComponent {
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+
+		/** Hook called to check if the current player is immune to knockback. */
+		getImmuneToKnockback: GameHook<() => boolean>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
@@ -181,11 +187,13 @@ export class PlayerComponent {
 			afterAttack: new PriorityHook(),
 			afterDefence: new PriorityHook(),
 			onTurnStart: new GameHook(),
+			beforeTurnEnd: new GameHook(),
 			onTurnEnd: new GameHook(),
 			onCoinFlip: new GameHook(),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
 			freezeSlots: new GameHook(),
+			getImmuneToKnockback: new GameHook(),
 		}
 	}
 
@@ -331,6 +339,51 @@ export class PlayerComponent {
 		}
 
 		return true
+	}
+
+	public canBeKnockedBack(): boolean {
+		return this.hooks.getImmuneToKnockback.call().every((x) => x === false)
+	}
+
+	/** Change the player's row with a knockback effect, for example egg */
+	public knockback(newRow: RowComponent | null): boolean {
+		if (!this.canBeKnockedBack()) return false
+		return this.changeActiveRow(newRow)
+	}
+
+	/** Force the player to switch their active hermit due to knockback. If the hermit is immune to knockback, return null. */
+	public createKnockbackPickRequest(
+		component: CardComponent,
+	): PickRequest | null {
+		const pickCondition = query.every(
+			query.not(query.slot.active),
+			query.not(query.slot.empty),
+			query.slot.opponent,
+			query.slot.hermit,
+		)
+
+		if (!this.game.components.exists(SlotComponent, pickCondition)) return null
+
+		if (!this.canBeKnockedBack()) return null
+
+		return {
+			player: this.entity,
+			id: component.entity,
+			message: 'Choose a new active Hermit from your AFK Hermits.',
+			canPick: pickCondition,
+			onResult: (pickedSlot) => {
+				if (!pickedSlot.inRow()) return
+				this.changeActiveRow(pickedSlot.row)
+			},
+			onTimeout: () => {
+				let rowComponent = this.game.components.find(
+					RowComponent,
+					query.not(query.row.active),
+				)
+				if (!rowComponent) return
+				this.changeActiveRow(rowComponent)
+			},
+		}
 	}
 
 	/** Get an array of [card, slot the card can be placed in] for each card in the player's hand. */

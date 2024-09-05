@@ -64,7 +64,7 @@ const Egg: SingleUse = {
 						let afkHermitSlot = pickedSlot
 						if (!afkHermitSlot?.inRow()) return
 
-						opponentPlayer.changeActiveRow(afkHermitSlot.row)
+						opponentPlayer.knockback(afkHermitSlot.row)
 
 						const coinFlip = flipCoin(player, component)
 						if (coinFlip[0] === 'heads') {

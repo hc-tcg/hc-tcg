@@ -43,6 +43,8 @@ export class CardComponent<CardType extends Card = Card> {
 	observerEntity: ObserverEntity | null
 
 	turnedOver: boolean
+	/** True if this card can be drawn from the discard pile */
+	canBeRecovered: boolean
 
 	hooks: {
 		onChangeSlot: GameHook<(slot: SlotComponent) => void>
@@ -73,6 +75,7 @@ export class CardComponent<CardType extends Card = Card> {
 		}
 
 		this.turnedOver = false
+		this.canBeRecovered = true
 
 		this.hooks = {
 			onChangeSlot: new GameHook(),

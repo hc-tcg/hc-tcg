@@ -41,6 +41,9 @@ const Clock: SingleUse = {
 	),
 	log: (values) =>
 		`${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
+	onCreate(_game, component) {
+		component.canBeRecovered = false
+	},
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

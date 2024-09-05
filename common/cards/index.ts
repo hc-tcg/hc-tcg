@@ -1,5 +1,6 @@
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits'
+import alterEgosIIIIEffectards from './alter-egos-iii/effects'
 import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
 import alterEgosIIIItemCards from './alter-egos-iii/items'
 import alterEgoEffectCards from './alter-egos/effects'
@@ -17,6 +18,7 @@ import seasonXHermitCards from './season-x/hermits'
 const effectCardClasses: Array<Card> = [
 	...defaultEffectCards,
 	...alterEgoEffectCards,
+	...alterEgosIIIIEffectards,
 	// ...adventOfTcgEffectCards,
 ]
 
