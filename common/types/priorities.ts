@@ -73,6 +73,8 @@ export const afterAttack = createPriorityDictionary({
 	UPDATE_POST_ATTACK_STATE: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
+	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
+	DESTROY_MOCK_CARD: null,
 })
 
 export const afterDefence = createPriorityDictionary({
