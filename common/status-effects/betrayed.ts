@@ -98,7 +98,10 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			player.hooks.getAttackRequests,
 			(_activeInstance, _hermitAttackType) => {
 				// Only pick if there is afk to pick
-				if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					pickedAfkHermit = null
+					return
+				}
 
 				game.addPickRequest({
 					player: player.entity,
@@ -109,7 +112,6 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 						pickedAfkHermit = pickedSlot
 					},
 					onTimeout() {
-						observer.unsubscribe(player.hooks.getAttackRequests)
 						const firstAfk = game.components.find(SlotComponent, pickCondition)
 						if (!firstAfk) return
 						pickedAfkHermit = firstAfk
