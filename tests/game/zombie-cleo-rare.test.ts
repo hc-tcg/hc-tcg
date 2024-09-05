@@ -14,6 +14,7 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
+import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
 	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
@@ -71,6 +72,74 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 	)
 }
 
+function* testPuppetryCanceling(game: GameModel) {
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
+	yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 2)
+
+	yield* attack(game, 'secondary')
+
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	expect(game.state.pickRequests).toHaveLength(1)
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(2),
+	)
+
+	yield* finishModalRequest(game, {cancel: true})
+
+	yield* attack(game, 'secondary')
+
+	expect(game.state.pickRequests).toHaveLength(1)
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	expect(game.state.pickRequests).toHaveLength(1)
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(2),
+	)
+
+	yield* finishModalRequest(game, {pick: 'secondary'})
+	// Flip one coin for "Watch This"
+	yield* finishModalRequest(game, {result: true, cards: null})
+	yield* finishModalRequest(game, {result: false, cards: null})
+
+	expect(
+		game.components.find(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.active,
+		)?.health,
+	).toBe(
+		EthosLabCommon.health -
+			80 /** Boomer Bdubs' base secondary damage */ -
+			20 /** Extra damage from exactly 1 heads */,
+	)
+}
+
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
 		testGame(
@@ -91,6 +160,17 @@ describe('Test Zombie Cleo', () => {
 				playerTwoDeck: [ZombieCleoRare, EthosLabCommon],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test Puppetry After Canceling', () => {
+		testGame(
+			{
+				saga: testPuppetryCanceling,
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, ZombieCleoRare, BoomerBdubsRare],
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

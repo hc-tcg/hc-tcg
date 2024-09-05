@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
+import {SelectCards} from '../../../types/modal-requests'
 import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
@@ -66,6 +67,41 @@ const BoomerBdubsRare: Hermit = {
 
 				if (!activeHermit) return
 
+				const followUpModal = {
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+						name: 'Boomer BDubs - Watch This',
+						description: 'Do you want to flip another coin for your attack?',
+						cards: [],
+						selectionSize: 0,
+						cancelable: false,
+						primaryButton: {
+							text: 'Yes',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'No',
+							variant: 'default',
+						},
+					},
+					onResult(modalResult) {
+						if (!modalResult?.result) return
+
+						const flip = flipCoin(player, activeHermit)[0]
+
+						if (flip === 'tails') {
+							flippedTails = true
+							return
+						}
+
+						extraDamage += 20
+
+						game.addModalRequest(followUpModal)
+					},
+					onTimeout() {},
+				} satisfies SelectCards.Request
+
 				game.addModalRequest({
 					player: player.entity,
 					modal: {
@@ -97,10 +133,7 @@ const BoomerBdubsRare: Hermit = {
 
 						extraDamage += 20
 
-						player.hooks.getAttackRequests.call(
-							activeInstance,
-							hermitAttackType,
-						)
+						game.addModalRequest(followUpModal)
 
 						// After the first coin flip we remove fortune to prevent infinite coin flips.
 						game.components
