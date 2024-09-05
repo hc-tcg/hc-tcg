@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import MelodyEffect from '../../../status-effects/melody'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -43,26 +44,35 @@ const OrionSoundRare: Hermit = {
 
 		let cardsWithStatusEffects: Array<string> = []
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+					return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Choose an Active or AFK Hermit to heal.',
-				canPick: query.every(query.not(query.slot.empty)),
-				onResult(pickedSlot) {
-					const pickedCard = pickedSlot.getCard()
-					if (!pickedCard) return
+				const pickCondition = query.every(
+					query.slot.hermit,
+					query.not(query.slot.empty),
+				)
 
-					game.components
-						.new(StatusEffectComponent, MelodyEffect, component.entity)
-						.apply(pickedCard.entity)
-					cardsWithStatusEffects.push(pickedCard.entity)
-				},
-			})
-		})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an Active or AFK Hermit to heal.',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const pickedCard = pickedSlot.getCard()
+						if (!pickedCard) return
+
+						game.components
+							.new(StatusEffectComponent, MelodyEffect, component.entity)
+							.apply(pickedCard.entity)
+						cardsWithStatusEffects.push(pickedCard.entity)
+					},
+				})
+			},
+		)
 	},
 }
 

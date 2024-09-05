@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -78,24 +79,28 @@ const PharaohRare: Hermit = {
 		)
 
 		// Heals the afk hermit *before* we actually do damage
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!pickedAfkSlot?.inRow()) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!pickedAfkSlot?.inRow()) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
-			const healAmount = attack.calculateDamage()
-			pickedAfkSlot.row.heal(healAmount)
-			const healedHermit = pickedAfkSlot.getCard()
-			game.battleLog.addEntry(
-				player.entity,
-				`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
-					pickedAfkSlot.row.index + 1
-				})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
-			)
-		})
+				const healAmount = attack.calculateDamage()
+				pickedAfkSlot.row.heal(healAmount)
+				const healedHermit = pickedAfkSlot.getCard()
+				game.battleLog.addEntry(
+					player.entity,
+					`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
+						pickedAfkSlot.row.index + 1
+					})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
+				)
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			pickedAfkSlot = null

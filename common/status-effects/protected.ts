@@ -5,6 +5,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {afterDefence, beforeDefence} from '../types/priorities'
 import {StatusEffect, statusEffect} from './status-effect'
 
 const ProtectedEffect: StatusEffect<CardComponent> = {
@@ -57,21 +58,29 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 			}
 		})
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!becameActive || !attack.isTargeting(target)) return
-			// Do not block backlash attacks
-			if (attack.isBacklash) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeDefence,
+			beforeDefence.HERMIT_BLOCK_DAMAGE,
+			(attack) => {
+				if (!becameActive || !attack.isTargeting(target)) return
+				// Do not block backlash attacks
+				if (attack.isBacklash) return
 
-			if (attack.getDamage() > 0) {
-				// Block all damage
-				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
-			}
-		})
+				if (attack.getDamage() > 0) {
+					// Block all damage
+					attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+				}
+			},
+		)
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!attack.isTargeting(target) || attack.target?.health) return
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (!attack.isTargeting(target) || attack.target?.health) return
+				effect.remove()
+			},
+		)
 	},
 }
 

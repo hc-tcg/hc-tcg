@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import RendogCommon from '../../default/hermits/rendog-common'
@@ -40,25 +41,29 @@ const PythonGBRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const logfellaAmount = game.components.filter(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.attached,
-				query.card.is(
-					XisumavoidCommon,
-					XisumavoidRare,
-					RendogCommon,
-					RendogRare,
-				),
-				query.card.row(query.row.adjacent(query.row.active)),
-			).length
+				const logfellaAmount = game.components.filter(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.attached,
+					query.card.is(
+						XisumavoidCommon,
+						XisumavoidRare,
+						RendogCommon,
+						RendogRare,
+					),
+					query.card.row(query.row.adjacent(query.row.active)),
+				).length
 
-			attack.multiplyDamage(component.entity, Math.pow(2, logfellaAmount))
-		})
+				attack.multiplyDamage(component.entity, Math.pow(2, logfellaAmount))
+			},
+		)
 	},
 }
 

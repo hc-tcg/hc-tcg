@@ -4,6 +4,7 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -39,21 +40,25 @@ const ShubbleYTRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			if (attack.type !== 'secondary') return
-			const topCard = player.getDeck().sort(CardComponent.compareOrder).at(0)
-			if (!topCard) return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				if (attack.type !== 'secondary') return
+				const topCard = player.getDeck().sort(CardComponent.compareOrder).at(0)
+				if (!topCard) return
 
-			game.addModalRequest({
-				player: player.entity,
-				modall: {
-					type: 'selectCards',
-					payload: {
-						modalName: 'Shelby - Parallel World',
-						modalDescription: 'Place your top card on bottom of deck?',
+				game.addModalRequest({
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+
+						name: 'Shelby - Parallel World',
+						description: 'Place your top card on bottom of deck?',
 						cards: [topCard.entity],
 						selectionSize: 0,
+						cancelable: false,
 						primaryButton: {
 							text: 'Place on Bottom',
 							variant: 'primary',
@@ -63,22 +68,22 @@ const ShubbleYTRare: Hermit = {
 							variant: 'secondary',
 						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult) return 'SUCCESS'
-					if (!modalResult.result) return 'SUCCESS'
+					onResult(modalResult) {
+						if (!modalResult) return 'SUCCESS'
+						if (!modalResult.result) return 'SUCCESS'
 
-					topCard.attach(
-						game.components.new(DeckSlotComponent, player.entity, {
-							position: 'back',
-						}),
-					)
+						topCard.attach(
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'back',
+							}),
+						)
 
-					return 'SUCCESS'
-				},
-				onTimeout() {},
-			})
-		})
+						return 'SUCCESS'
+					},
+					onTimeout() {},
+				})
+			},
+		)
 	},
 }
 

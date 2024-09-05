@@ -8,6 +8,7 @@ import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
+import {beforeAttack} from '../../../types/priorities'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -114,36 +115,41 @@ const Biffa2001Rare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const counter = cardsPlayed.get(game)[player.entity]
-			if (counter === undefined) return
+				const counter = cardsPlayed.get(game)[player.entity]
+				if (counter === undefined) return
 
-			observer.subscribe(player.hooks.onApply, () => {
-				const additionalAttack = game
-					.newAttack({
-						attacker: component.entity,
-						target: attack.targetEntity,
-						type: 'secondary',
-						log: (values) =>
-							`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.secondary.name}$`,
-					})
-					.addDamage(component.entity, 20)
-				additionalAttack.shouldIgnoreCards.push(
-					query.card.entity(component.entity),
-				)
+				observer.subscribe(player.hooks.onApply, () => {
+					const additionalAttack = game
+						.newAttack({
+							attacker: component.entity,
+							target: attack.targetEntity,
+							type: 'secondary',
+							log: (values) =>
+								`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.secondary.name}$`,
+						})
+						.addDamage(component.entity, 20)
+					additionalAttack.shouldIgnoreCards.push(
+						query.card.entity(component.entity),
+					)
 
-				executeExtraAttacks(game, [additionalAttack])
-			})
+					executeExtraAttacks(game, [additionalAttack])
+				})
 
-			observer.oneShot(player.hooks.onTurnEnd, () => {
-				observer.unsubscribe(player.hooks.onApply)
-			})
+				observer.subscribe(player.hooks.onTurnEnd, () => {
+					observer.unsubscribe(player.hooks.onApply)
+					observer.unsubscribe(player.hooks.onTurnEnd)
+				})
 
-			attack.addDamage(component.entity, 20 * counter)
-		})
+				attack.addDamage(component.entity, 20 * counter)
+			},
+		)
 	},
 }
 

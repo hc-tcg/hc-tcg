@@ -7,6 +7,7 @@ import {GameModel} from '../../../models/game-model'
 import SoulmateEffect, {
 	soulmateEffectDamage,
 } from '../../../status-effects/soulmate'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -41,13 +42,17 @@ const BigBSt4tzRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			game.components
-				.new(StatusEffectComponent, SoulmateEffect, component.entity)
-				.apply(player.opponentPlayer.entity)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				game.components
+					.new(StatusEffectComponent, SoulmateEffect, component.entity)
+					.apply(player.opponentPlayer.entity)
+			},
+		)
 	},
 }
 

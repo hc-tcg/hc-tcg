@@ -4,6 +4,7 @@ import {
 } from './aussie-ping'
 import BadOmenEffect from './badomen'
 import BetrayedEffect from './betrayed'
+import CatGiftEffect from './cat-gift'
 import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
@@ -84,6 +85,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	IgnoreAttachSlotEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
+	CatGiftEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

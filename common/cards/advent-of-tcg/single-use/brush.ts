@@ -38,18 +38,17 @@ const Brush: SingleUse = {
 
 			game.addModalRequest({
 				player: player.entity,
-				modall: {
+				modal: {
 					type: 'selectCards',
-					payload: {
-						modalName: 'Brush',
-						modalDescription:
-							'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
-						cards: topCards.map((card) => card.entity),
-						selectionSize: 3,
-						primaryButton: {
-							text: 'Confirm Selection',
-							variant: 'default',
-						},
+					name: 'Brush',
+					description:
+						'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
+					cards: topCards.map((card) => card.entity),
+					selectionSize: [0, 3],
+					cancelable: false,
+					primaryButton: {
+						text: 'Confirm Selection',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {

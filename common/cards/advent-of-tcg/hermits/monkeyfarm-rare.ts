@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -41,32 +42,36 @@ const MonkeyfarmRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const pickCondition = query.every(
-				query.slot.opponent,
-				query.slot.item,
-				query.not(query.slot.active),
-				query.not(query.slot.empty),
-			)
+				const pickCondition = query.every(
+					query.slot.opponent,
+					query.slot.item,
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] !== 'heads') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] !== 'heads') return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Pick one of your opponent's AFK Hermit's item cards",
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					pickedSlot.getCard()?.discard()
-				},
-			})
-		})
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: "Pick one of your opponent's AFK Hermit's item cards",
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						pickedSlot.getCard()?.discard()
+					},
+				})
+			},
+		)
 	},
 }
 

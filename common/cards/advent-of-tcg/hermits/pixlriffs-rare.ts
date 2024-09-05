@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {CardEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -78,19 +79,23 @@ const PixlriffsRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const startingRowIndex = hermitStartingRow.get(game)[component.entity]
-			if (
-				startingRowIndex !== undefined &&
-				startingRowIndex !== player.activeRow?.index
-			) {
-				// TODO: Handle "Puppetry"/"Role Play" + Ender Pearl + "Jumpscare" + Naughty Regift to move, return to original row, then use "World Build" in the same turn
-				attack.addDamage(component.entity, 40)
-			}
-		})
+				const startingRowIndex = hermitStartingRow.get(game)[component.entity]
+				if (
+					startingRowIndex !== undefined &&
+					startingRowIndex !== player.activeRow?.index
+				) {
+					// TODO: Handle "Puppetry"/"Role Play" + Ender Pearl + "Jumpscare" + Naughty Regift to move, return to original row, then use "World Build" in the same turn
+					attack.addDamage(component.entity, 40)
+				}
+			},
+		)
 	},
 }
 

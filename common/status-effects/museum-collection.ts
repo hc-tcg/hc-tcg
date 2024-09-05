@@ -1,13 +1,8 @@
 import {PlayerComponent} from '../components'
-import {
-	Counter,
-	statusEffect,
-	StatusEffect,
-	systemStatusEffect,
-} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
-const MuseumCollectionEffect: StatusEffect<PlayerComponent> & Counter = {
-	...statusEffect,
+const MuseumCollectionEffect: Counter<PlayerComponent> = {
+	...systemStatusEffect,
 	id: 'museum-collection',
 	icon: 'museum-collection',
 	name: 'Museum Collection Size',

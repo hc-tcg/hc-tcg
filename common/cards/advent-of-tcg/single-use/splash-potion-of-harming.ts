@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -74,13 +75,17 @@ const SplashPotionOfHarming: SingleUse = {
 			return attack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-			applySingleUse(game)
+				applySingleUse(game)
 
-			observer.unsubscribe(player.hooks.onAttack)
-		})
+				observer.unsubscribe(player.hooks.beforeAttack)
+			},
+		)
 	},
 }
 

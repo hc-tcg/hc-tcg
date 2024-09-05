@@ -1,10 +1,12 @@
 import {
 	CardComponent,
-	DeckSlotComponent,
 	ObserverComponent,
+	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import CatGiftEffect from '../../../status-effects/cat-gift'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -24,29 +26,32 @@ const Cat: Attach = {
 		observer: ObserverComponent,
 	) {
 		const {player} = component
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!component.slot.inRow()) return
-			if (!attack.isAttacker(component.slot.row.getHermit()?.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
+			(attack) => {
+				if (!component.slot.inRow()) return
+				if (!attack.isAttacker(component.slot.row.getHermit()?.entity)) return
 
-			if (
-				game.components.exists(
-					CardComponent,
-					query.card.slot(query.slot.currentPlayer, query.slot.deck),
+				if (
+					game.components.exists(
+						CardComponent,
+						query.card.slot(query.slot.currentPlayer, query.slot.deck),
+					)
 				)
-			)
-				return
+					return
 
-			game.addModalRequest({
-				player: player.entity,
-				modall: {
-					type: 'selectCards',
-					payload: {
-						modalName: 'Cat',
-						modalDescription: 'Draw a card from the bottom of your deck?',
+				game.addModalRequest({
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+						name: 'Cat',
+						description: 'Draw a card from the bottom of your deck?',
 						cards: [
 							player.getDeck().sort(CardComponent.compareOrder)[0].entity,
 						],
 						selectionSize: 0,
+						cancelable: false,
 						primaryButton: {
 							text: 'Draw from Bottom',
 							variant: 'primary',
@@ -56,27 +61,20 @@ const Cat: Attach = {
 							variant: 'secondary',
 						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult) return 'SUCCESS'
-					if (!modalResult.result) return 'SUCCESS'
+					onResult(modalResult) {
+						if (!modalResult) return 'SUCCESS'
+						if (!modalResult.result) return 'SUCCESS'
 
-					observer.oneShot(player.hooks.onTurnEnd, (drawCards) => {
-						drawCards[0]?.attach(
-							game.components.new(DeckSlotComponent, player.entity, {
-								position: 'front',
-							}),
-						)
-						drawCards[0] =
-							player.getDeck().sort(CardComponent.compareOrder).at(-1) || null
-						drawCards[0]?.draw()
-					})
+						game.components
+							.new(StatusEffectComponent, CatGiftEffect, component.entity)
+							.apply(player.entity)
 
-					return 'SUCCESS'
-				},
-				onTimeout() {},
-			})
-		})
+						return 'SUCCESS'
+					},
+					onTimeout() {},
+				})
+			},
+		)
 	},
 }
 

@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import DyedEffect from '../../../status-effects/dyed'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -42,34 +43,38 @@ const Smajor1995Rare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const pickCondition = query.every(
-				query.slot.currentPlayer,
-				query.slot.hermit,
-				query.not(query.slot.active),
-				query.not(query.slot.empty),
-			)
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Choose an AFK Hermit to dye.',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					const pickedCard = pickedSlot.getCard()
-					if (!pickedCard) return
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an AFK Hermit to dye.',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const pickedCard = pickedSlot.getCard()
+						if (!pickedCard) return
 
-					game.components
-						.new(StatusEffectComponent, DyedEffect, component.entity)
-						.apply(pickedCard.entity)
-				},
-			})
-		})
+						game.components
+							.new(StatusEffectComponent, DyedEffect, component.entity)
+							.apply(pickedCard.entity)
+					},
+				})
+			},
+		)
 	},
 }
 

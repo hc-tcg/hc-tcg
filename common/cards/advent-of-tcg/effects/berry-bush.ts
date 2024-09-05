@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 
@@ -34,18 +35,22 @@ const BerryBush: Attach & HasHealth = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(opponentPlayer.hooks.afterAttack, () => {
-			if (component.slot.inRow() && !component.slot.row.health) {
-				for (let i = 0; i < 2; i++) {
-					game.components.new(
-						CardComponent,
-						'instant_health_ii',
-						game.components.new(HandSlotComponent, opponentPlayer.entity)
-							.entity,
-					)
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				if (component.slot.inRow() && !component.slot.row.health) {
+					for (let i = 0; i < 2; i++) {
+						game.components.new(
+							CardComponent,
+							'instant_health_ii',
+							game.components.new(HandSlotComponent, opponentPlayer.entity)
+								.entity,
+						)
+					}
 				}
-			}
-		})
+			},
+		)
 
 		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
 			if (component.slot.inRow() && component.slot.row.health)

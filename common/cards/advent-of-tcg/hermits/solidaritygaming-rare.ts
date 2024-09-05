@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ProtectedEffect from '../../../status-effects/protected'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -42,33 +43,37 @@ const SolidaritygamingRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+					return
 
-			const pickCondition = query.every(
-				query.slot.currentPlayer,
-				query.slot.hermit,
-				query.not(query.slot.active),
-				query.not(query.slot.empty),
-			)
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+				)
 
-			if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Choose an AFK Hermit to protect',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow() || !pickedSlot.getCard()) return
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an AFK Hermit to protect',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow() || !pickedSlot.getCard()) return
 
-					game.components
-						.new(StatusEffectComponent, ProtectedEffect, component.entity)
-						.apply(pickedSlot.getCard()?.entity)
-				},
-			})
-		})
+						game.components
+							.new(StatusEffectComponent, ProtectedEffect, component.entity)
+							.apply(pickedSlot.getCard()?.entity)
+					},
+				})
+			},
+		)
 	},
 }
 

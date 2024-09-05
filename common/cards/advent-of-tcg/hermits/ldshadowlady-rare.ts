@@ -6,6 +6,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -41,56 +42,60 @@ const LDShadowLadyRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (
-				!game.components.exists(
-					SlotComponent,
-					query.slot.opponent,
-					query.slot.hermit,
-					query.slot.active,
-				)
-			)
-				return
-
-			const pickCondition = query.every(
-				query.slot.hermit,
-				query.slot.opponent,
-				query.slot.empty,
-				query.not(query.slot.active),
-			)
-
-			if (!game.components.exists(SlotComponent, pickCondition)) return
-
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: "Move your opponent's active Hermit to a new slot.",
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (opponentPlayer.activeRow === null) return
-
-					game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
-				},
-				onTimeout() {
-					if (opponentPlayer.activeRow === null) return
-
-					const emptyOpponentRow = game.components.find(
-						RowComponent,
-						query.row.opponentPlayer,
-						query.not(query.row.active),
-						query.not(query.row.hasHermit),
+				if (
+					!game.components.exists(
+						SlotComponent,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.active,
 					)
+				)
+					return
 
-					if (!emptyOpponentRow) return
+				const pickCondition = query.every(
+					query.slot.hermit,
+					query.slot.opponent,
+					query.slot.empty,
+					query.not(query.slot.active),
+				)
 
-					game.swapRows(opponentPlayer.activeRow, emptyOpponentRow)
-				},
-			})
-		})
+				if (!game.components.exists(SlotComponent, pickCondition)) return
+
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: "Move your opponent's active Hermit to a new slot.",
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (opponentPlayer.activeRow === null) return
+
+						game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
+					},
+					onTimeout() {
+						if (opponentPlayer.activeRow === null) return
+
+						const emptyOpponentRow = game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.not(query.row.active),
+							query.not(query.row.hasHermit),
+						)
+
+						if (!emptyOpponentRow) return
+
+						game.swapRows(opponentPlayer.activeRow, emptyOpponentRow)
+					},
+				})
+			},
+		)
 	},
 }
 

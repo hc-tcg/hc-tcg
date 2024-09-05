@@ -8,6 +8,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -44,52 +45,56 @@ const GrianchRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-			if (attack.type === 'primary') {
-				// Heals the afk hermit *before* we actually do damage
-				if (!pickedAfkSlot?.inRow()) return
-				pickedAfkSlot.row.heal(40)
-				let hermit = pickedAfkSlot.row.getHermit()
+				if (attack.type === 'primary') {
+					// Heals the afk hermit *before* we actually do damage
+					if (!pickedAfkSlot?.inRow()) return
+					pickedAfkSlot.row.heal(40)
+					let hermit = pickedAfkSlot.row.getHermit()
 
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g40hp$ by $p${
-						component.props.name
-					}$`,
-				)
-			} else if (attack.type === 'secondary') {
-				const coinFlip = flipCoin(player, component)
-
-				if (coinFlip[0] === 'tails') {
-					game.components
-						.new(StatusEffectComponent, NaughtyRegiftEffect, component.entity)
-						.apply(opponentPlayer.entity)
-					return
-				}
-
-				game.components
-					.find(
-						StatusEffectComponent,
-						query.effect.is(FortuneEffect),
-						query.effect.targetEntity(player.entity),
+					game.battleLog.addEntry(
+						player.entity,
+						`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g40hp$ by $p${
+							component.props.name
+						}$`,
 					)
-					?.remove()
+				} else if (attack.type === 'secondary') {
+					const coinFlip = flipCoin(player, component)
 
-				game.removeCompletedActions(
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'SINGLE_USE_ATTACK',
-				)
-				game.removeBlockedActions(
-					'game',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'SINGLE_USE_ATTACK',
-				)
-			}
-		})
+					if (coinFlip[0] === 'tails') {
+						game.components
+							.new(StatusEffectComponent, NaughtyRegiftEffect, component.entity)
+							.apply(opponentPlayer.entity)
+						return
+					}
+
+					game.components
+						.find(
+							StatusEffectComponent,
+							query.effect.is(FortuneEffect),
+							query.effect.targetEntity(player.entity),
+						)
+						?.remove()
+
+					game.removeCompletedActions(
+						'PRIMARY_ATTACK',
+						'SECONDARY_ATTACK',
+						'SINGLE_USE_ATTACK',
+					)
+					game.removeBlockedActions(
+						'game',
+						'PRIMARY_ATTACK',
+						'SECONDARY_ATTACK',
+						'SINGLE_USE_ATTACK',
+					)
+				}
+			},
+		)
 
 		let pickedAfkSlot: SlotComponent | null = null
 

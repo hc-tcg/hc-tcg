@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -11,6 +12,7 @@ export const soulmateEffectDamage = 140
 
 const SoulmateEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'soulmate',
 	icon: 'soulmate',
 	name: 'Soulmate',
 	description: `If you knock out %CREATOR%, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
@@ -27,23 +29,27 @@ const SoulmateEffect: StatusEffect<PlayerComponent> = {
 	) {
 		const {creator} = effect
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isTargeting(creator) || attack.target!.health) return
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (!attack.isTargeting(creator) || attack.target!.health) return
 
-			const statusEffectAttack = game.newAttack({
-				attacker: effect.creatorEntity,
-				target: player.activeRowEntity,
-				type: 'status-effect',
-				log: (values) =>
-					`${values.target} took ${values.damage} from $e${effect.props.name}$`,
-			})
-			statusEffectAttack.addDamage(effect.entity, soulmateEffectDamage)
+				const statusEffectAttack = game.newAttack({
+					attacker: effect.creatorEntity,
+					target: player.activeRowEntity,
+					type: 'status-effect',
+					log: (values) =>
+						`${values.target} took ${values.damage} from $e${effect.props.name}$`,
+				})
+				statusEffectAttack.addDamage(effect.entity, soulmateEffectDamage)
 
-			observer.unsubscribe(player.hooks.afterAttack)
-			executeExtraAttacks(game, [statusEffectAttack])
+				observer.unsubscribe(player.hooks.afterAttack)
+				executeExtraAttacks(game, [statusEffectAttack])
 
-			effect.remove()
-		})
+				effect.remove()
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnEnd, () => {
 			effect.remove()

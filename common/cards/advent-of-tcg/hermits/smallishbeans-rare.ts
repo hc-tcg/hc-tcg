@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -35,19 +36,23 @@ const SmallishbeansAdventRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const activeRow = component.slot.inRow() ? component.slot.row : null
-			if (!activeRow) return
+				const activeRow = component.slot.inRow() ? component.slot.row : null
+				if (!activeRow) return
 
-			let total = activeRow.getItems().reduce((partialSum, item) => {
-				return partialSum + (item.isItem() ? item.props.energy.length : 1)
-			}, 0)
+				let total = activeRow.getItems().reduce((partialSum, item) => {
+					return partialSum + (item.isItem() ? item.props.energy.length : 1)
+				}, 0)
 
-			attack.addDamage(component.entity, total * 20)
-		})
+				attack.addDamage(component.entity, total * 20)
+			},
+		)
 	},
 }
 
