@@ -8,9 +8,11 @@ import {
 	AussiePingImmuneEffect,
 } from 'common/status-effects/aussie-ping'
 import query from 'common/components/query'
+import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
+import Anvil from 'common/cards/alter-egos/single-use/anvil'
 
 describe('Test Pearlescent MoonRare', () => {
-	test('Test Aussie Ping', () => {
+	test('Aussie Ping', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -58,6 +60,40 @@ describe('Test Pearlescent MoonRare', () => {
 							query.effect.targetEntity(game.opponentPlayer.entity),
 						),
 					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Aussie Ping blocks Skizzleman Rare extra damage.', () => {
+		testGame(
+			{
+				playerOneDeck: [SkizzlemanRare, Anvil],
+				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+
+					// Give Skizzleman Rare the Aussie Ping effect.
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					// Use Anvil to trigger Skizz's bonus damage.
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
