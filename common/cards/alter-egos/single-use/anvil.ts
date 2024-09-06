@@ -12,6 +12,12 @@ import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
+function opponentHasMultipleRows(game: GameModel) {
+	return (
+		game.components.filter(RowComponent, query.row.opponentPlayer).length > 1
+	)
+}
+
 function getTargetHermits(game: GameModel, player: PlayerComponent) {
 	return game.components.filter(
 		RowComponent,
@@ -34,7 +40,9 @@ const Anvil: SingleUse = {
 	hasAttack: true,
 	attackPreview: (game) => {
 		const targets = getTargetHermits(game, game.currentPlayer)
-		if (targets.length === 0) return '$A0$'
+		if (targets.length === 0) {
+			return opponentHasMultipleRows(game) ? '$A0$' : '$A30$'
+		}
 		if (targets[0].index === game.currentPlayer.activeRow!.index) {
 			return targets.length === 1
 				? '$A30$'
@@ -51,7 +59,7 @@ const Anvil: SingleUse = {
 
 		observer.subscribe(
 			player.hooks.getAttack,
-			game.components.filter(RowComponent, query.row.opponentPlayer).length > 1
+			opponentHasMultipleRows(game)
 				? () => {
 						const attack = getTargetHermits(game, player).reduce(
 							(attacks: null | AttackModel, row) => {

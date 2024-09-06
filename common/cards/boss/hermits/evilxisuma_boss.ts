@@ -10,9 +10,9 @@ import {GameModel} from '../../../models/game-model'
 import ExBossNineStatusEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'
 import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from '../../../status-effects/multiturn-attack-disabled'
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/singleturn-attack-disabled'
 import PoisonEffect from '../../../status-effects/poison'
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
@@ -159,8 +159,8 @@ const EvilXisumaBossHermitCard: Hermit = {
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.entity(component.entity)),
 			query.effect.is(
-				MultiturnPrimaryAttackDisabledEffect,
-				MultiturnSecondaryAttackDisabledEffect,
+				PrimaryAttackDisabledEffect,
+				SecondaryAttackDisabledEffect,
 			),
 		)
 		damageDisabled.set(component, disabled)
@@ -348,8 +348,8 @@ const EvilXisumaBossHermitCard: Hermit = {
 					StatusEffectComponent<CardComponent>,
 					query.effect.targetIsCardAnd(query.card.entity(component.entity)),
 					query.effect.is(
-						MultiturnPrimaryAttackDisabledEffect,
-						MultiturnSecondaryAttackDisabledEffect,
+						PrimaryAttackDisabledEffect,
+						SecondaryAttackDisabledEffect,
 					),
 				)
 				if (lastAttackDisabledByAmnesia) {

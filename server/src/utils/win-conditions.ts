@@ -12,7 +12,6 @@ import {getOpponentId} from '../utils'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
-// @TODO `getGamePlayerOutcome` and `getWinner` need to properly handle when an AI loses
 /////////////////////////////////////////
 
 type EndResult = {
