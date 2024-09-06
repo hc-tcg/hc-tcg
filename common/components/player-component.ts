@@ -9,6 +9,7 @@ import type {
 	CoinFlipResult,
 	CurrentCoinFlip,
 	TurnActions,
+	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {
@@ -355,5 +356,26 @@ export class PlayerComponent {
 						Array<SlotEntity>,
 					],
 			)
+	}
+
+	private lastHermitAttack: null | UsedHermitAttackInfo = null
+
+	/** Get details about the last hermit attack this player used. */
+	public get lastHermitAttackInfo() {
+		return this.lastHermitAttack
+	}
+
+	public updateLastUsedHermitAttack(attackType: HermitAttackType) {
+		if (attackType === 'single-use') return
+		const activeHermit = this.getActiveHermit()
+		assert(
+			activeHermit,
+			`${this.playerName} tried to attack without an active hermit`,
+		)
+		this.lastHermitAttack = {
+			attackType,
+			attacker: activeHermit,
+			turn: this.game.state.turn.turnNumber,
+		}
 	}
 }

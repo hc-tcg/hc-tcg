@@ -116,7 +116,7 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: string | null
+		winner: PlayerId | null
 		outcome: GameEndOutcomeT | null
 		reason: GameEndReasonT | null
 	}

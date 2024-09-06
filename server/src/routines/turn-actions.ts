@@ -29,6 +29,7 @@ function getAttack(
 	if (!creator.isHermit()) return []
 
 	const nextAttack = creator.props.getAttack(game, creator, hermitAttackType)
+	creator.player.updateLastUsedHermitAttack(hermitAttackType)
 
 	if (nextAttack) attacks.push(nextAttack)
 

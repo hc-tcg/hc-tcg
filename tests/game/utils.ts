@@ -106,6 +106,17 @@ export function* applyEffect(game: GameModel) {
 	})
 }
 
+/** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
+export function* removeEffect(game: GameModel) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayer.entity,
+		action: {
+			type: 'REMOVE_EFFECT',
+		},
+	})
+}
+
 /** Attack with the current player. */
 export function* attack(
 	game: GameModel,
@@ -198,7 +209,7 @@ const defaultGameSettings = {
 	extraStartingCards: [],
 	disableDamage: false,
 	noItemRequirements: false,
-	forceCoinFlip: false,
+	forceCoinFlip: true,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 	logBoardState: true,

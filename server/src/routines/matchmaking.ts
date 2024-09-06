@@ -133,7 +133,7 @@ function* gameManager(game: GameModel) {
 						.forEach((player) => (player.coinFlips = []))
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
+			const outcome = getGamePlayerOutcome(game, result, viewer)
 			// assert(game.endInfo.reason, 'Games can not end without a reason')
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,

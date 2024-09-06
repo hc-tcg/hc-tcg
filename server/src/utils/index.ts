@@ -4,11 +4,14 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
-	const players = game.getPlayers()
-	return players.filter((p) => p.id !== playerId).at(0)?.id || null
+	const players = game.components
+		.filter(ViewerComponent, (_game, viewer) => !viewer.spectator)
+		.map((viewer) => viewer.player)
+	return players.filter((p) => p.id !== playerId)[0]?.id || null
 }
 
 export function printHooksState(game: GameModel) {
