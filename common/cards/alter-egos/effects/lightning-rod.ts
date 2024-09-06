@@ -5,7 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -54,10 +54,14 @@ const LightningRod: Attach = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!used) return
-			component.discard()
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!used) return
+				component.discard()
+			},
+		)
 	},
 }
 

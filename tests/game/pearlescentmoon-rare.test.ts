@@ -93,7 +93,7 @@ describe('Test Pearlescent MoonRare', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(EthosLabCommon.health - 10 /* Anvil damage */)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

@@ -85,3 +85,10 @@ export const afterDefence = createPriorityDictionary({
 	/** Listeners can confidently execute after a row has been knocked-out */
 	ON_ROW_DEATH: null,
 })
+
+export const onTurnEnd = createPriorityDictionary({
+	/** Trigger before status effects time out */
+	BEFORE_STATUS_EFFECT_TIMEOUT: null,
+	/** End of the turn, when status effects are supposed to timeout. */
+	ON_STATUS_EFFECT_TIMEOUT: null,
+})
