@@ -42,7 +42,7 @@ const SkizzlemanRare: Hermit = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_APPLY_ATTACK,
+			beforeAttack.ADD_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return

@@ -30,7 +30,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 				if (!attack.attacker) return

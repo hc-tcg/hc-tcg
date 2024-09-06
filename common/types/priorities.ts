@@ -35,10 +35,10 @@ export const beforeAttack = createPriorityDictionary({
 	LIGHTNING_ROD_REDIRECT: null,
 	/** Target Block redirecting all damage from attacks, effect overrules Lightning Rod  */
 	TARGET_BLOCK_REDIRECT: null,
-	/** Hermit abilities modifying how much damage an attack should do, and/or adding sub-attacks */
-	HERMIT_MODIFY_DAMAGE: null,
-	/** Effect cards such as Invisibility modifying how much damage an attack should do */
-	EFFECT_MODIFY_DAMAGE: null,
+	/** Effects, Hermits, and Status Effects that add additional attacks or adjust damage of the main attack. */
+	ADD_ATTACK: null,
+	/** Effects, Hermits, and Status Effects that modify damage of additional attacks.  */
+	MODIFY_DAMAGE: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */
 	HERMIT_APPLY_ATTACK: null,
 	/** Any attacking single-use cards must call `applySingleUse` at this stage */
