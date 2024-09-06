@@ -9,11 +9,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ExBossNineStatusEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'
+import PoisonEffect from '../../../status-effects/poison'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
-import PoisonEffect from '../../../status-effects/poison'
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {

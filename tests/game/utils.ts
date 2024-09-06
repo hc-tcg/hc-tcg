@@ -1,5 +1,16 @@
+import assert from 'assert'
 import {Card} from 'common/cards/base/types'
-import {PlayerComponent, SlotComponent} from 'common/components'
+import EvilXisumaBossHermitCard, {
+	BOSS_ATTACK,
+	supplyBossAttack,
+} from 'common/cards/boss/hermits/evilxisuma_boss'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
@@ -238,4 +249,94 @@ export function testGame(
 	)
 
 	testSagas(call(gameSaga, game), call(options.saga, game))
+}
+
+/**
+ * Works similarly to `testGame`, but for testing the Evil X boss fight
+ */
+export function testBossFight(
+	options: {
+		/**
+		 * @example
+		 * {
+		 * 	...
+		 * 	yield* endTurn(game)
+		 * 	// Boss' first turn
+		 * 	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+		 * 	yield* bossAttack(game, '50DMG')
+		 * 	...
+		 * }
+		 */
+		saga: (game: GameModel) => any
+		playerDeck: Array<Card>
+	},
+	settings?: Partial<GameSettings>,
+) {
+	let newBossGame = new GameModel(
+		getTestPlayer('playerOne', options.playerDeck),
+		getTestPlayer('EX', [EvilXisumaBossHermitCard]),
+		{...defaultGameSettings, ...settings},
+		{randomizeOrder: false},
+	)
+
+	newBossGame.state.isBossGame = true
+
+	function destroyRow(row: RowComponent) {
+		newBossGame.components
+			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+		newBossGame.components.delete(row.entity)
+	}
+
+	// Remove challenger's rows other than indexes 0, 1, and 2
+	newBossGame.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			(_game, row) => row.index > 2,
+		)
+		.forEach(destroyRow)
+	// Remove boss' rows other than index 0
+	newBossGame.components
+		.filter(
+			RowComponent,
+			query.row.currentPlayer,
+			query.not(query.row.index(0)),
+		)
+		.forEach(destroyRow)
+	// Remove boss' item slots
+	newBossGame.components
+		.filterEntities(
+			BoardSlotComponent,
+			query.slot.currentPlayer,
+			query.slot.item,
+		)
+		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+	newBossGame.rules = {
+		disableRewardCards: true,
+		disableVirtualDeckOut: true,
+	}
+
+	testSagas(call(gameSaga, newBossGame), call(options.saga, newBossGame))
+}
+
+export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
+	const bossCard = game.components.find(
+		CardComponent,
+		query.card.is(EvilXisumaBossHermitCard),
+		query.card.currentPlayer,
+	)
+	const attackType = game.state.turn.availableActions.find(
+		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+	)
+	assert(bossCard !== null, 'Boss card not found to attack with')
+	assert(attackType !== undefined, 'Boss can not attack right now.')
+	supplyBossAttack(bossCard, attack)
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayerEntity,
+		action: {
+			type: attackType,
+		},
+	})
 }
