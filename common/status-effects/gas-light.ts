@@ -19,10 +19,9 @@ function newGasLightAttack(
 	target: RowEntity,
 ): AttackDefs {
 	return {
-		attacker: effect.entity,
+		attacker: effect.creator.entity,
 		target: target,
-		type: 'status-effect',
-		player: effect.target.opponentPlayer.entity,
+		type: 'secondary',
 		log: (values) =>
 			`${values.target} took ${values.damage} damage from $vGas Light$`,
 	} satisfies AttackDefs

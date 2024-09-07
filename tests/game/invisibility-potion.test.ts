@@ -1,10 +1,19 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import {applyEffect, attack, endTurn, playCardFromHand, testGame} from './utils'
+import {
+	applyEffect,
+	attack,
+	changeActiveHermit,
+	endTurn,
+	playCardFromHand,
+	testGame,
+} from './utils'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
+import Anvil from 'common/cards/alter-egos/single-use/anvil'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {
@@ -62,6 +71,42 @@ describe('Test Invisiblity Potion.', () => {
 							query.row.opponentPlayer,
 						)?.health,
 					).toBe(EthosLabCommon.health - EthosLabCommon.secondary.damage * 2)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
+				playerTwoDeck: [SkizzlemanRare, Anvil],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+
+					// Invisibility potion should block both of Skizzlman's attacks.
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.index(0),
+							query.row.opponentPlayer,
+						)?.health,
+					).toBe(EthosLabCommon.health - 30 /* Anvil */)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.index(1),
+							query.row.opponentPlayer,
+						)?.health,
+					).toBe(EthosLabCommon.health - 10 /* Anvil */)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

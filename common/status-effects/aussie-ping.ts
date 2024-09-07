@@ -34,16 +34,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				console.info(attack)
-				if (
-					!attack.isType('primary', 'secondary', 'status-effect') ||
-					attack.isBacklash
-				)
-					return
-				if (attack.isType('status-effect')) {
-					if (!(attack.attacker instanceof StatusEffectComponent)) return
-					if (!(attack.attacker.creator instanceof CardComponent)) return
-					if (attack.attacker.creator.props.category !== 'hermit') return
-				}
+				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 				if (!attack.attacker) return
 
 				// No need to flip a coin for multiple attacks
