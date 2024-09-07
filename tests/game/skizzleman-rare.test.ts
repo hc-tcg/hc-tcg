@@ -45,7 +45,7 @@ describe('Test Skizzleman Rare Rare', () => {
 					)
 				},
 			},
-			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
