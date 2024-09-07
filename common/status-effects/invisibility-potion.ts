@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {beforeAttack} from '../types/priorities'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
@@ -25,6 +25,12 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
 				attack.multiplyDamage(effect.entity, 0)
+			},
+		)
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
 				effect.remove()
 			},
 		)
@@ -49,6 +55,12 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
 				attack.multiplyDamage(effect.entity, 2)
+			},
+		)
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
 				effect.remove()
 			},
 		)

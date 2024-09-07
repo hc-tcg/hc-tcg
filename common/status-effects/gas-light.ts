@@ -3,6 +3,7 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {RowEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {AttackDefs} from '../types/attack'
@@ -51,6 +52,9 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 					let attack = game
 						.newAttack(newGasLightAttack(effect, target.slot.row.entity))
 						.addDamage(effect.entity, 20)
+					attack.shouldIgnoreCards.push(
+						query.card.entity(effect.creator.entity),
+					)
 					effect.remove()
 					executeExtraAttacks(game, [attack])
 					return
@@ -99,6 +103,7 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 				let attack = game
 					.newAttack(newGasLightAttack(effect, target.slot.row.entity))
 					.addDamage(effect.entity, 20)
+				attack.shouldIgnoreCards.push(query.card.entity(effect.creator.entity))
 				executeExtraAttacks(game, [attack])
 				effect.remove()
 			},
