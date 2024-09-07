@@ -19,6 +19,8 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
+		let multipliedDamage = false
+
 		observer.subscribeWithPriority(
 			player.opponentPlayer.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
@@ -31,7 +33,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 			player.opponentPlayer.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				effect.remove()
+				if (multipliedDamage) effect.remove()
 			},
 		)
 	},
@@ -49,6 +51,8 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
+		let multipliedDamage = false
+
 		observer.subscribeWithPriority(
 			player.opponentPlayer.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
@@ -61,7 +65,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 			player.opponentPlayer.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				effect.remove()
+				if (multipliedDamage) effect.remove()
 			},
 		)
 	},

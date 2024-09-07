@@ -30,6 +30,10 @@ describe('Test Invisiblity Potion.', () => {
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
+          // Verify effect lasts for multiple turns.
+					yield* endTurn(game)
+					yield* endTurn(game)
+
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* attack(game, 'secondary')
 
@@ -58,6 +62,10 @@ describe('Test Invisiblity Potion.', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, BadOmen, 'single_use')
 					yield* applyEffect(game)
+					yield* endTurn(game)
+
+          // Verify effect lasts for multiple turns.
+					yield* endTurn(game)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
