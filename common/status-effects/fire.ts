@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence} from '../types/priorities'
+import {afterDefence, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
@@ -24,20 +24,24 @@ const FireEffect: StatusEffect<CardComponent> = {
 	) {
 		const {player, opponentPlayer} = target
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!target.slot.inRow()) return
-			const statusEffectAttack = game.newAttack({
-				attacker: effect.entity,
-				target: target.slot.row.entity,
-				player: opponentPlayer.entity,
-				type: 'status-effect',
-				log: (values) =>
-					`${values.target} took ${values.damage} damage from $bBurn$`,
-			})
-			statusEffectAttack.addDamage(target.entity, 20)
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!target.slot.inRow()) return
+				const statusEffectAttack = game.newAttack({
+					attacker: effect.entity,
+					target: target.slot.row.entity,
+					player: opponentPlayer.entity,
+					type: 'status-effect',
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $bBurn$`,
+				})
+				statusEffectAttack.addDamage(target.entity, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack])
-		})
+				executeExtraAttacks(game, [statusEffectAttack])
+			},
+		)
 
 		observer.subscribeWithPriority(
 			player.hooks.afterDefence,

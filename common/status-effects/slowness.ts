@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence} from '../types/priorities'
+import {afterDefence, onTurnEnd} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
@@ -33,15 +33,19 @@ const SlownessEffect: Counter<CardComponent> = {
 				game.addBlockedActions(this.icon, 'SECONDARY_ATTACK')
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (!effect.counter) return
-			effect.counter--
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!effect.counter) return
+				effect.counter--
 
-			if (effect.counter === 0) {
-				effect.remove()
-				return
-			}
-		})
+				if (effect.counter === 0) {
+					effect.remove()
+					return
+				}
+			},
+		)
 
 		observer.subscribeWithPriority(
 			player.hooks.afterDefence,

@@ -7,7 +7,7 @@ import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {afterAttack} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -256,7 +256,11 @@ export function setupMockCard(
 	}
 	observer.subscribeBefore(player.hooks.getAttackRequests, destroyMockCard)
 
-	observer.subscribeBefore(player.hooks.onTurnEnd, destroyMockCard)
+	observer.subscribeWithPriority(
+		player.hooks.onTurnEnd,
+		onTurnEnd.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
 	observer.subscribeWithPriority(
 		player.hooks.afterAttack,
 		afterAttack.DESTROY_MOCK_CARD,

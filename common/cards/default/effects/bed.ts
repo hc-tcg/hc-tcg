@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import { onTurnEnd } from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -67,12 +68,16 @@ const Bed: Attach = {
 			}
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			// if sleeping has worn off, discard the bed
-			if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
-				component.discard()
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				// if sleeping has worn off, discard the bed
+				if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
+					component.discard()
+				}
+			},
+		)
 	},
 }
 

@@ -87,6 +87,8 @@ export const afterDefence = createPriorityDictionary({
 })
 
 export const onTurnEnd = createPriorityDictionary({
+	/** Similar to afterAttack.DESTROY_MOCK_CARD */
+	DESTROY_MOCK_CARD: null,
 	/** Trigger before status effects time out */
 	BEFORE_STATUS_EFFECT_TIMEOUT: null,
 	/** End of the turn, when status effects are supposed to timeout. */

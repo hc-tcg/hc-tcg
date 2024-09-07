@@ -5,6 +5,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
@@ -26,11 +27,15 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 		const {player} = target
 		if (effect.counter === null) effect.counter = this.counter
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (effect.counter === null) return
-			if (effect.counter === 0) effect.remove()
-			effect.counter--
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (effect.counter === null) return
+				if (effect.counter === 0) effect.remove()
+				effect.counter--
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (player.getActiveHermit()?.entity === target.entity) {
@@ -57,11 +62,15 @@ export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 		const {player} = target
 		if (effect.counter === null) effect.counter = this.counter
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (effect.counter === null) return
-			if (effect.counter === 0) effect.remove()
-			effect.counter--
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (effect.counter === null) return
+				if (effect.counter === 0) effect.remove()
+				effect.counter--
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (player.getActiveHermit()?.entity === target.entity) {
