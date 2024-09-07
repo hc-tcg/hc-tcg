@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import PearlescentMoonRare from 'common/cards/default/hermits/pearlescentmoon-rare'
@@ -10,7 +11,6 @@ import {
 	AussiePingImmuneEffect,
 } from 'common/status-effects/aussie-ping'
 import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
-import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 
 describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping', () => {
@@ -118,7 +118,12 @@ describe('Test Pearlescent Moon Rare', () => {
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
-					yield* pick(game, query.slot.rowIndex(1), query.slot.hermit)
+					yield* pick(
+						game,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+						query.slot.currentPlayer,
+					)
 					yield* endTurn(game)
 
 					expect(

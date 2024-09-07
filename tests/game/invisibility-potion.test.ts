@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
@@ -8,7 +9,14 @@ import InvisibilityPotion from 'common/cards/default/single-use/invisibility-pot
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {applyEffect, attack, endTurn, playCardFromHand, testGame} from './utils'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	pick,
+	playCardFromHand,
+	testGame,
+} from './utils'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {
@@ -102,6 +110,47 @@ describe('Test Invisiblity Potion.', () => {
 							query.row.opponentPlayer,
 						)?.health,
 					).toBe(EthosLabCommon.health - 10 /* Anvil */)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
+				playerTwoDeck: [PoePoeSkizzRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+						query.slot.currentPlayer,
+					)
+
+					// Invisibility potion should block both of Poe Poe Skizz's attacks.
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.index(0),
+							query.row.opponentPlayer,
+						)?.health,
+					).toBe(EthosLabCommon.health)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.index(1),
+							query.row.opponentPlayer,
+						)?.health,
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
