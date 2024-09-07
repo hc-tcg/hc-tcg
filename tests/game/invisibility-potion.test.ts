@@ -1,19 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
+import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from './utils'
+import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
+import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
-import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
-import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import {applyEffect, attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {

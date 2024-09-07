@@ -1,5 +1,4 @@
 import {
-	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
