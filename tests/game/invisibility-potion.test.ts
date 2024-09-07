@@ -111,13 +111,14 @@ describe('Test Invisiblity Potion.', () => {
 							query.row.opponentPlayer,
 						)?.health,
 					).toBe(EthosLabCommon.health - 30 /* Anvil */)
+					yield* endTurn(game)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.index(1),
-							query.row.opponentPlayer,
+							query.row.currentPlayer,
 						)?.health,
-					).toBe(EthosLabCommon.health - 10 /* Anvil */)
+					).toBe(EthosLabCommon.health - 10 /* Anvil only */)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
