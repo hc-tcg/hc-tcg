@@ -1,14 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
+import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import WaterBucket from 'common/cards/default/effects/water-bucket'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {applyEffect, attack, endTurn, playCardFromHand, testGame} from './utils'
-import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
-import WaterBucket from 'common/cards/default/effects/water-bucket'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {
