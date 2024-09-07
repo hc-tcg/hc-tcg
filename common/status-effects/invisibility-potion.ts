@@ -26,6 +26,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
+				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 0)
 			},
 		)
@@ -58,6 +59,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
+				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 2)
 			},
 		)
