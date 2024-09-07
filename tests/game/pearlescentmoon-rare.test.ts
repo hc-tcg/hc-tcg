@@ -104,7 +104,7 @@ describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping blocks Poe Poe Skizz Rare extra damage.', () => {
 		testGame(
 			{
-				playerOneDeck: [PoePoeSkizzRare, Anvil],
+				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
 				saga: function* (game) {
 					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
