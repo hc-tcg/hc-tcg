@@ -11,7 +11,7 @@ import query from 'common/components/query'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 
-describe('Test Pearlescent MoonRare', () => {
+describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping', () => {
 		testGame(
 			{
