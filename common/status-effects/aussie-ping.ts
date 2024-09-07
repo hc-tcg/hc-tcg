@@ -32,7 +32,6 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 			player.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
-				console.info(attack)
 				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 				if (!attack.attacker) return
 

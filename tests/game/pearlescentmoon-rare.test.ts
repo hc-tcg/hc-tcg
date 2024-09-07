@@ -9,7 +9,8 @@ import {
 	AussiePingEffect,
 	AussiePingImmuneEffect,
 } from 'common/status-effects/aussie-ping'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 
 describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping', () => {
@@ -94,6 +95,39 @@ describe('Test Pearlescent Moon Rare', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 10 /* Anvil damage */)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Aussie Ping blocks Poe Poe Skizz Rare extra damage.', () => {
+		testGame(
+			{
+				playerOneDeck: [PoePoeSkizzRare, Anvil],
+				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+
+					// Give Poe Poe Skizz the Aussie Ping effect.
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(game, query.slot.rowIndex(1), query.slot.hermit)
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
