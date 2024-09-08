@@ -17,7 +17,7 @@ export const setActiveDeck = (name: string) => {
 export const isActiveDeckValid = () => {
 	const activeDeckName = getActiveDeckName()
 	const activeDeck = activeDeckName ? getSavedDeck(activeDeckName)?.cards : null
-	const activeDeckValid = !!activeDeck && !validateDeck(activeDeck)
+	const activeDeckValid = !!activeDeck && validateDeck(activeDeck).valid
 	return activeDeckValid
 }
 

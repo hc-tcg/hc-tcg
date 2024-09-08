@@ -97,7 +97,7 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (validateDeck(loadedDeck.cards)) {
+		if (!validateDeck(loadedDeck.cards).valid) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -210,7 +210,7 @@ function SelectDeck({
 			)
 		},
 	)
-	const validationMessage = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(loadedDeck.cards)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter(
 			(card) => card.props.category === 'hermit',
@@ -375,10 +375,10 @@ function SelectDeck({
 							</Button>
 						)}
 					</div>
-					{validationMessage && (
+					{!validationResult.valid && (
 						<div className={css.validationMessage}>
 							<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span>{' '}
-							{validationMessage}
+							{validationResult.reason}
 						</div>
 					)}
 
