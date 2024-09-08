@@ -51,6 +51,14 @@ const saveSession = (playerInfo: PlayerInfo) => {
 	sessionStorage.setItem('playerDeck', JSON.stringify(playerInfo.playerDeck))
 }
 
+export const updateSession = (session: {
+	minecraftName: string
+	playerDeck: PlayerDeckT
+}) => {
+	sessionStorage.setItem('minecraftName', session.minecraftName)
+	sessionStorage.setItem('playerDeck', JSON.stringify(session.playerDeck))
+}
+
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
 	sessionStorage.removeItem('censoredPlayerName')
@@ -169,7 +177,7 @@ export function* loginSaga() {
 
 		const activeDeckName = getActiveDeckName()
 		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
-		const activeDeckValid = !!activeDeck && !validateDeck(activeDeck.cards)
+		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards)
 
 		// if active deck is not valid, generate and save a starter deck
 		if (urlDeck) {
