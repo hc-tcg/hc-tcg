@@ -56,8 +56,8 @@ const TurtleShell: Attach = {
 				if (!activated) return
 
 				if (!attack.isTargeting(component)) return
-				// Do not block backlash attacks
-				if (attack.isBacklash) return
+				// Do not block backlash or status-effect attacks
+				if (attack.isBacklash || attack.isType('status-effect')) return
 
 				if (attack.getDamage() > 0) {
 					// Block all damage
