@@ -114,6 +114,7 @@ function shouldIgnoreCard(
 	return false
 }
 
+/** Executes a complete attack cycle (without creating attack logs) */
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	const allAttacks: Array<AttackModel> = []
 
@@ -142,6 +143,7 @@ export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	runAfterDefenceHooks(game, allAttacks)
 }
 
+/** Executes a complete attack cycle and automatically sends attack logs */
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,

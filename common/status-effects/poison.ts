@@ -26,7 +26,7 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 
 		observer.subscribeWithPriority(
 			opponentPlayer.hooks.onTurnEnd,
-			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
 			() => {
 				if (!target.slot.inRow()) return
 				const statusEffectAttack = game.newAttack({
