@@ -97,7 +97,7 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (!validateDeck(loadedDeck.cards).valid) {
+		if (validateDeck(loadedDeck.cards)) {
 			return setShowValidateDeckModal(true)
 		}
 
