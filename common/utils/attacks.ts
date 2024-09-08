@@ -7,7 +7,7 @@ import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {afterAttack} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -29,8 +29,9 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
-			if (entity instanceof CardComponent)
+			if (entity instanceof CardComponent) {
 				return !shouldIgnoreCard(attack, game, entity)
+			}
 			return true
 		})
 	}
@@ -113,6 +114,7 @@ function shouldIgnoreCard(
 	return false
 }
 
+/** Executes a complete attack cycle (without creating attack logs) */
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	const allAttacks: Array<AttackModel> = []
 
@@ -141,6 +143,7 @@ export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	runAfterDefenceHooks(game, allAttacks)
 }
 
+/** Executes a complete attack cycle and automatically sends attack logs */
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
@@ -256,7 +259,11 @@ export function setupMockCard(
 	}
 	observer.subscribeBefore(player.hooks.getAttackRequests, destroyMockCard)
 
-	observer.subscribeBefore(player.hooks.onTurnEnd, destroyMockCard)
+	observer.subscribeWithPriority(
+		player.hooks.onTurnEnd,
+		onTurnEnd.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
 	observer.subscribeWithPriority(
 		player.hooks.afterAttack,
 		afterAttack.DESTROY_MOCK_CARD,

@@ -17,6 +17,7 @@ import {
 	afterDefence,
 	beforeAttack,
 	beforeDefence,
+	onTurnEnd,
 } from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
@@ -120,7 +121,10 @@ export class PlayerComponent {
 		 */
 		onTurnStart: GameHook<() => void>
 		/** Hook called at the end of the turn */
-		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
+		onTurnEnd: PriorityHook<
+			(drawCards: Array<CardComponent | null>) => void,
+			typeof onTurnEnd
+		>
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
@@ -181,7 +185,7 @@ export class PlayerComponent {
 			afterAttack: new PriorityHook(),
 			afterDefence: new PriorityHook(),
 			onTurnStart: new GameHook(),
-			onTurnEnd: new GameHook(),
+			onTurnEnd: new PriorityHook(),
 			onCoinFlip: new GameHook(),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),

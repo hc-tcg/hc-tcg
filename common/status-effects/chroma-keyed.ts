@@ -5,7 +5,7 @@ import {
 } from '../components'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {afterAttack} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
@@ -52,10 +52,14 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 			},
 		)
 
-		observer.subscribe(target.player.hooks.onTurnEnd, () => {
-			if (!chromaUsedThisTurn) effect.remove()
-			chromaUsedThisTurn = false
-		})
+		observer.subscribeWithPriority(
+			target.player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!chromaUsedThisTurn) effect.remove()
+				chromaUsedThisTurn = false
+			},
+		)
 	},
 }
 

@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {ObserverEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -77,9 +77,13 @@ const WormManRare: Hermit = {
 			},
 		)
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			observer.unsubscribe(player.hooks.onAttach)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				observer.unsubscribe(player.hooks.onAttach)
+			},
+		)
 	},
 	onDetach(
 		game: GameModel,

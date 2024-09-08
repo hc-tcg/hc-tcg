@@ -4,6 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const OriginalXbEffect: StatusEffect<PlayerComponent> = {
@@ -18,10 +19,14 @@ const OriginalXbEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			player.draw(1)
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				player.draw(1)
+				effect.remove()
+			},
+		)
 	},
 }
 
