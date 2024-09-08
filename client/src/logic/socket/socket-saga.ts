@@ -54,7 +54,7 @@ function* socketSaga(): SagaIterator {
 		if (type === 'disconnect')
 			yield* put<LocalMessage>({type: localMessages.SOCKET_DISCONNECT})
 		if (type === 'connect_error')
-			yield* put(<LocalMessage>{type: localMessages.SOCKET_CONNECT_ERROR})
+			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECT_ERROR})
 	})
 }
 
