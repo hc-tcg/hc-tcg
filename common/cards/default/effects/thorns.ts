@@ -72,7 +72,7 @@ const Thorns: Attach = {
 
 		observer.subscribeWithPriority(
 			opponentPlayer.hooks.onTurnEnd,
-			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
 				hasTriggered = false
 			},
