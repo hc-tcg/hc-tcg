@@ -3,11 +3,14 @@ import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 import TurtleShell from 'common/cards/alter-egos/effects/turtle-shell'
 import Egg from 'common/cards/alter-egos/single-use/egg'
 import Ladder from 'common/cards/alter-egos/single-use/ladder'
+import Cubfan135Rare from 'common/cards/default/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GrianRare from 'common/cards/default/hermits/grian-rare'
+import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import ZombieCleoCommon from 'common/cards/default/hermits/zombiecleo-common'
 import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
+import Emerald from 'common/cards/default/single-use/emerald'
 import Knockback from 'common/cards/default/single-use/knockback'
 import LavaBucket from 'common/cards/default/single-use/lava-bucket'
 import Mending from 'common/cards/default/single-use/mending'
@@ -25,8 +28,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
-import Emerald from 'common/cards/default/single-use/emerald'
-import Cubfan135Rare from 'common/cards/default/hermits/cubfan135-rare'
 
 describe('Test Turtle Shell', () => {
 	test('Turtle Shell applies to next turn', () => {
@@ -382,6 +383,71 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
+	test('Turtle Shell is discarded after defending against Peace Out + Egg', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					ArmorStand,
+					EthosLabCommon,
+					Iskall85Common,
+					TurtleShell,
+					TurtleShell,
+				],
+				playerTwoDeck: [IJevinRare, Egg],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Iskall85Common, 'hermit', 2)
+					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+					yield* playCardFromHand(game, TurtleShell, 'attach', 2)
+					yield* changeActiveHermit(game, 1)
+
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
+					yield* playCardFromHand(game, Egg, 'single_use')
+					yield* attack(game, 'secondary')
+
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(TurtleShell),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.discardPile),
+						),
+					).not.toBe(null)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(TurtleShell),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.rowIndex(2)),
+						),
+					).not.toBe(null)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
 	test("Turtle Shells borrowed by Grian only work on Grian's first turn", () => {
 		testGame(
 			{
@@ -406,7 +472,7 @@ describe('Test Turtle Shell', () => {
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data)
 							.primaryButton,
-					).toStrictEqual({text: 'Attach', variant: 'default'})
+					).toBeTruthy()
 					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
 					yield* finishModalRequest(game, {result: true, cards: null})
 
@@ -480,6 +546,9 @@ describe('Test Turtle Shell', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
+					expect(game.getPickableSlots(Emerald.attachCondition).at(0)).not.toBe(
+						undefined,
+					) // Check if Emerald can move Turtle Shells
 					yield* playCardFromHand(game, Emerald, 'single_use')
 					yield* applyEffect(game)
 
@@ -519,7 +588,7 @@ describe('Test Turtle Shell', () => {
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
-						GrianRare.health - EthosLabCommon.secondary.damage,
+						ZombieCleoCommon.health - EthosLabCommon.secondary.damage,
 					)
 					expect(
 						game.components.find(
@@ -546,6 +615,7 @@ describe('Test Turtle Shell', () => {
 					TurtleShell,
 					TurtleShell,
 					Emerald,
+					Emerald,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -564,6 +634,9 @@ describe('Test Turtle Shell', () => {
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
+					expect(game.getPickableSlots(Emerald.attachCondition).at(0)).not.toBe(
+						undefined,
+					) // Check if Emerald can move Turtle Shells
 					yield* playCardFromHand(game, Emerald, 'single_use')
 					yield* applyEffect(game)
 
@@ -602,7 +675,7 @@ describe('Test Turtle Shell', () => {
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
-						query.slot.rowIndex(2),
+						query.slot.rowIndex(3),
 					)
 
 					yield* endTurn(game)

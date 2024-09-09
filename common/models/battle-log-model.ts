@@ -295,7 +295,7 @@ export class BattleLogModel {
 		let oldHermit = this.game.components.get(oldHermitEntity)
 		let newHermit = this.game.components.get(newHermitEntity)
 
-		if (!newRow || !oldHermit || !newHermit) return
+		if (!newRow || !newHermit) return
 
 		if (oldHermit) {
 			this.logMessageQueue.push({
