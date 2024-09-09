@@ -2,6 +2,7 @@ import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
+import {updateSession} from './session-saga'
 
 type SessionState = {
 	playerName: string
@@ -30,11 +31,7 @@ const defaultState: SessionState = {
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
 }
-
-const loginReducer = (
-	state = defaultState,
-	action: LocalMessage,
-): SessionState => {
+function updateState(state = defaultState, action: LocalMessage) {
 	switch (action.type) {
 		case localMessages.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
@@ -89,6 +86,15 @@ const loginReducer = (
 		default:
 			return state
 	}
+}
+
+const loginReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): SessionState => {
+	let newState = updateState(state, action)
+	updateSession(newState)
+	return newState
 }
 
 export default loginReducer

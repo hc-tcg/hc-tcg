@@ -51,6 +51,14 @@ const saveSession = (playerInfo: PlayerInfo) => {
 	sessionStorage.setItem('playerDeck', JSON.stringify(playerInfo.playerDeck))
 }
 
+export const updateSession = (session: {
+	minecraftName: string
+	playerDeck: PlayerDeckT
+}) => {
+	sessionStorage.setItem('minecraftName', session.minecraftName)
+	sessionStorage.setItem('playerDeck', JSON.stringify(session.playerDeck))
+}
+
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
 	sessionStorage.removeItem('censoredPlayerName')
