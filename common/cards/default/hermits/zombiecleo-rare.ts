@@ -59,12 +59,17 @@ const ZombieCleoRare: Hermit = {
 		if (!newAttack) return null
 
 		const attackName = mockedAttack.attackName
-		newAttack.updateLog(
-			(values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
-					values.target
-				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
-		)
+		newAttack.updateLog((values) => {
+			if (
+				values.attack.getDamageMultiplier() === 0 ||
+				!values.attack.target?.getHermit()
+			) {
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
+			}
+			return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+				values.target
+			} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
+		})
 		return newAttack
 	},
 	onAttach(
