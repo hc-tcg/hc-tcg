@@ -29,7 +29,9 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.currentPlayer,
 							query.row.index(0),
 						)?.health,
-					).toBe(BeetlejhostRare.health - (2 * BeetlejhostRare.secondary.damage) + 10)
+					).toBe(
+						BeetlejhostRare.health - (2 * BeetlejhostRare.secondary.damage) + 10
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, disableDeckOut: true},
