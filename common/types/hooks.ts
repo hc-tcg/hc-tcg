@@ -121,8 +121,8 @@ export class PriorityHook<
 	}
 
 	get listeners(): Array<[ObserverEntity, Args]> {
-		return Object.entries(this._listeners).flatMap(
-			(listeners) => listeners,
+		return Object.entries(this._listeners).flatMap((listeners) =>
+			listeners.filter(([_instance, _listerner, removed]) => !removed),
 		) as any
 	}
 
