@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
@@ -38,11 +38,15 @@ const Efficiency: SingleUse = {
 			)
 
 			// In case the player does not attack
-			observer.subscribe(player.hooks.onTurnEnd, () => {
-				observer.unsubscribe(player.hooks.availableEnergy)
-				observer.unsubscribe(player.hooks.afterAttack)
-				observer.unsubscribe(player.hooks.onTurnEnd)
-			})
+			observer.subscribeWithPriority(
+				player.hooks.onTurnEnd,
+				onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+				() => {
+					observer.unsubscribe(player.hooks.availableEnergy)
+					observer.unsubscribe(player.hooks.afterAttack)
+					observer.unsubscribe(player.hooks.onTurnEnd)
+				},
+			)
 		})
 	},
 }

@@ -35,10 +35,10 @@ export const beforeAttack = createPriorityDictionary({
 	LIGHTNING_ROD_REDIRECT: null,
 	/** Target Block redirecting all damage from attacks, effect overrules Lightning Rod  */
 	TARGET_BLOCK_REDIRECT: null,
-	/** Hermit abilities modifying how much damage an attack should do, and/or adding sub-attacks */
-	HERMIT_MODIFY_DAMAGE: null,
-	/** Effect cards such as Invisibility modifying how much damage an attack should do */
-	EFFECT_MODIFY_DAMAGE: null,
+	/** Effects, Hermits, and Status Effects that add additional attacks or adjust damage of the main attack. */
+	ADD_ATTACK: null,
+	/** Effects, Hermits, and Status Effects that modify damage of additional attacks along with the main attack.  */
+	MODIFY_DAMAGE: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */
 	HERMIT_APPLY_ATTACK: null,
 	/** Any attacking single-use cards must call `applySingleUse` at this stage */
@@ -73,6 +73,8 @@ export const afterAttack = createPriorityDictionary({
 	UPDATE_POST_ATTACK_STATE: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
+	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
+	DESTROY_MOCK_CARD: null,
 })
 
 export const afterDefence = createPriorityDictionary({
@@ -82,4 +84,13 @@ export const afterDefence = createPriorityDictionary({
 	TRIGGER_GAS_LIGHT: null,
 	/** Listeners can confidently execute after a row has been knocked-out */
 	ON_ROW_DEATH: null,
+})
+
+export const onTurnEnd = createPriorityDictionary({
+	/** Similar to afterAttack.DESTROY_MOCK_CARD */
+	DESTROY_MOCK_CARD: null,
+	/** Trigger before status effects time out */
+	BEFORE_STATUS_EFFECT_TIMEOUT: null,
+	/** End of the turn, when status effects are supposed to timeout. */
+	ON_STATUS_EFFECT_TIMEOUT: null,
 })

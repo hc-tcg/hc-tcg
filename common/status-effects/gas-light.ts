@@ -3,10 +3,11 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {RowEntity} from '../entities'
+import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {AttackDefs} from '../types/attack'
-import {afterDefence} from '../types/priorities'
+import {afterDefence, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
 	StatusEffect,
@@ -15,17 +16,20 @@ import {
 } from './status-effect'
 
 function newGasLightAttack(
+	game: GameModel,
 	effect: StatusEffectComponent,
 	target: RowEntity,
-): AttackDefs {
-	return {
-		attacker: effect.entity,
-		target: target,
-		type: 'status-effect',
-		player: effect.target.opponentPlayer.entity,
-		log: (values) =>
-			`${values.target} took ${values.damage} damage from $vGas Light$`,
-	} satisfies AttackDefs
+): AttackModel {
+	return game
+		.newAttack({
+			attacker: effect.creator.entity,
+			target: target,
+			type: 'secondary',
+			shouldIgnoreSlots: [query.card.entity(effect.creator.entity)],
+			log: (values) =>
+				`${values.target} took ${values.damage} damage from $vGas Light$`,
+		})
+		.addDamage(effect.entity, 20)
 }
 
 export const GasLightEffect: StatusEffect<CardComponent> = {
@@ -49,9 +53,7 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 
 				// We have an extra take because status effects are executed at the end of the turn.
 				if (attack.type === 'status-effect' && target.slot.inRow()) {
-					let attack = game
-						.newAttack(newGasLightAttack(effect, target.slot.row.entity))
-						.addDamage(effect.entity, 20)
+					const attack = newGasLightAttack(game, effect, target.slot.row.entity)
 					effect.remove()
 					executeExtraAttacks(game, [attack])
 					return
@@ -68,9 +70,13 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 
@@ -88,13 +94,16 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 	) {
 		let {opponentPlayer} = target
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!target.slot.inRow()) return
-			let attack = game
-				.newAttack(newGasLightAttack(effect, target.slot.row.entity))
-				.addDamage(effect.entity, 20)
-			executeExtraAttacks(game, [attack])
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!target.slot.inRow()) return
+				executeExtraAttacks(game, [
+					newGasLightAttack(game, effect, target.slot.row.entity),
+				])
+				effect.remove()
+			},
+		)
 	},
 }

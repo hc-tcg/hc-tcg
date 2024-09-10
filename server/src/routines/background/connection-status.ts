@@ -54,7 +54,7 @@ export function* statusChangedSaga(
 	const opponentId = getOpponentId(game, playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
 
-	if (!game.players[opponentId]) return
+	if (!opponentId || !game.players[opponentId]) return
 
 	broadcast([game.players[opponentId]], {
 		type: serverMessages.OPPONENT_CONNECTION,

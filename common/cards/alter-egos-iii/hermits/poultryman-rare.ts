@@ -52,16 +52,7 @@ const PoultryManRare: Hermit = {
 					query.card.is(Egg),
 				)
 
-				if (singleUse) {
-					observer.subscribeWithPriority(
-						player.hooks.afterAttack,
-						afterAttack.UPDATE_POST_ATTACK_STATE,
-						() => {
-							singleUse.draw(player.entity)
-							observer.unsubscribe(player.hooks.afterAttack)
-						},
-					)
-				}
+				singleUse?.draw()
 			},
 		)
 	},

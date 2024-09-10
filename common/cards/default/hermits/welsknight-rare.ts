@@ -36,7 +36,7 @@ const WelsknightRare: Hermit = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
