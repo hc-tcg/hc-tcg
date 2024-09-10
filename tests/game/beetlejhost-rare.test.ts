@@ -30,7 +30,7 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(
-						BeetlejhostRare.health - (2 * BeetlejhostRare.secondary.damage) + 10
+						BeetlejhostRare.health - 2 * BeetlejhostRare.secondary.damage + 10
 					)
 				},
 			},
