@@ -61,7 +61,7 @@ const RendogRare: Hermit = {
 		newAttack.updateLog((values) => {
 			if (
 				values.attack.getDamageMultiplier() === 0 ||
-				values.attack.target?.getHermit() === null
+				!values.attack.target?.getHermit()
 			) {
 				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
 			}
