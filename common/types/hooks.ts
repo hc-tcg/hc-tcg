@@ -107,9 +107,22 @@ export class PriorityHook<
 	Priorities extends PriorityDict<Src>,
 	Src extends PrioritiesT = PrioritySrc<Priorities>,
 > {
-	public listeners: Array<
-		[instance: ObserverEntity, listener: Args, priority: number]
+	private _listeners: Record<
+		number,
+		Array<[instance: ObserverEntity, listener: Args]>
 	> = []
+
+	public constructor(priorities: PriorityDict<Src>) {
+		for (const [_, priority] of Object.entries(priorities)) {
+			this._listeners[priority] = []
+		}
+	}
+
+	get listeners(): Array<[ObserverEntity, Args]> {
+		return Object.entries(this._listeners).flatMap(
+			(listeners) => listeners,
+		) as any
+	}
 
 	/** Adds a new listener to this hook */
 	public add(
@@ -117,24 +130,31 @@ export class PriorityHook<
 		priority: Priority<Src>,
 		listener: Args,
 	) {
-		this.listeners.push([instance, listener, priority])
-		this.listeners.sort((a, b) => a[2] - b[2])
+		if (this._listeners[priority] === undefined) {
+			this._listeners[priority] = []
+		}
+		this._listeners[priority].push([instance, listener])
 	}
 
 	/**
-	 * Removes all the listeners tied to a specific instance
+	 * Removes all the _listeners tied to a specific instance
 	 */
 	public remove(instance: ObserverEntity) {
-		this.listeners = this.listeners.filter(
-			([hookListener]) => hookListener !== instance,
-		)
+		for (const [key, _] of Object.entries(this._listeners)) {
+			let numKey = Number(key)
+			this._listeners[numKey] = this._listeners[numKey].filter(
+				([hookListener]) => hookListener !== instance,
+			)
+		}
 	}
 
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
 	public call(...params: Parameters<Args>) {
-		return this.listeners.map(([_listener, call]) => call(...params))
+		for (const [key, _] of Object.entries(this._listeners)) {
+			this._listeners[Number(key)].forEach(([_, call]) => call(...params))
+		}
 	}
 
 	/**
@@ -144,8 +164,10 @@ export class PriorityHook<
 		params: Parameters<Args>,
 		predicate: (instance: ObserverEntity) => boolean,
 	) {
-		return this.listeners.flatMap(([instance, listener]) =>
-			predicate(instance) ? [listener(...params)] : [],
-		)
+		for (const [key, _] of Object.entries(this._listeners)) {
+			this._listeners[Number(key)].forEach(([listener, call]) => {
+				if (predicate(listener)) call(...params)
+			})
+		}
 	}
 }

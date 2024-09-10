@@ -46,8 +46,6 @@ export const beforeAttack = createPriorityDictionary({
 })
 
 export const beforeDefence = createPriorityDictionary({
-	/** Listeners adding queries to `attack.shouldIgnoreCards` */
-	IGNORE_CARDS: null,
 	/** Hermits blocking all damage done by certain attacks */
 	HERMIT_BLOCK_DAMAGE: null,
 	/** Effect cards blocking all damage done by certain attacks */
