@@ -37,7 +37,6 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 			target.opponentPlayer.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				console.log('TIMEOUT')
 				effect.remove()
 			},
 		)

@@ -152,7 +152,6 @@ export class PriorityHook<
 	public call(...params: Parameters<Args>) {
 		for (const [key, _] of Object.entries(this._listeners)) {
 			const numKey = Number(key)
-			console.log(this._listeners[numKey])
 			for (let i = 0; i < this._listeners[numKey].length; i++) {
 				if (this._listeners[numKey][i][2]) continue
 				this._listeners[numKey][i][1](...params)
