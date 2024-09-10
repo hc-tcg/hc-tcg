@@ -29,9 +29,8 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
-			if (entity instanceof CardComponent) {
+			if (entity instanceof CardComponent)
 				return !shouldIgnoreCard(attack, game, entity)
-			}
 			return true
 		})
 	}

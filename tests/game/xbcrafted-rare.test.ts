@@ -8,8 +8,8 @@ import IronSword from 'common/cards/default/single-use/iron-sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
+import {printBoardState} from 'server/utils'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
-import { printBoardState } from 'server/utils'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', () => {
@@ -72,7 +72,7 @@ describe('Test xB', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-          printBoardState(game)
+					printBoardState(game)
 					expect(
 						game.components.find(
 							RowComponent,

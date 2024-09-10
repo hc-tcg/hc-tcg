@@ -101,6 +101,7 @@ export class WaterfallHook<
  * Custom hook class that works the same as a regular game hook, but requires a listener's priority.
  *
  * Allows listeners to be called in a more deterministic order, neccessary when listeners are dependent on the execution of other listeners.
+ * Listeners can be added or removed at any time without causing issues.
  */
 export class PriorityHook<
 	Args extends (...args: any) => any,
@@ -109,7 +110,7 @@ export class PriorityHook<
 > {
 	private _listeners: Record<
 		number,
-		Array<[instance: ObserverEntity, listener: Args]>
+		Array<[instance: ObserverEntity, listener: Args, removed: boolean]>
 	> = []
 
 	public constructor(priorities: PriorityDict<Src>) {
@@ -130,10 +131,7 @@ export class PriorityHook<
 		priority: Priority<Src>,
 		listener: Args,
 	) {
-		if (this._listeners[priority] === undefined) {
-			this._listeners[priority] = []
-		}
-		this._listeners[priority].push([instance, listener])
+		this._listeners[priority].push([instance, listener, false])
 	}
 
 	/**
@@ -142,9 +140,9 @@ export class PriorityHook<
 	public remove(instance: ObserverEntity) {
 		for (const [key, _] of Object.entries(this._listeners)) {
 			let numKey = Number(key)
-			this._listeners[numKey] = this._listeners[numKey].filter(
-				([hookListener]) => hookListener !== instance,
-			)
+			this._listeners[numKey]
+				.filter(([hookListener]) => hookListener === instance)
+				.map((x) => (x[2] = true))
 		}
 	}
 
@@ -153,7 +151,12 @@ export class PriorityHook<
 	 */
 	public call(...params: Parameters<Args>) {
 		for (const [key, _] of Object.entries(this._listeners)) {
-			this._listeners[Number(key)].forEach(([_, call]) => call(...params))
+			const numKey = Number(key)
+			console.log(this._listeners[numKey])
+			for (let i = 0; i < this._listeners[numKey].length; i++) {
+				if (this._listeners[numKey][i][2]) continue
+				this._listeners[numKey][i][1](...params)
+			}
 		}
 	}
 
@@ -165,9 +168,12 @@ export class PriorityHook<
 		predicate: (instance: ObserverEntity) => boolean,
 	) {
 		for (const [key, _] of Object.entries(this._listeners)) {
-			this._listeners[Number(key)].forEach(([listener, call]) => {
-				if (predicate(listener)) call(...params)
-			})
+			const numKey = Number(key)
+			for (let i = 0; i < this._listeners[numKey].length; i++) {
+				if (this._listeners[numKey][i][2]) continue
+				if (!predicate(this._listeners[numKey][i][0])) continue
+				this._listeners[numKey][i][1](...params)
+			}
 		}
 	}
 }

@@ -68,8 +68,8 @@ describe('Test Dwarf Impulse Rare', () => {
 							StatusEffectComponent,
 							query.effect.is(IgnoreAttachSlotEffect),
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
-						),
-					).toStrictEqual([])
+						).length,
+					).toBe(0)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
