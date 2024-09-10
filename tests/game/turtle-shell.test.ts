@@ -5,6 +5,7 @@ import Egg from 'common/cards/alter-egos/single-use/egg'
 import Ladder from 'common/cards/alter-egos/single-use/ladder'
 import Cubfan135Rare from 'common/cards/default/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import GrianRare from 'common/cards/default/hermits/grian-rare'
 import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
@@ -15,8 +16,9 @@ import Knockback from 'common/cards/default/single-use/knockback'
 import LavaBucket from 'common/cards/default/single-use/lava-bucket'
 import Mending from 'common/cards/default/single-use/mending'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
-import {CardComponent} from 'common/components'
+import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
+import LooseShellEffect from 'common/status-effects/loose-shell'
 import {SelectCards} from 'common/types/modal-requests'
 import {
 	applyEffect,
@@ -383,7 +385,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell is discarded after defending against Peace Out + Egg', () => {
+	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', () => {
 		testGame(
 			{
 				playerOneDeck: [
@@ -442,6 +444,17 @@ describe('Test Turtle Shell', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(TurtleShell),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.rowIndex(2)),
+						),
+					).not.toBe(null)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -691,6 +704,174 @@ describe('Test Turtle Shell', () => {
 							query.card.attached,
 						),
 					).not.toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					GeminiTayRare,
+					GeminiTayRare,
+					TurtleShell,
+					Ladder,
+					Mending,
+					Ladder,
+					Ladder,
+					Ladder,
+				],
+				playerTwoDeck: [GrianRare, Emerald],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
+					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Ladder, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					// Test Mending removes indicator
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).not.toBe(null)
+
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Mending, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.attach,
+						query.slot.rowIndex(0),
+					)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toBe(null)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Ladder, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					// Test Ladder removes indicator
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).not.toBe(null)
+
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Ladder, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toBe(null)
+
+					// Test Borrow removes indicator
+					yield* endTurn(game)
+					yield* endTurn(game)
+					yield* playCardFromHand(game, Ladder, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+
+					let oldEffect = game.components.find(
+						StatusEffectComponent,
+						query.effect.is(LooseShellEffect),
+						query.effect.targetIsCardAnd(query.card.currentPlayer),
+					)
+
+					expect(oldEffect).not.toBe(null)
+
+					yield* endTurn(game)
+
+					yield* attack(game, 'primary')
+					expect(
+						(game.state.modalRequests[0].modal as SelectCards.Data)
+							.primaryButton,
+					).toBeTruthy()
+					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
+					yield* finishModalRequest(game, {result: true, cards: null})
+
+					expect(oldEffect?.targetEntity).toBe(null)
+
+					// Test Emerald removes indicator
+
+					oldEffect = game.components.find(
+						StatusEffectComponent,
+						query.effect.is(LooseShellEffect),
+						query.effect.targetIsCardAnd(query.card.currentPlayer),
+					)
+					expect(oldEffect).not.toBe(null)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Emerald, 'single_use')
+					yield* applyEffect(game)
+
+					expect(oldEffect?.targetEntity).toBe(null)
+
+					// Test manually changing active hermit
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.opponentPlayer),
+						),
+					).not.toBe(null)
+
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toBe(null)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

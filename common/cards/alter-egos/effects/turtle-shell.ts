@@ -3,10 +3,12 @@ import {
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
+	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
+import LooseShellEffect from '../../../status-effects/loose-shell'
 import {beforeDefence} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -128,6 +130,10 @@ const TurtleShell: Attach = {
 			const activeInfo = lastActiveHermit.get(game)[player.entity]
 			if (activeInfo) {
 				activated = activeInfo.stage !== 'too-late'
+				if (!activated)
+					game.components
+						.new(StatusEffectComponent, LooseShellEffect, component.entity)
+						.apply(activeInfo.hermit.entity)
 				shouldDiscard = activeInfo.stage === 'defend-then-discard'
 			}
 		}
@@ -135,26 +141,38 @@ const TurtleShell: Attach = {
 		observer.subscribe(
 			player.hooks.onActiveRowChange,
 			(oldActiveHermit, newActiveHermit) => {
-				const attachedHermitCard = game.components.find(
+				const myHermitCard = game.components.find(
 					CardComponent,
 					query.card.isHermit,
 					query.card.row(query.row.hasCard(component.entity)),
 				)
 
-				if (
-					attachedHermitCard &&
-					newActiveHermit.entity === attachedHermitCard.entity
-				) {
+				if (!myHermitCard) return
+
+				if (newActiveHermit.entity === myHermitCard.entity) {
 					const activeInfo = lastActiveHermit.get(game)[player.entity]
-					if (activeInfo && activeInfo.hermit === attachedHermitCard) {
-						if (activeInfo.stage === 'too-late') return
+					if (activeInfo && activeInfo.hermit.entity === myHermitCard.entity) {
+						if (activeInfo.stage === 'too-late') {
+							game.components
+								.new(StatusEffectComponent, LooseShellEffect, component.entity)
+								.apply(activeInfo.hermit.entity)
+							return
+						}
 						activated = true
 						if (activeInfo.stage === 'defend-then-discard') shouldDiscard = true
 					}
 				} else if (
-					oldActiveHermit === attachedHermitCard &&
-					game.currentPlayerEntity === player.entity
+					oldActiveHermit?.entity === myHermitCard.entity &&
+					!shouldDiscard
 				) {
+					game.components
+						.find(
+							StatusEffectComponent,
+							query.effect.is(LooseShellEffect),
+							(_game, effect) => effect.creatorEntity === component.entity,
+							query.not(query.effect.targetEntity(null)),
+						)
+						?.remove()
 					activated = false
 					shouldDiscard = false
 				}
@@ -163,6 +181,14 @@ const TurtleShell: Attach = {
 
 		observer.subscribe(component.hooks.onChangeSlot, (newSlot) => {
 			if (query.slot.active(game, newSlot)) return
+			game.components
+				.find(
+					StatusEffectComponent,
+					query.effect.is(LooseShellEffect),
+					(_game, effect) => effect.creatorEntity === component.entity,
+					query.not(query.effect.targetEntity(null)),
+				)
+				?.remove()
 			activated = false
 			shouldDiscard = false
 		})
@@ -198,6 +224,16 @@ const TurtleShell: Attach = {
 				}
 			},
 		)
+	},
+	onDetach(game, component) {
+		game.components
+			.filter(
+				StatusEffectComponent,
+				query.effect.is(LooseShellEffect),
+				(_game, effect) => effect.creatorEntity === component.entity,
+				query.not(query.effect.targetEntity(null)),
+			)
+			.forEach((effect) => effect.remove())
 	},
 }
 

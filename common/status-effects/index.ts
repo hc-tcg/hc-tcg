@@ -16,6 +16,7 @@ import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
+import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
@@ -80,6 +81,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	GasLightEffect,
 	GasLightTriggeredEffect,
 	IgnoreAttachSlotEffect,
+	LooseShellEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
