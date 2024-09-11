@@ -9,7 +9,8 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {printBoardState} from 'server/utils'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
+import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', () => {
@@ -126,6 +127,47 @@ describe('Test xB', () => {
 							XBCraftedRare.secondary.damage -
 							20 /* Iron Sword */,
 					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Test "Noice!" does not ignore Target Block.', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [XBCraftedRare, TargetBlock],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
+					yield* playCardFromHand(game, TargetBlock, 'single_use')
+					yield* pick(
+						game,
+						query.slot.rowIndex(1),
+						query.slot.opponent,
+						query.slot.hermit,
+					)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					printBoardState(game)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
