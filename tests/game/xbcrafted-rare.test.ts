@@ -8,7 +8,6 @@ import IronSword from 'common/cards/default/single-use/iron-sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {printBoardState} from 'server/utils'
 import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
 import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 
@@ -73,7 +72,6 @@ describe('Test xB', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-					printBoardState(game)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -153,7 +151,6 @@ describe('Test xB', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-					printBoardState(game)
 					expect(
 						game.components.find(
 							RowComponent,
