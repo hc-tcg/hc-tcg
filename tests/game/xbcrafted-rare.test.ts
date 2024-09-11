@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
+import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 import DiamondArmor from 'common/cards/default/effects/diamond-armor'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
@@ -9,7 +10,6 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
-import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', () => {
