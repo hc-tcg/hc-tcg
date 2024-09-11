@@ -24,8 +24,8 @@ describe("Type advantage tests", () => {
     test('Terraformer v Redstoner', getTestGame(GoodTimesWithScarCommon, MumboJumboCommon))
     test('Miner v Redstoner', getTestGame(TinFoilChefCommon, MumboJumboCommon))
     test('Miner v Prankster', getTestGame(TinFoilChefCommon, PoultrymanCommon))
-    test('Speedrunner v Miner', getTestGame(IJevinCommon, TinFoilChefCommon))
-    test('Speedrunner v Prankster', getTestGame(IJevinCommon, PoultrymanCommon))
+    test('Speedrunner v Miner', getTestGame(HotguyCommon, TinFoilChefCommon))
+    test('Speedrunner v Prankster', getTestGame(HotguyCommon, PoultrymanCommon))
     test('Prankster v Builder', getTestGame(PoultrymanCommon, GrianCommon))
 
     function getTestGame(attacker: Hermit, defender: Hermit) {
