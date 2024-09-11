@@ -242,6 +242,7 @@ export class BattleLogModel {
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
+				attack: subAttack,
 			})
 
 			reducer += logMessage
