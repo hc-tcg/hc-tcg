@@ -1,7 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
+import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {
 	attack,
 	changeActiveHermit,
@@ -9,9 +12,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from './utils'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
-import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 
 describe('Test Beetlejhost Rare', () => {
 	test('Test Jopacity damage is reduced', () => {
