@@ -100,8 +100,9 @@ export class WaterfallHook<
 /**
  * Custom hook class that works the same as a regular game hook, but requires a listener's priority.
  *
- * Allows listeners to be called in a more deterministic order, neccessary when listeners are dependent on the execution of other listeners.
- * Listeners can be added or removed at any time without causing issues. Listeners added at the current priority being called or a later
+ * Allows listeners to be called in a more deterministic order, neccessary when listeners are dependent on the execution of
+ * other listeners.
+ * Listeners can be added or removed at any time without causing issues. Listeners added at the current priority or a later
  * priority will always be called.
  */
 export class PriorityHook<
