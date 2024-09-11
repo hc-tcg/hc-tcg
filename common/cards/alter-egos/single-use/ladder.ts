@@ -30,6 +30,7 @@ const Ladder: SingleUse = {
 		singleUse.attachCondition,
 		query.exists(SlotComponent, pickCondition),
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
