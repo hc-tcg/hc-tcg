@@ -1,23 +1,39 @@
 import {describe, expect, test} from '@jest/globals'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
-import {RowComponent} from 'common/components'
+import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {
+	attack,
+	changeActiveHermit,
+	endTurn,
+	playCardFromHand,
+	testGame,
+} from './utils'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
+import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 
 describe('Test Beetlejhost Rare', () => {
-	test('Test Jopacity having damage reduced', () => {
+	test('Test Jopacity damage is reduced', () => {
 		testGame(
 			{
-				playerOneDeck: [BeetlejhostRare],
+				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
 				saga: function* (game) {
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
@@ -30,11 +46,117 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(
-						BeetlejhostRare.health - 2 * BeetlejhostRare.secondary.damage + 10,
+						EthosLabCommon.health -
+							BeetlejhostRare.secondary.damage -
+							(BeetlejhostRare.secondary.damage - 10),
+					)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							BeetlejhostRare.secondary.damage -
+							(BeetlejhostRare.secondary.damage - 10) -
+							(BeetlejhostRare.secondary.damage - 20),
 					)
 				},
 			},
-			{startWithAllCards: true, noItemRequirements: true, disableDeckOut: true},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Attacking with primary removes Chroma Keyed', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [BeetlejhostRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).not.toBe(null)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'primary')
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Attacking with other hermit removes Chroma Keyed', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [BeetlejhostRare, GeminiTayCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).not.toBe(null)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).not.toBe(null)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
