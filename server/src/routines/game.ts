@@ -184,12 +184,13 @@ function getAvailableActions(
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRowId !== null || turnState.turnNumber <= 2) {
 		// Temporarily add these to see if any slots are available
-		game.state.turn.availableActions.push(
+		game.state.turn.availableActions = [
+			...actions,
 			'PLAY_HERMIT_CARD',
 			'PLAY_EFFECT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_SINGLE_USE_CARD',
-		)
+		]
 		const desiredActions = game.components
 			.filter(
 				CardComponent,
