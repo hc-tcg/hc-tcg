@@ -297,13 +297,14 @@ export class PlayerComponent {
 		if (newRow !== null) {
 			const newHermit = this.game.components.findEntity(
 				CardComponent,
-				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(newRow.entity)),
+				query.card.slot(query.slot.rowIs(newRow.entity), query.slot.hermit),
 			)
 			const oldHermit = this.game.components.findEntity(
 				CardComponent,
-				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(currentActiveRow?.entity)),
+				query.card.slot(
+					query.slot.rowIs(currentActiveRow?.entity),
+					query.slot.hermit,
+				),
 			)
 			this.game.battleLog.addChangeRowEntry(
 				this,

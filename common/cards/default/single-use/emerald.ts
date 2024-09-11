@@ -40,6 +40,7 @@ const Emerald: SingleUse = {
 			),
 		),
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

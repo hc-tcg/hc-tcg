@@ -31,6 +31,7 @@ const CurseOfVanishing: SingleUse = {
 		singleUse.attachCondition,
 		query.exists(SlotComponent, discardCondition),
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

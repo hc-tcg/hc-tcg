@@ -19,6 +19,7 @@ const PotionOfSlowness: SingleUse = {
 	description:
 		"Your opponent's active Hermit can only use their primary attack on their next turn.",
 	showConfirmationModal: true,
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

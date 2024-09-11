@@ -9,7 +9,7 @@ import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import LooseShellEffect from '../../../status-effects/loose-shell'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeDefence, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -36,12 +36,10 @@ const lastActiveHermit = new GameValue<
 	return {}
 })
 
-const knockedIntoEntry = (hermit: CardComponent) =>
-	`$p${hermit.props.name}$ is protected by their $e${TurtleShell.name}$ for the rest of this turn, as long as they remain active.`
-const defendThenDiscardEntry = (hermit: CardComponent) =>
-	`$p${hermit.props.name}$ is protected by their $e${TurtleShell.name}$ until it is removed at the end of this turn.`
-const tooLateEntry = (hermit: CardComponent) =>
-	`$p${hermit.props.name}$ will $bnot$ be protected by $e${TurtleShell.name}$ next turn because they have remained active for at least one turn.`
+const startProtectionEntry = (hermit: CardComponent) =>
+	`$p${hermit.props.name}$ is now protected by their $e${TurtleShell.name}$`
+const endProtectionEntry = (hermit: CardComponent, rowIndex: number) =>
+	`$p${hermit.props.name}$ is no longer protected by $e${TurtleShell.name} (${rowIndex + 1})$`
 
 const TurtleShell: Attach = {
 	...attach,
@@ -138,26 +136,13 @@ const TurtleShell: Attach = {
 					game.components
 						.new(StatusEffectComponent, LooseShellEffect, component.entity)
 						.apply(activeInfo.hermit.entity)
-					game.battleLog.addEntry(
-						player.entity,
-						tooLateEntry(activeInfo.hermit),
-					)
 				} else {
 					state = activeInfo.stage
-					switch (state) {
-						case 'opponent-activated':
-							game.battleLog.addEntry(
-								player.entity,
-								knockedIntoEntry(activeInfo.hermit),
-							)
-							break
-						case 'defend-then-discard':
-							game.battleLog.addEntry(
-								player.entity,
-								defendThenDiscardEntry(activeInfo.hermit),
-							)
-							break
-					}
+
+					game.battleLog.addEntry(
+						player.entity,
+						startProtectionEntry(activeInfo.hermit),
+					)
 				}
 			}
 		}
@@ -180,16 +165,15 @@ const TurtleShell: Attach = {
 							game.components
 								.new(StatusEffectComponent, LooseShellEffect, component.entity)
 								.apply(activeInfo.hermit.entity)
-							game.battleLog.addEntry(player.entity, tooLateEntry(myHermitCard))
 							return
 						}
 						if (state !== 'defend-then-discard') {
-							state = activeInfo.stage
-							if (activeInfo.stage === 'opponent-activated')
+							if (state === 'inactive')
 								game.battleLog.addEntry(
 									player.entity,
-									knockedIntoEntry(activeInfo.hermit),
+									startProtectionEntry(activeInfo.hermit),
 								)
+							state = activeInfo.stage
 						}
 					}
 				} else if (
@@ -204,6 +188,17 @@ const TurtleShell: Attach = {
 							query.not(query.effect.targetEntity(null)),
 						)
 						?.remove()
+					const activeInfo = lastActiveHermit.get(game)[player.entity]
+					if (activeInfo && component.slot.inRow() && state !== 'inactive')
+						game.battleLog.addEntry(
+							player.entity,
+							endProtectionEntry(
+								activeInfo.stage === 'opponent-activated'
+									? myHermitCard
+									: activeInfo.hermit,
+								component.slot.row.index,
+							),
+						)
 					state = 'inactive'
 				}
 			},
@@ -219,21 +214,36 @@ const TurtleShell: Attach = {
 					query.not(query.effect.targetEntity(null)),
 				)
 				?.remove()
+			if (state !== 'inactive') {
+				const hermit = lastActiveHermit.get(game)[player.entity]?.hermit
+				if (hermit && newSlot.inRow())
+					game.battleLog.addEntry(
+						player.entity,
+						endProtectionEntry(hermit, newSlot.row.index),
+					)
+			}
 			state = 'inactive'
 		})
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (state === 'defend-then-discard') {
-				component.discard()
-			}
-		})
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (state === 'defend-then-discard') {
+					if (component.slot.inRow()) {
+						game.battleLog.addEntry(
+							player.entity,
+							`$p${TurtleShell.name} (${component.slot.row.index + 1})$ discarded itself`,
+						)
+					}
+					component.discard()
+				}
+			},
+		)
 
 		observer.subscribe(player.opponentPlayer.hooks.onTurnStart, () => {
 			if (state === 'player-activated') {
 				state = 'defend-then-discard'
-				const hermit = lastActiveHermit.get(game)[player.entity]?.hermit
-				if (hermit)
-					game.battleLog.addEntry(player.entity, defendThenDiscardEntry(hermit))
 			}
 		})
 
