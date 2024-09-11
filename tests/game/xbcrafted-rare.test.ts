@@ -1,11 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
+import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
 import DiamondArmor from 'common/cards/default/effects/diamond-armor'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 import XBCraftedRare from 'common/cards/default/hermits/xbcrafted-rare'
 import IronSword from 'common/cards/default/single-use/iron-sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
+import {printBoardState} from 'server/utils'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test xB', () => {
@@ -34,7 +37,7 @@ describe('Test xB', () => {
 						)?.health,
 					).toBe(
 						GeminiTayCommon.health -
-							70 /* xB Secondary */ -
+							XBCraftedRare.secondary.damage -
 							20 /* Explorer -> Builder type advantage */ -
 							20 /* Iron Sword*/,
 					)
@@ -49,6 +52,80 @@ describe('Test xB', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).toBeFalsy()
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Test "Noice!" does not ignore Lightning Rod.', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
+				playerTwoDeck: [XBCraftedRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					printBoardState(game)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Test "Noice!" does not ignore Lightning Rod when using single use.', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
+				playerTwoDeck: [XBCraftedRare, IronSword],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
+					yield* playCardFromHand(game, IronSword, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							XBCraftedRare.secondary.damage -
+							20 /* Iron Sword */,
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
