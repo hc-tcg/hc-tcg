@@ -8,6 +8,7 @@ import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-com
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {MultiturnSecondaryAttackDisabledEffect} from 'common/status-effects/multiturn-attack-disabled'
 import {
 	attack,
@@ -196,6 +197,15 @@ function* testPuppetingJopacity(game: GameModel) {
 			(BeetlejhostRare.secondary.damage - 10) -
 			SmallishbeansCommon.secondary.damage,
 	)
+
+	yield* endTurn(game)
+	expect(
+		game.components.find(
+			StatusEffectComponent,
+			query.effect.is(ChromaKeyedEffect),
+			query.effect.targetIsCardAnd(query.card.currentPlayer),
+		),
+	).toBe(null)
 }
 
 describe('Test Zombie Cleo', () => {

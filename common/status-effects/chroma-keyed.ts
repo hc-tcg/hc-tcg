@@ -3,9 +3,8 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
-import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {beforeAttack, onTurnEnd} from '../types/priorities'
+import {onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
@@ -14,7 +13,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 	icon: 'chroma-keyed',
 	name: 'Chroma Keyed',
 	description:
-		'You deal 10hp less damage for each level of this status effect.',
+		'You deal 10hp less damage with "Jopacity" for each level of this status effect.',
 	counter: 1,
 	counterType: 'number',
 	onApply(
@@ -25,39 +24,14 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 	): void {
 		if (!effect.counter) effect.counter = this.counter
 
-		let chromaUsedThisTurn = true
-
-		observer.subscribeWithPriority(
-			target.player.hooks.beforeAttack,
-			beforeAttack.MODIFY_DAMAGE,
-			(attack: AttackModel) => {
-				if (
-					[
-						attack.isAttacker(target.entity) && attack.type === 'primary',
-						!attack.isAttacker(target.entity) &&
-							attack.isType('primary', 'secondary'),
-					].some(Boolean)
-				) {
-					effect.remove()
-					return
-				}
-
-				if (effect.counter === null) return
-
-				if (attack.isAttacker(target.entity) && attack.type === 'secondary') {
-					attack.removeDamage(effect.entity, effect.counter * 10)
-					effect.counter++
-					chromaUsedThisTurn = true
-				}
-			},
-		)
+		let previousUses = effect.counter - 1
 
 		observer.subscribeWithPriority(
 			target.player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				if (!chromaUsedThisTurn) effect.remove()
-				chromaUsedThisTurn = false
+				if (previousUses === effect.counter) effect.remove()
+				if (effect.counter !== null) previousUses = effect.counter
 			},
 		)
 	},
