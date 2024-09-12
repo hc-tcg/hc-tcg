@@ -13,22 +13,6 @@ import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
-describe('Type advantage tests', () => {
-	createTypeAdvantageTest('Prankster', 'PvP')
-	createTypeAdvantageTest('Redstoner', 'PvP')
-	createTypeAdvantageTest('PvP', 'Speedrunner')
-	createTypeAdvantageTest('PvP', 'Farm')
-	createTypeAdvantageTest('Farm', 'Explorer')
-	createTypeAdvantageTest('Explorer', 'Builder')
-	createTypeAdvantageTest('Builder', 'Terraformer')
-	createTypeAdvantageTest('Terraformer', 'Redstoner')
-	createTypeAdvantageTest('Miner', 'Redstoner')
-	createTypeAdvantageTest('Miner', 'Prankster')
-	createTypeAdvantageTest('Speedrunner', 'Miner')
-	createTypeAdvantageTest('Speedrunner', 'Prankster')
-	createTypeAdvantageTest('Prankster', 'Builder')
-})
-
 var typeToHermitMap: Map<String, Hermit> = new Map([
 	['Prankster', PoultrymanCommon],
 	['PvP', XBCraftedCommon],
@@ -70,3 +54,19 @@ function createTypeAdvantageTest(attackingType: String, defendingType: String) {
 		)
 	})
 }
+
+describe('Type advantage tests', () => {
+	createTypeAdvantageTest('Prankster', 'PvP')
+	createTypeAdvantageTest('Redstoner', 'PvP')
+	createTypeAdvantageTest('PvP', 'Speedrunner')
+	createTypeAdvantageTest('PvP', 'Farm')
+	createTypeAdvantageTest('Farm', 'Explorer')
+	createTypeAdvantageTest('Explorer', 'Builder')
+	createTypeAdvantageTest('Builder', 'Terraformer')
+	createTypeAdvantageTest('Terraformer', 'Redstoner')
+	createTypeAdvantageTest('Miner', 'Redstoner')
+	createTypeAdvantageTest('Miner', 'Prankster')
+	createTypeAdvantageTest('Speedrunner', 'Miner')
+	createTypeAdvantageTest('Speedrunner', 'Prankster')
+	createTypeAdvantageTest('Prankster', 'Builder')
+})
