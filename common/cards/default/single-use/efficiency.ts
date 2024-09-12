@@ -15,6 +15,7 @@ const Efficiency: SingleUse = {
 	description:
 		'Use an attack from your active Hermit without having the necessary item cards attached.',
 	showConfirmationModal: true,
+	log: (values) => values.defaultLog,
 	onAttach(
 		_game: GameModel,
 		component: CardComponent,

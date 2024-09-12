@@ -29,6 +29,7 @@ const LavaBucket: SingleUse = {
 			name: 'fire',
 		},
 	],
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
