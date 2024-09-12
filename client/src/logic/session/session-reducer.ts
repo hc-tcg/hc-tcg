@@ -30,7 +30,11 @@ const defaultState: SessionState = {
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
 }
-function updateState(state = defaultState, action: LocalMessage) {
+
+const loginReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): SessionState => {
 	switch (action.type) {
 		case localMessages.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
@@ -86,14 +90,6 @@ function updateState(state = defaultState, action: LocalMessage) {
 		default:
 			return state
 	}
-}
-
-const loginReducer = (
-	state = defaultState,
-	action: LocalMessage,
-): SessionState => {
-	let newState = updateState(state, action)
-	return newState
 }
 
 export default loginReducer
