@@ -45,7 +45,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 				if (effect.counter === null) return
 
 				if (attack.isAttacker(target.entity) && attack.type === 'secondary') {
-					attack.reduceDamage(effect.entity, effect.counter * 10)
+					attack.removeDamage(effect.entity, effect.counter * 10)
 					effect.counter++
 					chromaUsedThisTurn = true
 				}
