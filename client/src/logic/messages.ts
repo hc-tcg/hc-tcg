@@ -1,4 +1,5 @@
 import {PlayerEntity} from 'common/entities'
+import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'
@@ -22,7 +23,6 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
-import {PlayerId} from 'common/models/player-model'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,

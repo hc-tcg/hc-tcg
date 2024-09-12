@@ -2,7 +2,6 @@ import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeckT} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
-import {updateSession} from './session-saga'
 
 type SessionState = {
 	playerName: string
