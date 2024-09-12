@@ -39,7 +39,7 @@ const lastActiveHermit = new GameValue<
 const startProtectionEntry = (hermit: CardComponent) =>
 	`$p${hermit.props.name}$ is now protected by $e${TurtleShell.name}$`
 const endProtectionEntry = (hermit: CardComponent, rowIndex: number) =>
-	`$p${hermit.props.name}$ (${rowIndex + 1}) is no longer protected by $e${TurtleShell.name}$`
+	`$p${hermit.props.name} (${rowIndex + 1})$ is no longer protected by $e${TurtleShell.name}$`
 
 const TurtleShell: Attach = {
 	...attach,
@@ -189,14 +189,18 @@ const TurtleShell: Attach = {
 						)
 						?.remove()
 					const activeInfo = lastActiveHermit.get(game)[player.entity]
-					if (activeInfo && component.slot.inRow() && state !== 'inactive')
+					if (
+						activeInfo &&
+						activeInfo.hermit.slot.inRow() &&
+						state !== 'inactive'
+					)
 						game.battleLog.addEntry(
 							player.entity,
 							endProtectionEntry(
 								activeInfo.stage === 'opponent-activated'
 									? myHermitCard
 									: activeInfo.hermit,
-								component.slot.row.index,
+								activeInfo.hermit.slot.row.index,
 							),
 						)
 					state = 'inactive'
@@ -216,10 +220,10 @@ const TurtleShell: Attach = {
 				?.remove()
 			if (state !== 'inactive') {
 				const hermit = lastActiveHermit.get(game)[player.entity]?.hermit
-				if (hermit && newSlot.inRow())
+				if (hermit && hermit.slot.inRow())
 					game.battleLog.addEntry(
 						player.entity,
-						endProtectionEntry(hermit, newSlot.row.index),
+						endProtectionEntry(hermit, hermit.slot.row.index),
 					)
 			}
 			state = 'inactive'
