@@ -198,7 +198,6 @@ function* testPuppetingJopacity(game: GameModel) {
 			SmallishbeansCommon.secondary.damage,
 	)
 
-	yield* endTurn(game)
 	expect(
 		game.components.find(
 			StatusEffectComponent,

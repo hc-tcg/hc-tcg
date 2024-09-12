@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {onTurnEnd} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const ChromaKeyedEffect: Counter<CardComponent> = {
@@ -24,13 +24,23 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 	): void {
 		if (!effect.counter) effect.counter = this.counter
 
+		let jopacityUsedThisTurn = false
 		let previousUses = effect.counter - 1
+		observer.subscribeWithPriority(
+			target.player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(attack) => {
+				if (previousUses !== this.counter) jopacityUsedThisTurn = true
+				else if (attack.isAttacker(target.entity)) effect.remove()
+			},
+		)
 
 		observer.subscribeWithPriority(
 			target.player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				if (previousUses === effect.counter) effect.remove()
+				if (!jopacityUsedThisTurn) effect.remove()
+				jopacityUsedThisTurn = false
 				if (effect.counter !== null) previousUses = effect.counter
 			},
 		)
