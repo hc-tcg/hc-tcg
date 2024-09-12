@@ -37,7 +37,7 @@ const lastActiveHermit = new GameValue<
 })
 
 const startProtectionEntry = (hermit: CardComponent) =>
-	`$p${hermit.props.name}$ is now protected by their $e${TurtleShell.name}$`
+	`$p${hermit.props.name}$ is now protected by $e${TurtleShell.name}$`
 const endProtectionEntry = (hermit: CardComponent, rowIndex: number) =>
 	`$p${hermit.props.name}$ is no longer protected by $e${TurtleShell.name} (${rowIndex + 1})$`
 
