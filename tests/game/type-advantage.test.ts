@@ -1,7 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import HotguyCommon from 'common/cards/alter-egos-iii/hermits/hotguy-common'
 import PoultrymanCommon from 'common/cards/alter-egos/hermits/poultryman-common'
-import {Hermit} from 'common/cards/base/types'
 import GoodTimesWithScarCommon from 'common/cards/default/hermits/goodtimeswithscar-common'
 import GrianCommon from 'common/cards/default/hermits/grian-common'
 import IJevinCommon from 'common/cards/default/hermits/ijevin-common'
@@ -14,20 +13,23 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 let typeToHermitMap = {
-	'Prankster': PoultrymanCommon,
-	'PvP': XBCraftedCommon,
-	'Redstoner': MumboJumboCommon,
-	'Speedrunner': HotguyCommon,
-	'Farm': ImpulseSVCommon,
-	'Explorer': IJevinCommon,
-	'Builder': GrianCommon,
-	'Terraformer': GoodTimesWithScarCommon,
-	'Miner': TinFoilChefCommon,
+	Prankster: PoultrymanCommon,
+	PvP: XBCraftedCommon,
+	Redstoner: MumboJumboCommon,
+	Speedrunner: HotguyCommon,
+	Farm: ImpulseSVCommon,
+	Explorer: IJevinCommon,
+	Builder: GrianCommon,
+	Terraformer: GoodTimesWithScarCommon,
+	Miner: TinFoilChefCommon,
 }
 
 type HermitType = keyof typeof typeToHermitMap
 
-function createTypeAdvantageTest(attackingType: HermitType, defendingType: HermitType) {
+function createTypeAdvantageTest(
+	attackingType: HermitType,
+	defendingType: HermitType,
+) {
 	test(attackingType + ' v ' + defendingType, () => {
 		const attacker = typeToHermitMap[attackingType]
 		const defender = typeToHermitMap[defendingType]
