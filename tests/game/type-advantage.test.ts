@@ -13,22 +13,24 @@ import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
-var typeToHermitMap: Map<String, Hermit> = new Map([
-	['Prankster', PoultrymanCommon],
-	['PvP', XBCraftedCommon],
-	['Redstoner', MumboJumboCommon],
-	['Speedrunner', HotguyCommon],
-	['Farm', ImpulseSVCommon],
-	['Explorer', IJevinCommon],
-	['Builder', GrianCommon],
-	['Terraformer', GoodTimesWithScarCommon],
-	['Miner', TinFoilChefCommon],
-])
+let typeToHermitMap = {
+	'Prankster': PoultrymanCommon,
+	'PvP': XBCraftedCommon,
+	'Redstoner': MumboJumboCommon,
+	'Speedrunner': HotguyCommon,
+	'Farm': ImpulseSVCommon,
+	'Explorer': IJevinCommon,
+	'Builder': GrianCommon,
+	'Terraformer': GoodTimesWithScarCommon,
+	'Miner': TinFoilChefCommon,
+}
 
-function createTypeAdvantageTest(attackingType: String, defendingType: String) {
+type HermitType = keyof typeof typeToHermitMap
+
+function createTypeAdvantageTest(attackingType: HermitType, defendingType: HermitType) {
 	test(attackingType + ' v ' + defendingType, () => {
-		let attacker = typeToHermitMap.get(attackingType)!
-		let defender = typeToHermitMap.get(defendingType)!
+		const attacker = typeToHermitMap[attackingType]
+		const defender = typeToHermitMap[defendingType]
 		testGame(
 			{
 				playerOneDeck: [defender],
