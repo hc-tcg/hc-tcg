@@ -17,28 +17,19 @@ import socket from 'socket'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import {PlayerDeckT} from '../../../../common/types/deck'
 
-const loadSession = (): PlayerInfo | null => {
+const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
 	const censoredPlayerName = sessionStorage.getItem('censoredPlayerName')
-	const minecraftName = sessionStorage.getItem('minecraftName')
 	const playerId = sessionStorage.getItem('playerId') as PlayerId
 	const playerSecret = sessionStorage.getItem('playerSecret')
-	const playerDeck = JSON.parse(sessionStorage.getItem('playerDeck') || '{}')
-	if (
-		!playerName ||
-		!minecraftName ||
-		!censoredPlayerName ||
-		!playerId ||
-		!playerSecret
-	)
+
+	if (!playerName || !censoredPlayerName || !playerId || !playerSecret)
 		return null
 	return {
 		playerName,
-		minecraftName,
 		censoredPlayerName,
 		playerId,
 		playerSecret,
-		playerDeck,
 	}
 }
 
@@ -150,9 +141,21 @@ export function* loginSaga() {
 		if (!session) return
 		console.log('User reconnected')
 		yield put<LocalMessage>({
-			type: localMessages.PLAYER_INFO_SET,
+			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
+		let activeDeck = localStorage.getItem('activeDeck')
+		if (activeDeck) {
+			let deck = getSavedDeck(activeDeck)
+			console.log('Select previous active deck')
+			if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
+		}
+		let minecraftName = localStorage.getItem('minecraftName')
+		if (minecraftName)
+			yield* put<LocalMessage>({
+				type: localMessages.MINECRAFT_NAME_SET,
+				name: minecraftName,
+			})
 	}
 
 	if (result.playerInfo) {

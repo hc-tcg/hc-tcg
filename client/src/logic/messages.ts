@@ -22,6 +22,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {PlayerId} from 'common/models/player-model'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,
@@ -29,6 +30,7 @@ export const localMessages = messages({
 	SOCKET_DISCONNECT: null,
 	SOCKET_CONNECT_ERROR: null,
 	LOGIN: null,
+	PLAYER_SESSION_SET: null,
 	PLAYER_INFO_SET: null,
 	DISCONNECT: null,
 	LOGOUT: null,
@@ -86,6 +88,15 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
 	{type: typeof localMessages.LOGIN; name: string},
+	{
+		type: typeof localMessages.PLAYER_SESSION_SET
+		player: {
+			playerName: string
+			censoredPlayerName: string
+			playerId: PlayerId
+			playerSecret: string
+		}
+	},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},

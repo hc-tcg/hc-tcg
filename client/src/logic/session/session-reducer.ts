@@ -47,6 +47,7 @@ function updateState(state = defaultState, action: LocalMessage) {
 				errorType: action.errorMessage,
 			}
 		case localMessages.PLAYER_INFO_SET:
+		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
 				connecting: false,
@@ -93,7 +94,6 @@ const loginReducer = (
 	action: LocalMessage,
 ): SessionState => {
 	let newState = updateState(state, action)
-	updateSession(newState)
 	return newState
 }
 
