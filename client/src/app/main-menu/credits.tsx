@@ -74,7 +74,7 @@ function Credits({setMenuSection}: Props) {
 				/>
 				<DeveloperCredit
 					name="ImagineFyre"
-					handle="imaginefyre"
+					handle="jmlyman424"
 					social="github"
 					link="https://github.com/jmlyman424"
 					avatar="https://avatars.githubusercontent.com/u/8975572"

@@ -12,7 +12,7 @@ interface Props {
 
 const DeveloperCredit = ({name, social, handle, link, avatar}: Props) => {
 	let nameTooltip = (
-		<div className={css.tooltip}>
+		<>
 			<div className={css.name}>{name}</div>
 			<div className={css.handle}>
 				<img
@@ -21,7 +21,7 @@ const DeveloperCredit = ({name, social, handle, link, avatar}: Props) => {
 				/>
 				{handle}
 			</div>
-		</div>
+		</>
 	)
 
 	return (
