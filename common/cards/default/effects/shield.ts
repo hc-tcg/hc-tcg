@@ -37,7 +37,7 @@ const Shield: Attach = {
 						60 - damageBlocked,
 					)
 					damageBlocked += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 				}
 			},
 		)

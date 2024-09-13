@@ -80,7 +80,7 @@ export type AttackDefs =
 export type AttackHistoryType =
 	| 'add_damage'
 	| 'remove_damage'
-	| 'reduce_damage'
+	| 'add_damage_reduction'
 	| 'multiply_damage'
 	| 'lock_damage'
 	| 'set_attacker'
