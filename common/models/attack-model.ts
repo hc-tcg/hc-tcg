@@ -183,11 +183,11 @@ export class AttackModel {
 	}
 
 	/** Reduces the total damage the attack does */
-	public reduceDamage(source: AttackerEntity, amount: number) {
+	public addDamageReduction(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.addHistory(source, 'reduce_damage', amount)
+		this.addHistory(source, 'add_damage_reduction', amount)
 
 		return this
 	}

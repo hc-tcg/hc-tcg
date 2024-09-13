@@ -36,7 +36,7 @@ const GoldArmor: Attach = {
 						10 - damageBlocked,
 					)
 					damageBlocked += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 				}
 			},
 		)

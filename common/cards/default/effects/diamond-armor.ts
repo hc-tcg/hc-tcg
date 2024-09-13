@@ -36,7 +36,7 @@ const DiamondArmor: Attach = {
 						30 - damageBlocked,
 					)
 					damageBlocked += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 				}
 			},
 		)
