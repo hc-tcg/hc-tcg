@@ -40,16 +40,25 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://cdn.discordapp.com/avatars/171689337954500608/c17287ea15fbbbf66f8bfcbcdf6bd705.webp"
 				/>
 				<DeveloperCredit
-					name="ImagineFyre"
-					handle="imaginefyre"
-					social="discord"
-					avatar="https://cdn.discordapp.com/avatars/395760322864218113/89d3e188881c3aacd62a91c8f6b0b2f5.webp"
+					name="Benji"
+					handle="東方愛麗絲"
+					social="github"
+					link="https://github.com/alicetouhou"
+					avatar="https://avatars.githubusercontent.com/u/63879236?v=4"
 				/>
 				<DeveloperCredit
-					name="Benji"
-					handle="alicetouhou"
-					social="discord"
-					avatar="https://avatars.githubusercontent.com/u/63879236?v=4"
+					name="Lunarmagpie"
+					handle="Lunarmagpie"
+					social="github"
+					link="https://github.com/lunarmagpie"
+					avatar="https://avatars.githubusercontent.com/u/65521138"
+				/>
+				<DeveloperCredit
+					name="Screaper91"
+					handle="Screaper91"
+					social="github"
+					link="https://github.com/screaper91"
+					avatar="https://avatars.githubusercontent.com/u/155844020"
 				/>
 				<DeveloperCredit
 					name="ChimeraDev"
@@ -58,22 +67,17 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://avatars.githubusercontent.com/u/109681545?v=4"
 				/>
 				<DeveloperCredit
+					name="ImagineFyre"
+					handle="imaginefyre"
+					social="github"
+					link="https://github.com/jmlyman424"
+					avatar="https://avatars.githubusercontent.com/u/8975572"
+				/>
+				<DeveloperCredit
 					name="Niko"
 					handle="niko.uy"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/12455733?v=4"
-				/>
-				<DeveloperCredit
-					name="ProfNinja"
-					handle="profninja"
-					social="discord"
-					avatar="https://avatars.githubusercontent.com/u/671639?v=4"
-				/>
-				<DeveloperCredit
-					name="Scopop"
-					handle="scopop"
-					social="discord"
-					avatar="https://cdn.discordapp.com/avatars/625061304939446273/9149b6f7d531c89afc1dbdb9000a494e.webp"
 				/>
 				<DeveloperCredit
 					name="Sense_101"
@@ -88,11 +92,24 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://cdn.discordapp.com/avatars/547104418131083285/0e6fa62e2f647943f21ecbe2d21a9291.webp"
 				/>
 				<DeveloperCredit
-					name="Lunarmagpie"
-					handle="lunarmagpie"
+					name="Rvtar"
+					handle="Rvtar"
 					social="github"
-					link="https://github.com/lunarmagpie"
-					avatar="https://avatars.githubusercontent.com/u/65521138"
+					link="https://github.com/Rvtar"
+					avatar="https://avatars.githubusercontent.com/u/106639908"
+				/>
+				<DeveloperCredit
+					name="blockgolbin31"
+					handle="blockgolbin31"
+					social="github"
+					link="https://github.com/blockgolbin31"
+					avatar="https://avatars.githubusercontent.com/u/57573828"
+				/>
+				<DeveloperCredit
+					name="ProfNinja"
+					handle="profninja"
+					social="discord"
+					avatar="https://avatars.githubusercontent.com/u/671639?v=4"
 				/>
 			</div>
 		</MenuLayout>
