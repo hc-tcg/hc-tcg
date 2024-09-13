@@ -1,11 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
+import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
+import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {MultiturnSecondaryAttackDisabledEffect} from 'common/status-effects/multiturn-attack-disabled'
 import {
 	attack,
@@ -140,6 +143,70 @@ function* testPuppetryCanceling(game: GameModel) {
 	)
 }
 
+function* testPuppetingJopacity(game: GameModel) {
+	yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
+
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
+	yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 2)
+
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	yield* endTurn(game)
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	expect(game.opponentPlayer.activeRow?.health).toBe(
+		SmallishbeansCommon.health -
+			BeetlejhostRare.secondary.damage -
+			(BeetlejhostRare.secondary.damage - 10),
+	)
+
+	yield* endTurn(game)
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(2),
+	)
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	expect(game.opponentPlayer.activeRow?.health).toBe(
+		SmallishbeansCommon.health -
+			BeetlejhostRare.secondary.damage -
+			(BeetlejhostRare.secondary.damage - 10) -
+			SmallishbeansCommon.secondary.damage,
+	)
+
+	expect(
+		game.components.find(
+			StatusEffectComponent,
+			query.effect.is(ChromaKeyedEffect),
+			query.effect.targetIsCardAnd(query.card.currentPlayer),
+		),
+	).toBe(null)
+}
+
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
 		testGame(
@@ -171,6 +238,17 @@ describe('Test Zombie Cleo', () => {
 				playerTwoDeck: [ZombieCleoRare, ZombieCleoRare, BoomerBdubsRare],
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Test using Puppetry on Jopacity', () => {
+		testGame(
+			{
+				saga: testPuppetingJopacity,
+				playerOneDeck: [SmallishbeansCommon],
+				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, SmallishbeansCommon],
+			},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
