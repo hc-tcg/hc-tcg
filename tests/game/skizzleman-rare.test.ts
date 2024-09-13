@@ -92,7 +92,7 @@ describe('Test Skizzleman Rare', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
-					//Use anvil to trigger attack on the afk hermit that does no damage
+					// Use anvil to trigger attack the afk hermit for zero damage
 					yield* playCardFromHand(game, Anvil, 'single_use')
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
