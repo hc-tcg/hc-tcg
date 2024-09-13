@@ -14,6 +14,7 @@ describe('Test Game Win Conditions', () => {
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* attack(game, 'secondary')
+					console.log("OVER")
 				},
 				then: (game) => {
 					expect(game.endInfo.outcome).toBe('player_won')
