@@ -13,7 +13,7 @@ import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
-import {call, delay, put, race} from 'typed-redux-saga'
+import {call, put, race} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {

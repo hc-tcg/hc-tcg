@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test Game Utils', () => {
 	test('Test fails if game ends', () => {
