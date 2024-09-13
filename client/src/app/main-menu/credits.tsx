@@ -31,7 +31,7 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://pbs.twimg.com/profile_images/1779336099556675584/jXzagXkR_400x400.jpg"
 				/>
 			</div>
-			<h2>Website Developers</h2>
+			<h2>Contributors</h2>
 			<div className={css.developerCreditsContainer}>
 				<DeveloperCredit
 					name="Minion Harou"
@@ -67,6 +67,12 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://avatars.githubusercontent.com/u/109681545?v=4"
 				/>
 				<DeveloperCredit
+					name="Sense_101"
+					handle="sense101"
+					social="discord"
+					avatar="https://avatars.githubusercontent.com/u/67970865?v=4"
+				/>
+				<DeveloperCredit
 					name="ImagineFyre"
 					handle="imaginefyre"
 					social="github"
@@ -78,12 +84,6 @@ function Credits({setMenuSection}: Props) {
 					handle="niko.uy"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/12455733?v=4"
-				/>
-				<DeveloperCredit
-					name="Sense_101"
-					handle="sense101"
-					social="discord"
-					avatar="https://avatars.githubusercontent.com/u/67970865?v=4"
 				/>
 				<DeveloperCredit
 					name="Tyrannicodin"
@@ -106,10 +106,59 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://avatars.githubusercontent.com/u/57573828"
 				/>
 				<DeveloperCredit
+					name="ijzm"
+					handle="ijzm"
+					social="github"
+					link="https://github.com/ijzm"
+					avatar="https://avatars.githubusercontent.com/u/4440678"
+				/>
+				<DeveloperCredit
+					name="Maescool"
+					handle="Maescool"
+					social="github"
+					link="https://github.com/Maescool"
+					avatar="https://avatars.githubusercontent.com/u/197110"
+				/>
+				<DeveloperCredit
 					name="ProfNinja"
 					handle="profninja"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/671639?v=4"
+				/>
+				<DeveloperCredit
+					name="ArsenalTillIDie"
+					handle="ArsenalTillIDie"
+					social="github"
+					link="https://github.com/ArsenalTillIDie"
+					avatar="https://avatars.githubusercontent.com/u/59069144"
+				/>
+				<DeveloperCredit
+					name="Razboy20"
+					handle="Razboy20"
+					social="github"
+					link="https://github.com/Razboy20"
+					avatar="https://avatars.githubusercontent.com/u/29903962"
+				/>
+				<DeveloperCredit
+					name="JoelleJS"
+					handle="JoelleJS"
+					social="gitlab"
+					link="https://gitlab.com/JoelleJS"
+					avatar="https://gitlab.com/uploads/-/system/user/avatar/5164556/avatar.png"
+				/>
+				<DeveloperCredit
+					name="Czompi"
+					handle="Czompi"
+					social="github"
+					link="https://github.com/Czompi"
+					avatar="https://avatars.githubusercontent.com/u/26040786"
+				/>
+				<DeveloperCredit
+					name="eyduh"
+					handle="eyduh"
+					social="github"
+					link="https://github.com/eyduh"
+					avatar="https://avatars.githubusercontent.com/u/29815625"
 				/>
 			</div>
 		</MenuLayout>
