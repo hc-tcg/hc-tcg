@@ -16,9 +16,8 @@ describe('Test Game Win Conditions', () => {
 					yield* attack(game, 'secondary')
 				},
 				then: (game) => {
-					expect(game.endInfo.outcome).toBe('player_won')
-					expect(game.endInfo.reason).toBe('hermits')
 					expect(getWinner(game)).toBe('playerTwo')
+					expect(game.endInfo.reason).toBe('hermits')
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true},

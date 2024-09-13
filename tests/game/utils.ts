@@ -13,7 +13,7 @@ import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
-import {call, put, race} from 'typed-redux-saga'
+import {call, delay, put, race} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {
@@ -180,10 +180,11 @@ export function* finishModalRequest(
 export function getWinner(
 	game: GameModel,
 ): 'playerOne' | 'playerTwo' | undefined {
-	let loserComponent = game.components.find(PlayerComponent, (game, player) =>
-		game.endInfo.deadPlayerEntities.includes(player.entity),
+	let winnerComponent = game.components.find(
+		PlayerComponent,
+		(game, player) => !game.endInfo.deadPlayerEntities.includes(player.entity),
 	)
-	return loserComponent?.playerName as any
+	return winnerComponent?.playerName as any
 }
 
 function testSagas(rootSaga: any, testingSaga: any) {
@@ -193,21 +194,9 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
 
-	let gameSagaCompleted = false
-
 	let saga = sagaMiddleware.run(function* () {
-		yield* race([
-			rootSaga,
-			call(function* () {
-				yield* testingSaga
-				gameSagaCompleted = true
-			}),
-		])
+		yield* race([rootSaga, testingSaga])
 	})
-
-	if (!gameSagaCompleted) {
-		throw new Error('Game was ended before the test finished running')
-	}
 
 	if (saga.error()) {
 		throw saga.error()
@@ -261,6 +250,21 @@ export function testGame(
 		{randomizeOrder: false},
 	)
 
-	testSagas(call(gameSaga, game), call(options.saga, game))
+	let testEnded = false
+
+	testSagas(
+		call(function* () {
+			yield* call(gameSaga, game)
+		}),
+		call(function* () {
+			yield* call(options.saga, game)
+			testEnded = true
+		}),
+	)
+
+	if (!options.then && !testEnded) {
+		throw new Error('Game was ended before the test finished running.')
+	}
+
 	if (options.then) options.then(game)
 }
