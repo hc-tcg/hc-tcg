@@ -1,12 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import IronArmor from 'common/cards/default/effects/iron-armor'
 import Thorns from 'common/cards/default/effects/thorns'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
-import IronArmor from 'common/cards/default/effects/iron-armor'
 
 describe('Test Skizzleman Rare', () => {
 	test('Gaslight works as intended', () => {
@@ -80,7 +80,7 @@ describe('Test Skizzleman Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Gaslight doesn\'t trigger if the hermit takes no damage', () => {
+	test("Gaslight doesn't trigger if the hermit takes no damage", () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
@@ -97,14 +97,16 @@ describe('Test Skizzleman Rare', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-					expect(game.components.find(
-						RowComponent,
-						query.row.currentPlayer,
-						query.row.index(1)
-					)?.health).toBe(EthosLabCommon.health)
-				}
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+				},
 			},
-			{startWithAllCards: true, noItemRequirements: true}
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
