@@ -1,7 +1,7 @@
 import Credit from 'components/credit'
+import DeveloperCredit from 'components/credit/developer-credit'
 import MenuLayout from 'components/menu-layout'
 import css from './main-menu.module.scss'
-import DeveloperCredit from 'components/credit/developer-credit'
 
 type Props = {
 	setMenuSection: (section: string) => void

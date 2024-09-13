@@ -1,6 +1,6 @@
-import css from './credit.module.scss'
 import classnames from 'classnames'
 import Tooltip from 'components/tooltip'
+import css from './credit.module.scss'
 
 interface Props {
 	name: string
