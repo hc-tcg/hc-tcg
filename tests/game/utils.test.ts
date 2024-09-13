@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from './utils'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 
 describe('Test Game Utils', () => {
@@ -14,6 +14,7 @@ describe('Test Game Utils', () => {
 						yield* endTurn(game)
 
 						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+						yield* attack(game, 'secondary')
 						// The game should never reach this point
 						yield* endTurn(game)
 					},
@@ -23,4 +24,3 @@ describe('Test Game Utils', () => {
 		).toThrow()
 	})
 })
-

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import {endTurn, getWinner, playCardFromHand, testGame} from './utils'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import {attack, endTurn, getWinner, playCardFromHand, testGame} from './utils'
 
 describe('Test Game Win Conditions', () => {
 	test('Killing all hermits results in victory.', () => {
@@ -13,6 +13,7 @@ describe('Test Game Win Conditions', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* attack(game, 'secondary')
 				},
 				then: (game) => {
 					expect(game.endInfo.outcome).toBe('player_won')
@@ -20,7 +21,7 @@ describe('Test Game Win Conditions', () => {
 					expect(getWinner(game)).toBe('playerTwo')
 				},
 			},
-			{oneShotMode: true},
+			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
 })

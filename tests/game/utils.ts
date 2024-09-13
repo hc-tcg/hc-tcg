@@ -198,10 +198,10 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	let saga = sagaMiddleware.run(function* () {
 		yield* race([
 			rootSaga,
-			function* () {
-				yield* testingSaga()
+			call(function* () {
+				yield* testingSaga
 				gameSagaCompleted = true
-			},
+			}),
 		])
 	})
 
@@ -244,7 +244,7 @@ const defaultGameSettings = {
 export function testGame(
 	options: {
 		saga: (game: GameModel) => any
-		// Saga to check the state of the game after it ends.
+		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
