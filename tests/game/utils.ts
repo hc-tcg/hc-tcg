@@ -177,15 +177,37 @@ export function* finishModalRequest(
 	})
 }
 
+export function getWinner(
+	game: GameModel,
+): 'playerOne' | 'playerTwo' | undefined {
+	let loserComponent = game.components.find(PlayerComponent, (game, player) =>
+		game.endInfo.deadPlayerEntities.includes(player.entity),
+	)
+	return loserComponent?.playerName as any
+}
+
 function testSagas(rootSaga: any, testingSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
 		onError: (_err, {sagaStack: _}) => {},
 	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
+
+	let gameSagaCompleted = false
+
 	let saga = sagaMiddleware.run(function* () {
-		yield* race([rootSaga, testingSaga])
+		yield* race([
+			rootSaga,
+			function* () {
+				yield* testingSaga()
+				gameSagaCompleted = true
+			},
+		])
 	})
+
+	if (!gameSagaCompleted) {
+		throw new Error('Game was ended before the test finished running')
+	}
 
 	if (saga.error()) {
 		throw saga.error()
@@ -222,6 +244,8 @@ const defaultGameSettings = {
 export function testGame(
 	options: {
 		saga: (game: GameModel) => any
+		// Saga to check the state of the game after it ends.
+		then?: (game: GameModel) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
@@ -238,4 +262,5 @@ export function testGame(
 	)
 
 	testSagas(call(gameSaga, game), call(options.saga, game))
+	if (options.then) options.then(game)
 }
