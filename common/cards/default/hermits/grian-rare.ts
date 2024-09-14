@@ -10,16 +10,6 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-// The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
-
-/*
-Some assumptions that make sense to me:
-- Shield can't be stolen as they get used up during the attack
-- If hermitMultiplier is 0 (e.g. invis potion), then shield don't get used and so you can steal it
-- Totem/Loyalty can be stolen unless it was used
-- If you choose to discard the card it gets discarded to your discard pile
-*/
-
 const GrianRare: Hermit = {
 	...hermit,
 	id: 'grian_rare',
