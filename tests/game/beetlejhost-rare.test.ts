@@ -161,7 +161,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Chroma Keyed is not removed when doing nothing', () => {
+	test('Chroma Keyed is removed when doing nothing', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -176,11 +176,15 @@ describe('Test Beetlejhost Rare', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
+					// Do nothing for a turn.
+					yield* endTurn(game)
+					yield* endTurn(game)
+
 					expect(
 						game.components.find(
 							StatusEffectComponent,
 							query.effect.is(ChromaKeyedEffect),
-							query.effect.targetEntity(null),
+							query.not(query.effect.targetEntity(null)),
 						),
 					).toBe(null)
 				},

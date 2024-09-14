@@ -78,7 +78,6 @@ const BeetlejhostRare: Hermit = {
 				) {
 					attack.removeDamage(chromaKeyed.entity, chromaKeyed.counter * 10)
 					chromaKeyed.counter++
-					console.info('UPDATED COUNTER', chromaKeyed.counter)
 				}
 			},
 		)
