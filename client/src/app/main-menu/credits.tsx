@@ -31,7 +31,7 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://pbs.twimg.com/profile_images/1779336099556675584/jXzagXkR_400x400.jpg"
 				/>
 			</div>
-			<h2>Contributors</h2>
+			<h2>Website Developers</h2>
 			<div className={css.developerCreditsContainer}>
 				<DeveloperCredit
 					name="Minion Harou"
