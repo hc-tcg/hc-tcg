@@ -183,7 +183,7 @@ export function printBoardState(game: GameModel) {
 							StatusEffectComponent,
 							query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
 						)
-						.map((e) => e.props.name)
+						.map((e) => e.props.name + ' ' + e.counter)
 						.join(', '),
 				)
 			}
@@ -217,7 +217,6 @@ export function printBoardState(game: GameModel) {
 					SlotComponent,
 					query.slot.player(playerEntity),
 					query.slot.attach,
-
 					query.slot.row(query.row.index(i)),
 				)
 				.forEach(printSlot)

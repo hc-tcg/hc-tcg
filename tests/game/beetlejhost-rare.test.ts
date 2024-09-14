@@ -161,6 +161,33 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
+	test('Chroma Keyed is not removed when doing nothing', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [BeetlejhostRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.effect.targetEntity(null),
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
 	test('Test Jopacity with Invisibility tails', () => {
 		testGame(
 			{
