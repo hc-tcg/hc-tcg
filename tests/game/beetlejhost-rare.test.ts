@@ -176,7 +176,7 @@ describe('Test Beetlejhost Rare', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-          // Do nothing for a turn.
+					// Do nothing for a turn.
 					yield* endTurn(game)
 					yield* endTurn(game)
 
