@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Armor Stand', () => {
 	test("Armor stand doesn't give a prize card", () => {

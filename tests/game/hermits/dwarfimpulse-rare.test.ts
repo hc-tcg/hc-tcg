@@ -17,7 +17,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Dwarf Impulse Rare', () => {
 	test('Test Dwarf Impulse with golden axe.', () => {

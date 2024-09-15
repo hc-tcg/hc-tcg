@@ -3,7 +3,7 @@ import Loyalty from 'common/cards/default/effects/loyalty'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 function* testLoyaltyHelperSaga(game: GameModel) {
 	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)

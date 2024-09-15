@@ -7,7 +7,7 @@ import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test rare King Joel Steal', () => {
 	test('Test regular Steal behavior', () => {

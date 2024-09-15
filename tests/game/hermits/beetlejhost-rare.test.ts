@@ -14,7 +14,7 @@ import {
 	endTurn,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Beetlejhost Rare', () => {
 	test('Test Jopacity damage is reduced', () => {

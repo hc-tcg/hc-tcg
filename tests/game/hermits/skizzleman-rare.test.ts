@@ -6,7 +6,7 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Skizzleman Rare', () => {
 	test('Gaslight works as intended', () => {

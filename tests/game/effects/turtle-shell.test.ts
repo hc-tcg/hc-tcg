@@ -29,7 +29,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Turtle Shell', () => {
 	test('Turtle Shell applies to next turn', () => {

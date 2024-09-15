@@ -18,7 +18,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Gemini Tay', () => {
 	test('Test Axe Functions Until End Of Turn', () => {
