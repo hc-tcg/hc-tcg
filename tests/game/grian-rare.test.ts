@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import Loyalty from 'common/cards/default/effects/loyalty'
 import Shield from 'common/cards/default/effects/shield'
+import Thorns from 'common/cards/default/effects/thorns'
 import Totem from 'common/cards/default/effects/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GrianRare from 'common/cards/default/hermits/grian-rare'
@@ -140,6 +141,125 @@ describe('Test Grian Rare', () => {
 				noItemRequirements: true,
 				forceCoinFlip: true,
 				oneShotMode: true,
+			},
+		)
+	})
+
+	test("Test Borrow discards to Grian's discard pile", () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Loyalty],
+				playerTwoDeck: [GrianRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Loyalty, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					yield* attack(game, 'primary')
+
+					// Check Grian added a modal request
+					expect(game.state.modalRequests[0]?.modal.type).toBe('selectCards')
+
+					yield* finishModalRequest(game, {result: false, cards: null})
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(Loyalty),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.discardPile),
+						),
+					).not.toBe(null)
+				},
+			},
+			{
+				startWithAllCards: true,
+				noItemRequirements: true,
+				forceCoinFlip: true,
+			},
+		)
+	})
+
+	test("Test Borrow cannot replace card in Grian's attach slot", () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Loyalty],
+				playerTwoDeck: [GrianRare, Shield],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Loyalty, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					yield* playCardFromHand(game, Shield, 'attach', 0)
+					yield* attack(game, 'primary')
+
+					// Check Grian added a modal request that does not allow attaching
+					expect(
+						(game.state.modalRequests[0] as SelectCards.Request)?.modal
+							.primaryButton,
+					).toBe(null)
+
+					yield* finishModalRequest(game, {result: false, cards: null})
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(Loyalty),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.discardPile),
+						),
+					).not.toBe(null)
+				},
+			},
+			{
+				startWithAllCards: true,
+				noItemRequirements: true,
+				forceCoinFlip: true,
+			},
+		)
+	})
+
+	test('Test Borrow cannot attach card when Grian is knocked-out', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Thorns],
+				playerTwoDeck: [GrianRare, EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Thorns, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					// Manually set Grian's health to knock-out range
+					game.currentPlayer.activeRow!.health = 10
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* attack(game, 'primary')
+
+					// Check Grian added a modal request that does not allow attaching
+					expect(
+						(game.state.modalRequests[0] as SelectCards.Request)?.modal
+							.primaryButton,
+					).toBe(null)
+
+					yield* finishModalRequest(game, {result: false, cards: null})
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(Thorns),
+							query.card.currentPlayer,
+							query.card.slot(query.slot.discardPile),
+						),
+					).not.toBe(null)
+				},
+			},
+			{
+				startWithAllCards: true,
+				noItemRequirements: true,
+				forceCoinFlip: true,
 			},
 		)
 	})

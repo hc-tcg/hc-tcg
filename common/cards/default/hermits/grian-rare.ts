@@ -65,14 +65,16 @@ const GrianRare: Hermit = {
 					query.slot.active,
 					query.slot.attach,
 				)
-				const canAttach = game.components.find(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.not(query.slot.frozen),
-					query.slot.attach,
-					query.slot.active,
-					query.slot.empty,
-				)
+				const canAttach =
+					component.isAlive() &&
+					game.components.exists(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.not(query.slot.frozen),
+						query.slot.attach,
+						query.slot.active,
+						query.slot.empty,
+					)
 
 				game.addModalRequest({
 					player: player.entity,
@@ -95,8 +97,8 @@ const GrianRare: Hermit = {
 						},
 					},
 					onResult(modalResult) {
-						if (modalResult.result) {
-							if (attachSlot) opponentAttachCard.attach(attachSlot)
+						if (modalResult.result && canAttach && attachSlot) {
+							opponentAttachCard.attach(attachSlot)
 						} else {
 							opponentAttachCard.discard(component.player.entity)
 						}
