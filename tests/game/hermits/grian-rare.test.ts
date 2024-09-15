@@ -15,7 +15,7 @@ import {
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Grian Rare', () => {
 	test('Test Borrow steals Loyalty after knock out', () => {
