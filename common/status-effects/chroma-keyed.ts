@@ -25,12 +25,14 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 		if (!effect.counter) effect.counter = this.counter
 
 		let jopacityUsedThisTurn = false
-		let previousUses = effect.counter - 1
+		let previousUses = 0
+
 		observer.subscribeWithPriority(
 			target.player.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
-				if (previousUses !== this.counter) jopacityUsedThisTurn = true
+				if (effect.counter === null) return
+				if (previousUses < effect.counter) jopacityUsedThisTurn = true
 				else if (attack.isAttacker(target.entity)) effect.remove()
 			},
 		)

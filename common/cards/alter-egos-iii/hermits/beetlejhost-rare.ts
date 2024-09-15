@@ -10,6 +10,17 @@ import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
+function findChromaKeyed(
+	game: GameModel,
+	component: CardComponent,
+): StatusEffectComponent | null {
+	return game.components.find(
+		StatusEffectComponent,
+		query.effect.targetEntity(component.entity),
+		query.effect.is(ChromaKeyedEffect),
+	)
+}
+
 const BeetlejhostRare: Hermit = {
 	...hermit,
 	id: 'beetlejhost_rare',
@@ -46,6 +57,8 @@ const BeetlejhostRare: Hermit = {
 			player.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				const chromaKeyed = findChromaKeyed(game, component)
+
 				if (
 					[
 						attack.isAttacker(component.entity) && attack.type === 'primary',
@@ -53,21 +66,10 @@ const BeetlejhostRare: Hermit = {
 							attack.isType('primary', 'secondary'),
 					].some(Boolean)
 				) {
-					game.components
-						.find(
-							StatusEffectComponent,
-							query.effect.targetEntity(component.entity),
-							query.effect.is(ChromaKeyedEffect),
-						)
-						?.remove()
+					chromaKeyed?.remove()
 					return
 				}
 
-				const chromaKeyed = game.components.filter(
-					StatusEffectComponent,
-					query.effect.targetEntity(component.entity),
-					query.effect.is(ChromaKeyedEffect),
-				)[0]
 				if (!chromaKeyed || chromaKeyed.counter === null) return
 
 				if (
@@ -87,12 +89,7 @@ const BeetlejhostRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const chromakeyed = game.components.filter(
-					StatusEffectComponent,
-					query.effect.targetEntity(component.entity),
-					query.effect.is(ChromaKeyedEffect),
-				)[0]
-				if (!chromakeyed) {
+				if (!findChromaKeyed(game, component)) {
 					game.components
 						.new(StatusEffectComponent, ChromaKeyedEffect, component.entity)
 						.apply(component.entity)
