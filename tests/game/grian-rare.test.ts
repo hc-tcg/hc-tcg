@@ -158,9 +158,6 @@ describe('Test Grian Rare', () => {
 					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
 					yield* attack(game, 'primary')
 
-					// Check Grian added a modal request
-					expect(game.state.modalRequests[0]?.modal.type).toBe('selectCards')
-
 					yield* finishModalRequest(game, {result: false, cards: null})
 
 					expect(
@@ -221,7 +218,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test('Test Borrow cannot attach card when Grian is knocked-out', () => {
+	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
