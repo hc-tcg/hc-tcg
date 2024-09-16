@@ -1,28 +1,29 @@
+import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
-class Trident extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'trident',
-		numericId: 150,
-		name: 'Trident',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A30$',
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+const Trident: SingleUse = {
+	...singleUse,
+	id: 'trident',
+	numericId: 150,
+	name: 'Trident',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A30$',
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		let coinflipResult: CoinFlipResult | null = null
@@ -31,6 +32,7 @@ class Trident extends Card {
 			return game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -39,25 +41,24 @@ class Trident extends Card {
 				.addDamage(component.entity, 30)
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			applySingleUse(game)
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+				coinflipResult = flipCoin(player, component)[0]
 
-			coinflipResult = flipCoin(player, component)[0]
+				applySingleUse(game)
+			},
+		)
 
-			applySingleUse(game)
-		})
-
-		observer.subscribe(player.hooks.onApply, () => {
+		observer.subscribe(player.hooks.afterApply, () => {
 			if (coinflipResult === 'heads') {
 				component.draw()
 			}
 		})
-	}
+	},
 }
 
 export default Trident

@@ -1,11 +1,11 @@
-import {GameModel} from '../../../models/game-model'
-import {query, row, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import {query, row, slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Slimeball extends Card {
+class Slimeball extends CardOld {
 	props: Attach = {
 		...attach,
 		id: 'slimeball',
@@ -22,11 +22,15 @@ class Slimeball extends Card {
 			slot.empty,
 			slot.row(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
-			query.not(slot.frozen)
+			query.not(slot.frozen),
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player} = component
 
 		player.hooks.freezeSlots.add(component, () => {
@@ -34,12 +38,12 @@ class Slimeball extends Card {
 				slot.player,
 				slot.rowIndex(pos.rowIndex),
 				slot.not(slot.attach),
-				slot.not(slot.empty)
+				slot.not(slot.empty),
 			)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		pos.player.hooks.freezeSlots.remove(component)
 		pos.player.hooks.onDetach.remove(component)
 	}

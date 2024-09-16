@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class SmallishbeansAdventRare extends Card {
+class SmallishbeansAdventRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'smallishbeansadvent_rare',
@@ -27,12 +27,17 @@ class SmallishbeansAdventRare extends Card {
 			name: 'Lore',
 			cost: ['pvp', 'pvp', 'any'],
 			damage: 30,
-			power: 'Deal 20 extra damage for each item attached. Double items count twice.',
+			power:
+				'Deal 20 extra damage for each item attached. Double items count twice.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
-		const {player, rowId: row} = pos
+	override onAttach(
+		_game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
+		const {player} = pos
 
 		player.hooks.onAttack.add(component, (attack) => {
 			const attackId = this.getInstanceKey(component)
@@ -53,7 +58,7 @@ class SmallishbeansAdventRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

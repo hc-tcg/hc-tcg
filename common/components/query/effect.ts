@@ -1,21 +1,18 @@
-import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
-import {CardStatusEffect, StatusEffect, StatusEffectProps} from '../../status-effects/status-effect'
-import {CardEntity, PlayerEntity} from '../../entities'
 import query from '.'
-
-let STATUS_EFFECTS: Record<any, CardStatusEffect>
-import('../../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
+import {CardComponent, PlayerComponent, StatusEffectComponent} from '..'
+import {CardEntity, PlayerEntity} from '../../entities'
+import {StatusEffect} from '../../status-effects/status-effect'
 
 export function id(id: string): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => statusEffect.props.icon === id
 }
 
 export function is(
-	...effect: Array<new () => StatusEffect>
+	...effect: Array<StatusEffect>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		effect.some((e) => STATUS_EFFECTS[e.name].props.icon === statusEffect.props.icon)
+		effect.some((e) => e.name === statusEffect.props.name)
 }
 
 export function targetIsPlayerAnd(
@@ -37,17 +34,14 @@ export function targetIsCardAnd(
 }
 
 export function targetEntity(
-	target: CardEntity | PlayerEntity | null | undefined
+	target: CardEntity | PlayerEntity | null | undefined,
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		statusEffect.targetEntity !== null &&
-		target !== null &&
-		target !== undefined &&
-		target == statusEffect.targetEntity
+		target !== undefined && target == statusEffect.targetEntity
 }
 
 export function type(
-	...types: Array<StatusEffectProps['type']>
+	...types: Array<StatusEffect['type']>
 ): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => types.includes(statusEffect.props.type)
 }

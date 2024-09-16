@@ -1,9 +1,9 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {PlayerDeckT} from 'common/types/deck'
-import {CopyIcon} from 'components/svgs'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
-import css from './import-export.module.scss'
+import {CopyIcon} from 'components/svgs'
 import {getHashFromDeck} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -31,12 +31,16 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
+					<AlertDialog.Description
+						asChild
+						className={ModalCSS.AlertDialogDescription}
+					>
 						<div>
 							{/* EXPORT SECTION */}
 							<div>
 								<p className={css.instructions}>
-									Export the "{loadedDeck.name}" deck to share with your friends!
+									Export the "{loadedDeck.name}" deck to share with your
+									friends!
 								</p>
 								<div className={css.exportControls}>
 									<input type="text" readOnly value={handleExportDeck()} />

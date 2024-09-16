@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class ShubbleYTRare extends Card {
+class ShubbleYTRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'shubbleyt_rare',
@@ -40,12 +40,12 @@ class ShubbleYTRare extends Card {
 			if (attack.type !== 'secondary') return
 
 			game.addModalRequest({
-				playerId: player.id,
-				data: {
-					modalId: 'selectCards',
+				player: player.entity,
+				modall: {
+					type: 'selectCards',
 					payload: {
-						modalName: 'Shelby: Place your top card on bottom of deck?',
-						modalDescription: '',
+						modalName: 'Shelby - Parallel World',
+						modalDescription: 'Place your top card on bottom of deck?',
 						cards: [player.pile[0].toLocalCardInstance()],
 						selectionSize: 0,
 						primaryButton: {
@@ -73,7 +73,7 @@ class ShubbleYTRare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)

@@ -1,4 +1,4 @@
-import {useRef, useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import css from './mouse-indicator.module.css'
 
 let globalClientX = -100
@@ -9,7 +9,7 @@ document.addEventListener(
 		globalClientX = ev.clientX
 		globalClientY = ev.clientY
 	},
-	{passive: true}
+	{passive: true},
 )
 
 type Props = {

@@ -1,6 +1,12 @@
 const ChatIcon = () => {
 	return (
-		<svg width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<svg
+			width="24"
+			height="26"
+			viewBox="0 0 24 26"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
 			<path d="M2 0V2H0V18H2V20H6V22H8V20H22V18H24V2H22V0H2Z" fill="#FCFCFC" />
 			<path d="M2 18H0V20H2V22H4V20H2V18Z" fill="#2A2A2A" />
 			<path d="M10 20H22V22H10V20Z" fill="#2A2A2A" />

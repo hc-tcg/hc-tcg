@@ -1,8 +1,8 @@
-import {ReactNode} from 'react'
-import cn from 'classnames'
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import css from './alert-modal.module.scss'
+import cn from 'classnames'
 import Button from 'components/button'
+import {ReactNode} from 'react'
+import css from './alert-modal.module.scss'
 
 type AlertModal = {
 	setOpen: boolean
@@ -38,7 +38,12 @@ const AlertModal = ({
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
 					<div className={css.AlertDialogDescription}>{description}</div>
-					<div className={cn(css.buttonContainer, buttonDirection === 'column' && css.column)}>
+					<div
+						className={cn(
+							css.buttonContainer,
+							buttonDirection === 'column' && css.column,
+						)}
+					>
 						<AlertDialog.Cancel asChild>
 							<Button.Ref>{cancelText || 'Cancel'}</Button.Ref>
 						</AlertDialog.Cancel>

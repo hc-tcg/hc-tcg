@@ -1,46 +1,48 @@
-import FireEffect from './fire'
-import PoisonEffect from './poison'
-import SleepingEffect from './sleeping'
-import BadOmenEffect from './badomen'
-import SlownessEffect from './slowness'
-import WeaknessEffect from './weakness'
-import ProtectedEffect from './protected'
-import DyedEffect from './dyed'
-import MuseumCollectionEffect from './museum-collection'
-import SmeltingEffect from './smelting'
-import MelodyEffect from './melody'
-import UsedClockEffect from './used-clock'
-import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
-import BetrayedEffect from './betrayed'
-import SheepStareEffect from './sheep-stare'
 import {
 	AussiePingEffect as AussiePingEffect,
 	AussiePingImmuneEffect as AussiePingImmuneEffect,
 } from './aussie-ping'
+import BadOmenEffect from './badomen'
+import BetrayedEffect from './betrayed'
+import ChromaKeyedEffect from './chroma-keyed'
+import CurseOfBindingEffect from './curse-of-binding'
+import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
+import DyedEffect from './dyed'
+import FireEffect from './fire'
+import FortuneEffect from './fortune'
+import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
-import TurnSkippedEffect from './turn-skipped'
-import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from './singleturn-attack-disabled'
-import {TrapHoleEffect} from './trap-hole'
-import CurseOfBindingEffect from './curse-of-binding'
-import {StatusEffect} from './status-effect'
-import FortuneEffect from './fortune'
+import LooseShellEffect from './loose-shell'
+import MelodyEffect from './melody'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
-import ChromaKeyedEffect from './chroma-keyed'
+import MuseumCollectionEffect from './museum-collection'
 import OriginalXbEffect from './original-xb'
+import PoisonEffect from './poison'
+import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
+import SheepStareEffect from './sheep-stare'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from './singleturn-attack-disabled'
+import SleepingEffect from './sleeping'
+import SlownessEffect from './slowness'
+import SmeltingEffect from './smelting'
+import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
-import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {TrapHoleEffect} from './trap-hole'
+import TurnSkippedEffect from './turn-skipped'
+import UsedClockEffect from './used-clock'
+import WeaknessEffect from './weakness'
 
-const effectClasses: Array<new () => StatusEffect> = [
+export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
@@ -78,15 +80,12 @@ const effectClasses: Array<new () => StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	IgnoreAttachSlotEffect,
+	LooseShellEffect,
 ]
 
-export const STATUS_EFFECTS: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, effectClass) => {
-		let effect = new effectClass()
-		if (!effect.props) return result
-		result[effectClass.name] = effect
-		result[effect.props.icon] = effect
+export const STATUS_EFFECTS: Record<string, StatusEffect> =
+	STATUS_EFFECTS_LIST.reduce((result: Record<string, StatusEffect>, effect) => {
+		result[effect.id] = effect
 		return result
-	},
-	{}
-)
+	}, {})

@@ -1,11 +1,11 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
 
-class SolidaritygamingRare extends Card {
+class SolidaritygamingRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'solidaritygaming_rare',
@@ -37,16 +37,22 @@ class SolidaritygamingRare extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'primary'
+			)
+				return
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
-				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-					return (
-						ail.targetInstance.component === row.hermitCard.component &&
-						ail.statusEffect.props.id === 'protected'
-					)
-				})
+				const statusEffectsToRemove = game.state.statusEffects.filterEntities(
+					(ail) => {
+						return (
+							ail.targetInstance.component === row.hermitCard.component &&
+							ail.statusEffect.props.id === 'protected'
+						)
+					},
+				)
 
 				statusEffectsToRemove.forEach((ail) => {
 					removeStatusEffect(game, pos, ail)
@@ -57,13 +63,13 @@ class SolidaritygamingRare extends Card {
 				slot.player,
 				slot.not(slot.active),
 				slot.not(slot.empty),
-				slot.hermit
+				slot.hermit,
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an AFK Hermit to protect',
 				canPick: pickCondition,
@@ -77,7 +83,7 @@ class SolidaritygamingRare extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}

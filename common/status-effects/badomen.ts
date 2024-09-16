@@ -1,26 +1,29 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {Counter, statusEffect} from './status-effect'
 
-class BadOmenEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'badomen',
-		name: 'Bad Omen',
-		description: 'All coinflips are tails.',
-		counter: 3,
-		counterType: 'turns',
-	}
+const BadOmenEffect: Counter<CardComponent> = {
+	...statusEffect,
+	id: 'badomen',
+	icon: 'badomen',
+	name: 'Bad Omen',
+	description: 'All coinflips are tails.',
+	counter: 3,
+	counterType: 'turns',
 
-	override onApply(
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
@@ -33,7 +36,7 @@ class BadOmenEffect extends CardStatusEffect {
 			// Only modify when the target hermit is "flipping"
 			if (
 				target.entity !== card.entity &&
-				(game.currentPlayer.id !== player.id ||
+				(game.currentPlayer.entity !== player.entity ||
 					player.activeRow?.getHermit()?.entity !== target.entity)
 			)
 				return coinFlips
@@ -43,7 +46,7 @@ class BadOmenEffect extends CardStatusEffect {
 			}
 			return coinFlips
 		})
-	}
+	},
 }
 
 export default BadOmenEffect

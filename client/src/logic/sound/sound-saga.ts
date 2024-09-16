@@ -1,9 +1,9 @@
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
-import {call, takeLatest, takeEvery} from 'redux-saga/effects'
+import {call, takeEvery, takeLatest} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
-import {SectionChangeT, PlaySoundT} from './sound-actions'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -23,10 +23,10 @@ window.bgMusic = bgMusic
 // @ts-ignore
 window.audioCtx = audioCtx
 
-function* backgroundMusic(action: SectionChangeT): SagaIterator {
-	const section = action.payload
-
-	if (section !== 'game') {
+function* backgroundMusic(
+	action: LocalMessageTable[typeof localMessages.SOUND_SECTION_CHANGE],
+): SagaIterator {
+	if (action.section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
 		bgMusic.src = ''
@@ -36,7 +36,8 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 		return
 	}
 
-	const musicFile = trackList.game[Math.floor(Math.random() * trackList.game.length)]
+	const musicFile =
+		trackList.game[Math.floor(Math.random() * trackList.game.length)]
 
 	const newPath = `/music/${musicFile.file}`
 	if (newPath !== bgMusic.getAttribute('src')) {
@@ -47,13 +48,15 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	}
 }
 
-function* playSoundSaga(action: PlaySoundT): SagaIterator {
+function* playSoundSaga(
+	action: LocalMessageTable[typeof localMessages.SOUND_PLAY],
+): SagaIterator {
 	try {
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
-		if (settings.soundVolume === '0') return
+		if (settings.soundVolume === 0) return
 
-		const sound = new Audio(action.payload)
+		const sound = new Audio(action.path)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
 		sourceNode.connect(soundGainNode)
 		sound.onended = () => sourceNode.disconnect(soundGainNode)
@@ -70,8 +73,8 @@ function* settingSaga(): SagaIterator {
 			musicGainNode.gain.value = 0
 			soundGainNode.gain.value = 0
 		} else {
-			musicGainNode.gain.value = Number(settings.musicVolume) / 100
-			soundGainNode.gain.value = Number(settings.soundVolume) / 100
+			musicGainNode.gain.value = settings.musicVolume / 100
+			soundGainNode.gain.value = settings.soundVolume / 100
 		}
 	} catch (err) {
 		console.error(err)
@@ -81,9 +84,9 @@ function* settingSaga(): SagaIterator {
 function* soundSaga(): SagaIterator {
 	// @ts-ignore
 	yield call(settingSaga)
-	yield takeEvery('SET_SETTING', settingSaga)
-	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
-	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
+	yield takeEvery(localMessages.SETTINGS_SET, settingSaga)
+	yield takeLatest(localMessages.SOUND_SECTION_CHANGE, backgroundMusic)
+	yield takeEvery(localMessages.SOUND_PLAY, playSoundSaga)
 	document.addEventListener(
 		'click',
 		() => {
@@ -94,7 +97,7 @@ function* soundSaga(): SagaIterator {
 			}
 			interacted = true
 		},
-		{once: true}
+		{once: true},
 	)
 }
 

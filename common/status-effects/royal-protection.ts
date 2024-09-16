@@ -1,32 +1,43 @@
-import {CardStatusEffect, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {beforeDefence} from '../types/priorities'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class RoyalProtectionEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...statusEffect,
-		icon: 'royal_protection',
-		name: 'Royal Protection',
-		description: 'Any attacks targeting a Hermit under Royal Protection are prevented.',
-		applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
-	}
-
-	override onApply(
-		game: GameModel,
+const RoyalProtectionEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	id: 'royal-protection',
+	icon: 'royal_protection',
+	name: 'Royal Protection',
+	description:
+		'Any damage dealt to a Hermit under Royal Protection is prevented.',
+	applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
+	onApply(
+		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
-		observer.subscribe(target.player.hooks.beforeDefence, (attack) => {
-			if (!attack.isTargeting(target)) return
+		observer.subscribeWithPriority(
+			target.player.hooks.beforeDefence,
+			beforeDefence.HERMIT_BLOCK_DAMAGE,
+			(attack) => {
+				if (!attack.isTargeting(target)) return
 
-			attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
-		})
+				// Do not block backlash attacks
+				if (attack.isBacklash) return
 
-		observer.subscribe(target.opponentPlayer.hooks.onTurnEnd, () => {
+				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+			},
+		)
+
+		observer.subscribe(target.player.hooks.onTurnStart, () => {
 			effect.remove()
 		})
-	}
+	},
 }
 
 export default RoyalProtectionEffect

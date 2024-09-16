@@ -1,26 +1,36 @@
-import {takeEvery, put, take, race, delay} from 'typed-redux-saga'
 import {PlayerModel} from 'common/models/player-model'
+import {
+	RecievedClientMessage,
+	clientMessages,
+} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
+import {delay, put, race, take} from 'typed-redux-saga'
 import root from '../serverRoot'
+import {broadcast} from '../utils/comm'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
-function* playerConnectedSaga(action: any) {
-	const {playerName, minecraftName, deck, socket} = action.payload
+export function* playerConnectedSaga(
+	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
+) {
+	const {playerName, minecraftName, deck, socket} = action
 
-	if (action.payload.playerId) {
-		const existingPlayer = root.players[action.payload.playerId]
-		const validPlayer = existingPlayer?.secret === action.payload.playerSecret
+	if (action.playerId) {
+		const existingPlayer = root.players[action.playerId]
+		const validPlayer = existingPlayer?.secret === action.playerSecret
 
 		if (validPlayer) {
 			existingPlayer.socket = socket
 			if (deck) existingPlayer.setPlayerDeck(deck)
-			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
-			socket.emit('PLAYER_RECONNECTED', {
-				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.deck,
+			yield* put<LocalMessage>({
+				type: localMessages.PLAYER_RECONNECTED,
+				player: existingPlayer,
 			})
+			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
 		} else {
-			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
+			console.log('invalid player connected')
+			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
@@ -30,18 +40,23 @@ function* playerConnectedSaga(action: any) {
 	root.addPlayer(newPlayer)
 
 	root.hooks.playerJoined.call(newPlayer)
-	yield* put({type: 'PLAYER_CONNECTED', payload: newPlayer})
+	yield* put<LocalMessage>({
+		type: localMessages.PLAYER_CONNECTED,
+		player: newPlayer,
+	})
 
 	yield* delay(500)
 
-	socket.emit('PLAYER_INFO', {
-		type: 'PLAYER_INFO',
-		payload: newPlayer.getPlayerInfo(),
+	broadcast([newPlayer], {
+		type: serverMessages.PLAYER_INFO,
+		player: newPlayer.getPlayerInfo(),
 	})
 }
 
-function* playerDisconnectedSaga(action: any) {
-	const {socket} = action.payload
+export function* playerDisconnectedSaga(
+	action: LocalMessageTable[typeof localMessages.CLIENT_DISCONNECTED],
+) {
+	const {socket} = action
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
@@ -50,48 +65,51 @@ function* playerDisconnectedSaga(action: any) {
 	// Remove player from queues straight away
 	root.hooks.playerLeft.call(player)
 
-	yield* put({type: 'PLAYER_DISCONNECTED', payload: player})
+	yield* put<LocalMessage>({type: localMessages.PLAYER_DISCONNECTED, player})
 
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
-			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId
+			(action: any) =>
+				action.type === localMessages.PLAYER_RECONNECTED &&
+				action.player.id === playerId,
 		),
 	})
 
 	if (result.timeout) {
-		yield* put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
+		yield* put<LocalMessage>({type: localMessages.PLAYER_REMOVED, player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
 	}
 }
 
-function* updateDeckSaga(action: any) {
+export function* updateDeckSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
+) {
 	const {playerId} = action
-	let newDeck = action.payload
+	let playerDeck = action.payload.deck
 	const player = root.players[playerId]
 	if (!player) return
-	player.setPlayerDeck(newDeck)
+	player.setPlayerDeck(playerDeck)
 
-	player.socket?.emit('NEW_DECK', {
-		type: 'NEW_DECK',
-		payload: player.deck,
-	})
+	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 
-function* updateMinecraftNameSaga(action: any) {
+export function* updateMinecraftNameSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_MINECRAFT_NAME>,
+) {
 	const {playerId} = action
-	let minecraftName = action.payload
+	let minecraftName = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
 	player.setMinecraftName(minecraftName)
 
-	player.socket?.emit('NEW_MINECRAFT_NAME', {
-		type: 'NEW_MINECRAFT_NAME',
-		payload: player.minecraftName,
+	broadcast([player], {
+		type: serverMessages.NEW_MINECRAFT_NAME,
+		name: player.minecraftName,
 	})
 }
 
-function* loadUpdatesSaga(action: any) {
+export function* loadUpdatesSaga(action: any) {
 	const {playerId} = action
 	const player = root.players[playerId]
 
@@ -100,16 +118,8 @@ function* loadUpdatesSaga(action: any) {
 		return
 	}
 
-	player.socket?.emit('LOAD_UPDATES', {
-		type: 'LOAD_UPDATES',
-		payload: root.updates,
+	broadcast([player], {
+		type: serverMessages.LOAD_UPDATES,
+		updates: root.updates,
 	})
-}
-
-export function* playerSaga() {
-	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
-	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
-	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
-	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
-	yield* takeEvery('GET_UPDATES', loadUpdatesSaga)
 }

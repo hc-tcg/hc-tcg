@@ -1,7 +1,7 @@
-import {AnyAction} from 'redux'
-import {PlayerDeckT} from 'common/types/deck'
-import {ToastT} from 'common/types/app'
 import {PlayerId} from 'common/models/player-model'
+import {ToastT} from 'common/types/app'
+import {PlayerDeckT} from 'common/types/deck'
+import {LocalMessage, localMessages} from 'logic/messages'
 
 type SessionState = {
 	playerName: string
@@ -10,7 +10,12 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: PlayerDeckT
 	connecting: boolean
-	errorType?: 'invalid_name' | 'invalid_version' | 'session_expired' | 'timeout' | string
+	errorType?:
+		| 'invalid_name'
+		| 'invalid_version'
+		| 'session_expired'
+		| 'timeout'
+		| string
 	toast: ToastT
 	updates: Record<string, Array<string>>
 }
@@ -26,11 +31,14 @@ const defaultState: SessionState = {
 	updates: {},
 }
 
-const loginReducer = (state = defaultState, action: AnyAction): SessionState => {
+const loginReducer = (
+	state = defaultState,
+	action: LocalMessage,
+): SessionState => {
 	switch (action.type) {
-		case 'LOGIN':
+		case localMessages.LOGIN:
 			return {...state, connecting: true, errorType: undefined}
-		case 'DISCONNECT':
+		case localMessages.DISCONNECT:
 			return {
 				...state,
 				connecting: false,
@@ -39,31 +47,33 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 				playerId: '' as PlayerId,
 				playerSecret: '',
 				playerDeck: state.playerDeck,
-				errorType: action.payload,
+				errorType: action.errorMessage,
 			}
-		case 'SET_PLAYER_INFO':
+		case localMessages.PLAYER_INFO_SET:
+		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
 				connecting: false,
 				errorType: undefined,
-				...action.payload,
+				...action.player,
 			}
-		case 'LOAD_UPDATES':
+		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
-				...action.payload,
+				...action.updates,
 			}
-		case 'SET_NEW_DECK':
+		case localMessages.DECK_NEW:
+		case localMessages.DECK_SET:
 			return {
 				...state,
-				playerDeck: action.payload,
+				playerDeck: action.deck,
 			}
-		case 'SET_TOAST':
+		case localMessages.TOAST_OPEN:
 			return {
 				...state,
-				toast: action.payload,
+				toast: action,
 			}
-		case 'CLOSE_TOAST':
+		case localMessages.TOAST_CLOSE:
 			return {
 				...state,
 				toast: {
@@ -71,10 +81,11 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 					open: false,
 				},
 			}
-		case 'SET_MINECRAFT_NAME':
+		case localMessages.MINECRAFT_NAME_NEW:
+		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,
-				minecraftName: action.payload,
+				minecraftName: action.name,
 			}
 		default:
 			return state

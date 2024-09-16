@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Biffa2001Rare extends Card {
+class Biffa2001Rare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'biffa2001_rare',
@@ -27,11 +27,16 @@ class Biffa2001Rare extends Card {
 			name: "Biffa's Museum",
 			cost: ['miner', 'any'],
 			damage: 70,
-			power: 'For each card you played or used this turn, this attack does 20 more damage.',
+			power:
+				'For each card you played or used this turn, this attack does 20 more damage.',
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player} = component
 
 		applyStatusEffect(game, 'museum-collection', component)
@@ -41,7 +46,7 @@ class Biffa2001Rare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onTurnStart.remove(component)

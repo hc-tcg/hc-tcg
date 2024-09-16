@@ -1,27 +1,35 @@
-import {StatusEffectComponent, ObserverComponent, PlayerComponent} from '../components'
+import {
+	ObserverComponent,
+	PlayerComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {PlayerStatusEffect, StatusEffectProps, hiddenStatusEffect} from './status-effect'
+import {onTurnEnd} from '../types/priorities'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class CurseOfBindingEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...hiddenStatusEffect,
-		name: 'Curse of Binding',
-		description: 'You can not switch your active hermit this turn.',
-	}
-
-	public override onApply(
+const CurseOfBindingEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'binded',
+	icon: 'binded',
+	name: 'Curse of Binding',
+	description: 'You can not switch your active hermit this turn.',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			game.addBlockedActions(this.props.icon, 'CHANGE_ACTIVE_HERMIT')
+			game.addBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT')
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
+	},
 }
 
 export default CurseOfBindingEffect

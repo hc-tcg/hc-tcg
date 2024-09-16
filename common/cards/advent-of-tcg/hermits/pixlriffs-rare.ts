@@ -1,10 +1,10 @@
-import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class PixlriffsRare extends Card {
+class PixlriffsRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'pixlriffs_rare',
@@ -32,7 +32,7 @@ class PixlriffsRare extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, component: CardComponent): void {
+	public override onAttach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 
 		let startingRow = pos.rowId
@@ -42,13 +42,18 @@ class PixlriffsRare extends Card {
 		})
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'secondary'
+			)
+				return
 
-			if (startingRow !== player.board.activeRow) attack.addDamage(this.props.id, 40)
+			if (startingRow !== player.board.activeRow)
+				attack.addDamage(this.props.id, 40)
 		})
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}

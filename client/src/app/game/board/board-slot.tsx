@@ -1,20 +1,22 @@
 import classnames from 'classnames'
-import {LocalRowState} from 'common/types/game-state'
-import Card from 'components/card'
-import css from './board.module.scss'
+import {SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
-import {useDispatch, useSelector} from 'react-redux'
+import {LocalRowState} from 'common/types/game-state'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+} from 'common/types/server-requests'
+import Card from 'components/card'
 import {
 	getCardsCanBePlacedIn,
 	getGameState,
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useSelector} from 'react-redux'
 import StatusEffectContainer from './board-status-effects'
-import {SlotEntity} from 'common/entities'
-import {useEffect, useState} from 'react'
-import {playSound} from 'logic/sound/sound-actions'
+import css from './board.module.scss'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -35,58 +37,29 @@ const Slot = ({
 	active,
 	statusEffects,
 	cssId,
-	muted = false,
 }: SlotProps) => {
+	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-	const [isMoutning, setIsMounting] = useState(true)
-	const [hasEverHadCard, setHasEverHasCard] = useState(false)
-	const dispatch = useDispatch()
 
-	if (card && !hasEverHadCard) {
-		setHasEverHasCard(true)
-	}
-
-	useEffect(() => {
-		if (isMoutning) {
-			setIsMounting(false)
-			return
-		}
-		if (muted) return
-		let sound: Array<string> = []
-		if (!card) {
-			if (type == 'hermit' || type == 'single_use') {
-				sound = ['/sfx/Item_Frame_remove_item1.ogg', '/sfx/Item_Frame_remove_item2.ogg']
-			}
-		} else {
-			sound = ['/sfx/Item_Frame_add_item1.ogg', '/sfx/Item_Frame_add_item2.ogg']
-		}
-		dispatch(playSound(sound[Math.floor(Math.random() * sound.length)]))
-	}, [card?.entity])
-
-	useEffect(() => {
-		if (!card) return
-		if (!hasEverHadCard) return
-		if (!active) return
-		if (muted) return
-
-		let sound = ['/sfx/Item_Frame_rotate_item1.ogg', '/sfx/Item_Frame_rotate_item2.ogg']
-
-		dispatch(playSound(sound[Math.floor(Math.random() * sound.length)]))
-	}, [active && hasEverHadCard])
-
-	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
+	const frameImg =
+		type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
-		if (pickRequestPickableCard !== null && pickRequestPickableCard !== undefined) {
+		if (
+			pickRequestPickableCard !== null &&
+			pickRequestPickableCard !== undefined
+		) {
 			return pickRequestPickableCard
 		}
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(([card, _]) => card?.entity == selectedCard.entity)[0][1]
+		return cardsCanBePlacedIn.filter(
+			([card, _]) => card?.entity == selectedCard.entity,
+		)[0][1]
 	}
 
 	const getIsPickable = () => {
@@ -103,11 +76,14 @@ const Slot = ({
 	let isClickable = false
 
 	if (
-		(localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) ||
+		(localGameState &&
+			localGameState.playerEntity ===
+				localGameState.turn.currentPlayerEntity) ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()
-		somethingPickable = selectedCard !== null || pickRequestPickableCard !== null
+		somethingPickable =
+			selectedCard !== null || pickRequestPickableCard !== null
 		isClickable = somethingPickable && isPickable
 	}
 
@@ -116,12 +92,15 @@ const Slot = ({
 	}
 
 	return (
-		<div
+		<button
 			onClick={isClickable ? onClick : () => {}}
+			disabled={!isClickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.pickable]: isPickable && somethingPickable,
-				[css.unpickable]: !isPickable && somethingPickable,
+				[css.pickable]:
+					isPickable && somethingPickable && settings.slotHighlightingEnabled,
+				[css.unpickable]:
+					!isPickable && somethingPickable && settings.slotHighlightingEnabled,
 				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !card,
@@ -141,7 +120,7 @@ const Slot = ({
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
 			<StatusEffectContainer statusEffects={statusEffects || []} />
-		</div>
+		</button>
 	)
 }
 

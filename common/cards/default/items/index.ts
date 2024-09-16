@@ -1,26 +1,26 @@
-import BuilderItem from './builder-common'
-import BuilderDoubleItem from './builder-rare'
+import {Card} from '../../base/types'
 import BalancedItem from './balanced-common'
 import BalancedDoubleItem from './balanced-rare'
-import RedstoneItem from './redstone-common'
-import RedstoneDoubleItem from './redstone-rare'
-import PranksterItem from './prankster-common'
-import PranksterDoubleItem from './prankster-rare'
+import BuilderItem from './builder-common'
+import BuilderDoubleItem from './builder-rare'
 import ExplorerItem from './explorer-common'
 import ExplorerDoubleItem from './explorer-rare'
 import FarmItem from './farm-common'
 import FarmDoubleItem from './farm-rare'
+import MinerItem from './miner-common'
+import MinerDoubleItem from './miner-rare'
+import PranksterItem from './prankster-common'
+import PranksterDoubleItem from './prankster-rare'
 import PvPItem from './pvp-common'
 import PvPDoubleItem from './pvp-rare'
+import RedstoneItem from './redstone-common'
+import RedstoneDoubleItem from './redstone-rare'
 import SpeedrunnerItem from './speedrunner-common'
 import SpeedrunnerDoubleItem from './speedrunner-rare'
 import TerraformItem from './terraform-common'
 import TerraformDoubleItem from './terraform-rare'
-import MinerItem from './miner-common'
-import MinerDoubleItem from './miner-rare'
-import {CardClass} from '../../base/card'
 
-const itemCardClasses: Array<CardClass> = [
+const itemCardClasses: Array<Card> = [
 	BuilderItem,
 	BuilderDoubleItem,
 	BalancedItem,

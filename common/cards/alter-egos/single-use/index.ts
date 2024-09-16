@@ -1,19 +1,19 @@
-import Trident from './trident'
-import SweepingEdge from './sweeping-edge'
+import {Card} from '../../base/types'
 import Anvil from './anvil'
-import PotionOfSlowness from './potion-of-slowness'
-import PotionOfWeakness from './potion-of-weakness'
+import BadOmen from './bad-omen'
 import Egg from './egg'
 import EnderPearl from './ender-pearl'
-import Ladder from './ladder'
-import BadOmen from './bad-omen'
 import FireCharge from './fire-charge'
+import Ladder from './ladder'
 import Piston from './piston'
+import PotionOfSlowness from './potion-of-slowness'
+import PotionOfWeakness from './potion-of-weakness'
 import SplashPotionOfHealingII from './splash-potion-of-healing-ii'
+import SweepingEdge from './sweeping-edge'
 import TargetBlock from './target-block'
-import {CardClass} from '../../base/card'
+import Trident from './trident'
 
-const singleUseCardClasses: Array<CardClass> = [
+const singleUseCardClasses: Array<Card> = [
 	Anvil,
 	BadOmen,
 	Egg,

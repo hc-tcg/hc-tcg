@@ -1,9 +1,9 @@
-import {getStarterPack} from '../../server/src/utils/state-gen'
-import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
-import {validateDeck} from '../utils/validation'
-import {censorString} from '../utils/formatting'
+import {PlayerDeckT} from '../../common/types/deck'
+import {getStarterPack} from '../../server/src/utils/state-gen'
 import {PlayerInfo} from '../types/server-requests'
+import {censorString} from '../utils/formatting'
+import {validateDeck} from '../utils/validation'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -56,8 +56,8 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards)
-		if (validationMessage) return
+		const validationResult = validateDeck(newDeck.cards)
+		if (!validationResult.valid) return
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,

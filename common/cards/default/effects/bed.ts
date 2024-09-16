@@ -1,32 +1,37 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import Card from '../../base/card'
+import {GameModel} from '../../../models/game-model'
+import SleepingEffect from '../../../status-effects/sleeping'
+import {onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
-import SleepingEffect from '../../../status-effects/sleeping'
 
-class Bed extends Card {
-	props: Attach = {
-		...attach,
-		id: 'bed',
-		numericId: 2,
-		expansion: 'default',
-		name: 'Bed',
-		rarity: 'ultra_rare',
-		tokens: 2,
-		description:
-			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'sleeping',
-			},
-		],
-		attachCondition: query.every(attach.attachCondition, query.slot.active),
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+const Bed: Attach = {
+	...attach,
+	id: 'bed',
+	numericId: 2,
+	expansion: 'default',
+	name: 'Bed',
+	rarity: 'ultra_rare',
+	tokens: 2,
+	description:
+		'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'sleeping',
+		},
+	],
+	attachCondition: query.every(attach.attachCondition, query.slot.active),
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		// Give the current row sleeping for 3 turns
 		const {player} = component
 
@@ -35,7 +40,7 @@ class Bed extends Card {
 			return game.components.find(
 				CardComponent,
 				query.card.rowEntity(component.slot.row.entity),
-				query.card.slot(query.slot.hermit)
+				query.card.slot(query.slot.hermit),
 			)
 		}
 
@@ -48,7 +53,10 @@ class Bed extends Card {
 			if (!hermit) return
 
 			// If the player is moved by knockback or ladder, we want to remove sleep and discard the bed.
-			if (!hermit.slot.inRow() || hermit.slot.row.entity !== player.activeRowEntity) {
+			if (
+				!hermit.slot.inRow() ||
+				hermit.slot.row.entity !== player.activeRowEntity
+			) {
 				hermit.getStatusEffect(SleepingEffect)?.remove()
 				component.discard()
 			}
@@ -60,13 +68,17 @@ class Bed extends Card {
 			}
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			// if sleeping has worn off, discard the bed
-			if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
-				component.discard()
-			}
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				// if sleeping has worn off, discard the bed
+				if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
+					component.discard()
+				}
+			},
+		)
+	},
 }
 
 export default Bed

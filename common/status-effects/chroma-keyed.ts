@@ -1,45 +1,52 @@
-import {StatusEffectComponent, ObserverComponent, CardComponent} from '../components'
-import {AttackModel} from '../models/attack-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardStatusEffect, Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
+import {afterAttack, onTurnEnd} from '../types/priorities'
+import {Counter, systemStatusEffect} from './status-effect'
 
-class ChromaKeyedEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...systemStatusEffect,
-		icon: 'chroma-keyed',
-		name: 'Chroma Keyed',
-		description: 'You deal 10hp less damage for each level of this status effect.',
-		counter: 1,
-		counterType: 'number',
-	}
-
-	public override onApply(
+const ChromaKeyedEffect: Counter<CardComponent> = {
+	...systemStatusEffect,
+	id: 'chroma-keyed',
+	icon: 'chroma-keyed',
+	name: 'Chroma Keyed',
+	description:
+		'You deal 10hp less damage with "Jopacity" for each level of this status effect.',
+	counter: 1,
+	counterType: 'number',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	): void {
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
-		let chromaUsedThisTurn = true
+		let jopacityUsedThisTurn = false
+		let previousUses = 0
 
-		observer.subscribe(target.player.hooks.onAttack, (attack: AttackModel) => {
-			if (!attack.isAttacker(target.entity) || attack.type !== 'secondary') {
-				effect.remove()
-				return
-			}
-			if (effect.counter === null) return
+		observer.subscribeWithPriority(
+			target.player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(attack) => {
+				if (effect.counter === null) return
+				if (previousUses < effect.counter) jopacityUsedThisTurn = true
+				else if (attack.isAttacker(target.entity)) effect.remove()
+			},
+		)
 
-			attack.reduceDamage(effect.entity, effect.counter * 10)
-			effect.counter++
-			chromaUsedThisTurn = true
-		})
-
-		observer.subscribe(target.player.hooks.onTurnEnd, () => {
-			if (!chromaUsedThisTurn) effect.remove()
-			chromaUsedThisTurn = false
-		})
-	}
+		observer.subscribeWithPriority(
+			target.player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!jopacityUsedThisTurn) effect.remove()
+				jopacityUsedThisTurn = false
+				if (effect.counter !== null) previousUses = effect.counter
+			},
+		)
+	},
 }
 
 export default ChromaKeyedEffect

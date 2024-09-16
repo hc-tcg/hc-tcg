@@ -1,11 +1,11 @@
-import {GameModel} from '../../../models/game-model'
-import {query} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
+import {query} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class Brush extends Card {
+class Brush extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'brush',
@@ -19,22 +19,29 @@ class Brush extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length >= 3
+			(_game, pos) => pos.player.pile.length >= 3,
 		),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
-				playerId: player.id,
-				data: {
-					modalId: 'selectCards',
+				player: player.entity,
+				modall: {
+					type: 'selectCards',
 					payload: {
-						modalName: 'Brush: Choose cards to place on the top of your deck.',
-						modalDescription: 'Select cards you would like to draw sooner first.',
-						cards: player.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
+						modalName: 'Brush',
+						modalDescription:
+							'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
+						cards: player.pile
+							.slice(0, 3)
+							.map((card) => card.toLocalCardInstance()),
 						selectionSize: 3,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -69,7 +76,7 @@ class Brush extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

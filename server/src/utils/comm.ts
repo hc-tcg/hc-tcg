@@ -1,10 +1,14 @@
-import {PlayerModel} from '../../../common/models/player-model'
+import {ServerMessage} from 'common/socket-messages/server-messages'
 
-export function broadcast(players: Array<PlayerModel>, type: string, payload: any = {}) {
+export function broadcast(
+	players: Array<{socket: any} | undefined>,
+	message: ServerMessage,
+) {
 	players.forEach((player) => {
+		if (!player) return
 		const playerSocket = player.socket
 		if (playerSocket && playerSocket.connected) {
-			playerSocket.emit(type, {type: type, payload})
+			playerSocket.emit(message.type, message)
 		}
 	})
 }

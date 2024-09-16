@@ -1,20 +1,25 @@
 import classNames from 'classnames'
-import {useState} from 'react'
-import {useSelector} from 'react-redux'
-import css from './deck.module.scss'
-import {getPlayerDeck} from 'logic/session/session-selectors'
 import {PlayerDeckT} from 'common/types/deck'
-import EditDeck from './deck-edit'
-import SelectDeck from './deck-select'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
-import {LocalCardInstance} from 'common/types/server-requests'
+import {getPlayerDeck} from 'logic/session/session-selectors'
+import {useState} from 'react'
+import {useSelector} from 'react-redux'
+import EditDeck from './deck-edit'
+import SelectDeck from './deck-select'
+import css from './deck.module.scss'
 
-export const cardGroupHeader = (title: string, cards: Array<LocalCardInstance>) => (
+export const cardGroupHeader = (
+	title: string,
+	cards: Array<LocalCardInstance>,
+) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
-		<span className={classNames(css.tokens, css.tokenHeader)}>{getDeckCost(cards)} tokens</span>
+		<span className={classNames(css.tokens, css.tokenHeader)}>
+			{getDeckCost(cards)} tokens
+		</span>
 	</p>
 )
 

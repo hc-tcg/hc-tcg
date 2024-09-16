@@ -1,12 +1,14 @@
-import {RootState} from 'store'
 import {LocalPlayerState} from 'common/types/game-state'
-import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
+import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
+import {RootState} from 'store'
 
 const getActiveRow = (playerState: LocalPlayerState | null) => {
 	if (!playerState) return null
 	const {rows, activeRow} = playerState.board
 	if (activeRow === null) return null
-	const activeHermit = rows.find((row) => row.entity == playerState.board.activeRow)
+	const activeHermit = rows.find(
+		(row) => row.entity == playerState.board.activeRow,
+	)
 	if (!activeHermit) return null
 	return activeHermit
 }

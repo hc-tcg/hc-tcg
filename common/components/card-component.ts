@@ -6,33 +6,37 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '.'
-import type Card from '../cards/base/card'
-import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
-	type CardProps,
+	type Card,
 	type HasHealth,
 	type Hermit,
 	type Item,
 	type SingleUse,
-	isItem,
-	isSingleUse,
 	isAttach,
 	isHealth,
 	isHermit,
+	isItem,
+	isSingleUse,
 } from '../cards/base/types'
+import type {
+	CardEntity,
+	ObserverEntity,
+	PlayerEntity,
+	SlotEntity,
+} from '../entities'
 import type {GameModel} from '../models/game-model'
-import type {CardEntity, PlayerEntity, SlotEntity, ObserverEntity} from '../entities'
+import {StatusEffect} from '../status-effects/status-effect'
+import {GameHook} from '../types/hooks'
 import query from './query'
-import {CardStatusEffect} from '../status-effects/status-effect'
 
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
-export class CardComponent<Props extends CardProps = CardProps> {
+export class CardComponent<CardType extends Card = Card> {
 	readonly game: GameModel
-	readonly card: Card<Props>
+	readonly props: CardType
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
@@ -40,19 +44,23 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	turnedOver: boolean
 
+	hooks: {
+		onChangeSlot: GameHook<(slot: SlotComponent) => void>
+	}
+
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
-		card: number | string | CardClass,
-		slot: SlotEntity
+		card: number | string | Card,
+		slot: SlotEntity,
 	) {
 		this.game = game
 		this.entity = entity
 		this.observerEntity = null
 		if (card instanceof Object) {
-			this.card = CARDS[card.name] as Card<Props>
+			this.props = CARDS[card.id] as CardType
 		} else {
-			this.card = CARDS[card] as Card<Props>
+			this.props = CARDS[card] as CardType
 		}
 
 		this.slotEntity = slot
@@ -60,13 +68,17 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
 
 		this.turnedOver = false
 
-		this.card.onCreate(this.game, this)
+		this.hooks = {
+			onChangeSlot: new GameHook(),
+		}
+
+		this.props.onCreate(this.game, this)
 	}
 
 	/** A function that is used to order cards by thier slot's order.
@@ -84,10 +96,6 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return (a.slot.order as number) - (b.slot.order as number)
 	}
 
-	public get props(): Props {
-		return this.card.props
-	}
-
 	/** The slot that this card is in */
 	public get slot(): SlotComponent {
 		return this.game.components.getOrError(this.slotEntity)
@@ -100,21 +108,27 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	/** Get the player who does not own the slot this card is in. */
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.getOrError(this.game.otherPlayerEntity(this.slot?.player.entity))
+		return this.game.components.getOrError(
+			this.game.otherPlayerEntity(this.slot?.player.entity),
+		)
 	}
 
 	public isItem(): this is CardComponent<Item> {
 		return isItem(this.props)
 	}
+
 	public isSingleUse(): this is CardComponent<SingleUse> {
 		return isSingleUse(this.props)
 	}
+
 	public isAttach(): this is CardComponent<Attach> {
 		return isAttach(this.props)
 	}
+
 	public isHealth(): this is CardComponent<HasHealth> {
 		return isHealth(this.props)
 	}
+
 	public isHermit(): this is CardComponent<Hermit> {
 		return isHermit(this.props)
 	}
@@ -129,15 +143,24 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public attach(component: SlotComponent) {
 		// Stores if the card is moving to the slot's player's board or leaving the slot's player's board.
 		let changingBoards =
-			this.slot.onBoard() !== component.onBoard() || this.player.entity !== component.player.entity
+			this.slot.onBoard() !== component.onBoard() ||
+			this.player.entity !== component.player.entity
+
+		if (this.slot.onBoard() && !component.onBoard()) {
+			this.game.components
+				.filter(StatusEffectComponent, query.effect.targetEntity(this.entity))
+				.forEach((effect) => effect.remove())
+		}
 
 		if (this.slot.onBoard() && changingBoards) {
 			if (!this.observerEntity)
-				throw new Error('All cards attached to the board should have an observer')
+				throw new Error(
+					'All cards attached to the board should have an observer',
+				)
 			let observer = this.game.components.get(this.observerEntity)
 			if (!observer) throw new Error('Observer expected to be in ECS')
 			observer.unsubscribeFromEverything()
-			this.card.onDetach(this.game, this, observer)
+			this.props.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)
 		}
 
@@ -146,30 +169,42 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
+
+		this.hooks.onChangeSlot.call(component)
 	}
 
 	/** Move this card to the hand
 	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's hand if not specified.
 	 */
 	public draw(player?: PlayerEntity) {
-		this.attach(this.game.components.new(HandSlotComponent, player || this.slot.player.entity))
+		this.attach(
+			this.game.components.new(
+				HandSlotComponent,
+				player || this.slot.player.entity,
+			),
+		)
 	}
 
 	/** Move this card to the discard pile.
 	 * @arg player - The player who's hand to add this card to. Adds to the current card owner's discard pile if not specified.
 	 */
 	public discard(player?: PlayerEntity) {
-		this.attach(this.game.components.new(DiscardSlotComponent, player || this.slot.player.entity))
+		this.attach(
+			this.game.components.new(
+				DiscardSlotComponent,
+				player || this.slot.player.entity,
+			),
+		)
 	}
 
-	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
+	public getStatusEffect(...statusEffect: Array<StatusEffect<CardComponent>>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),
-			query.effect.targetEntity(this.entity)
+			query.effect.targetEntity(this.entity),
 		)
 	}
 }

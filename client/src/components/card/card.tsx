@@ -1,19 +1,19 @@
 import cn from 'classnames'
-import css from './card.module.scss'
+import {Card as CardObject} from 'common/cards/base/types'
+import {WithoutFunctions} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
-import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
+import css from './card.module.scss'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
+import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
-import {CardProps} from 'common/cards/base/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: WithoutFunctions<CardProps>
+	card: WithoutFunctions<CardObject>
 	selected?: boolean
 	picked?: boolean
 	unpickable?: boolean
@@ -25,8 +25,10 @@ const Card = (props: CardReactProps) => {
 	const {category} = props.card
 	const {onClick, selected, picked, unpickable, ...otherProps} = props
 	let card = null
-	if (category === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
-	else if (category === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
+	if (category === 'hermit')
+		card = <HermitCardModule {...(otherProps as HermitCardProps)} />
+	else if (category === 'item')
+		card = <ItemCardModule {...(otherProps as ItemCardProps)} />
 	else if (['attach', 'single_use'].includes(category))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
 	else throw new Error('Unsupported card category: ' + category)

@@ -1,10 +1,15 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 import {ComponentQuery} from '../components/query'
 import {Entity, PlayerEntity, RowEntity} from '../entities'
+import {AttackModel} from '../models/attack-model'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
-export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'status-effect'
+export type AttackType =
+	| HermitAttackType
+	| 'effect'
+	| 'weakness'
+	| 'status-effect'
 
 export type WeaknessType = 'always' | 'ifWeak' | 'never'
 
@@ -31,13 +36,18 @@ export type AttackLog = {
 	coinFlip: string | null
 	/**The previously defined log entry.*/
 	previousLog?: string
+	/**The attack */
+	attack: AttackModel
 }
 
-export type AttackerEntity = Entity<CardComponent | StatusEffectComponent> | 'debug'
+export type AttackerEntity =
+	| Entity<CardComponent | StatusEffectComponent>
+	| 'debug'
 
 export type AttackDefs =
 	| {
 			attacker?: Entity<StatusEffectComponent> | null | undefined
+			/** Status effects must specify the attacking player. */
 			player: PlayerEntity
 			target?: RowEntity | null | undefined
 			type: 'status-effect'
@@ -55,10 +65,22 @@ export type AttackDefs =
 			createWeakness?: WeaknessType
 			log?: (values: AttackLog) => string
 	  }
+	| {
+			attacker?: Entity<CardComponent> | null | undefined
+			/** Single-use cards must include the player, because they may be stolen by Trap Hole. */
+			player: PlayerEntity
+			target?: RowEntity | null | undefined
+			type: 'effect'
+			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
+			isBacklash?: boolean
+			createWeakness?: WeaknessType
+			log?: (values: AttackLog) => string
+	  }
 
 export type AttackHistoryType =
 	| 'add_damage'
-	| 'reduce_damage'
+	| 'remove_damage'
+	| 'add_damage_reduction'
 	| 'multiply_damage'
 	| 'lock_damage'
 	| 'set_attacker'

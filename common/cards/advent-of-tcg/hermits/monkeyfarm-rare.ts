@@ -1,12 +1,12 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../components/query'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
 
-class MonkeyfarmRare extends Card {
+class MonkeyfarmRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'monkeyfarm_rare',
@@ -29,27 +29,40 @@ class MonkeyfarmRare extends Card {
 			name: 'Monkeystep',
 			cost: ['farm', 'farm'],
 			damage: 80,
-			power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+			power:
+				"Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'secondary' ||
+				!attacker
+			)
 				return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
-			const pickCondition = slot.every(slot.opponent, slot.item, slot.not(slot.empty))
+			const pickCondition = slot.every(
+				slot.opponent,
+				slot.item,
+				slot.not(slot.empty),
+			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: this.props.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,
@@ -67,7 +80,7 @@ class MonkeyfarmRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.afterAttack.remove(component)

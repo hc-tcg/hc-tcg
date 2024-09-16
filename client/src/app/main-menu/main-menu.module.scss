@@ -13,8 +13,8 @@
 	right: 1vh;
 	display: grid;
 	grid-template-areas:
-		'name icon'
-		'deck icon';
+		"name icon"
+		"deck icon";
 	font-size: 1.5vh;
 	background-color: hsla(0deg, 0%, 0%, 35%);
 	padding: 0.75vh 1vh 0.75vh 1.5vh;
@@ -62,12 +62,12 @@ nav {
 	display: grid;
 	gap: 1vh;
 	grid-template-areas:
-		'public'
-		'private-create'
-		'private-join'
-		'deck'
-		'settings'
-		'logout';
+		"public"
+		"private-create"
+		"private-join"
+		"deck"
+		"settings"
+		"logout";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -128,8 +128,15 @@ nav {
 	margin-bottom: 2vh;
 }
 
+.settingsBox {
+	display: flex;
+	flex-direction: row;
+	gap: 1vh;
+}
+
 .stats {
-	background: var(--gray-800);
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
 	border-radius: 0.5vh;
 	padding: 1vh 2vh;
 }
@@ -185,45 +192,57 @@ nav {
 	}
 }
 
-.minecraftNameArea {
-	background: var(--gray-800);
+.settingDescriptor {
+	background: hsla(0deg, 0%, 0%, 55%);
 	border-radius: 0.5vh;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	align-items: center;
+	padding: 1vh;
+	color: var(--text-light);
+}
+
+.minecraftNameArea {
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	display: flex;
+	flex-direction: row;
 	align-items: center;
 
-	.upper {
+	.left {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin: 2vh 0;
-
-		> h3 {
-			font-size: 2.5vh;
-			color: var(--text-light);
-			margin-right: 2vh;
-			filter: drop-shadow(1px 1px 0 var(--text-dark));
-		}
+		margin: 4vh;
 
 		.playerHead {
-			width: 8vh;
-			height: 8vh;
-			filter: drop-shadow(0 0 2px var(--text-light));
+			width: 15vh;
+			height: 15vh;
+			filter: drop-shadow(2px 2px 0 white) drop-shadow(2px -2px 0 white)
+				drop-shadow(-2px 2px 0 white) drop-shadow(-2px -2px 0 white);
 		}
 	}
 
-	.playerHeadForm {
-		width: 100%;
-		display: flex;
-		padding: 2vh;
-
-		> * {
+	.right {
+		p {
+			padding: 0.5vh;
+			color: var(--text-light);
 			font-size: 2vh;
-			line-height: 100%;
+			filter: drop-shadow(1px 1px 0 var(--text-dark));
 		}
 
-		.customInput {
-			width: 90%;
+		.playerHeadForm {
+			width: 100%;
+			display: flex;
+
+			> * {
+				font-size: 2vh;
+				line-height: 100%;
+			}
+
+			.customInput {
+				width: 90%;
+			}
 		}
 	}
 }
@@ -236,15 +255,30 @@ nav {
 	gap: 1vh;
 }
 
+.developerCreditsContainer {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.developerCreditsContainer > div {
+	margin: 0.5vh;
+
+}
+
 .resetModal {
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
+	gap: 0.5vh;
+	margin: 0.5vh;
+}
+
+.resetModalDescription {
+	padding: 1vh;
 }
 
 .resetModalButton {
-	margin: 1vh;
-	min-width: 45%;
+	width: 50%;
 }
 
 /* DESKTOP */
@@ -255,10 +289,10 @@ nav {
 		gap: 2vh;
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
-			'public public'
-			'private-create private-join'
-			'deck deck'
-			'logout settings';
+			"public public"
+			"private-create private-join"
+			"deck deck"
+			"logout settings";
 	}
 }
 

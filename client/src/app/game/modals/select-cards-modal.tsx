@@ -1,28 +1,30 @@
-import {useSelector, useDispatch} from 'react-redux'
-import {useState} from 'react'
-import Modal from 'components/modal'
-import CardList from 'components/card-list'
 import {ModalData} from 'common/types/game-state'
-import css from './game-modals.module.scss'
-import {modalRequest} from 'logic/game/game-actions'
-import Button from 'components/button'
-import {getGameState} from 'logic/game/game-selectors'
 import {LocalCardInstance} from 'common/types/server-requests'
+import Button from 'components/button'
+import CardList from 'components/card-list'
+import Modal from 'components/modal'
+import {getGameState} from 'logic/game/game-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useState} from 'react'
+import {useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
 }
 
 function SelectCardsModal({closeModal}: Props) {
-	const dispatch = useDispatch()
+	const dispatch = useMessageDispatch()
 
-	const modalData: ModalData | null | undefined = useSelector(getGameState)?.currentModalData
-	if (!modalData || modalData.modalId !== 'selectCards') return null
+	const modalData: ModalData | null | undefined =
+		useSelector(getGameState)?.currentModalData
+	if (!modalData || modalData.type !== 'selectCards') return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
-	const cards: Array<LocalCardInstance> = modalData.payload.cards
-	const selectionSize = modalData.payload.selectionSize
-	const primaryButton = modalData.payload.primaryButton
-	const secondaryButton = modalData.payload.secondaryButton
+	const cards: Array<LocalCardInstance> = modalData.cards
+	const selectionSize = modalData.selectionSize
+	const primaryButton = modalData.primaryButton
+	const secondaryButton = modalData.secondaryButton
+	const cancelable = modalData.cancelable
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
 		if (selectionSize === 0) return
@@ -45,48 +47,83 @@ function SelectCardsModal({closeModal}: Props) {
 
 	const handlePrimary = () => {
 		if (selectionSize === 0) {
-			dispatch(modalRequest({modalResult: {result: true, cards: null}}))
+			dispatch({
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'MODAL_REQUEST',
+					modalResult: {result: true, cards: null},
+				},
+			})
 			closeModal()
 			return
 		}
+
 		if (selected.length <= selectionSize) {
-			dispatch(
-				modalRequest({modalResult: {result: true, cards: selected.map((card) => card.entity)}})
-			)
+			dispatch({
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						result: true,
+						cards: selected.map((card) => card.entity),
+					},
+				},
+			})
 			closeModal()
 		}
 	}
 
 	const handleClose = () => {
-		dispatch(modalRequest({modalResult: {result: false, cards: null}}))
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {result: false, cards: null},
+			},
+		})
 		closeModal()
 	}
 
 	return (
-		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
+		<Modal
+			title={modalData.name}
+			closeModal={handleClose}
+			showCloseButton={cancelable}
+		>
 			<div className={css.description}>
-				{modalData.payload.modalDescription}
-				<div className={css.cards}>
-					<div className={css.cardsListContainer}>
-						<CardList
-							onClick={handleSelection}
-							cards={cards}
-							selected={selected}
-							wrap={true}
-							tooltipAboveModal
-							disableAnimations
-						/>
+				{modalData.description}
+				{cards.length > 0 && (
+					<div className={css.cards}>
+						<div className={css.cardsListContainer}>
+							<CardList
+								onClick={handleSelection}
+								cards={cards}
+								selected={selected}
+								wrap={true}
+								tooltipAboveModal
+								disableAnimations
+							/>
+						</div>
 					</div>
-				</div>
+				)}
 			</div>
 			<div className={css.options}>
 				{secondaryButton && (
-					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
+					<Button
+						variant={secondaryButton.variant}
+						size="medium"
+						onClick={handleClose}
+					>
 						{secondaryButton.text}
 					</Button>
 				)}
 				{primaryButton && (
-					<Button variant={primaryButton.variant} size="medium" onClick={handlePrimary}>
+					<Button
+						variant={primaryButton.variant}
+						size="medium"
+						onClick={handlePrimary}
+						disabled={selected.length < selectionSize}
+					>
 						{primaryButton.text}
 					</Button>
 				)}

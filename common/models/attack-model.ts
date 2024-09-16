@@ -1,16 +1,21 @@
 import {
-	AttackHistory,
-	AttackHistoryType,
-	AttackDefs,
-	AttackType,
-	WeaknessType,
-	AttackLog,
-	AttackerEntity,
-} from '../types/attack'
-import {CardComponent, PlayerComponent, RowComponent, StatusEffectComponent} from '../components'
-import {GameModel} from './game-model'
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	StatusEffectComponent,
+} from '../components'
 import {ComponentQuery} from '../components/query'
 import {PlayerEntity, RowEntity} from '../entities'
+import {
+	AttackDefs,
+	AttackHistory,
+	AttackHistoryType,
+	AttackLog,
+	AttackType,
+	AttackerEntity,
+	WeaknessType,
+} from '../types/attack'
+import {GameModel} from './game-model'
 
 export class AttackModel {
 	private readonly game: GameModel
@@ -75,7 +80,11 @@ export class AttackModel {
 	// Helpers
 
 	/** Adds a change to the attack's history */
-	private addHistory(source: AttackerEntity, type: AttackHistoryType, value?: any) {
+	private addHistory(
+		source: AttackerEntity,
+		type: AttackHistoryType,
+		value?: any,
+	) {
 		this.history.push({
 			source,
 			type,
@@ -116,7 +125,10 @@ export class AttackModel {
 
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
-		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
+		return Math.max(
+			this.damage * this.damageMultiplier - this.damageReduction,
+			0,
+		)
 	}
 
 	/** Returns the damage this attack will do */
@@ -150,7 +162,7 @@ export class AttackModel {
 
 	// Setters / modifier methods
 
-	/** Increases the damage the attack does */
+	/** Increases the base damage the attack does */
 	public addDamage(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damage += amount
@@ -160,12 +172,22 @@ export class AttackModel {
 		return this
 	}
 
-	/** Reduces the damage the attack does */
-	public reduceDamage(source: AttackerEntity, amount: number) {
+	/** Reduces the base damage of the attack (before multiplication) */
+	public removeDamage(source: AttackerEntity, amount: number) {
+		if (this.damageLocked) return this
+		this.damage -= amount
+
+		this.addHistory(source, 'remove_damage', amount)
+
+		return this
+	}
+
+	/** Reduces the total damage the attack does */
+	public addDamageReduction(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.addHistory(source, 'reduce_damage', amount)
+		this.addHistory(source, 'add_damage_reduction', amount)
 
 		return this
 	}

@@ -1,24 +1,28 @@
-import {takeEvery, call, put, fork} from 'redux-saga/effects'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {SagaIterator} from 'redux-saga'
-import {chatMessage, chatUpdate} from '../game-actions'
-import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
+import {call, fork, put, takeEvery} from 'typed-redux-saga'
 
-function* chatMessageSaga(action: ReturnType<typeof chatMessage>): SagaIterator {
-	yield call(sendMsg, 'CHAT_MESSAGE', action.payload)
+function* chatMessageSaga(
+	action: LocalMessageTable[typeof localMessages.CHAT_MESSAGE],
+): SagaIterator {
+	yield* sendMsg({type: clientMessages.CHAT_MESSAGE, message: action.message})
 }
 
-function* receiveMessagesSaga(): SagaIterator {
+function* receiveMessagesSaga() {
 	while (true) {
-		const result = yield call(receiveMsg, 'CHAT_UPDATE')
-		const messages = result.payload.slice().reverse()
-		yield put(chatUpdate(messages))
+		const result = yield* call(receiveMsg(serverMessages.CHAT_UPDATE))
+		const messages = result.messages.slice().reverse()
+		yield* put<LocalMessage>({type: localMessages.CHAT_UPDATE, messages})
 	}
 }
 
 function* chatSaga(): SagaIterator {
 	try {
-		yield takeEvery('CHAT_MESSAGE', chatMessageSaga)
-		yield fork(receiveMessagesSaga)
+		yield* takeEvery(localMessages.CHAT_MESSAGE, chatMessageSaga)
+		yield* fork(receiveMessagesSaga)
 	} catch (err) {
 		console.error('Chat error: ', err)
 	}

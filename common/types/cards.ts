@@ -18,9 +18,14 @@ export type TypeT =
 	| 'explorer'
 	| 'any'
 
-export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
+export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
-export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'deck' | 'discardPile'
+export type SlotTypeT =
+	| BoardSlotTypeT
+	| 'single_use'
+	| 'hand'
+	| 'deck'
+	| 'discardPile'
 
 export type DamageT = {
 	target?: number

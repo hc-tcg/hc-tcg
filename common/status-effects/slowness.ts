@@ -1,48 +1,66 @@
-import {CardStatusEffect, Counter, StatusEffectProps, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
-import {CardComponent, ObserverComponent, StatusEffectComponent} from '../components'
+import {afterDefence, onTurnEnd} from '../types/priorities'
+import {Counter, statusEffect} from './status-effect'
 
-class SlownessEffect extends CardStatusEffect {
-	props: StatusEffectProps & Counter = {
-		...statusEffect,
-		icon: 'slowness',
-		name: 'Slowness',
-		description: 'This Hermit can only use their primary attack.',
-		counter: 1,
-		counterType: 'turns',
-	}
-
-	override onApply(
+const SlownessEffect: Counter<CardComponent> = {
+	...statusEffect,
+	id: 'slowness',
+	icon: 'slowness',
+	name: 'Slowness',
+	description: 'This Hermit can only use their primary attack.',
+	counter: 1,
+	counterType: 'turns',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
-		observer: ObserverComponent
+		observer: ObserverComponent,
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.props.counter
+		if (!effect.counter) effect.counter = this.counter
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (target.slot?.onBoard() && player.activeRowEntity === target.slot.row?.entity)
-				game.addBlockedActions(this.props.icon, 'SECONDARY_ATTACK')
+			if (
+				target.slot?.onBoard() &&
+				player.activeRowEntity === target.slot.row?.entity
+			)
+				game.addBlockedActions(this.icon, 'SECONDARY_ATTACK')
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (!effect.counter) return
-			effect.counter--
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!effect.counter) return
+				effect.counter--
 
-			if (effect.counter === 0) {
+				if (effect.counter === 0) {
+					effect.remove()
+					return
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (
+					!target.slot?.onBoard() ||
+					attack.target?.entity !== target.slot.row?.entity
+				)
+					return
+				if (target.slot.row?.health) return
 				effect.remove()
-				return
-			}
-		})
-
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!target.slot?.onBoard() || attack.target?.entity !== target.slot.row?.entity) return
-			if (target.slot.row?.health) return
-			effect.remove()
-		})
-	}
+			},
+		)
+	},
 }
 
 export default SlownessEffect

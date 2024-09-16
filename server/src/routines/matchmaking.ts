@@ -1,34 +1,85 @@
-import {all, take, takeEvery, cancel, spawn, fork, race, delay, join} from 'typed-redux-saga'
-import {broadcast} from '../utils/comm'
-import gameSaga, {getTimerForSeconds} from './game'
-import {GameModel} from 'common/models/game-model'
-import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
-import {getLocalGameState} from '../utils/state-gen'
+import {PlayerComponent} from 'common/components'
+import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {
+	RecievedClientMessage,
+	clientMessages,
+} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalMessageTable, localMessages} from 'messages'
+import {
+	all,
+	cancel,
+	delay,
+	fork,
+	join,
+	race,
+	spawn,
+	take,
+} from 'typed-redux-saga'
 import root from '../serverRoot'
+import {broadcast} from '../utils/comm'
+import {getLocalGameState} from '../utils/state-gen'
+import {
+	getGameOutcome,
+	getGamePlayerOutcome,
+	getWinner,
+} from '../utils/win-conditions'
+import gameSaga, {getTimerForSeconds} from './game'
 
-export type ClientMessage = {
-	type: string
-	playerId: PlayerId
-	playerSecret: string
-	payload?: any
+function setupGame(
+	player1: PlayerModel,
+	player2: PlayerModel,
+	code?: string,
+): GameModel {
+	let game = new GameModel(
+		{
+			model: player1,
+			deck: player1.deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: player2,
+			deck: player2.deck.cards.map((card) => card.props.numericId),
+		},
+		gameSettingsFromEnv(),
+		{code},
+	)
+
+	let playerEntities = game.components.filterEntities(PlayerComponent)
+
+	// Note player one must be added before player two to make sure each player has the right deck.
+	game.components.new(ViewerComponent, {
+		player: player1,
+		spectator: false,
+		playerOnLeft: playerEntities[0],
+	})
+
+	game.components.new(ViewerComponent, {
+		player: player2,
+		spectator: false,
+		playerOnLeft: playerEntities[1],
+	})
+
+	return game
 }
 
 function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
 	try {
-		const playerIds = game.getPlayerIds()
-		const players = game.getPlayers()
+		const viewers = game.viewers
+		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType = game.code ? 'Private' : 'Public'
-		console.log(
+		console.info(
+			`${game.logHeader}`,
 			`${gameType} game started.`,
-			`Players: ${players[0].name} + ${players[1].name}.`,
+			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
 			'Total games:',
-			root.getGameIds().length
+			root.getGameIds().length,
 		)
 
-		broadcast(players, 'GAME_START')
+		game.broadcastToViewers({type: serverMessages.GAME_START})
 		root.hooks.newGame.call(game)
 		game.task = yield* spawn(gameSaga, game)
 
@@ -39,25 +90,46 @@ function* gameManager(game: GameModel) {
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
-			playerRemoved: take(
-				(action: any) => action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.id)
+			playerRemoved: take<
+				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+			>(
+				(action: any) =>
+					action.type === localMessages.PLAYER_REMOVED &&
+					playerIds.includes(
+						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+							.player.id,
+					),
 			),
-			forfeit: take(
-				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
+			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
+				(action: any) =>
+					action.type === clientMessages.FORFEIT &&
+					playerIds.includes(
+						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
+							.playerId,
+					),
 			),
 		})
 
-		for (const player of players) {
-			const gameState = getLocalGameState(game, player)
+		for (const viewer of viewers) {
+			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
+				if (!game.endInfo.reason) {
+					// Remove coin flips from state if game was terminated before game end to prevent
+					// clients replaying animations after a forfeit, disconnect, or excessive game duration
+					game.components
+						.filter(PlayerComponent)
+						.forEach((player) => (player.coinFlips = []))
+				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, player.id)
-			broadcast([player], 'GAME_END', {
+			const outcome = getGamePlayerOutcome(game, result, viewer)
+			// assert(game.endInfo.reason, 'Games can not end without a reason')
+			broadcast([viewer.player], {
+				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
-				reason: game.endInfo.reason,
+				reason: game.endInfo.reason || undefined,
 			})
 		}
 		game.endInfo.outcome = getGameOutcome(game, result)
@@ -65,13 +137,16 @@ function* gameManager(game: GameModel) {
 	} catch (err) {
 		console.log('Error: ', err)
 		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), 'GAME_CRASH')
+		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
 	} finally {
 		if (game.task) yield* cancel(game.task)
 		game.afterGameEnd.call()
 
 		const gameType = game.code ? 'Private' : 'Public'
-		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
+		console.log(
+			`${gameType} game ended. Total games:`,
+			root.getGameIds().length - 1,
+		)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
@@ -79,7 +154,11 @@ function* gameManager(game: GameModel) {
 }
 
 export function inGame(playerId: PlayerId) {
-	return root.getGames().some((game) => !!game.players[playerId])
+	return root
+		.getGames()
+		.some(
+			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
+		)
 }
 
 export function inQueue(playerId: string) {
@@ -112,7 +191,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = new GameModel(player1, player2)
+				const newGame = setupGame(player1, player2)
 				root.addGame(newGame)
 				yield* fork(gameManager, newGame)
 			} else {
@@ -122,7 +201,9 @@ function* randomMatchmakingSaga() {
 			}
 		}
 
-		root.queue = root.queue.filter((player) => !playersToRemove.includes(player))
+		root.queue = root.queue.filter(
+			(player) => !playersToRemove.includes(player),
+		)
 	}
 }
 
@@ -137,7 +218,7 @@ function* cleanUpSaga() {
 				if (info.playerId) {
 					const player = root.players[info.playerId]
 					if (player) {
-						broadcast([player], 'PRIVATE_GAME_TIMEOUT')
+						broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
 					}
 				}
 				delete root.privateQueue[code]
@@ -146,7 +227,9 @@ function* cleanUpSaga() {
 	}
 }
 
-function* joinQueue(msg: ClientMessage) {
+export function* joinQueue(
+	msg: RecievedClientMessage<typeof clientMessages.JOIN_QUEUE>,
+) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 
@@ -157,17 +240,19 @@ function* joinQueue(msg: ClientMessage) {
 
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log('[Join queue] Player is already in game or queue:', player.name)
-		broadcast([player], 'JOIN_QUEUE_FAILURE')
+		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
 		return
 	}
 
 	// Add them to the queue
 	root.queue.push(playerId)
-	broadcast([player], 'JOIN_QUEUE_SUCCESS')
+	broadcast([player], {type: serverMessages.JOIN_QUEUE_SUCCESS})
 	console.log(`Joining queue: ${player.name}`)
 }
 
-function* leaveQueue(msg: ClientMessage) {
+export function* leaveQueue(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_QUEUE>,
+) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 
@@ -180,15 +265,20 @@ function* leaveQueue(msg: ClientMessage) {
 	const queueIndex = root.queue.indexOf(playerId)
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
-		broadcast([player], 'LEAVE_QUEUE_SUCCESS')
+		broadcast([player], {type: serverMessages.LEAVE_QUEUE_SUCCESS})
 		console.log(`Left queue: ${player.name}`)
 	} else {
-		broadcast([player], 'LEAVE_QUEUE_FAILURE')
-		console.log('[Leave queue]: Player tried to leave queue when not there:', player.name)
+		broadcast([player], {type: serverMessages.LEAVE_QUEUE_FAILURE})
+		console.log(
+			'[Leave queue]: Player tried to leave queue when not there:',
+			player.name,
+		)
 	}
 }
 
-function* createPrivateGame(msg: ClientMessage) {
+export function* createPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_PRIVATE_GAME>,
+) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 	if (!player) {
@@ -197,8 +287,11 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Create private game] Player is already in game or queue:', player.name)
-		broadcast([player], 'CREATE_PRIVATE_GAME_FAILURE')
+		console.log(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
 
@@ -210,13 +303,21 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	// Send code to player
-	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', gameCode)
+	broadcast([player], {
+		type: serverMessages.CREATE_PRIVATE_GAME_SUCCESS,
+		code: gameCode,
+	})
 
 	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
 }
 
-function* joinPrivateGame(msg: ClientMessage) {
-	const {playerId, payload: code} = msg
+export function* joinPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.JOIN_PRIVATE_GAME>,
+) {
+	const {
+		playerId,
+		payload: {code},
+	} = msg
 	const player = root.players[playerId]
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
@@ -224,15 +325,18 @@ function* joinPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join private game] Player is already in game or queue:', player.name)
-		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
+		console.log(
+			'[Join private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
 		return
 	}
 
 	// Find the code in the private queue
 	const info = root.privateQueue[code]
 	if (!info) {
-		broadcast([player], 'INVALID_CODE')
+		broadcast([player], {type: serverMessages.INVALID_CODE})
 		return
 	}
 
@@ -241,14 +345,17 @@ function* joinPrivateGame(msg: ClientMessage) {
 		// Create new game for these 2 players
 		const existingPlayer = root.players[info.playerId]
 		if (!existingPlayer) {
-			console.log('[Join private game]: Player waiting in queue no longer exists! Code: ' + code)
+			console.log(
+				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
+					code,
+			)
 			delete root.privateQueue[code]
 
-			broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
+			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
 			return
 		}
 
-		const newGame = new GameModel(player, existingPlayer, code)
+		const newGame = setupGame(player, existingPlayer, code)
 		root.addGame(newGame)
 
 		// Remove this game from the queue, it's started
@@ -256,18 +363,20 @@ function* joinPrivateGame(msg: ClientMessage) {
 
 		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
-		broadcast([player], 'JOIN_PRIVATE_GAME_SUCCESS')
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
 		yield* fork(gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
-		broadcast([player], 'WAITING_FOR_PLAYER')
+		broadcast([player], {type: serverMessages.WAITING_FOR_PLAYER})
 
 		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
 	}
 }
 
-function* cancelPrivateGame(msg: ClientMessage) {
+export function* cancelPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.CANCEL_PRIVATE_GAME>,
+) {
 	const {playerId} = msg
 
 	for (let code in root.privateQueue) {
@@ -275,7 +384,7 @@ function* cancelPrivateGame(msg: ClientMessage) {
 		if (info.playerId && info.playerId === playerId) {
 			const player = root.players[info.playerId]
 			if (player) {
-				broadcast([player], 'PRIVATE_GAME_CANCELLED')
+				broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
 			}
 
 			root.hooks.privateCancelled.call(code)
@@ -310,17 +419,7 @@ function onPlayerLeft(player: PlayerModel) {
 function* matchmakingSaga() {
 	root.hooks.playerLeft.add('matchmaking', onPlayerLeft)
 
-	yield* all([
-		fork(randomMatchmakingSaga),
-		fork(cleanUpSaga),
-
-		takeEvery('JOIN_QUEUE', joinQueue),
-		takeEvery('LEAVE_QUEUE', leaveQueue),
-
-		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
-		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
-		takeEvery('CANCEL_PRIVATE_GAME', cancelPrivateGame),
-	])
+	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
 
 /*

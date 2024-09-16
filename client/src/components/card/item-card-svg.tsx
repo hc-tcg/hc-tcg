@@ -1,11 +1,11 @@
 import classnames from 'classnames'
-import css from './item-card-svg.module.scss'
-import {useSelector} from 'react-redux'
+import {Item} from 'common/cards/base/types'
+import {WithoutFunctions} from 'common/types/server-requests'
+import {getCardRank} from 'common/utils/ranks'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import {Item} from 'common/cards/base/types'
-import {getCardRank} from 'common/utils/ranks'
-import {WithoutFunctions} from 'common/types/server-requests'
+import {useSelector} from 'react-redux'
+import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
 	card: WithoutFunctions<Item>
@@ -28,7 +28,13 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 				ry="15"
 			/>
 			<g>
-				<image className={css.star} href={`/images/star_white.svg`} x="-15" y="65" width="390" />
+				<image
+					className={css.star}
+					href={'/images/star_white.svg'}
+					x="-15"
+					y="65"
+					width="390"
+				/>
 				<image
 					className={classnames(css.icon, css[card.type])}
 					href={`/images/types/type-${card.type}.png`}
@@ -61,7 +67,15 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 			</g>
 			{card.rarity === 'rare' ? (
 				<g>
-					<rect className={css.rarity} x="302" y="302" width="100" height="100" rx="50" ry="50" />
+					<rect
+						className={css.rarity}
+						x="302"
+						y="302"
+						width="100"
+						height="100"
+						rx="50"
+						ry="50"
+					/>
 					<text
 						x="351"
 						y="331"
@@ -78,7 +92,15 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 
 			{showCost && rank !== 'stone' ? (
 				<g>
-					<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
+					<rect
+						className={css.rarity}
+						x="0"
+						y="302"
+						width="100"
+						height="100"
+						rx="50"
+						ry="50"
+					/>
 					<image
 						x="15"
 						y="315"
@@ -99,11 +121,21 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 					height="200%"
 					width="200%"
 				>
-					<feGaussianBlur id="blur" in="SourceAlpha" stdDeviation="5" result="SA-o-blur" />
+					<feGaussianBlur
+						id="blur"
+						in="SourceAlpha"
+						stdDeviation="5"
+						result="SA-o-blur"
+					/>
 					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
 						<feFuncA id="contour" type="table" tableValues="0 1" />
 					</feComponentTransfer>
-					<feComposite operator="in" in="SA-o-blur" in2="SA-o-b-contIN" result="SA-o-b-cont" />
+					<feComposite
+						operator="in"
+						in="SA-o-blur"
+						in2="SA-o-b-contIN"
+						result="SA-o-b-cont"
+					/>
 					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
 						<feFuncA id="spread-ctrl" type="linear" slope="200" />
 					</feComponentTransfer>

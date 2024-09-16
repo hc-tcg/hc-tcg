@@ -1,6 +1,6 @@
 .slider {
 	overflow: hidden;
-	height: 5vh;
+	height: 5.5vh;
 	position: relative;
 	min-width: 240px;
 }
@@ -15,7 +15,7 @@
 
 .background {
 	filter: brightness(60%);
-	background: #999 url('/images/bgbtn.png') center / cover;
+	background: #999 url("/images/bgbtn.png") center / cover;
 	image-rendering: pixelated;
 	border: 0.3vh solid #000;
 }
@@ -23,7 +23,7 @@
 .label {
 	font-size: 2vh;
 	text-shadow: 0.2vh 0.2vh #000;
-	font-family: Minecraft;
+	font-family: Minecraft, Unifont;
 	white-space: nowrap;
 	color: #ddd;
 	line-height: 5vh;
@@ -53,7 +53,7 @@
 
 .slider input::-webkit-slider-thumb {
 	box-sizing: border-box;
-	background: #999 url('/images/bgbtn.png') center / cover;
+	background: #999 url("/images/bgbtn.png") center / cover;
 	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
 	border: 0.3vh solid #000;
 	height: 100%;
@@ -79,7 +79,7 @@
 
 .slider input::-moz-range-thumb {
 	box-sizing: border-box;
-	background: #999 url('/images/bgbtn.png') center / cover;
+	background: #999 url("/images/bgbtn.png") center / cover;
 	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
 	border: 0.3vh solid #000;
 	height: 100%;

@@ -1,28 +1,42 @@
-import {PlayerId, PlayerModel} from './player-model'
+import {broadcast} from '../../server/src/utils/comm'
 import {
-	TurnAction,
-	GameState,
-	ActionResult,
-	TurnActions,
-	Message,
-	DefaultDictionary,
-} from '../types/game-state'
-import {getGameState, setupComponents} from '../utils/state-gen'
-import {PickRequest} from '../types/server-requests'
-import {BattleLogModel} from './battle-log-model'
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+} from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
-import {AttackDefs} from '../types/attack'
-import {AttackModel} from './attack-model'
-import ComponentTable from '../types/ecs'
+import {ViewerComponent} from '../components/viewer-component'
+import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {ServerMessage} from '../socket-messages/server-messages'
+import {AttackDefs} from '../types/attack'
+import ComponentTable from '../types/ecs'
+import {
+	DefaultDictionary,
+	GameEndOutcomeT,
+	GameEndReasonT,
+	GameState,
+	Message,
+	TurnAction,
+	TurnActions,
+} from '../types/game-state'
 import {Hook} from '../types/hooks'
+import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {PickRequest} from '../types/server-requests'
+import {
+	PlayerSetupDefs,
+	getGameState,
+	setupComponents,
+} from '../utils/state-gen'
+import {AttackModel} from './attack-model'
+import {BattleLogModel} from './battle-log-model'
+import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
-		if (!Object.hasOwn(this.values, game.id)) {
+		if (game.id in this.values) {
 			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
@@ -37,14 +51,60 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	}
 }
 
+export type GameSettings = {
+	maxTurnTime: number
+	extraActionTime: number
+	showHooksState: {
+		enabled: boolean
+		clearConsole: boolean
+	}
+	blockedActions: Array<TurnAction>
+	availableActions: Array<TurnAction>
+	autoEndTurn: boolean
+	disableDeckOut: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	oneShotMode: boolean
+	extraStartingCards: Array<string>
+	disableDamage: boolean
+	noItemRequirements: boolean
+	forceCoinFlip: boolean
+	shuffleDeck: boolean
+	logErrorsToStderr: boolean
+	logBoardState: boolean
+}
+
+export function gameSettingsFromEnv(): GameSettings {
+	return {
+		maxTurnTime: CONFIG.limits.maxTurnTime,
+		extraActionTime: CONFIG.limits.extraActionTime,
+		showHooksState: DEBUG_CONFIG.showHooksState,
+		blockedActions: DEBUG_CONFIG.blockedActions,
+		availableActions: DEBUG_CONFIG.availableActions,
+		autoEndTurn: DEBUG_CONFIG.autoEndTurn,
+		disableDeckOut: DEBUG_CONFIG.disableDeckOut,
+		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
+		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
+		oneShotMode: DEBUG_CONFIG.oneShotMode,
+		extraStartingCards: DEBUG_CONFIG.extraStartingCards,
+		disableDamage: DEBUG_CONFIG.disableDamage,
+		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
+		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
+		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
+		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
+		logBoardState: DEBUG_CONFIG.logBoardState,
+	}
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
 	private internalCode: string | null
 
+	public readonly settings: GameSettings
+
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public players: Record<PlayerId, PlayerModel>
 	public task: any
 	public state: GameState
 
@@ -54,38 +114,54 @@ export class GameModel {
 	public afterGameEnd: Hook<string, () => void>
 
 	public endInfo: {
-		deadPlayerIds: Array<string>
-		winner: string | null
-		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error' | null
-		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
+		deadPlayerEntities: Array<PlayerEntity>
+		winner: PlayerId | null
+		outcome: GameEndOutcomeT | null
+		reason: GameEndReasonT | null
 	}
 
-	constructor(player1: PlayerModel, player2: PlayerModel, code: string | null = null) {
+	constructor(
+		player1: PlayerSetupDefs,
+		player2: PlayerSetupDefs,
+		settings: GameSettings,
+		options?: {
+			code?: string
+			randomizeOrder?: false
+		},
+	) {
+		options = options ?? {}
+
+		this.settings = settings
+
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code
+		this.internalCode = options.code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
 		this.task = null
 
 		this.endInfo = {
-			deadPlayerIds: [],
+			deadPlayerEntities: [],
 			winner: null,
 			outcome: null,
 			reason: null,
 		}
 
-		this.players = {
-			[player1.id]: player1,
-			[player2.id]: player2,
-		}
-
 		this.components = new ComponentTable(this)
 		this.afterGameEnd = new Hook<string, () => void>()
-		setupComponents(this.components, player1, player2)
+		setupComponents(this.components, player1, player2, {
+			shuffleDeck: settings.shuffleDeck,
+			startWithAllCards: settings.startWithAllCards,
+			unlimitedCards: settings.unlimitedCards,
+			extraStartingCards: settings.extraStartingCards,
+		})
 
-		this.state = getGameState(this)
+		this.state = getGameState(this, options.randomizeOrder)
+	}
+
+	public get logHeader() {
+		return `Game ${this.id}:`
 	}
 
 	public get currentPlayerEntity() {
@@ -104,12 +180,22 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public getPlayerIds() {
-		return Object.keys(this.players) as Array<PlayerId>
+	public get viewers(): Array<ViewerComponent> {
+		return this.components.filter(ViewerComponent)
+	}
+
+	public get players() {
+		return this.viewers.reduce(
+			(acc, viewer) => {
+				acc[viewer.player.id] = viewer.player
+				return acc
+			},
+			{} as Record<PlayerId, PlayerModel>,
+		)
 	}
 
 	public getPlayers() {
-		return Object.values(this.players)
+		return this.viewers.map((viewer) => viewer.player)
 	}
 
 	public get createdTime() {
@@ -124,13 +210,22 @@ export class GameModel {
 		return this.internalCode
 	}
 
+	public broadcastToViewers(payload: ServerMessage) {
+		broadcast(
+			this.viewers.map((viewer) => viewer.player),
+			payload,
+		)
+	}
+
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
 		const otherPlayer = this.components.findEntity(
 			PlayerComponent,
-			(_game, otherPlayer) => player !== otherPlayer.entity
+			(_game, otherPlayer) => player !== otherPlayer.entity,
 		)
 		if (!otherPlayer)
-			throw new Error('Can not query for other before because both player components are created')
+			throw new Error(
+				'Can not query for other before because both player components are created',
+			)
 		return otherPlayer
 	}
 
@@ -149,9 +244,10 @@ export class GameModel {
 	/** Remove action from the completed list so they can be done again this turn */
 	public removeCompletedActions(...actions: TurnActions) {
 		for (let i = 0; i < actions.length; i++) {
-			this.state.turn.completedActions = this.state.turn.completedActions.filter(
-				(action) => !actions.includes(action)
-			)
+			this.state.turn.completedActions =
+				this.state.turn.completedActions.filter(
+					(action) => !actions.includes(action),
+				)
 		}
 	}
 
@@ -178,7 +274,7 @@ export class GameModel {
 
 		for (let i = 0; i < actions.length; i++) {
 			turnState.blockedActions[key] = turnState.blockedActions[key].filter(
-				(action) => !actions.includes(action)
+				(action) => !actions.includes(action),
 			)
 		}
 
@@ -218,10 +314,6 @@ export class GameModel {
 		return allBlockedActions
 	}
 
-	public setLastActionResult(action: TurnAction, result: ActionResult) {
-		this.state.lastActionResult = {action, result}
-	}
-
 	public addPickRequest(newRequest: PickRequest, before = false) {
 		if (before) {
 			this.state.pickRequests.unshift(newRequest)
@@ -238,7 +330,7 @@ export class GameModel {
 		}
 	}
 	public cancelPickRequests() {
-		if (this.state.pickRequests[0]?.playerId === this.currentPlayer.id) {
+		if (this.state.pickRequests[0]?.player === this.currentPlayer.entity) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
 				this.state.pickRequests[i].onCancel?.()
@@ -247,7 +339,10 @@ export class GameModel {
 		}
 	}
 
-	public addModalRequest(newRequest: SelectCards.Request, before?: boolean): void
+	public addModalRequest(
+		newRequest: SelectCards.Request,
+		before?: boolean,
+	): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
@@ -270,7 +365,9 @@ export class GameModel {
 	}
 
 	public hasActiveRequests(): boolean {
-		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+		return (
+			this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+		)
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
@@ -285,11 +382,20 @@ export class GameModel {
 	 * This function does not check whether the cards can be placed in the other card's slot.
 	 * If one of the slots is undefined, do not swap the slots.
 	 */
-	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
+	public swapSlots(
+		slotA: SlotComponent | null,
+		slotB: SlotComponent | null,
+	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, query.card.slotEntity(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, query.card.slotEntity(slotB.entity))
+		const slotACards = this.components.filter(
+			CardComponent,
+			query.card.slotEntity(slotA.entity),
+		)
+		const slotBCards = this.components.filter(
+			CardComponent,
+			query.card.slotEntity(slotB.entity),
+		)
 
 		slotACards.forEach((card) => {
 			card.attach(slotB)
@@ -299,7 +405,11 @@ export class GameModel {
 		})
 	}
 
-	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<SlotEntity> {
-		return this.components.filter(SlotComponent, predicate).map((slotInfo) => slotInfo.entity)
+	public getPickableSlots(
+		predicate: ComponentQuery<SlotComponent>,
+	): Array<SlotEntity> {
+		return this.components
+			.filter(SlotComponent, predicate)
+			.map((slotInfo) => slotInfo.entity)
 	}
 }

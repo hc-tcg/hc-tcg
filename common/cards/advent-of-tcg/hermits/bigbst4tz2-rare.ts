@@ -1,12 +1,12 @@
-import {GameModel} from '../../../models/game-model'
+import {CardComponent} from '../../../components'
 import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
 
-class BigBSt4tzRare extends Card {
+class BigBSt4tzRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'bigbst4tz2_rare',
@@ -29,17 +29,26 @@ class BigBSt4tzRare extends Card {
 			name: 'Soulmate',
 			cost: ['speedrunner', 'speedrunner'],
 			damage: 80,
-			power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
+			power:
+				"When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, observer: Observer) {
+	override onAttach(
+		game: GameModel,
+		component: CardComponent,
+		_observer: Observer,
+	) {
 		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'secondary'
+			)
+				return
 			dealDamageNextTurn = true
 		})
 
@@ -86,7 +95,7 @@ class BigBSt4tzRare extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.remove(component)

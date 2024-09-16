@@ -1,74 +1,82 @@
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
 import query from '../../../components/query'
-import {CardComponent, ObserverComponent, SlotComponent} from '../../../components'
-import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
-import {singleUse} from '../../base/defaults'
+import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import {afterAttack} from '../../../types/priorities'
+import {applySingleUse} from '../../../utils/board'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class ChorusFruit extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'chorus_fruit',
-		numericId: 5,
-		name: 'Chorus Fruit',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 1,
-		description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
-		log: (values) => `${values.defaultLog} with {your|their} attack`,
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.not(
-				query.exists(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.slot.active,
-					query.slot.hasStatusEffect(SleepingEffect)
-				)
-			),
+const ChorusFruit: SingleUse = {
+	...singleUse,
+	id: 'chorus_fruit',
+	numericId: 5,
+	name: 'Chorus Fruit',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 1,
+	description:
+		'After your attack, choose an AFK Hermit to set as your active Hermit.',
+	log: (values) => `${values.defaultLog} with {your|their} attack`,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
+		query.not(
 			query.exists(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.slot(query.slot.hermit),
-				query.not(query.card.active)
-			)
+				SlotComponent,
+				query.slot.currentPlayer,
+				query.slot.hermit,
+				query.slot.active,
+				query.slot.hasStatusEffect(SleepingEffect),
+			),
 		),
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+		query.exists(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.slot(query.slot.hermit),
+			query.not(query.card.active),
+		),
+	),
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player} = component
 
-		let switchedActiveHermit = false
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (switchedActiveHermit) return
-			switchedActiveHermit = true
+				applySingleUse(game, component.slot)
 
-			applySingleUse(game, component.slot)
+				observer.unsubscribe(player.hooks.afterAttack)
 
-			game.addPickRequest({
-				playerId: player.id,
-				id: component.entity,
-				message: 'Pick one of your Hermits to become the new active Hermit',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.empty)
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						player.changeActiveRow(pickedSlot.row)
-					} else {
-						switchedActiveHermit = false
-					}
-				},
-			})
-		})
-	}
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick one of your Hermits to become the new active Hermit',
+					canPick: query.every(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (pickedSlot.row.entity !== player.activeRowEntity) {
+							player.changeActiveRow(pickedSlot.row)
+						}
+					},
+				})
+			},
+		)
+	},
 }
 
 export default ChorusFruit

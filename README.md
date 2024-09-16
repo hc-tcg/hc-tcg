@@ -60,30 +60,18 @@ You can also configure debug settings using `common/config/debug-config.json`. T
 | unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
 | blockedActions        | Block specific actions every turn.                                          |
 | availableActions      | Make specific actions available every turn.                                 |
+| shuffleDeck           | Shuffe the player's decks at the start of the game.													|
+| logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
 | showHooksState        | Show hooks in the console.                                                  |
 | autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
 
 ### Formatting & coding style
 
-We run lint/prettier/tsc as part of the PR process. We also recommend to run prettier on save in your editor, this is an example configuration using the prettier extension for VSCode:
-
-```jsonc
-// .vscode/settings.json
-{
-	"[json][jsonc]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
-	},
-	"[javascript][typescript][typescriptreact]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
-	},
-	"[css][scss]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
-	},
-	"typescript.tsdk": "node_modules/typescript/lib"
-}
+We run Biome's linter and formatter as part of the PR process. You can use these commands to lint your code:
+```sh
+npm run lint      # check your code for linting and formatting issues
+npm run format    # format your code
+npm run fix       # fix any autofixable linting errors
 ```
 
 # Building & Self Hosting

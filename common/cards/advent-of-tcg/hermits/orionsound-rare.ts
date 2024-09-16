@@ -1,12 +1,12 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OrionSoundRare extends Card {
+class OrionSoundRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'orionsound_rare',
@@ -40,10 +40,14 @@ class OrionSoundRare extends Card {
 		let cardsWithStatusEffects: Array<string> = []
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
+			if (
+				attack.id !== this.getInstanceKey(component) ||
+				attack.type !== 'primary'
+			)
+				return
 
 			game.addPickRequest({
-				playerId: player.id,
+				player: player.entity,
 				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermit),
@@ -60,25 +64,34 @@ class OrionSoundRare extends Card {
 		const afterAttack = (attack: AttackModel) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget || attackTarget.row.health > 0) return
-			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
+			if (
+				attackTarget.player !== pos.player ||
+				attackTarget.rowIndex !== pos.rowIndex
+			)
+				return
 
-			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-				return (
-					cardsWithStatusEffects.includes(ail.targetInstance.component) && ail.props.id == 'melody'
-				)
-			})
+			const statusEffectsToRemove = game.state.statusEffects.filterEntities(
+				(ail) => {
+					return (
+						cardsWithStatusEffects.includes(ail.targetInstance.component) &&
+						ail.props.id == 'melody'
+					)
+				},
+			)
 			statusEffectsToRemove.forEach((ail) => {
 				removeStatusEffect(game, pos, ail)
 			})
 		}
 
 		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(component, (attack) =>
+			afterAttack(attack),
+		)
 	}
 
-	public override onDetach(game: GameModel, component: CardComponent): void {
+	public override onDetach(_game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const componentKey = this.getInstanceKey(component)
+		const _componentKey = this.getInstanceKey(component)
 
 		player.hooks.onAttack.remove(component)
 		player.hooks.afterAttack.remove(component)

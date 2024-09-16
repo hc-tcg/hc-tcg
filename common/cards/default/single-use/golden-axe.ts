@@ -1,35 +1,39 @@
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import query from '../../../components/query'
-import {CardComponent, ObserverComponent} from '../../../components'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
-import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
-class GoldenAxe extends Card {
-	selectionAvailable = false
-
-	props: SingleUse = {
-		...singleUse,
-		id: 'golden_axe',
-		numericId: 31,
-		name: 'Golden Axe',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A40$',
-	}
-
-	override onAttach(game: GameModel, component: CardComponent, observer: ObserverComponent) {
+const GoldenAxe: SingleUse = {
+	...singleUse,
+	id: 'golden_axe',
+	numericId: 31,
+	name: 'Golden Axe',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A40$',
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	) {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			const axeAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -37,19 +41,23 @@ class GoldenAxe extends Card {
 				})
 				.addDamage(component.entity, 40)
 
+			game.components
+				.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
+				.apply(opponentPlayer.getActiveHermit()?.entity)
+
 			return axeAttack
 		})
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (attack.isAttacker(component.entity)) {
-				applySingleUse(game)
-			}
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(query.every(query.slot.opponent, query.slot.attach, query.slot.active))
-			)
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (attack.isAttacker(component.entity)) {
+					applySingleUse(game)
+				}
+			},
+		)
+	},
 }
 
 export default GoldenAxe

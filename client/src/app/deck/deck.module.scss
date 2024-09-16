@@ -20,7 +20,8 @@
 	border: 2px solid var(--color-error-highlight);
 	background: var(--color-error);
 	color: var(--text-light);
-	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%)) drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
+		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
 	z-index: 11;
 }
 
@@ -36,7 +37,7 @@
 	background: var(--gray-600);
 	padding: 0.5rem 0.75rem;
 	border-radius: 6px;
-	font-family: Minecraft;
+	font-family: Minecraft, Unifont;
 }
 
 .cardCount span {
@@ -77,7 +78,11 @@
 	font-size: 1rem;
 	color: gold;
 	text-indent: 3px;
-	background: linear-gradient(to right, rgba(var(--color-700), 0), rgba(var(--color-900), 0.4));
+	background: linear-gradient(
+		to right,
+		rgba(var(--color-700), 0),
+		rgba(var(--color-900), 0.4)
+	);
 	transition: all 0.25s ease-in-out;
 }
 
@@ -254,7 +259,7 @@
 		color: var(--gray-200);
 	}
 
-	&:invalid[data-focused='true'] ~ .errorMessage {
+	&:invalid[data-focused="true"] ~ .errorMessage {
 		display: inline;
 		width: 100%;
 		color: red;
@@ -314,7 +319,7 @@
 }
 
 .editableDeckName:not(:focus) {
-	&:invalid[data-focused='true'] ~ .errorMessage {
+	&:invalid[data-focused="true"] ~ .errorMessage {
 		display: block;
 		width: 100%;
 		color: red;

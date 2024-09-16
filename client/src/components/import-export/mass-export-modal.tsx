@@ -1,10 +1,10 @@
 import * as AlertDialog from '@radix-ui/react-dialog'
-import Button from 'components/button'
-import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
-import css from './import-export.module.scss'
-import {getHashFromDeck} from './import-export-utils'
-import {getSavedDecks} from 'logic/saved-decks/saved-decks'
 import {loadSavedDeck} from 'common/types/deck'
+import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
+import Button from 'components/button'
+import {getSavedDecks} from 'logic/saved-decks/saved-decks'
+import {getHashFromDeck} from './import-export-utils'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
@@ -17,7 +17,9 @@ export function MassExportModal({setOpen, onClose}: Props) {
 		getSavedDecks().forEach((deck) => {
 			let savedDeck = loadSavedDeck(JSON.parse(deck))
 			if (savedDeck) {
-				decks.push(`${savedDeck.name}:${savedDeck.icon}:${getHashFromDeck(savedDeck.cards)}\n`)
+				decks.push(
+					`${savedDeck.name}:${savedDeck.icon}:${getHashFromDeck(savedDeck.cards)}\n`,
+				)
 			}
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
@@ -44,11 +46,16 @@ export function MassExportModal({setOpen, onClose}: Props) {
 							</button>
 						</AlertDialog.Close>
 					</AlertDialog.Title>
-					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
+					<AlertDialog.Description
+						asChild
+						className={ModalCSS.AlertDialogDescription}
+					>
 						<div>
 							{/* EXPORT SECTION */}
 							<div className={css.importControls}>
-								<p className={css.instructions}>Press the export button to export all decks</p>
+								<p className={css.instructions}>
+									Press the export button to export all decks
+								</p>
 								<Button onClick={getExportDecks}>Export decks</Button>
 							</div>
 						</div>
