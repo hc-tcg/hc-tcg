@@ -158,6 +158,7 @@ export function getGameState(
 
 		pickRequests: [],
 		modalRequests: [],
+		soundEffects: [],
 
 		timer: {
 			turnStartTime: 0,

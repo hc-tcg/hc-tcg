@@ -220,6 +220,9 @@ export function* playCardSaga(
 		game.battleLog.addPlayCardEntry(card, currentPlayer.coinFlips, pickedSlot)
 	}
 
+  console.log("PLAY CARD")
+	game.state.soundEffects.push('sfx/Item_Frame_add_item1.ogg')
+
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
 }
