@@ -1,4 +1,18 @@
-import {CARDS} from 'common/cards'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
+import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
+import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import Egg from 'common/cards/alter-egos/single-use/egg'
+import PotionOfSlowness from 'common/cards/alter-egos/single-use/potion-of-slowness'
+import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
+import {Card} from 'common/cards/base/types'
+import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
+import Bow from 'common/cards/default/single-use/bow'
+import Knockback from 'common/cards/default/single-use/knockback'
+import LavaBucket from 'common/cards/default/single-use/lava-bucket'
+import Lead from 'common/cards/default/single-use/lead'
+import Looting from 'common/cards/default/single-use/looting'
+import SplashPotionOfPoison from 'common/cards/default/single-use/splash-potion-of-poison'
+import Spyglass from 'common/cards/default/single-use/spyglass'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
@@ -12,18 +26,18 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-function createUICardInstance(cardId: string): LocalCardInstance {
+function createUICardInstance(card: Card): LocalCardInstance {
 	return {
-		props: WithoutFunctions(CARDS[cardId]),
-		entity: cardId as CardEntity,
+		props: WithoutFunctions(card),
+		entity: card.id as CardEntity,
 		slot: null,
 		turnedOver: false,
 		attackHint: null,
 	} as const
 }
 
-function removeDisabledExpansions(cardId: string) {
-	return !EXPANSIONS[CARDS[cardId].expansion].disabled
+function removeDisabledExpansions(card: Card) {
+	return !EXPANSIONS[card.expansion].disabled
 }
 
 function BossLanding({setMenuSection}: Props) {
@@ -35,26 +49,26 @@ function BossLanding({setMenuSection}: Props) {
 	}
 
 	const nonFunctionalCards = [
-		'knockback',
-		'lead',
-		'looting',
-		'spyglass',
-		'bow',
-		'splash_potion_of_poison',
-		'lava_bucket',
+		Knockback,
+		Lead,
+		Looting,
+		Spyglass,
+		Bow,
+		SplashPotionOfPoison,
+		LavaBucket,
 
-		'egg',
-		'potion_of_slowness',
-		'target_block',
+		Egg,
+		PotionOfSlowness,
+		TargetBlock,
 
-		//'dropper',
-		//'glowstone',
-		//'berry_bush',
+		// Dropper,
+		// Glowstone,
+		// BerryBush,
 	]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
-	const directlyOppositeCards = ['anvil', 'renbob_rare', 'poepoeskizz_rare']
+	const directlyOppositeCards = [Anvil, RenbobRare, PoePoeSkizzRare]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
@@ -65,7 +79,7 @@ function BossLanding({setMenuSection}: Props) {
 			returnText="Main Menu"
 			className={css.bossLanding}
 		>
-			<CardList cards={[createUICardInstance('evilxisuma_boss')]} />
+			<CardList cards={[createUICardInstance(EvilXisumaBossHermitCard)]} />
 			<div className={css.bossRules}>
 				<p>
 					That's right, the Hermitcraft TCG has its first boss fight! This is no

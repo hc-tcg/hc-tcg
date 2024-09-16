@@ -17,7 +17,6 @@ import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
 import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {
-	AnyTurnActionData,
 	AttackActionData,
 	PlayCardActionData,
 } from 'common/types/turn-action-data'
@@ -25,58 +24,53 @@ import {VirtualAI} from 'common/types/virtual-ai'
 import {delay} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
 
-class ExBossAI implements VirtualAI {
-	get id(): string {
-		return 'evilxisuma_boss'
-	}
+const fireDropper = () => {
+	return Math.floor(Math.random() * 9)
+}
 
-	private fireDropper() {
-		return Math.floor(Math.random() * 9)
-	}
+function getBossAttack(player: PlayerComponent) {
+	const lives = player.lives
 
-	getBossAttack(player: PlayerComponent) {
-		const lives = player.lives
+	const attackIndexes: {
+		damage: number
+		secondary?: number
+		tertiary?: number
+	} = {damage: fireDropper()}
 
-		const attackIndexes: {
-			damage: number
-			secondary?: number
-			tertiary?: number
-		} = {damage: this.fireDropper()}
-
-		if (lives === 3) {
-			attackIndexes.damage = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackIndexes.damage]
+	if (lives === 3) {
+		attackIndexes.damage = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackIndexes.damage]
+	} else {
+		let secondary = fireDropper()
+		if (lives === 2) {
+			attackIndexes.damage = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackIndexes.damage]
+			attackIndexes.secondary = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondary]
 		} else {
-			let secondary = this.fireDropper()
-			if (lives === 2) {
-				attackIndexes.damage = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackIndexes.damage]
-				attackIndexes.secondary = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondary]
-			} else {
-				attackIndexes.damage = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackIndexes.damage]
-				attackIndexes.secondary = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondary]
-				attackIndexes.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][this.fireDropper()]
-			}
+			attackIndexes.damage = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackIndexes.damage]
+			attackIndexes.secondary = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondary]
+			attackIndexes.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][fireDropper()]
 		}
-
-		const attackDef: BOSS_ATTACK = [
-			(['50DMG', '70DMG', '90DMG'] as const)[attackIndexes.damage],
-		]
-		if (attackIndexes.secondary !== undefined) {
-			attackDef[1] = (['HEAL150', 'ABLAZE', 'DOUBLE'] as const)[
-				attackIndexes.secondary
-			]
-			if (attackIndexes.tertiary !== undefined)
-				attackDef[2] = (['EFFECTCARD', 'AFK20', 'ITEMCARD'] as const)[
-					attackIndexes.tertiary
-				]
-		}
-
-		return attackDef
 	}
 
-	*getTurnAction(
-		game: GameModel,
-		component: AIComponent,
-	): Generator<any, AnyTurnActionData> {
+	const attackDef: BOSS_ATTACK = [
+		(['50DMG', '70DMG', '90DMG'] as const)[attackIndexes.damage],
+	]
+	if (attackIndexes.secondary !== undefined) {
+		attackDef[1] = (['HEAL150', 'ABLAZE', 'DOUBLE'] as const)[
+			attackIndexes.secondary
+		]
+		if (attackIndexes.tertiary !== undefined)
+			attackDef[2] = (['EFFECTCARD', 'AFK20', 'ITEMCARD'] as const)[
+				attackIndexes.tertiary
+			]
+	}
+
+	return attackDef
+}
+
+const ExBossAI: VirtualAI = {
+	id: 'evilxisuma_boss',
+
+	getTurnAction: function* (game: GameModel, component: AIComponent) {
 		const {playerEntity} = component
 
 		if (game.state.modalRequests.length)
@@ -135,7 +129,7 @@ class ExBossAI implements VirtualAI {
 			)
 			if (bossCard === null)
 				throw new Error(`EX's active hermit cannot be found, please report`)
-			const bossAttack = this.getBossAttack(currentPlayer)
+			const bossAttack = getBossAttack(currentPlayer)
 			supplyBossAttack(bossCard, bossAttack)
 			broadcast(game.getPlayers(), {
 				type: serverMessages.VOICE_ANNOUNCE,
@@ -154,6 +148,7 @@ class ExBossAI implements VirtualAI {
 		const nineEffect = game.components.find(
 			StatusEffectComponent,
 			query.effect.is(ExBossNineStatusEffect),
+			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		)
 		if (nineEffect && nineEffect.counter === 0) {
 			currentPlayer.hooks.onTurnEnd.callSome([[]], (observer) => {
@@ -168,7 +163,7 @@ class ExBossAI implements VirtualAI {
 		}
 
 		return {type: 'END_TURN'}
-	}
+	},
 }
 
 export default ExBossAI

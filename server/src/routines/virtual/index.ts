@@ -1,12 +1,10 @@
-import {AIClass, VirtualAI} from 'common/types/virtual-ai'
+import {VirtualAI} from 'common/types/virtual-ai'
 import ExBossAI from './exboss-ai'
 
-const aiClasses: Array<AIClass> = [ExBossAI]
+const aiClasses: Array<VirtualAI> = [ExBossAI]
 
-export const AI_CLASSES: Record<string, VirtualAI> = aiClasses.reduce(
-	(result: Record<string, VirtualAI>, aiClass) => {
-		let ai = new aiClass()
-		result[aiClass.name] = ai
+export const AI_DEFINITIONS: Record<string, VirtualAI> = aiClasses.reduce(
+	(result: Record<string, VirtualAI>, ai) => {
 		result[ai.id] = ai
 		return result
 	},

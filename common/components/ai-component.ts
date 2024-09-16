@@ -1,7 +1,7 @@
-import {AI_CLASSES} from '../../server/src/routines/virtual'
+import {AI_DEFINITIONS} from '../../server/src/routines/virtual'
 import {AIEntity, PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
-import {AIClass, VirtualAI} from '../types/virtual-ai'
+import {VirtualAI} from '../types/virtual-ai'
 
 export class AIComponent {
 	readonly game: GameModel
@@ -14,14 +14,15 @@ export class AIComponent {
 		game: GameModel,
 		entity: AIEntity,
 		player: PlayerEntity,
-		ai: string | AIClass,
+		ai: string | VirtualAI,
 	) {
 		this.game = game
-		;(this.entity = entity), (this.playerEntity = player)
+		this.entity = entity
+		this.playerEntity = player
 		if (ai instanceof Object) {
-			this.ai = AI_CLASSES[ai.name]
+			this.ai = ai
 		} else {
-			this.ai = AI_CLASSES[ai]
+			this.ai = AI_DEFINITIONS[ai]
 		}
 	}
 
