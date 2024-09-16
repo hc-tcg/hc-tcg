@@ -27,7 +27,6 @@ export type SlotProps = {
 	active?: boolean
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
-	muted?: boolean
 }
 const Slot = ({
 	type,
