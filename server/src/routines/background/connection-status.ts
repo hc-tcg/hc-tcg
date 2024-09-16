@@ -52,7 +52,6 @@ export function* statusChangedSaga(
 
 	const playerId = action.player.id
 	const opponentId = getOpponentId(game, playerId)
-	if (!opponentId) return
 	const connectionStatus = game.players[playerId]?.socket.connected
 
 	if (!opponentId || !game.players[opponentId]) return

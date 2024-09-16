@@ -16,7 +16,6 @@ import {
 	DefaultDictionary,
 	GameEndOutcomeT,
 	GameEndReasonT,
-	GameRules,
 	GameState,
 	Message,
 	TurnAction,
@@ -73,6 +72,7 @@ export type GameSettings = {
 	shuffleDeck: boolean
 	logErrorsToStderr: boolean
 	logBoardState: boolean
+	disableRewardCards: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -94,6 +94,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 		logBoardState: DEBUG_CONFIG.logBoardState,
+		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
 	}
 }
 
@@ -120,8 +121,6 @@ export class GameModel {
 		outcome: GameEndOutcomeT | null
 		reason: GameEndReasonT | null
 	}
-
-	public rules: GameRules
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -150,8 +149,6 @@ export class GameModel {
 			outcome: null,
 			reason: null,
 		}
-
-		this.rules = {}
 
 		this.components = new ComponentTable(this)
 		this.afterGameEnd = new Hook<string, () => void>()

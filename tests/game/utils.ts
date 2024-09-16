@@ -235,7 +235,8 @@ const defaultGameSettings = {
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 	logBoardState: true,
-}
+	disableRewardCards: false,
+} satisfies GameSettings
 
 /**
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
@@ -297,28 +298,38 @@ export function testBossFight(
 		 * }
 		 */
 		saga: (game: GameModel) => any
+		// This is the place to check the state of the game after it ends.
+		then?: (game: GameModel) => any
 		playerDeck: Array<Card>
 	},
 	settings?: Partial<GameSettings>,
 ) {
-	let newBossGame = new GameModel(
+	let game = new GameModel(
 		getTestPlayer('playerOne', options.playerDeck),
-		getTestPlayer('EX', [EvilXisumaBossHermitCard]),
-		{...defaultGameSettings, ...settings},
+		{
+			model: {
+				name: 'EX',
+				censoredName: 'EX',
+				minecraftName: 'EvilXisuma',
+				disableDeckingOut: true,
+			},
+			deck: [EvilXisumaBossHermitCard],
+		},
+		{...defaultGameSettings, ...settings, disableRewardCards: true},
 		{randomizeOrder: false},
 	)
 
-	newBossGame.state.isBossGame = true
+	game.state.isBossGame = true
 
 	function destroyRow(row: RowComponent) {
-		newBossGame.components
+		game.components
 			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-		newBossGame.components.delete(row.entity)
+			.forEach((slotEntity) => game.components.delete(slotEntity))
+		game.components.delete(row.entity)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGame.components
+	game.components
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
@@ -326,7 +337,7 @@ export function testBossFight(
 		)
 		.forEach(destroyRow)
 	// Remove boss' rows other than index 0
-	newBossGame.components
+	game.components
 		.filter(
 			RowComponent,
 			query.row.currentPlayer,
@@ -334,19 +345,31 @@ export function testBossFight(
 		)
 		.forEach(destroyRow)
 	// Remove boss' item slots
-	newBossGame.components
+	game.components
 		.filterEntities(
 			BoardSlotComponent,
 			query.slot.currentPlayer,
 			query.slot.item,
 		)
-		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-	newBossGame.rules = {
-		disableRewardCards: true,
-		disableVirtualDeckOut: true,
+		.forEach((slotEntity) => game.components.delete(slotEntity))
+
+	let testEnded = false
+
+	testSagas(
+		call(function* () {
+			yield* call(gameSaga, game)
+		}),
+		call(function* () {
+			yield* call(options.saga, game)
+			testEnded = true
+		}),
+	)
+
+	if (!options.then && !testEnded) {
+		throw new Error('Game was ended before the test finished running.')
 	}
 
-	testSagas(call(gameSaga, newBossGame), call(options.saga, newBossGame))
+	if (options.then) options.then(game)
 }
 
 export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {

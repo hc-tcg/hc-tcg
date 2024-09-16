@@ -74,7 +74,7 @@ class BerryBush extends CardOld {
 		if (slot && type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
-			row.itemCards = row.itemCards.map(() => null)
+			row.itemCards = []
 		}
 
 		player.hooks.afterAttack.remove(component)

@@ -298,7 +298,7 @@ function* checkHermitHealth(game: GameModel) {
 				playerState.lives -= 1
 
 				// reward card
-				if (game.rules.disableRewardCards) continue
+				if (game.settings.disableRewardCards) continue
 				game.components
 					.filter(
 						CardComponent,

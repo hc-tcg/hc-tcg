@@ -336,15 +336,14 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const EX_BOSS = {
+	const newBossGame = setupSolitareGame(player, {
 		name: 'EX',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'EX',
 		deck: [EvilXisumaBossHermitCard],
 		virtualAI: ExBossAI,
-	}
-
-	const newBossGame = setupSolitareGame(player, EX_BOSS)
+		disableDeckingOut: true,
+	})
 	newBossGame.state.isBossGame = true
 
 	function destroyRow(row: RowComponent) {
@@ -379,10 +378,7 @@ export function* createBossGame(
 		)
 		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
 
-	newBossGame.rules = {
-		disableRewardCards: true,
-		disableVirtualDeckOut: true,
-	}
+	newBossGame.settings.disableRewardCards = true
 
 	root.addGame(newBossGame)
 
