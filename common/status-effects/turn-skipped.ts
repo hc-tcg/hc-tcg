@@ -4,16 +4,13 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	hiddenStatusEffect,
-} from './status-effect'
+import {onTurnEnd} from '../types/priorities'
+import {StatusEffect, hiddenStatusEffect} from './status-effect'
 
-class TurnSkippedEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = hiddenStatusEffect
-
-	public override onApply(
+const TurnSkippedEffect: StatusEffect<PlayerComponent> = {
+	...hiddenStatusEffect,
+	id: 'turn-skipped',
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -21,7 +18,7 @@ class TurnSkippedEffect extends PlayerStatusEffect {
 	): void {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(
-				this.props.icon,
+				this.icon,
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
 				'SINGLE_USE_ATTACK',
@@ -33,10 +30,14 @@ class TurnSkippedEffect extends PlayerStatusEffect {
 				'PLAY_EFFECT_CARD',
 			)
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
+	},
 }
 
 export default TurnSkippedEffect

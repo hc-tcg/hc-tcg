@@ -2,11 +2,11 @@ import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class OrionSoundRare extends Card {
+class OrionSoundRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'orionsound_rare',

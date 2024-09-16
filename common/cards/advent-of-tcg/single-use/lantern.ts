@@ -1,11 +1,11 @@
 import {CardComponent} from '../../../components'
 import {query} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Lantern extends Card {
+class Lantern extends CardOld {
 	props: SingleUse = {
 		...singleUse,
 		id: 'lantern',
@@ -33,8 +33,8 @@ class Lantern extends Card {
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Lantern',
 						modalDescription: 'Choose 2 cards to draw immediately.',
@@ -65,8 +65,8 @@ class Lantern extends Card {
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
-						data: {
-							modalId: 'selectCards',
+						modall: {
+							type: 'selectCards',
 							payload: {
 								modalName: 'Lantern',
 								modalDescription: 'Cards your opponent drew.',

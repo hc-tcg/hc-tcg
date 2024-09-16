@@ -1,4 +1,4 @@
-import type {Attach, CardProps, HasHealth} from '../cards/base/types'
+import type {Attach, Card, HasHealth} from '../cards/base/types'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'
@@ -18,7 +18,7 @@ export type LocalRowState = {
 	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
 	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
-	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<Card> | null}>
 	health: number | null
 }
 
@@ -47,30 +47,6 @@ export type BattleLogT = {
 	description: string
 }
 
-export type GenericActionResult =
-	| 'SUCCESS'
-	| 'FAILURE_INVALID_DATA'
-	| 'FAILURE_NOT_APPLICABLE'
-	| 'FAILURE_ACTION_NOT_AVAILABLE'
-	| 'FAILURE_CANNOT_COMPLETE'
-	| 'FAILURE_UNKNOWN_ERROR'
-
-export type PlayCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_UNMET_CONDITION'
-	| 'FAILURE_UNMET_CONDITION_SILENT'
-
-export type PickCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_WRONG_PICK'
-
-export type ActionResult =
-	| GenericActionResult
-	| PlayCardActionResult
-	| PickCardActionResult
-
 export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
@@ -96,11 +72,6 @@ export type GameState = {
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
-
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
 
 	timer: {
 		turnStartTime: number
@@ -193,11 +164,6 @@ export type LocalGameState = {
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
-
 	currentCardsCanBePlacedIn: Array<
 		[LocalCardInstance, Array<SlotEntity>]
 	> | null
@@ -235,6 +201,12 @@ export type GameLog = {
 	startHand2: Array<CardComponent>
 	startTimestamp: number
 	startDeck: string
+}
+
+export type UsedHermitAttackInfo = {
+	readonly attackType: 'primary' | 'secondary'
+	readonly attacker: CardComponent
+	readonly turn: number
 }
 
 export abstract class DefaultDictionary<Keys, Type> {

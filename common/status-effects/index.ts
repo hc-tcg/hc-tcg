@@ -11,10 +11,12 @@ import DyedEffect from './dyed'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
+import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
@@ -40,7 +42,7 @@ import TurnSkippedEffect from './turn-skipped'
 import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
-const effectClasses: Array<new () => StatusEffect> = [
+export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
@@ -78,13 +80,12 @@ const effectClasses: Array<new () => StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	IgnoreAttachSlotEffect,
+	LooseShellEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
-	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
-		let effect = new effectClass()
-		if (!effect.props) return result
-		result[effectClass.name] = effect
-		result[effect.props.icon] = effect
+	STATUS_EFFECTS_LIST.reduce((result: Record<string, StatusEffect>, effect) => {
+		result[effect.id] = effect
 		return result
 	}, {})

@@ -1,6 +1,6 @@
 import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
+import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -31,7 +31,7 @@ import gameSaga, {getTimerForSeconds} from './game'
 function setupGame(
 	player1: PlayerModel,
 	player2: PlayerModel,
-	gameCode?: string,
+	code?: string,
 	spectatorCode?: string,
 ): GameModel {
 	let game = new GameModel(
@@ -43,8 +43,8 @@ function setupGame(
 			model: player2,
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-		gameCode,
-		spectatorCode,
+		gameSettingsFromEnv(),
+		{code, spectatorCode},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -72,7 +72,9 @@ function* gameManager(game: GameModel) {
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType = game.gameCode ? 'Private' : 'Public'
-		console.log(
+
+		console.info(
+			`${game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers[0].player.name} + ${viewers[1].player.name}.`,
 			'Total games:',
@@ -90,7 +92,9 @@ function* gameManager(game: GameModel) {
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
-			playerRemoved: take(
+			playerRemoved: take<
+				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+			>(
 				(action: any) =>
 					action.type === localMessages.PLAYER_REMOVED &&
 					playerIds.includes(
@@ -98,10 +102,13 @@ function* gameManager(game: GameModel) {
 							.player.id,
 					),
 			),
-			forfeit: take(
+			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
 				(action: any) =>
 					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(action.playerId),
+					playerIds.includes(
+						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
+							.playerId,
+					),
 			),
 		})
 
@@ -109,7 +116,7 @@ function* gameManager(game: GameModel) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
 				if (!game.endInfo.reason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -118,7 +125,7 @@ function* gameManager(game: GameModel) {
 						.forEach((player) => (player.coinFlips = []))
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, viewer.player.id)
+			const outcome = getGamePlayerOutcome(game, result, viewer)
 			// assert(game.endInfo.reason, 'Games can not end without a reason')
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,

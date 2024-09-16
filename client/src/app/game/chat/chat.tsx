@@ -7,6 +7,7 @@ import {
 	getGameState,
 	getIsSpectator,
 	getOpponentName,
+	getPlayerEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -22,9 +23,10 @@ function clamp(n: number, min: number, max: number): number {
 function Chat() {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
-	const chatMessages = !settings.disableChat ? useSelector(getChatMessages) : []
+	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
+	const playerEntity = useSelector(getPlayerEntity)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
@@ -39,7 +41,7 @@ function Chat() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'showChat',
+				key: 'showChatWindow',
 				value: false,
 			},
 		})
@@ -81,7 +83,7 @@ function Chat() {
 		}
 	})
 
-	if (!settings.showChat) return null
+	if (!settings.showChatWindow) return null
 
 	const handleNewMessage = (ev: SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -98,7 +100,7 @@ function Chat() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'showChat',
+				key: 'showChatWindow',
 				value: false,
 			},
 		})
@@ -202,7 +204,7 @@ function Chat() {
 								>
 									{FormattedText(line.message, {
 										isOpponent,
-										censorProfanity: settings.profanityFilter,
+										censorProfanity: settings.profanityFilterEnabled,
 									})}
 								</span>
 							</div>

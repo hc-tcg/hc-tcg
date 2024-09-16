@@ -1,11 +1,11 @@
 import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import CardOld from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DungeonTangoRare extends Card {
+class DungeonTangoRare extends CardOld {
 	props: Hermit = {
 		...hermit,
 		id: 'dungeontango_rare',

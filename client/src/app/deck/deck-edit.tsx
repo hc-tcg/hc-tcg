@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import {CARDS_LIST} from 'common/cards'
-import Card from 'common/cards/base/card'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
@@ -44,7 +43,7 @@ const EXPANSION_NAMES = [
 	...Object.keys(EXPANSIONS).filter((expansion) => {
 		return CARDS_LIST.some(
 			(card) =>
-				card.props.expansion === expansion &&
+				card.expansion === expansion &&
 				EXPANSIONS[expansion].disabled === false,
 		)
 	}),
@@ -171,8 +170,8 @@ export function sortCards(
 
 const ALL_CARDS = sortCards(
 	CARDS_LIST.map(
-		(card: Card): LocalCardInstance => ({
-			props: WithoutFunctions(card.props),
+		(card): LocalCardInstance => ({
+			props: WithoutFunctions(card),
 			entity: newEntity('deck_editor_card'),
 			slot: null,
 			attackHint: null,
@@ -342,7 +341,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		})
 		back()
 	}
-	const validationMessage = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(loadedDeck.cards)
 
 	return (
 		<>
@@ -521,10 +520,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					}
 				>
 					<div style={{margin: '0.5rem'}}>
-						{validationMessage && (
+						{!validationResult.valid && (
 							<div className={css.validationMessage}>
 								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span>{' '}
-								{validationMessage}
+								{validationResult.reason}
 							</div>
 						)}
 

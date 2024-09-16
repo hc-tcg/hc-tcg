@@ -5,27 +5,22 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {flipCoin} from '../utils/coinFlips'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export class AussiePingEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'aussie-ping',
-		name: 'Weak Connection',
-		description:
-			'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
-		applyCondition: (_game, player) => {
-			if (!(player instanceof PlayerComponent)) return false
-			return !player.hasStatusEffect(AussiePingImmuneEffect)
-		},
-	}
-
-	override onApply(
+export const AussiePingEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'aussie-ping',
+	icon: 'aussie-ping',
+	name: 'Weak Connection',
+	description:
+		'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
+	applyCondition: (_game, player) => {
+		if (!(player instanceof PlayerComponent)) return false
+		return !player.hasStatusEffect(AussiePingImmuneEffect)
+	},
+	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -33,64 +28,56 @@ export class AussiePingEffect extends PlayerStatusEffect {
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-			if (!attack.attacker) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+				if (!attack.attacker) return
 
-			// No need to flip a coin for multiple attacks
-			if (!coinFlipResult) {
-				const coinFlip = flipCoin(
-					player.opponentPlayer,
-					effect.creator,
-					1,
-					player,
-				)
-				coinFlipResult = coinFlip[0]
-			}
-
-			if (coinFlipResult === 'heads') {
-				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
-			}
-		})
-
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (!coinFlipResult) return
-			effect.remove()
-			if (coinFlipResult === 'heads') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						AussiePingImmuneEffect,
-						effect.creator.entity,
+				// No need to flip a coin for multiple attacks
+				if (!coinFlipResult) {
+					const coinFlip = flipCoin(
+						player.opponentPlayer,
+						effect.creator,
+						1,
+						player,
 					)
-					.apply(player.entity)
-			}
-		})
+					coinFlipResult = coinFlip[0]
+				}
 
-		observer.subscribe(player.hooks.onTurnEnd, (_) => {
-			effect.remove()
-			if (coinFlipResult === 'heads') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						AussiePingImmuneEffect,
-						effect.creator.entity,
-					)
-					.apply(player.entity)
-			}
-		})
-	}
+				if (coinFlipResult === 'heads') {
+					attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			(_) => {
+				effect.remove()
+				if (coinFlipResult === 'heads') {
+					game.components
+						.new(
+							StatusEffectComponent,
+							AussiePingImmuneEffect,
+							effect.creator.entity,
+						)
+						.apply(player.entity)
+				}
+			},
+		)
+	},
 }
 
-export class AussiePingImmuneEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'aussie-ping-immune',
-		name: 'Strong Connection',
-		description: 'You are immune to Aussie Ping for the duration of this turn.',
-	}
-
-	override onApply(
+export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'aussie-ping-immune',
+	icon: 'aussie-ping-immune',
+	name: 'Strong Connection',
+	description: 'You are immune to Aussie Ping for the duration of this turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -99,5 +86,5 @@ export class AussiePingImmuneEffect extends PlayerStatusEffect {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			effect.remove()
 		})
-	}
+	},
 }

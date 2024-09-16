@@ -6,31 +6,28 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
-import Card from '../../base/card'
+import {onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Bed extends Card {
-	props: Attach = {
-		...attach,
-		id: 'bed',
-		numericId: 2,
-		expansion: 'default',
-		name: 'Bed',
-		rarity: 'ultra_rare',
-		tokens: 2,
-		description:
-			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'sleeping',
-			},
-		],
-		attachCondition: query.every(attach.attachCondition, query.slot.active),
-	}
-
-	override onAttach(
+const Bed: Attach = {
+	...attach,
+	id: 'bed',
+	numericId: 2,
+	expansion: 'default',
+	name: 'Bed',
+	rarity: 'ultra_rare',
+	tokens: 2,
+	description:
+		'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'sleeping',
+		},
+	],
+	attachCondition: query.every(attach.attachCondition, query.slot.active),
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -71,13 +68,17 @@ class Bed extends Card {
 			}
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			// if sleeping has worn off, discard the bed
-			if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
-				component.discard()
-			}
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				// if sleeping has worn off, discard the bed
+				if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
+					component.discard()
+				}
+			},
+		)
+	},
 }
 
 export default Bed

@@ -1,4 +1,4 @@
-import {CardClass} from '../cards/base/card'
+import {Card} from '../cards/base/types'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -9,7 +9,6 @@ import {
 } from '../components'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
@@ -17,7 +16,14 @@ import {GameState} from '../types/game-state'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
-	deck: Array<number | string | CardClass>
+	deck: Array<number | string | Card>
+}
+
+type ComponentSetupOptions = {
+	shuffleDeck: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	extraStartingCards: Array<string>
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -29,23 +35,25 @@ export function setupComponents(
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
+	options: ComponentSetupOptions,
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
-	deck: Array<number | string | CardClass>,
+	deck: Array<number | string | Card>,
+	options: ComponentSetupOptions,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'random',
+			position: options.shuffleDeck ? 'random' : 'back',
 		})
 		components.new(CardComponent, card, slot.entity)
 	}
@@ -112,12 +120,10 @@ function setupEcsForPlayer(
 	}
 
 	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards
-			? sortedCards.length
-			: 7
+		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
+	for (let i = 0; i < options.extraStartingCards.length; i++) {
+		const id = options.extraStartingCards[i]
 		let slot = components.new(HandSlotComponent, playerEntity)
 		components.new(CardComponent, id, slot.entity)
 	}
@@ -127,11 +133,16 @@ function setupEcsForPlayer(
 	})
 }
 
-export function getGameState(game: GameModel): GameState {
+export function getGameState(
+	game: GameModel,
+	randomizeOrder: boolean = true,
+): GameState {
 	const playerEntities = game.components.filter(PlayerComponent)
 
-	if (Math.random() >= 0.5) {
-		playerEntities.reverse()
+	if (randomizeOrder !== false) {
+		if (Math.random() >= 0.5) {
+			playerEntities.reverse()
+		}
 	}
 
 	const gameState: GameState = {
@@ -144,7 +155,6 @@ export function getGameState(game: GameModel): GameState {
 			currentAttack: null,
 		},
 		order: playerEntities.map((x) => x.entity),
-		lastActionResult: null,
 
 		pickRequests: [],
 		modalRequests: [],

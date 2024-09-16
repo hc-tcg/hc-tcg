@@ -6,11 +6,9 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '.'
-import type Card from '../cards/base/card'
-import {CardClass} from '../cards/base/card'
 import {
 	type Attach,
-	type CardProps,
+	type Card,
 	type HasHealth,
 	type Hermit,
 	type Item,
@@ -28,7 +26,7 @@ import type {
 	SlotEntity,
 } from '../entities'
 import type {GameModel} from '../models/game-model'
-import {CardStatusEffect} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {GameHook} from '../types/hooks'
 import query from './query'
 
@@ -36,9 +34,9 @@ let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
-export class CardComponent<Props extends CardProps = CardProps> {
+export class CardComponent<CardType extends Card = Card> {
 	readonly game: GameModel
-	readonly card: Card<Props>
+	readonly props: CardType
 	readonly entity: CardEntity
 
 	slotEntity: SlotEntity
@@ -53,16 +51,16 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	constructor(
 		game: GameModel,
 		entity: CardEntity,
-		card: number | string | CardClass,
+		card: number | string | Card,
 		slot: SlotEntity,
 	) {
 		this.game = game
 		this.entity = entity
 		this.observerEntity = null
 		if (card instanceof Object) {
-			this.card = CARDS[card.name] as Card<Props>
+			this.props = CARDS[card.id] as CardType
 		} else {
-			this.card = CARDS[card] as Card<Props>
+			this.props = CARDS[card] as CardType
 		}
 
 		this.slotEntity = slot
@@ -70,7 +68,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player?.hooks.onAttach.call(this)
 		}
 
@@ -80,7 +78,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			onChangeSlot: new GameHook(),
 		}
 
-		this.card.onCreate(this.game, this)
+		this.props.onCreate(this.game, this)
 	}
 
 	/** A function that is used to order cards by thier slot's order.
@@ -96,10 +94,6 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	static compareOrder(a: CardComponent, b: CardComponent) {
 		if (!('order' in a.slot) || !('order' in b.slot)) return 0
 		return (a.slot.order as number) - (b.slot.order as number)
-	}
-
-	public get props(): Props {
-		return this.card.props
 	}
 
 	/** The slot that this card is in */
@@ -122,15 +116,19 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public isItem(): this is CardComponent<Item> {
 		return isItem(this.props)
 	}
+
 	public isSingleUse(): this is CardComponent<SingleUse> {
 		return isSingleUse(this.props)
 	}
+
 	public isAttach(): this is CardComponent<Attach> {
 		return isAttach(this.props)
 	}
+
 	public isHealth(): this is CardComponent<HasHealth> {
 		return isHealth(this.props)
 	}
+
 	public isHermit(): this is CardComponent<Hermit> {
 		return isHermit(this.props)
 	}
@@ -162,7 +160,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 			let observer = this.game.components.get(this.observerEntity)
 			if (!observer) throw new Error('Observer expected to be in ECS')
 			observer.unsubscribeFromEverything()
-			this.card.onDetach(this.game, this, observer)
+			this.props.onDetach(this.game, this, observer)
 			this.player.hooks.onDetach.call(this)
 		}
 
@@ -171,7 +169,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
 			this.observerEntity = observer.entity
-			this.card.onAttach(this.game, this, observer)
+			this.props.onAttach(this.game, this, observer)
 			this.player.hooks.onAttach.call(this)
 		}
 
@@ -202,7 +200,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		)
 	}
 
-	public getStatusEffect(...statusEffect: Array<new () => CardStatusEffect>) {
+	public getStatusEffect(...statusEffect: Array<StatusEffect<CardComponent>>) {
 		return this.game.components.find(
 			StatusEffectComponent,
 			query.effect.is(...statusEffect),

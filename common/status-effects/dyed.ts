@@ -1,19 +1,14 @@
 import {CardComponent} from '../components'
-import {
-	CardStatusEffect,
-	StatusEffectProps,
-	statusEffect,
-} from './status-effect'
+import {StatusEffect, statusEffect} from './status-effect'
 
-class DyedEffect extends CardStatusEffect {
-	props: StatusEffectProps = {
-		...statusEffect,
-		icon: 'dyed',
-		name: 'Dyed',
-		description: 'Items attached to this Hermit become any type.',
-		applyCondition: (_game, card) =>
-			card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
-	}
+const DyedEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	id: 'dyed',
+	icon: 'dyed',
+	name: 'Dyed',
+	description: 'Items attached to this Hermit become any type.',
+	applyCondition: (_game, card) =>
+		card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
 
 	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
 	// 	target.player.hooks.availableEnergy.add(effect, (availableEnergy) => {

@@ -6,7 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '..'
-import {CardClass} from '../../cards/base/card'
+import {Card} from '../../cards/base/types'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'
 
@@ -117,15 +117,20 @@ export const index = (
 	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
+export const rowIndex = (
+	index: number | null | undefined,
+): ComponentQuery<SlotComponent> => {
+	return (_game, pos) =>
+		pos.inRow() && index !== null && pos.row.index === index
+}
+
 export const entity = (
 	entity: SlotEntity | null | undefined,
 ): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => pos.entity === entity
 }
 
-export const has = (
-	...cards: Array<CardClass>
-): ComponentQuery<SlotComponent> => {
+export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		return game.components.exists(
 			CardComponent,
@@ -154,7 +159,7 @@ export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 export function hasStatusEffect(
-	statusEffect: new () => StatusEffect,
+	statusEffect: StatusEffect,
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
 		return game.components.exists(

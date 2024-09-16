@@ -1,6 +1,11 @@
 import {CARDS} from 'common/cards'
-import Card from 'common/cards/base/card'
-import {CardProps, Hermit, isHermit} from 'common/cards/base/types'
+import {
+	Card,
+	isAttach,
+	isHermit,
+	isItem,
+	isSingleUse,
+} from 'common/cards/base/types'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -63,14 +68,14 @@ export function getStarterPack(): Array<LocalCardInstance> {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!cardInfo.isHermit() ||
-			!cardInfo.isItem() ||
-			(types.includes(cardInfo.props.type) &&
-				EXPANSIONS[cardInfo.props.expansion].disabled === false),
+			!isHermit(cardInfo) ||
+			!isItem(cardInfo) ||
+			(types.includes(cardInfo.type) &&
+				EXPANSIONS[cardInfo.expansion].disabled === false),
 	)
 
 	const effectCards = cards.filter(
-		(card) => card.isSingleUse() || card.isAttach(),
+		(card) => isSingleUse(card) || isAttach(card),
 	)
 	const hermitCount = typesCount === 2 ? 8 : 10
 
@@ -96,9 +101,9 @@ export function getStarterPack(): Array<LocalCardInstance> {
 
 	// hermits, but not diamond ones
 	let hermitCards = cards
-		.filter((card) => card.isHermit())
-		.filter((card) => !isHermit(card.props) || types.includes(card.props.type))
-		.filter((card) => card.props.name !== 'diamond') as Array<Card<Hermit>>
+		.filter((card) => isHermit(card))
+		.filter((card) => !isHermit(card) || types.includes(card.type))
+		.filter((card) => card.name !== 'diamond')
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -114,11 +119,10 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		)
 
 		tokens +=
-			(hermitCard.props.tokens !== 'wild' ? hermitCard.props.tokens : 1) *
-			hermitAmount
+			(hermitCard.tokens !== 'wild' ? hermitCard.tokens : 1) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.props.type].items += 2
+			itemCounts[hermitCard.type].items += 2
 		}
 	}
 
@@ -138,12 +142,11 @@ export function getStarterPack(): Array<LocalCardInstance> {
 			effectCards[Math.floor(Math.random() * effectCards.length)]
 
 		const duplicates = deck.filter(
-			(card) => card.props.numericId === effectCard.props.numericId,
+			(card) => card.numericId === effectCard.numericId,
 		)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
-		const tokenCost =
-			effectCard.props.tokens !== 'wild' ? effectCard.props.tokens : 1
+		const tokenCost = effectCard.tokens !== 'wild' ? effectCard.tokens : 1
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue
@@ -162,7 +165,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 
 	return deck.map((card) => {
 		return {
-			props: WithoutFunctions(CARDS[card.props.numericId].props),
+			props: WithoutFunctions(CARDS[card.numericId]),
 			entity: newEntity('card-entity') as CardEntity,
 			slot: null,
 			turnedOver: false,
@@ -186,17 +189,17 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 	}
 }
 
-function getLocalCard<Props extends CardProps>(
+export function getLocalCard<CardType extends Card>(
 	game: GameModel,
-	card: CardComponent<Props>,
-): LocalCardInstance<Props> {
+	card: CardComponent<CardType>,
+): LocalCardInstance<CardType> {
 	let attackPreview = null
 	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
 		attackPreview = card.props.attackPreview(game)
 	}
 
 	return {
-		props: card.card.props as WithoutFunctions<Props>,
+		props: card.props as WithoutFunctions<CardType>,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
@@ -204,19 +207,16 @@ function getLocalCard<Props extends CardProps>(
 	}
 }
 
-function getLocalModalDataPayload(
-	game: GameModel,
-	modal: ModalData,
-): LocalModalData['payload'] {
-	if (modal.modalId == 'selectCards') {
+function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
+	if (modal.type == 'selectCards') {
 		return {
-			...modal.payload,
-			cards: modal.payload.cards.map((entity) =>
+			...modal,
+			cards: modal.cards.map((entity) =>
 				getLocalCard(game, game.components.get(entity)!),
 			),
 		}
-	} else if (modal.modalId === 'copyAttack') {
-		let hermitCard = game.components.get(modal.payload.hermitCard)!
+	} else if (modal.type === 'copyAttack') {
+		let hermitCard = game.components.get(modal.hermitCard)!
 		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
 			[[]],
 			(observerEntity) => {
@@ -255,20 +255,13 @@ function getLocalModalDataPayload(
 		}
 
 		return {
-			...modal.payload,
+			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
 			blockedActions: blockedActions,
 		}
 	}
 
 	throw new Error('Uknown modal type')
-}
-
-function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
-	return {
-		modalId: modal.modalId,
-		payload: getLocalModalDataPayload(game, modal),
-	} as LocalModalData
 }
 
 function getLocalCoinFlip(
@@ -416,7 +409,7 @@ export function getLocalGameState(
 
 	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
-		currentModalData = getLocalModalData(game, currentModalRequest.data)
+		currentModalData = getLocalModalData(game, currentModalRequest.modal)
 	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
@@ -495,8 +488,6 @@ export function getLocalGameState(
 		playerEntity: players[viewer.playerOnLeft.entity].entity,
 		// The entity for the player on the the right of the screen
 		opponentPlayerEntity: players[viewer.playerOnRight.entity].entity,
-
-		lastActionResult: game.state.lastActionResult,
 
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()

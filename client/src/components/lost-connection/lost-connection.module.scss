@@ -7,7 +7,7 @@
 	z-index: 2000;
 
 	&::after {
-		content: '';
+		content: "";
 		position: absolute;
 		inset: 0;
 		background: radial-gradient(
@@ -24,12 +24,12 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 1vh;
-	font-family: Minecraft;
+	font-family: Minecraft, Unifont;
 	color: white;
 	font-size: 2vh;
 	text-align: center;
 	padding: 3vh;
-	border-image: url('/images/game/border_frame_gold.png') 30 / 20px;
+	border-image: url("/images/game/border_frame_gold.png") 30 / 20px;
 
 	h1 {
 		font-size: 3vh;

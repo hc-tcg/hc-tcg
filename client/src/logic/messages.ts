@@ -1,4 +1,5 @@
 import {PlayerEntity} from 'common/entities'
+import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'
@@ -11,7 +12,6 @@ import {
 import {Message as ChatMessage} from 'common/types/game-state'
 import {
 	LocalCardInstance,
-	LocalModalResult,
 	PlayerInfo,
 	SlotInfo,
 } from 'common/types/server-requests'
@@ -30,6 +30,7 @@ export const localMessages = messages({
 	SOCKET_DISCONNECT: null,
 	SOCKET_CONNECT_ERROR: null,
 	LOGIN: null,
+	PLAYER_SESSION_SET: null,
 	PLAYER_INFO_SET: null,
 	DISCONNECT: null,
 	LOGOUT: null,
@@ -64,7 +65,6 @@ export const localMessages = messages({
 	GAME_END_OVERLAY_HIDE: null,
 	GAME_COIN_FLIP_SET: null,
 	GAME_OPPONENT_CONNECTION_SET: null,
-	GAME_MODAL_REQUEST: null,
 	GAME_ACTIONS_HERMIT_CHANGE_CONFIRM: null,
 	CHAT_MESSAGE: null,
 	CHAT_UPDATE: null,
@@ -78,6 +78,7 @@ export const localMessages = messages({
 	FIREBASE_STATS: null,
 	SETTINGS_SET: null,
 	SETTINGS_RESET: null,
+	ALL_SETTINGS_RESET: null,
 	SOUND_PLAY: null,
 	SOUND_SECTION_CHANGE: null,
 })
@@ -88,6 +89,15 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
 	{type: typeof localMessages.LOGIN; name: string},
+	{
+		type: typeof localMessages.PLAYER_SESSION_SET
+		player: {
+			playerName: string
+			censoredPlayerName: string
+			playerId: PlayerId
+			playerSecret: string
+		}
+	},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
@@ -168,10 +178,6 @@ type Messages = [
 	},
 	{type: typeof localMessages.GAME_OPPONENT_CONNECTION_SET; connected: boolean},
 	{
-		type: typeof localMessages.GAME_MODAL_REQUEST
-		modalResult: LocalModalResult
-	},
-	{
 		type: typeof localMessages.GAME_ACTIONS_HERMIT_CHANGE_CONFIRM
 		confirmed: boolean
 	},
@@ -201,6 +207,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.SETTINGS_SET; setting: LocalSetting},
 	{type: typeof localMessages.SETTINGS_RESET; key: keyof LocalSettings},
+	{type: typeof localMessages.ALL_SETTINGS_RESET},
 	{type: typeof localMessages.SOUND_PLAY; path: string},
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
 ]

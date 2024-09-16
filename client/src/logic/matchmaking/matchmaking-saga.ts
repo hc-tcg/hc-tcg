@@ -207,7 +207,7 @@ function* joinQueueSaga() {
 	}
 }
 
-function* reconnectSaga() {
+export function* reconnectSaga() {
 	const reconnectState = yield* call(
 		receiveMsg(serverMessages.GAME_STATE_ON_RECONNECT),
 	)

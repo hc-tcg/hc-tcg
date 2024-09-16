@@ -17,8 +17,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'confirmationDialogs',
-				value: !settings.confirmationDialogs,
+				key: 'confirmationDialogsEnabled',
+				value: !settings.confirmationDialogsEnabled,
 			},
 		})
 	}
@@ -39,8 +39,8 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'disableChat',
-				value: !settings.disableChat,
+				key: 'chatEnabled',
+				value: !settings.chatEnabled,
 			},
 		})
 	}
@@ -48,8 +48,17 @@ function GameSettings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'profanityFilter',
-				value: !settings.profanityFilter,
+				key: 'profanityFilterEnabled',
+				value: !settings.profanityFilterEnabled,
+			},
+		})
+	}
+	const handleSlotHighlightingChange = () => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'slotHighlightingEnabled',
+				value: !settings.slotHighlightingEnabled,
 			},
 		})
 	}
@@ -85,36 +94,41 @@ function GameSettings({setMenuSection}: Props) {
 					Game Side: {settings.gameSide.toString()}
 				</Button>
 				<Button variant="stone" onClick={handleDialogsChange}>
-					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+					Confirmation Dialogs:{' '}
+					{getDescriptor(settings.confirmationDialogsEnabled)}
 				</Button>
 				<Button variant="stone" onClick={handleChatChange}>
-					Hide Chat: {getDescriptor(settings.disableChat)}
+					In-Game Chat: {getDescriptor(settings.chatEnabled)}
 				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
-					Profanity Filter: {getDescriptor(settings.profanityFilter)}
+					Profanity Filter: {getDescriptor(settings.profanityFilterEnabled)}
+				</Button>
+				<Button variant="stone" onClick={handleSlotHighlightingChange}>
+					Card Slot Highlighting:{' '}
+					{getDescriptor(settings.slotHighlightingEnabled)}
 				</Button>
 				<div className={css.minecraftNameArea}>
-					<div className={css.upper}>
-						<h3>Ingame Player head</h3>
+					<div className={css.left}>
 						<img
 							className={css.playerHead}
 							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
 							alt="player head"
 						/>
 					</div>
-					<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
-						<div className={css.customInput}>
-							<input
-								maxLength={16}
-								name="minecraftName"
-								placeholder=" "
-								autoFocus
-								id="minecraft-name"
-							></input>
-							<label htmlFor="minecraft-name">Minecraft Username</label>
-						</div>
-						<Button variant="stone">Select</Button>
-					</form>
+					<div className={css.right}>
+						<p>Select in-game player head</p>
+						<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
+							<div className={css.customInput}>
+								<input
+									maxLength={16}
+									name="minecraftName"
+									placeholder="Minecraft Username"
+									id="minecraft-name"
+								></input>
+							</div>
+							<Button variant="stone">Select</Button>
+						</form>
+					</div>
 				</div>
 			</div>
 		</MenuLayout>

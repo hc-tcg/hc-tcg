@@ -4,21 +4,16 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {onTurnEnd} from '../types/priorities'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export default class FortuneEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		name: 'Fortune',
-		icon: 'fortune',
-		description: 'Any coin flips this turn will roll heads.',
-	}
-
-	override onApply(
+const FortuneEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	name: 'Fortune',
+	id: 'fortune',
+	icon: 'fortune',
+	description: 'Any coin flips this turn will roll heads.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
@@ -31,8 +26,14 @@ export default class FortuneEffect extends PlayerStatusEffect {
 			return coinFlips
 		})
 
-		observer.subscribe(player.opponentPlayer.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
-	}
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
+	},
 }
+
+export default FortuneEffect

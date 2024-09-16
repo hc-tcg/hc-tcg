@@ -7,6 +7,7 @@ import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -49,52 +50,6 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call before defence hooks
 		player.hooks.beforeDefence.callSome([attack], (observer) => {
-			let entity = game.components.get(
-				game.components.get(observer)?.wrappingEntity || null,
-			)
-			if (entity instanceof CardComponent)
-				return !shouldIgnoreCard(attack, game, entity)
-			return true
-		})
-	}
-}
-
-/**
- * Call attack hooks for each attack that has an attacker
- */
-function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
-	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-		const attack = attacks[attackIndex]
-		if (!attack.attacker) continue
-
-		// The hooks we call are determined by the source of the attack
-		const player = attack.player
-
-		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack], (observer) => {
-			let entity = game.components.get(
-				game.components.get(observer)?.wrappingEntity || null,
-			)
-			if (entity instanceof CardComponent)
-				return !shouldIgnoreCard(attack, game, entity)
-			return true
-		})
-	}
-}
-
-/**
- * Call defence hooks, based on each attack's target
- */
-function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
-	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-		const attack = attacks[attackIndex]
-		if (!attack.target) continue
-
-		// The hooks we call are determined by the target of the attack
-		const player = attack.target.player
-
-		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack], (observer) => {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
@@ -158,31 +113,36 @@ function shouldIgnoreCard(
 	return false
 }
 
+/** Executes a complete attack cycle (without creating attack logs) */
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
-	// STEP 1 - Call before attack and defence for all attacks
-	runBeforeAttackHooks(game, attacks)
-	runBeforeDefenceHooks(game, attacks)
+	const allAttacks: Array<AttackModel> = []
 
-	// STEP 2 - Call on attack and defence for all attacks
-	runOnAttackHooks(game, attacks)
-	runOnDefenceHooks(game, attacks)
+	while (attacks.length > 0) {
+		// STEP 1 - Call before attack and defence for all attacks
+		runBeforeAttackHooks(game, attacks)
+		runBeforeDefenceHooks(game, attacks)
 
-	// STEP 3 - Execute all attacks
-	attacks.forEach((attack) => {
-		attack.target?.damage(attack.calculateDamage())
-		let weaknessAttack = createWeaknessAttack(game, attack)
-		if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+		const nextAttacks: Array<AttackModel> = []
+		// STEP 3 - Execute all attacks
+		attacks.forEach((attack) => {
+			attack.target?.damage(attack.calculateDamage())
+			let weaknessAttack = createWeaknessAttack(game, attack)
+			if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
-		if (attack.nextAttacks.length > 0) {
-			executeAttacks(game, attack.nextAttacks)
-		}
-	})
+			if (attack.nextAttacks.length > 0) {
+				nextAttacks.push(...attack.nextAttacks)
+			}
+		})
+		allAttacks.push(...attacks)
+		attacks = nextAttacks
+	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
-	runAfterAttackHooks(game, attacks)
-	runAfterDefenceHooks(game, attacks)
+	runAfterAttackHooks(game, allAttacks)
+	runAfterDefenceHooks(game, allAttacks)
 }
 
+/** Executes a complete attack cycle and automatically sends attack logs */
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
@@ -198,8 +158,12 @@ export function executeExtraAttacks(
 
 // Things not directly related to the attack loop
 
-export function hasEnoughEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
-	if (DEBUG_CONFIG.noItemRequirements) return true
+export function hasEnoughEnergy(
+	energy: Array<TypeT>,
+	cost: Array<TypeT>,
+	noItemRequirements: boolean,
+) {
+	if (noItemRequirements) return true
 
 	const remainingEnergy = energy.slice()
 
@@ -277,19 +241,33 @@ export function setupMockCard(
 	mocking: CardComponent<Hermit>,
 	attackType: 'primary' | 'secondary',
 ): MockedAttack {
-	let observer = game.components.new(ObserverComponent, component.entity)
+	const observer = game.components.new(ObserverComponent, component.entity)
+	const player = component.player
 
-	mocking.card.onAttach(game, component, observer)
+	mocking.props.onAttach(game, component, observer)
 
-	component.player.hooks.getAttackRequests.callSome(
+	player.hooks.getAttackRequests.callSome(
 		[component, attackType],
 		(observerEntity) => observerEntity === observer.entity,
 	)
+	observer.unsubscribe(player.hooks.getAttackRequests)
 
-	observer.subscribe(component.player.hooks.onTurnEnd, () => {
-		mocking.card.onDetach(game, component, observer)
+	const destroyMockCard = () => {
+		mocking.props.onDetach(game, component, observer)
 		observer.unsubscribeFromEverything()
-	})
+	}
+	observer.subscribeBefore(player.hooks.getAttackRequests, destroyMockCard)
+
+	observer.subscribeWithPriority(
+		player.hooks.onTurnEnd,
+		onTurnEnd.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
+	observer.subscribeWithPriority(
+		player.hooks.afterAttack,
+		afterAttack.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
 
 	return {
 		hermitName: mocking.props.name,
@@ -298,7 +276,7 @@ export function setupMockCard(
 				? mocking.props.primary.name
 				: mocking.props.secondary.name,
 		getAttack: () => {
-			return mocking.card.getAttack(game, component, attackType)
+			return mocking.props.getAttack(game, component, attackType)
 		},
 	}
 }

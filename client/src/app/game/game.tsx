@@ -124,7 +124,7 @@ function Game() {
 			dispatch({
 				type: localMessages.SETTINGS_SET,
 				setting: {
-					key: 'showChat',
+					key: 'showChatWindow',
 					value: false,
 				},
 			})
@@ -133,20 +133,20 @@ function Game() {
 		if (e.key === 'c' || e.key === 'C') {
 			// We do not do anything if the chat is opened because then you couldn't type the C key.
 			// Users can still use ESC to close the window.
-			if (!settings.showChat) {
+			if (!settings.showChatWindow) {
 				e.stopImmediatePropagation()
 				e.preventDefault()
 				dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'showChat',
+						key: 'showChatWindow',
 						value: true,
 					},
 				})
 			}
 		}
 
-		if (!settings.showChat) {
+		if (!settings.showChatWindow) {
 			if (e.key === 'a' || e.key === 'A') {
 				dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 			}

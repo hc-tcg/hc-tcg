@@ -6,65 +6,70 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
+import {afterAttack, beforeAttack, onTurnEnd} from '../types/priorities'
 import {flipCoin} from '../utils/coinFlips'
-import {
-	PlayerStatusEffect,
-	StatusEffectProps,
-	systemStatusEffect,
-} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
-class SheepStareEffect extends PlayerStatusEffect {
-	props: StatusEffectProps = {
-		...systemStatusEffect,
-		icon: 'sheep-stare',
-		name: 'Sheep Stare',
-		description:
-			'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
-	}
-
-	override onApply(
+const SheepStareEffect: StatusEffect<PlayerComponent> = {
+	...systemStatusEffect,
+	id: 'sheep-stare',
+	icon: 'sheep-stare',
+	name: 'Sheep Stare',
+	description:
+		'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
+	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
 		let coinFlipResult: CoinFlipResult | null = null
-		const activeHermit = player.getActiveHermit()
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(activeHermit?.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_CHANGE_TARGET,
+			(attack) => {
+				if (!attack.isAttacker(player.getActiveHermit()?.entity)) return
 
-			// No need to flip a coin for multiple attacks
-			if (!coinFlipResult) {
-				if (!activeHermit) return
-				const coinFlip = flipCoin(
-					player.opponentPlayer,
-					effect.creator,
-					1,
-					player,
+				// No need to flip a coin for multiple attacks
+				if (!coinFlipResult) {
+					const coinFlip = flipCoin(
+						player.opponentPlayer,
+						effect.creator,
+						1,
+						player,
+					)
+					coinFlipResult = coinFlip[0]
+				}
+
+				if (
+					!(attack.attacker instanceof CardComponent) ||
+					!attack.attacker.slot.inRow()
 				)
-				coinFlipResult = coinFlip[0]
-			}
+					return
 
-			if (
-				!(attack.attacker instanceof CardComponent) ||
-				!attack.attacker.slot.inRow()
-			)
-				return
+				if (coinFlipResult === 'heads') {
+					attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
+				}
+			},
+		)
 
-			if (coinFlipResult === 'heads') {
-				attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			() => {
+				if (coinFlipResult) effect.remove()
+			},
+		)
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (coinFlipResult) effect.remove()
-		})
-
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
+	},
 }
 
 export default SheepStareEffect

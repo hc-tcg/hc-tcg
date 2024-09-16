@@ -1,43 +1,45 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {CardEntity, RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import Card from '../../base/card'
+import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import GoldenAxe from '../../default/single-use/golden-axe'
 
-class DwarfImpulseRare extends Card {
-	props: Hermit = {
-		...hermit,
-		id: 'dwarfimpulse_rare',
-		numericId: 152,
-		name: 'Dwarf Impulse',
-		shortName: 'D. Impulse',
-		expansion: 'alter_egos_iii',
-		background: 'alter_egos',
-		palette: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		type: 'miner',
-		health: 260,
-		primary: {
-			name: 'Barrel Roll',
-			cost: ['any'],
-			damage: 40,
-			power: null,
-		},
-		secondary: {
-			name: 'Can I Axe You A Question?',
-			shortName: 'Axe A Question',
-			cost: ['miner', 'miner'],
-			damage: 80,
-			power:
-				"When used with a Golden Axe effect card, all effect cards attached to your opponent's Hermits are ignored, and you can choose one of your opponent's AFK Hermits to take all damage from Golden Axe.",
-		},
-	}
-
-	override onAttach(
+const DwarfImpulseRare: Hermit = {
+	...hermit,
+	id: 'dwarfimpulse_rare',
+	numericId: 152,
+	name: 'Dwarf Impulse',
+	shortName: 'D. Impulse',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	type: 'miner',
+	health: 260,
+	primary: {
+		name: 'Barrel Roll',
+		cost: ['any'],
+		damage: 40,
+		power: null,
+	},
+	secondary: {
+		name: 'Can I Axe You A Question?',
+		shortName: 'Axe A Question',
+		cost: ['miner', 'miner'],
+		damage: 80,
+		power:
+			"When used with a Golden Axe effect card, all effect cards attached to your opponent's Hermits are ignored, and you can choose one of your opponent's AFK Hermits to take all damage from Golden Axe.",
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -87,32 +89,49 @@ class DwarfImpulseRare extends Card {
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
 						goldenAxeRedirect = pickedSlot.rowEntity
+						game.components
+							.filterEntities(
+								CardComponent,
+								query.card.slot(
+									query.every(
+										query.slot.opponent,
+										query.slot.hermit,
+										query.not(query.slot.active),
+									),
+								),
+							)
+							.forEach((hermit) =>
+								game.components
+									.new(
+										StatusEffectComponent,
+										IgnoreAttachSlotEffect,
+										component.entity,
+									)
+									.apply(hermit),
+							)
 					},
 				})
 			},
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(goldenAxeEntity) || !goldenAxeRedirect) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_SET_TARGET,
+			(attack) => {
+				if (!goldenAxeRedirect || !attack.isAttacker(goldenAxeEntity)) return
+				attack.setTarget(component.entity, goldenAxeRedirect)
+			},
+		)
 
-			attack.targetEntity = goldenAxeRedirect
-
-			attack.shouldIgnoreCards.push(
-				query.card.slot(
-					query.every(
-						query.slot.opponent,
-						query.slot.attach,
-						query.not(query.slot.active),
-					),
-				),
-			)
-		})
-
-		observer.subscribe(player.hooks.afterAttack, (_attack) => {
-			goldenAxeRedirect = null
-			goldenAxeEntity = null
-		})
-	}
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				goldenAxeRedirect = null
+				goldenAxeEntity = null
+			},
+		)
+	},
 }
 
 export default DwarfImpulseRare

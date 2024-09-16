@@ -1,26 +1,23 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class TNT extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'tnt',
-		numericId: 100,
-		name: 'TNT',
-		expansion: 'default',
-		rarity: 'common',
-		tokens: 2,
-		description:
-			"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
-		hasAttack: true,
-		attackPreview: (_game) => '$A60$',
-	}
-
-	override onAttach(
+const TNT: SingleUse = {
+	...singleUse,
+	id: 'tnt',
+	numericId: 100,
+	name: 'TNT',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 2,
+	description:
+		"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
+	hasAttack: true,
+	attackPreview: (_game) => '$A60$',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -28,11 +25,10 @@ class TNT extends Card {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			applySingleUse(game)
-
 			const tntAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
@@ -43,6 +39,7 @@ class TNT extends Card {
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
+					player: player.entity,
 					target: player.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
@@ -54,7 +51,17 @@ class TNT extends Card {
 
 			return tntAttack
 		})
-	}
+
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				applySingleUse(game)
+				observer.unsubscribe(player.hooks.beforeAttack)
+			},
+		)
+	},
 }
 
 export default TNT

@@ -6,34 +6,31 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class BadOmen extends Card {
-	props: SingleUse = {
-		...singleUse,
-		id: 'bad_omen',
-		numericId: 139,
-		name: 'Bad Omen',
-		expansion: 'alter_egos',
-		rarity: 'rare',
-		tokens: 1,
-		description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
-		showConfirmationModal: true,
-		sidebarDescriptions: [
-			{
-				type: 'statusEffect',
-				name: 'badomen',
-			},
-		],
-		attachCondition: query.every(
-			singleUse.attachCondition,
-			query.slot.opponentHasActiveHermit,
-		),
-	}
-
-	override onAttach(
+const BadOmen: SingleUse = {
+	...singleUse,
+	id: 'bad_omen',
+	numericId: 139,
+	name: 'Bad Omen',
+	expansion: 'alter_egos',
+	rarity: 'rare',
+	tokens: 1,
+	description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
+	showConfirmationModal: true,
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'badomen',
+		},
+	],
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		query.slot.opponentHasActiveHermit,
+	),
+	log: (values) => values.defaultLog,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -53,7 +50,7 @@ class BadOmen extends Card {
 				.new(StatusEffectComponent, BadOmenEffect, component.entity)
 				.apply(target)
 		})
-	}
+	},
 }
 
 export default BadOmen

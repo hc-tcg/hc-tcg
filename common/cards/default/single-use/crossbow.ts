@@ -7,41 +7,38 @@ import query from '../../../components/query'
 import {RowEntity} from '../../../entities'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
-import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Crossbow extends Card {
-	pickCondition = query.every(
-		query.slot.opponent,
-		query.slot.hermit,
-		query.not(query.slot.empty),
+const pickCondition = query.every(
+	query.slot.opponent,
+	query.slot.hermit,
+	query.not(query.slot.empty),
+)
+
+function getTotalTargets(game: GameModel) {
+	return Math.min(
+		3,
+		game.components.filter(SlotComponent, pickCondition).length,
 	)
+}
 
-	props: SingleUse = {
-		...singleUse,
-		id: 'crossbow',
-		numericId: 8,
-		name: 'Crossbow',
-		expansion: 'default',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			"Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
-		hasAttack: true,
-		attackPreview: (game) => `$A20$ x ${this.getTotalTargets(game)}`,
-	}
-
-	getTotalTargets(game: GameModel) {
-		return Math.min(
-			3,
-			game.components.filter(SlotComponent, this.pickCondition).length,
-		)
-	}
-
-	override onAttach(
+const Crossbow: SingleUse = {
+	...singleUse,
+	id: 'crossbow',
+	numericId: 8,
+	name: 'Crossbow',
+	expansion: 'default',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		"Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
+	hasAttack: true,
+	attackPreview: (game) => `$A20$ x ${getTotalTargets(game)}`,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
@@ -53,7 +50,7 @@ class Crossbow extends Card {
 		observer.subscribe(
 			player.hooks.getAttackRequests,
 			(_activeInstance, _hermitAttackType) => {
-				let totalTargets = this.getTotalTargets(game)
+				let totalTargets = getTotalTargets(game)
 				let targetsRemaining = totalTargets
 
 				const pickRequest = {
@@ -79,7 +76,7 @@ class Crossbow extends Card {
 					const request: PickRequest = {
 						...pickRequest,
 						canPick: query.every(
-							this.pickCondition,
+							pickCondition,
 							...Array.from(targets).map((row) =>
 								query.not(query.slot.rowIs(row)),
 							),
@@ -99,6 +96,7 @@ class Crossbow extends Card {
 					const newAttack = game
 						.newAttack({
 							attacker: component.entity,
+							player: player.entity,
 							target: target,
 							type: 'effect',
 							log: (values) =>
@@ -118,15 +116,19 @@ class Crossbow extends Card {
 			return attack
 		})
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
 
-			applySingleUse(game)
+				applySingleUse(game)
 
-			// Do not apply single use more than once
-			observer.unsubscribe(player.hooks.onAttack)
-		})
-	}
+				// Do not apply single use more than once
+				observer.unsubscribe(player.hooks.beforeAttack)
+			},
+		)
+	},
 }
 
 export default Crossbow
