@@ -126,7 +126,7 @@ export class GameModel {
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
 		options?: {
-			code?: string
+			gameCode?: string
 			spectatorCode?: string
 			randomizeOrder?: false
 		},
@@ -137,7 +137,7 @@ export class GameModel {
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.code || null
+		this.internalGameCode = options.gameCode || null
 		this.internalSpectatorCode = options.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)

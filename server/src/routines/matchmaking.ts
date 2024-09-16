@@ -44,7 +44,7 @@ function setupGame(
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
 		gameSettingsFromEnv(),
-		{code, spectatorCode},
+		{gameCode: code, spectatorCode},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
