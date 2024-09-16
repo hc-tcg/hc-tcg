@@ -37,7 +37,7 @@ const Docm77Rare: Hermit = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
@@ -48,7 +48,7 @@ const Docm77Rare: Hermit = {
 				if (coinFlip[0] === 'heads') {
 					attack.addDamage(component.entity, this.secondary.damage)
 				} else {
-					attack.multiplyDamage(component.entity, 0.5)
+					attack.removeDamage(component.entity, this.secondary.damage / 2)
 				}
 			},
 		)

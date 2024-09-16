@@ -341,7 +341,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		})
 		back()
 	}
-	const validationMessage = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(loadedDeck.cards)
 
 	return (
 		<>
@@ -520,10 +520,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					}
 				>
 					<div style={{margin: '0.5rem'}}>
-						{validationMessage && (
+						{!validationResult.valid && (
 							<div className={css.validationMessage}>
 								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span>{' '}
-								{validationMessage}
+								{validationResult.reason}
 							</div>
 						)}
 

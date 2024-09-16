@@ -66,7 +66,7 @@ const Mending: SingleUse = {
 				)
 
 				// Apply the mending card
-				applySingleUse(game, component.slot)
+				applySingleUse(game, pickedSlot)
 
 				// Move the effect card
 				game.swapSlots(hermitActive, pickedSlot)

@@ -5,6 +5,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 // @todo Only disable the proper slots. This is not doable until bloced actions are reworked.
@@ -27,9 +28,13 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 				game.addBlockedActions(effect.entity, 'PRIMARY_ATTACK')
 			}
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 
@@ -51,8 +56,12 @@ export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 				game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 			}
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }

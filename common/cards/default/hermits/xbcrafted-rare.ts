@@ -46,14 +46,6 @@ const XBCraftedRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				// All attacks from our side should ignore opponent attached effect card this turn
-				attack.shouldIgnoreCards.push(
-					query.every(
-						query.card.opponentPlayer,
-						query.card.active,
-						query.card.slot(query.slot.attach),
-					),
-				)
 				game.components
 					.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
 					.apply(
