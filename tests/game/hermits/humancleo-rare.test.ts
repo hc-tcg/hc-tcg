@@ -14,7 +14,7 @@ import {
 	playCardFromHand,
 	removeEffect,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Human Cleo Betrayal', () => {
 	test('Test Betrayal with canceling to Ender Pearl knock-out', () => {

@@ -3,7 +3,7 @@ import GoatfatherRare from 'common/cards/alter-egos/hermits/goatfather-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Goatfather Rare', () => {
 	test('Test anvil drop does the proper amount of damage', () => {

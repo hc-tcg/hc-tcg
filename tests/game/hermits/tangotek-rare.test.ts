@@ -13,7 +13,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Tango Extra Flee', () => {
 	test('Both players change active hermits', () => {

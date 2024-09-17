@@ -12,7 +12,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Poutry Man Rare', () => {
 	test('Poultry Man only recycles Egg.', () => {

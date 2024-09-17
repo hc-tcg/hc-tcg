@@ -6,7 +6,7 @@ import TangoTekRare from 'common/cards/default/hermits/tangotek-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 function* testOneHermit(game: GameModel) {
 	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)

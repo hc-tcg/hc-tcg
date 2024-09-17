@@ -12,7 +12,7 @@ import {
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
 	yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)

@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import HelsknightRare from 'common/cards/alter-egos/hermits/helsknight-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import TNT from 'common/cards/default/single-use/tnt'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
 	test('Test Trap Hole with TNT', () => {

@@ -17,7 +17,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
 	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)

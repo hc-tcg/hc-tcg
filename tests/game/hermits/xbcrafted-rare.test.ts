@@ -9,7 +9,7 @@ import IronSword from 'common/cards/default/single-use/iron-sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', () => {

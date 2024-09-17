@@ -3,7 +3,7 @@ import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rar
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Poe Poe Skizz Rare', () => {
 	test('Jumpscare.', () => {

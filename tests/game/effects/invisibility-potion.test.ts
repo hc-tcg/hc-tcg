@@ -18,7 +18,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {
