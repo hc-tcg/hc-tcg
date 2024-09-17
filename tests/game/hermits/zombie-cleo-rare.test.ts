@@ -287,7 +287,7 @@ describe('Test Zombie Cleo', () => {
 		testGame(
 			{
 				saga: testPuppetryCanceling,
-				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, ZombieCleoRare, BoomerBdubsRare],
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

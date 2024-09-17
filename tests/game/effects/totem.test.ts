@@ -24,7 +24,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Totem of Undying', () => {
 	test('Test Totem with TNT', () => {

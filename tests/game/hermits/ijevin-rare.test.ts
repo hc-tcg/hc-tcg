@@ -3,7 +3,7 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import {printBoardState} from 'server/utils'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test iJevin Peace Out', () => {
 	test('Test Peace Out when opponent times out request', () => {

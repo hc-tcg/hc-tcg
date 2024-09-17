@@ -12,7 +12,7 @@ import {
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
 	yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
@@ -67,10 +67,11 @@ describe('Test Evil X', () => {
 	test('Test Evil X secondary does not open popup if there are no opponent active hermits', () => {
 		testGame(
 			{
-				playerOneDeck: [ArmorStand],
+				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
 				saga: function* (game: GameModel) {
 					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)

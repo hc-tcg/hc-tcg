@@ -14,16 +14,18 @@ import {
 	endTurn,
 	playCardFromHand,
 	testGame,
-} from './utils'
+} from '../utils'
 
 describe('Test Beetlejhost Rare', () => {
 	test('Test Jopacity damage is reduced', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon],
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
@@ -37,6 +39,7 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
+					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
@@ -46,13 +49,12 @@ describe('Test Beetlejhost Rare', () => {
 						game.components.find(
 							RowComponent,
 							query.row.currentPlayer,
-							query.row.index(0),
+							query.row.index(1),
 						)?.health,
 					).toBe(
-						EthosLabCommon.health -
-							BeetlejhostRare.secondary.damage -
-							(BeetlejhostRare.secondary.damage - 10),
+						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 10),
 					)
+					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
@@ -62,13 +64,10 @@ describe('Test Beetlejhost Rare', () => {
 						game.components.find(
 							RowComponent,
 							query.row.currentPlayer,
-							query.row.index(0),
+							query.row.index(2),
 						)?.health,
 					).toBe(
-						EthosLabCommon.health -
-							BeetlejhostRare.secondary.damage -
-							(BeetlejhostRare.secondary.damage - 10) -
-							(BeetlejhostRare.secondary.damage - 20),
+						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 20),
 					)
 				},
 			},
@@ -149,6 +148,37 @@ describe('Test Beetlejhost Rare', () => {
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Chroma Keyed is removed when doing nothing', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [BeetlejhostRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					// Do nothing for a turn.
+					yield* endTurn(game)
+					yield* endTurn(game)
 
 					expect(
 						game.components.find(

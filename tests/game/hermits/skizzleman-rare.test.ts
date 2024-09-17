@@ -1,12 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
-import IronArmor from 'common/cards/default/effects/iron-armor'
+import GoldArmor from 'common/cards/default/effects/gold-armor'
 import Thorns from 'common/cards/default/effects/thorns'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Skizzleman Rare', () => {
 	test('Gaslight works as intended', () => {
@@ -83,12 +83,12 @@ describe('Test Skizzleman Rare', () => {
 	test("Gaslight doesn't trigger if the hermit takes no damage", () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 1)
+					yield* playCardFromHand(game, GoldArmor, 'attach', 1)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
