@@ -13,7 +13,9 @@ import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import ExBossNineStatusEffect from 'common/status-effects/exboss-nine'
+import ExBossNineStatusEffect, {
+	supplyNineSpecial,
+} from 'common/status-effects/exboss-nine'
 import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {
@@ -151,13 +153,11 @@ const ExBossAI: VirtualAI = {
 			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		)
 		if (nineEffect && nineEffect.counter === 0) {
-			currentPlayer.hooks.onTurnEnd.callSome([[]], (observer) => {
-				const entity = game.components.get(
-					game.components.get(observer)?.wrappingEntity || null,
-				)
-				if (entity instanceof StatusEffectComponent)
-					return entity === nineEffect
-				return false
+			const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+			supplyNineSpecial(nineEffect, nineSpecial)
+			broadcast(game.getPlayers(), {
+				type: serverMessages.VOICE_ANNOUNCE,
+				lines: [nineSpecial],
 			})
 			yield* delay(10600)
 		}

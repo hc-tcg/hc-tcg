@@ -4,10 +4,16 @@ import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rar
 import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
+import GoldArmor from 'common/cards/default/effects/gold-armor'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import RendogRare from 'common/cards/default/hermits/rendog-rare'
-import {StatusEffectComponent} from 'common/components'
+import BalancedItem from 'common/cards/default/items/balanced-common'
+import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import ExBossNineStatusEffect, {
+	supplyNineSpecial,
+} from 'common/status-effects/exboss-nine'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
@@ -181,6 +187,61 @@ function* testDirectlyOpposite(game: GameModel) {
 	)
 }
 
+function* testNineAttached(game: GameModel) {
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	yield* playCardFromHand(game, GoldArmor, 'attach', 0)
+	yield* playCardFromHand(game, GoldArmor, 'attach', 1)
+	yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+	yield* endTurn(game)
+	// Boss Turn 1
+	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	const nineEffect = game.components.filter(
+		StatusEffectComponent,
+		query.effect.is(ExBossNineStatusEffect),
+		query.effect.targetIsCardAnd(query.card.currentPlayer),
+	)[0]
+	expect(nineEffect).not.toBe(undefined)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, BalancedItem, 'item', 0, 1)
+	yield* endTurn(game)
+	// Boss Turn 2
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+	yield* endTurn(game)
+	// Boss Turns 3-8
+	while (game.state.turn.turnNumber < 18) {
+		yield* endTurn(game)
+	}
+	// Boss Turn 9
+	expect(nineEffect.targetEntity).not.toBe(null)
+	supplyNineSpecial(nineEffect, 'NINEATTACHED')
+	yield* endTurn(game)
+
+	expect(nineEffect.targetEntity).toBe(null)
+	expect(
+		game.components
+			.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.active,
+				query.card.slot(query.not(query.slot.hermit)),
+			)
+			.map((card) => card.props),
+	).toStrictEqual([])
+	expect(
+		game.components
+			.filter(
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.slot(query.slot.discardPile),
+			)
+			.map((card) => card.props),
+	).toHaveLength(3)
+}
+
 describe('Test Evil X Boss Fight', () => {
 	test('Test Boss versus consecutive Amnesia', () => {
 		testBossFight(
@@ -209,6 +270,24 @@ describe('Test Evil X Boss Fight', () => {
 				playerDeck: [PoePoeSkizzRare, RenbobRare, Anvil],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test "NINEATTACHED" discards all cards from active', () => {
+		testBossFight(
+			{
+				saga: testNineAttached,
+				playerDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					BalancedItem,
+					BalancedItem,
+					BalancedItem,
+					GoldArmor,
+					GoldArmor,
+				],
+			},
+			{startWithAllCards: true},
 		)
 	})
 })
