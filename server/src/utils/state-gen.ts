@@ -471,7 +471,6 @@ export function getLocalGameState(
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,
-		soundEffects: game.state.soundEffects,
 
 		players,
 

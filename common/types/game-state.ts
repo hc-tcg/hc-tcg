@@ -72,7 +72,6 @@ export type GameState = {
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
-	soundEffects: Array<string>
 
 	timer: {
 		turnStartTime: number
@@ -169,7 +168,6 @@ export type LocalGameState = {
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
-	soundEffects: Array<string>
 
 	players: Record<PlayerEntity, LocalPlayerState>
 
