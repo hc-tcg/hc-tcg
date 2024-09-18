@@ -9,7 +9,7 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
-import { getNextSound } from './game-saga'
+import {getNextSound} from './game-saga'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null
@@ -109,12 +109,13 @@ const gameReducer = (
 				...state,
 				currentCoinFlip: action.coinFlip,
 			}
-		// Update the board for the current player. This is used to put cards on the board before the
-		// server sends the new state.
-		// This updates based on outside mutations because I am so confused by redux and I want to ship
-		// the release tomorrow.
+
 		case localMessages.GAME_UPDATE:
-			return state
+			if (!action.gameState) return state
+			return {
+				...state,
+				localGameState: action.gameState,
+			}
 
 		default:
 			return state

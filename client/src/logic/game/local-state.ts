@@ -2,9 +2,9 @@ import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {LocalMessageTable, localMessages} from 'logic/messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {put, select} from 'typed-redux-saga'
-import {getGameState, getPlayerState} from './game-selectors'
+import {getCopyOfGameState} from './game-selectors'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
@@ -13,7 +13,7 @@ export function* localPutCardInSlot(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
 	selectedCard: LocalCardInstance,
 ) {
-	let gameState = yield* select(getGameState)
+	let gameState = yield* select(getCopyOfGameState)
 	if (!gameState) throw new Error('Can not find game state')
 
 	let playerState = Object.values(gameState?.players || {}).find(
@@ -74,34 +74,39 @@ export function* localPutCardInSlot(
 		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 /** Make the client look like a card has been removed from the hand. */
 export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
-	let localPlayerState = yield* select(getGameState)
+	let localGameState = yield* select(getCopyOfGameState)
 
-	if (!localPlayerState?.hand) return
+	if (!localGameState?.hand) return
 
-	localPlayerState.hand = localPlayerState.hand.filter(
+	localGameState.hand = localGameState.hand.filter(
 		(card) => card.entity !== selectedCard.entity,
 	)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_UPDATE,
+		gameState: localGameState,
+	})
 }
 
 export function* localApplyEffect() {
-	let playerState = yield* select(getPlayerState)
+	let gameState = yield* select(getCopyOfGameState)
+	let playerState = gameState?.players[gameState.playerEntity]
 
 	if (playerState?.board) {
 		playerState.board.singleUseCardUsed = true
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put<LocalMessage>({type: localMessages.GAME_UPDATE, gameState})
 }
 
 export function* localRemoveEffect() {
-	let playerState = yield* select(getPlayerState)
+	let gameState = yield* select(getCopyOfGameState)
+	let playerState = gameState?.players[gameState.playerEntity]
 
 	if (playerState?.board) {
 		playerState.board.singleUse = {
@@ -110,12 +115,12 @@ export function* localRemoveEffect() {
 		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put<LocalMessage>({type: localMessages.GAME_UPDATE, gameState})
 }
 
 export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
-	let playerState = yield* select(getPlayerState)
-	let gameState = yield* select(getGameState)
+	let gameState = yield* select(getCopyOfGameState)
+	let playerState = gameState?.players[gameState.playerEntity]
 
 	if (playerState?.board) {
 		// Rows are changed by sending a hermit slot.
@@ -141,24 +146,27 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 				].includes(action),
 		)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put<LocalMessage>({type: localMessages.GAME_UPDATE, gameState})
 }
 
 /** Make the client look like the turn has ended */
 export function* localEndTurn() {
-	let localPlayerState = yield* select(getGameState)
-	if (localPlayerState?.turn) {
-		localPlayerState.turn.currentPlayerEntity =
-			localPlayerState?.opponentPlayerEntity
-		localPlayerState.turn.turnNumber++
+	let gameState = yield* select(getCopyOfGameState)
+
+	if (gameState?.turn) {
+		gameState.turn.currentPlayerEntity = gameState?.opponentPlayerEntity
+		gameState.turn.turnNumber++
 	}
 
 	// When our turn ends we cannot do anything, so lets pretend that we have no actions to have the
 	// frontend update properly.
-	if (localPlayerState?.turn) localPlayerState.turn.availableActions = []
+	if (gameState?.turn) gameState.turn.availableActions = []
 
 	// Slots are cleared at the end of the turn
 	yield* localRemoveEffect()
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_UPDATE,
+		gameState: gameState,
+	})
 }

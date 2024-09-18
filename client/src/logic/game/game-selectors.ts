@@ -10,6 +10,12 @@ export const getGameState = (state: RootState): LocalGameState | null => {
 	return getGame(state).localGameState
 }
 
+export const getCopyOfGameState = (state: RootState): LocalGameState | null => {
+	let gameState = getGame(state).localGameState
+	if (!gameState) return null
+	return JSON.parse(JSON.stringify(gameState))
+}
+
 export const getTime = (state: RootState) => {
 	return getGame(state).time
 }
