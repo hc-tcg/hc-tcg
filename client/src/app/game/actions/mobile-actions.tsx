@@ -115,7 +115,6 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 					type={'single_use'}
 					onClick={handleClick}
 					entity={singleUse?.slot}
-					muted={true}
 				/>
 			</div>
 		)
