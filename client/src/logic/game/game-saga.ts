@@ -44,42 +44,6 @@ function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	})
 }
 
-/* Diff the new and old game state to figure out what sounds to play */
-function getNextSound(
-	oldGameState: LocalGameState | null,
-	newGameState: LocalGameState | null,
-): string | null {
-	if (!oldGameState || !newGameState) return null
-
-	function countCards(game: LocalGameState) {
-		return Object.values(game.players)
-			.map((player) =>
-				player.board.rows
-					.map(
-						(row) =>
-							Number(row.attach.card !== null) +
-							Number(row.hermit.card !== null) +
-							row.items.filter((item) => item.card !== null).length,
-					)
-					.reduce((a, b) => a + b, 0),
-			)
-			.reduce((a, b) => a + b, 0)
-	}
-
-	let oldCardNumber = countCards(oldGameState)
-	let newCardNumber = countCards(newGameState)
-	console.log(oldCardNumber, newCardNumber)
-
-	if (newCardNumber > oldCardNumber) {
-		return 'sfx/Item_Frame_add_item1.ogg'
-	}
-	if (newCardNumber < oldCardNumber) {
-		return 'sfx/Item_Frame_add_remove1.ogg'
-	}
-
-	return null
-}
-
 function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
@@ -168,6 +132,43 @@ function* gameStateReceiver() {
 			time: Date.now(),
 		})
 	}
+}
+
+/* Diff the new and old game state to figure out what sounds to play */
+function getNextSound(
+	oldGameState: LocalGameState | null,
+	newGameState: LocalGameState | null,
+): string | null {
+	if (!oldGameState || !newGameState) return null
+
+	function countCards(game: LocalGameState) {
+		return Object.values(game.players)
+			.map(
+				(player) =>
+					player.board.rows
+						.map(
+							(row) =>
+								Number(row.attach.card !== null) +
+								Number(row.hermit.card !== null) +
+								row.items.filter((item) => item.card !== null).length,
+						)
+						.reduce((a, b) => a + b, 0) +
+					Number(player.board.singleUse.card !== null),
+			)
+			.reduce((a, b) => a + b, 0)
+	}
+
+	let oldCardNumber = countCards(oldGameState)
+	let newCardNumber = countCards(newGameState)
+
+	if (newCardNumber > oldCardNumber) {
+		return 'sfx/Item_Frame_add_item1.ogg'
+	}
+	if (newCardNumber < oldCardNumber) {
+		return 'sfx/Item_Frame_add_remove1.ogg'
+	}
+
+	return null
 }
 
 function* gameSoundSaga() {
