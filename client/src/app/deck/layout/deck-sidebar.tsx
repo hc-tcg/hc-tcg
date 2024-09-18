@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import {KebabMenuIcon} from 'components/svgs'
 import {ReactNode, useState} from 'react'
 import css from './deck-sidebar.module.scss'
 
@@ -20,7 +19,11 @@ function DeckSidebar({children, header, footer, width, showHeader}: Props) {
 				<div className={css.header}>
 					{header}
 					<button
-						className={classNames(css.toggle, !active && css.open, css.showOnMobile)}
+						className={classNames(
+							css.toggle,
+							!active && css.open,
+							css.showOnMobile,
+						)}
 						onClick={() => setActive(!active)}
 					>
 						<img src="/images/icons/deck.png" className={css.toggleImage}></img>

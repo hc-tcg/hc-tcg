@@ -22,7 +22,6 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import MobileCardComponent from 'components/card/mobile-card-component'
 import MobileCardList from 'components/card-list/mobile-card-list'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
