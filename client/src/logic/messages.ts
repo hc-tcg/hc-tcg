@@ -188,7 +188,7 @@ type Messages = [
 		action: AnyTurnActionData
 	},
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
-	{type: typeof localMessages.GAME_UPDATE; gameState?: LocalGameState | null},
+	{type: typeof localMessages.GAME_UPDATE; gameState: LocalGameState | null},
 	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
 	{type: typeof localMessages.FIREBASE_STATS_RESET},
 	{
