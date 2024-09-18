@@ -96,9 +96,19 @@
 	}
 }
 
+.showOnMobile {
+	display: none;
+	visibility: hidden;
+}
+
 // MOBILE
 @media (max-width: 800px) {
 	.sidebar {
 		border: 0px solid black;
+	}
+
+	.showOnMobile {
+		display: inherit;
+		visibility: visible;
 	}
 }
