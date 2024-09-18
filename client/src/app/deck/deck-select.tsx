@@ -7,6 +7,7 @@ import Accordion from 'components/accordion'
 import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
+import MobileCardList from 'components/card-list/mobile-card-list'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {
@@ -34,7 +35,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import MobileCardList from 'components/card-list/mobile-card-list'
 
 type Props = {
 	setMenuSection: (section: string) => void
