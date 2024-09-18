@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameState, LocalGameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
@@ -45,21 +45,45 @@ function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 }
 
 /* Diff the new and old game state to figure out what sounds to play */
-function* playSoundSaga(
+function getNextSound(
 	oldGameState: LocalGameState | null,
 	newGameState: LocalGameState | null,
-) {
-	if (!oldGameState || !newGameState) return
+): string | null {
+	if (!oldGameState || !newGameState) return null
+
+	function countCards(game: LocalGameState) {
+		return Object.values(game.players)
+			.map((player) =>
+				player.board.rows
+					.map(
+						(row) =>
+							Number(row.attach.card !== null) +
+							Number(row.hermit.card !== null) +
+							row.items.filter((item) => item.card !== null).length,
+					)
+					.reduce((a, b) => a + b, 0),
+			)
+			.reduce((a, b) => a + b, 0)
+	}
+
+	let oldCardNumber = countCards(oldGameState)
+	let newCardNumber = countCards(newGameState)
+	console.log(oldCardNumber, newCardNumber)
+
+	if (newCardNumber > oldCardNumber) {
+		return 'sfx/Item_Frame_add_item1.ogg'
+	}
+	if (newCardNumber < oldCardNumber) {
+		return 'sfx/Item_Frame_add_remove1.ogg'
+	}
+
+	return null
 }
 
 function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 	>(localMessages.GAME_TURN_ACTION)
-
-	const oldGameState: LocalGameState = JSON.parse(
-		JSON.stringify(yield* select(getGameState)),
-	)
 
 	if (
 		[
@@ -96,8 +120,6 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		)
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
-
-	yield* playSoundSaga(oldGameState, yield* select(getGameState))
 }
 
 function* gameStateSaga(
@@ -148,6 +170,25 @@ function* gameStateReceiver() {
 	}
 }
 
+let oldGameState: LocalGameState | null = null
+
+function* gameSoundSaga() {
+	if (!oldGameState) {
+		oldGameState = JSON.parse(JSON.stringify(yield* select(getGameState)))
+	}
+
+	let nextSound = getNextSound(oldGameState, yield* select(getGameState))
+
+	if (nextSound) {
+		yield* put<LocalMessage>({
+			type: localMessages.SOUND_PLAY,
+			path: nextSound,
+		})
+	}
+
+	oldGameState = JSON.parse(JSON.stringify(yield* select(getGameState)))
+}
+
 function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
@@ -156,6 +197,7 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 			}),
 			fork(gameStateReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
+			takeLatest(localMessages.GAME_LOCAL_STATE_SET, gameSoundSaga),
 		]),
 	)
 

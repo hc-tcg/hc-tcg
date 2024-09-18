@@ -9,6 +9,7 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
+import { getNextSound } from './game-saga'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null
