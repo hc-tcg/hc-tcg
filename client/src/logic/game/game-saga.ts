@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
+import {GameState, LocalGameState} from 'common/types/game-state'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
@@ -170,23 +170,28 @@ function* gameStateReceiver() {
 	}
 }
 
-let oldGameState: LocalGameState | null = null
-
 function* gameSoundSaga() {
-	if (!oldGameState) {
-		oldGameState = JSON.parse(JSON.stringify(yield* select(getGameState)))
+	let oldGameState = null
+
+	while (true) {
+		yield* take(localMessages.GAME_LOCAL_STATE_SET)
+
+		let newGameState = yield* select(getGameState)
+		if (!newGameState) continue
+
+		if (oldGameState) {
+			let nextSound = getNextSound(oldGameState, newGameState)
+
+			if (nextSound) {
+				yield* put<LocalMessage>({
+					type: localMessages.SOUND_PLAY,
+					path: nextSound,
+				})
+			}
+		}
+
+		oldGameState = newGameState
 	}
-
-	let nextSound = getNextSound(oldGameState, yield* select(getGameState))
-
-	if (nextSound) {
-		yield* put<LocalMessage>({
-			type: localMessages.SOUND_PLAY,
-			path: nextSound,
-		})
-	}
-
-	oldGameState = JSON.parse(JSON.stringify(yield* select(getGameState)))
 }
 
 function* gameActionsSaga(initialGameState?: LocalGameState) {
@@ -197,7 +202,7 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 			}),
 			fork(gameStateReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
-			takeLatest(localMessages.GAME_LOCAL_STATE_SET, gameSoundSaga),
+			fork(gameSoundSaga),
 		]),
 	)
 
