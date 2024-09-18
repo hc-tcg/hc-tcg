@@ -74,7 +74,7 @@ export function* localPutCardInSlot(
 		}
 	}
 
-	yield* put({type: localMessages.GAME_UPDATE})
+	yield* put({type: localMessages.GAME_UPDATE, gameState: gameState})
 }
 
 /** Make the client look like a card has been removed from the hand. */
