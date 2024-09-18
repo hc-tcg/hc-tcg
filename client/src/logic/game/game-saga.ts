@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
+import {GameState, LocalGameState} from 'common/types/game-state'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
@@ -21,7 +21,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay} from './game-selectors'
+import {getEndGameOverlay, getGameState} from './game-selectors'
 import {
 	localApplyEffect,
 	localChangeActiveHermit,
@@ -44,10 +44,22 @@ function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	})
 }
 
+/* Diff the new and old game state to figure out what sounds to play */
+function* playSoundSaga(
+	oldGameState: LocalGameState | null,
+	newGameState: LocalGameState | null,
+) {
+	if (!oldGameState || !newGameState) return
+}
+
 function* actionSaga(playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 	>(localMessages.GAME_TURN_ACTION)
+
+	const oldGameState: LocalGameState = JSON.parse(
+		JSON.stringify(yield* select(getGameState)),
+	)
 
 	if (
 		[
@@ -84,6 +96,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		)
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
+
+	yield* playSoundSaga(oldGameState, yield* select(getGameState))
 }
 
 function* gameStateSaga(

@@ -25,7 +25,6 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
-import game from '.'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -70,16 +69,7 @@ function Game() {
 		}
 	}, [handleKeys])
 
-	useEffect(() => {
-		for (const sound of gameState.soundEffects) {
-			dispatch({
-				type: localMessages.SOUND_PLAY,
-				path: sound,
-			})
-		}
-	}, [gameState])
-
-	const handleOpenModal = (id: ModalVariant | null) => {
+		const handleOpenModal = (id: ModalVariant | null) => {
 		dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: id})
 	}
 
