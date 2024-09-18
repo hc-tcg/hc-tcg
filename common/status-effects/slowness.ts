@@ -4,10 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence, onTurnEnd} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'slowness',
 	icon: 'slowness',
 	name: 'Slowness',
 	description: 'This Hermit can only use their primary attack.',
@@ -31,25 +33,33 @@ const SlownessEffect: Counter<CardComponent> = {
 				game.addBlockedActions(this.icon, 'SECONDARY_ATTACK')
 		})
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (!effect.counter) return
-			effect.counter--
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!effect.counter) return
+				effect.counter--
 
-			if (effect.counter === 0) {
+				if (effect.counter === 0) {
+					effect.remove()
+					return
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (
+					!target.slot?.onBoard() ||
+					attack.target?.entity !== target.slot.row?.entity
+				)
+					return
+				if (target.slot.row?.health) return
 				effect.remove()
-				return
-			}
-		})
-
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (
-				!target.slot?.onBoard() ||
-				attack.target?.entity !== target.slot.row?.entity
-			)
-				return
-			if (target.slot.row?.health) return
-			effect.remove()
-		})
+			},
+		)
 	},
 }
 

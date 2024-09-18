@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -45,25 +46,29 @@ const EthosLabRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!(attack.attacker instanceof CardComponent)) return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!(attack.attacker instanceof CardComponent)) return
 
-			const coinFlip = flipCoin(player, attack.attacker)
+				const coinFlip = flipCoin(player, attack.attacker)
 
-			if (coinFlip[0] !== 'heads') return
+				if (coinFlip[0] !== 'heads') return
 
-			let opponentActiveHermit = game.components.find(
-				CardComponent,
-				query.card.opponentPlayer,
-				query.card.active,
-				query.card.slot(query.slot.hermit),
-			)
-			game.components
-				.new(StatusEffectComponent, FireEffect, component.entity)
-				.apply(opponentActiveHermit?.entity)
-		})
+				let opponentActiveHermit = game.components.find(
+					CardComponent,
+					query.card.opponentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.hermit),
+				)
+				game.components
+					.new(StatusEffectComponent, FireEffect, component.entity)
+					.apply(opponentActiveHermit?.entity)
+			},
+		)
 	},
 }
 

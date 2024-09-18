@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import Wolf from '../../default/effects/wolf'
@@ -37,22 +38,26 @@ const FiveAMPearlRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (
-				!game.components.find(
-					CardComponent,
-					query.card.currentPlayer,
-					query.card.active,
-					query.card.is(Wolf),
+				if (
+					!game.components.find(
+						CardComponent,
+						query.card.currentPlayer,
+						query.card.active,
+						query.card.is(Wolf),
+					)
 				)
-			)
-				return
+					return
 
-			attack.addDamage(component.entity, 30)
-		})
+				attack.addDamage(component.entity, 30)
+			},
+		)
 	},
 }
 

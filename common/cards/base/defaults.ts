@@ -67,6 +67,8 @@ export const hermit = {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	): AttackModel | null {
+		if (hermitAttackType === 'single-use') return null
+
 		const attack = game.newAttack({
 			attacker: component.entity,
 			target: game.components.findEntity(
@@ -76,10 +78,17 @@ export const hermit = {
 			),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
-			log: (values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+			log: (values) => {
+				if (
+					values.attack.getDamageMultiplier() === 0 ||
+					!values.attack.target?.getHermit()
+				) {
+					return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
+				}
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with ${values.attackName} for ${values.damage} damage`,
+				} with ${values.attackName} for ${values.damage} damage`
+			},
 		})
 
 		if (attack.type === 'primary') {

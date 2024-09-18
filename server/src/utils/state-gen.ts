@@ -189,7 +189,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 	}
 }
 
-function getLocalCard<CardType extends Card>(
+export function getLocalCard<CardType extends Card>(
 	game: GameModel,
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
@@ -207,19 +207,16 @@ function getLocalCard<CardType extends Card>(
 	}
 }
 
-function getLocalModalDataPayload(
-	game: GameModel,
-	modal: ModalData,
-): LocalModalData['payload'] {
-	if (modal.modalId == 'selectCards') {
+function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
+	if (modal.type == 'selectCards') {
 		return {
-			...modal.payload,
-			cards: modal.payload.cards.map((entity) =>
+			...modal,
+			cards: modal.cards.map((entity) =>
 				getLocalCard(game, game.components.get(entity)!),
 			),
 		}
-	} else if (modal.modalId === 'copyAttack') {
-		let hermitCard = game.components.get(modal.payload.hermitCard)!
+	} else if (modal.type === 'copyAttack') {
+		let hermitCard = game.components.get(modal.hermitCard)!
 		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
 			[[]],
 			(observerEntity) => {
@@ -258,20 +255,13 @@ function getLocalModalDataPayload(
 		}
 
 		return {
-			...modal.payload,
+			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
 			blockedActions: blockedActions,
 		}
 	}
 
 	throw new Error('Uknown modal type')
-}
-
-function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
-	return {
-		modalId: modal.modalId,
-		payload: getLocalModalDataPayload(game, modal),
-	} as LocalModalData
 }
 
 function getLocalCoinFlip(
@@ -408,7 +398,7 @@ export function getLocalGameState(
 
 	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
-		currentModalData = getLocalModalData(game, currentModalRequest.data)
+		currentModalData = getLocalModalData(game, currentModalRequest.modal)
 	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
@@ -474,8 +464,6 @@ export function getLocalGameState(
 		playerEntity: players[viewer.playerOnLeft.entity].entity,
 		// The entity for the player on the the right of the screen
 		opponentPlayerEntity: players[viewer.playerOnRight.entity].entity,
-
-		lastActionResult: game.state.lastActionResult,
 
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()

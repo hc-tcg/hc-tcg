@@ -117,6 +117,13 @@ export const index = (
 	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
+export const rowIndex = (
+	index: number | null | undefined,
+): ComponentQuery<SlotComponent> => {
+	return (_game, pos) =>
+		pos.inRow() && index !== null && pos.row.index === index
+}
+
 export const entity = (
 	entity: SlotEntity | null | undefined,
 ): ComponentQuery<SlotComponent> => {

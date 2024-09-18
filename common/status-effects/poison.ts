@@ -4,11 +4,13 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
 const PoisonEffect: StatusEffect<CardComponent> = {
 	...damageEffect,
+	id: 'poison',
 	icon: 'poison',
 	name: 'Poison',
 	description:
@@ -22,32 +24,40 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 	) {
 		const {player, opponentPlayer} = target
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!target.slot.inRow()) return
-			const statusEffectAttack = game.newAttack({
-				attacker: effect.entity,
-				target: target.slot.row.entity,
-				player: opponentPlayer.entity,
-				type: 'status-effect',
-				log: (values) =>
-					`${values.target} took ${values.damage} damage from $bPoison$`,
-			})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!target.slot.inRow()) return
+				const statusEffectAttack = game.newAttack({
+					attacker: effect.entity,
+					target: target.slot.row.entity,
+					player: opponentPlayer.entity,
+					type: 'status-effect',
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $bPoison$`,
+				})
 
-			let damage = 0
-			if (target.slot.row.health && target.slot.row.health >= 30) {
-				damage = 20
-			} else if (target.slot.row.health && target.slot.row.health >= 20) {
-				damage = 10
-			}
-			statusEffectAttack.addDamage(effect.entity, damage)
+				let damage = 0
+				if (target.slot.row.health && target.slot.row.health >= 30) {
+					damage = 20
+				} else if (target.slot.row.health && target.slot.row.health >= 20) {
+					damage = 10
+				}
+				statusEffectAttack.addDamage(effect.entity, damage)
 
-			executeExtraAttacks(game, [statusEffectAttack])
-		})
+				executeExtraAttacks(game, [statusEffectAttack])
+			},
+		)
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!attack.isTargeting(target) || attack.target?.health) return
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(attack) => {
+				if (!attack.isTargeting(target) || attack.target?.health) return
+				effect.remove()
+			},
+		)
 	},
 }
 

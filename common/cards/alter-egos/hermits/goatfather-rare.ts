@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -40,41 +41,47 @@ const GoatfatherRare: Hermit = {
 		observer: ObserverComponent,
 	): void {
 		const {player, opponentPlayer} = component
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.ADD_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			let coinFlip = flipCoin(player, component)[0]
+				let coinFlip = flipCoin(player, component)[0]
 
-			if (coinFlip !== 'heads') return
+				if (coinFlip !== 'heads') return
 
-			let opponentActiveHermit = opponentPlayer.getActiveHermit()
-			if (!opponentActiveHermit?.slot.inRow()) return
+				let opponentActiveHermit = opponentPlayer.getActiveHermit()
+				if (!opponentActiveHermit?.slot.inRow()) return
 
-			attack.addDamage(component.entity, 30)
+				attack.addDamage(component.entity, 30)
 
-			game.components
-				.filter(
-					RowComponent,
-					query.row.opponentPlayer,
-					query.row.hermitSlotOccupied,
-					(_game, row) =>
-						opponentActiveHermit !== null &&
-						opponentActiveHermit.slot.inRow() &&
-						row.index > opponentActiveHermit.slot.row.index,
-				)
-				.forEach((row) => {
-					const newAttack = game.newAttack({
-						attacker: component.entity,
-						target: row.entity,
-						type: 'secondary',
-						log: (values) => `, ${values.target} for ${values.damage} damage`,
+				game.components
+					.filter(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.row.hermitSlotOccupied,
+						(_game, row) =>
+							opponentActiveHermit !== null &&
+							opponentActiveHermit.slot.inRow() &&
+							row.index > opponentActiveHermit.slot.row.index,
+					)
+					.forEach((row) => {
+						const newAttack = game.newAttack({
+							attacker: component.entity,
+							target: row.entity,
+							type: 'secondary',
+							log: (values) => `, ${values.target} for ${values.damage} damage`,
+						})
+						newAttack.addDamage(component.entity, 10)
+						newAttack.shouldIgnoreCards.push(
+							query.card.entity(component.entity),
+						)
+						attack.addNewAttack(newAttack)
 					})
-					newAttack.addDamage(component.entity, 10)
-					newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
-					attack.addNewAttack(newAttack)
-				})
-		})
+			},
+		)
 	},
 }
 

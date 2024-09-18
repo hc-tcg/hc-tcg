@@ -43,34 +43,32 @@ const Spyglass: SingleUse = {
 
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Spyglass',
-						modalDescription: canDiscard ? ': Select 1 card to discard' : '',
-						cards: opponentPlayer.getHand().map((card) => card.entity),
-						selectionSize: canDiscard ? 1 : 0,
-						primaryButton: {
-							text: canDiscard ? 'Confirm Selection' : 'Close',
-							variant: 'default',
-						},
+				modal: {
+					type: 'selectCards',
+					name: 'Spyglass',
+					description: canDiscard ? ': Select 1 card to discard' : '',
+					cards: opponentPlayer.getHand().map((card) => card.entity),
+					selectionSize: canDiscard ? 1 : 0,
+					cancelable: true,
+					primaryButton: {
+						text: canDiscard ? 'Confirm Selection' : 'Close',
+						variant: 'default',
 					},
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!canDiscard) return 'SUCCESS'
+					if (!modalResult) return
+					if (!canDiscard) return
 
-					if (!modalResult.cards || modalResult.cards.length !== 1)
-						return 'FAILURE_INVALID_DATA'
+					if (!modalResult.cards || modalResult.cards.length !== 1) return
 
 					let card = game.components.get(modalResult.cards[0].entity)
-					if (!card) return 'FAILURE_INVALID_DATA'
+					if (!card) return
 
 					card.discard()
 
 					game.battleLog.addEntry(player.entity, getEntry(card))
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					if (canDiscard) {

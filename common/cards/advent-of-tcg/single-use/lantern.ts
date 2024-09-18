@@ -33,8 +33,8 @@ class Lantern extends CardOld {
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
+				modall: {
+					type: 'selectCards',
 					payload: {
 						modalName: 'Lantern',
 						modalDescription: 'Choose 2 cards to draw immediately.',
@@ -65,8 +65,8 @@ class Lantern extends CardOld {
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
-						data: {
-							modalId: 'selectCards',
+						modall: {
+							type: 'selectCards',
 							payload: {
 								modalName: 'Lantern',
 								modalDescription: 'Cards your opponent drew.',

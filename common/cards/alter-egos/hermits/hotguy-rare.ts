@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import Bow from '../../default/single-use/bow'
@@ -37,20 +38,36 @@ const HotguyRare: Hermit = {
 
 		let usingSecondaryAttack = false
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity)) return
-			usingSecondaryAttack = attack.type === 'secondary'
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+				usingSecondaryAttack = attack.type === 'secondary'
+			},
+		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!usingSecondaryAttack) return
-			if (
-				attack.attacker instanceof CardComponent &&
-				attack.attacker.props.id === Bow.id
-			) {
-				attack.addDamage(attack.attacker.entity, attack.getDamage())
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
+			(attack) => {
+				if (!usingSecondaryAttack) return
+				if (
+					attack.attacker instanceof CardComponent &&
+					attack.attacker.props.id === Bow.id
+				) {
+					attack.addDamage(attack.attacker.entity, attack.getDamage())
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				usingSecondaryAttack = false
+			},
+		)
 	},
 }
 

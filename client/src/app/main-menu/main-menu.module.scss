@@ -255,6 +255,16 @@ nav {
 	gap: 1vh;
 }
 
+.developerCreditsContainer {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.developerCreditsContainer > div {
+	margin: 0.5vh;
+
+}
+
 .resetModal {
 	display: flex;
 	flex-direction: row;

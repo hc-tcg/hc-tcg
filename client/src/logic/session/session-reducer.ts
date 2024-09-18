@@ -50,6 +50,7 @@ const loginReducer = (
 				errorType: action.errorMessage,
 			}
 		case localMessages.PLAYER_INFO_SET:
+		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
 				connecting: false,

@@ -17,47 +17,34 @@ import socket from 'socket'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
 import {PlayerDeckT} from '../../../../common/types/deck'
 
-const loadSession = (): PlayerInfo | null => {
+const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
 	const censoredPlayerName = sessionStorage.getItem('censoredPlayerName')
-	const minecraftName = sessionStorage.getItem('minecraftName')
 	const playerId = sessionStorage.getItem('playerId') as PlayerId
 	const playerSecret = sessionStorage.getItem('playerSecret')
-	const playerDeck = JSON.parse(sessionStorage.getItem('playerDeck') || '{}')
-	if (
-		!playerName ||
-		!minecraftName ||
-		!censoredPlayerName ||
-		!playerId ||
-		!playerSecret
-	)
+
+	if (!playerName || !censoredPlayerName || !playerId || !playerSecret)
 		return null
 	return {
 		playerName,
-		minecraftName,
 		censoredPlayerName,
 		playerId,
 		playerSecret,
-		playerDeck,
 	}
 }
 
 const saveSession = (playerInfo: PlayerInfo) => {
 	sessionStorage.setItem('playerName', playerInfo.playerName)
 	sessionStorage.setItem('censoredPlayerName', playerInfo.playerName)
-	sessionStorage.setItem('minecraftName', playerInfo.minecraftName)
 	sessionStorage.setItem('playerId', playerInfo.playerId)
 	sessionStorage.setItem('playerSecret', playerInfo.playerSecret)
-	sessionStorage.setItem('playerDeck', JSON.stringify(playerInfo.playerDeck))
 }
 
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
 	sessionStorage.removeItem('censoredPlayerName')
-	sessionStorage.removeItem('minecraftName')
 	sessionStorage.removeItem('playerId')
 	sessionStorage.removeItem('playerSecret')
-	sessionStorage.removeItem('playerDeck')
 }
 
 const getClientVersion = () => {
@@ -75,7 +62,7 @@ const getDeck: () => PlayerDeckT | null = function () {
 	const name = urlParams.get('name')
 	if (!hash) return null
 	const deckCards = getDeckFromHash(hash)
-	if (validateDeck(deckCards)) return null
+	if (!validateDeck(deckCards).valid) return null
 	console.log('Valid deck')
 	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
 	return {cards: deckCards, name: name, icon: 'any'}
@@ -142,9 +129,21 @@ export function* loginSaga() {
 		if (!session) return
 		console.log('User reconnected')
 		yield put<LocalMessage>({
-			type: localMessages.PLAYER_INFO_SET,
+			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
+		let activeDeck = localStorage.getItem('activeDeck')
+		if (activeDeck) {
+			let deck = getSavedDeck(activeDeck)
+			console.log('Select previous active deck')
+			if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
+		}
+		let minecraftName = localStorage.getItem('minecraftName')
+		if (minecraftName)
+			yield* put<LocalMessage>({
+				type: localMessages.MINECRAFT_NAME_SET,
+				name: minecraftName,
+			})
 	}
 
 	if (result.playerInfo) {
@@ -169,7 +168,7 @@ export function* loginSaga() {
 
 		const activeDeckName = getActiveDeckName()
 		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
-		const activeDeckValid = !!activeDeck && !validateDeck(activeDeck.cards)
+		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
 
 		// if active deck is not valid, generate and save a starter deck
 		if (urlDeck) {

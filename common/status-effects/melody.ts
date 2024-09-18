@@ -3,6 +3,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 
 const MelodyEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
+	id: 'melody',
 	icon: 'melody',
 	name: "Ollie's Melody",
 	description: 'This Hermit heals 10hp every turn.',

@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import BdoubleO100Common from './bdoubleo100-common'
@@ -41,32 +42,36 @@ const VintageBeefUltraRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			player.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const hasBdubs = game.components.exists(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.is(BdoubleO100Common, BdoubleO100Rare),
-				query.card.attached,
-			)
-			const hasDoc = game.components.exists(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.is(Docm77Common, Docm77Rare),
-				query.card.attached,
-			)
-			const hasEtho = game.components.exists(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare),
-				query.card.attached,
-			)
+				const hasBdubs = game.components.exists(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.is(BdoubleO100Common, BdoubleO100Rare),
+					query.card.attached,
+				)
+				const hasDoc = game.components.exists(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.is(Docm77Common, Docm77Rare),
+					query.card.attached,
+				)
+				const hasEtho = game.components.exists(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.is(EthosLabCommon, EthosLabRare, EthosLabUltraRare),
+					query.card.attached,
+				)
 
-			if (hasBdubs && hasDoc && hasEtho)
-				attack.multiplyDamage(component.entity, 2)
-		})
+				if (hasBdubs && hasDoc && hasEtho)
+					attack.multiplyDamage(component.entity, 2)
+			},
+		)
 	},
 }
 

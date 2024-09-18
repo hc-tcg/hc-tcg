@@ -5,7 +5,8 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {executeAttacks} from '../../../utils/attacks'
+import {afterAttack} from '../../../types/priorities'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -41,51 +42,56 @@ const PoePoeSkizzRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!component.slot.inRow()) return
+		observer.subscribeWithPriority(
+			player.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!component.slot.inRow()) return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick an empty Hermit slot or your active Hermit.',
-				canPick: query.every(
-					query.slot.hermit,
-					query.slot.currentPlayer,
-					query.some(
-						query.slot.empty,
-						query.slot.rowIs(component.slot.rowEntity),
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick an empty Hermit slot or your active Hermit.',
+					canPick: query.every(
+						query.slot.hermit,
+						query.slot.currentPlayer,
+						query.some(
+							query.slot.empty,
+							query.slot.rowIs(component.slot.rowEntity),
+						),
 					),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow() || !component.slot.inRow()) return
-					if (pickedSlot.row.entity === component.slot.rowEntity) return
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow() || !component.slot.inRow()) return
+						if (pickedSlot.row.entity === component.slot.rowEntity) return
 
-					game.swapRows(pickedSlot.row, component.slot.row)
+						game.swapRows(pickedSlot.row, component.slot.row)
 
-					const jumpscareTarget = game.components.find(
-						RowComponent,
-						query.row.opponentPlayer,
-						query.row.index(component.slot.row.index),
-					)
+						const jumpscareTarget = game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(component.slot.row.index),
+						)
 
-					if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
+						if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
 
-					const jumpscareAttack = game.newAttack({
-						attacker: component.entity,
-						target: jumpscareTarget.entity,
-						type: 'secondary',
-						log: (values) => ` and dealt ${values.damage} to ${values.target}`,
-					})
-					jumpscareAttack.addDamage(component.entity, 20)
-					jumpscareAttack.shouldIgnoreCards.push(
-						query.card.entity(component.entity),
-					)
-					executeAttacks(game, [jumpscareAttack])
-				},
-			})
-		})
+						const jumpscareAttack = game.newAttack({
+							attacker: component.entity,
+							target: jumpscareTarget.entity,
+							type: 'secondary',
+							log: (values) =>
+								` and dealt ${values.damage} to ${values.target}`,
+						})
+						jumpscareAttack.addDamage(component.entity, 20)
+						jumpscareAttack.shouldIgnoreCards.push(
+							query.card.entity(component.entity),
+						)
+						executeExtraAttacks(game, [jumpscareAttack])
+					},
+				})
+			},
+		)
 	},
 }
 

@@ -49,7 +49,6 @@ const allCardClasses: Array<Card> = [
 
 export const CARDS: Record<string | number, Card> = allCardClasses.reduce(
 	(result: Record<string | string, Card>, card) => {
-		result[card.name] = card
 		result[card.numericId] = card
 		// To maintain compatability with the deck saving system, we need to be able to look up
 		// cards by their id.

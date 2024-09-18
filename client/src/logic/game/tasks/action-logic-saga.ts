@@ -19,19 +19,17 @@ function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const player = yield* select(getPlayerEntity)
 	const pState = gameState.players[player]
-	const lastActionResult = gameState.lastActionResult
 
-	if (gameState.currentModalData && gameState.currentModalData.modalId) {
-		const id = gameState.currentModalData?.modalId
+	if (gameState.currentModalData && gameState.currentModalData.type) {
+		const id = gameState.currentModalData?.type
 		yield put<LocalMessage>({
 			type: localMessages.GAME_MODAL_OPENED_SET,
 			id,
 		})
 	} else if (
-		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&
-		lastActionResult?.result === 'SUCCESS' &&
 		!pState.board.singleUseCardUsed &&
-		pState.board.singleUse.card
+		pState.board.singleUse.card &&
+		gameState.turn.currentPlayerEntity === player
 	) {
 		yield call(singleUseSaga, pState.board.singleUse.card)
 	}

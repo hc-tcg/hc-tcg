@@ -58,12 +58,17 @@ const RendogRare: Hermit = {
 		if (!newAttack) return null
 
 		const attackName = mockedAttack.attackName
-		newAttack.updateLog(
-			(values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
-					values.target
-				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
-		)
+		newAttack.updateLog((values) => {
+			if (
+				values.attack.getDamageMultiplier() === 0 ||
+				!values.attack.target?.getHermit()
+			) {
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
+			}
+			return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+				values.target
+			} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
+		})
 		return newAttack
 	},
 	onAttach(
@@ -92,22 +97,21 @@ const RendogRare: Hermit = {
 
 						game.addModalRequest({
 							player: player.entity,
-							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Rendog: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+							modal: {
+								type: 'copyAttack',
+								name: 'Rendog: Choose an attack to copy',
+								description:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
+								cancelable: true,
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return 'FAILURE_INVALID_DATA'
+								if (!modalResult) return
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return 'SUCCESS'
+									return
 								}
 
 								// Store the chosen attack to copy
@@ -116,7 +120,7 @@ const RendogRare: Hermit = {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return 'SUCCESS'
+								return
 							},
 							onTimeout: () => {
 								mockedAttacks.set(

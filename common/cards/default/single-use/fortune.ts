@@ -20,6 +20,7 @@ const Fortune: SingleUse = {
 	description:
 		'Any coin flips on this turn are not required, as "heads" is assumed.',
 	showConfirmationModal: true,
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

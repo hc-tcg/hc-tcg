@@ -28,21 +28,17 @@ class Glowstone extends CardOld {
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				player: player.entity,
-				data: {
-					modalId: 'selectCards',
-					payload: {
-						modalName: 'Glowstone: Choose the card for your opponent to draw.',
-						modalDescription:
-							'The other two cards will be placed on the bottom of their deck.',
-						cards: opponentPlayer.pile
-							.slice(0, 3)
-							.map((card) => card.toLocalCardInstance()),
-						selectionSize: 1,
-						primaryButton: {
-							text: 'Confirm Selection',
-							variant: 'default',
-						},
-					},
+				type: 'selectCards',
+				modalName: 'Glowstone: Choose the card for your opponent to draw.',
+				modalDescription:
+					'The other two cards will be placed on the bottom of their deck.',
+				cards: opponentPlayer.pile
+					.slice(0, 3)
+					.map((card) => card.toLocalCardInstance()),
+				selectionSize: 1,
+				primaryButton: {
+					text: 'Confirm Selection',
+					variant: 'default',
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'

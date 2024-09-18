@@ -23,6 +23,8 @@ export type StatusEffect<
 	/** The icon of the status effect, not including the file extension */
 	icon: string
 	name: string
+	/** A unique identifier for this status effect */
+	id: string
 	description: string
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
@@ -89,6 +91,7 @@ export const hiddenStatusEffect = {
 	type: 'hiddenSystem' as StatusEffect['type'],
 	icon: '',
 	description: '',
+	name: '',
 	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,

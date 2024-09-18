@@ -33,7 +33,7 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$`
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
@@ -87,6 +87,15 @@ export class BattleLogModel {
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
 			})
+
+			console.info(`${this.game.logHeader} ${firstEntry.description}`)
+		}
+
+		// We skip waiting for the logs to send if there are no players. This is because
+		// the coin flip delay confuses jest. Additionally we don't want to wait longer
+		// than what is needed in tests.
+		if (this.game.getPlayers().length === 0) {
+			return
 		}
 
 		await new Promise((e) =>
@@ -233,6 +242,7 @@ export class BattleLogModel {
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
+				attack: subAttack,
 			})
 
 			reducer += logMessage
@@ -286,7 +296,7 @@ export class BattleLogModel {
 		let oldHermit = this.game.components.get(oldHermitEntity)
 		let newHermit = this.game.components.get(newHermitEntity)
 
-		if (!newRow || !oldHermit || !newHermit) return
+		if (!newRow || !newHermit) return
 
 		if (oldHermit) {
 			this.logMessageQueue.push({

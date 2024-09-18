@@ -3,6 +3,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const MuseumCollectionEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'museum-collection',
 	icon: 'museum-collection',
 	name: 'Museum Collection Size',
 	description:

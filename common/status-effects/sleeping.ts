@@ -4,10 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {afterDefence} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const SleepingEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'sleeping',
 	icon: 'sleeping',
 	name: 'Sleep',
 	description:
@@ -60,9 +62,13 @@ const SleepingEffect: Counter<CardComponent> = {
 			}
 		})
 
-		observer.subscribe(player.hooks.afterDefence, (_attack) => {
-			if (!target.isAlive()) effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterDefence,
+			afterDefence.ON_ROW_DEATH,
+			(_attack) => {
+				if (!target.isAlive()) effect.remove()
+			},
+		)
 	},
 }
 
