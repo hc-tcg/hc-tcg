@@ -23,7 +23,7 @@ function DeckSidebar({children, header, footer, width, showHeader}: Props) {
 						className={classNames(css.toggle, !active && css.open)}
 						onClick={() => setActive(!active)}
 					>
-						<KebabMenuIcon />
+						<img src="/images/icons/deck.png" className={css.toggleImage}></img>
 					</button>
 				</div>
 			)}

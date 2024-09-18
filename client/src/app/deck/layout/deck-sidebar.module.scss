@@ -30,7 +30,6 @@
 	place-content: center;
 	background: var(--gray-700);
 	padding: 0.5rem;
-	height: 1rem;
 	min-width: 1rem;
 	border-radius: 6px;
 	font-size: 2rem;
@@ -41,6 +40,11 @@
 		background: var(--gray-900);
 		filter: brightness(1.1);
 	}
+}
+
+.toggleImage {
+	width: 1.5rem;
+	height: 1.5rem;
 }
 
 .bodyWrapper {
@@ -57,7 +61,7 @@
 	display: none;
 }
 
-@media screen and (max-width: 720px) {
+@media screen and (max-width: 800px) {
 	.bodyWrapper {
 		position: absolute;
 		background: #313233fd;

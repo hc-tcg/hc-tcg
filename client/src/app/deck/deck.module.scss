@@ -430,6 +430,10 @@
 .mobileDeckNameText {
 	font-weight: 600;
 	flex-grow: 1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 100px;
 
 	&.invalid {
 		filter: drop-shadow(1px 0px 0 var(--color-error))
@@ -500,6 +504,10 @@
 		gap: 0rem;
 		margin-bottom: 0px;
 	}
+
+	.editDeckInfo {
+		padding: 0px;
+	}
 }
 
 .iconButton {
@@ -520,5 +528,14 @@
 	> img {
 		height: 1.5rem;
 		width: 1.5rem;
+	}
+}
+
+@media screen and (max-width: 365px) {
+	.mobileDeckStat {
+		padding: 0.2rem 0.2rem;
+	}
+	.mobileDeckStats {
+		width: 100%;
 	}
 }

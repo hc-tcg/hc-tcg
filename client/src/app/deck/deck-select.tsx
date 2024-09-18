@@ -347,12 +347,12 @@ function SelectDeck({
 								<span
 									className={classNames(
 										css.mobileDeckNameText,
-										validationMessage && css.invalid,
+										!validationResult.valid && css.invalid,
 									)}
 								>
 									{loadedDeck.name}
 								</span>
-								{validationMessage && (
+								{!validationResult.valid && validationResult.reason && (
 									<span className={css.mobileErrorIcon}>
 										<ErrorIcon />
 									</span>

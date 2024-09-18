@@ -107,3 +107,11 @@ $card-size: 118px;
 	align-items: start;
 	width: 100%;
 }
+
+@media (max-width: 400px) {
+	.mobileCardListSmall {
+		display: flex;
+		flex-direction: column;
+		align-items: normal;
+	}
+}

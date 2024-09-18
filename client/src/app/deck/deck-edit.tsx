@@ -443,7 +443,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								disabled={!textQuery && !rankQuery && !typeQuery}
 								onClick={clearFilters}
 							>
-								Clear Filter
+								<span className={css.hideOnMobile}>Clear Filter</span>
+								<span className={css.showOnMobile}>Clear</span>
 							</Button>
 						</>
 					}
