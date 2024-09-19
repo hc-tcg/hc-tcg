@@ -524,7 +524,7 @@ function SelectDeck({
 					</Accordion>
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
-					showHeader={false}
+					showHeader={true}
 					header={
 						<>
 							<img
