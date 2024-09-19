@@ -60,7 +60,7 @@ function checkHasTakenDamage(
 			let newHealth = newPlayer.board.rows[i].health
 			if (oldHealth === null || newHealth === null) continue
 
-			if (oldHealth < newHealth) return true
+			if (newHealth < oldHealth) return true
 		}
 	}
 
