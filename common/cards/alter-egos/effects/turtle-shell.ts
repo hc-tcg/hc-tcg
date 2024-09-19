@@ -18,17 +18,9 @@ type ActiveInfo = {
 	readonly stage: HermitState
 }
 
-type HermitState =
-	| 'opponent-activated'
-	| 'player-activated'
-	| 'defend-then-discard'
-	| 'too-late'
+type HermitState = 'activated' | 'defend-then-discard' | 'too-late'
 
-type InstanceState =
-	| 'opponent-activated'
-	| 'player-activated'
-	| 'defend-then-discard'
-	| 'inactive'
+type InstanceState = 'activated' | 'defend-then-discard' | 'inactive'
 
 const lastActiveHermit = new GameValue<
 	Record<PlayerEntity, ActiveInfo | undefined>
@@ -77,10 +69,7 @@ const TurtleShell: Attach = {
 					}
 					lastActiveHermit.get(game)[player.entity] = {
 						hermit: newHermit,
-						stage:
-							game.currentPlayerEntity === player.entity
-								? 'player-activated'
-								: 'opponent-activated',
+						stage: 'activated',
 					}
 				},
 			)
@@ -96,13 +85,7 @@ const TurtleShell: Attach = {
 					const activeInfo = lastActiveHermit.get(game)[player.entity]
 					assert(activeInfo)
 					switch (activeInfo.stage) {
-						case 'opponent-activated':
-							lastActiveHermit.get(game)[player.entity] = {
-								hermit: activeHermit,
-								stage: 'player-activated',
-							}
-							break
-						case 'player-activated':
+						case 'activated':
 							lastActiveHermit.get(game)[player.entity] = {
 								hermit: activeHermit,
 								stage: 'defend-then-discard',
@@ -197,7 +180,8 @@ const TurtleShell: Attach = {
 						game.battleLog.addEntry(
 							player.entity,
 							endProtectionEntry(
-								activeInfo.stage === 'opponent-activated'
+								activeInfo.stage === 'activated' &&
+									game.currentPlayerEntity === player.opponentPlayer.entity
 									? myHermitCard
 									: activeInfo.hermit,
 								activeInfo.hermit.slot.row.index,
@@ -246,7 +230,7 @@ const TurtleShell: Attach = {
 		)
 
 		observer.subscribe(player.opponentPlayer.hooks.onTurnStart, () => {
-			if (state === 'player-activated') {
+			if (state === 'activated') {
 				state = 'defend-then-discard'
 			}
 		})
