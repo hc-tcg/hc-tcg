@@ -4,7 +4,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -114,21 +114,18 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 }
 
 const addTag = (
-	loadedDeck: PlayerDeckT,
-	setLoadedDeck: React.Dispatch<React.SetStateAction<PlayerDeckT>>,
+	tags: Array<Tag>,
+	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
 	color: string,
 	setColor: React.Dispatch<React.SetStateAction<string>>,
 	ev: React.SyntheticEvent<HTMLFormElement>,
 ) => {
 	ev.preventDefault()
 	const tag = {name: ev.currentTarget.tag.value.trim(), color: color}
-	if (loadedDeck.tags?.includes(tag)) return
-	if (loadedDeck.tags && loadedDeck.tags.length >= 3) return
+	if (tags.includes(tag)) return
+	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
-	setLoadedDeck({
-		...loadedDeck,
-		tags: loadedDeck.tags ? [tag, ...loadedDeck.tags] : [tag],
-	})
+	setTags([...tags, tag])
 	setColor('ffffff')
 }
 
@@ -236,6 +233,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#aabbcc')
+	const [tags, setTags] = useState<Array<Tag>>(
+		loadedDeck.tags ? loadedDeck.tags : [],
+	)
 	const tagNameRef = useRef<HTMLInputElement>(null)
 
 	const tagsDropdownOptions = getCreatedTags().map((option) => ({
@@ -372,6 +372,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		) {
 			return setShowOverwriteModal(true)
 		}
+
+		// Set up tags
+		newDeck.tags = tags
 
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck, initialDeckState)
@@ -639,9 +642,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								<label htmlFor="tags">Deck Tags</label>
 								<form
 									className={css.deckTagsForm}
-									onSubmit={(e) =>
-										addTag(loadedDeck, setLoadedDeck, color, setColor, e)
-									}
+									onSubmit={(e) => addTag(tags, setTags, color, setColor, e)}
 								>
 									<div className={css.customInput}>
 										<Dropdown
@@ -683,28 +684,31 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									</Button>
 								</form>
 								<div className={css.tagList}>
-									{deck.tags &&
-										deck.tags.map((tag) => {
-											return (
-												<div className={css.fullTag}>
-													<Button
-														className={css.tagRemovalButton}
-														onClick={() => loadedDeck.tags = loadedDeck.tags!.filter(
-															(subtag) =>
-																subtag.name !== tag.name &&
-																subtag.color !== tag.color,
-														)}
-													>
-														X
-													</Button>
-													<span
-														className={css.fullTagColor}
-														style={{backgroundColor: tag.color}}
-													></span>
-													{tag.name}
-												</div>
-											)
-										})}
+									{tags.map((tag) => {
+										return (
+											<div className={css.fullTag}>
+												<Button
+													className={css.tagRemovalButton}
+													onClick={() =>
+														setTags(
+															tags.filter(
+																(subtag) =>
+																	subtag.name !== tag.name &&
+																	subtag.color !== tag.color,
+															),
+														)
+													}
+												>
+													X
+												</Button>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								</div>
 							</div>
 							<Button
