@@ -72,6 +72,7 @@ const ChorusFruit: SingleUse = {
 						if (pickedSlot.row.entity !== player.activeRowEntity) {
 							player.changeActiveRow(pickedSlot.row)
 						}
+						game.sounds.addOneOf('sfx/Teleport1.ogg', 'sfx/Teleport2.ogg')
 					},
 				})
 			},

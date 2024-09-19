@@ -168,6 +168,8 @@ export type LocalGameState = {
 	currentPickableSlots: Array<SlotEntity> | null
 	currentPickMessage: string | null
 	currentModalData: LocalModalData | null
+	// Sound effects to play when the game state is updated.
+	soundEffects: Array<string>
 
 	players: Record<PlayerEntity, LocalPlayerState>
 

@@ -32,6 +32,7 @@ import {
 import {AttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 import {PlayerId, PlayerModel} from './player-model'
+import SoundQueueModel from './sound-queue-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
@@ -105,6 +106,7 @@ export class GameModel {
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
+	public sounds: SoundQueueModel
 	public task: any
 	public state: GameState
 
@@ -138,6 +140,7 @@ export class GameModel {
 		this.internalCode = options.code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
+		this.sounds = new SoundQueueModel()
 
 		this.task = null
 

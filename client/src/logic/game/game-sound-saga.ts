@@ -85,31 +85,6 @@ function checkHasChangedActiveRow(
 	)
 }
 
-function checkSingleUseApplied(
-	oldGameState: LocalGameState,
-	newGameState: LocalGameState,
-): string | null {
-	let oldSingleUse =
-		oldGameState.players[oldGameState.turn.currentPlayerEntity].board.singleUse
-
-	if (
-		oldSingleUse.card !== null &&
-		newGameState.players[oldGameState.turn.currentPlayerEntity].board.singleUse
-			.card === null
-	) {
-		if (isSingleUse(oldSingleUse.card.props)) {
-			return (
-				oldSingleUse.card.props.applySounds[
-					Math.floor(
-						Math.random() * oldSingleUse.card.props.applySounds?.length,
-					)
-				] || null
-			)
-		}
-	}
-	return null
-}
-
 /* Diff the new and old game state to figure out what sounds to play */
 function getNextSound(
 	oldGameState: LocalGameState | null,
@@ -117,13 +92,12 @@ function getNextSound(
 ): string | null {
 	if (!oldGameState || !newGameState) return null
 
-	if (checkHasTakenDamage(oldGameState, newGameState)) {
-		return getDamageTakenSound()
+	if (newGameState.soundEffects.length !== 0) {
+		return newGameState.soundEffects[0]
 	}
 
-	let applySound = checkSingleUseApplied(oldGameState, newGameState)
-	if (applySound) {
-		return applySound
+	if (checkHasTakenDamage(oldGameState, newGameState)) {
+		return getDamageTakenSound()
 	}
 
 	let oldCardNumber = countCards(oldGameState)
@@ -155,7 +129,6 @@ export default function* gameSoundSaga() {
 
 		if (oldGameState) {
 			let nextSound = getNextSound(oldGameState, newGameState)
-			console.log(nextSound)
 
 			if (nextSound) {
 				yield* put<LocalMessage>({

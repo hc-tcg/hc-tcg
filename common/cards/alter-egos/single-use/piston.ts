@@ -42,7 +42,6 @@ const Piston: SingleUse = {
 		singleUse.attachCondition,
 		query.exists(SlotComponent, firstPickCondition),
 	),
-	applySounds: ['sfx/Piston_extend.ogg'],
 	log: (values) =>
 		`${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
 	onAttach(
@@ -89,6 +88,8 @@ const Piston: SingleUse = {
 				// Remove playing a single use from completed actions so it can be done again
 				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false
+
+        game.sounds.queue('sfx/Piston_extend.ogg')
 			},
 		})
 	},
