@@ -21,6 +21,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
+	getCreatedTags,
 	getLegacyDecks,
 	getSavedDeck,
 	getSavedDecks,
@@ -35,6 +36,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import Dropdown from 'components/dropdown'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -55,6 +57,14 @@ function SelectDeck({
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
+	const sortedDecks = savedDecks
+		.map((d: any) => {
+			const deck: PlayerDeckT = JSON.parse(d)
+			return deck
+		})
+		.sort((a, b) => a.name.localeCompare(b.name))
+	const [filteredDecks, setFilteredDecks] =
+		useState<Array<PlayerDeckT>>(sortedDecks)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
@@ -63,6 +73,7 @@ function SelectDeck({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
+		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -73,6 +84,16 @@ function SelectDeck({
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+
+	const tagsDropdownOptions = [
+		{name: 'No Filter', color: ''},
+		...getCreatedTags(),
+	].map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+		icon: '',
+	}))
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
@@ -180,13 +201,8 @@ function SelectDeck({
 		//Refresh saved deck list and load new deck
 		setSavedDecks(getSavedDecks())
 	}
-	const sortedDecks = savedDecks
-		.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
-		})
-		.sort((a, b) => a.name.localeCompare(b.name))
-	const deckList: ReactNode = sortedDecks.map(
+
+	const deckList: ReactNode = filteredDecks.map(
 		(deck: PlayerDeckT, i: number) => {
 			return (
 				<li
@@ -206,6 +222,14 @@ function SelectDeck({
 							alt={'deck-icon'}
 						/>
 					</div>
+					{deck.tags?.splice(3)
+						? deck.tags.map((tag) => (
+								<div
+									className={css.tagBox}
+									style={{backgroundColor: tag.color}}
+								></div>
+							))
+						: ''}
 					{deck.name}
 				</li>
 			)
@@ -524,7 +548,7 @@ function SelectDeck({
 					</Accordion>
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
-					showHeader={false}
+					showHeader={true}
 					header={
 						<>
 							<img
@@ -533,6 +557,35 @@ function SelectDeck({
 								className={css.sidebarIcon}
 							/>
 							<p style={{textAlign: 'center'}}>My Decks</p>
+							<Dropdown
+								button={
+									<button className={css.dropdownButton}>
+										{' '}
+										<img src="../images/icons/tag.png" alt="tag-icon" />
+									</button>
+								}
+								label="Saved Tags"
+								options={tagsDropdownOptions}
+								action={(option) => {
+									if (option.includes('No Filter')) {
+										setFilteredDecks(sortedDecks)
+										return
+									}
+									const parsedOption = JSON.parse(option)
+									console.log(parsedOption)
+									setFilteredDecks(
+										sortedDecks.filter(
+											(deck) =>
+												deck.tags &&
+												deck.tags.some(
+													(tag) =>
+														tag.name === parsedOption.name &&
+														tag.color === parsedOption.color,
+												),
+										),
+									)
+								}}
+							/>
 						</>
 					}
 					footer={

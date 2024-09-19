@@ -60,12 +60,19 @@ const getDeck: () => PlayerDeckT | null = function () {
 	const urlParams = new URLSearchParams(document.location.search || '')
 	const hash = urlParams.get('deck')
 	const name = urlParams.get('name')
+	const tags = urlParams.get('tags')
 	if (!hash) return null
 	const deckCards = getDeckFromHash(hash)
 	if (!validateDeck(deckCards).valid) return null
 	console.log('Valid deck')
-	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
-	return {cards: deckCards, name: name, icon: 'any'}
+	if (!name)
+		return {cards: deckCards, name: 'Imported deck', icon: 'any', tags: tags}
+	return {
+		cards: deckCards,
+		name: name,
+		icon: 'any',
+		tags: tags ? JSON.parse(tags) : null,
+	}
 }
 
 const createConnectErrorChannel = () =>

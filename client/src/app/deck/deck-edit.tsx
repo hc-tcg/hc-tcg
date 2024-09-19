@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {HexColorPicker} from 'react-colorful'
 import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
@@ -16,13 +17,18 @@ import Dropdown from 'components/dropdown'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
+import {
+	deleteDeck,
+	getCreatedTags,
+	getSavedDeckNames,
+} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -105,6 +111,40 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 			</p>
 		</div>
 	)
+}
+
+const addTag = (
+	loadedDeck: PlayerDeckT,
+	setLoadedDeck: React.Dispatch<React.SetStateAction<PlayerDeckT>>,
+	color: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	ev: React.SyntheticEvent<HTMLFormElement>,
+) => {
+	ev.preventDefault()
+	const tag = {name: ev.currentTarget.tag.value.trim(), color: color}
+	if (loadedDeck.tags?.includes(tag)) return
+	if (loadedDeck.tags && loadedDeck.tags.length >= 3) return
+	if (tag.name.length === 0) return
+	setLoadedDeck({
+		...loadedDeck,
+		tags: loadedDeck.tags ? [tag, ...loadedDeck.tags] : [tag],
+	})
+	setColor('ffffff')
+}
+
+const selectTag = (
+	option: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	ref: React.RefObject<HTMLInputElement>,
+) => {
+	const tags = getCreatedTags()
+	const selectedTag = tags.find((tag) => {
+		const parsedTag = JSON.parse(option)
+		return tag.name === parsedTag.name && tag.color === parsedTag.color
+	})
+	if (!selectedTag) return
+	setColor(selectedTag.color)
+	if (ref.current) ref.current.value = selectedTag.name
 }
 
 type Props = {
@@ -195,6 +235,15 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+	const [color, setColor] = useState('#aabbcc')
+	const tagNameRef = useRef<HTMLInputElement>(null)
+
+	const tagsDropdownOptions = getCreatedTags().map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+		icon: '',
+	}))
 
 	useEffect(() => {
 		window.addEventListener('keydown', handleTooltipKey)
@@ -586,6 +635,76 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											})
 										}
 									/>
+								</div>
+								<label htmlFor="tags">Deck Tags</label>
+								<form
+									className={css.deckTagsForm}
+									onSubmit={(e) =>
+										addTag(loadedDeck, setLoadedDeck, color, setColor, e)
+									}
+								>
+									<div className={css.customInput}>
+										<Dropdown
+											button={
+												<button className={css.dropdownButton}>
+													<img
+														src={`/images/expansion-icons/${
+															expansionQuery === '' ? 'any' : expansionQuery
+														}.png`}
+													/>
+												</button>
+											}
+											label="Saved Tags"
+											options={tagsDropdownOptions}
+											action={(option) =>
+												selectTag(option, setColor, tagNameRef)
+											}
+										/>
+										<ColorPickerDropdown
+											button={
+												<button
+													className={css.dropdownButton}
+													style={{backgroundColor: color}}
+												></button>
+											}
+											action={setColor}
+										/>
+										<input
+											maxLength={25}
+											name="tag"
+											placeholder=" "
+											autoFocus
+											id="tag"
+											ref={tagNameRef}
+										></input>
+									</div>
+									<Button variant="stone" type="submit">
+										+
+									</Button>
+								</form>
+								<div className={css.tagList}>
+									{deck.tags &&
+										deck.tags.map((tag) => {
+											return (
+												<div className={css.fullTag}>
+													<Button
+														className={css.tagRemovalButton}
+														onClick={() => loadedDeck.tags = loadedDeck.tags!.filter(
+															(subtag) =>
+																subtag.name !== tag.name &&
+																subtag.color !== tag.color,
+														)}
+													>
+														X
+													</Button>
+													<span
+														className={css.fullTagColor}
+														style={{backgroundColor: tag.color}}
+													></span>
+													{tag.name}
+												</div>
+											)
+										})}
 								</div>
 							</div>
 							<Button
