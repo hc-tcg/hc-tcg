@@ -69,7 +69,7 @@ function Game() {
 		}
 	}, [handleKeys])
 
-		const handleOpenModal = (id: ModalVariant | null) => {
+	const handleOpenModal = (id: ModalVariant | null) => {
 		dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: id})
 	}
 

@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameState, LocalGameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
@@ -21,7 +21,8 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay, getGameState} from './game-selectors'
+import {getEndGameOverlay} from './game-selectors'
+import gameSoundSaga from './game-sound-saga'
 import {
 	localApplyEffect,
 	localChangeActiveHermit,
@@ -131,67 +132,6 @@ function* gameStateReceiver() {
 			localGameState: localGameState,
 			time: Date.now(),
 		})
-	}
-}
-
-/* Diff the new and old game state to figure out what sounds to play */
-function getNextSound(
-	oldGameState: LocalGameState | null,
-	newGameState: LocalGameState | null,
-): string | null {
-	if (!oldGameState || !newGameState) return null
-
-	function countCards(game: LocalGameState) {
-		return Object.values(game.players)
-			.map(
-				(player) =>
-					player.board.rows
-						.map(
-							(row) =>
-								Number(row.attach.card !== null) +
-								Number(row.hermit.card !== null) +
-								row.items.filter((item) => item.card !== null).length,
-						)
-						.reduce((a, b) => a + b, 0) +
-					Number(player.board.singleUse.card !== null),
-			)
-			.reduce((a, b) => a + b, 0)
-	}
-
-	let oldCardNumber = countCards(oldGameState)
-	let newCardNumber = countCards(newGameState)
-
-	if (newCardNumber > oldCardNumber) {
-		return 'sfx/Item_Frame_add_item1.ogg'
-	}
-	if (newCardNumber < oldCardNumber) {
-		return 'sfx/Item_Frame_add_remove1.ogg'
-	}
-
-	return null
-}
-
-function* gameSoundSaga() {
-	let oldGameState = null
-
-	while (true) {
-		yield* take(localMessages.GAME_LOCAL_STATE_SET)
-
-		let newGameState = yield* select(getGameState)
-		if (!newGameState) continue
-
-		if (oldGameState) {
-			let nextSound = getNextSound(oldGameState, newGameState)
-
-			if (nextSound) {
-				yield* put<LocalMessage>({
-					type: localMessages.SOUND_PLAY,
-					path: nextSound,
-				})
-			}
-		}
-
-		oldGameState = newGameState
 	}
 }
 

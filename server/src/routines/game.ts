@@ -348,7 +348,7 @@ function* turnActionSaga(
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
-  game.state.soundEffects = []
+	game.state.soundEffects = []
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
