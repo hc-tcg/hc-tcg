@@ -124,6 +124,7 @@ export const singleUse = {
 	showConfirmationModal: false,
 	hasAttack: false,
 	category: 'single_use' as CardCategoryT,
+	applySounds: [],
 	attachCondition: query.every(
 		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,

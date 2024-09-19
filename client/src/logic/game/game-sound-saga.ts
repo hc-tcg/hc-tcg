@@ -3,7 +3,6 @@ import {LocalMessage, localMessages} from 'logic/messages'
 import {put, take} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {getGameState} from './game-selectors'
-import {LocalCardInstance} from 'common/types/server-requests'
 import {isSingleUse} from 'common/cards/base/types'
 
 function getCardPlacedSound(): string {
@@ -99,7 +98,13 @@ function checkSingleUseApplied(
 			.card === null
 	) {
 		if (isSingleUse(oldSingleUse.card.props)) {
-			return oldSingleUse.card.props.applySound || null
+			return (
+				oldSingleUse.card.props.applySounds[
+					Math.floor(
+						Math.random() * oldSingleUse.card.props.applySounds?.length,
+					)
+				] || null
+			)
 		}
 	}
 	return null
@@ -111,10 +116,6 @@ function getNextSound(
 	newGameState: LocalGameState | null,
 ): string | null {
 	if (!oldGameState || !newGameState) return null
-
-	if (checkHasChangedActiveRow(oldGameState, newGameState)) {
-		return getActiveRowChangedSound()
-	}
 
 	if (checkHasTakenDamage(oldGameState, newGameState)) {
 		return getDamageTakenSound()
@@ -134,6 +135,10 @@ function getNextSound(
 
 	if (newCardNumber < oldCardNumber) {
 		return getCardRemovedSound()
+	}
+
+	if (checkHasChangedActiveRow(oldGameState, newGameState)) {
+		return getActiveRowChangedSound()
 	}
 
 	return null
