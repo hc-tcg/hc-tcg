@@ -471,14 +471,12 @@ export function getLocalGameState(
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,
-		soundEffects: game.sounds.soundQueue,
+		soundEffects: game.sfxQueue.read(),
 
 		players,
 
 		timer: game.state.timer,
 	}
-
-	game.sounds.clear()
 
 	return localGameState
 }

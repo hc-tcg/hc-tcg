@@ -1,8 +1,10 @@
 export default class SoundQueueModel {
-	public soundQueue: Array<string> = []
+	private soundQueue: Array<string> = []
 
-	public clear() {
+	public read() {
+		let tmp = this.soundQueue
 		this.soundQueue = []
+		return tmp
 	}
 
 	public queue(sound: string) {

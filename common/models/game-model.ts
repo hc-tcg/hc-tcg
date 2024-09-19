@@ -106,7 +106,7 @@ export class GameModel {
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public sounds: SoundQueueModel
+	public sfxQueue: SoundQueueModel
 	public task: any
 	public state: GameState
 
@@ -140,7 +140,7 @@ export class GameModel {
 		this.internalCode = options.code || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
-		this.sounds = new SoundQueueModel()
+		this.sfxQueue = new SoundQueueModel()
 
 		this.task = null
 
