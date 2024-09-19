@@ -37,6 +37,7 @@ import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import Dropdown from 'components/dropdown'
+import {TagsModal} from 'components/tags-modal'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -81,6 +82,7 @@ function SelectDeck({
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
+	const [showManageTagsModal, setShowManageTagsModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
@@ -278,6 +280,11 @@ function SelectDeck({
 			<MassExportModal
 				setOpen={showMassExportModal}
 				onClose={() => setShowMassExportModal(!showMassExportModal)}
+			/>
+			<TagsModal
+				setOpen={showManageTagsModal}
+				tags={getCreatedTags()}
+				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
 			/>
 			<AlertModal
 				setOpen={showValidateDeckModal}
@@ -626,19 +633,28 @@ function SelectDeck({
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>
-								<Button
-									variant="primary"
-									onClick={() => setShowImportModal(!showImportModal)}
-								>
-									<ExportIcon reversed />
-									<span>Import Decks</span>
-								</Button>
+								<div className={css.importAndExport}>
+									<Button
+										variant="primary"
+										onClick={() => setShowImportModal(!showImportModal)}
+										style={{flexGrow: 1}}
+									>
+										<ExportIcon reversed />
+										<span>Import</span>
+									</Button>
+									<Button
+										variant="default"
+										onClick={() => setShowMassExportModal(!showMassExportModal)}
+									>
+										<ExportIcon />
+										<span>Mass Export</span>
+									</Button>
+								</div>
 								<Button
 									variant="default"
-									onClick={() => setShowMassExportModal(!showMassExportModal)}
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 								>
-									<ExportIcon />
-									<span>Mass Export</span>
+									<span>Manage Tags</span>
 								</Button>
 							</div>
 						</>
