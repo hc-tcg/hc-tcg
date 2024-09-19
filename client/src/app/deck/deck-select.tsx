@@ -340,6 +340,18 @@ function SelectDeck({
 								<div className={css.deckName}>
 									<span>{loadedDeck.name}</span>
 								</div>
+								{loadedDeck.tags &&
+									loadedDeck.tags.map((tag) => {
+										return (
+											<div className={css.fullTagTitle}>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								<div className={css.dynamicSpace}></div>
 
 								<p className={classNames(css.cardCount)}>

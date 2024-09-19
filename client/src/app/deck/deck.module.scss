@@ -475,6 +475,13 @@
 	gap: 1rem;
 }
 
+.fullTagTitle {
+	background-color: var(--gray-600);
+	padding: 0.25rem;
+	border-radius: 4px;
+	border: var(--gray-600) 2px solid;
+}
+
 .fullTag {
 	background-color: var(--gray-600);
 	padding: 0.5rem;
