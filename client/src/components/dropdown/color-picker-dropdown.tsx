@@ -3,19 +3,14 @@ import {ReactNode, useState} from 'react'
 import css from './dropdown.module.scss'
 import {HexColorPicker} from 'react-colorful'
 
-type DropdownOptions = {
-	name: string
-	key?: string
-	icon?: string
-}
-
 type Props = {
 	button: ReactNode
 	action: React.Dispatch<React.SetStateAction<string>>
 }
 
 const ColorPickerDropdown = ({button, action}: Props) => {
-	const [color, setColor] = useState('#aabbcc')
+	const [color, setColor] = useState('#abcdef')
+	const [code, setCode] = useState('#abcdef')
 
 	return (
 		<DropdownMenu.Root>
@@ -34,7 +29,18 @@ const ColorPickerDropdown = ({button, action}: Props) => {
 						color={color}
 						onChange={(e) => {
 							setColor(e)
+							setCode(e)
 							action(e)
+						}}
+					/>
+					<input
+						placeholder="Hex Code"
+						className={css.input}
+						value={code}
+						onChange={(e) => {
+							setColor(e.target.value)
+							setCode(e.target.value)
+							action(e.target.value)
 						}}
 					/>
 				</DropdownMenu.Content>

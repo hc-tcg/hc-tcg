@@ -83,12 +83,16 @@
 	color: var(--mauve11);
 }
 
-[data-highlighted] > .RightSlot {
+[data-highlighted]>.RightSlot {
 	color: white;
 }
 
 [data-disabled] .RightSlot {
 	color: var(--mauve8);
+}
+
+.input {
+	padding-top: 1rem;
 }
 
 @keyframes slideUpAndFade {

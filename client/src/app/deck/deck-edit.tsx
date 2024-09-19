@@ -614,7 +614,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 						<div className={css.upperEditDeck}>
 							<div className={css.editDeckInfo}>
-								<label htmlFor="deckname">Deck Name and Icon</label>
+								<label htmlFor="deckname">Name and Icon</label>
 								<div className={css.editDeckInfoSettings}>
 									<Dropdown
 										button={
@@ -639,7 +639,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										}
 									/>
 								</div>
-								<label htmlFor="tags">Deck Tags</label>
+								<label htmlFor="tags">Tags</label>
 								<form
 									className={css.deckTagsForm}
 									onSubmit={(e) => addTag(tags, setTags, color, setColor, e)}
@@ -648,11 +648,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										<Dropdown
 											button={
 												<button className={css.dropdownButton}>
-													<img
-														src={`/images/expansion-icons/${
-															expansionQuery === '' ? 'any' : expansionQuery
-														}.png`}
-													/>
+													<img src="/images/icons/tag.png" />
 												</button>
 											}
 											label="Saved Tags"
@@ -679,28 +675,29 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											ref={tagNameRef}
 										></input>
 									</div>
-									<Button variant="stone" type="submit">
+									<Button
+										variant="default"
+										type="submit"
+										className={css.submitButton}
+									>
 										+
 									</Button>
 								</form>
 								<div className={css.tagList}>
 									{tags.map((tag) => {
 										return (
-											<div className={css.fullTag}>
-												<Button
-													className={css.tagRemovalButton}
-													onClick={() =>
-														setTags(
-															tags.filter(
-																(subtag) =>
-																	subtag.name !== tag.name &&
-																	subtag.color !== tag.color,
-															),
-														)
-													}
-												>
-													X
-												</Button>
+											<div
+												className={css.fullTag}
+												onClick={() =>
+													setTags(
+														tags.filter(
+															(subtag) =>
+																subtag.name !== tag.name &&
+																subtag.color !== tag.color,
+														),
+													)
+												}
+											>
 												<span
 													className={css.fullTagColor}
 													style={{backgroundColor: tag.color}}
@@ -711,14 +708,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									})}
 								</div>
 							</div>
-							<Button
-								variant="default"
-								size="small"
-								onClick={clearDeck}
-								disabled={loadedDeck.cards.length == 0}
-							>
-								Remove All
-							</Button>
 						</div>
 
 						<div className={css.hideOnMobile}>
@@ -767,7 +756,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 						</div>
 
 						<div className={css.showOnMobile}>
-							Deck Cards{' '}
+							Cards
 							<MobileCardList
 								cards={sortCards(loadedDeck.cards)}
 								onClick={removeCard}

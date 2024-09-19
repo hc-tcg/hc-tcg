@@ -462,6 +462,13 @@
 	gap: 1rem;
 }
 
+.customInput {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+}
+
 .tagList {
 	display: flex;
 	flex-direction: row;
@@ -472,10 +479,12 @@
 	background-color: var(--gray-600);
 	padding: 0.5rem;
 	border-radius: 4px;
-}
+	border: var(--gray-600) 2px solid;
 
-.tagRemovalButton {
-	padding: 5px;
+	&:hover {
+		border: var(--text-light) 2px solid;
+		background-color: #353838;
+	}
 }
 
 .fullTagColor {
@@ -486,8 +495,13 @@
 
 .tagBox {
 	width: 1rem;
-	height: 1.5rem;
-	border: 2px solid var(--text-light);
+	height: 1rem;
+	border-radius: 50%;
+}
+
+.submitButton {
+	padding-right: 1rem;
+	padding-left: 1rem;
 }
 
 /* MOBILE */
