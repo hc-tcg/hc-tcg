@@ -3,6 +3,8 @@ import {LocalMessage, localMessages} from 'logic/messages'
 import {put, take} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {getGameState} from './game-selectors'
+import {LocalCardInstance} from 'common/types/server-requests'
+import {isSingleUse} from 'common/cards/base/types'
 
 function getCardPlacedSound(): string {
 	return ['sfx/Item_Frame_add_item1.ogg', 'sfx/Item_Frame_add_item2.ogg'][
@@ -84,6 +86,25 @@ function checkHasChangedActiveRow(
 	)
 }
 
+function checkSingleUseApplied(
+	oldGameState: LocalGameState,
+	newGameState: LocalGameState,
+): string | null {
+	let oldSingleUse =
+		oldGameState.players[oldGameState.turn.currentPlayerEntity].board.singleUse
+
+	if (
+		oldSingleUse.card !== null &&
+		newGameState.players[oldGameState.turn.currentPlayerEntity].board.singleUse
+			.card === null
+	) {
+		if (isSingleUse(oldSingleUse.card.props)) {
+			return oldSingleUse.card.props.applySound || null
+		}
+	}
+	return null
+}
+
 /* Diff the new and old game state to figure out what sounds to play */
 function getNextSound(
 	oldGameState: LocalGameState | null,
@@ -97,6 +118,11 @@ function getNextSound(
 
 	if (checkHasTakenDamage(oldGameState, newGameState)) {
 		return getDamageTakenSound()
+	}
+
+	let applySound = checkSingleUseApplied(oldGameState, newGameState)
+	if (applySound) {
+		return applySound
 	}
 
 	let oldCardNumber = countCards(oldGameState)

@@ -139,6 +139,7 @@ export type SingleUse = Card &
 		hasAttack: boolean
 		attackPreview?: (game: GameModel) => string
 		getFormattedDescription(): FormattedTextNode
+		applySound?: string
 	}
 
 export function isSingleUse(

@@ -42,6 +42,7 @@ const Piston: SingleUse = {
 		singleUse.attachCondition,
 		query.exists(SlotComponent, firstPickCondition),
 	),
+	applySound: 'sfx/Piston_extend.ogg',
 	log: (values) =>
 		`${values.defaultLog} to move ${getFormattedName(values.pick.id, false)}`,
 	onAttach(
