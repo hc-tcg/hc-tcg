@@ -492,6 +492,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				<DeckLayout.Sidebar
 					width="half"
 					showHeader={true}
+					showHeaderOnMobile={true}
 					header={
 						<>
 							<p className={css.hideOnMobile} style={{textAlign: 'center'}}>
