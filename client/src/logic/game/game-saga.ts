@@ -67,6 +67,11 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		yield* localRemoveEffect()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'PICK_REQUEST') {
+  	// Play a sound when the user selects a slot for a pick request.
+		yield* put<LocalMessage>({
+			type: localMessages.SOUND_PLAY,
+			path: 'sfx/Click.ogg',
+		})
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'MODAL_REQUEST') {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
