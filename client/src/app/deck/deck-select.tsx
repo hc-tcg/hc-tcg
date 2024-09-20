@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -87,6 +87,11 @@ function SelectDeck({
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+	const [tagFilter, setTagFilter] = useState<Tag>({
+		name: 'No Filter',
+		color: '#ffffff',
+		key: '0',
+	})
 
 	const tagsDropdownOptions = [
 		{name: 'No Filter', color: ''},
@@ -225,14 +230,16 @@ function SelectDeck({
 							alt={'deck-icon'}
 						/>
 					</div>
-					{deck.tags
-						? keysToTags(deck.tags).map((tag) => (
+					{deck.tags && deck.tags.length > 0 && (
+						<div className={css.tagRectangle}>
+							{keysToTags(deck.tags).map((tag) => (
 								<div
-									className={css.tagBox}
+									className={css.singleTag}
 									style={{backgroundColor: tag.color}}
 								></div>
-							))
-						: ''}
+							))}
+						</div>
+					)}
 					{deck.name}
 				</li>
 			)
@@ -577,40 +584,53 @@ function SelectDeck({
 								className={css.sidebarIcon}
 							/>
 							<p style={{textAlign: 'center'}}>My Decks</p>
-							<Dropdown
-								button={
-									<button className={css.dropdownButton}>
-										{' '}
-										<img src="../images/icons/tag.png" alt="tag-icon" />
-									</button>
-								}
-								label="Saved Tags"
-								options={tagsDropdownOptions}
-								action={(option) => {
-									if (option.includes('No Filter')) {
-										setFilteredDecks(sortedDecks)
-										return
-									}
-									const parsedOption = JSON.parse(option)
-									console.log(parsedOption)
-									setFilteredDecks(
-										sortedDecks.filter(
-											(deck) =>
-												deck.tags &&
-												keysToTags(deck.tags).some(
-													(tag) =>
-														tag.name === parsedOption.name &&
-														tag.color === parsedOption.color,
-												),
-										),
-									)
-								}}
-							/>
 						</>
 					}
 					footer={
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
+								<div className={css.footerTags}>
+									<Dropdown
+										button={
+											<button className={css.dropdownButton}>
+												{' '}
+												<img src="../images/icons/tag.png" alt="tag-icon" />
+											</button>
+										}
+										label="Saved Tags"
+										options={tagsDropdownOptions}
+										action={(option) => {
+											if (option.includes('No Filter')) {
+												setFilteredDecks(sortedDecks)
+												setTagFilter({
+													name: 'No Filter',
+													color: '#ffffff',
+													key: '0',
+												})
+												return
+											}
+											const parsedOption = JSON.parse(option)
+											console.log(parsedOption)
+											setFilteredDecks(
+												sortedDecks.filter(
+													(deck) =>
+														deck.tags &&
+														keysToTags(deck.tags).some(
+															(tag) =>
+																tag.name === parsedOption.name &&
+																tag.color === parsedOption.color,
+														),
+												),
+											)
+											setTagFilter(parsedOption)
+										}}
+									/>
+									<div
+										className={css.tagBox}
+										style={{backgroundColor: tagFilter.color}}
+									></div>
+									{tagFilter.name}
+								</div>
 								{getLegacyDecks() && (
 									<Button
 										onClick={() => {

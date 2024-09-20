@@ -506,6 +506,18 @@
 	border-radius: 50%;
 }
 
+.tagRectangle {
+	width: 0.75rem;
+	height: 2rem;
+	display: flex;
+	flex-direction: column;
+	border-radius: 0.5rem;
+}
+
+.singleTag {
+	flex-grow: 1;
+}
+
 .submitButton {
 	padding-right: 1rem;
 	padding-left: 1rem;
@@ -514,6 +526,13 @@
 .importAndExport {
 	display: flex;
 	width: 100%;
+	gap: 0.5rem;
+}
+
+.footerTags {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 	gap: 0.5rem;
 }
 

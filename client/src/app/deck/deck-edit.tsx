@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import {HexColorPicker} from 'react-colorful'
 import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
@@ -684,7 +683,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											maxLength={25}
 											name="tag"
 											placeholder=" "
-											autoFocus
+											className={css.input}
 											id="tag"
 											ref={tagNameRef}
 										></input>
