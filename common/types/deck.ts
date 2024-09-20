@@ -4,6 +4,7 @@ import {LocalCardInstance, WithoutFunctions} from './server-requests'
 export type Tag = {
 	name: string
 	color: string
+	key: string
 }
 
 export type PlayerDeckT = {
@@ -21,7 +22,7 @@ export type PlayerDeckT = {
 		| 'speedrunner'
 		| 'terraform'
 	cards: Array<LocalCardInstance>
-	tags: Array<Tag> | null
+	tags: Array<string> | null
 }
 
 export type SavedDeckT = {
@@ -43,7 +44,7 @@ export type SavedDeckT = {
 		cardId: string
 		cardInstance: string
 	}>
-	tags: Array<Tag> | null
+	tags: Array<string> | null
 }
 
 export function deckToSavedDeck(deck: PlayerDeckT): SavedDeckT {

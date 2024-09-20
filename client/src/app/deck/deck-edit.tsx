@@ -21,6 +21,8 @@ import {
 	deleteDeck,
 	getCreatedTags,
 	getSavedDeckNames,
+	keysToTags,
+	saveTag,
 } from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -117,11 +119,12 @@ const addTag = (
 	tags: Array<Tag>,
 	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
 	color: string,
+	key: string,
 	setColor: React.Dispatch<React.SetStateAction<string>>,
 	ev: React.SyntheticEvent<HTMLFormElement>,
 ) => {
 	ev.preventDefault()
-	const tag = {name: ev.currentTarget.tag.value.trim(), color: color}
+	const tag = {name: ev.currentTarget.tag.value.trim(), color: color, key: key}
 	if (tags.includes(tag)) return
 	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
@@ -132,6 +135,7 @@ const addTag = (
 const selectTag = (
 	option: string,
 	setColor: React.Dispatch<React.SetStateAction<string>>,
+	setKey: React.Dispatch<React.SetStateAction<string>>,
 	ref: React.RefObject<HTMLInputElement>,
 ) => {
 	const tags = getCreatedTags()
@@ -141,6 +145,7 @@ const selectTag = (
 	})
 	if (!selectedTag) return
 	setColor(selectedTag.color)
+	setKey(selectedTag.key)
 	if (ref.current) ref.current.value = selectedTag.name
 }
 
@@ -233,8 +238,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#aabbcc')
+	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
 	const [tags, setTags] = useState<Array<Tag>>(
-		loadedDeck.tags ? loadedDeck.tags : [],
+		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
 	)
 	const tagNameRef = useRef<HTMLInputElement>(null)
 
@@ -306,9 +312,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 
 	//CARD LOGIC
-	const clearDeck = () => {
-		setLoadedDeck({...loadedDeck, cards: []})
-	}
+	// const clearDeck = () => {
+	// 	setLoadedDeck({...loadedDeck, cards: []})
+	// }
 	const addCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
@@ -374,7 +380,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		}
 
 		// Set up tags
-		newDeck.tags = tags
+		newDeck.tags = tags.map((tag) => tag.key)
+
+		// Save tags
+		tags.forEach((tag) => {
+			saveTag(tag)
+		})
 
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck, initialDeckState)
@@ -642,7 +653,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								<label htmlFor="tags">Tags</label>
 								<form
 									className={css.deckTagsForm}
-									onSubmit={(e) => addTag(tags, setTags, color, setColor, e)}
+									onSubmit={(e) => {
+										addTag(tags, setTags, color, nextKey, setColor, e)
+										setNextKey(Math.random().toString())
+									}}
 								>
 									<div className={css.customInput}>
 										<Dropdown
@@ -654,7 +668,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											label="Saved Tags"
 											options={tagsDropdownOptions}
 											action={(option) =>
-												selectTag(option, setColor, tagNameRef)
+												selectTag(option, setColor, setNextKey, tagNameRef)
 											}
 										/>
 										<ColorPickerDropdown

@@ -25,6 +25,7 @@ import {
 	getLegacyDecks,
 	getSavedDeck,
 	getSavedDecks,
+	keysToTags,
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
@@ -224,8 +225,8 @@ function SelectDeck({
 							alt={'deck-icon'}
 						/>
 					</div>
-					{deck.tags?.splice(3)
-						? deck.tags.map((tag) => (
+					{deck.tags
+						? keysToTags(deck.tags).map((tag) => (
 								<div
 									className={css.tagBox}
 									style={{backgroundColor: tag.color}}
@@ -348,7 +349,7 @@ function SelectDeck({
 									<span>{loadedDeck.name}</span>
 								</div>
 								{loadedDeck.tags &&
-									loadedDeck.tags.map((tag) => {
+									keysToTags(loadedDeck.tags).map((tag) => {
 										return (
 											<div className={css.fullTagTitle}>
 												<span
@@ -596,7 +597,7 @@ function SelectDeck({
 										sortedDecks.filter(
 											(deck) =>
 												deck.tags &&
-												deck.tags.some(
+												keysToTags(deck.tags).some(
 													(tag) =>
 														tag.name === parsedOption.name &&
 														tag.color === parsedOption.color,

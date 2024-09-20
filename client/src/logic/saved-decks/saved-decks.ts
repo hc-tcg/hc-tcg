@@ -36,11 +36,6 @@ export const getSavedDeck = (name: string) => {
 export const saveDeck = (deck: PlayerDeckT) => {
 	const hash = 'Deck_' + deck.name
 	localStorage.setItem(hash, JSON.stringify(deckToSavedDeck(deck)))
-	// save tags if they're new
-	if (!deck.tags) return
-	deck.tags.forEach((tag) => {
-		localStorage.setItem(`Tag_${tag.name}${tag.color}`, JSON.stringify(tag))
-	})
 }
 
 export const deleteDeck = (name: string) => {
@@ -61,21 +56,6 @@ export const getSavedDecks = () => {
 		}
 	}
 	return decks.sort()
-}
-
-export const getCreatedTags: () => Array<Tag> = () => {
-	let lsKey
-	const tags = []
-
-	for (let i = 0; i < localStorage.length; i++) {
-		lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Tag_')) {
-			const key = localStorage.getItem(lsKey)
-			if (key) tags.push(JSON.parse(key) || {})
-		}
-	}
-	return tags.sort() as Array<Tag>
 }
 
 export const getSavedDeckNames = () => {
@@ -114,4 +94,41 @@ export const convertLegacyDecks = (): number => {
 	}
 
 	return conversionCount
+}
+
+export const getCreatedTags: () => Array<Tag> = () => {
+	let lsKey
+	const tags = []
+
+	for (let i = 0; i < localStorage.length; i++) {
+		lsKey = localStorage.key(i)
+
+		if (lsKey?.includes('Tag_')) {
+			const key = localStorage.getItem(lsKey)
+			if (key) tags.push(JSON.parse(key) || {})
+		}
+	}
+	return tags.sort() as Array<Tag>
+}
+
+export const keysToTags = (tags: Array<string>): Array<Tag> => {
+	const savedTags = getCreatedTags()
+	const fullTags: Array<Tag> = []
+	tags.forEach((key) => {
+		const fullTag = savedTags.find((tag) => tag.key === key)
+		if (fullTag) fullTags.push(fullTag)
+	})
+	return fullTags
+}
+
+export const saveTag = (tag: Tag) => {
+	const createdTags = getCreatedTags()
+	const hash = 'Tag_' + tag.key
+	if (createdTags.find((createdTag) => createdTag.key === tag.key)) return
+	localStorage.setItem(hash, JSON.stringify(tag))
+}
+
+export const deleteTag = (tag: Tag) => {
+	const hash = 'Tag_' + tag.key
+	localStorage.removeItem(hash)
 }
