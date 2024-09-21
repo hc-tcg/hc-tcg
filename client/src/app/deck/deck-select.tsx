@@ -8,6 +8,7 @@ import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
+import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {
@@ -18,6 +19,7 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {TagsModal} from 'components/tags-modal'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -37,8 +39,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import Dropdown from 'components/dropdown'
-import {TagsModal} from 'components/tags-modal'
 
 type Props = {
 	setMenuSection: (section: string) => void

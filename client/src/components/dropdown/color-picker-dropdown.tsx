@@ -1,7 +1,7 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {ReactNode, useState} from 'react'
-import css from './dropdown.module.scss'
 import {HexColorPicker} from 'react-colorful'
+import css from './dropdown.module.scss'
 
 type Props = {
 	button: ReactNode
