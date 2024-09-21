@@ -8,15 +8,28 @@ type Props = {
 	footer?: ReactNode
 	width?: 'normal' | 'half'
 	showHeader: boolean
+	showHeaderOnMobile: boolean
 }
 
-function DeckSidebar({children, header, footer, width, showHeader}: Props) {
+function DeckSidebar({
+	children,
+	header,
+	footer,
+	width,
+	showHeader,
+	showHeaderOnMobile,
+}: Props) {
 	const [active, setActive] = useState<boolean>(true)
 
 	return (
 		<section className={classNames(css.sidebar, width && css[width])}>
 			{showHeader && (
-				<div className={css.header}>
+				<div
+					className={classNames(
+						css.header,
+						!showHeaderOnMobile && css.hideOnMobile,
+					)}
+				>
 					{header}
 					<button
 						className={classNames(
@@ -26,7 +39,7 @@ function DeckSidebar({children, header, footer, width, showHeader}: Props) {
 						)}
 						onClick={() => setActive(!active)}
 					>
-						<img src="/images/icons/deck.png" className={css.toggleImage}></img>
+						<img src="/images/card-icon.png" className={css.toggleImage}></img>
 					</button>
 				</div>
 			)}

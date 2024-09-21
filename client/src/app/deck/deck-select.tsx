@@ -576,6 +576,7 @@ function SelectDeck({
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
 					showHeader={true}
+					showHeaderOnMobile={false}
 					header={
 						<>
 							<img

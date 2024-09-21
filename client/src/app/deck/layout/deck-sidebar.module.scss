@@ -111,4 +111,9 @@
 		display: inherit;
 		visibility: visible;
 	}
+
+	.hideOnMobile {
+		display: none;
+		visibility: hidden;
+	}
 }

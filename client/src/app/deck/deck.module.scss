@@ -433,7 +433,10 @@
 	width: 100px;
 
 	&.invalid {
-		filter: drop-shadow(1px 0px 0 var(--color-error)) drop-shadow(-1px 0px 0 var(--color-error)) drop-shadow(0px 1px 0 var(--color-error)) drop-shadow(0px -1px 0 var(--color-error));
+		filter: drop-shadow(1px 0px 0 var(--color-error))
+			drop-shadow(-1px 0px 0 var(--color-error))
+			drop-shadow(0px 1px 0 var(--color-error))
+			drop-shadow(0px -1px 0 var(--color-error));
 	}
 }
 
@@ -449,7 +452,10 @@
 
 .mobileErrorIcon {
 	padding-left: 0.5rem;
-	filter: drop-shadow(1px 0px 0 var(--color-error)) drop-shadow(-1px 0px 0 var(--color-error)) drop-shadow(0px 1px 0 var(--color-error)) drop-shadow(0px -1px 0 var(--color-error));
+	filter: drop-shadow(1px 0px 0 var(--color-error))
+		drop-shadow(-1px 0px 0 var(--color-error))
+		drop-shadow(0px 1px 0 var(--color-error))
+		drop-shadow(0px -1px 0 var(--color-error));
 }
 
 .deckListContainer {
@@ -606,7 +612,6 @@
 	.mobileDeckStat {
 		padding: 0.2rem 0.2rem;
 	}
-
 	.mobileDeckStats {
 		width: 100%;
 	}

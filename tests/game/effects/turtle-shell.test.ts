@@ -9,6 +9,7 @@ import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import GrianRare from 'common/cards/default/hermits/grian-rare'
 import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
+import TangoTekRare from 'common/cards/default/hermits/tangotek-rare'
 import ZombieCleoCommon from 'common/cards/default/hermits/zombiecleo-common'
 import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
 import Emerald from 'common/cards/default/single-use/emerald'
@@ -455,6 +456,52 @@ describe('Test Turtle Shell', () => {
 							query.card.slot(query.slot.rowIndex(2)),
 						),
 					).not.toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test("Turtle Shell works after previous active was KO'd by Extra Flee", () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerTwoDeck: [TangoTekRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						Iskall85Common.health,
+					)
+					expect(game.currentPlayer.activeRow?.getAttach()).toBe(null)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
