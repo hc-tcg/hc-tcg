@@ -39,6 +39,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -56,6 +57,7 @@ function SelectDeck({
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
+	const settings = useSelector(getSettings)
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
@@ -64,7 +66,23 @@ function SelectDeck({
 			const deck: PlayerDeckT = JSON.parse(d)
 			return deck
 		})
-		.sort((a, b) => a.name.localeCompare(b.name))
+		.sort((a, b) => {
+			if (settings.deckSortingMethod === 'Alphabetical') {
+				return a.name.localeCompare(b.name)
+			}
+			if (settings.deckSortingMethod === 'First Tag') {
+				const aHasTags = a.tags && a.tags.length > 0
+				const bHasTags = b.tags && b.tags.length > 0
+				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
+				if (!aHasTags && bHasTags) return 1
+				if (aHasTags && !bHasTags) return 0
+				const aFirstTag = a.tags![0]
+				const bFirstTag = b.tags![0]
+				return aFirstTag.localeCompare(bFirstTag)
+			}
+			//Default case so something is always returned
+			return 0
+		})
 	const [filteredDecks, setFilteredDecks] =
 		useState<Array<PlayerDeckT>>(sortedDecks)
 
