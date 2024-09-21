@@ -650,7 +650,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										}
 									/>
 								</div>
-								<label htmlFor="tags">Tags</label>
+								<label htmlFor="tags">Tags ({tags.length}/3)</label>
 								<form
 									className={css.deckTagsForm}
 									onSubmit={(e) => {
