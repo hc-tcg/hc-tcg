@@ -56,18 +56,6 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
-const getDeck: () => PlayerDeckT | null = function () {
-	const urlParams = new URLSearchParams(document.location.search || '')
-	const hash = urlParams.get('deck')
-	const name = urlParams.get('name')
-	if (!hash) return null
-	const deckCards = getDeckFromHash(hash)
-	if (!validateDeck(deckCards).valid) return null
-	console.log('Valid deck')
-	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
-	return {cards: deckCards, name: name, icon: 'any'}
-}
-
 const createConnectErrorChannel = () =>
 	eventChannel((emit) => {
 		const connectErrorListener = (err: Error | null) => {
@@ -91,8 +79,6 @@ export function* loginSaga() {
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
-
-	const urlDeck = getDeck()
 
 	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
@@ -171,12 +157,7 @@ export function* loginSaga() {
 		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
 
 		// if active deck is not valid, generate and save a starter deck
-		if (urlDeck) {
-			console.log('Selected deck found in url: ' + urlDeck.name)
-			saveDeck(urlDeck)
-			setActiveDeck(urlDeck.name)
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: urlDeck})
-		} else if (activeDeckValid) {
+		if (activeDeckValid) {
 			// set player deck to active deck, and send to server
 			console.log('Selected previous active deck: ' + activeDeck.name)
 			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: activeDeck})
