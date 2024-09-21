@@ -311,9 +311,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 
 	//CARD LOGIC
-	// const clearDeck = () => {
-	// 	setLoadedDeck({...loadedDeck, cards: []})
-	// }
+	const clearDeck = () => {
+		setLoadedDeck({...loadedDeck, cards: []})
+	}
 	const addCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
@@ -649,6 +649,15 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											})
 										}
 									/>
+									<div className={css.spacingItem}></div>
+									<Button
+										variant="default"
+										size="small"
+										onClick={clearDeck}
+										className={css.removeButton}
+									>
+										Remove All
+									</Button>
 								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>
 								<form
@@ -658,28 +667,28 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										setNextKey(Math.random().toString())
 									}}
 								>
+									<Dropdown
+										button={
+											<button className={css.dropdownButton}>
+												<img src="/images/icons/tag.png" />
+											</button>
+										}
+										label="Saved Tags"
+										options={tagsDropdownOptions}
+										action={(option) =>
+											selectTag(option, setColor, setNextKey, tagNameRef)
+										}
+									/>
+									<ColorPickerDropdown
+										button={
+											<button
+												className={css.dropdownButton}
+												style={{backgroundColor: color}}
+											></button>
+										}
+										action={setColor}
+									/>
 									<div className={css.customInput}>
-										<Dropdown
-											button={
-												<button className={css.dropdownButton}>
-													<img src="/images/icons/tag.png" />
-												</button>
-											}
-											label="Saved Tags"
-											options={tagsDropdownOptions}
-											action={(option) =>
-												selectTag(option, setColor, setNextKey, tagNameRef)
-											}
-										/>
-										<ColorPickerDropdown
-											button={
-												<button
-													className={css.dropdownButton}
-													style={{backgroundColor: color}}
-												></button>
-											}
-											action={setColor}
-										/>
 										<input
 											maxLength={25}
 											name="tag"
@@ -691,6 +700,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									</div>
 									<Button
 										variant="default"
+										size="small"
 										type="submit"
 										className={css.submitButton}
 									>
