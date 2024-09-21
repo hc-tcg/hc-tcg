@@ -20,6 +20,7 @@ import {
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -39,7 +40,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
