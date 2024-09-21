@@ -3,7 +3,7 @@ import {loadSavedDeck} from 'common/types/deck'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import {getSavedDecks} from 'logic/saved-decks/saved-decks'
-import {getHashFromDeck} from './import-export-utils'
+import {getHashFromDeck} from 'common/utils/import-export'
 import css from './import-export.module.scss'
 
 type Props = {

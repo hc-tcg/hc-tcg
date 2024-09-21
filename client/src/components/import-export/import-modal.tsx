@@ -8,7 +8,7 @@ import Dropdown from 'components/dropdown'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
-import {getDeckFromHash} from './import-export-utils'
+import {getDeckFromHash} from 'common/utils/import-export'
 import css from './import-export.module.scss'
 
 type Props = {

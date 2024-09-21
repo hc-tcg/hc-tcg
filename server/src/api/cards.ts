@@ -1,4 +1,4 @@
-import {CARDS_LIST} from 'common/cards'
+import {CARDS, CARDS_LIST} from 'common/cards'
 import {getCardImage, getHermitBackground} from 'common/cards/base/card'
 import {
 	Card,
@@ -7,6 +7,7 @@ import {
 	isItem,
 	isSingleUse,
 } from 'common/cards/base/types'
+import {getDeckFromHash} from 'common/utils/import-export'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
@@ -107,4 +108,11 @@ export function cards() {
 	}
 
 	return out
+}
+
+export function getCardsInDeck(hash: string) {
+	let deck = getDeckFromHash(hash)
+	return deck
+		.map((card) => cardToCardResponse(card.props))
+		.filter((x) => x !== null)
 }
