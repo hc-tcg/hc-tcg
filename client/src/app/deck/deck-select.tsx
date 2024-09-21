@@ -457,12 +457,13 @@ function SelectDeck({
 									)}
 								>
 									{loadedDeck.name}
+									{!validationResult.valid && validationResult.reason && (
+										<span className={css.mobileErrorIcon}>
+											<ErrorIcon />
+										</span>
+									)}
 								</span>
-								{!validationResult.valid && validationResult.reason && (
-									<span className={css.mobileErrorIcon}>
-										<ErrorIcon />
-									</span>
-								)}
+								<span className={css.mobileDeckNamePadding}></span>
 								<div className={css.mobileDeckStats}>
 									<div className={css.mobileDeckStat}>
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}

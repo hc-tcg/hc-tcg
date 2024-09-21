@@ -413,6 +413,8 @@
 	justify-content: right;
 	gap: 0.5rem;
 	width: 40%;
+	white-space: nowrap;
+	flex-shrink: 0;
 }
 
 .mobileDeckName {
@@ -421,16 +423,21 @@
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
-	flex-wrap: wrap;
+	flex-wrap: none;
+	white-space: nowrap;
+}
+
+.mobileDeckNamePadding {
+	flex-grow: 1;
 }
 
 .mobileDeckNameText {
 	font-weight: 600;
-	flex-grow: 1;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
-	width: 100px;
+	flex-shrink: 0;
+	max-width: 40%;
 
 	&.invalid {
 		filter: drop-shadow(1px 0px 0 var(--color-error)) drop-shadow(-1px 0px 0 var(--color-error)) drop-shadow(0px 1px 0 var(--color-error)) drop-shadow(0px -1px 0 var(--color-error));
@@ -448,8 +455,8 @@
 }
 
 .mobileErrorIcon {
+	width: 5%;
 	padding-left: 0.5rem;
-	filter: drop-shadow(1px 0px 0 var(--color-error)) drop-shadow(-1px 0px 0 var(--color-error)) drop-shadow(0px 1px 0 var(--color-error)) drop-shadow(0px -1px 0 var(--color-error));
 }
 
 .deckListContainer {
@@ -613,6 +620,14 @@
 @media screen and (max-width: 365px) {
 	.mobileDeckStat {
 		padding: 0.2rem 0.2rem;
+	}
+
+	.mobileDeckName {
+		flex-wrap: wrap;
+	}
+
+	.mobileDeckNameText {
+		max-width: 80%;
 	}
 
 	.mobileDeckStats {
