@@ -15,6 +15,7 @@ type HermitResponse = {
 	category: 'hermit'
 	id: string
 	name: string
+	shortName: string
 	expansion: string
 	rarity: string
 	tokens: number | string
@@ -63,6 +64,7 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			category: card.category as any,
 			id: card.id,
 			name: card.name,
+			shortName: card.shortName || card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
 			tokens: card.tokens,
