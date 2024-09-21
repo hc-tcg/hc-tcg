@@ -9,8 +9,8 @@ type Props = {
 }
 
 const ColorPickerDropdown = ({button, action}: Props) => {
-	const [color, setColor] = useState('#abcdef')
-	const [code, setCode] = useState('#abcdef')
+	const [color, setColor] = useState('#ff0000')
+	const [code, setCode] = useState('#ff0000')
 
 	return (
 		<DropdownMenu.Root>

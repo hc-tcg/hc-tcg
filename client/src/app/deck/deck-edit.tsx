@@ -236,7 +236,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
-	const [color, setColor] = useState('#aabbcc')
+	const [color, setColor] = useState('#ff0000')
 	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
 	const [tags, setTags] = useState<Array<Tag>>(
 		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
