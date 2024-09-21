@@ -18,8 +18,8 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
-import {localMessages, useMessageDispatch} from 'logic/messages'
 import {TagsModal} from 'components/tags-modal'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
