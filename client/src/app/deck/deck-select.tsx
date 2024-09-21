@@ -19,8 +19,8 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
-import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
