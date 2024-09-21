@@ -112,7 +112,7 @@ const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 	ultra_rare: '★ Ultra Rare ★',
 }
 
-const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {
+export const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {
 	return (
 		<span className={classNames(css.rarity, css[card.rarity])}>
 			{' '}
