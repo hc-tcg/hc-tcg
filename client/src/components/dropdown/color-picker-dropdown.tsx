@@ -2,6 +2,7 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import {ReactNode, useState} from 'react'
 import {HexColorPicker} from 'react-colorful'
 import css from './dropdown.module.scss'
+import './color-picker.scss'
 
 type Props = {
 	button: ReactNode
@@ -22,27 +23,26 @@ const ColorPickerDropdown = ({button, action}: Props) => {
 					align="start"
 				>
 					<DropdownMenu.Arrow className={css.DropdownMenuArrow} />
-					<DropdownMenu.Label className={css.DropdownMenuLabel}>
-						Color Picker
-					</DropdownMenu.Label>
-					<HexColorPicker
-						color={color}
-						onChange={(e) => {
-							setColor(e)
-							setCode(e)
-							action(e)
-						}}
-					/>
-					<input
-						placeholder="Hex Code"
-						className={css.input}
-						value={code}
-						onChange={(e) => {
-							setColor(e.target.value)
-							setCode(e.target.value)
-							action(e.target.value)
-						}}
-					/>
+					<div className="colorPicker">
+						<HexColorPicker
+							color={color}
+							onChange={(e) => {
+								setColor(e)
+								setCode(e)
+								action(e)
+							}}
+						/>
+						<input
+							placeholder="Hex Code"
+							className={css.input}
+							value={code}
+							onChange={(e) => {
+								setColor(e.target.value)
+								setCode(e.target.value)
+								action(e.target.value)
+							}}
+						/>
+					</div>
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>
 		</DropdownMenu.Root>

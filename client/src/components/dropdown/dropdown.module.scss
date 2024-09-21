@@ -99,6 +99,14 @@
 
 .input {
 	padding-top: 1rem;
+	min-width: 100px;
+	background: var(--gray-400);
+	border: 2px solid var(--text-light);
+	color: white;
+	height: 2.4rem;
+	padding: 0.5rem;
+	padding-bottom: 0.25rem;
+	font-size: 0.8rem;
 }
 
 @keyframes slideUpAndFade {
