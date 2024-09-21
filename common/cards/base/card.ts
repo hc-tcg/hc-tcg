@@ -24,3 +24,9 @@ export class InstancedValue<T> extends DefaultDictionary<CardComponent, T> {
 		this.clearValue(component.entity)
 	}
 }
+
+export function getCardImage() {
+
+
+}
+
