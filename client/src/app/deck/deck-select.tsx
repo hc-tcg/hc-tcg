@@ -438,6 +438,18 @@ function SelectDeck({
 										alt="deck-icon"
 									/>
 								</div>
+								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
+									<div className={css.multiColoredCircleBorder}>
+										<div className={css.multiColoredCircle}>
+											{keysToTags(loadedDeck.tags).map((tag) => (
+												<div
+													className={css.singleTag}
+													style={{backgroundColor: tag.color}}
+												></div>
+											))}
+										</div>
+									</div>
+								)}
 								<span
 									className={classNames(
 										css.mobileDeckNameText,
