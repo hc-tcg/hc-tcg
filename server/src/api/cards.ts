@@ -1,4 +1,5 @@
 import {CARDS_LIST} from 'common/cards'
+import {getCardImage, getHermitBackground} from 'common/cards/base/card'
 import {
 	Card,
 	isAttach,
@@ -17,11 +18,7 @@ type HermitResponse = {
 	rarity: string
 	tokens: number | string
 	type: string
-	image: string
-	background: string
-	palette?: string
 	primary: {
-		name: string
 		cost: Array<string>
 		damage: number
 		power: string | null
@@ -32,6 +29,9 @@ type HermitResponse = {
 		damage: number
 		power: string | null
 	}
+	image: string
+	background: string
+	palette?: string
 }
 
 type EffectResponse = {
@@ -58,18 +58,6 @@ type ItemResponse = {
 
 function cardToCardResponse(card: Card): CardResponse | null {
 	if (isHermit(card)) {
-		let background
-
-		if (card.expansion === 'advent_of_tcg') {
-			background = '/images/backgrounds/advent_of_tcg.png'
-		} else if (
-			['alter_egos', 'alter_egos_ii', 'alter_egos_iii'].includes(card.expansion)
-		) {
-			background = '/images/backgrounds/alter_egos.png'
-		} else {
-			background = `/images/backgrounds/${card.name.split('-')[0]}.png`
-		}
-
 		return {
 			category: card.category as any,
 			id: card.id,
@@ -80,8 +68,8 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			type: card.type,
 			primary: card.primary,
 			secondary: card.secondary,
-			image: `/images/hermits-nobg/${card.id.split('-')[0]}.png`,
-			background,
+			image: getCardImage(card),
+			background: getHermitBackground(card),
 			palette: card.palette,
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
@@ -93,7 +81,7 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			rarity: card.rarity,
 			tokens: card.tokens,
 			description: card.description,
-			image: `/images/effects/${card.id}.png`,
+			image: getCardImage(card),
 		}
 	} else if (isItem(card)) {
 		return {
@@ -104,7 +92,7 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			rarity: card.rarity,
 			tokens: card.tokens,
 			energy: card.energy,
-			image: `/images/effects/${card.id}.png`,
+			image: getCardImage(card),
 		}
 	}
 	return null
