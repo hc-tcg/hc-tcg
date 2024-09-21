@@ -1,4 +1,4 @@
-import {CARDS, CARDS_LIST} from 'common/cards'
+import {CARDS_LIST} from 'common/cards'
 import {getCardImage, getHermitBackground} from 'common/cards/base/card'
 import {
 	Card,

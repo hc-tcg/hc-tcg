@@ -1,7 +1,7 @@
+import {decode, encode} from 'js-base64'
 import {CARDS} from '../cards'
 import {CardEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
-import {decode, encode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
