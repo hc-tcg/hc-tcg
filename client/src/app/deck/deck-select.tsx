@@ -230,13 +230,15 @@ function SelectDeck({
 						/>
 					</div>
 					{deck.tags && deck.tags.length > 0 && (
-						<div className={css.tagRectangle}>
-							{keysToTags(deck.tags).map((tag) => (
-								<div
-									className={css.singleTag}
-									style={{backgroundColor: tag.color}}
-								></div>
-							))}
+						<div className={css.multiColoredCircleBorder}>
+							<div className={css.multiColoredCircle}>
+								{keysToTags(deck.tags).map((tag) => (
+									<div
+										className={css.singleTag}
+										style={{backgroundColor: tag.color}}
+									></div>
+								))}
+							</div>
 						</div>
 					)}
 					{deck.name}
