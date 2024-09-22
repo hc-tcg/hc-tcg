@@ -1,5 +1,5 @@
-import {Request} from 'express'
 import url from 'url'
+import {Request} from 'express'
 
 export function requestUrlRoot(req: Request) {
 	return url.format({
