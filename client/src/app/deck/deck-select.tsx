@@ -502,7 +502,16 @@ function SelectDeck({
 									<div className={css.deckList}>{deckList}</div>
 								</div>
 							</div>
-							{footerTags}
+							<div className={css.mobileTags}>
+								{footerTags}
+								<Button
+									variant="default"
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									size="small"
+								>
+									<span>Manage Tags</span>
+								</Button>
+							</div>
 							<div className={css.filterGroup}>
 								<Button
 									variant="default"

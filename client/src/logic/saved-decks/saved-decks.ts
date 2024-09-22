@@ -131,4 +131,11 @@ export const saveTag = (tag: Tag) => {
 export const deleteTag = (tag: Tag) => {
 	const hash = 'Tag_' + tag.key
 	localStorage.removeItem(hash)
+	getSavedDeckNames().forEach((deck) => {
+		const savedDeck = getSavedDeck(deck)
+		console.log(savedDeck)
+		if (!savedDeck || !savedDeck.tags) return
+		savedDeck.tags = savedDeck.tags.filter((deckTag) => deckTag !== tag.key)
+		saveDeck(savedDeck)
+	})
 }

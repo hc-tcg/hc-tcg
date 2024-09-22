@@ -551,6 +551,12 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5rem;
+	flex-grow: 1;
+}
+
+.mobileTags {
+	display: flex;
+	flex-direction: row;
 }
 
 .removeButton {
