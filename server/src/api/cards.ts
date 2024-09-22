@@ -8,6 +8,7 @@ import {
 	isSingleUse,
 } from 'common/cards/base/types'
 import {getDeckFromHash} from 'common/utils/import-export'
+import {joinUrl} from './utils'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
@@ -58,7 +59,7 @@ type ItemResponse = {
 	image: string
 }
 
-function cardToCardResponse(card: Card): CardResponse | null {
+function cardToCardResponse(card: Card, url: string): CardResponse | null {
 	if (isHermit(card)) {
 		return {
 			category: card.category as any,
@@ -71,8 +72,8 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			type: card.type,
 			primary: card.primary,
 			secondary: card.secondary,
-			image: getCardImage(card),
-			background: getHermitBackground(card),
+			image: joinUrl(url, getCardImage(card)),
+			background: joinUrl(url, getHermitBackground(card)),
 			palette: card.palette,
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
@@ -84,7 +85,7 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			rarity: card.rarity,
 			tokens: card.tokens,
 			description: card.description,
-			image: getCardImage(card),
+			image: joinUrl(url, getCardImage(card)),
 		}
 	} else if (isItem(card)) {
 		return {
@@ -95,26 +96,26 @@ function cardToCardResponse(card: Card): CardResponse | null {
 			rarity: card.rarity,
 			tokens: card.tokens,
 			energy: card.energy,
-			image: getCardImage(card),
+			image: joinUrl(url, getCardImage(card)),
 		}
 	}
 	return null
 }
 
-export function cards() {
+export function cards(url: string) {
 	let out = []
 
 	for (const card of CARDS_LIST) {
-		let resp = cardToCardResponse(card)
+		let resp = cardToCardResponse(card, url)
 		if (resp) out.push(resp)
 	}
 
 	return out
 }
 
-export function getCardsInDeck(hash: string) {
+export function getCardsInDeck(url: string, hash: string) {
 	let deck = getDeckFromHash(hash)
 	return deck
-		.map((card) => cardToCardResponse(card.props))
+		.map((card) => cardToCardResponse(card.props, url))
 		.filter((x) => x !== null)
 }
