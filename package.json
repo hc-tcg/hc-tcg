@@ -26,6 +26,7 @@
 		"js-base64": "^3.7.5",
 		"node-fetch": "^3.3.2",
 		"react": "^18.2.0",
+		"react-colorful": "^5.6.1",
 		"react-dom": "^18.2.0",
 		"react-redux": "^8.0.5",
 		"react-transition-group": "^4.4.5",

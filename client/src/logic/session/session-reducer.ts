@@ -25,7 +25,7 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: []},
+	playerDeck: {name: '', icon: 'any', cards: [], tags: []},
 	connecting: false,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},

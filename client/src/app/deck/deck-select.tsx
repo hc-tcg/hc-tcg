@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -8,6 +8,7 @@ import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
+import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {
@@ -17,13 +18,17 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
+import {TagsModal} from 'components/tags-modal'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
+	getCreatedTags,
 	getLegacyDecks,
 	getSavedDeck,
 	getSavedDecks,
+	keysToTags,
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
@@ -52,9 +57,34 @@ function SelectDeck({
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
+	const settings = useSelector(getSettings)
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
+	const sortedDecks = savedDecks
+		.map((d: any) => {
+			const deck: PlayerDeckT = JSON.parse(d)
+			return deck
+		})
+		.sort((a, b) => {
+			if (settings.deckSortingMethod === 'Alphabetical') {
+				return a.name.localeCompare(b.name)
+			}
+			if (settings.deckSortingMethod === 'First Tag') {
+				const aHasTags = a.tags && a.tags.length > 0
+				const bHasTags = b.tags && b.tags.length > 0
+				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
+				if (!aHasTags && bHasTags) return 1
+				if (aHasTags && !bHasTags) return 0
+				const aFirstTag = a.tags![0]
+				const bFirstTag = b.tags![0]
+				return aFirstTag.localeCompare(bFirstTag)
+			}
+			//Default case so something is always returned
+			return 0
+		})
+	const [filteredDecks, setFilteredDecks] =
+		useState<Array<PlayerDeckT>>(sortedDecks)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
@@ -63,6 +93,7 @@ function SelectDeck({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
+		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -70,9 +101,24 @@ function SelectDeck({
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
+	const [showManageTagsModal, setShowManageTagsModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+	const [tagFilter, setTagFilter] = useState<Tag>({
+		name: 'No Filter',
+		color: '#ffffff',
+		key: '0',
+	})
+
+	const tagsDropdownOptions = [
+		{name: 'No Filter', color: '#ffffff'},
+		...getCreatedTags(),
+	].map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+	}))
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
@@ -180,13 +226,8 @@ function SelectDeck({
 		//Refresh saved deck list and load new deck
 		setSavedDecks(getSavedDecks())
 	}
-	const sortedDecks = savedDecks
-		.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
-		})
-		.sort((a, b) => a.name.localeCompare(b.name))
-	const deckList: ReactNode = sortedDecks.map(
+
+	const deckList: ReactNode = filteredDecks.map(
 		(deck: PlayerDeckT, i: number) => {
 			return (
 				<li
@@ -206,10 +247,66 @@ function SelectDeck({
 							alt={'deck-icon'}
 						/>
 					</div>
+					{deck.tags && deck.tags.length > 0 && (
+						<div className={css.multiColoredCircleBorder}>
+							<div className={css.multiColoredCircle}>
+								{keysToTags(deck.tags).map((tag) => (
+									<div
+										className={css.singleTag}
+										style={{backgroundColor: tag.color}}
+									></div>
+								))}
+							</div>
+						</div>
+					)}
 					{deck.name}
 				</li>
 			)
 		},
+	)
+	const footerTags = (
+		<div className={css.footerTags}>
+			<Dropdown
+				button={
+					<button className={css.dropdownButton}>
+						{' '}
+						<img src="../images/icons/tag.png" alt="tag-icon" />
+					</button>
+				}
+				label="Saved Tags"
+				options={tagsDropdownOptions}
+				action={(option) => {
+					if (option.includes('No Filter')) {
+						setFilteredDecks(sortedDecks)
+						setTagFilter({
+							name: 'No Filter',
+							color: '#ffffff',
+							key: '0',
+						})
+						return
+					}
+					const parsedOption = JSON.parse(option)
+					console.log(parsedOption)
+					setFilteredDecks(
+						sortedDecks.filter(
+							(deck) =>
+								deck.tags &&
+								keysToTags(deck.tags).some(
+									(tag) =>
+										tag.name === parsedOption.name &&
+										tag.color === parsedOption.color,
+								),
+						),
+					)
+					setTagFilter(parsedOption)
+				}}
+			/>
+			<div
+				className={css.tagBox}
+				style={{backgroundColor: tagFilter.color}}
+			></div>
+			{tagFilter.name}
+		</div>
 	)
 	const validationResult = validateDeck(loadedDeck.cards)
 	const selectedCards = {
@@ -254,6 +351,11 @@ function SelectDeck({
 			<MassExportModal
 				setOpen={showMassExportModal}
 				onClose={() => setShowMassExportModal(!showMassExportModal)}
+			/>
+			<TagsModal
+				setOpen={showManageTagsModal}
+				tags={getCreatedTags()}
+				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
 			/>
 			<AlertModal
 				setOpen={showValidateDeckModal}
@@ -313,9 +415,19 @@ function SelectDeck({
 										alt="deck-icon"
 									/>
 								</div>
-								<div className={css.deckName}>
-									<span>{loadedDeck.name}</span>
-								</div>
+								<div className={css.deckName}>{loadedDeck.name}</div>
+								{loadedDeck.tags &&
+									keysToTags(loadedDeck.tags).map((tag) => {
+										return (
+											<div className={css.fullTagTitle}>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								<div className={css.dynamicSpace}></div>
 
 								<p className={classNames(css.cardCount)}>
@@ -344,6 +456,18 @@ function SelectDeck({
 										alt="deck-icon"
 									/>
 								</div>
+								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
+									<div className={css.multiColoredCircleBorder}>
+										<div className={css.multiColoredCircle}>
+											{keysToTags(loadedDeck.tags).map((tag) => (
+												<div
+													className={css.singleTag}
+													style={{backgroundColor: tag.color}}
+												></div>
+											))}
+										</div>
+									</div>
+								)}
 								<span
 									className={classNames(
 										css.mobileDeckNameText,
@@ -351,12 +475,13 @@ function SelectDeck({
 									)}
 								>
 									{loadedDeck.name}
+									{!validationResult.valid && validationResult.reason && (
+										<span className={css.mobileErrorIcon}>
+											<ErrorIcon />
+										</span>
+									)}
 								</span>
-								{!validationResult.valid && validationResult.reason && (
-									<span className={css.mobileErrorIcon}>
-										<ErrorIcon />
-									</span>
-								)}
+								<span className={css.mobileDeckNamePadding}></span>
 								<div className={css.mobileDeckStats}>
 									<div className={css.mobileDeckStat}>
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
@@ -376,6 +501,16 @@ function SelectDeck({
 								<div className={css.deckListContainer}>
 									<div className={css.deckList}>{deckList}</div>
 								</div>
+							</div>
+							<div className={css.mobileTags}>
+								{footerTags}
+								<Button
+									variant="default"
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									size="small"
+								>
+									<span>Manage Tags</span>
+								</Button>
 							</div>
 							<div className={css.filterGroup}>
 								<Button
@@ -539,6 +674,7 @@ function SelectDeck({
 					footer={
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
+								{footerTags}
 								{getLegacyDecks() && (
 									<Button
 										onClick={() => {
@@ -562,19 +698,28 @@ function SelectDeck({
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>
-								<Button
-									variant="primary"
-									onClick={() => setShowImportModal(!showImportModal)}
-								>
-									<ExportIcon reversed />
-									<span>Import Decks</span>
-								</Button>
+								<div className={css.importAndExport}>
+									<Button
+										variant="primary"
+										onClick={() => setShowImportModal(!showImportModal)}
+										style={{flexGrow: 1}}
+									>
+										<ExportIcon reversed />
+										<span>Import</span>
+									</Button>
+									<Button
+										variant="default"
+										onClick={() => setShowMassExportModal(!showMassExportModal)}
+									>
+										<ExportIcon />
+										<span>Mass Export</span>
+									</Button>
+								</div>
 								<Button
 									variant="default"
-									onClick={() => setShowMassExportModal(!showMassExportModal)}
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 								>
-									<ExportIcon />
-									<span>Mass Export</span>
+									<span>Manage Tags</span>
 								</Button>
 							</div>
 						</>

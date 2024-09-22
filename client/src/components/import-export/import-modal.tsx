@@ -47,6 +47,7 @@ export const ImportModal = ({
 			name: nameRef?.current?.value || 'Imported Deck',
 			icon: deckIcon,
 			cards: deck,
+			tags: [],
 		})
 
 		onClose(true)
@@ -84,6 +85,7 @@ export const ImportModal = ({
 						? (lineComponents[1] as TypeT)
 						: 'any',
 					cards: deck,
+					tags: [],
 				})
 			})
 

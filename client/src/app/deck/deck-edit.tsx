@@ -3,7 +3,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -13,10 +13,17 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
+import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
+import {
+	deleteDeck,
+	getCreatedTags,
+	getSavedDeckNames,
+	keysToTags,
+	saveTag,
+} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -107,6 +114,40 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 	)
 }
 
+const addTag = (
+	tags: Array<Tag>,
+	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
+	color: string,
+	key: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	ev: React.SyntheticEvent<HTMLFormElement>,
+) => {
+	ev.preventDefault()
+	const tag = {name: ev.currentTarget.tag.value.trim(), color: color, key: key}
+	if (tags.includes(tag)) return
+	if (tags.length >= 3) return
+	if (tag.name.length === 0) return
+	setTags([...tags, tag])
+	setColor('ffffff')
+}
+
+const selectTag = (
+	option: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	setKey: React.Dispatch<React.SetStateAction<string>>,
+	ref: React.RefObject<HTMLInputElement>,
+) => {
+	const tags = getCreatedTags()
+	const selectedTag = tags.find((tag) => {
+		const parsedTag = JSON.parse(option)
+		return tag.name === parsedTag.name && tag.color === parsedTag.color
+	})
+	if (!selectedTag) return
+	setColor(selectedTag.color)
+	setKey(selectedTag.key)
+	if (ref.current) ref.current.value = selectedTag.name
+}
+
 type Props = {
 	back: () => void
 	title: string
@@ -195,6 +236,19 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+	const [color, setColor] = useState('#ff0000')
+	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
+	const [tags, setTags] = useState<Array<Tag>>(
+		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
+	)
+	const tagNameRef = useRef<HTMLInputElement>(null)
+
+	const tagsDropdownOptions = getCreatedTags().map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+		icon: '',
+	}))
 
 	useEffect(() => {
 		window.addEventListener('keydown', handleTooltipKey)
@@ -323,6 +377,14 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		) {
 			return setShowOverwriteModal(true)
 		}
+
+		// Set up tags
+		newDeck.tags = tags.map((tag) => tag.key)
+
+		// Save tags
+		tags.forEach((tag) => {
+			saveTag(tag)
+		})
 
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck, initialDeckState)
@@ -563,7 +625,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 						<div className={css.upperEditDeck}>
 							<div className={css.editDeckInfo}>
-								<label htmlFor="deckname">Deck Name and Icon</label>
+								<label htmlFor="deckname">Name and Icon</label>
 								<div className={css.editDeckInfoSettings}>
 									<Dropdown
 										button={
@@ -587,16 +649,89 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											})
 										}
 									/>
+									<div className={css.spacingItem}></div>
+									<Button
+										variant="default"
+										size="small"
+										onClick={clearDeck}
+										className={css.removeButton}
+									>
+										Remove All
+									</Button>
+								</div>
+								<label htmlFor="tags">Tags ({tags.length}/3)</label>
+								<form
+									className={css.deckTagsForm}
+									onSubmit={(e) => {
+										addTag(tags, setTags, color, nextKey, setColor, e)
+										setNextKey(Math.random().toString())
+									}}
+								>
+									<Dropdown
+										button={
+											<button className={css.dropdownButton}>
+												<img src="/images/icons/tag.png" />
+											</button>
+										}
+										label="Saved Tags"
+										options={tagsDropdownOptions}
+										action={(option) =>
+											selectTag(option, setColor, setNextKey, tagNameRef)
+										}
+									/>
+									<ColorPickerDropdown
+										button={
+											<button
+												className={css.dropdownButton}
+												style={{backgroundColor: color}}
+											></button>
+										}
+										action={setColor}
+									/>
+									<div className={css.customInput}>
+										<input
+											maxLength={25}
+											name="tag"
+											placeholder=" "
+											className={css.input}
+											id="tag"
+											ref={tagNameRef}
+										></input>
+									</div>
+									<Button
+										variant="default"
+										size="small"
+										type="submit"
+										className={css.submitButton}
+									>
+										+
+									</Button>
+								</form>
+								<div className={css.tagList}>
+									{tags.map((tag) => {
+										return (
+											<div
+												className={css.fullTag}
+												onClick={() =>
+													setTags(
+														tags.filter(
+															(subtag) =>
+																subtag.name !== tag.name &&
+																subtag.color !== tag.color,
+														),
+													)
+												}
+											>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								</div>
 							</div>
-							<Button
-								variant="default"
-								size="small"
-								onClick={clearDeck}
-								disabled={loadedDeck.cards.length == 0}
-							>
-								Remove All
-							</Button>
 						</div>
 
 						<div className={css.hideOnMobile}>
@@ -645,7 +780,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 						</div>
 
 						<div className={css.showOnMobile}>
-							Deck Cards{' '}
+							Cards
 							<MobileCardList
 								cards={sortCards(loadedDeck.cards)}
 								onClick={removeCard}
