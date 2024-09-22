@@ -5,7 +5,7 @@ import {fileURLToPath} from 'url'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
-import {registerApis} from './api'
+import {addApi} from './api'
 import startSocketIO from './sockets'
 
 const port = process.env.PORT || CONFIG.port || 9000
@@ -14,8 +14,6 @@ const app = express()
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-
-registerApis(app)
 
 const server = createServer(app)
 
@@ -42,6 +40,8 @@ app.use(
 app.get('/', (_req, res) => {
 	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
 })
+
+addApi(app)
 
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)

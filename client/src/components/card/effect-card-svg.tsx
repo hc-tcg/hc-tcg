@@ -1,8 +1,8 @@
 import classNames from 'classnames'
+import {getCardImage, getCardRankIcon} from 'common/cards/base/card'
 import {Attach, SingleUse} from 'common/cards/base/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {getCardRank} from 'common/utils/ranks'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
 import {useSelector} from 'react-redux'
@@ -13,10 +13,11 @@ export type EffectCardProps = {
 }
 
 const EffectCardModule = memo(({card}: EffectCardProps) => {
-	const rank = getCardRank(card.tokens)
+	const rank = getCardRankIcon(card)
 	const showCost = !useSelector(getGameState)
 	const disabled =
 		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
+	const image = getCardImage(card)
 
 	return (
 		<svg
@@ -44,7 +45,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 				/>
 				<image
 					className={css.icon}
-					href={`/images/effects/${card.id}.png`}
+					href={image}
 					width="220"
 					height="220"
 					x="90"
@@ -72,7 +73,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank !== 'stone' ? (
+			{showCost && rank !== null ? (
 				<g>
 					<rect
 						className={css.rarity}
@@ -88,7 +89,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank}.png`}
+						href={rank}
 						className={css.rank}
 					/>
 				</g>

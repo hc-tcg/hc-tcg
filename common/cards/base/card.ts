@@ -1,5 +1,7 @@
 import {CardComponent} from '../../components'
 import {DefaultDictionary} from '../../types/game-state'
+import {getCardRank} from '../../utils/ranks'
+import {Card, Hermit, Item, isItem} from './types'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -23,4 +25,39 @@ export class InstancedValue<T> extends DefaultDictionary<CardComponent, T> {
 	public clear(component: CardComponent) {
 		this.clearValue(component.entity)
 	}
+}
+
+/** Get the foreground image for a card */
+export function getCardImage(card: Card) {
+	if (card.category === 'hermit') {
+		return `/images/hermits-nobg/${card.id.split('_')[0]}.png`
+	}
+	if (isItem(card)) {
+		return `/images/types/type-${card.type}.png`
+	}
+	return `/images/effects/${card.id}.png`
+}
+
+export function getCardTypeIcon(card: Hermit | Item) {
+	return `/images/types/type-${card.type}.png`
+}
+
+export function getCardRankIcon(card: Card) {
+	let rank = getCardRank(card.tokens)
+	if (card.tokens === 0 || card.tokens === 'wild') {
+		return null
+	}
+	return `/images/ranks/${rank}.png`
+}
+
+/** Get the background image for a hermit card */
+export function getHermitBackground(card: Card) {
+	if (card.expansion === 'advent_of_tcg') {
+		return '/images/backgrounds/advent_of_tcg.png'
+	} else if (
+		['alter_egos', 'alter_egos_ii', 'alter_egos_iii'].includes(card.expansion)
+	) {
+		return '/images/backgrounds/alter_egos.png'
+	}
+	return `/images/backgrounds/${card.id.split('_')[0]}.png`
 }
