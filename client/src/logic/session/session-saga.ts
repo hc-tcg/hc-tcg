@@ -3,7 +3,6 @@ import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
-import {getDeckFromHash} from 'components/import-export/import-export-utils'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	getActiveDeckName,
@@ -15,7 +14,6 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
-import {PlayerDeckT} from '../../../../common/types/deck'
 
 const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -56,25 +54,6 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
-const getDeck: () => PlayerDeckT | null = function () {
-	const urlParams = new URLSearchParams(document.location.search || '')
-	const hash = urlParams.get('deck')
-	const name = urlParams.get('name')
-	const tags = urlParams.get('tags')
-	if (!hash) return null
-	const deckCards = getDeckFromHash(hash)
-	if (!validateDeck(deckCards).valid) return null
-	console.log('Valid deck')
-	if (!name)
-		return {cards: deckCards, name: 'Imported deck', icon: 'any', tags: tags}
-	return {
-		cards: deckCards,
-		name: name,
-		icon: 'any',
-		tags: tags ? JSON.parse(tags) : null,
-	}
-}
-
 const createConnectErrorChannel = () =>
 	eventChannel((emit) => {
 		const connectErrorListener = (err: Error | null) => {
@@ -98,8 +77,6 @@ export function* loginSaga() {
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
-
-	const urlDeck = getDeck()
 
 	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
@@ -178,12 +155,7 @@ export function* loginSaga() {
 		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
 
 		// if active deck is not valid, generate and save a starter deck
-		if (urlDeck) {
-			console.log('Selected deck found in url: ' + urlDeck.name)
-			saveDeck(urlDeck)
-			setActiveDeck(urlDeck.name)
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: urlDeck})
-		} else if (activeDeckValid) {
+		if (activeDeckValid) {
 			// set player deck to active deck, and send to server
 			console.log('Selected previous active deck: ' + activeDeck.name)
 			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: activeDeck})
