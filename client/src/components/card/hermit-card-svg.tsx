@@ -30,7 +30,6 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 	const palette = card.palette || ''
 	const backgroundImage = getHermitBackground(card)
 	const hermitImage = getCardImage(card)
-	const typeIcon = getCardTypeIcon(card)
 	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
@@ -112,7 +111,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					y="12"
 					width="68"
 					height="68"
-					href={`/images/types/type-${card.type}.png`}
+					href={getCardTypeIcon(card.type)}
 					className={css.type}
 				/>
 			</g>
@@ -130,10 +129,10 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.primary.cost.map((type: string, i: number) => (
+					{card.primary.cost.map((type, i: number) => (
 						<image
 							key={i}
-							href={typeIcon}
+							href={getCardTypeIcon(type)}
 							x={COST_X[card.primary.cost.length - 1][i]}
 							y="273"
 							width={COST_SIZE}
@@ -165,10 +164,10 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.secondary.cost.map((type: string, i: number) => (
+				{card.secondary.cost.map((type, i: number) => (
 					<image
 						key={i}
-						href={`/images/types/type-${type}.png`}
+						href={getCardTypeIcon(type)}
 						x={COST_X[card.secondary.cost.length - 1][i]}
 						y="343"
 						width={COST_SIZE}
