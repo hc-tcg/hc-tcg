@@ -28,8 +28,7 @@ test_card_images_exist() {
 
 trap cleanup EXIT
 
-npm run server:build
-npm run server &
+npm run server:dev
 
 # Give the server some time to start
 sleep 2
