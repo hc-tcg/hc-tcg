@@ -3,12 +3,14 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import MinerDoubleItem from 'common/cards/default/items/miner-rare'
 import Bow from 'common/cards/default/single-use/bow'
+import Efficiency from 'common/cards/default/single-use/efficiency'
 import {
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import EfficiencyEffect from 'common/status-effects/efficiency'
 import {
 	applyEffect,
 	attack,
@@ -17,8 +19,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../utils'
-import Efficiency from 'common/cards/default/single-use/efficiency'
-import EfficiencyEffect from 'common/status-effects/efficiency'
 
 describe('Test Rare Hypnotizd', () => {
 	test('Secondary attack and bow can select different targets', () => {
