@@ -21,7 +21,9 @@ test_card_images_exist() {
 	background=$(echo $test_hermit | jq -r .background)
 	hermit_image_output=$(mktemp)
 	hermit_background_output=$(mktemp)
+	echo $image
 	curl -f $image -o $hermit_image_output
+	echo $background
 	curl -f $background -o $hermit_background_output
 	test -s $hermit_image_output
 	test -s $hermit_background_output
