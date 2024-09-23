@@ -55,6 +55,8 @@ while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
 	sleep .1
 done
 
+echo "Server started! Running tests."
+
 echo "Running `test_card_images_exist`"
 test_card_images_exist
 echo "Running `test_card_token_costs`"
