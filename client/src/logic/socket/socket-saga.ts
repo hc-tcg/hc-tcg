@@ -40,7 +40,6 @@ export function receiveMsg<T extends keyof ServerMessageTable>(
 
 function* socketSaga(): SagaIterator {
 	const socket = yield* select(getSocket)
-	console.log('socket saga')
 
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')
