@@ -16,7 +16,6 @@ cleanup() {
 trap cleanup EXIT
 
 test_card_images_exist() {
-  echo "$HOST/api/cards"
 	test_hermit=$(curl $HOST/api/cards | jq '.[] | select(.id == "ethoslab_common")')
 	image=$(echo $test_hermit | jq -r .image)
 	background=$(echo $test_hermit | jq -r .background)
@@ -54,8 +53,9 @@ test_card_token_costs() {
 	test $api_cost -eq "$(($helsknight_rare_cost + $welsknight_rare_cost))"
 }
 
+npm run build
 output_file=$(mktemp)
-PORT=$PORT npm run server:dev &> $output_file &
+PORT=$PORT npm run server &> $output_file &
 while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
 	# Wait for the server to start
 	sleep .1
