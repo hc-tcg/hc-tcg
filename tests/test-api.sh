@@ -5,10 +5,9 @@
 
 set -o pipefail
 
-kill -9 $(lsof -t -i:9000) || true
-
 cleanup() {
-  pkill -f "npm run server:dev"
+  echo "Closing server on port 9000."
+  kill -9 $(lsof -t -i:9000)
 }
 
 trap cleanup EXIT
@@ -60,5 +59,3 @@ echo "Running `test_card_images_exist`"
 test_card_images_exist
 echo "Running `test_card_token_costs`"
 test_card_token_costs
-
-cleanup
