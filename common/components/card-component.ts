@@ -112,10 +112,6 @@ export class CardComponent<CardType extends Card = Card> {
 			this.game.otherPlayerEntity(this.slot?.player.entity),
 		)
 	}
-	/** Get the type of card */
-	public get type(): CardType {
-		return this.props
-	}
 
 	public isItem(): this is CardComponent<Item> {
 		return isItem(this.props)

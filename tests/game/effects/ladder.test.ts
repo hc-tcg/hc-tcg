@@ -47,7 +47,7 @@ describe('Test Ladder', () => {
 								query.slot.hermit,
 								query.slot.rowIndex(0),
 							)
-							?.getCard()?.type,
+							?.getCard()?.props,
 					).toBe(SmallishbeansCommon)
 
 					expect(
@@ -89,7 +89,7 @@ describe('Test Ladder', () => {
 								query.slot.hermit,
 								query.slot.rowIndex(1),
 							)
-							?.getCard()?.type,
+							?.getCard()?.props,
 					).toBe(EthosLabCommon)
 
 					expect(
