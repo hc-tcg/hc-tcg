@@ -50,10 +50,13 @@ test_card_token_costs() {
 
 trap cleanup EXIT
 
-npm run server:dev &
 
-# Give the server some time to start
-sleep 2
+output_file=$(mktemp)
+npm run server:dev &> $output_file &
+while [ -z $(cat $output_file | grep "Server listening on port") ]; do
+	# Wait for the server to start
+	sleep .1
+done
 
 echo "Running `test_card_images_exist`"
 test_card_images_exist
