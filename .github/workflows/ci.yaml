@@ -71,6 +71,9 @@ jobs:
       - name: Create debug config
         run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
 
+      - name: Build project
+        run: npm run build
+
       - name: Run tests
         run: ./tests/test-api.sh
 
