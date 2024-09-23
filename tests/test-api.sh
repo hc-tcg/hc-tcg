@@ -5,7 +5,7 @@
 
 set -o pipefail
 
-PORT=9000
+PORT=55576
 HOST="http://localhost:$PORT"
 
 cleanup() {
@@ -55,7 +55,7 @@ test_card_token_costs() {
 }
 
 output_file=$(mktemp)
-npm run server:dev &> $output_file &
+PORT=$PORT npm run server:dev &> $output_file &
 while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
 	# Wait for the server to start
 	sleep .1
