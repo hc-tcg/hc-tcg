@@ -52,7 +52,7 @@ jobs:
         run: npm run test
 
   api-tests:
-    name: Run Server and Client Tests
+    name: Run API Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
