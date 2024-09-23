@@ -8,7 +8,7 @@ import {put, select, takeEvery} from 'typed-redux-saga'
 import {getSocket} from './socket-selectors'
 
 export function* sendMsg(payload: ClientMessage): any {
-	const socket = yield* select()
+	const socket = yield* select(getSocket)
 
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
