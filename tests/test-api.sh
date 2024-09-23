@@ -53,7 +53,7 @@ trap cleanup EXIT
 
 output_file=$(mktemp)
 npm run server:dev &> $output_file &
-while [ -z $(cat $output_file | grep "Server listening on port") ]; do
+while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
 	# Wait for the server to start
 	sleep .1
 done
