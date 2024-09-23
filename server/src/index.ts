@@ -11,6 +11,7 @@ import startSocketIO from './sockets'
 const port = process.env.PORT || CONFIG.port || 9000
 
 const app = express()
+app.use(express.json())
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
