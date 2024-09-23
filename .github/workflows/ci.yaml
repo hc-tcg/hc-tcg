@@ -54,6 +54,11 @@ jobs:
   api-tests:
     name: Run API Tests
     runs-on: ubuntu-latest
+    services:
+      hc-tcg:
+        image: .
+        ports:
+          - 9000:9000
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

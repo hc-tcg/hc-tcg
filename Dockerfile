@@ -12,6 +12,7 @@ COPY . .
 
 COPY common/config/debug-config.example.json common/config/debug-config.json
 
+RUN apt-get install curl jq -y
 RUN npm ci && npm run build
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
 ENV NODE_ENV production
