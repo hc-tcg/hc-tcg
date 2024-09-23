@@ -5,12 +5,13 @@
 
 set -o pipefail
 
-PORT=9000
-kill -9 $(lsof -t -i:$PORT) || true
+kill -9 $(lsof -t -i:9000) || true
 
 cleanup() {
   pkill -f "npm run server:dev"
 }
+
+trap cleanup EXIT
 
 test_card_images_exist() {
 	test_hermit=$(curl http://localhost:9000/api/cards | jq '.[] | select(.id == "ethoslab_common")')
@@ -47,9 +48,6 @@ test_card_token_costs() {
 
 	test $api_cost -eq "$(($helsknight_rare_cost + $welsknight_rare_cost))"
 }
-
-trap cleanup EXIT
-
 
 output_file=$(mktemp)
 npm run server:dev &> $output_file &
