@@ -64,9 +64,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y curl jq
           npm ci
+          sudo apt-get install -y curl
+          sudo apt-get install -y jq
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
