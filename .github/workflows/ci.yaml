@@ -36,7 +36,7 @@ jobs:
         run: npm run lint
 
   unittest:
-    name: Run Jest Unit Tests
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
