@@ -45,7 +45,7 @@ type EffectResponse = {
 	name: string
 	expansion: string
 	rarity: string
-	tokens: number | string
+	tokens: number
 	description: string
 	image: string
 }
@@ -56,7 +56,7 @@ type ItemResponse = {
 	name: string
 	expansion: string
 	rarity: string
-	tokens: number | string
+	tokens: number
 	energy: Array<string>
 	image: string
 }
@@ -85,7 +85,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			name: card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
 			image: joinUrl(url, getCardImage(card)),
 		}
@@ -96,7 +96,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			name: card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
 			image: joinUrl(url, getCardImage(card)),
 		}
