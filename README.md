@@ -80,7 +80,7 @@ This project contains a few tests that are run against every PR.
 
 ```sh
 npm run test      # run all the tests
-npm run test:jest # run unittests written with jest, this will catch most errors.
+npm run test:unit # run unittests written with jest, this will catch most errors.
 npm run test:api  # run tests for the hc-tcg API.
 ```
 

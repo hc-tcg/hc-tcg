@@ -72,7 +72,7 @@
 		"client:preview": "vite preview --port 3002 client/",
 		"test": "npm run test:api && npm run test:jest",
 		"test:api": "./tests/test-api.sh",
-		"test:jest": "jest --detect-open-handles",
+		"test:unit": "jest --detect-open-handles",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
