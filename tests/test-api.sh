@@ -6,7 +6,7 @@
 set -o pipefail
 
 PORT=9000
-HOST="127.0.0.1:$PORT"
+HOST="http://localhost:$PORT"
 
 cleanup() {
   echo "Closing server on port $PORT."
