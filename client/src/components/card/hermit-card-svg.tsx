@@ -1,8 +1,13 @@
 import classnames from 'classnames'
+import {
+	getCardImage,
+	getCardRankIcon,
+	getCardTypeIcon,
+	getHermitBackground,
+} from 'common/cards/base/card'
 import {Hermit} from 'common/cards/base/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {getCardRank} from 'common/utils/ranks'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
 import {useSelector} from 'react-redux'
@@ -21,11 +26,10 @@ const COST_X = [
 ]
 
 const HermitCardModule = memo(({card}: HermitCardProps) => {
-	const hermitFullName = card.id.split('_')[0]
-
-	const rank = getCardRank(card.tokens)
+	const rank = getCardRankIcon(card)
 	const palette = card.palette || ''
-	const backgroundName = card.background || hermitFullName
+	const backgroundImage = getHermitBackground(card)
+	const hermitImage = getCardImage(card)
 	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
@@ -77,7 +81,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 			<g id="hermit-image">
 				<rect x="45" y="60" fill="white" width="310" height="196" />
 				<image
-					href={`/images/backgrounds/${backgroundName}.png`}
+					href={backgroundImage}
 					x="55"
 					y="70"
 					width="290"
@@ -85,7 +89,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 				/>
 				<image
 					className={css.hermitImage}
-					href={`/images/hermits-nobg/${hermitFullName}.png`}
+					href={hermitImage}
 					x="55"
 					y="70"
 					width="290"
@@ -107,28 +111,28 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					y="12"
 					width="68"
 					height="68"
-					href={`/images/types/type-${card.type}.png`}
+					href={getCardTypeIcon(card.type)}
 					className={css.type}
 				/>
 			</g>
-			{showCost && rank !== 'stone' ? (
+			{showCost && rank !== null ? (
 				<g>
 					<image
 						x="68"
 						y="80"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank}.png`}
+						href={rank}
 						className={css.rank}
 					/>
 				</g>
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.primary.cost.map((type: string, i: number) => (
+					{card.primary.cost.map((type, i: number) => (
 						<image
 							key={i}
-							href={`/images/types/type-${type}.png`}
+							href={getCardTypeIcon(type)}
 							x={COST_X[card.primary.cost.length - 1][i]}
 							y="273"
 							width={COST_SIZE}
@@ -160,10 +164,10 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.secondary.cost.map((type: string, i: number) => (
+				{card.secondary.cost.map((type, i: number) => (
 					<image
 						key={i}
-						href={`/images/types/type-${type}.png`}
+						href={getCardTypeIcon(type)}
 						x={COST_X[card.secondary.cost.length - 1][i]}
 						y="343"
 						width={COST_SIZE}

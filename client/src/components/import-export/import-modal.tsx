@@ -2,13 +2,13 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {TypeT} from 'common/types/cards'
 import {PlayerDeckT} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {getDeckFromHash} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
-import {getDeckFromHash} from './import-export-utils'
 import css from './import-export.module.scss'
 
 type Props = {
@@ -47,6 +47,7 @@ export const ImportModal = ({
 			name: nameRef?.current?.value || 'Imported Deck',
 			icon: deckIcon,
 			cards: deck,
+			tags: [],
 		})
 
 		onClose(true)
@@ -84,6 +85,7 @@ export const ImportModal = ({
 						? (lineComponents[1] as TypeT)
 						: 'any',
 					cards: deck,
+					tags: [],
 				})
 			})
 

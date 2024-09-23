@@ -62,6 +62,18 @@ function GameSettings({setMenuSection}: Props) {
 			},
 		})
 	}
+	const handleDeckSortingMethod = () => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'deckSortingMethod',
+				value:
+					settings.deckSortingMethod === 'Alphabetical'
+						? 'First Tag'
+						: 'Alphabetical',
+			},
+		})
+	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const username = ev.currentTarget.minecraftName.value.trim()
@@ -106,6 +118,9 @@ function GameSettings({setMenuSection}: Props) {
 				<Button variant="stone" onClick={handleSlotHighlightingChange}>
 					Card Slot Highlighting:{' '}
 					{getDescriptor(settings.slotHighlightingEnabled)}
+				</Button>
+				<Button variant="stone" onClick={handleDeckSortingMethod}>
+					Deck Sorting Method: {settings.deckSortingMethod}
 				</Button>
 				<div className={css.minecraftNameArea}>
 					<div className={css.left}>

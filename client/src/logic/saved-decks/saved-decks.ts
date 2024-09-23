@@ -1,6 +1,7 @@
 import {
 	PlayerDeckT,
 	SavedDeckT,
+	Tag,
 	deckToSavedDeck,
 	loadSavedDeck,
 } from 'common/types/deck'
@@ -93,4 +94,48 @@ export const convertLegacyDecks = (): number => {
 	}
 
 	return conversionCount
+}
+
+export const getCreatedTags: () => Array<Tag> = () => {
+	let lsKey
+	const tags = []
+
+	for (let i = 0; i < localStorage.length; i++) {
+		lsKey = localStorage.key(i)
+
+		if (lsKey?.includes('Tag_')) {
+			const key = localStorage.getItem(lsKey)
+			if (key) tags.push(JSON.parse(key) || {})
+		}
+	}
+	return tags.sort() as Array<Tag>
+}
+
+export const keysToTags = (tags: Array<string>): Array<Tag> => {
+	const savedTags = getCreatedTags()
+	const fullTags: Array<Tag> = []
+	tags.forEach((key) => {
+		const fullTag = savedTags.find((tag) => tag.key === key)
+		if (fullTag) fullTags.push(fullTag)
+	})
+	return fullTags
+}
+
+export const saveTag = (tag: Tag) => {
+	const createdTags = getCreatedTags()
+	const hash = 'Tag_' + tag.key
+	if (createdTags.find((createdTag) => createdTag.key === tag.key)) return
+	localStorage.setItem(hash, JSON.stringify(tag))
+}
+
+export const deleteTag = (tag: Tag) => {
+	const hash = 'Tag_' + tag.key
+	localStorage.removeItem(hash)
+	getSavedDeckNames().forEach((deck) => {
+		const savedDeck = getSavedDeck(deck)
+		console.log(savedDeck)
+		if (!savedDeck || !savedDeck.tags) return
+		savedDeck.tags = savedDeck.tags.filter((deckTag) => deckTag !== tag.key)
+		saveDeck(savedDeck)
+	})
 }

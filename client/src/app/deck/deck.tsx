@@ -70,6 +70,7 @@ const Deck = ({setMenuSection}: Props) => {
 							name: '',
 							icon: 'any',
 							cards: [],
+							tags: [],
 						}}
 					/>
 				)
