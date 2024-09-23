@@ -11,9 +11,9 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
-import socket from 'socket'
-import {call, delay, put, race, take, takeEvery} from 'typed-redux-saga'
+import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 
 const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -54,7 +54,7 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
-const createConnectErrorChannel = () =>
+const createConnectErrorChannel = (socket: any) =>
 	eventChannel((emit) => {
 		const connectErrorListener = (err: Error | null) => {
 			if (err instanceof Error) return emit(err.message)
@@ -66,6 +66,7 @@ const createConnectErrorChannel = () =>
 	})
 
 export function* loginSaga() {
+	const socket = yield* select(getSocket)
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
@@ -80,11 +81,13 @@ export function* loginSaga() {
 
 	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
-	const connectErrorChan = createConnectErrorChannel()
+	const connectErrorChan = createConnectErrorChannel(socket)
 	const result = yield* race({
-		playerInfo: call(receiveMsg(serverMessages.PLAYER_INFO)),
-		invalidPlayer: call(receiveMsg(serverMessages.INVALID_PLAYER)),
-		playerReconnected: call(receiveMsg(serverMessages.PLAYER_RECONNECTED)),
+		playerInfo: call(receiveMsg(socket, serverMessages.PLAYER_INFO)),
+		invalidPlayer: call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),
+		playerReconnected: call(
+			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
+		),
 		connectError: take(connectErrorChan),
 		timeout: delay(8000),
 	})
@@ -173,6 +176,8 @@ export function* loginSaga() {
 }
 
 export function* logoutSaga() {
+	const socket = yield* select(getSocket)
+
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DECK_SET]>(
 		localMessages.DECK_SET,
 		function* (action) {
@@ -190,7 +195,7 @@ export function* logoutSaga() {
 	)
 	yield* race([
 		take(localMessages.LOGOUT),
-		call(receiveMsg(serverMessages.INVALID_PLAYER)),
+		call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),
 	])
 	clearSession()
 	socket.disconnect()
@@ -198,8 +203,9 @@ export function* logoutSaga() {
 }
 
 export function* newDeckSaga() {
+	const socket = yield* select(getSocket)
 	while (true) {
-		const result = yield* call(receiveMsg(serverMessages.NEW_DECK))
+		const result = yield* call(receiveMsg(socket, serverMessages.NEW_DECK))
 		yield put<LocalMessage>({
 			type: localMessages.DECK_NEW,
 			deck: result.deck,
@@ -208,8 +214,11 @@ export function* newDeckSaga() {
 }
 
 export function* minecraftNameSaga() {
+	const socket = yield* select(getSocket)
 	while (true) {
-		const result = yield* call(receiveMsg(serverMessages.NEW_MINECRAFT_NAME))
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.NEW_MINECRAFT_NAME),
+		)
 		yield put<LocalMessage>({
 			type: localMessages.MINECRAFT_NAME_NEW,
 			name: result.name,
@@ -218,8 +227,9 @@ export function* minecraftNameSaga() {
 }
 
 export function* updatesSaga() {
+	const socket = yield* select(getSocket)
 	yield sendMsg({type: clientMessages.GET_UPDATES})
-	const result = yield* call(receiveMsg(serverMessages.LOAD_UPDATES))
+	const result = yield* call(receiveMsg(socket, serverMessages.LOAD_UPDATES))
 	yield put<LocalMessage>({
 		type: localMessages.UPDATES_LOAD,
 		updates: result.updates,
