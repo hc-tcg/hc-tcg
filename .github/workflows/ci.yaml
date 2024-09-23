@@ -49,7 +49,7 @@ jobs:
         run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
 
       - name: Run tests
-        run: npm run test:jest
+        run: npm run test:unit
 
   api-tests:
     name: Run API Tests
