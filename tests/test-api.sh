@@ -16,6 +16,7 @@ cleanup() {
 trap cleanup EXIT
 
 test_card_images_exist() {
+  echo "$HOST/api/cards"
 	test_hermit=$(curl $HOST/api/cards | jq '.[] | select(.id == "ethoslab_common")')
 	image=$(echo $test_hermit | jq -r .image)
 	background=$(echo $test_hermit | jq -r .background)
