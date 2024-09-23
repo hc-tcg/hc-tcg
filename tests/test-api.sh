@@ -36,6 +36,18 @@ test_card_images_exist() {
 	test -s "$effect_image_output"
 }
 
+test_card_token_costs() {
+  ids='["helsknight_rare", "welsknight_rare"]'
+	hermits=$(curl http://localhost:9000/api/cards)
+
+	helsknight_rare_cost=$(echo $hermits | jq '.[] | select(.id == "helsknight_rare").tokens')
+	welsknight_rare_cost=$(echo $hermits | jq '.[] | select(.id == "welsknight_rare").tokens')
+
+	api_cost=$(curl http://localhost:9000/api/deck/cost -d "$ids" -H Content-Type:application/json | jq '.cost')
+
+	test $api_cost -eq "$(($helsknight_rare_cost + $welsknight_rare_cost))"
+}
+
 trap cleanup EXIT
 
 npm run server:dev &
@@ -45,6 +57,7 @@ sleep 2
 
 echo "Running `test_card_images_exist`"
 test_card_images_exist
+echo "Running `test_card_token_costs`"
+test_card_token_costs
 
 cleanup
-

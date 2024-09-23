@@ -67,6 +67,10 @@ jobs:
       - name: Create debug config
         run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '>=16,<19'
+
       - name: Run tests
         run: ./tests/test-api.sh
 
