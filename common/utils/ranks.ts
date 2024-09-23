@@ -1,16 +1,24 @@
 import {Card} from '../cards/base/types'
 import {RankT, TokenCostT} from '../types/cards'
 
+export function getCardVisualTokenCost(
+	tokens: TokenCostT,
+): 0 | 1 | 2 | 3 | 4 | 5 {
+	if (tokens === 'wild') return 1
+	return tokens
+}
+
 export function getCardRank(tokens: TokenCostT): RankT {
-	if (tokens === 0) {
+	let displayCost = getCardVisualTokenCost(tokens)
+	if (displayCost === 0) {
 		return 'stone'
-	} else if (tokens === 1 || tokens === 'wild') {
+	} else if (displayCost === 1) {
 		return 'iron'
-	} else if (tokens === 2) {
+	} else if (displayCost === 2) {
 		return 'gold'
-	} else if (tokens === 3) {
+	} else if (displayCost === 3) {
 		return 'emerald'
-	} else if (tokens === 4) {
+	} else if (displayCost === 4) {
 		return 'diamond'
 	}
 	return 'stone'

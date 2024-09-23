@@ -9,7 +9,7 @@ import {
 } from 'common/cards/base/types'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {joinUrl} from './utils'
-import {getDeckCost} from 'common/utils/ranks'
+import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import {ListOfCards} from './schema'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
@@ -70,7 +70,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			shortName: card.shortName || card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens === 'wild' ? 1 : card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			type: card.type,
 			primary: card.primary,
 			secondary: card.secondary,
