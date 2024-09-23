@@ -1,6 +1,7 @@
 #!/bin/bash -e
 #
 # Tests for the HC-TCG API. Depends on `curl` and `jq`.
+# Requires the server to be built before running.
 #
 
 set -o pipefail
@@ -51,7 +52,6 @@ test_card_token_costs() {
 	test $api_cost -eq "$(($helsknight_rare_cost + $welsknight_rare_cost))"
 }
 
-npm run build
 output_file=$(mktemp)
 PORT=$PORT npm run server &> $output_file &
 while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
