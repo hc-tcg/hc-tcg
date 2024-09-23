@@ -1,5 +1,5 @@
 import {Express} from 'express'
-import {cards, getCardsInDeck, deckCost} from './cards'
+import {cards, deckCost, getCardsInDeck} from './cards'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
