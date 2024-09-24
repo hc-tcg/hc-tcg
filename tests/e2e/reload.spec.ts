@@ -7,7 +7,6 @@ test('is still connected after reload', async ({page}) => {
 	await page.getByPlaceholder(' ').press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
-
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
 		'Test Player',
 	)
