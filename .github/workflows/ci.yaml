@@ -153,6 +153,7 @@ jobs:
       - name: Connect to PostgreSQL
         run: npm run test:db
         env:
+          POSTGRES_HOST: localhost
           POSTGRES_USER: hc-tcg
           POSTGRES_PORT: 5432
 

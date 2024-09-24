@@ -5,7 +5,8 @@ import QUERIES from './queries'
 
 export const setupDatabase = () => {
 	const pool = new Pool({
-		host: 'localhost',
+		host: process.env.POSTGRES_HOST || 'localhost',
+		port: Number(process.env.POSTGRES_PORT || 5432),
 		user: 'hc-tcg',
 		password: 'hc-tcg',
 		database: 'hc-tcg',
