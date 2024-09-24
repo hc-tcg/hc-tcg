@@ -6,4 +6,3 @@ test('has correct title', async ({page}) => {
 	// Expect a title "to contain" a substring.
 	await expect(page).toHaveTitle(/Hermitcraft TCG/)
 })
-
