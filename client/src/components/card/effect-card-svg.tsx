@@ -3,18 +3,16 @@ import {getCardImage, getCardRankIcon} from 'common/cards/base/card'
 import {Attach, SingleUse} from 'common/cards/base/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import {useSelector} from 'react-redux'
 import css from './effect-card-svg.module.scss'
 
 export type EffectCardProps = {
 	card: WithoutFunctions<Attach | SingleUse>
+	showCost: boolean
 }
 
-const EffectCardModule = memo(({card}: EffectCardProps) => {
+const EffectCardModule = memo(({card, showCost}: EffectCardProps) => {
 	const rank = getCardRankIcon(card)
-	const showCost = !useSelector(getGameState)
 	const disabled =
 		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 	const image = getCardImage(card)

@@ -19,10 +19,6 @@ const config = {
 		'^.+\\.scss$': 'jest-scss-transform',
 	},
 
-	diagnostics: {
-		pathRegex: /\.(test)\.ts$/,
-	},
-
 	// A map from regular expressions to paths to transformers
 	transform: {
 		'^.+\\.tsx?$': [
@@ -30,6 +26,7 @@ const config = {
 			{
 				diagnostics: {
 					warnOnly: true,
+      		pathRegex: /\.(test)\.ts$/,
 				},
 				tsconfig: 'tests/snapshots/tsconfig.json',
 			},
