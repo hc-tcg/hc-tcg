@@ -9,7 +9,7 @@ import {
 	PlaintextNode,
 	ProfanityNode,
 	formatText,
-} from '../../../common/utils/formatting'
+} from 'common/utils/formatting'
 
 describe('formatting tests', () => {
 	test('text node', () => {

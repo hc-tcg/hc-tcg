@@ -41,6 +41,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
+		"@playwright/test": "^1.47.2",
 		"@types/node": "^16.18.11",
 		"@types/react": "^18.0.26",
 		"@types/react-dom": "^18.0.10",
@@ -70,9 +71,10 @@
 		"client:tsc": "tsc --p client/",
 		"client:dev": "vite client",
 		"client:preview": "vite preview --port 3002 client/",
-		"test": "npm run test:api && npm run test:jest",
+		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
 		"test:api": "./tests/test-api.sh",
 		"test:unit": "jest --detect-open-handles",
+		"test:e2e": "playwright test",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."

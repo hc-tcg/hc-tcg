@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 
-import {censorString} from '../../../common/utils/formatting'
+import {censorString} from 'common/utils/formatting'
 
 describe('censorship tests', () => {
 	test('simple censorship', () => {
