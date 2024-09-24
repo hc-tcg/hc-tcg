@@ -10,7 +10,7 @@ import store from './store'
 
 // Make the store available in the playwright test.
 // @ts-ignore
-global.store = store
+global.getState = () => store.getState()
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
