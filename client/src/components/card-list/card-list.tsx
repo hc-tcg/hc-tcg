@@ -4,6 +4,8 @@ import css from './card-list.module.scss'
 
 import {LocalCardInstance} from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import {getGameState} from 'common/utils/state-gen'
+import {useSelector} from 'react-redux'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
@@ -29,6 +31,8 @@ const CardList = (props: CardListProps) => {
 		disableAnimations,
 	} = props
 
+	const gameState = useSelector(getGameState)
+
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
 			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
@@ -53,6 +57,7 @@ const CardList = (props: CardListProps) => {
 				selected={isSelected}
 				picked={isPicked}
 				tooltipAboveModal={props.tooltipAboveModal}
+				showCost={!!gameState}
 			/>
 		)
 

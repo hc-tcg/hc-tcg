@@ -24,10 +24,7 @@ const config = {
 		'^.+\\.tsx?$': [
 			'ts-jest',
 			{
-				diagnostics: {
-					warnOnly: true,
-      		pathRegex: /\.(test)\.ts$/,
-				},
+				diagnostics: false,
 				tsconfig: 'tests/snapshots/tsconfig.json',
 			},
 		],
