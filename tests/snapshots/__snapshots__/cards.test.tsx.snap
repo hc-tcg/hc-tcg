@@ -1,5 +1,133 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Test card snapshots Effect Card SVG 1`] = `
+<svg
+  className=""
+  height="100%"
+  viewBox="0 0 400 400"
+  width="100%"
+>
+  <rect
+    height="380"
+    rx="15"
+    ry="15"
+    width="380"
+    x="10"
+    y="10"
+  />
+  <g>
+    <image
+      href="/images/star_color.svg"
+      width="390"
+      x="-15"
+      y="65"
+    />
+    <image
+      height="220"
+      href="/images/effects/golden_axe.png"
+      width="220"
+      x="90"
+      y="132"
+    />
+  </g>
+  <g
+    id="type"
+  >
+    <rect
+      height="75"
+      rx="15"
+      ry="15"
+      width="360"
+      x="20"
+      y="20"
+    />
+    <text
+      dominantBaseline="hanging"
+      textAnchor="middle"
+      x="200"
+      y="33"
+    >
+      EFFECT
+    </text>
+  </g>
+  <g>
+    <rect
+      height="100"
+      rx="50"
+      ry="50"
+      width="100"
+      x="0"
+      y="302"
+    />
+    <image
+      height="70"
+      href="/images/ranks/gold.png"
+      width="70"
+      x="15"
+      y="315"
+    />
+  </g>
+  <defs>
+    <filter
+      colorInterpolationFilters="sRGB"
+      height="200%"
+      id="drop-shadow"
+      width="200%"
+      x="-50%"
+      y="-50%"
+    >
+      <feGaussianBlur
+        id="blur"
+        in="SourceAlpha"
+        result="SA-o-blur"
+        stdDeviation="5"
+      />
+      <feComponentTransfer
+        in="SA-o-blur"
+        result="SA-o-b-contIN"
+      >
+        <feFuncA
+          id="contour"
+          tableValues="0 1"
+          type="table"
+        />
+      </feComponentTransfer>
+      <feComposite
+        in="SA-o-blur"
+        in2="SA-o-b-contIN"
+        operator="in"
+        result="SA-o-b-cont"
+      />
+      <feComponentTransfer
+        in="SA-o-b-cont"
+        result="SA-o-b-c-sprd"
+      >
+        <feFuncA
+          id="spread-ctrl"
+          slope="200"
+          type="linear"
+        />
+      </feComponentTransfer>
+      <feColorMatrix
+        id="recolor"
+        in="SA-o-b-c-sprd"
+        result="SA-o-b-c-s-recolor"
+        type="matrix"
+        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
+      />
+      <feMerge>
+        <feMergeNode
+          in="SA-o-b-c-s-r-mix"
+        />
+        <feMergeNode
+          in="SourceGraphic"
+        />
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+`;
+
 exports[`Test card snapshots Hermit card SVG 1`] = `
 <svg
   className=""
@@ -180,5 +308,153 @@ exports[`Test card snapshots Hermit card SVG 1`] = `
       100
     </text>
   </g>
+</svg>
+`;
+
+exports[`Test card snapshots Item Card SVG 1`] = `
+<svg
+  height="100%"
+  viewBox="0 0 400 400"
+  width="100%"
+>
+  <rect
+    className="undefined"
+    height="380"
+    rx="15"
+    ry="15"
+    width="380"
+    x="10"
+    y="10"
+  />
+  <g>
+    <image
+      href="/images/star_white.svg"
+      width="390"
+      x="-15"
+      y="65"
+    />
+    <image
+      className=""
+      height="220"
+      href="/images/types/type-builder.png"
+      width="220"
+      x="90"
+      y="132"
+    />
+  </g>
+  <g
+    id="type"
+  >
+    <rect
+      height="75"
+      rx="15"
+      ry="15"
+      width="360"
+      x="20"
+      y="20"
+    />
+    <text
+      dominantBaseline="hanging"
+      textAnchor="middle"
+      x="200"
+      y="33"
+    >
+      ITEM
+    </text>
+  </g>
+  <g>
+    <rect
+      height="100"
+      rx="50"
+      ry="50"
+      width="100"
+      x="302"
+      y="302"
+    />
+    <text
+      dominantBaseline="hanging"
+      fill="black"
+      textAnchor="middle"
+      x="351"
+      y="331"
+    >
+      x2
+    </text>
+  </g>
+  <g>
+    <rect
+      height="100"
+      rx="50"
+      ry="50"
+      width="100"
+      x="0"
+      y="302"
+    />
+    <image
+      height="70"
+      href="/images/ranks/gold.png"
+      width="70"
+      x="15"
+      y="315"
+    />
+  </g>
+  <defs>
+    <filter
+      colorInterpolationFilters="sRGB"
+      height="200%"
+      id="drop-shadow"
+      width="200%"
+      x="-50%"
+      y="-50%"
+    >
+      <feGaussianBlur
+        id="blur"
+        in="SourceAlpha"
+        result="SA-o-blur"
+        stdDeviation="5"
+      />
+      <feComponentTransfer
+        in="SA-o-blur"
+        result="SA-o-b-contIN"
+      >
+        <feFuncA
+          id="contour"
+          tableValues="0 1"
+          type="table"
+        />
+      </feComponentTransfer>
+      <feComposite
+        in="SA-o-blur"
+        in2="SA-o-b-contIN"
+        operator="in"
+        result="SA-o-b-cont"
+      />
+      <feComponentTransfer
+        in="SA-o-b-cont"
+        result="SA-o-b-c-sprd"
+      >
+        <feFuncA
+          id="spread-ctrl"
+          slope="200"
+          type="linear"
+        />
+      </feComponentTransfer>
+      <feColorMatrix
+        id="recolor"
+        in="SA-o-b-c-sprd"
+        result="SA-o-b-c-s-recolor"
+        type="matrix"
+        values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
+      />
+      <feMerge>
+        <feMergeNode
+          in="SA-o-b-c-s-r-mix"
+        />
+        <feMergeNode
+          in="SourceGraphic"
+        />
+      </feMerge>
+    </filter>
+  </defs>
 </svg>
 `;

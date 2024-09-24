@@ -7,7 +7,7 @@ import {memo} from 'react'
 import css from './effect-card-svg.module.scss'
 
 export type EffectCardProps = {
-	card: WithoutFunctions<Attach | SingleUse>
+	card: WithoutFunctions<Attach | SingleUse> | Attach | SingleUse
 	showCost: boolean
 }
 

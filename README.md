@@ -86,6 +86,13 @@ npm run test:api      # run tests for the hc-tcg API.
 npm run test:e2e      # run end-to-end tests with Playwright.
 ```
 
+If snapshot tests fail, you may need to update them.
+
+```sh
+npm run test:snapshot-update
+```
+
+
 # Building & Self Hosting
 
 [Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
