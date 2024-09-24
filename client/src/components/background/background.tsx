@@ -25,6 +25,9 @@ type CameraProps = {
 const Panorama = ({panorama, camera, disabled}: Props) => {
 	const gameState = useSelector(getGameState)
 
+	if (disabled || gameState)
+		return <div className={cn(css.background, css.canvas)} />
+
 	const Camera = ({
 		rotationEnabled,
 		rotationSpeed,
@@ -80,9 +83,6 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 			</mesh>
 		)
 	}
-
-	if (disabled || gameState)
-		return <div className={cn(css.background, css.canvas)} />
 
 	return (
 		<Canvas linear flat className={css.canvas}>

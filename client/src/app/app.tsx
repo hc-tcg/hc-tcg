@@ -62,12 +62,16 @@ function App() {
 	}
 
 	const background = useMemo(() => {
-		return (
-			<Background
-				panorama={settings.panorama}
-				disabled={!settings.panoramaEnabled}
-			/>
-		)
+		try {
+			return (
+				<Background
+					panorama={settings.panorama}
+					disabled={!settings.panoramaEnabled}
+				/>
+			)
+		} catch {
+			return <Background panorama={settings.panorama} disabled={true} />
+		}
 	}, [settings.panoramaEnabled])
 
 	return (
