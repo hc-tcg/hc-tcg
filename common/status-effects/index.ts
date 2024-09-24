@@ -8,6 +8,7 @@ import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import DyedEffect from './dyed'
+import EfficiencyEffect from './efficiency'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
@@ -81,6 +82,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	GasLightEffect,
 	GasLightTriggeredEffect,
 	IgnoreAttachSlotEffect,
+	EfficiencyEffect,
 	LooseShellEffect,
 ]
 

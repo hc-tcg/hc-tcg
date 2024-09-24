@@ -3,9 +3,15 @@ import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
+import PvPItem from 'common/cards/default/items/pvp-common'
 import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
-import {RowComponent, StatusEffectComponent} from 'common/components'
+import {
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
@@ -207,6 +213,53 @@ function* testPuppetingJopacity(game: GameModel) {
 	).toBe(null)
 }
 
+function* testPuppetryDiscardingItem(game: GameModel) {
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	yield* playCardFromHand(game, PvPItem, 'item', 0, 0)
+	yield* playCardFromHand(game, HypnotizdRare, 'hermit', 1)
+	yield* attack(game, 'secondary')
+
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+
+	yield* finishModalRequest(game, {pick: 'secondary'})
+
+	yield* pick(
+		game,
+		query.slot.opponent,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.item,
+		query.slot.index(0),
+		query.slot.rowIndex(0),
+	)
+
+	expect(
+		game.components
+			.find(
+				SlotComponent,
+				query.slot.currentPlayer,
+				query.slot.item,
+				query.slot.rowIndex(0),
+				query.slot.index(0),
+			)
+			?.getCard(),
+	).toBe(null)
+}
+
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
 		testGame(
@@ -247,6 +300,17 @@ describe('Test Zombie Cleo', () => {
 				saga: testPuppetingJopacity,
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, SmallishbeansCommon],
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test Puppeting an attack that requites an item to be discarded', () => {
+		testGame(
+			{
+				saga: testPuppetryDiscardingItem,
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, PvPItem, HypnotizdRare],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)

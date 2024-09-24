@@ -37,10 +37,12 @@
 		"socket.io": "^4.5.4",
 		"socket.io-client": "^4.5.4",
 		"terser": "^5.31.3",
-		"typed-redux-saga": "^1.5.0"
+		"typed-redux-saga": "^1.5.0",
+		"zod": "^3.23.8"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
+		"@playwright/test": "^1.47.2",
 		"@types/node": "^16.18.11",
 		"@types/pg": "^8.11.10",
 		"@types/react": "^18.0.26",
@@ -71,7 +73,10 @@
 		"client:tsc": "tsc --p client/",
 		"client:dev": "vite client",
 		"client:preview": "vite preview --port 3002 client/",
-		"test": "jest --detect-open-handles",
+		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
+		"test:api": "./tests/test-api.sh",
+		"test:unit": "jest --detect-open-handles",
+		"test:e2e": "playwright test",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."

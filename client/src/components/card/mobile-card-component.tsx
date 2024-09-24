@@ -70,7 +70,11 @@ const MobileCardComponent = (props: CardReactProps) => {
 						)}
 
 						<div className={css.amount}>x{cards.length}</div>
-						{!small && <div className={css.tokens}>{getDeckCost(cards)}</div>}
+						{!small && (
+							<div className={css.tokens}>
+								{getDeckCost(cards.map((card) => card.props))}
+							</div>
+						)}
 					</div>
 				</button>
 				{!small && (

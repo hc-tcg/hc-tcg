@@ -1,4 +1,4 @@
-import {CARDS_LIST} from 'common/cards'
+import {CARDS, CARDS_LIST} from 'common/cards'
 import {getCardImage, getHermitBackground} from 'common/cards/base/card'
 import {
 	Card,
@@ -8,6 +8,8 @@ import {
 	isSingleUse,
 } from 'common/cards/base/types'
 import {getDeckFromHash} from 'common/utils/import-export'
+import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
+import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
@@ -19,7 +21,7 @@ type HermitResponse = {
 	shortName: string
 	expansion: string
 	rarity: string
-	tokens: number | string
+	tokens: number
 	type: string
 	primary: {
 		cost: Array<string>
@@ -43,7 +45,7 @@ type EffectResponse = {
 	name: string
 	expansion: string
 	rarity: string
-	tokens: number | string
+	tokens: number
 	description: string
 	image: string
 }
@@ -54,7 +56,7 @@ type ItemResponse = {
 	name: string
 	expansion: string
 	rarity: string
-	tokens: number | string
+	tokens: number
 	energy: Array<string>
 	image: string
 }
@@ -68,7 +70,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			shortName: card.shortName || card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			type: card.type,
 			primary: card.primary,
 			secondary: card.secondary,
@@ -83,7 +85,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			name: card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
 			image: joinUrl(url, getCardImage(card)),
 		}
@@ -94,7 +96,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			name: card.name,
 			expansion: card.expansion,
 			rarity: card.rarity,
-			tokens: card.tokens,
+			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
 			image: joinUrl(url, getCardImage(card)),
 		}
@@ -118,4 +120,11 @@ export function getCardsInDeck(url: string, hash: string) {
 	return deck
 		.map((card) => cardToCardResponse(card.props, url))
 		.filter((x) => x !== null)
+}
+
+export function deckCost(body: Object) {
+	let cards = ListOfCards.parse(body)
+	return {
+		cost: getDeckCost(cards.map((card) => CARDS[card])),
+	}
 }
