@@ -134,9 +134,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: hc-tcg
-          POSTGRES_PASSWORD: hc-tcg
-          POSTGRES_DATABASE: hc-tcg
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -157,7 +157,7 @@ jobs:
         run: npm run test:db
         env:
           POSTGRES_HOST: 127.0.0.1
-          POSTGRES_USER: hc-tcg
+          POSTGRES_USER: hctcg
           POSTGRES_PORT: 5432
 
 

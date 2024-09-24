@@ -1,19 +1,18 @@
 import {beforeAll, describe, expect, test} from '@jest/globals'
 import {Pool} from 'pg'
-import {setupDatabase} from '../../server/src/db/db'
-import QUERIES from '../../server/src/db/queries'
+import {setupDatabase} from 'server/db/db'
+import QUERIES from 'server/db/queries'
 
 describe('Test Database', () => {
-	let database: null | Pool = null
+	let database: any
 
 	beforeAll(() => {
 		database = setupDatabase()
 	})
 
 	test('test database queries', () => {
-		expect(database).toBeTruthy()
 		for (const query of Object.values(QUERIES)) {
-			console.log(query)
+			database.validate(query)
 		}
 	})
 })

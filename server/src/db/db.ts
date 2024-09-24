@@ -1,23 +1,30 @@
-import pg from 'pg'
+import {Pool} from 'pg'
 
-const {Pool} = pg
 import QUERIES from './queries'
 
 export const setupDatabase = () => {
 	const pool = new Pool({
 		host: process.env.POSTGRES_HOST || 'localhost',
 		port: Number(process.env.POSTGRES_PORT || 5432),
-		user: 'hc-tcg',
-		password: 'hc-tcg',
-		database: 'hc-tcg',
+		user: 'hctcg',
+		password: 'hctcg',
+		database: 'hctcg',
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
 	})
 
-	pool.query(QUERIES.SETUP_DB)
-
-	return pool
+	return new Databse(pool)
 }
 
-export const database = setupDatabase()
+class Databse {
+	private db: Pool
+
+	constructor(db: Pool) {
+		this.db = db
+	}
+
+	public validate(query: string) {
+		this.db.query(query)
+	}
+}

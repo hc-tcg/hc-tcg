@@ -35,7 +35,6 @@ const QUERIES = {
 			name varchar(255) NOT NULL;
 			color varchar(7) NOT NULL;
 		);
-
 	`,
 }
 
