@@ -74,8 +74,7 @@
 		"test": "npm run test:api && npm run test:jest",
 		"test:api": "./tests/test-api.sh",
 		"test:unit": "jest --detect-open-handles",
-		"test:e2e": "./tests/e2e/setup-and-teardown.sh",
-		"playwright": "playwright test",
+		"test:e2e": "playwright test",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
