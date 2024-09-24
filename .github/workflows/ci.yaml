@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   run-linters:
-    name: Run linters
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
