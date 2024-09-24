@@ -74,6 +74,7 @@
 		"test": "npm run test:api && npm run test:jest",
 		"test:api": "./tests/test-api.sh",
 		"test:unit": "jest --detect-open-handles",
+		"test:e2e": "npm run server & playwright test && fg",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
