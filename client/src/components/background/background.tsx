@@ -6,14 +6,8 @@ import {getGameState} from 'logic/game/game-selectors'
 import React from 'react'
 import {useRef} from 'react'
 import {useSelector} from 'react-redux'
+import * as THREE from 'three'
 import css from './background.module.scss'
-
-let THREE: any = {}
-try {
-	THREE = require('three')
-} catch (e) {
-	console.error('Failed to import Three:', e)
-}
 
 type Props = {
 	panorama: string

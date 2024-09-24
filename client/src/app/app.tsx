@@ -1,4 +1,4 @@
-import Background from 'components/background'
+// import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -62,21 +62,20 @@ function App() {
 	}
 
 	const background = useMemo(() => {
-		try {
-			return (
-				<Background
-					panorama={settings.panorama}
-					disabled={!settings.panoramaEnabled}
-				/>
-			)
-		} catch {
-			return <Background panorama={settings.panorama} disabled={true} />
-		}
+		// try {
+		// 	return (
+		// 		<Background
+		// 			panorama={settings.panorama}
+		// 			disabled={!settings.panoramaEnabled}
+		// 		/>
+		// 	)
+		// } catch {
+		// 	return <Background panorama={settings.panorama} disabled={true} />
+		// }
 	}, [settings.panoramaEnabled])
 
 	return (
 		<main>
-			{background}
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
 			{enableToast && (
