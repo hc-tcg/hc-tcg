@@ -74,14 +74,8 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Start the server
-        run: npm run start &
-
       - name: Run tests
         run: ./tests/test-api.sh
-
-      - name: Kill the server
-        run: pkill 'npm run start'
 
   e2e:
     timeout-minutes: 60
@@ -105,8 +99,14 @@ jobs:
     - name: Build the server
       run: npm run build
 
+    - name: Start the server
+      run: npm run start &
+
     - name: Run Playwright tests
       run: npm run test:e2e
+
+    - name: Kill the server
+      run: pkill 'npm run start'
 
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
