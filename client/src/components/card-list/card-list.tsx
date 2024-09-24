@@ -3,9 +3,9 @@ import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {LocalCardInstance} from 'common/types/server-requests'
-import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import {getGameState} from 'common/utils/state-gen'
 import {useSelector} from 'react-redux'
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
