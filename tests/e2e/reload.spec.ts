@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test'
 
 test('is still connected after reload', async ({page}) => {
-	await page.goto('http://localhost:9000/')
+	await page.goto('localhost:9000')
 	await page.getByPlaceholder(' ').click()
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
