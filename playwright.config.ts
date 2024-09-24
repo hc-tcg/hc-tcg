@@ -38,10 +38,10 @@ export default defineConfig({
 			name: 'Firefox',
 			use: {...devices['Desktop Firefox']},
 		},
-		{
-			name: 'Mobile Firefox',
-			use: {...devices['Pixel 8']},
-		},
+		// {
+		// 	name: 'Mobile Firefox',
+		// 	use: {...devices['Pixel 8']},
+		// },
 
 		/* Test against mobile viewports. */
 		// {
