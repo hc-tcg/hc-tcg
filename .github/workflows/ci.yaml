@@ -51,7 +51,7 @@ jobs:
       - name: Run tests
         run: npm run test:unit
 
-  unittest:
+  snapshot-tests:
     name: Snapshot Tests
     runs-on: ubuntu-latest
     steps:
