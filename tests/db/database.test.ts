@@ -1,6 +1,6 @@
-import {describe, expect, test, beforeAll} from '@jest/globals'
-import {setupDatabase} from '../../server/src/db/db'
+import {beforeAll, describe, expect, test} from '@jest/globals'
 import {Pool} from 'pg'
+import {setupDatabase} from '../../server/src/db/db'
 import QUERIES from '../../server/src/db/queries'
 
 describe('Test Database', () => {
