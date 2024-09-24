@@ -746,7 +746,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								>
 									<CardList
 										cards={sortCards(selectedCards.hermits)}
-      							showCost={true}
+										showCost={true}
 										wrap={true}
 										onClick={removeCard}
 									/>
@@ -760,7 +760,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.attachableEffects)}
-    							showCost={true}
+									showCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -773,7 +773,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.singleUseEffects)}
-    							showCost={true}
+									showCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -781,7 +781,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 								<CardList
 									cards={sortCards(selectedCards.items)}
-    							showCost={true}
+									showCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
