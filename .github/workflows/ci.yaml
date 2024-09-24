@@ -125,7 +125,22 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
-	db:
+  db:
+    name: Test Databse
+    runs-on: ubuntu-latest
+    container: node:20-bookworm-slim
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: hc-tcg
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
