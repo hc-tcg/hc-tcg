@@ -1,10 +1,10 @@
 {
 	"compilerOptions": {
 		"paths": {
-			"client/*": ["../client/src/*"],
-			"common/*": ["../common/*"],
-			"types/*": ["../common/types/*"],
-			"server/*": ["../server/src/*"]
+			"client/*": ["../../client/src/*"],
+			"common/*": ["../../common/*"],
+			"types/*": ["../../common/types/*"],
+			"server/*": ["../../server/src/*"]
 		},
 		"allowJs": true,
 		"target": "esnext",
