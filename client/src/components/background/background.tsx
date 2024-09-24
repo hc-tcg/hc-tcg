@@ -6,8 +6,8 @@ import {getGameState} from 'logic/game/game-selectors'
 import React from 'react'
 import {useRef} from 'react'
 import {useSelector} from 'react-redux'
-import {isWebGL2Available} from 'three-stdlib'
 import * as THREE from 'three'
+import {isWebGL2Available} from 'three-stdlib'
 import css from './background.module.scss'
 
 type Props = {

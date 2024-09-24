@@ -72,7 +72,7 @@ function App() {
 
 	return (
 		<main>
-		  {background}
+			{background}
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
 			{enableToast && (
