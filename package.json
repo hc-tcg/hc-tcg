@@ -79,6 +79,7 @@
 		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
 		"test:api": "./tests/test-api.sh",
 		"test:unit": "jest tests/unit/ --detect-open-handles",
+		"test:db": "jest tests/db/",
 		"test:snapshot": "jest tests/snapshots/",
 		"test:snapshot-update": "jest tests/snapshots/ --updateSnapshot",
 		"test:e2e": "playwright test",

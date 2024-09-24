@@ -3,7 +3,7 @@ import pg from 'pg'
 const {Pool} = pg
 import QUERIES from './queries'
 
-const setupDatabase = () => {
+export const setupDatabase = () => {
 	const pool = new Pool({
 		host: 'localhost',
 		user: 'hc-tcg',
@@ -12,7 +12,7 @@ const setupDatabase = () => {
 		connectionTimeoutMillis: 2000,
 	})
 
-	pool.query(QUERIES.CREATE_DB)
+	pool.query(QUERIES.SETUP_DB)
 
 	return pool
 }

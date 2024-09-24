@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"paths": {
+			"client/*": ["../../client/src/*"],
+			"common/*": ["../../common/*"],
+			"types/*": ["../../common/types/*"],
+			"server/*": ["../../server/src/*"]
+		},
+		"allowJs": true,
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"strict": true,
+		"noEmit": true,
+		"noImplicitOverride": true,
+		"esModuleInterop": true
+	}
+}

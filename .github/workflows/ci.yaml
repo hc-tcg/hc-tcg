@@ -125,6 +125,22 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
+	db:
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Connect to PostgreSQL
+        run: npm run test:db
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: hc-tcg
+          POSTGRES_PORT: 5432
+
+
   build-docker:
     name: Test Can Build Docker Image
     runs-on: ubuntu-latest
