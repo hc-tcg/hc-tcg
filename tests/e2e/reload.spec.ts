@@ -6,16 +6,15 @@ test('is still connected after reload', async ({page}) => {
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
 
-	// Wait for login
-	await page.waitForTimeout(1000)
+	await page.waitForFunction(() => global.getState().session.connected)
+
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
 		'Test Player',
 	)
 
 	// We expect that the player is still logged in because the session was saved properly.
 	await page.reload()
-	// Wait for login
-	await page.waitForTimeout(1000)
+	await page.waitForFunction(() => global.getState().session.connected)
 	// Verify we are reconnected as the same player.
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
 		'Test Player',
