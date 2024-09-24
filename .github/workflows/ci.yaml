@@ -36,7 +36,7 @@ jobs:
         run: npm run lint
 
   unittest:
-    name: Run Unit Tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -52,7 +52,7 @@ jobs:
         run: npm run test:unit
 
   api-tests:
-    name: Run API Tests
+    name: API Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
