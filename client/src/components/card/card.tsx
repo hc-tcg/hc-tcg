@@ -24,7 +24,14 @@ interface CardReactProps
 
 const Card = (props: CardReactProps) => {
 	const {category} = props.card
-	const {onClick, selected, picked, unpickable, displayTokenCost, ...otherProps} = props
+	const {
+		onClick,
+		selected,
+		picked,
+		unpickable,
+		displayTokenCost,
+		...otherProps
+	} = props
 	let card = null
 	if (category === 'hermit')
 		card = (
@@ -35,7 +42,10 @@ const Card = (props: CardReactProps) => {
 		)
 	else if (category === 'item')
 		card = (
-			<ItemCardModule {...(otherProps as ItemCardProps)} displayTokenCost={displayTokenCost} />
+			<ItemCardModule
+				{...(otherProps as ItemCardProps)}
+				displayTokenCost={displayTokenCost}
+			/>
 		)
 	else if (['attach', 'single_use'].includes(category))
 		card = (
