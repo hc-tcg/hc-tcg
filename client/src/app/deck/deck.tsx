@@ -18,7 +18,7 @@ export const cardGroupHeader = (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards)} tokens
+			{getDeckCost(cards.map((card) => card.props))} tokens
 		</span>
 	</p>
 )

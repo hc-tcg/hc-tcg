@@ -74,6 +74,16 @@ npm run format    # format your code
 npm run fix       # fix any autofixable linting errors
 ```
 
+### Testing
+
+This project contains a few tests that are run against every PR.
+
+```sh
+npm run test      # run all the tests
+npm run test:unit # run unittests written with jest, this will catch most errors.
+npm run test:api  # run tests for the hc-tcg API.
+```
+
 # Building & Self Hosting
 
 [Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
