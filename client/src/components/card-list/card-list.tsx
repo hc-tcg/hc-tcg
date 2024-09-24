@@ -3,12 +3,11 @@ import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {LocalCardInstance} from 'common/types/server-requests'
-import {useSelector} from 'react-redux'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
-import {getGameState} from 'logic/game/game-selectors'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
+	showCost: boolean
 	disabled?: Array<string>
 	unpickable?: Array<LocalCardInstance>
 	selected?: Array<LocalCardInstance | null>
@@ -21,6 +20,7 @@ type CardListProps = {
 
 const CardList = (props: CardListProps) => {
 	const {
+		showCost,
 		wrap,
 		onClick,
 		cards,
@@ -30,8 +30,6 @@ const CardList = (props: CardListProps) => {
 		picked,
 		disableAnimations,
 	} = props
-
-	const gameState = useSelector(getGameState)
 
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
@@ -57,7 +55,7 @@ const CardList = (props: CardListProps) => {
 				selected={isSelected}
 				picked={isPicked}
 				tooltipAboveModal={props.tooltipAboveModal}
-				showCost={!!gameState}
+				showCost={showCost}
 			/>
 		)
 
