@@ -16,12 +16,12 @@ const config = {
 		'^client/(.*)$': '<rootDir>/client/src/$1',
 		'^common/(.*)$': '<rootDir>/common/$1',
 		'^server/(.*)$': '<rootDir>/server/src/$1',
-    "^.+\\.scss$": 'jest-scss-transform',
+		'^.+\\.scss$': 'jest-scss-transform',
 	},
 
 	diagnostics: {
-   pathRegex: /\.(test)\.ts$/
-  },
+		pathRegex: /\.(test)\.ts$/,
+	},
 
 	// A map from regular expressions to paths to transformers
 	transform: {
