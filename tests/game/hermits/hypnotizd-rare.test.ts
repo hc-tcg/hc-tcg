@@ -3,9 +3,22 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import MinerDoubleItem from 'common/cards/default/items/miner-rare'
 import Bow from 'common/cards/default/single-use/bow'
-import {RowComponent, SlotComponent} from 'common/components'
+import Efficiency from 'common/cards/default/single-use/efficiency'
+import {
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import EfficiencyEffect from 'common/status-effects/efficiency'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	pick,
+	playCardFromHand,
+	testGame,
+} from '../utils'
 
 describe('Test Rare Hypnotizd', () => {
 	test('Secondary attack and bow can select different targets', () => {
@@ -83,6 +96,50 @@ describe('Test Rare Hypnotizd', () => {
 							)
 							?.getCard(),
 					).toBe(null)
+				},
+			},
+			{startWithAllCards: true},
+		)
+	})
+
+	test('Secondary attack can not select AFK target without item card', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [HypnotizdRare, Efficiency],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
+					yield* playCardFromHand(game, Efficiency, 'single_use')
+					yield* applyEffect(game)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(EfficiencyEffect),
+							query.effect.targetIsPlayerAnd(query.player.currentPlayer),
+						),
+					).not.toBe(null)
+
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(EfficiencyEffect),
+							query.effect.targetIsPlayerAnd(query.player.currentPlayer),
+						),
+					).toBe(null)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health - HypnotizdRare.secondary.damage)
 				},
 			},
 			{startWithAllCards: true},
