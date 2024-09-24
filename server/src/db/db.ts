@@ -8,6 +8,7 @@ export const setupDatabase = () => {
 		host: 'localhost',
 		user: 'hc-tcg',
 		password: 'hc-tcg',
+		database: 'hc-tcg',
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
