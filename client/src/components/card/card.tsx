@@ -14,7 +14,7 @@ interface CardReactProps
 		HTMLButtonElement
 	> {
 	card: WithoutFunctions<CardObject>
-	showCost: boolean
+	displayTokenCost: boolean
 	selected?: boolean
 	picked?: boolean
 	unpickable?: boolean
@@ -24,24 +24,24 @@ interface CardReactProps
 
 const Card = (props: CardReactProps) => {
 	const {category} = props.card
-	const {onClick, selected, picked, unpickable, showCost, ...otherProps} = props
+	const {onClick, selected, picked, unpickable, displayTokenCost, ...otherProps} = props
 	let card = null
 	if (category === 'hermit')
 		card = (
 			<HermitCardModule
 				{...(otherProps as HermitCardProps)}
-				showCost={showCost}
+				displayTokenCost={displayTokenCost}
 			/>
 		)
 	else if (category === 'item')
 		card = (
-			<ItemCardModule {...(otherProps as ItemCardProps)} showCost={showCost} />
+			<ItemCardModule {...(otherProps as ItemCardProps)} displayTokenCost={displayTokenCost} />
 		)
 	else if (['attach', 'single_use'].includes(category))
 		card = (
 			<EffectCardModule
 				{...(otherProps as EffectCardProps)}
-				showCost={showCost}
+				displayTokenCost={displayTokenCost}
 			/>
 		)
 	else throw new Error('Unsupported card category: ' + category)

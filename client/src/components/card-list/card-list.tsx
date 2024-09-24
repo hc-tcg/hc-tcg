@@ -7,7 +7,7 @@ import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
-	showCost: boolean
+	displayTokenCost: boolean
 	disabled?: Array<string>
 	unpickable?: Array<LocalCardInstance>
 	selected?: Array<LocalCardInstance | null>
@@ -20,7 +20,7 @@ type CardListProps = {
 
 const CardList = (props: CardListProps) => {
 	const {
-		showCost,
+		displayTokenCost,
 		wrap,
 		onClick,
 		cards,
@@ -55,7 +55,7 @@ const CardList = (props: CardListProps) => {
 				selected={isSelected}
 				picked={isPicked}
 				tooltipAboveModal={props.tooltipAboveModal}
-				showCost={showCost}
+				displayTokenCost={displayTokenCost}
 			/>
 		)
 

@@ -515,7 +515,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'hermit',
 							)}
-							showCost={true}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -526,7 +526,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'attach',
 							)}
-							showCost={true}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -537,7 +537,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'single_use',
 							)}
-							showCost={true}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -548,7 +548,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'item',
 							)}
-							showCost={true}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -746,7 +746,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								>
 									<CardList
 										cards={sortCards(selectedCards.hermits)}
-										showCost={true}
+										displayTokenCost={true}
 										wrap={true}
 										onClick={removeCard}
 									/>
@@ -760,7 +760,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.attachableEffects)}
-									showCost={true}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -773,7 +773,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.singleUseEffects)}
-									showCost={true}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -781,7 +781,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 								<CardList
 									cards={sortCards(selectedCards.items)}
-									showCost={true}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>

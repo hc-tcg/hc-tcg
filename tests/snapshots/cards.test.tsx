@@ -10,19 +10,19 @@ import * as ReactTestRenderer from 'react-test-renderer'
 describe('Test card snapshots', () => {
 	test('Hermit card SVG', () => {
 		const render = ReactTestRenderer.create(
-			<HermitCard card={EthosLabCommon} showCost={true} />,
+			<HermitCard card={EthosLabCommon} displayTokenCost={true} />,
 		)
 		expect(render.toJSON()).toMatchSnapshot()
 	})
 	test('Item Card SVG', () => {
 		const render = ReactTestRenderer.create(
-			<ItemCard card={BuilderDoubleItem} showCost={true} />,
+			<ItemCard card={BuilderDoubleItem} displayTokenCost={true} />,
 		)
 		expect(render.toJSON()).toMatchSnapshot()
 	})
 	test('Effect Card SVG', () => {
 		const render = ReactTestRenderer.create(
-			<EffectCard card={GoldenAxe} showCost={true} />,
+			<EffectCard card={GoldenAxe} displayTokenCost={true} />,
 		)
 		expect(render.toJSON()).toMatchSnapshot()
 	})

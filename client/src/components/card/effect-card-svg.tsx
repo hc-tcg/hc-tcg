@@ -8,10 +8,10 @@ import css from './effect-card-svg.module.scss'
 
 export type EffectCardProps = {
 	card: WithoutFunctions<Attach | SingleUse> | Attach | SingleUse
-	showCost: boolean
+	displayTokenCost: boolean
 }
 
-const EffectCardModule = memo(({card, showCost}: EffectCardProps) => {
+const EffectCardModule = memo(({card, displayTokenCost}: EffectCardProps) => {
 	const rank = getCardRankIcon(card)
 	const disabled =
 		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
@@ -71,7 +71,7 @@ const EffectCardModule = memo(({card, showCost}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank !== null ? (
+			{displayTokenCost && rank !== null ? (
 				<g>
 					<rect
 						className={css.rarity}

@@ -112,7 +112,7 @@ const Slot = ({
 					{card.turnedOver ? (
 						<img src="/images/card-back.jpg" className={css.cardBack} />
 					) : (
-						<Card card={card.props} showCost={false} />
+						<Card card={card.props} displayTokenCost={false} />
 					)}
 				</div>
 			) : (

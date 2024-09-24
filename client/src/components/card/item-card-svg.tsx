@@ -7,10 +7,10 @@ import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
 	card: WithoutFunctions<Item> | Item
-	showCost: boolean
+	displayTokenCost: boolean
 }
 
-const ItemCardModule = memo(({card, showCost}: ItemCardProps) => {
+const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 	const rank = getCardRankIcon(card)
 	const image = getCardImage(card)
 	return (
@@ -89,7 +89,7 @@ const ItemCardModule = memo(({card, showCost}: ItemCardProps) => {
 				</g>
 			) : null}
 
-			{showCost && rank !== null ? (
+			{displayTokenCost && rank !== null ? (
 				<g>
 					<rect
 						className={css.rarity}

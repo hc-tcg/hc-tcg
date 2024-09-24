@@ -97,7 +97,7 @@ function SelectCardsModal({closeModal}: Props) {
 						<div className={css.cardsListContainer}>
 							<CardList
 								onClick={handleSelection}
-								showCost={false}
+								displayTokenCost={false}
 								cards={cards}
 								selected={selected}
 								wrap={true}
