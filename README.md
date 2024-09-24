@@ -82,6 +82,7 @@ This project contains a few tests that are run against every PR.
 npm run test      # run all the tests
 npm run test:unit # run unittests written with jest, this will catch most errors.
 npm run test:api  # run tests for the hc-tcg API.
+npm run test:e2e  # run end-to-end tests with Playwright.
 ```
 
 # Building & Self Hosting
