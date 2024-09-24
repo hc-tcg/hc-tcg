@@ -2,18 +2,16 @@ import classnames from 'classnames'
 import {getCardImage, getCardRankIcon} from 'common/cards/base/card'
 import {Item} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import {useSelector} from 'react-redux'
 import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
-	card: WithoutFunctions<Item>
+	card: WithoutFunctions<Item> | Item
+	displayTokenCost: boolean
 }
 
-const ItemCardModule = memo(({card}: ItemCardProps) => {
+const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 	const rank = getCardRankIcon(card)
-	const showCost = !useSelector(getGameState)
 	const image = getCardImage(card)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
@@ -91,7 +89,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 				</g>
 			) : null}
 
-			{showCost && rank !== null ? (
+			{displayTokenCost && rank !== null ? (
 				<g>
 					<rect
 						className={css.rarity}

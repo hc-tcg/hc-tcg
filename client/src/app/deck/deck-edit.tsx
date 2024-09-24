@@ -515,6 +515,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'hermit',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -525,6 +526,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'attach',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -535,6 +537,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'single_use',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -545,6 +548,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'item',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -742,6 +746,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								>
 									<CardList
 										cards={sortCards(selectedCards.hermits)}
+										displayTokenCost={true}
 										wrap={true}
 										onClick={removeCard}
 									/>
@@ -755,6 +760,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.attachableEffects)}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -767,6 +773,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							>
 								<CardList
 									cards={sortCards(selectedCards.singleUseEffects)}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
@@ -774,6 +781,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 								<CardList
 									cards={sortCards(selectedCards.items)}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>

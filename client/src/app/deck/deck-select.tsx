@@ -622,6 +622,7 @@ function SelectDeck({
 					<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
 						<CardList
 							cards={sortCards(selectedCards.hermits)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -635,6 +636,7 @@ function SelectDeck({
 					>
 						<CardList
 							cards={sortCards(selectedCards.attachableEffects)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -647,6 +649,7 @@ function SelectDeck({
 					>
 						<CardList
 							cards={sortCards(selectedCards.singleUseEffects)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -655,6 +658,7 @@ function SelectDeck({
 					<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 						<CardList
 							cards={sortCards(selectedCards.items)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>

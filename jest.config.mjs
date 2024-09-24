@@ -10,12 +10,13 @@ const config = {
 
 	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'ts', 'json'],
 
-	roots: ['tests/unit', 'common', 'server'],
+	roots: ['tests/unit/', 'tests/snapshots/'],
 
 	moduleNameMapper: {
 		'^client/(.*)$': '<rootDir>/client/src/$1',
 		'^common/(.*)$': '<rootDir>/common/$1',
 		'^server/(.*)$': '<rootDir>/server/src/$1',
+		'^.+\\.scss$': 'jest-scss-transform',
 	},
 
 	// A map from regular expressions to paths to transformers
@@ -23,10 +24,8 @@ const config = {
 		'^.+\\.tsx?$': [
 			'ts-jest',
 			{
-				diagnostics: {
-					warnOnly: true,
-				},
-				tsconfig: 'tests/unit/tsconfig.json',
+				diagnostics: false,
+				tsconfig: 'tests/snapshots/tsconfig.json',
 			},
 		],
 	},
