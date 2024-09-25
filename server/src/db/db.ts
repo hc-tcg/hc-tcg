@@ -43,7 +43,7 @@ class Databse {
 	public new() {
 		this.db.query(
 			`
-    	CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+			CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 			CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 			CREATE TABLE IF NOT EXISTS users(
 				user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
