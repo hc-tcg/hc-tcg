@@ -41,7 +41,7 @@ const XBCraftedRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.IGNORE_CARDS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

@@ -92,13 +92,13 @@ const Anvil: SingleUse = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
 				if (attack.isAttacker(component.entity)) {
 					applySingleUse(game, component.slot)
-					observer.unsubscribe(game.globalHooks.beforeAttack)
+					observer.unsubscribe(game.hooks.beforeAttack)
 				}
 			},
 		)

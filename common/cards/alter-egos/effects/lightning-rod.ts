@@ -41,7 +41,7 @@ const LightningRod: Attach = {
 		let used = false
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.LIGHTNING_ROD_REDIRECT,
 			(attack) => {
 				if (attack.player.entity !== opponentPlayer.entity) return

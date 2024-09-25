@@ -71,7 +71,7 @@ const Bow: SingleUse = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

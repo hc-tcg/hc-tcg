@@ -44,7 +44,7 @@ const FireEffect: StatusEffect<CardComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				if (!target.isAlive()) effect.remove()

@@ -30,7 +30,7 @@ const CommandBlock: Attach = {
 			return availableEnergy.map(() => 'any')
 		})
 
-		observer.subscribe(game.globalHooks.freezeSlots, () => {
+		observer.subscribe(game.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				query.slot.player(player.entity),

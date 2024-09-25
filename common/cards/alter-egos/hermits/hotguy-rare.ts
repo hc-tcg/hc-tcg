@@ -39,7 +39,7 @@ const HotguyRare: Hermit = {
 		let usingSecondaryAttack = false
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -49,7 +49,7 @@ const HotguyRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -64,7 +64,7 @@ const HotguyRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

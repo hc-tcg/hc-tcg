@@ -34,7 +34,7 @@ const Totem: Attach = {
 
 		// If we are attacked from any source
 		observer.subscribeWithPriority(
-			game.globalHooks.rowRevive,
+			game.hooks.rowRevive,
 			rowRevive.TOTEM_REVIVE,
 			(attack) => {
 				if (!attack.isTargeting(component)) return

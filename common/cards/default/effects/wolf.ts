@@ -30,7 +30,7 @@ const Wolf: Attach = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				if (attack.isType('status-effect') || attack.isBacklash) return

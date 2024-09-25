@@ -54,7 +54,7 @@ const BeetlejhostRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -84,7 +84,7 @@ const BeetlejhostRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

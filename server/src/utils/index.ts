@@ -37,7 +37,7 @@ export function printHooksState(game: GameModel) {
 		// Instance Info
 		for (const [hookName, hookValue] of [
 			...Object.entries(player.hooks),
-			...Object.entries(game.globalHooks),
+			...Object.entries(game.hooks),
 		] satisfies [string, Hook<string, any> | PriorityHook<any, any>][]) {
 			hookValue.listeners.forEach(([observer, _args, _key], i) => {
 				let target = game.components.get(

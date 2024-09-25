@@ -22,7 +22,7 @@ const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 		observer: ObserverComponent,
 	): void {
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_BLOCK_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(target)) return

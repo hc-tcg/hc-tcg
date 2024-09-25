@@ -29,7 +29,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 		let coinFlipResult: CoinFlipResult | null = null
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

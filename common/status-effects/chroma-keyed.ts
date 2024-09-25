@@ -28,7 +28,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 		let previousUses = 0
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (attack.player.entity !== target.player.entity) return

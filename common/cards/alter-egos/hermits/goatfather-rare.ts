@@ -42,7 +42,7 @@ const GoatfatherRare: Hermit = {
 	): void {
 		const {player, opponentPlayer} = component
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.ADD_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

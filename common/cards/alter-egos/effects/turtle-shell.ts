@@ -236,7 +236,7 @@ const TurtleShell: Attach = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.EFFECT_BLOCK_DAMAGE,
 			(attack) => {
 				if (!component.slot.inRow()) return

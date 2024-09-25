@@ -39,7 +39,7 @@ import {PlayerId, PlayerModel} from './player-model'
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
 		if (!(game.id in this.values)) {
-			game.globalHooks.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+			game.hooks.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
 	}
@@ -112,7 +112,7 @@ export class GameModel {
 
 	/** The objects used in the game. */
 	public components: ComponentTable
-	public globalHooks: {
+	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
 		beforeAttack: PriorityHook<
 			(attack: AttackModel) => void,
@@ -173,7 +173,7 @@ export class GameModel {
 		}
 
 		this.components = new ComponentTable(this)
-		this.globalHooks = {
+		this.hooks = {
 			beforeAttack: new PriorityHook(beforeAttack),
 			rowRevive: new PriorityHook(rowRevive),
 			afterAttack: new PriorityHook(afterAttack),

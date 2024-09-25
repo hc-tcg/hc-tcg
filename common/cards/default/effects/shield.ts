@@ -25,7 +25,7 @@ const Shield: Attach = {
 
 		// Note that we want to activate on any attack to us, not just from the opponent
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.EFFECT_REDUCE_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(component) || attack.isType('status-effect'))
@@ -43,7 +43,7 @@ const Shield: Attach = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (damageBlocked > 0 && attack.isTargeting(component)) {

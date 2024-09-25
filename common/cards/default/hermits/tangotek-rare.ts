@@ -40,7 +40,7 @@ const TangoTekRare: Hermit = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

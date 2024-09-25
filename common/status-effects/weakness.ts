@@ -33,7 +33,7 @@ const WeaknessEffect: Counter<CardComponent> = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.FORCE_WEAKNESS_ATTACK,
 			(attack) => {
 				if (!target.slot.inRow()) return

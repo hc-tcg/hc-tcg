@@ -121,7 +121,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

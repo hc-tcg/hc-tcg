@@ -40,14 +40,14 @@ const Knockback: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 				applySingleUse(game)
 				// Only Apply this for the first attack
-				observer.unsubscribe(game.globalHooks.afterAttack)
+				observer.unsubscribe(game.hooks.afterAttack)
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 

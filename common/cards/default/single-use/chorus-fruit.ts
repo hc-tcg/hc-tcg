@@ -49,7 +49,7 @@ const ChorusFruit: SingleUse = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -57,7 +57,7 @@ const ChorusFruit: SingleUse = {
 
 				applySingleUse(game, component.slot)
 
-				observer.unsubscribe(game.globalHooks.afterAttack)
+				observer.unsubscribe(game.hooks.afterAttack)
 
 				game.addPickRequest({
 					player: player.entity,

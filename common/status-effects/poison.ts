@@ -51,7 +51,7 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!attack.isTargeting(target) || attack.target?.health) return

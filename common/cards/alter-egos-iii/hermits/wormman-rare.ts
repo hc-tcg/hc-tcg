@@ -42,7 +42,7 @@ const WormManRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -69,7 +69,7 @@ const WormManRare: Hermit = {
 						(_oldActiveHermit, newActiveHermit) => {
 							if (newActiveHermit.entity !== attachedComponent.entity) return
 							attachedComponent.turnedOver = false
-							newObserver.unsubscribe(game.globalHooks.freezeSlots)
+							newObserver.unsubscribe(game.hooks.freezeSlots)
 						},
 					)
 

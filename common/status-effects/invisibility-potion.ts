@@ -22,7 +22,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		let multipliedDamage = false
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.opponentPlayer.entity) return
@@ -56,7 +56,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		let multipliedDamage = false
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.opponentPlayer.entity) return

@@ -23,7 +23,7 @@ const Loyalty: Attach = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!component.slot.inRow() || component.slot.row.health) return

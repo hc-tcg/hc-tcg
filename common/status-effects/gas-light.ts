@@ -45,7 +45,7 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 		let {opponentPlayer} = target
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(target)) return
@@ -112,7 +112,7 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 
 		// Prevents Gas Light from knocking out a hermit that gets revived by Totem after taking Burn damage
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				if (attack.isType('status-effect') && attack.isTargeting(target)) {

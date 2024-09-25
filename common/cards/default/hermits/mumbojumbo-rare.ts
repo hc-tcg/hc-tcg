@@ -40,7 +40,7 @@ const MumboJumboRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

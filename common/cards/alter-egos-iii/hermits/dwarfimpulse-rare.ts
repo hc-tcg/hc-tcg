@@ -115,7 +115,7 @@ const DwarfImpulseRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_SET_TARGET,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
@@ -125,7 +125,7 @@ const DwarfImpulseRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

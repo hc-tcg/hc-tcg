@@ -18,7 +18,7 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	},
 	onApply(game, effect, target, observer) {
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.IGNORE_CARDS,
 			(attack) => {
 				if (attack.player.entity !== target.opponentPlayer.entity) return

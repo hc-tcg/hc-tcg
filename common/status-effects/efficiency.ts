@@ -16,7 +16,7 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 		})
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				effect.remove()

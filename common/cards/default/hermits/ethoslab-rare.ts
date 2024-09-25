@@ -47,7 +47,7 @@ const EthosLabRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

@@ -60,7 +60,7 @@ const KingJoelRare: Hermit = {
 		let firstPickedCard: CardComponent | null = null
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

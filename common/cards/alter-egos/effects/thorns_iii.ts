@@ -28,7 +28,7 @@ const ThornsIII: Attach = {
 		let hasTriggered = false
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				// If we have already triggered once this turn do not do so again

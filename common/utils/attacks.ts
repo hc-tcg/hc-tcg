@@ -21,7 +21,7 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		}
 
 		// Call before attack hooks
-		game.globalHooks.beforeAttack.callSome([attack], (observer) => {
+		game.hooks.beforeAttack.callSome([attack], (observer) => {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
@@ -37,7 +37,7 @@ function runRowReviveHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const attack = attacks[i]
 
 		// Call after attack hooks
-		game.globalHooks.rowRevive.callSome([attack], (observer) => {
+		game.hooks.rowRevive.callSome([attack], (observer) => {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
@@ -53,7 +53,7 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		const attack = attacks[i]
 
 		// Call after attack hooks
-		game.globalHooks.afterAttack.callSome([attack], (observer) => {
+		game.hooks.afterAttack.callSome([attack], (observer) => {
 			let entity = game.components.get(
 				game.components.get(observer)?.wrappingEntity || null,
 			)
@@ -227,7 +227,7 @@ export function setupMockCard(
 		destroyMockCard,
 	)
 	observer.subscribeWithPriority(
-		game.globalHooks.afterAttack,
+		game.hooks.afterAttack,
 		afterAttack.DESTROY_MOCK_CARD,
 		destroyMockCard,
 	)

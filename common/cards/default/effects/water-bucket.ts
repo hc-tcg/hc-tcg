@@ -85,7 +85,7 @@ const WaterBucket: Attach & SingleUse = {
 			removeFireEffect(game, component.slot)
 
 			observer.subscribeWithPriority(
-				game.globalHooks.beforeAttack,
+				game.hooks.beforeAttack,
 				beforeAttack.EFFECT_REMOVE_STATUS,
 				(_attack) => {
 					if (!component.slot.inRow()) return

@@ -42,7 +42,7 @@ const RenbobRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_SET_TARGET,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

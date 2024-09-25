@@ -41,7 +41,7 @@ const ZedaphPlaysRare: Hermit = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return

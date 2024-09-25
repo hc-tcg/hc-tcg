@@ -24,7 +24,7 @@ const DiamondArmor: Attach = {
 		let damageBlocked = 0
 
 		observer.subscribeWithPriority(
-			game.globalHooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.EFFECT_REDUCE_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(component) || attack.isType('status-effect'))
