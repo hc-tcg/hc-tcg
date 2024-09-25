@@ -34,8 +34,6 @@ const HotguyRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		let usingSecondaryAttack = false
 
 		observer.subscribeWithPriority(
@@ -64,7 +62,7 @@ const HotguyRare: Hermit = {
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(attack) => {
+			(_attack) => {
 				usingSecondaryAttack = false
 			},
 		)

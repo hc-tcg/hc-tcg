@@ -126,7 +126,7 @@ const DwarfImpulseRare: Hermit = {
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(attack) => {
+			(_attack) => {
 				goldenAxeRedirect = null
 				goldenAxeEntity = null
 			},

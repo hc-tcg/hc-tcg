@@ -33,8 +33,6 @@ const OverseerRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,

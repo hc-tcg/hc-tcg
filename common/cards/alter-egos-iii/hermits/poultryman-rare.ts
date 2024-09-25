@@ -37,8 +37,6 @@ const PoultryManRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.HERMIT_REMOVE_SINGLE_USE,
