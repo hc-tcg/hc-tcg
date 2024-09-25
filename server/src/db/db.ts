@@ -15,6 +15,13 @@ export const setupDatabase = (allCards: Array<Card>, env: any) => {
 	return new Databse(pool, allCards)
 }
 
+export type user = {
+	uuid: string
+	secret: string
+	username: string
+	minecraftName: string
+}
+
 class Databse {
 	private db: pg.Pool
 	private allCards: Array<Card>
@@ -33,7 +40,7 @@ class Databse {
       	user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
       	secret varchar(255) NOT NULL,
       	username varchar(255) NOT NULL,
-      	minecraft_name varchar(15) NOT NULL
+      	minecraft_name varchar(255) NOT NULL
       );
       CREATE TABLE IF NOT EXISTS decks(
       	user_id uuid REFERENCES users(user_id),
@@ -76,5 +83,27 @@ class Databse {
 		)
 
 		console.log('Database initialized')
+	}
+
+	public async insertUser(
+		username: string,
+		minecraftName: string,
+	): Promise<user | null> {
+		try {
+			const secret = Math.random().toString()
+			const user = await this.db.query(
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', 15))) RETURNING (user_id)",
+				[username, minecraftName, secret],
+			)
+			return {
+				uuid: user.rows[0]['user_id'],
+				secret: secret,
+				username: username,
+				minecraftName: minecraftName,
+			}
+		} catch (err) {
+			console.log(err)
+			return null
+		}
 	}
 }
