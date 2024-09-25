@@ -105,11 +105,15 @@ function SelectDeck({
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
-	const [tagFilter, setTagFilter] = useState<Tag>({
-		name: 'No Filter',
-		color: '#ffffff',
-		key: '0',
-	})
+	const [tagFilter, setTagFilter] = useState<Tag>(
+		settings.lastSelectedTag
+			? keysToTags([settings.lastSelectedTag])[0]
+			: {
+					name: 'No Filter',
+					color: '#ffffff',
+					key: '0',
+				},
+	)
 
 	const tagsDropdownOptions = [
 		{name: 'No Filter', color: '#ffffff'},
@@ -283,9 +287,16 @@ function SelectDeck({
 							color: '#ffffff',
 							key: '0',
 						})
+						dispatch({
+							type: localMessages.SETTINGS_SET,
+							setting: {
+								key: 'lastSelectedTag',
+								value: null,
+							},
+						})
 						return
 					}
-					const parsedOption = JSON.parse(option)
+					const parsedOption = JSON.parse(option) as Tag
 					console.log(parsedOption)
 					setFilteredDecks(
 						sortedDecks.filter(
@@ -299,6 +310,13 @@ function SelectDeck({
 						),
 					)
 					setTagFilter(parsedOption)
+					dispatch({
+						type: localMessages.SETTINGS_SET,
+						setting: {
+							key: 'lastSelectedTag',
+							value: parsedOption.key,
+						},
+					})
 				}}
 			/>
 			<div
