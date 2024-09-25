@@ -80,7 +80,8 @@ export class Databse {
 			CREATE TABLE IF NOT EXISTS deck_cards(
 				deck_code varchar(7) REFERENCES decks(deck_code),
 				card_id integer REFERENCES cards(card_id),
-				copies integer NOT NULL
+				copies integer NOT NULL,
+				PRIMARY KEY (deck_code,card_id)
 			);
 			CREATE TABLE IF NOT EXISTS user_tags(
 				user_id uuid REFERENCES users(user_id),
@@ -112,8 +113,8 @@ export class Databse {
 			return (
 				(
 					await this.db.query(
-						'SELECT * FROM users WHERE secret = $1 AND WHERE user_id = $2',
-						[secret, user_id],
+						'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
+						[user_id, secret],
 					)
 				).rows.length > 0
 			)
@@ -148,22 +149,28 @@ export class Databse {
 
 	/*** Insert a deck into the Database. Returns the deck code. */
 	public async insertDeck(
-		deck: PlayerDeckT,
+		name: string,
+		icon: string,
+		cards: Array<number>,
+		tags: Array<string>,
 		user_id: string,
 		secret: string,
 	): Promise<string | null> {
 		try {
-			if (!(await this.checkSecret(secret, user_id))) return null
+			// if (!(await this.checkSecret(user_id, secret))) return null
 			const deckResult = await this.db.query(
-				"INSERT INTO decks (user_id, name, icon) values (crypt($1, gen_salt('bf', 15)),$2,$3) RETURNING (deck_code)",
-				[user_id, deck.name, deck.icon],
+				'INSERT INTO decks (user_id, name, icon) values ($1,$2,$3) RETURNING (deck_code)',
+				[user_id, name, icon],
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
 			await this.db.query(
-				`INSERT INTO deck_cards (deck_code,card_id,copies) values($1,SELECT * FROM UNNEST ($2::int[]),1) 
-				ON CONFLICT DO UPDATE SET copies = copies + 1`,
-				[deckCode, deck.cards.map((card) => card.props.numericId)],
+				`
+				MERGE INTO deck_cards
+				USING (SELECT * FROM (SELECT * FROM UNNEST ($1::text[],$2::int[])) AS code,id ON deck_cards.deck_code = code AND deck_cards.card_id = id)
+				WHEN MATCH UPDATE SET copies = deck_cards.copies + 1
+				WHEN NOT MATCHED THEN INSERT (deck_code,card_id,copies) values (code,id,1)`,
+				[Array(cards.length).fill(deckCode), cards],
 			)
 			return deckCode
 		} catch (err) {
@@ -232,7 +239,7 @@ export class Databse {
 		secret: string,
 	): Promise<void> {
 		try {
-			if (!(await this.checkSecret(secret, user_id))) return
+			// if (!(await this.checkSecret(user_id, secret))) return
 			await this.db.query(
 				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
