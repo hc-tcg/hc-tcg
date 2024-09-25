@@ -62,8 +62,7 @@ export class Databse {
 			CREATE TABLE IF NOT EXISTS decks(
 				user_id uuid REFERENCES users(user_id),
 				deck_code varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
-				internal_id uuid DEFAULT uuid_generate_v4(),
-				creation_time date NOT NULL,
+				previous_code varchar(7) REFERENCES decks(deck_code),
 				name varchar(255) NOT NULL,
 				icon varchar(255) NOT NULL,
 			);
