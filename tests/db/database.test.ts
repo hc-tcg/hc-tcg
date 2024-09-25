@@ -1,11 +1,13 @@
 import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
 import {Databse, setupDatabase} from 'server/db/db'
+import {config} from 'dotenv'
 
 describe('Test Database', () => {
 	let database: Databse
 
 	beforeAll(async () => {
+		const env = config()
 		database = setupDatabase(CARDS_LIST, {
 			...{
 				POSTGRES_DATABASE: 'hctcg',
@@ -14,6 +16,7 @@ describe('Test Database', () => {
 				POSTGRES_HOST: 'localhost',
 			},
 			...process.env,
+			...env,
 		})
 		return database.new()
 	})
