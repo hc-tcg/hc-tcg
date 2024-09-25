@@ -1,4 +1,4 @@
-import {beforeAll, describe, test} from '@jest/globals'
+import {beforeAll, describe} from '@jest/globals'
 import {setupDatabase} from 'server/db/db'
 
 describe('Test Database', () => {
@@ -7,5 +7,4 @@ describe('Test Database', () => {
 	beforeAll(() => {
 		database = setupDatabase()
 	})
-
 })

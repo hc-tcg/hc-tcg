@@ -15,7 +15,7 @@ function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
-  // @todo Get stats working again
+	// @todo Get stats working again
 	const totalGames = stats.w + stats.l + stats.fw + stats.fl + stats.t
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {

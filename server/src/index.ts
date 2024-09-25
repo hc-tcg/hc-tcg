@@ -2,13 +2,13 @@ import 'dotenv/config'
 import {createServer} from 'http'
 import path from 'path'
 import {fileURLToPath} from 'url'
+import {CARDS_LIST} from 'common/cards'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
-import {addApi} from './api'
 import {setupDatabase} from '../src/db/db'
+import {addApi} from './api'
 import startSocketIO from './sockets'
-import {CARDS_LIST} from 'common/cards'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
