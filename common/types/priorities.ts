@@ -43,9 +43,6 @@ export const beforeAttack = createPriorityDictionary({
 	HERMIT_APPLY_ATTACK: null,
 	/** Any attacking single-use cards must call `applySingleUse` at this stage */
 	APPLY_SINGLE_USE_ATTACK: null,
-})
-
-export const beforeDefence = createPriorityDictionary({
 	/** Hermits blocking all damage done by certain attacks */
 	HERMIT_BLOCK_DAMAGE: null,
 	/** Effect cards blocking all damage done by certain attacks */
@@ -60,11 +57,14 @@ export const beforeDefence = createPriorityDictionary({
 	EFFECT_CREATE_BACKLASH: null,
 })
 
-export const afterAttack = createPriorityDictionary({
+export const rowRevive = createPriorityDictionary({
 	/** Deathloop may revive their row (does not trigger an attached Totem when present) */
 	DEATHLOOP_REVIVE: null,
 	/** Totems may revive their row and be discarded */
 	TOTEM_REVIVE: null,
+})
+
+export const afterAttack = createPriorityDictionary({
 	/** Hermit attacks add any requests dependent on the new board state */
 	HERMIT_ATTACK_REQUESTS: null,
 	/** Effect cards that take effect after attacking can add their requests */
@@ -73,17 +73,14 @@ export const afterAttack = createPriorityDictionary({
 	UPDATE_POST_ATTACK_STATE: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
-	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
-	DESTROY_MOCK_CARD: null,
-})
-
-export const afterDefence = createPriorityDictionary({
 	/** Shield can now discard itself if it blocked any damage */
 	DISCARD_SHIELD: null,
 	/** Gas Light effect reacting to target taking damage, to be damaged at end of turn */
 	TRIGGER_GAS_LIGHT: null,
 	/** Listeners can confidently execute after a row has been knocked-out */
 	ON_ROW_DEATH: null,
+	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
+	DESTROY_MOCK_CARD: null,
 })
 
 export const onTurnEnd = createPriorityDictionary({

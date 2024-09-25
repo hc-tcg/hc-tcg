@@ -60,6 +60,22 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	}
 }
 
+function runRowReviveHooks(game: GameModel, attacks: Array<AttackModel>) {
+	for (let i = 0; i < attacks.length; i++) {
+		const attack = attacks[i]
+
+		// Call after attack hooks
+		game.globalHooks.rowRevive.callSome([attack], (observer) => {
+			let entity = game.components.get(
+				game.components.get(observer)?.wrappingEntity || null,
+			)
+			if (entity instanceof CardComponent)
+				return !shouldIgnoreCard(attack, game, entity)
+			return true
+		})
+	}
+}
+
 function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
@@ -138,6 +154,7 @@ export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
+	runRowReviveHooks(game, allAttacks)
 	runAfterAttackHooks(game, allAttacks)
 	runAfterDefenceHooks(game, allAttacks)
 }
