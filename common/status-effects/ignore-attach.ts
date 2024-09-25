@@ -16,11 +16,12 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 			!value.getStatusEffect(IgnoreAttachSlotEffect)
 		)
 	},
-	onApply(_game, effect, target, observer) {
+	onApply(game, effect, target, observer) {
 		observer.subscribeWithPriority(
-			target.opponentPlayer.hooks.beforeAttack,
+			game.globalHooks.beforeAttack,
 			beforeAttack.IGNORE_CARDS,
 			(attack) => {
+				if (attack.player.entity !== target.opponentPlayer.entity) return
 				if (!target.slot.inRow()) return
 				attack.shouldIgnoreCards.push(
 					query.card.slot(

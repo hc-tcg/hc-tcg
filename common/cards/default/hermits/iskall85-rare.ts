@@ -27,16 +27,17 @@ const Iskall85Rare: Hermit = {
 		power: 'Attack damage doubles versus Builder types.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.globalHooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 

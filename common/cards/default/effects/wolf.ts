@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -30,8 +30,8 @@ const Wolf: Attach = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_CREATE_BACKLASH,
+			game.globalHooks.beforeAttack,
+			beforeAttack.EFFECT_CREATE_BACKLASH,
 			(attack) => {
 				if (attack.isType('status-effect') || attack.isBacklash) return
 				// Only on opponents turn

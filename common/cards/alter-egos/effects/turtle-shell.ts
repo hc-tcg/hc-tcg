@@ -9,7 +9,7 @@ import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import LooseShellEffect from '../../../status-effects/loose-shell'
-import {beforeDefence, onTurnEnd} from '../../../types/priorities'
+import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -236,8 +236,8 @@ const TurtleShell: Attach = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_BLOCK_DAMAGE,
+			game.globalHooks.beforeAttack,
+			beforeAttack.EFFECT_BLOCK_DAMAGE,
 			(attack) => {
 				if (!component.slot.inRow()) return
 				if (state === 'inactive' || game.currentPlayerEntity === player.entity)

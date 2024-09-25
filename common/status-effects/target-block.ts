@@ -14,7 +14,7 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	name: 'Made the target!',
 	description: 'This hermit will take all damage this turn.',
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent,
@@ -22,9 +22,10 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 		let {opponentPlayer} = target
 		// Redirect all future attacks this turn
 		observer.subscribeWithPriority(
-			opponentPlayer.hooks.beforeAttack,
+			game.globalHooks.beforeAttack,
 			beforeAttack.TARGET_BLOCK_REDIRECT,
 			(attack) => {
+				if (attack.player.entity !== opponentPlayer.entity) return
 				if (attack.isType('status-effect') || attack.isBacklash) return
 				if (!target.slot.inRow()) return
 				attack.redirect(effect.entity, target.slot.row.entity)

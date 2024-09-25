@@ -3,6 +3,7 @@ import Thorns from 'common/cards/default/effects/thorns'
 import Totem from 'common/cards/default/effects/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GoodTimesWithScarRare from 'common/cards/default/hermits/goodtimeswithscar-rare'
+import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import PearlescentMoonCommon from 'common/cards/default/hermits/pearlescentmoon-common'
 import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'
@@ -25,7 +26,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../utils'
-import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 
 describe('Test Totem of Undying', () => {
 	test('Test Totem with TNT', () => {

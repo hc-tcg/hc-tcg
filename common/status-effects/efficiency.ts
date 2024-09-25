@@ -9,14 +9,14 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 	icon: 'efficiency',
 	description:
 		'You may use an attack from your active Hermit without having the necessary item cards attached.',
-	onApply(_game, effect, player, observer) {
+	onApply(game, effect, player, observer) {
 		observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {
 			// Unliimited powwa
 			return ['any', 'any', 'any']
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.globalHooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				effect.remove()

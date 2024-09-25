@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -15,15 +15,13 @@ const ChainmailArmor: Attach = {
 	description:
 		'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_BLOCK_DAMAGE,
+			game.globalHooks.beforeAttack,
+			beforeAttack.EFFECT_BLOCK_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(component)) {
 					return

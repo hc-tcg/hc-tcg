@@ -40,9 +40,10 @@ const PoultryManRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.globalHooks.afterAttack,
 			afterAttack.HERMIT_REMOVE_SINGLE_USE,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 

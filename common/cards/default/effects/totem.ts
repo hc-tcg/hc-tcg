@@ -33,7 +33,6 @@ const Totem: Attach = {
 		const {player} = component
 
 		// If we are attacked from any source
-		// Add before any other hook so they can know a hermits health reliably
 		observer.subscribeWithPriority(
 			game.globalHooks.rowRevive,
 			rowRevive.TOTEM_REVIVE,

@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence, onTurnEnd} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
@@ -48,8 +48,8 @@ const SlownessEffect: Counter<CardComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			game.globalHooks.afterAttack,
+			afterAttack.ON_ROW_DEATH,
 			(attack) => {
 				if (
 					!target.slot?.onBoard() ||

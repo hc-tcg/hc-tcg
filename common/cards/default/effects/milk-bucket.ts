@@ -8,7 +8,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
 import PoisonEffect from '../../../status-effects/poison'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {attach, singleUse} from '../../base/defaults'
 import {Attach, SingleUse} from '../../base/types'
@@ -77,8 +77,8 @@ const MilkBucket: Attach & SingleUse = {
 			removeStatusEffects(game, component.slot)
 
 			observer.subscribeWithPriority(
-				player.hooks.beforeDefence,
-				beforeDefence.EFFECT_REMOVE_STATUS,
+				game.globalHooks.beforeAttack,
+				beforeAttack.EFFECT_REMOVE_STATUS,
 				(_attack) => {
 					if (!component.slot.inRow()) return
 					removeStatusEffects(game, component.slot.row.getHermit()?.slot)

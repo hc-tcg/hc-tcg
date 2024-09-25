@@ -54,9 +54,10 @@ const BeetlejhostRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.globalHooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				const chromaKeyed = findChromaKeyed(game, component)
 
 				if (
@@ -83,9 +84,10 @@ const BeetlejhostRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.globalHooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 

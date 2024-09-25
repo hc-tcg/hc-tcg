@@ -7,7 +7,7 @@ import query from '../components/query'
 import {RowEntity} from '../entities'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {afterDefence, onTurnEnd} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
 	StatusEffect,
@@ -42,11 +42,11 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	) {
-		let {player, opponentPlayer} = target
+		let {opponentPlayer} = target
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.TRIGGER_GAS_LIGHT,
+			game.globalHooks.afterAttack,
+			afterAttack.TRIGGER_GAS_LIGHT,
 			(attack) => {
 				if (!attack.isTargeting(target)) return
 				if (attack.calculateDamage() === 0) return

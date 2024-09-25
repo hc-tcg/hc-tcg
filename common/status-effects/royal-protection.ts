@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {beforeDefence} from '../types/priorities'
+import {beforeAttack} from '../types/priorities'
 import {StatusEffect, statusEffect} from './status-effect'
 
 const RoyalProtectionEffect: StatusEffect<CardComponent> = {
@@ -16,14 +16,14 @@ const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 		'Any damage dealt to a Hermit under Royal Protection is prevented.',
 	applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
 		observer.subscribeWithPriority(
-			target.player.hooks.beforeDefence,
-			beforeDefence.HERMIT_BLOCK_DAMAGE,
+			game.globalHooks.beforeAttack,
+			beforeAttack.HERMIT_BLOCK_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(target)) return
 
