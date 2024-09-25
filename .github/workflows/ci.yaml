@@ -126,9 +126,9 @@ jobs:
         retention-days: 30
 
   db:
-    name: Test Databse
+    name: Databse Tests
     runs-on: ubuntu-latest
-    container: node:20-bookworm-slim
+    container: node:18.20-bookworm-slim
 
     services:
       postgres:
@@ -144,7 +144,6 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-
 
     steps:
       - name: Check out repository code
