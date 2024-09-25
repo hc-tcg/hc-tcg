@@ -103,6 +103,10 @@ export class Databse {
 		console.log('Database initialized')
 	}
 
+	public async close() {
+		await this.db.end()
+	}
+
 	private async checkSecret(user_id: string, secret: string): Promise<boolean> {
 		try {
 			return (

@@ -1,4 +1,4 @@
-import {beforeAll, describe, test, expect} from '@jest/globals'
+import {beforeAll, afterAll, describe, test, expect} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
 import {Databse, setupDatabase} from 'server/db/db'
 
@@ -13,6 +13,10 @@ describe('Test Database', () => {
 			HOST: 'localhost',
 		})
 		return database.new()
+	})
+
+	afterAll(async () => {
+		database.close()
 	})
 
 	test('Add user', async () => {
