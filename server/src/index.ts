@@ -6,7 +6,9 @@ import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
 import {addApi} from './api'
+import {setupDatabase} from '../src/db/db'
 import startSocketIO from './sockets'
+import {CARDS_LIST} from 'common/cards'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
@@ -43,6 +45,7 @@ app.get('/', (_req, res) => {
 })
 
 addApi(app)
+export const database = setupDatabase(CARDS_LIST, process.env)
 
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)

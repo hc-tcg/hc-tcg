@@ -1,11 +1,14 @@
 import pg from 'pg'
+import {Card} from '../../../common/cards/base/types'
 
 const {Pool} = pg
 
-const setupDatabase = () => {
+export const setupDatabase = (allCards: Array<Card>, env: any) => {
 	const pool = new Pool({
-		host: 'localhost',
-		user: 'hc-tcg',
+		host: env.HOST,
+		user: env.USER,
+		password: env.PASSWORD,
+		database: env.DATABASE,
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
@@ -19,11 +22,6 @@ const setupDatabase = () => {
 			secret varchar(255) NOT NULL;
 			username varchar(255) NOT NULL;
 			minecraft_name varchar(15) NOT NULL;
-			/* Please forgive me for this sin. I think it's ok here, as we don't ever need to
-			grab users by what they have their settings set as, and this makes it so we don't
-			need to update the schema if we ever add/remove settings.
-			*/
-			settings varchar(65536) NOT NULL;
 		);
 		CREATE TABLE IF NOT EXISTS decks(
 			user_id uuid REFERENCES users(user_id);
@@ -55,7 +53,12 @@ const setupDatabase = () => {
 
 	`)
 
+	pool.query(
+		`
+		INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
+	`,
+		allCards.map((card) => card.numericId),
+	)
+
 	return pool
 }
-
-export const database = setupDatabase()
