@@ -53,5 +53,5 @@ test('player does not stay in queue after reloading the page', async ({
 	).json()
 	expect(queue).not.toContain(playerId)
 	expect(queue).not.toContain(playerId)
-	expect(page.evaluate(() => global.getState().matching.status)).toBe(null)
+	expect(await page.evaluate(() => global.getState().matching.status)).toBe(null)
 })
