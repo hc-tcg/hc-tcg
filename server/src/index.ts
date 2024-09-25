@@ -48,9 +48,6 @@ addApi(app)
 export const database = setupDatabase(CARDS_LIST, process.env)
 database.new()
 
-const user = await database.insertUser('aliceMargatroid', 'sevencoloredmage')
-console.log(user)
-
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
 })
