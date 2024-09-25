@@ -54,12 +54,13 @@ class Databse {
 			CREATE TABLE IF NOT EXISTS decks(
 				user_id uuid REFERENCES users(user_id),
 				deck_code varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
+				internal_id uuid DEFAULT uuid_generate_v4(),
+				creation_time date NOT NULL,
 				name varchar(255) NOT NULL,
 				icon varchar(255) NOT NULL,
-				visible boolean NOT NULL DEFAULT 'true'
 			);
 			CREATE TABLE IF NOT EXISTS games(
-				date date NOT NULL,
+				game_time date NOT NULL,
 				winer uuid REFERENCES users(user_id),
 				loser uuid REFERENCES users(user_id),
 				winner_deck_code varchar(7) REFERENCES decks(deck_code),
@@ -222,7 +223,7 @@ class Databse {
 		try {
 			if (!(await this.checkSecret(secret, user_id))) return
 			await this.db.query(
-				"UPDATE decks SET visible = 'false' WHERE deck_code = $1 AND user_id = $2",
+				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
 			)
 		} catch (err) {
