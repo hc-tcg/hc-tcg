@@ -1,4 +1,4 @@
-import {beforeAll, afterAll, describe, test, expect} from '@jest/globals'
+import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
 import {Databse, setupDatabase} from 'server/db/db'
 
