@@ -40,7 +40,7 @@ class Databse {
 		this.allCards = allCards
 	}
 
-	public new() {
+	public async new() {
 		this.db.query(
 			`
 			CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -87,7 +87,7 @@ class Databse {
 				`,
 		)
 
-		this.db.query(
+		await this.db.query(
 			'INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING',
 			[this.allCards.map((card) => card.numericId)],
 		)
@@ -148,7 +148,7 @@ class Databse {
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
-			this.db.query(
+			await this.db.query(
 				`INSERT INTO deck_cards (deck_code,card_id,copies) values($1,SELECT * FROM UNNEST ($2::int[]),1) 
 				ON CONFLICT DO UPDATE SET copies = copies + 1`,
 				[deckCode, deck.cards.map((card) => card.props.numericId)],
