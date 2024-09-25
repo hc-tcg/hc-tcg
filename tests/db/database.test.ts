@@ -8,10 +8,10 @@ describe('Test Database', () => {
 	beforeAll(async () => {
 		database = setupDatabase(CARDS_LIST, {
 			...{
-				DATABASE: 'hctcg',
-				USER: 'hctcg',
-				PASSWORD: 'hctcg',
-				HOST: 'localhost',
+				POSTGRES_DATABASE: 'hctcg',
+				POSTGRES_USER: 'hctcg',
+				POSTGRES_PASSWORD: 'hctcg',
+				POSTGRES_HOST: 'localhost',
 			},
 			...process.env,
 		})

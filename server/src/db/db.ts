@@ -5,17 +5,17 @@ import {Card} from '../../../common/cards/base/types'
 export const setupDatabase = (
 	allCards: Array<Card>,
 	env: {
-		HOST: string
-		USER: string
-		PASSWORD: string
-		DATABASE: string
+		POSTGRES_HOST: string
+		POSTGRES_USER: string
+		POSTGRES_PASSWORD: string
+		POSTGRES_DATABASE: string
 	},
 ) => {
 	const pool = new pg.Pool({
-		host: env.HOST,
-		user: env.USER,
-		password: env.PASSWORD,
-		database: env.DATABASE,
+		host: env.POSTGRES_HOST,
+		user: env.POSTGRES_USER,
+		password: env.POSTGRES_PASSWORD,
+		database: env.POSTGRES_DATABASE,
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
