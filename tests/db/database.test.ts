@@ -7,10 +7,13 @@ describe('Test Database', () => {
 
 	beforeAll(async () => {
 		database = setupDatabase(CARDS_LIST, {
-			DATABASE: 'hctcg',
-			USER: 'hctcg',
-			PASSWORD: 'hctcg',
-			HOST: 'localhost',
+			...{
+				DATABASE: 'hctcg',
+				USER: 'hctcg',
+				PASSWORD: 'hctcg',
+				HOST: 'localhost',
+			},
+			...process.env,
 		})
 		return database.new()
 	})
