@@ -194,6 +194,8 @@ class Databse {
 			return null
 		}
 	}
+
+	// This function is horribly written, need to redo it
 	/** Return the decks associated with a user. */
 	public async getDecks(user_id: string): Promise<Array<Deck | null>> {
 		try {
