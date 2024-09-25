@@ -8,13 +8,12 @@ import {
 import {Hermit} from 'common/cards/base/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import {useSelector} from 'react-redux'
 import css from './hermit-card-svg.module.scss'
 
 export type HermitCardProps = {
-	card: WithoutFunctions<Hermit>
+	card: WithoutFunctions<Hermit> | Hermit
+	displayTokenCost: boolean
 }
 
 const COST_PAD = 20
@@ -25,12 +24,11 @@ const COST_X = [
 	[COST_PAD, COST_PAD + COST_SIZE, COST_PAD + COST_SIZE * 2],
 ]
 
-const HermitCardModule = memo(({card}: HermitCardProps) => {
+const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const rank = getCardRankIcon(card)
 	const palette = card.palette || ''
 	const backgroundImage = getHermitBackground(card)
 	const hermitImage = getCardImage(card)
-	const showCost = !useSelector(getGameState)
 	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled =
@@ -115,7 +113,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					className={css.type}
 				/>
 			</g>
-			{showCost && rank !== null ? (
+			{displayTokenCost && rank !== null ? (
 				<g>
 					<image
 						x="68"
