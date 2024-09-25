@@ -1,4 +1,3 @@
-import fbdbSaga from 'logic/fbdb/fbdb-saga'
 import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
@@ -24,12 +23,7 @@ function* appSaga(): SagaIterator {
 }
 
 function* rootSaga(): SagaIterator {
-	yield all([
-		fork(socketSaga),
-		fork(fbdbSaga),
-		fork(localSettingsSaga),
-		fork(soundSaga),
-	])
+	yield all([fork(socketSaga), fork(localSettingsSaga), fork(soundSaga)])
 	while (true) {
 		console.log('Starting game loop')
 		const result = yield race({
