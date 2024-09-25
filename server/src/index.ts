@@ -46,6 +46,7 @@ app.get('/', (_req, res) => {
 
 addApi(app)
 export const database = setupDatabase(CARDS_LIST, process.env)
+database.new()
 
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
