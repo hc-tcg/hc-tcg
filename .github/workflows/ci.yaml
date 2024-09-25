@@ -160,6 +160,7 @@ jobs:
         env:
           POSTGRES_HOST: localhost
           POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
           POSTGRES_PORT: 5432
 
 
