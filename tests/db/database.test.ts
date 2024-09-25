@@ -1,7 +1,7 @@
 import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
-import {Databse, setupDatabase} from 'server/db/db'
 import {config} from 'dotenv'
+import {Databse, setupDatabase} from 'server/db/db'
 
 describe('Test Database', () => {
 	let database: Databse
@@ -27,10 +27,10 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', "ethoslab")
+		const user = await database.insertUser('Test User', 'ethoslab')
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
-		expect(user?.minecraftName).toBe("ethoslab")
+		expect(user?.minecraftName).toBe('ethoslab')
 		expect(user?.uuid).toBeTruthy()
 		expect(user?.secret).toBeTruthy()
 		expect(typeof user?.uuid === 'string').toBeTruthy()
