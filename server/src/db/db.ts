@@ -38,10 +38,15 @@ class Databse {
       	code varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7);
       	name varchar(255) NOT NULL;
       	icon varchar(255) NOT NULL;
-      	wins integer NOT NULL;
-      	losses integer NOT NULL;
-      	ties integer NOT NULL;
       );
+	  CREATE TABLE IF NOT EXISTS games(
+		date date NOT NULL;
+      	winer uuid REFERENCES users(user_id);
+		loser uuid REFERENCES users(user_id);
+		winner_deck_code varchar(7) REFERENCES decks(deck_code);
+		loser_deck_code varchar(7) REFERENCES decks(deck_code);
+		tie boolean NOT NULL;
+	  );
       CREATE TABLE IF NOT EXISTS cards(
       	card_id integer PRIMARY KEY NOT NULL;
       );
