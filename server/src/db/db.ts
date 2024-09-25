@@ -131,7 +131,7 @@ export class Databse {
 		try {
 			const secret = await this.db.query('SELECT * FROM uuid_generate_v4()')
 			const user = await this.db.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', 15))) RETURNING (user_id)",
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', 15)) RETURNING (user_id)",
 				[username, minecraftName, secret],
 			)
 			return {
