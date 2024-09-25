@@ -49,7 +49,7 @@ export class Databse {
 	}
 
 	public async new() {
-		this.db.query(
+		await this.db.query(
 			`
 			CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 			CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -64,7 +64,7 @@ export class Databse {
 				deck_code varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
 				previous_code varchar(7) REFERENCES decks(deck_code),
 				name varchar(255) NOT NULL,
-				icon varchar(255) NOT NULL,
+				icon varchar(255) NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS games(
 				game_time date NOT NULL,
