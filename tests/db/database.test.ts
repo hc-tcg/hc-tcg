@@ -13,7 +13,7 @@ describe('Test Database', () => {
 				POSTGRES_DATABASE: 'hctcg',
 				POSTGRES_USER: 'hctcg',
 				POSTGRES_PASSWORD: 'hctcg',
-				POSTGRES_HOST: 'localhost',
+				POSTGRES_HOST: 'postgres',
 				POSTGRES_PORT: '5432',
 			},
 			...process.env,
