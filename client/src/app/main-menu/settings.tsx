@@ -2,7 +2,6 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
-import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
@@ -14,9 +13,9 @@ type Props = {
 }
 function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 
+  // @todo Get stats working again
 	const totalGames = stats.w + stats.l + stats.fw + stats.fl + stats.t
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
