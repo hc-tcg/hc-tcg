@@ -16,7 +16,6 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		database.insertUser("Test User", null)
-
+		database.insertUser('Test User', null)
 	})
 })
