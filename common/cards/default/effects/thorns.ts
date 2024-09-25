@@ -29,7 +29,7 @@ const Thorns: Attach = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.beforeAttack,
-			beforeAttack.EFFECT_CREATE_BACKLASH,
+			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				// If we have already triggered once this turn do not do so again
 				if (hasTriggered) return

@@ -31,7 +31,7 @@ const Wolf: Attach = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.beforeAttack,
-			beforeAttack.EFFECT_CREATE_BACKLASH,
+			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				if (attack.isType('status-effect') || attack.isBacklash) return
 				// Only on opponents turn

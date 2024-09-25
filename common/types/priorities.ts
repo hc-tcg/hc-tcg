@@ -53,8 +53,8 @@ export const beforeAttack = createPriorityDictionary({
 	EFFECT_REDUCE_DAMAGE: null,
 	/** Effects such as buckets can remove status effects created by an attack */
 	EFFECT_REMOVE_STATUS: null,
-	/** Effects reacting to the whether the attack's target will be damaged */
-	EFFECT_CREATE_BACKLASH: null,
+	/** Listeners reacting to the whether the attack's target will be damaged */
+	REACT_TO_DAMAGE: null,
 })
 
 export const rowRevive = createPriorityDictionary({
@@ -73,8 +73,6 @@ export const afterAttack = createPriorityDictionary({
 	UPDATE_POST_ATTACK_STATE: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
-	/** Gas Light effect reacting to target taking damage, to be damaged at end of turn */
-	TRIGGER_GAS_LIGHT: null,
 	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
 	DESTROY_MOCK_CARD: null,
 })

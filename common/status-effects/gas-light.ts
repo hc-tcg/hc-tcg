@@ -7,7 +7,7 @@ import query from '../components/query'
 import {RowEntity} from '../entities'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {afterAttack, onTurnEnd} from '../types/priorities'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {
 	StatusEffect,
@@ -45,17 +45,21 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 		let {opponentPlayer} = target
 
 		observer.subscribeWithPriority(
-			game.globalHooks.afterAttack,
-			afterAttack.TRIGGER_GAS_LIGHT,
+			game.globalHooks.beforeAttack,
+			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(target)) return
 				if (attack.calculateDamage() === 0) return
 
 				// We have an extra take because status effects are executed at the end of the turn.
 				if (attack.type === 'status-effect' && target.slot.inRow()) {
-					const attack = newGasLightAttack(game, effect, target.slot.row.entity)
+					const newAttack = newGasLightAttack(
+						game,
+						effect,
+						target.slot.row.entity,
+					)
 					effect.remove()
-					executeExtraAttacks(game, [attack])
+					attack.addNewAttack(newAttack)
 					return
 				}
 
@@ -103,6 +107,20 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 					newGasLightAttack(game, effect, target.slot.row.entity),
 				])
 				effect.remove()
+			},
+		)
+
+		// Prevents Gas Light from knocking out a hermit that gets revived by Totem after taking Burn damage
+		observer.subscribeWithPriority(
+			game.globalHooks.beforeAttack,
+			beforeAttack.REACT_TO_DAMAGE,
+			(attack) => {
+				if (attack.isType('status-effect') && attack.isTargeting(target)) {
+					attack.addNewAttack(
+						newGasLightAttack(game, effect, attack.target!.entity),
+					)
+					effect.remove()
+				}
 			},
 		)
 	},
