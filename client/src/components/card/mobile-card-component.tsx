@@ -54,10 +54,20 @@ const MobileCardComponent = (props: CardReactProps) => {
 							/>
 						)}
 						{cards[0].props.category === 'item' && (
-							<img
-								className={css.headInList}
-								src={`/images/types/type-${cards[0].props.id.split('_')[1]}.png`}
-							/>
+							<div>
+								<img
+									className={css.headInList}
+									src={`/images/types/type-${cards[0].props.id.split('_')[1]}.png`}
+								/>
+								{small && (
+									<div
+										className={classNames(
+											css.rarityStar,
+											css[cards[0].props.rarity],
+										)}
+									></div>
+								)}
+							</div>
 						)}
 
 						{!small && (
