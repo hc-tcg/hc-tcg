@@ -26,10 +26,10 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', null)
+		const user = await database.insertUser('Test User', "ethoslab")
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
-		expect(user?.minecraftName).toBe(null)
+		expect(user?.minecraftName).toBe("ethoslab")
 		expect(user?.uuid).toBeTruthy()
 		expect(user?.secret).toBeTruthy()
 		expect(typeof user?.uuid === 'string').toBeTruthy()
