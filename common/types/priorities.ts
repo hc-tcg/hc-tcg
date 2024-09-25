@@ -73,12 +73,8 @@ export const afterAttack = createPriorityDictionary({
 	UPDATE_POST_ATTACK_STATE: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
-	/** Shield can now discard itself if it blocked any damage */
-	DISCARD_SHIELD: null,
 	/** Gas Light effect reacting to target taking damage, to be damaged at end of turn */
 	TRIGGER_GAS_LIGHT: null,
-	/** Listeners can confidently execute after a row has been knocked-out */
-	ON_ROW_DEATH: null,
 	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
 	DESTROY_MOCK_CARD: null,
 })

@@ -52,7 +52,7 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.afterAttack,
-			afterAttack.ON_ROW_DEATH,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!attack.isTargeting(target) || attack.target?.health) return
 				effect.remove()

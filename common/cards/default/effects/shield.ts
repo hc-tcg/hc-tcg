@@ -44,7 +44,7 @@ const Shield: Attach = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.afterAttack,
-			afterAttack.DISCARD_SHIELD,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (damageBlocked > 0 && attack.isTargeting(component)) {
 					// attack.isTargeting asserts `attack.target !== null` and `attack.targetEntity !== null`

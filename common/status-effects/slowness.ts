@@ -49,7 +49,7 @@ const SlownessEffect: Counter<CardComponent> = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.afterAttack,
-			afterAttack.ON_ROW_DEATH,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (
 					!target.slot?.onBoard() ||

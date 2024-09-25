@@ -64,7 +64,7 @@ const SleepingEffect: Counter<CardComponent> = {
 
 		observer.subscribeWithPriority(
 			game.globalHooks.afterAttack,
-			afterAttack.ON_ROW_DEATH,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				if (!target.isAlive()) effect.remove()
 			},
