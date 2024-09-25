@@ -45,7 +45,6 @@ const RenbobRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_SET_TARGET,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				if (!component.slot.inRow()) return

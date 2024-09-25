@@ -45,7 +45,6 @@ const Egg: SingleUse = {
 			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				const activeHermit = player.getActiveHermit()
 				if (!attack.isAttacker(activeHermit?.entity)) return
 

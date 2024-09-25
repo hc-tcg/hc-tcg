@@ -43,7 +43,6 @@ const Knockback: SingleUse = {
 			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 				applySingleUse(game)
 				// Only Apply this for the first attack

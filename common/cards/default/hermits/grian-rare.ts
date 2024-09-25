@@ -44,7 +44,6 @@ const GrianRare: Hermit = {
 			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
 					return
 

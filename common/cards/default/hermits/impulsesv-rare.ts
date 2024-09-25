@@ -43,7 +43,6 @@ const ImpulseSVRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 

@@ -118,7 +118,6 @@ const DwarfImpulseRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_SET_TARGET,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!goldenAxeRedirect || !attack.isAttacker(goldenAxeEntity)) return
 				attack.setTarget(component.entity, goldenAxeRedirect)
 			},
@@ -128,7 +127,6 @@ const DwarfImpulseRare: Hermit = {
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				goldenAxeRedirect = null
 				goldenAxeEntity = null
 			},

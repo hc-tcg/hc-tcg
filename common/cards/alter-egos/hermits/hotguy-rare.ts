@@ -42,7 +42,6 @@ const HotguyRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity)) return
 				usingSecondaryAttack = attack.type === 'secondary'
 			},
@@ -52,7 +51,6 @@ const HotguyRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!usingSecondaryAttack) return
 				if (
 					attack.attacker instanceof CardComponent &&
@@ -67,7 +65,6 @@ const HotguyRare: Hermit = {
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				usingSecondaryAttack = false
 			},
 		)

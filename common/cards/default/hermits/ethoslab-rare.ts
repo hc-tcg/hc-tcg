@@ -50,7 +50,6 @@ const EthosLabRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				if (!(attack.attacker instanceof CardComponent)) return

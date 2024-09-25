@@ -56,7 +56,6 @@ const TNT: SingleUse = {
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
-				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(component.entity)) return
 				applySingleUse(game)
 				observer.unsubscribe(game.hooks.beforeAttack)
