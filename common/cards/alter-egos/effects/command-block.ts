@@ -15,7 +15,7 @@ const CommandBlock: Attach = {
 	description:
 		'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
@@ -30,7 +30,7 @@ const CommandBlock: Attach = {
 			return availableEnergy.map(() => 'any')
 		})
 
-		observer.subscribe(player.hooks.freezeSlots, () => {
+		observer.subscribe(game.globalHooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				query.slot.player(player.entity),

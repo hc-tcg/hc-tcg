@@ -21,8 +21,9 @@ import {
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
-import {Hook, PriorityHook} from '../types/hooks'
+import {GameHook, Hook, PriorityHook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
 import {
@@ -112,7 +113,22 @@ export class GameModel {
 	/** The objects used in the game. */
 	public components: ComponentTable
 	public globalHooks: {
-		/** Hook for when the game ends and references needs to be disposed */
+		/** Hook called before the main attack loop, for every attack from any source */
+		beforeAttack: PriorityHook<
+			(attack: AttackModel) => void,
+			typeof beforeAttack
+		>
+		/** Hook called after the main attack loop, one stage at a time, for every attack from any source */
+		afterAttack: PriorityHook<
+			(attack: ReadonlyAttackModel) => void,
+			typeof afterAttack
+		>
+		/** Hook called when the `slot.locked` combinator is called.
+		 * Returns a combinator that verifies if the slot is locked or not.
+		 * Locked slots cannot be chosen in some combinator expressions.
+		 */
+		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
 		rowRevive: PriorityHook<
@@ -158,8 +174,11 @@ export class GameModel {
 
 		this.components = new ComponentTable(this)
 		this.globalHooks = {
-			afterGameEnd: new Hook(),
+			beforeAttack: new PriorityHook(beforeAttack),
 			rowRevive: new PriorityHook(rowRevive),
+			afterAttack: new PriorityHook(afterAttack),
+			freezeSlots: new GameHook(),
+			afterGameEnd: new Hook(),
 		}
 		setupComponents(this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,

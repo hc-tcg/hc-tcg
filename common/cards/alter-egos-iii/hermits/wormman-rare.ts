@@ -69,7 +69,7 @@ const WormManRare: Hermit = {
 						(_oldActiveHermit, newActiveHermit) => {
 							if (newActiveHermit.entity !== attachedComponent.entity) return
 							attachedComponent.turnedOver = false
-							newObserver.unsubscribe(player.hooks.freezeSlots)
+							newObserver.unsubscribe(game.globalHooks.freezeSlots)
 						},
 					)
 

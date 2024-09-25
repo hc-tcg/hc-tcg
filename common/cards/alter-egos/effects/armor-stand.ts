@@ -29,10 +29,10 @@ const ArmorStand: Attach & HasHealth = {
 		observer: ObserverComponent,
 	) {
 		const {player} = component
-		observer.subscribe(player.hooks.freezeSlots, () => {
+		observer.subscribe(game.globalHooks.freezeSlots, () => {
 			if (!component.slot?.onBoard()) return query.nothing
 			return query.every(
-				query.slot.player(component.player.entity),
+				query.slot.player(player.entity),
 				query.slot.rowIs(component.slot.row?.entity),
 			)
 		})

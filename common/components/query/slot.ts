@@ -147,15 +147,7 @@ export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
  * Use slot.player(player.entity) instead.
  */
 export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
-	const playerResult = game.currentPlayer.hooks.freezeSlots
-		.call()
-		.some((result) => result(game, pos))
-
-	const opponentResult = game.opponentPlayer.hooks.freezeSlots
-		.call()
-		.some((result) => result(game, pos))
-
-	return playerResult || opponentResult
+	return game.globalHooks.freezeSlots.call().some((result) => result(game, pos))
 }
 
 export function hasStatusEffect(
