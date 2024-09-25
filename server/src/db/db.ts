@@ -2,7 +2,15 @@ import {PlayerDeckT} from 'common/types/deck'
 import pg from 'pg'
 import {Card} from '../../../common/cards/base/types'
 
-export const setupDatabase = (allCards: Array<Card>, env: any) => {
+export const setupDatabase = (
+	allCards: Array<Card>,
+	env: {
+		HOST: string
+		USER: string
+		PASSWORD: string
+		DATABASE: string
+	},
+) => {
 	const pool = new pg.Pool({
 		host: env.HOST,
 		user: env.USER,
@@ -20,7 +28,7 @@ export type User = {
 	uuid: string
 	secret: string
 	username: string
-	minecraftName: string
+	minecraftName: string | null
 }
 
 export type Deck = {
@@ -31,7 +39,7 @@ export type Deck = {
 	cards: Array<Card>
 }
 
-class Databse {
+export class Databse {
 	private db: pg.Pool
 	private allCards: Array<Card>
 
@@ -40,7 +48,7 @@ class Databse {
 		this.allCards = allCards
 	}
 
-	public new() {
+	public async new() {
 		this.db.query(
 			`
 			CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
@@ -49,7 +57,7 @@ class Databse {
 				user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 				secret varchar(255) NOT NULL,
 				username varchar(255) NOT NULL,
-				minecraft_name varchar(255) NOT NULL
+				minecraft_name varchar(255)
 			);
 			CREATE TABLE IF NOT EXISTS decks(
 				user_id uuid REFERENCES users(user_id),
@@ -88,7 +96,7 @@ class Databse {
 				`,
 		)
 
-		this.db.query(
+		await this.db.query(
 			'INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING',
 			[this.allCards.map((card) => card.numericId)],
 		)
@@ -115,7 +123,7 @@ class Databse {
 	/*** Insert a user into the Database. Returns `user`. */
 	public async insertUser(
 		username: string,
-		minecraftName: string,
+		minecraftName: string | null,
 	): Promise<User | null> {
 		try {
 			const secret = await this.db.query('SELECT * FROM uuid_generate_v4()')
@@ -149,7 +157,7 @@ class Databse {
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
-			this.db.query(
+			await this.db.query(
 				`INSERT INTO deck_cards (deck_code,card_id,copies) values($1,SELECT * FROM UNNEST ($2::int[]),1) 
 				ON CONFLICT DO UPDATE SET copies = copies + 1`,
 				[deckCode, deck.cards.map((card) => card.props.numericId)],
