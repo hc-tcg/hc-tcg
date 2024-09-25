@@ -33,7 +33,7 @@ test('player does not stay in queue after reloading the page', async ({
 		return global.getState().session.connected
 	})
 
-	let playerId = page.evaluate(() => global.getState().session.playerId)
+	let playerId = await page.evaluate(() => global.getState().session.playerId)
 	// Close the update notification if it exists
 	await page.getByText('Close').click()
 	await page.getByText('Public Game').click()
