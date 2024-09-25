@@ -11,7 +11,7 @@
 	height: 100%;
 	overflow: hidden;
 	position: absolute;
-	background: url('/images/menu-background-image.png') center center no-repeat;
+	background: url("/images/menu-background-image.png") center center no-repeat;
 	background-size: cover;
 	filter: blur(2px);
 }
@@ -110,5 +110,18 @@ header {
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
 		display: none;
+	}
+
+	.wrapper {
+		margin: 0.5rem;
+		gap: 0px;
+		height: auto;
+		width: auto;
+		border: 2px black solid;
+		height: 100%;
+	}
+
+	.body {
+		padding: 0px;
 	}
 }

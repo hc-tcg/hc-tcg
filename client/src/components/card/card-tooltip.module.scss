@@ -18,18 +18,6 @@
 	gap: 5px;
 }
 
-.tooltipSidebar {
-	position: absolute;
-	left: -250px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	@media screen and (max-width: 80vh) {
-		visibility: hidden;
-	}
-}
-
 .tooltipBelow {
 	display: flex;
 	flex-direction: column;
@@ -186,5 +174,34 @@
 
 	&.advent_of_tcg {
 		color: #de9292;
+	}
+}
+
+@media (max-width: 800px) {
+	.cardTooltip {
+		max-width: 90vw;
+	}
+
+	.cardTooltipContainer {
+		max-width: 90vw;
+		font-size: 12px;
+		overflow: hidden;
+	}
+
+	.smallText {
+		font-size: 12px;
+	}
+
+	.topLine {
+		gap: 8px;
+		font-size: 16px;
+	}
+
+	.description {
+		font-size: 16px;
+	}
+
+	.cardTooltip.small {
+		font-size: 14px;
 	}
 }

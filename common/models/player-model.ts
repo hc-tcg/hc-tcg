@@ -25,6 +25,7 @@ export class PlayerModel {
 			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack(),
+			tags: [],
 		}
 
 		this.name = playerName
@@ -62,6 +63,7 @@ export class PlayerModel {
 			name: newDeck.name,
 			icon: newDeck.icon,
 			cards: newDeck.cards,
+			tags: newDeck.tags,
 		}
 	}
 

@@ -3,12 +3,14 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
 import {
 	call,
 	cancelled,
 	fork,
 	put,
 	race,
+	select,
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
@@ -60,14 +62,19 @@ function* createBossGameSaga() {
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
+		const socket = yield* select(getSocket)
 		try {
 			// Send message to server to create the game
 			yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
 
 			// Wait for response
 			const createGameResponse = yield* race({
-				success: call(receiveMsg(serverMessages.CREATE_PRIVATE_GAME_SUCCESS)),
-				failure: call(receiveMsg(serverMessages.CREATE_PRIVATE_GAME_FAILURE)),
+				success: call(
+					receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_SUCCESS),
+				),
+				failure: call(
+					receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_FAILURE),
+				),
 			})
 
 			if (createGameResponse.success) {
@@ -85,8 +92,8 @@ function* createPrivateGameSaga() {
 
 			// Wait for game start or timeout
 			const queueResponse = yield* race({
-				gameStart: call(receiveMsg(serverMessages.GAME_START)),
-				timeout: call(receiveMsg(serverMessages.PRIVATE_GAME_TIMEOUT)),
+				gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
+				timeout: call(receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT)),
 			})
 
 			if (queueResponse.gameStart) {
@@ -118,6 +125,7 @@ function* createPrivateGameSaga() {
 
 function* joinPrivateGameSaga() {
 	function* matchmaking() {
+		const socket = yield* select(getSocket)
 		try {
 			while (true) {
 				const {code} = yield* take<
@@ -127,11 +135,19 @@ function* joinPrivateGameSaga() {
 				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
 
 				const result = yield* race({
-					failure: call(receiveMsg(serverMessages.JOIN_PRIVATE_GAME_FAILURE)),
-					success: call(receiveMsg(serverMessages.JOIN_PRIVATE_GAME_SUCCESS)),
-					invalidCode: call(receiveMsg(serverMessages.INVALID_CODE)),
-					waitingForPlayer: call(receiveMsg(serverMessages.WAITING_FOR_PLAYER)),
-					timeout: call(receiveMsg(serverMessages.PRIVATE_GAME_TIMEOUT)),
+					failure: call(
+						receiveMsg(socket, serverMessages.JOIN_PRIVATE_GAME_FAILURE),
+					),
+					success: call(
+						receiveMsg(socket, serverMessages.JOIN_PRIVATE_GAME_SUCCESS),
+					),
+					invalidCode: call(receiveMsg(socket, serverMessages.INVALID_CODE)),
+					waitingForPlayer: call(
+						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
+					),
+					timeout: call(
+						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+					),
 				})
 
 				if (result.invalidCode) {
@@ -155,8 +171,10 @@ function* joinPrivateGameSaga() {
 
 					// Private game joined successfully - wait for game start or timeout
 					const queueResponse = yield* race({
-						gameStart: call(receiveMsg(serverMessages.GAME_START)),
-						timeout: call(receiveMsg(serverMessages.PRIVATE_GAME_TIMEOUT)),
+						gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
+						timeout: call(
+							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+						),
 					})
 
 					if (queueResponse.gameStart) {
@@ -198,14 +216,15 @@ function* joinPrivateGameSaga() {
 
 function* joinQueueSaga() {
 	function* matchmaking() {
+		const socket = yield* select(getSocket)
 		try {
 			// Send message to server to join the queue
 			yield sendMsg({type: clientMessages.JOIN_QUEUE})
 
 			// Wait for response
 			const joinResponse = yield* race({
-				success: call(receiveMsg(serverMessages.JOIN_QUEUE_SUCCESS)),
-				failure: call(receiveMsg(serverMessages.JOIN_QUEUE_FAILURE)),
+				success: call(receiveMsg(socket, serverMessages.JOIN_QUEUE_SUCCESS)),
+				failure: call(receiveMsg(socket, serverMessages.JOIN_QUEUE_FAILURE)),
 			})
 
 			if (joinResponse.failure) {
@@ -217,7 +236,7 @@ function* joinQueueSaga() {
 			}
 
 			// We have joined the queue, wait for game start
-			yield call(receiveMsg(serverMessages.GAME_START))
+			yield call(receiveMsg(socket, serverMessages.GAME_START))
 			yield call(gameSaga)
 			console.log('end game sagas')
 		} catch (err) {
@@ -247,8 +266,9 @@ function* joinQueueSaga() {
 }
 
 export function* reconnectSaga() {
+	const socket = yield* select(getSocket)
 	const reconnectState = yield* call(
-		receiveMsg(serverMessages.GAME_STATE_ON_RECONNECT),
+		receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
 	)
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
 	if (!reconnectState.localGameState)

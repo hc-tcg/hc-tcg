@@ -301,6 +301,7 @@ function Game() {
 					{Filter()}
 					<CardList
 						wrap={false}
+						displayTokenCost={false}
 						cards={filteredCards}
 						onClick={(card: LocalCardInstance) => selectCard(card)}
 						selected={[selectedCard]}
