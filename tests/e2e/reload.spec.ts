@@ -34,9 +34,9 @@ test('player does not stay in queue after reloading the page', async ({
 	})
 
 	let playerId = page.evaluate(() => global.getState().session.playerId)
-	await page.getByText('Public Game').click()
+	await page.getByText(/Public Game/).click()
 
-	let queue= await (
+	let queue = await (
 		await fetch('http://localhost:9000/debug/root-state/queue')
 	).json()
 
@@ -46,7 +46,7 @@ test('player does not stay in queue after reloading the page', async ({
 	await page.waitForFunction(() => global.getState().session.connected)
 
 	// We should be automatically removed from the queue.
-	queue= await (
+	queue = await (
 		await fetch('http://localhost:9000/debug/root-state/queue')
 	).json()
 	expect(queue).not.toContain(playerId)
