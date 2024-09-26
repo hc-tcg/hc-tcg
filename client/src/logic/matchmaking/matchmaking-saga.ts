@@ -148,13 +148,16 @@ function* joinPrivateGameSaga() {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
 					})
+					let result = yield* call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+					)
+					yield* call(gameSaga, result.localGameState)
 				} else if (result.invalidCode) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CODE_INVALID,
 					})
 				}
 
-				// For anything but invalid code, we exit loop
 				break
 			}
 		} catch (err) {

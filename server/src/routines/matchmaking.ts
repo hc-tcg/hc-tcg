@@ -305,6 +305,7 @@ export function* createPrivateGame(
 		playerId,
 		gameCode,
 		spectatorCode,
+		spectatorsWaiting: [],
 	}
 
 	// Send code to player
@@ -407,6 +408,20 @@ export function* joinPrivateGame(
 			root.privateQueue[code].spectatorCode,
 		)
 		root.addGame(newGame)
+
+		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			const viewer = newGame.components.new(ViewerComponent, {
+				player: root.players[playerId],
+				spectator: true,
+				playerOnLeft: newGame.state.order[0],
+			})
+			let gameState = getLocalGameState(newGame, viewer)
+
+			broadcast([root.players[playerId]], {
+				type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+				localGameState: gameState,
+			})
+		}
 
 		// Remove this game from the queue, it's started
 		delete root.privateQueue[code]
