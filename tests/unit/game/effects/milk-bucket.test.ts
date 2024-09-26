@@ -1,14 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
-import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
-import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
+import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import MilkBucket from 'common/cards/default/effects/milk-bucket'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import query from 'common/components/query'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import SplashPotionOfPoison from 'common/cards/default/single-use/splash-potion-of-poison'
-import PoisonEffect from 'common/status-effects/poison'
 import {StatusEffectComponent} from 'common/components'
+import query from 'common/components/query'
 import BadOmenEffect from 'common/status-effects/badomen'
+import PoisonEffect from 'common/status-effects/poison'
+import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Milk Bucket', () => {
 	test('Single Use Functionality', () => {
