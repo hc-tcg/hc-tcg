@@ -1,7 +1,7 @@
 import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
-import {Databse, setupDatabase} from 'server/db/db'
 import {config} from 'dotenv'
+import {Databse, setupDatabase} from 'server/db/db'
 
 describe('Test Database', () => {
 	let database: Databse
@@ -14,6 +14,7 @@ describe('Test Database', () => {
 				POSTGRES_USER: 'hctcg',
 				POSTGRES_PASSWORD: 'hctcg',
 				POSTGRES_HOST: 'localhost',
+				POSTGRES_PORT: '5432',
 			},
 			...process.env,
 			...env,

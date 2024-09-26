@@ -9,6 +9,7 @@ export const setupDatabase = (
 		POSTGRES_USER: string
 		POSTGRES_PASSWORD: string
 		POSTGRES_DATABASE: string
+		POSTGRES_PORT: string
 	},
 ) => {
 	const pool = new pg.Pool({
@@ -16,6 +17,7 @@ export const setupDatabase = (
 		user: env.POSTGRES_USER,
 		password: env.POSTGRES_PASSWORD,
 		database: env.POSTGRES_DATABASE,
+		port: Number(env.POSTGRES_PORT),
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
