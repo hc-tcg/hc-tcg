@@ -8,6 +8,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {DEBUG} from 'common/config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -69,7 +70,11 @@ function Settings({setMenuSection}: Props) {
 	const handleCredits = () => setMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
+
 	const handleUpdates = () => {
+		if (DEBUG) {
+			setUpdatesOpen(false)
+		}
 		setUpdatesOpen(true)
 	}
 
