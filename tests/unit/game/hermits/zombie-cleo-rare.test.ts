@@ -300,7 +300,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 	expect(
 		game.components.find(
 			CardComponent,
-			query.card.currentPlayer,
+			query.card.opponentPlayer,
 			query.card.slot(query.slot.rowIndex(2)),
 		)?.turnedOver,
 	).toBe(false)
