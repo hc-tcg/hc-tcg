@@ -43,7 +43,7 @@ describe('Test Database', () => {
 		const playerDeck = {
 			name: 'Testing deck',
 			icon: 'balanced',
-			cards: [1, 2, 3, 4, 4, 4, 5],
+			cards: [1, 2, 2, 3, 4, 4, 5, 4],
 			tags: [],
 		}
 		const code = await database.insertDeck(
@@ -54,7 +54,31 @@ describe('Test Database', () => {
 			user.uuid,
 			user.secret,
 		)
+
 		expect(code).not.toBeNull()
 		expect(typeof code === 'string').toBeTruthy()
+		if (!code) return
+
+		const returnedDeck = await database.getDeckFromID(code)
+		expect(returnedDeck).not.toBeNull()
+
+		expect(returnedDeck?.name).toBe('Testing deck')
+		expect(returnedDeck?.icon).toBe('balanced')
+
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 1).length,
+		).toEqual(1)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 2).length,
+		).toEqual(2)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 3).length,
+		).toEqual(1)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 4).length,
+		).toEqual(3)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 5).length,
+		).toEqual(1)
 	})
 })

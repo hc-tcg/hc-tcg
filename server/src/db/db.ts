@@ -166,13 +166,27 @@ export class Databse {
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
+			const reformattedCards = cards.reduce(
+				(r: Array<{id: number; copies: number}>, card) => {
+					const index = r.findIndex((subcard) => subcard.id === card)
+					if (index >= 0) {
+						r[index].copies += 1
+						return r
+					}
+					return [...r, {id: card, copies: 1}]
+				},
+				[],
+			)
+
 			await this.db.query(
 				`
-				MERGE INTO deck_cards
-				USING (SELECT * FROM (SELECT * FROM UNNEST ($1::text[],$2::int[])) AS code,id ON deck_cards.deck_code = code AND deck_cards.card_id = id)
-				WHEN MATCH UPDATE SET copies = deck_cards.copies + 1
-				WHEN NOT MATCHED THEN INSERT (deck_code,card_id,copies) values (code,id,1)`,
-				[Array(cards.length).fill(deckCode), cards],
+				INSERT INTO deck_cards (deck_code,card_id,copies) SELECT * FROM UNNEST ($1::text[],$2::int[],$3::int[]) 
+				ON CONFLICT DO NOTHING`,
+				[
+					Array(reformattedCards.length).fill(deckCode),
+					reformattedCards.map((card) => card.id),
+					reformattedCards.map((card) => card.copies),
+				],
 			)
 			return deckCode
 		} catch (err) {
@@ -186,8 +200,9 @@ export class Databse {
 		try {
 			const deck = (
 				await this.db.query(
-					`SELECT * FROM decks WHERE deck_code = $1
+					`SELECT * FROM decks
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					WHERE decks.deck_code = $1
 					`,
 					[deckCode],
 				)
@@ -198,7 +213,9 @@ export class Databse {
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				return [
 					...r,
-					this.allCards.find((card) => card.numericId === row['card_id']),
+					...Array(row['copies']).fill(
+						this.allCards.find((card) => card.numericId === row['card_id']),
+					),
 				]
 			}, [])
 			const tags: Array<string> = []
