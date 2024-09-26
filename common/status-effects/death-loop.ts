@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {afterAttack} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const DeathloopReady: StatusEffect<CardComponent> = {
@@ -70,9 +70,13 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 

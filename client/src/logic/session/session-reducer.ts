@@ -10,6 +10,7 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: PlayerDeckT
 	connecting: boolean
+	connected: boolean
 	errorType?:
 		| 'invalid_name'
 		| 'invalid_version'
@@ -25,8 +26,9 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: []},
+	playerDeck: {name: '', icon: 'any', cards: [], tags: []},
 	connecting: false,
+	connected: false,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
 }
@@ -42,6 +44,7 @@ const loginReducer = (
 			return {
 				...state,
 				connecting: false,
+				connected: false,
 				playerName: '',
 				minecraftName: '',
 				playerId: '' as PlayerId,
@@ -50,9 +53,11 @@ const loginReducer = (
 				errorType: action.errorMessage,
 			}
 		case localMessages.PLAYER_INFO_SET:
+		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
 				connecting: false,
+				connected: true,
 				errorType: undefined,
 				...action.player,
 			}

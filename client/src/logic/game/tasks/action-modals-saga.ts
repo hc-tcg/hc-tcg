@@ -10,6 +10,7 @@ import {
 	ConfirmModal,
 	CopyAttackModal,
 	EndTurnModal,
+	ExitModal,
 	ForfeitModal,
 	SelectCardsModal,
 } from '../../../app/game/modals'
@@ -21,6 +22,7 @@ export const MODAL_COMPONENTS = {
 	forfeit: ForfeitModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
+	exit: ExitModal,
 
 	// Custom modals
 	copyAttack: CopyAttackModal,

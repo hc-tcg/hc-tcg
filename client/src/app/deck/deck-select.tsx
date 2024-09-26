@@ -1,12 +1,14 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
+import MobileCardList from 'components/card-list/mobile-card-list'
+import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {
@@ -16,13 +18,17 @@ import {
 	ErrorIcon,
 	ExportIcon,
 } from 'components/svgs'
+import {TagsModal} from 'components/tags-modal'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
 	deleteDeck,
+	getCreatedTags,
 	getLegacyDecks,
 	getSavedDeck,
 	getSavedDecks,
+	keysToTags,
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
@@ -51,9 +57,34 @@ function SelectDeck({
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
+	const settings = useSelector(getSettings)
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
+	const sortedDecks = savedDecks
+		.map((d: any) => {
+			const deck: PlayerDeckT = JSON.parse(d)
+			return deck
+		})
+		.sort((a, b) => {
+			if (settings.deckSortingMethod === 'Alphabetical') {
+				return a.name.localeCompare(b.name)
+			}
+			if (settings.deckSortingMethod === 'First Tag') {
+				const aHasTags = a.tags && a.tags.length > 0
+				const bHasTags = b.tags && b.tags.length > 0
+				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
+				if (!aHasTags && bHasTags) return 1
+				if (aHasTags && !bHasTags) return 0
+				const aFirstTag = a.tags![0]
+				const bFirstTag = b.tags![0]
+				return aFirstTag.localeCompare(bFirstTag)
+			}
+			//Default case so something is always returned
+			return 0
+		})
+	const [filteredDecks, setFilteredDecks] =
+		useState<Array<PlayerDeckT>>(sortedDecks)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
@@ -62,6 +93,7 @@ function SelectDeck({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
+		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -69,9 +101,28 @@ function SelectDeck({
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
+	const [showManageTagsModal, setShowManageTagsModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+	const [tagFilter, setTagFilter] = useState<Tag>(
+		settings.lastSelectedTag
+			? keysToTags([settings.lastSelectedTag])[0]
+			: {
+					name: 'No Filter',
+					color: '#ffffff',
+					key: '0',
+				},
+	)
+
+	const tagsDropdownOptions = [
+		{name: 'No Filter', color: '#ffffff'},
+		...getCreatedTags(),
+	].map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+	}))
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
@@ -97,7 +148,7 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (validateDeck(loadedDeck.cards)) {
+		if (!validateDeck(loadedDeck.cards).valid) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -179,13 +230,8 @@ function SelectDeck({
 		//Refresh saved deck list and load new deck
 		setSavedDecks(getSavedDecks())
 	}
-	const sortedDecks = savedDecks
-		.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
-		})
-		.sort((a, b) => a.name.localeCompare(b.name))
-	const deckList: ReactNode = sortedDecks.map(
+
+	const deckList: ReactNode = filteredDecks.map(
 		(deck: PlayerDeckT, i: number) => {
 			return (
 				<li
@@ -205,12 +251,82 @@ function SelectDeck({
 							alt={'deck-icon'}
 						/>
 					</div>
+					{deck.tags && deck.tags.length > 0 && (
+						<div className={css.multiColoredCircleBorder}>
+							<div className={css.multiColoredCircle}>
+								{keysToTags(deck.tags).map((tag) => (
+									<div
+										className={css.singleTag}
+										style={{backgroundColor: tag.color}}
+									></div>
+								))}
+							</div>
+						</div>
+					)}
 					{deck.name}
 				</li>
 			)
 		},
 	)
-	const validationMessage = validateDeck(loadedDeck.cards)
+	const footerTags = (
+		<div className={css.footerTags}>
+			<Dropdown
+				button={
+					<button className={css.dropdownButton}>
+						{' '}
+						<img src="../images/icons/tag.png" alt="tag-icon" />
+					</button>
+				}
+				label="Saved Tags"
+				options={tagsDropdownOptions}
+				action={(option) => {
+					if (option.includes('No Filter')) {
+						setFilteredDecks(sortedDecks)
+						setTagFilter({
+							name: 'No Filter',
+							color: '#ffffff',
+							key: '0',
+						})
+						dispatch({
+							type: localMessages.SETTINGS_SET,
+							setting: {
+								key: 'lastSelectedTag',
+								value: null,
+							},
+						})
+						return
+					}
+					const parsedOption = JSON.parse(option) as Tag
+					console.log(parsedOption)
+					setFilteredDecks(
+						sortedDecks.filter(
+							(deck) =>
+								deck.tags &&
+								keysToTags(deck.tags).some(
+									(tag) =>
+										tag.name === parsedOption.name &&
+										tag.color === parsedOption.color,
+								),
+						),
+					)
+					setTagFilter(parsedOption)
+					dispatch({
+						type: localMessages.SETTINGS_SET,
+						setting: {
+							key: 'lastSelectedTag',
+							value: parsedOption.key,
+						},
+					})
+				}}
+			/>
+			<div
+				className={css.tagBox}
+				style={{backgroundColor: tagFilter.color}}
+			></div>
+			{tagFilter.name}
+		</div>
+	)
+	const validationResult = validateDeck(loadedDeck.cards)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter(
 			(card) => card.props.category === 'hermit',
@@ -253,6 +369,11 @@ function SelectDeck({
 			<MassExportModal
 				setOpen={showMassExportModal}
 				onClose={() => setShowMassExportModal(!showMassExportModal)}
+			/>
+			<TagsModal
+				setOpen={showManageTagsModal}
+				tags={getCreatedTags()}
+				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
 			/>
 			<AlertModal
 				setOpen={showValidateDeckModal}
@@ -312,9 +433,19 @@ function SelectDeck({
 										alt="deck-icon"
 									/>
 								</div>
-								<div className={css.deckName}>
-									<span>{loadedDeck.name}</span>
-								</div>
+								<div className={css.deckName}>{loadedDeck.name}</div>
+								{loadedDeck.tags &&
+									keysToTags(loadedDeck.tags).map((tag) => {
+										return (
+											<div className={css.fullTagTitle}>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								<div className={css.dynamicSpace}></div>
 
 								<p className={classNames(css.cardCount)}>
@@ -323,12 +454,144 @@ function SelectDeck({
 								</p>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
-										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
 							</div>
 						</>
+					}
+					mobileChildren={
+						<div className={css.mobileSelector}>
+							<div className={css.mobileDeckName}>
+								<div className={css.deckImage}>
+									<img
+										src={
+											'../images/types/type-' +
+											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
+											'.png'
+										}
+										alt="deck-icon"
+									/>
+								</div>
+								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
+									<div className={css.multiColoredCircleBorder}>
+										<div className={css.multiColoredCircle}>
+											{keysToTags(loadedDeck.tags).map((tag) => (
+												<div
+													className={css.singleTag}
+													style={{backgroundColor: tag.color}}
+												></div>
+											))}
+										</div>
+									</div>
+								)}
+								<span
+									className={classNames(
+										css.mobileDeckNameText,
+										!validationResult.valid && css.invalid,
+									)}
+								>
+									{loadedDeck.name}
+									{!validationResult.valid && validationResult.reason && (
+										<span className={css.mobileErrorIcon}>
+											<ErrorIcon />
+										</span>
+									)}
+								</span>
+								<span className={css.mobileDeckNamePadding}></span>
+								<div className={css.mobileDeckStats}>
+									<div className={css.mobileDeckStat}>
+										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
+									</div>
+									<div className={classNames(css.mobileDeckStat, css.tokens)}>
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}
+									</div>
+								</div>
+							</div>
+							<div className={css.deckListBox}>
+								<div className={css.mobileDeckPreview}>
+									<MobileCardList
+										cards={sortCards(loadedDeck.cards)}
+										small={true}
+									/>
+								</div>
+								<div className={css.deckListContainer}>
+									<div className={css.deckList}>{deckList}</div>
+								</div>
+							</div>
+							<div className={css.mobileTags}>
+								{footerTags}
+								<Button
+									variant="default"
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									size="small"
+								>
+									<span>Manage Tags</span>
+								</Button>
+							</div>
+							<div className={css.filterGroup}>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setMode('edit')}
+									leftSlot={<EditIcon />}
+								>
+									<span>Edit</span>
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setShowDuplicateDeckModal(true)}
+									leftSlot={CopyIcon()}
+								>
+									<span>Copy</span>
+								</Button>
+								{savedDecks.length > 1 && (
+									<Button
+										variant="error"
+										size="small"
+										leftSlot={<DeleteIcon />}
+										onClick={() => setShowDeleteDeckModal(true)}
+									>
+										<span>Delete</span>
+									</Button>
+								)}
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setMode('create')}
+								>
+									New Deck
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onClick={() => setShowImportModal(!showImportModal)}
+								>
+									<ExportIcon reversed />
+									Import
+								</Button>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setShowExportModal(!showExportModal)}
+									leftSlot={<ExportIcon />}
+								>
+									<span>Export</span>
+								</Button>
+								<Button
+									variant="default"
+									size="small"
+									onClick={() => setShowMassExportModal(!showMassExportModal)}
+								>
+									<ExportIcon />
+									<span>Mass Export</span>
+								</Button>
+							</div>
+						</div>
 					}
 				>
 					<div className={css.filterGroup}>
@@ -338,9 +601,7 @@ function SelectDeck({
 							onClick={() => setMode('edit')}
 							leftSlot={<EditIcon />}
 						>
-							<span>
-								Edit<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Edit Deck</span>
 						</Button>
 						<Button
 							variant="default"
@@ -348,9 +609,7 @@ function SelectDeck({
 							onClick={() => setShowExportModal(!showExportModal)}
 							leftSlot={<ExportIcon />}
 						>
-							<span>
-								Export<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Export Deck</span>
 						</Button>
 						<Button
 							variant="primary"
@@ -358,9 +617,7 @@ function SelectDeck({
 							onClick={() => setShowDuplicateDeckModal(true)}
 							leftSlot={CopyIcon()}
 						>
-							<span>
-								Duplicate<span className={css.hideOnMobile}> Deck</span>
-							</span>
+							<span>Copy Deck</span>
 						</Button>
 						{savedDecks.length > 1 && (
 							<Button
@@ -369,22 +626,21 @@ function SelectDeck({
 								leftSlot={<DeleteIcon />}
 								onClick={() => setShowDeleteDeckModal(true)}
 							>
-								<span>
-									Delete<span className={css.hideOnMobile}> Deck</span>
-								</span>
+								<span>Delete Deck</span>
 							</Button>
 						)}
 					</div>
-					{validationMessage && (
+					{!validationResult.valid && (
 						<div className={css.validationMessage}>
 							<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span>{' '}
-							{validationMessage}
+							{validationResult.reason}
 						</div>
 					)}
 
 					<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
 						<CardList
 							cards={sortCards(selectedCards.hermits)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -398,6 +654,7 @@ function SelectDeck({
 					>
 						<CardList
 							cards={sortCards(selectedCards.attachableEffects)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -410,6 +667,7 @@ function SelectDeck({
 					>
 						<CardList
 							cards={sortCards(selectedCards.singleUseEffects)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
@@ -418,12 +676,15 @@ function SelectDeck({
 					<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 						<CardList
 							cards={sortCards(selectedCards.items)}
+							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
 						/>
 					</Accordion>
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
+					showHeader={true}
+					showHeaderOnMobile={false}
 					header={
 						<>
 							<img
@@ -437,6 +698,7 @@ function SelectDeck({
 					footer={
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
+								{footerTags}
 								{getLegacyDecks() && (
 									<Button
 										onClick={() => {
@@ -460,19 +722,28 @@ function SelectDeck({
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>
-								<Button
-									variant="primary"
-									onClick={() => setShowImportModal(!showImportModal)}
-								>
-									<ExportIcon reversed />
-									<span>Import Decks</span>
-								</Button>
+								<div className={css.importAndExport}>
+									<Button
+										variant="primary"
+										onClick={() => setShowImportModal(!showImportModal)}
+										style={{flexGrow: 1}}
+									>
+										<ExportIcon reversed />
+										<span>Import</span>
+									</Button>
+									<Button
+										variant="default"
+										onClick={() => setShowMassExportModal(!showMassExportModal)}
+									>
+										<ExportIcon />
+										<span>Mass Export</span>
+									</Button>
+								</div>
 								<Button
 									variant="default"
-									onClick={() => setShowMassExportModal(!showMassExportModal)}
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 								>
-									<ExportIcon />
-									<span>Mass Export</span>
+									<span>Manage Tags</span>
 								</Button>
 							</div>
 						</>

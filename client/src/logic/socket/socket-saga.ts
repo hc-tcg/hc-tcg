@@ -4,10 +4,12 @@ import {LocalMessage, localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
-import socket from 'socket'
 import {put, select, takeEvery} from 'typed-redux-saga'
+import {getSocket} from './socket-selectors'
 
 export function* sendMsg(payload: ClientMessage): any {
+	const socket = yield* select(getSocket)
+
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
 		const {playerId, playerSecret} = yield* select(getSession)
@@ -22,7 +24,10 @@ export function* sendMsg(payload: ClientMessage): any {
 	}
 }
 
-export function receiveMsg<T extends keyof ServerMessageTable>(type: T) {
+export function receiveMsg<T extends keyof ServerMessageTable>(
+	socket: any,
+	type: T,
+) {
 	return () => {
 		return new Promise<ServerMessageTable[T]>((resolve) => {
 			const listener = (message: ServerMessageTable[T]) => {
@@ -34,10 +39,13 @@ export function receiveMsg<T extends keyof ServerMessageTable>(type: T) {
 }
 
 function* socketSaga(): SagaIterator {
+	const socket = yield* select(getSocket)
+
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')
 		const disconnectListener = () => emitter('disconnect')
 		const connectErrorListener = () => emitter('connect_error')
+
 		socket.on('connect', connectListener)
 		socket.on('disconnect', disconnectListener)
 		socket.on('connect_error', connectErrorListener)
@@ -54,7 +62,7 @@ function* socketSaga(): SagaIterator {
 		if (type === 'disconnect')
 			yield* put<LocalMessage>({type: localMessages.SOCKET_DISCONNECT})
 		if (type === 'connect_error')
-			yield* put(<LocalMessage>{type: localMessages.SOCKET_CONNECT_ERROR})
+			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECT_ERROR})
 	})
 }
 

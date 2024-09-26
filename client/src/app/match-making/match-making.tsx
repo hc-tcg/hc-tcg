@@ -3,8 +3,9 @@ import ErrorBanner from 'components/error-banner'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {
-	getCode,
+	getGameCode,
 	getInvalidCode,
+	getSpectatorCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -15,7 +16,8 @@ import css from './match-making.module.scss'
 function MatchMaking() {
 	const dispatch = useMessageDispatch()
 	const status = useSelector(getStatus)
-	const code = useSelector(getCode)
+	const gameCode = useSelector(getGameCode)
+	const spectatorCode = useSelector(getSpectatorCode)
 	const invalidCode = useSelector(getInvalidCode)
 
 	const handleCancel = () => {
@@ -29,8 +31,8 @@ function MatchMaking() {
 	}
 
 	const handleCodeClick = () => {
-		if (!code) return
-		navigator.clipboard.writeText(code)
+		if (!gameCode) return
+		navigator.clipboard.writeText(gameCode)
 	}
 
 	const Status = () => {
@@ -54,6 +56,7 @@ function MatchMaking() {
 					</>
 				)
 			case 'waiting_for_player':
+			case 'waiting_for_player_as_spectator':
 				return (
 					<>
 						<Spinner />
@@ -77,7 +80,11 @@ function MatchMaking() {
 					<>
 						<p>Waiting for opponent</p>
 						<div className={css.code} onClick={handleCodeClick}>
-							{code}
+							{gameCode}
+						</div>
+						<p>Spectator Code</p>
+						<div className={css.code} onClick={handleCodeClick}>
+							{spectatorCode}
 						</div>
 						<div className={css.options}>
 							<Button variant="stone" onClick={handleCancel}>
@@ -90,7 +97,7 @@ function MatchMaking() {
 				return (
 					<>
 						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-							<label htmlFor="gameCode">Enter game code:</label>
+							<label htmlFor="gameCode">Enter game or spectator code:</label>
 							<input
 								className={invalidCode ? css.invalidCode : ''}
 								name="gameCode"

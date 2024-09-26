@@ -17,6 +17,8 @@ export type LocalSettings = {
 	panorama: string
 	gameSide: string
 	minecraftName: string
+	deckSortingMethod: 'Alphabetical' | 'First Tag'
+	lastSelectedTag: string | null
 }
 
 export type LocalSetting = {
@@ -40,6 +42,8 @@ const defaultSettings: LocalSettings = {
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
 	minecraftName: '',
+	deckSortingMethod: 'Alphabetical',
+	lastSelectedTag: null,
 }
 
 const getSettings = (): LocalSettings => {

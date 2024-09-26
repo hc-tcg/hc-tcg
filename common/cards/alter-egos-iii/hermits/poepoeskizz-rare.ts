@@ -6,7 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack} from '../../../types/priorities'
-import {executeAttacks} from '../../../utils/attacks'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -87,7 +87,7 @@ const PoePoeSkizzRare: Hermit = {
 						jumpscareAttack.shouldIgnoreCards.push(
 							query.card.entity(component.entity),
 						)
-						executeAttacks(game, [jumpscareAttack])
+						executeExtraAttacks(game, [jumpscareAttack])
 					},
 				})
 			},

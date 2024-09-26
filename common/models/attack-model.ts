@@ -162,7 +162,7 @@ export class AttackModel {
 
 	// Setters / modifier methods
 
-	/** Increases the damage the attack does */
+	/** Increases the base damage the attack does */
 	public addDamage(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damage += amount
@@ -172,12 +172,22 @@ export class AttackModel {
 		return this
 	}
 
-	/** Reduces the damage the attack does */
-	public reduceDamage(source: AttackerEntity, amount: number) {
+	/** Reduces the base damage of the attack (before multiplication) */
+	public removeDamage(source: AttackerEntity, amount: number) {
+		if (this.damageLocked) return this
+		this.damage -= amount
+
+		this.addHistory(source, 'remove_damage', amount)
+
+		return this
+	}
+
+	/** Reduces the total damage the attack does */
+	public addDamageReduction(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.addHistory(source, 'reduce_damage', amount)
+		this.addHistory(source, 'add_damage_reduction', amount)
 
 		return this
 	}

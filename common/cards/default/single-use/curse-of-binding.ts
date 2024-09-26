@@ -19,6 +19,7 @@ const CurseOfBinding: SingleUse = {
 	showConfirmationModal: true,
 	description:
 		'Your opponent can not make their active Hermit go AFK on their next turn.',
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

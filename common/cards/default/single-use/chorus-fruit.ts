@@ -50,7 +50,7 @@ const ChorusFruit: SingleUse = {
 
 		observer.subscribeWithPriority(
 			player.hooks.afterAttack,
-			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
 

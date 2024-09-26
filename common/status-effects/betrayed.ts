@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {beforeAttack} from '../types/priorities'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -98,7 +98,10 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			player.hooks.getAttackRequests,
 			(_activeInstance, _hermitAttackType) => {
 				// Only pick if there is afk to pick
-				if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					pickedAfkHermit = null
+					return
+				}
 
 				game.addPickRequest({
 					player: player.entity,
@@ -109,7 +112,6 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 						pickedAfkHermit = pickedSlot
 					},
 					onTimeout() {
-						observer.unsubscribe(player.hooks.getAttackRequests)
 						const firstAfk = game.components.find(SlotComponent, pickCondition)
 						if (!firstAfk) return
 						pickedAfkHermit = firstAfk
@@ -139,9 +141,13 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 

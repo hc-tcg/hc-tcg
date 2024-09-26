@@ -30,6 +30,7 @@ const PotionOfWeakness: SingleUse = {
 		singleUse.attachCondition,
 		query.slot.opponentHasActiveHermit,
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

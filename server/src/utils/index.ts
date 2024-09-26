@@ -4,11 +4,14 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
+import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
-	const players = game.getPlayers()
-	return players.filter((p) => p.id !== playerId)[0]?.id
+	const players = game.components
+		.filter(ViewerComponent, (_game, viewer) => !viewer.spectator)
+		.map((viewer) => viewer.player)
+	return players.filter((p) => p.id !== playerId)[0]?.id || null
 }
 
 export function printHooksState(game: GameModel) {
@@ -161,6 +164,7 @@ export function printBoardState(game: GameModel) {
 
 		if (card) {
 			let name = card.props.name
+			if (card.turnedOver) name = '?' + name
 
 			if (
 				slot.inRow() &&
@@ -173,6 +177,7 @@ export function printBoardState(game: GameModel) {
 			buffer.push(name.slice(0, 10).padEnd(11))
 			if (slot.type === 'hermit' && slot.inRow() && slot.row.health) {
 				buffer.push(slot.row.health)
+				if (card.turnedOver) buffer.push('?')
 
 				buffer.push(
 					...game.components
@@ -180,7 +185,7 @@ export function printBoardState(game: GameModel) {
 							StatusEffectComponent,
 							query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
 						)
-						.map((e) => e.props.name)
+						.map((e) => e.props.name + ' ' + e.counter)
 						.join(', '),
 				)
 			}
@@ -214,7 +219,6 @@ export function printBoardState(game: GameModel) {
 					SlotComponent,
 					query.slot.player(playerEntity),
 					query.slot.attach,
-
 					query.slot.row(query.row.index(i)),
 				)
 				.forEach(printSlot)

@@ -9,6 +9,7 @@ import type {
 	CoinFlipResult,
 	CurrentCoinFlip,
 	TurnActions,
+	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {
@@ -16,6 +17,7 @@ import {
 	afterDefence,
 	beforeAttack,
 	beforeDefence,
+	onTurnEnd,
 } from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
@@ -119,7 +121,10 @@ export class PlayerComponent {
 		 */
 		onTurnStart: GameHook<() => void>
 		/** Hook called at the end of the turn */
-		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
+		onTurnEnd: PriorityHook<
+			(drawCards: Array<CardComponent | null>) => void,
+			typeof onTurnEnd
+		>
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
@@ -175,12 +180,12 @@ export class PlayerComponent {
 			afterApply: new GameHook(),
 			getAttackRequests: new GameHook(),
 			getAttack: new GameHook(),
-			beforeAttack: new PriorityHook(),
-			beforeDefence: new PriorityHook(),
-			afterAttack: new PriorityHook(),
-			afterDefence: new PriorityHook(),
+			beforeAttack: new PriorityHook(beforeAttack),
+			beforeDefence: new PriorityHook(beforeDefence),
+			afterAttack: new PriorityHook(afterAttack),
+			afterDefence: new PriorityHook(afterDefence),
 			onTurnStart: new GameHook(),
-			onTurnEnd: new GameHook(),
+			onTurnEnd: new PriorityHook(onTurnEnd),
 			onCoinFlip: new GameHook(),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
@@ -292,13 +297,14 @@ export class PlayerComponent {
 		if (newRow !== null) {
 			const newHermit = this.game.components.findEntity(
 				CardComponent,
-				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(newRow.entity)),
+				query.card.slot(query.slot.rowIs(newRow.entity), query.slot.hermit),
 			)
 			const oldHermit = this.game.components.findEntity(
 				CardComponent,
-				query.card.isHermit,
-				query.card.slot(query.slot.rowIs(currentActiveRow?.entity)),
+				query.card.slot(
+					query.slot.rowIs(currentActiveRow?.entity),
+					query.slot.hermit,
+				),
 			)
 			this.game.battleLog.addChangeRowEntry(
 				this,
@@ -346,5 +352,26 @@ export class PlayerComponent {
 						Array<SlotEntity>,
 					],
 			)
+	}
+
+	private lastHermitAttack: null | UsedHermitAttackInfo = null
+
+	/** Get details about the last hermit attack this player used. */
+	public get lastHermitAttackInfo() {
+		return this.lastHermitAttack
+	}
+
+	public updateLastUsedHermitAttack(attackType: HermitAttackType) {
+		if (attackType === 'single-use') return
+		const activeHermit = this.getActiveHermit()
+		assert(
+			activeHermit,
+			`${this.playerName} tried to attack without an active hermit`,
+		)
+		this.lastHermitAttack = {
+			attackType,
+			attacker: activeHermit,
+			turn: this.game.state.turn.turnNumber,
+		}
 	}
 }

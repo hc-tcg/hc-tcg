@@ -134,6 +134,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
+	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -148,6 +149,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
+	isSpectator: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 
@@ -199,6 +201,12 @@ export type GameLog = {
 	startHand2: Array<CardComponent>
 	startTimestamp: number
 	startDeck: string
+}
+
+export type UsedHermitAttackInfo = {
+	readonly attackType: 'primary' | 'secondary'
+	readonly attacker: CardComponent
+	readonly turn: number
 }
 
 export abstract class DefaultDictionary<Keys, Type> {

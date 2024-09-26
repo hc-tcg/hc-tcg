@@ -8,6 +8,7 @@ import {
 } from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
 import {
 	all,
 	call,
@@ -35,6 +36,7 @@ import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
+import spectatorSaga from './tasks/spectators'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* sendMsg({
@@ -124,8 +126,11 @@ function* gameStateSaga(
 
 function* gameStateReceiver() {
 	// constantly forward GAME_STATE messages from the server to the store
+	const socket = yield* select(getSocket)
 	while (true) {
-		const {localGameState} = yield* call(receiveMsg(serverMessages.GAME_STATE))
+		const {localGameState} = yield* call(
+			receiveMsg(socket, serverMessages.GAME_STATE),
+		)
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 			localGameState: localGameState,
@@ -155,8 +160,11 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 }
 
 function* opponentConnectionSaga() {
+	const socket = yield* select(getSocket)
 	while (true) {
-		const action = yield* call(receiveMsg(serverMessages.OPPONENT_CONNECTION))
+		const action = yield* call(
+			receiveMsg(socket, serverMessages.OPPONENT_CONNECTION),
+		)
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_OPPONENT_CONNECTION_SET,
 			connected: action.isConnected,
@@ -165,8 +173,9 @@ function* opponentConnectionSaga() {
 }
 
 function* gameSaga(initialGameState?: LocalGameState) {
+	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
-		all([fork(opponentConnectionSaga), fork(chatSaga)]),
+		all([fork(opponentConnectionSaga), fork(chatSaga), fork(spectatorSaga)]),
 	)
 
 	try {
@@ -176,8 +185,9 @@ function* gameSaga(initialGameState?: LocalGameState) {
 
 		const result = yield* race({
 			game: call(gameActionsSaga, initialGameState),
-			gameEnd: call(receiveMsg(serverMessages.GAME_END)),
-			gameCrash: call(receiveMsg(serverMessages.GAME_CRASH)),
+			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
+			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
+			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {

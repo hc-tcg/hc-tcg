@@ -7,6 +7,7 @@ import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -112,6 +113,7 @@ function shouldIgnoreCard(
 	return false
 }
 
+/** Executes a complete attack cycle (without creating attack logs) */
 export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	const allAttacks: Array<AttackModel> = []
 
@@ -140,6 +142,7 @@ export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	runAfterDefenceHooks(game, allAttacks)
 }
 
+/** Executes a complete attack cycle and automatically sends attack logs */
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
@@ -238,19 +241,33 @@ export function setupMockCard(
 	mocking: CardComponent<Hermit>,
 	attackType: 'primary' | 'secondary',
 ): MockedAttack {
-	let observer = game.components.new(ObserverComponent, component.entity)
+	const observer = game.components.new(ObserverComponent, component.entity)
+	const player = component.player
 
 	mocking.props.onAttach(game, component, observer)
 
-	component.player.hooks.getAttackRequests.callSome(
+	player.hooks.getAttackRequests.callSome(
 		[component, attackType],
 		(observerEntity) => observerEntity === observer.entity,
 	)
+	observer.unsubscribe(player.hooks.getAttackRequests)
 
-	observer.subscribe(component.player.hooks.onTurnEnd, () => {
+	const destroyMockCard = () => {
 		mocking.props.onDetach(game, component, observer)
 		observer.unsubscribeFromEverything()
-	})
+	}
+	observer.subscribeBefore(player.hooks.getAttackRequests, destroyMockCard)
+
+	observer.subscribeWithPriority(
+		player.hooks.onTurnEnd,
+		onTurnEnd.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
+	observer.subscribeWithPriority(
+		player.hooks.afterAttack,
+		afterAttack.DESTROY_MOCK_CARD,
+		destroyMockCard,
+	)
 
 	return {
 		hermitName: mocking.props.name,

@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeDefence, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import DiamondArmor from '../../default/effects/diamond-armor'
@@ -70,9 +70,13 @@ const ThornsII: Attach = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			hasTriggered = false
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				hasTriggered = false
+			},
+		)
 	},
 }
 
