@@ -1,5 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
+import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
+import ChainmailArmor from 'common/cards/alter-egos/effects/chainmail-armor'
+import Ladder from 'common/cards/alter-egos/single-use/ladder'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import RendogRare from 'common/cards/default/hermits/rendog-rare'
 import TinFoilChefUltraRare from 'common/cards/default/hermits/tinfoilchef-ultra-rare'
+import Chest from 'common/cards/default/single-use/chest'
+import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {
 	attack,
@@ -10,13 +17,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../utils'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import ChainmailArmor from 'common/cards/alter-egos/effects/chainmail-armor'
-import {CardComponent} from 'common/components'
-import Ladder from 'common/cards/alter-egos/single-use/ladder'
-import Chest from 'common/cards/default/single-use/chest'
-import RendogRare from 'common/cards/default/hermits/rendog-rare'
-import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
 
 describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	test('Can not discard two attach effects from the same hermit', () => {
@@ -261,7 +261,54 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can not discard when used by/facing Role Play', () => {
+	test('Different TFC can discard from the same hermit', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
+				playerTwoDeck: [TinFoilChefUltraRare, TinFoilChefUltraRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
+					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 1)
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.slot(query.slot.discardPile),
+						)?.props,
+					).toBe(ChainmailArmor)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.active,
+							query.card.slot(query.slot.attach),
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Can not discard twice when used by/facing Role Play', () => {
 		testGame(
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],
