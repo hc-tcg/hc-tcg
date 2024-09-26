@@ -148,10 +148,20 @@ function* joinPrivateGameSaga() {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
 					})
-					let result = yield* call(
-						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-					)
-					yield* call(gameSaga, result.localGameState)
+					let result = yield* race({
+						matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
+						spectatePrivateGame: call(
+							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+						),
+					})
+					if (result.spectatePrivateGame) {
+						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
+					}
+					if (result.matchmakingLeave) {
+						yield* sendMsg({
+							type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
+						})
+					}
 				} else if (result.invalidCode) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CODE_INVALID,

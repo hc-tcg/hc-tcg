@@ -459,6 +459,25 @@ export function* cancelPrivateGame(
 	}
 }
 
+export function* spectatePrivateGameQueueLeave(
+	msg: RecievedClientMessage<
+		typeof clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE
+	>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	for (let code in root.privateQueue) {
+		const info = root.privateQueue[code]
+		if (info.spectatorsWaiting.includes(player.id)) {
+			info.spectatorsWaiting = info.spectatorsWaiting.filter(
+				(x) => x !== player.id,
+			)
+		}
+	}
+	console.log('player was removed')
+}
+
 function onPlayerLeft(player: PlayerModel) {
 	// Remove player from all queues
 
@@ -477,6 +496,11 @@ function onPlayerLeft(player: PlayerModel) {
 		if (info.playerId && info.playerId === player.id) {
 			delete root.privateQueue[code]
 			console.log(`Private game cancelled. Code: ${code}`)
+		}
+		if (info.spectatorsWaiting.includes(player.id)) {
+			info.spectatorsWaiting = info.spectatorsWaiting.filter(
+				(x) => x !== player.id,
+			)
 		}
 	}
 }
