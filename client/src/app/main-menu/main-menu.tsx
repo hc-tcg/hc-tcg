@@ -8,10 +8,12 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import debugOptions from 'debug'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
@@ -37,10 +39,12 @@ function MainMenu({setMenuSection}: Props) {
 			{!latestUpdateView ||
 			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
 				parseInt(latestUpdateView) ? (
-				<UpdatesModal
-					updatesOpen={updatesOpen}
-					setUpdatesOpen={setUpdatesOpen}
-				/>
+				debugOptions.showUpdateModal && (
+					<UpdatesModal
+						updatesOpen={updatesOpen}
+						setUpdatesOpen={setUpdatesOpen}
+					/>
+				)
 			) : (
 				<></>
 			)}
