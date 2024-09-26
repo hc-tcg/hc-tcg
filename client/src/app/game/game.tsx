@@ -7,6 +7,7 @@ import {
 	getAvailableActions,
 	getEndGameOverlay,
 	getGameState,
+	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
 	getPlayerState,
@@ -49,6 +50,7 @@ function Game() {
 	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
+	const isSpectator = useSelector(getIsSpectator)
 	const [filter, setFilter] = useState<string>('')
 
 	if (!gameState || !playerState) return <p>Loading</p>
@@ -274,17 +276,19 @@ function Game() {
 
 			<div className={css.bottom}>
 				<Toolbar />
-				<div className={css.hand} ref={handRef}>
-					{Filter()}
-					<CardList
-						wrap={false}
-						displayTokenCost={false}
-						cards={filteredCards}
-						onClick={(card: LocalCardInstance) => selectCard(card)}
-						selected={[selectedCard]}
-						unpickable={unpickableCards}
-					/>
-				</div>
+				{!isSpectator && (
+					<div className={css.hand} ref={handRef}>
+						{Filter()}
+						<CardList
+							wrap={false}
+							displayTokenCost={false}
+							cards={filteredCards}
+							onClick={(card: LocalCardInstance) => selectCard(card)}
+							selected={[selectedCard]}
+							unpickable={unpickableCards}
+						/>
+					</div>
+				)}
 			</div>
 
 			{renderModal(openedModal, handleOpenModal)}

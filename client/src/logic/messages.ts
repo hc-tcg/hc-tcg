@@ -51,6 +51,7 @@ export const localMessages = messages({
 	MATCHMAKING_CODE_SET: null,
 	MATCHMAKING_CODE_INVALID: null,
 	MATCHMAKING_WAITING_FOR_PLAYER: null,
+	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
 	GAME_LOCAL_STATE_SET: null,
 	GAME_START: null,
@@ -72,6 +73,7 @@ export const localMessages = messages({
 	GAME_ACTIONS_ATTACK: null,
 	GAME_ACTIONS_END_TURN: null,
 	GAME_UPDATE: null,
+	GAME_SPECTATOR_LEAVE: null,
 	FIREBASE_AUTHED: null,
 	FIREBASE_STATS_RESET: null,
 	FIREBASE_STATS: null,
@@ -116,7 +118,11 @@ type Messages = [
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_CREATE},
 	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_JOIN},
-	{type: typeof localMessages.MATCHMAKING_CODE_RECIEVED; code: string},
+	{
+		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
+		gameCode: string
+		spectatorCode: string
+	},
 	{type: typeof localMessages.MATCHMAKING_LEAVE},
 	{type: typeof localMessages.MATCHMAKING_CLEAR},
 	{
@@ -125,6 +131,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
+	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState
@@ -189,6 +196,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
 	{type: typeof localMessages.GAME_UPDATE},
+	{type: typeof localMessages.GAME_SPECTATOR_LEAVE},
 	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
 	{type: typeof localMessages.FIREBASE_STATS_RESET},
 	{

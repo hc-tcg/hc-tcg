@@ -43,8 +43,7 @@ export function* chatMessage(
 				isSpectator ? 'spectator' : 'player',
 				PlaintextNode(`${game.players[playerId].name}`),
 			),
-			PlaintextNode(' '),
-			formatText(message, {
+			formatText(` ${message}`, {
 				censor: true,
 				'enable-$': false,
 			}),
