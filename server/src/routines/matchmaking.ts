@@ -298,15 +298,7 @@ export function* createPrivateGame(
 	}
 
 	// Add to private queue with code
-	const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
-	const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
-	root.privateQueue[gameCode] = {
-		createdTime: Date.now(),
-		playerId,
-		gameCode,
-		spectatorCode,
-		spectatorsWaiting: [],
-	}
+	let {gameCode, spectatorCode} = root.createPrivateGame(playerId)
 
 	// Send code to player
 	broadcast([player], {

@@ -1,7 +1,9 @@
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getCardsInDeck} from './cards'
+import {createApiGame, cancelApiGame} from './games'
 import {requestUrlRoot} from './utils'
+import {CancelGameBody} from './schema'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
@@ -14,6 +16,15 @@ export function addApi(app: Express) {
 
 	app.post('/api/deck/cost', (req, res) => {
 		res.send(deckCost(req.body))
+	})
+
+	app.get('/api/games/create', (_req, res) => {
+		res.send(createApiGame())
+	})
+
+	app.delete('/api/games/cancel', (req, res) => {
+		let body = CancelGameBody.parse(req.body)
+		res.send(cancelApiGame(body.code))
 	})
 
 	if (process.env.NODE_ENV !== 'production') {
