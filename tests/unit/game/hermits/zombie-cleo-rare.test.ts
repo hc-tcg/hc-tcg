@@ -2,12 +2,14 @@ import {describe, expect, test} from '@jest/globals'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
+import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import PvPItem from 'common/cards/default/items/pvp-common'
 import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
 import {
+	CardComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
@@ -260,6 +262,50 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 	).toBe(null)
 }
 
+function* testPuppetingTotalAnonymity(game: GameModel) {
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	yield* playCardFromHand(game, WormManRare, 'hermit', 1)
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	yield* finishModalRequest(game, {pick: 'secondary'})
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+	expect(
+		game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.slot(query.slot.rowIndex(2)),
+		)?.turnedOver,
+	).toBe(true)
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* endTurn(game)
+
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* endTurn(game)
+
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	expect(
+		game.components.find(
+			CardComponent,
+			query.card.opponentPlayer,
+			query.card.slot(query.slot.rowIndex(2)),
+		)?.turnedOver,
+	).toBe(false)
+}
+
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
 		testGame(
@@ -311,6 +357,17 @@ describe('Test Zombie Cleo', () => {
 				saga: testPuppetryDiscardingItem,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, PvPItem, HypnotizdRare],
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test using Puppetry on Total Anonymity', () => {
+		testGame(
+			{
+				saga: testPuppetingTotalAnonymity,
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, WormManRare, EthosLabCommon],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
