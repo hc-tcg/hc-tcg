@@ -17,6 +17,13 @@
 	}
 }
 
+@media screen and (max-width: 800px) {
+	.tooltip {
+		margin: 2vh;
+		overflow: hidden;
+	}
+}
+
 .smallTooltip {
 	font-size: 14px;
 }

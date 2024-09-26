@@ -3,7 +3,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeckT} from 'common/types/deck'
+import {PlayerDeckT, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -11,11 +11,19 @@ import Accordion from 'components/accordion'
 import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
+import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
+import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
+import {
+	deleteDeck,
+	getCreatedTags,
+	getSavedDeckNames,
+	keysToTags,
+	saveTag,
+} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -106,6 +114,40 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 	)
 }
 
+const addTag = (
+	tags: Array<Tag>,
+	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
+	color: string,
+	key: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	ev: React.SyntheticEvent<HTMLFormElement>,
+) => {
+	ev.preventDefault()
+	const tag = {name: ev.currentTarget.tag.value.trim(), color: color, key: key}
+	if (tags.includes(tag)) return
+	if (tags.length >= 3) return
+	if (tag.name.length === 0) return
+	setTags([...tags, tag])
+	setColor('ffffff')
+}
+
+const selectTag = (
+	option: string,
+	setColor: React.Dispatch<React.SetStateAction<string>>,
+	setKey: React.Dispatch<React.SetStateAction<string>>,
+	ref: React.RefObject<HTMLInputElement>,
+) => {
+	const tags = getCreatedTags()
+	const selectedTag = tags.find((tag) => {
+		const parsedTag = JSON.parse(option)
+		return tag.name === parsedTag.name && tag.color === parsedTag.color
+	})
+	if (!selectedTag) return
+	setColor(selectedTag.color)
+	setKey(selectedTag.key)
+	if (ref.current) ref.current.value = selectedTag.name
+}
+
 type Props = {
 	back: () => void
 	title: string
@@ -194,6 +236,19 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+	const [color, setColor] = useState('#ff0000')
+	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
+	const [tags, setTags] = useState<Array<Tag>>(
+		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
+	)
+	const tagNameRef = useRef<HTMLInputElement>(null)
+
+	const tagsDropdownOptions = getCreatedTags().map((option) => ({
+		name: option.name,
+		key: JSON.stringify(option),
+		color: option.color,
+		icon: '',
+	}))
 
 	useEffect(() => {
 		window.addEventListener('keydown', handleTooltipKey)
@@ -323,6 +378,14 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			return setShowOverwriteModal(true)
 		}
 
+		// Set up tags
+		newDeck.tags = tags.map((tag) => tag.key)
+
+		// Save tags
+		tags.forEach((tag) => {
+			saveTag(tag)
+		})
+
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck, initialDeckState)
 	}
@@ -441,7 +504,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								disabled={!textQuery && !rankQuery && !typeQuery}
 								onClick={clearFilters}
 							>
-								Clear Filter
+								<span className={css.hideOnMobile}>Clear Filter</span>
+								<span className={css.showOnMobile}>Clear</span>
 							</Button>
 						</>
 					}
@@ -451,6 +515,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'hermit',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -461,6 +526,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'attach',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -471,6 +537,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'single_use',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -481,6 +548,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={filteredCards.filter(
 								(card) => card.props.category === 'item',
 							)}
+							displayTokenCost={true}
 							disableAnimations={true}
 							wrap={true}
 							onClick={addCard}
@@ -489,19 +557,52 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				</DeckLayout.Main>
 				<DeckLayout.Sidebar
 					width="half"
+					showHeader={true}
+					showHeaderOnMobile={true}
 					header={
 						<>
-							<p style={{textAlign: 'center'}}>My Cards</p>
+							<p className={css.hideOnMobile} style={{textAlign: 'center'}}>
+								My Cards
+							</p>
 							<div className={css.dynamicSpace} />
 							<div className={css.deckDetails}>
 								<p className={classNames(css.cardCount, css.dark)}>
 									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
+								<p
+									className={classNames(
+										css.showOnMobile,
+										css.cardCount,
+										css.dark,
+									)}
+								>
+									{
+										loadedDeck.cards.filter(
+											(card) => card.props.category === 'hermit',
+										).length
+									}
+									H:
+									{
+										loadedDeck.cards.filter(
+											(card) =>
+												card.props.category === 'attach' ||
+												card.props.category === 'single_use',
+										).length
+									}
+									E:
+									{
+										loadedDeck.cards.filter(
+											(card) => card.props.category === 'item',
+										).length
+									}
+									I
+								</p>
 								<div
 									className={classNames(css.cardCount, css.dark, css.tokens)}
 								>
-									{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+									{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+									{CONFIG.limits.maxDeckCost}{' '}
 									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>
@@ -529,7 +630,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 						<div className={css.upperEditDeck}>
 							<div className={css.editDeckInfo}>
-								<label htmlFor="deckname">Deck Name and Icon</label>
+								<label htmlFor="deckname">Name and Icon</label>
 								<div className={css.editDeckInfoSettings}>
 									<Dropdown
 										button={
@@ -553,60 +654,149 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											})
 										}
 									/>
+									<div className={css.spacingItem}></div>
+									<Button
+										variant="default"
+										size="small"
+										onClick={clearDeck}
+										className={css.removeButton}
+									>
+										Remove All
+									</Button>
+								</div>
+								<label htmlFor="tags">Tags ({tags.length}/3)</label>
+								<form
+									className={css.deckTagsForm}
+									onSubmit={(e) => {
+										addTag(tags, setTags, color, nextKey, setColor, e)
+										setNextKey(Math.random().toString())
+									}}
+								>
+									<Dropdown
+										button={
+											<button className={css.dropdownButton}>
+												<img src="/images/icons/tag.png" />
+											</button>
+										}
+										label="Saved Tags"
+										options={tagsDropdownOptions}
+										action={(option) =>
+											selectTag(option, setColor, setNextKey, tagNameRef)
+										}
+									/>
+									<ColorPickerDropdown
+										button={
+											<button
+												className={css.dropdownButton}
+												style={{backgroundColor: color}}
+											></button>
+										}
+										action={setColor}
+									/>
+									<div className={css.customInput}>
+										<input
+											maxLength={25}
+											name="tag"
+											placeholder=" "
+											className={css.input}
+											id="tag"
+											ref={tagNameRef}
+										></input>
+									</div>
+									<Button
+										variant="default"
+										size="small"
+										type="submit"
+										className={css.submitButton}
+									>
+										+
+									</Button>
+								</form>
+								<div className={css.tagList}>
+									{tags.map((tag) => {
+										return (
+											<div
+												className={css.fullTag}
+												onClick={() =>
+													setTags(
+														tags.filter(
+															(subtag) =>
+																subtag.name !== tag.name &&
+																subtag.color !== tag.color,
+														),
+													)
+												}
+											>
+												<span
+													className={css.fullTagColor}
+													style={{backgroundColor: tag.color}}
+												></span>
+												{tag.name}
+											</div>
+										)
+									})}
 								</div>
 							</div>
-							<Button
-								variant="default"
-								size="small"
-								onClick={clearDeck}
-								disabled={loadedDeck.cards.length == 0}
-							>
-								Remove All
-							</Button>
 						</div>
 
-						<div style={{zIndex: '-1'}}>
+						<div className={css.hideOnMobile}>
+							<div style={{zIndex: '-1'}}>
+								<Accordion
+									header={cardGroupHeader('Hermits', selectedCards.hermits)}
+								>
+									<CardList
+										cards={sortCards(selectedCards.hermits)}
+										displayTokenCost={true}
+										wrap={true}
+										onClick={removeCard}
+									/>
+								</Accordion>
+							</div>
 							<Accordion
-								header={cardGroupHeader('Hermits', selectedCards.hermits)}
+								header={cardGroupHeader(
+									'Attachable Effects',
+									selectedCards.attachableEffects,
+								)}
 							>
 								<CardList
-									cards={sortCards(selectedCards.hermits)}
+									cards={sortCards(selectedCards.attachableEffects)}
+									displayTokenCost={true}
+									wrap={true}
+									onClick={removeCard}
+								/>
+							</Accordion>
+							<Accordion
+								header={cardGroupHeader(
+									'Single Use Effects',
+									selectedCards.singleUseEffects,
+								)}
+							>
+								<CardList
+									cards={sortCards(selectedCards.singleUseEffects)}
+									displayTokenCost={true}
+									wrap={true}
+									onClick={removeCard}
+								/>
+							</Accordion>
+							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
+								<CardList
+									cards={sortCards(selectedCards.items)}
+									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
 								/>
 							</Accordion>
 						</div>
-						<Accordion
-							header={cardGroupHeader(
-								'Attachable Effects',
-								selectedCards.attachableEffects,
-							)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.attachableEffects)}
-								wrap={true}
+
+						<div className={css.showOnMobile}>
+							Cards
+							<MobileCardList
+								cards={sortCards(loadedDeck.cards)}
 								onClick={removeCard}
+								small={false}
+								onAdditionClick={addCard}
 							/>
-						</Accordion>
-						<Accordion
-							header={cardGroupHeader(
-								'Single Use Effects',
-								selectedCards.singleUseEffects,
-							)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.singleUseEffects)}
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
-						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
+						</div>
 					</div>
 				</DeckLayout.Sidebar>
 			</DeckLayout>

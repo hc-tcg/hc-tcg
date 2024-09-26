@@ -11,7 +11,7 @@ import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {localPutCardInSlot, localRemoveCardFromHand} from '../local-state'
+import {localPutCardInSlot} from '../local-state'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
@@ -45,7 +45,6 @@ function* pickWithSelectedSaga(
 		if (!actionType) return
 
 		yield* localPutCardInSlot(action, selectedCard)
-		yield* localRemoveCardFromHand(selectedCard)
 
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_TURN_ACTION,
@@ -54,6 +53,11 @@ function* pickWithSelectedSaga(
 				slot: pickInfo.slotEntity,
 				card: selectedCard,
 			},
+		})
+
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_CARD_SELECTED_SET,
+			card: null,
 		})
 	}
 }
