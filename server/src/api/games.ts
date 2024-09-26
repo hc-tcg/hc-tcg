@@ -2,6 +2,17 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 
+function cancelGame(game: {playerId: string | null; gameCode: string}) {
+	if (game.playerId) {
+		const player = root.players[game.playerId]
+		if (player) {
+			broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
+		}
+	}
+
+	if (game.gameCode) delete root.privateQueue[game.gameCode]
+}
+
 /** Create a hc-tcg game through the HC-TCG API.
  * API games automatically time out after 5 minutes if it is not started.
  */
@@ -11,9 +22,8 @@ export function createApiGame() {
 	let {gameCode, spectatorCode, apiSecret} = root.createPrivateGame(null)
 
 	setTimeout(() => {
-		if (gameCode in root.privateQueue) {
-			delete root.privateQueue[gameCode]
-		}
+		let game = root.privateQueue[gameCode]
+		if (game) cancelGame(game)
 	}, API_GAME_TIMEOUT)
 
 	return {
@@ -35,14 +45,7 @@ export function cancelApiGame(code: string) {
 		}
 	}
 
-	if (game.playerId) {
-		const player = root.players[game.playerId]
-		if (player) {
-			broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
-		}
-	}
-
-	if (game.gameCode) delete root.privateQueue[game.gameCode]
+	cancelGame(game)
 
 	return {success: null}
 }

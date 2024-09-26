@@ -12,7 +12,7 @@ export class RootModel {
 		{
 			createdTime: number
 			playerId: string | null
-			gameCode: string | undefined
+			gameCode: string
 			spectatorCode: string | undefined
 			spectatorsWaiting: Array<string>
 			/** Code used by API consumers to cancel a game. */
@@ -31,7 +31,7 @@ export class RootModel {
 	public createPrivateGame(playerId: string | null) {
 		const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
 		const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
-		const apiSecret = (Math.random() + 1).toString(16)
+		const apiSecret = (Math.random() + 1).toString(16).substring(2)
 		this.privateQueue[gameCode] = {
 			createdTime: Date.now(),
 			playerId,
