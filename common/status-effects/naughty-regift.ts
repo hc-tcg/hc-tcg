@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterAttack} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const NaughtyRegiftEffect: StatusEffect<PlayerComponent> = {
@@ -46,9 +46,13 @@ const NaughtyRegiftEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 

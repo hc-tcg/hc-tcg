@@ -52,7 +52,7 @@ const Trapdoor: Attach = {
 						40 - totalReduction,
 					)
 					totalReduction += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 
 					const newAttack = game
 						.newAttack({

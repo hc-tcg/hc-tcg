@@ -8,7 +8,7 @@ import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -103,9 +103,13 @@ const Biffa2001Rare: Hermit = {
 				if (museumEffect) museumEffect.counter = record[player.entity]! // see comment above
 			})
 
-			newObserver.subscribe(player.hooks.onTurnEnd, () => {
-				museumEffect?.remove()
-			})
+			newObserver.subscribeWithPriority(
+				player.hooks.onTurnEnd,
+				onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+				() => {
+					museumEffect?.remove()
+				},
+			)
 		})
 	},
 	onAttach(
@@ -117,7 +121,7 @@ const Biffa2001Rare: Hermit = {
 
 		observer.subscribeWithPriority(
 			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
@@ -142,10 +146,14 @@ const Biffa2001Rare: Hermit = {
 					executeExtraAttacks(game, [additionalAttack])
 				})
 
-				observer.subscribe(player.hooks.onTurnEnd, () => {
-					observer.unsubscribe(player.hooks.onApply)
-					observer.unsubscribe(player.hooks.onTurnEnd)
-				})
+				observer.subscribeWithPriority(
+					player.hooks.onTurnEnd,
+					onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+					() => {
+						observer.unsubscribe(player.hooks.onApply)
+						observer.unsubscribe(player.hooks.onTurnEnd)
+					},
+				)
 
 				attack.addDamage(component.entity, 20 * counter)
 			},

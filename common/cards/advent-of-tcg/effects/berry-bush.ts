@@ -5,7 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 
@@ -52,10 +52,14 @@ const BerryBush: Attach & HasHealth = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (component.slot.inRow() && component.slot.row.health)
-				component.slot.row.damage(10)
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (component.slot.inRow() && component.slot.row.health)
+					component.slot.row.damage(10)
+			},
+		)
 		observer.subscribe(player.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(

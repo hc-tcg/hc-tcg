@@ -4,7 +4,7 @@ import {Item} from '../../base/types'
 const WildDoubleItem: Item = {
 	...item,
 	id: 'item_any_rare',
-	numericId: 227,
+	numericId: 241,
 	name: 'Wild Item x2',
 	description: 'Counts as 2 Wild Item cards.',
 	shortName: 'Wild',

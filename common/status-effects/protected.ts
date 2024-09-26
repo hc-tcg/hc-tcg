@@ -5,7 +5,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {afterDefence, beforeDefence} from '../types/priorities'
+import {afterDefence, beforeDefence, onTurnEnd} from '../types/priorities'
 import {StatusEffect, statusEffect} from './status-effect'
 
 const ProtectedEffect: StatusEffect<CardComponent> = {
@@ -43,14 +43,18 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 
 		let becameActive = false
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (
-				target.slot.inRow() &&
-				player.activeRowEntity === target.slot.rowEntity
-			) {
-				becameActive = true
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (
+					target.slot.inRow() &&
+					player.activeRowEntity === target.slot.rowEntity
+				) {
+					becameActive = true
+				}
+			},
+		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (becameActive) {
