@@ -35,7 +35,8 @@ function* createPrivateGameSaga() {
 			if (createGameResponse.success) {
 				yield* put<LocalMessage>({
 					type: localMessages.MATCHMAKING_CODE_RECIEVED,
-					code: createGameResponse.success.code,
+					gameCode: createGameResponse.success.gameCode,
+					spectatorCode: createGameResponse.success.spectatorCode,
 				})
 			} else {
 				// Something went wrong, go back to menu
@@ -67,7 +68,7 @@ function* createPrivateGameSaga() {
 	}
 
 	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
+		cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
 	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
@@ -99,6 +100,12 @@ function* joinPrivateGameSaga() {
 					invalidCode: call(receiveMsg(socket, serverMessages.INVALID_CODE)),
 					waitingForPlayer: call(
 						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
+					),
+					specateWaitSuccess: call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_WAITING),
+					),
+					specateSuccess: call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
 					),
 					timeout: call(
 						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
@@ -135,13 +142,32 @@ function* joinPrivateGameSaga() {
 					if (queueResponse.gameStart) {
 						yield* call(gameSaga)
 					}
+				} else if (result.specateSuccess) {
+					yield* call(gameSaga, result.specateSuccess.localGameState)
+				} else if (result.specateWaitSuccess) {
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
+					})
+					let result = yield* race({
+						matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
+						spectatePrivateGame: call(
+							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+						),
+					})
+					if (result.spectatePrivateGame) {
+						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
+					}
+					if (result.matchmakingLeave) {
+						yield* sendMsg({
+							type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
+						})
+					}
 				} else if (result.invalidCode) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CODE_INVALID,
 					})
 				}
 
-				// For anything but invalid code, we exit loop
 				break
 			}
 		} catch (err) {
