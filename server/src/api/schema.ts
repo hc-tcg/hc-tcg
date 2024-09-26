@@ -11,4 +11,3 @@ export const ListOfCards = z.array(CardId)
 export const CancelGameBody = z.object({
 	code: z.string(),
 })
-
