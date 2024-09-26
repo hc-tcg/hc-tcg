@@ -16,7 +16,7 @@ export function addApi(app: Express) {
 		res.send(deckCost(req.body))
 	})
 
-	if (process.env.NODE_ENV !== 'production') {
+	if (__DEBUG_BUILD__) {
 		app.get('/debug/root-state/queue', (_req, res) => {
 			res.send(root.queue)
 		})
