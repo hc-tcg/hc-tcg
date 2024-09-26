@@ -187,7 +187,7 @@ describe('Test Rare Worm Man', () => {
 					).toBe(true)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ThornsIII, 'attach', 0)
+					yield* playCardFromHand(game, ThornsIII, 'attach', 1)
 					expect(
 						game.components.find(
 							CardComponent,

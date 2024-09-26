@@ -122,15 +122,17 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.slot.type === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return card.turnedOver
+				? `??? (${row.index + 1})`
+				: `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return card.turnedOver ? '???' : `${card.props.name}`
 	}
 
 	public addPlayCardEntry(
