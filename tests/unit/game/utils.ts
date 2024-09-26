@@ -1,6 +1,7 @@
 import {Card} from 'common/cards/base/types'
 import {PlayerComponent, SlotComponent} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalModalResult} from 'common/types/server-requests'
@@ -56,6 +57,7 @@ export function playCardFromHand(
 	card: Card,
 	slotType: 'hermit' | 'attach',
 	row: number,
+	player?: PlayerEntity,
 ): any
 export function playCardFromHand(
 	game: GameModel,
@@ -63,19 +65,27 @@ export function playCardFromHand(
 	slotType: 'item',
 	row: number,
 	index: number,
+	player?: PlayerEntity,
 ): any
 export function* playCardFromHand(
 	game: GameModel,
 	card: Card,
 	slotType: SlotTypeT,
 	row?: number,
-	index?: number,
+	indexOrPlayer?: number | PlayerEntity,
+	itemSlotPlayer?: PlayerEntity,
 ) {
 	let cardComponent = findCardInHand(game.currentPlayer, card)
+	const player =
+		itemSlotPlayer ||
+		(typeof indexOrPlayer === 'string'
+			? indexOrPlayer
+			: game.currentPlayerEntity)
+	const index = typeof indexOrPlayer === 'number' ? indexOrPlayer : undefined
 
 	const slot = game.components.find(
 		SlotComponent,
-		query.slot.currentPlayer,
+		query.slot.player(player),
 		(_game, slot) =>
 			(!slot.inRow() && index === undefined) ||
 			(slot.inRow() && slot.row.index === row),

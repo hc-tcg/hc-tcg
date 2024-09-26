@@ -49,6 +49,7 @@ const PoePoeSkizzRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				if (!component.slot.inRow()) return
+				if (query.slot.frozen(game, component.slot)) return
 
 				game.addPickRequest({
 					player: player.entity,

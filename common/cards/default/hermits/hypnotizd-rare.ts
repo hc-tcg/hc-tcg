@@ -73,6 +73,7 @@ const HypnotizdRare: Hermit = {
 					query.slot.active,
 					query.slot.item,
 					query.not(query.slot.empty),
+					query.not(query.slot.frozen),
 				)
 
 				// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request

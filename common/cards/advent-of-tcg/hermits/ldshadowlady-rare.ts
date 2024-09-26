@@ -55,6 +55,7 @@ const LDShadowLadyRare: Hermit = {
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.active,
+						query.not(query.slot.frozen),
 					)
 				)
 					return

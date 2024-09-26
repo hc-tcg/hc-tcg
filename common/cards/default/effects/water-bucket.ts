@@ -72,7 +72,10 @@ const WaterBucket: Attach & SingleUse = {
 					game.components
 						.filter(
 							CardComponent,
-							query.card.slot(query.slot.rowIs(pickedSlot.row.entity)),
+							query.card.slot(
+								query.slot.rowIs(pickedSlot.row.entity),
+								query.not(query.slot.frozen),
+							),
 							query.card.is(String),
 						)
 						.forEach((card) => card.discard())
