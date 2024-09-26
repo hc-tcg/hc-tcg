@@ -95,6 +95,15 @@ export class Databse {
 				deck_code varchar(7) REFERENCES decks(deck_code),
 				tag_id varchar(7) REFERENCES user_tags(tag_id)
 			);
+			CREATE TABLE IF NOT EXISTS titles(
+				title_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
+				name varchar(255) NOT NULL,
+				icon varchar(255) NOT NULL
+			);
+			CREATE TABLE IF NOT EXISTS user_titles(
+				user_id uuid REFERENCES users(user_id),
+				title_id REFERENCES titles(user_id)
+			);
 				`,
 		)
 
