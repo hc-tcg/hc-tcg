@@ -434,6 +434,16 @@ export function getLocalGameState(
 
 	let currentPickableSlots = playerState.pickableSlots
 
+	let timer = {
+		turnStartTime: game.state.timer.turnStartTime,
+		opponentActionStartTime: game.state.timer.opponentActionStartTime,
+		turnRemaining:
+			game.state.timer.turnStartTime +
+			999 +
+			game.settings.maxTurnTime * 1000 -
+			Date.now(),
+	}
+
 	const localGameState: LocalGameState = {
 		isSpectator: viewer.spectator,
 		turn: {
@@ -497,8 +507,7 @@ export function getLocalGameState(
 		currentModalData,
 
 		players,
-
-		timer: game.state.timer,
+		timer,
 	}
 
 	return localGameState

@@ -41,7 +41,7 @@ const matchmakingReducer = (
 				...state,
 				status: 'waiting_for_player',
 			}
-		case localMessages.MATCHMAKING_WAITING_FOR_GAME_AS_SPECTATOR:
+		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR:
 			return {
 				...state,
 				status: 'waiting_for_player_as_spectator',
