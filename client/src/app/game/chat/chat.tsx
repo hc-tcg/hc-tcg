@@ -7,7 +7,6 @@ import {
 	getGameState,
 	getIsSpectator,
 	getOpponentName,
-	getPlayerEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -26,7 +25,6 @@ function Chat() {
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
-	const playerEntity = useSelector(getPlayerEntity)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
