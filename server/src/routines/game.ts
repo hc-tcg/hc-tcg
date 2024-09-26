@@ -208,16 +208,16 @@ function getAvailableActions(
 				if (pickableSlots.length === 0) return reducer
 
 				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
-					return [...reducer, 'PLAY_HERMIT_CARD']
+					reducer.push('PLAY_HERMIT_CARD')
 				}
 				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
-					return [...reducer, 'PLAY_EFFECT_CARD']
+					reducer.push('PLAY_EFFECT_CARD')
 				}
 				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
-					return [...reducer, 'PLAY_ITEM_CARD']
+					reducer.push('PLAY_ITEM_CARD')
 				}
 				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
-					return [...reducer, 'PLAY_SINGLE_USE_CARD']
+					reducer.push('PLAY_SINGLE_USE_CARD')
 				}
 				return reducer
 			}, [] as TurnActions)
