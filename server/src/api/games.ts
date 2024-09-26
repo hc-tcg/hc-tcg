@@ -6,7 +6,7 @@ function cancelGame(game: {playerId: string | null; gameCode: string}) {
 	if (game.playerId) {
 		const player = root.players[game.playerId]
 		if (player) {
-			broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
+			broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
 		}
 	}
 
