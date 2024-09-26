@@ -19,3 +19,41 @@ test('is still connected after reload', async ({page}) => {
 		'Test Player',
 	)
 })
+
+test('player does not stay in queue after reloading the page', async ({
+	page,
+}) => {
+	await page.goto('/')
+
+	await page.getByPlaceholder(' ').fill('Test Player')
+	await page.getByPlaceholder(' ').press('Enter')
+
+	await page.waitForFunction(() => {
+		console.log(global.getState().session.connected)
+		return global.getState().session.connected
+	})
+
+	let playerId = await page.evaluate(() => global.getState().session.playerId)
+	// Close the update notification if it exists
+	await page.getByText('Close').click()
+	await page.getByText('Public Game').click()
+
+	let queue = await (
+		await fetch('http://localhost:9000/debug/root-state/queue')
+	).json()
+
+	expect(queue).toContain(playerId)
+
+	await page.reload()
+	await page.waitForFunction(() => global.getState().session.connected)
+
+	// We should be automatically removed from the queue.
+	queue = await (
+		await fetch('http://localhost:9000/debug/root-state/queue')
+	).json()
+	expect(queue).not.toContain(playerId)
+	expect(queue).not.toContain(playerId)
+	expect(await page.evaluate(() => global.getState().matchmaking.status)).toBe(
+		null,
+	)
+})

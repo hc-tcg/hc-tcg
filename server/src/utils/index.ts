@@ -170,6 +170,7 @@ export function printBoardState(game: GameModel) {
 
 		if (card) {
 			let name = card.props.name
+			if (card.turnedOver) name = '?' + name
 
 			if (
 				slot.inRow() &&
@@ -182,6 +183,7 @@ export function printBoardState(game: GameModel) {
 			buffer.push(name.slice(0, 10).padEnd(11))
 			if (slot.type === 'hermit' && slot.inRow() && slot.row.health) {
 				buffer.push(slot.row.health)
+				if (card.turnedOver) buffer.push('?')
 
 				buffer.push(
 					...game.components

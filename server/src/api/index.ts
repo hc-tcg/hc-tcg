@@ -1,4 +1,5 @@
 import {Express} from 'express'
+import root from 'serverRoot'
 import {cards, deckCost, getCardsInDeck} from './cards'
 import {requestUrlRoot} from './utils'
 
@@ -14,4 +15,10 @@ export function addApi(app: Express) {
 	app.post('/api/deck/cost', (req, res) => {
 		res.send(deckCost(req.body))
 	})
+
+	if (process.env.NODE_ENV !== 'production') {
+		app.get('/debug/root-state/queue', (_req, res) => {
+			res.send(root.queue)
+		})
+	}
 }
