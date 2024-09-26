@@ -14,6 +14,7 @@ export class RootModel {
 			playerId: string | null
 			gameCode: string | undefined
 			spectatorCode: string | undefined
+			spectatorsWaiting: Array<string>
 		}
 	> = {}
 	public hooks = {

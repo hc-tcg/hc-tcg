@@ -343,7 +343,7 @@ export function* joinPrivateGame(
 		return
 	}
 
-	// Check if spectator game first
+	// Check if spectator game is running first
 	const spectatorGame = Object.values(root.games).find(
 		(game) => game.spectatorCode === code,
 	)
@@ -360,10 +360,21 @@ export function* joinPrivateGame(
 		)
 
 		broadcast([player], {
-			type: serverMessages.SPECTATE_PRIVATE_GAME_SUCCESS,
+			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
 			localGameState: getLocalGameState(spectatorGame, viewer),
 		})
 
+		return
+	}
+
+	let gameQueue = Object.values(root.privateQueue).find(
+		(q) => q.spectatorCode === code,
+	)
+	if (gameQueue) {
+		gameQueue.spectatorsWaiting.push(player.id)
+		broadcast([player], {
+			type: serverMessages.SPECTATE_PRIVATE_GAME_WAITING,
+		})
 		return
 	}
 

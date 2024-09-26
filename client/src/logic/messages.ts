@@ -51,6 +51,7 @@ export const localMessages = messages({
 	MATCHMAKING_CODE_SET: null,
 	MATCHMAKING_CODE_INVALID: null,
 	MATCHMAKING_WAITING_FOR_PLAYER: null,
+	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
 	GAME_LOCAL_STATE_SET: null,
 	GAME_START: null,
@@ -130,6 +131,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
+	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState

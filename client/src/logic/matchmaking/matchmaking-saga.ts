@@ -101,8 +101,11 @@ function* joinPrivateGameSaga() {
 					waitingForPlayer: call(
 						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
 					),
+					specateWaitSuccess: call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_WAITING),
+					),
 					specateSuccess: call(
-						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_SUCCESS),
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
 					),
 					timeout: call(
 						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
@@ -141,6 +144,10 @@ function* joinPrivateGameSaga() {
 					}
 				} else if (result.specateSuccess) {
 					yield* call(gameSaga, result.specateSuccess.localGameState)
+				} else if (result.specateWaitSuccess) {
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
+					})
 				} else if (result.invalidCode) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CODE_INVALID,

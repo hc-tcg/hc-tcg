@@ -56,6 +56,7 @@ function MatchMaking() {
 					</>
 				)
 			case 'waiting_for_player':
+			case 'waiting_for_player_as_spectator':
 				return (
 					<>
 						<Spinner />
