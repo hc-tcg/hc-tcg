@@ -302,7 +302,7 @@ function setupSolitareGame(
 			deck: opponent.deck,
 		},
 		gameSettingsFromEnv(),
-		{code: 'solitare', randomizeOrder: false},
+		{gameCode: 'solitare', randomizeOrder: false},
 	)
 
 	const playerEntities = game.components.filterEntities(PlayerComponent)

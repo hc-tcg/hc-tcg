@@ -79,7 +79,10 @@ function BossLanding({setMenuSection}: Props) {
 			returnText="Main Menu"
 			className={css.bossLanding}
 		>
-			<CardList cards={[createUICardInstance(EvilXisumaBossHermitCard)]} />
+			<CardList
+				cards={[createUICardInstance(EvilXisumaBossHermitCard)]}
+				displayTokenCost={false}
+			/>
 			<div className={css.bossRules}>
 				<p>
 					That's right, the Hermitcraft TCG has its first boss fight! This is no
@@ -103,7 +106,11 @@ function BossLanding({setMenuSection}: Props) {
 								purposes of:
 							</p>,
 							<div>
-								<CardList cards={directlyOppositeCards} wrap={true} />
+								<CardList
+									cards={directlyOppositeCards}
+									wrap={true}
+									displayTokenCost={false}
+								/>
 							</div>,
 						]
 					: undefined}
@@ -113,7 +120,11 @@ function BossLanding({setMenuSection}: Props) {
 				</p>
 				<p>The following cards don't work in this battle:</p>
 				<div>
-					<CardList cards={nonFunctionalCards} wrap={true} />
+					<CardList
+						cards={nonFunctionalCards}
+						wrap={true}
+						displayTokenCost={false}
+					/>
 				</div>
 				<h1>EX's Moves & Special</h1>
 				<p>Evil X can attack for 50, 70 or 90 damage.</p>

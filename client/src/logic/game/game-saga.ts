@@ -141,8 +141,11 @@ function* gameStateReceiver() {
 
 function* voiceAnnounceReceiver() {
 	// constantly forward @sound/VOICE_ANNOUNCE messages from the server to the store
+	const socket = yield* select(getSocket)
 	while (true) {
-		const {lines} = yield call(receiveMsg(serverMessages.VOICE_ANNOUNCE))
+		const {lines} = yield call(
+			receiveMsg(socket, serverMessages.VOICE_ANNOUNCE),
+		)
 		yield put<LocalMessage>({type: localMessages.QUEUE_VOICE, lines: lines})
 	}
 }

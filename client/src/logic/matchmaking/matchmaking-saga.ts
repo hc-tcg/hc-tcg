@@ -17,13 +17,18 @@ import {
 
 function* createBossGameSaga() {
 	function* matchmaking() {
+		const socket = yield* select(getSocket)
 		try {
 			// Send message to server to create the game
 			yield* sendMsg({type: clientMessages.CREATE_BOSS_GAME})
 
 			const createBossResponse = yield* race({
-				success: call(receiveMsg(serverMessages.CREATE_BOSS_GAME_SUCCESS)),
-				failure: call(receiveMsg(serverMessages.CREATE_BOSS_GAME_FAILURE)),
+				success: call(
+					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
+				),
+				failure: call(
+					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_FAILURE),
+				),
 			})
 
 			if (createBossResponse.failure) {
@@ -31,7 +36,7 @@ function* createBossGameSaga() {
 				return
 			}
 
-			yield* call(receiveMsg, 'GAME_START')
+			yield* call(receiveMsg, socket, 'GAME_START')
 			yield* put<LocalMessage>({
 				type: localMessages.QUEUE_VOICE,
 				lines: ['EXSTART'],
