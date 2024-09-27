@@ -4,12 +4,12 @@ const urlParams = new URLSearchParams(window.location.search)
 
 const debugOptions = {
 	/** Show the update modal automatically when the user logs in */
-	showUpdateModal: true,
+	showUpdatesModal: true,
 }
 
 if (DEBUG) {
-	if (JSON.parse(urlParams.get('showUpdateModal') || '') == 'false') {
-		debugOptions.showUpdateModal = false
+	if (JSON.parse(urlParams.get('showUpdatesModal') || '') == 'false') {
+		debugOptions.showUpdatesModal = false
 	}
 }
 
