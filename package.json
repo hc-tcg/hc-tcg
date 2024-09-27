@@ -75,7 +75,7 @@
 		"client:dev": "vite client",
 		"client:preview": "vite preview --port 3002 client/",
 		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
-		"test:api": "./tests/test-api.sh",
+		"test:api": "./tests/sh/test-api",
 		"test:unit": "jest tests/unit/ --detect-open-handles",
 		"test:snapshot": "jest tests/snapshots/",
 		"test:snapshot-update": "jest tests/snapshots/ --updateSnapshot",

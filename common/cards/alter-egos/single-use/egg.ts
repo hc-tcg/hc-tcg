@@ -42,7 +42,7 @@ const Egg: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				const activeHermit = player.getActiveHermit()
@@ -51,7 +51,7 @@ const Egg: SingleUse = {
 				applySingleUse(game)
 
 				// Do not apply single use more than once
-				observer.unsubscribe(player.hooks.afterAttack)
+				observer.unsubscribe(game.hooks.afterAttack)
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 

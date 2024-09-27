@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test'
 
 test('is still connected after reload', async ({page}) => {
-	await page.goto('/')
+	await page.goto('/?showUpdatesModal=false')
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
@@ -23,7 +23,7 @@ test('is still connected after reload', async ({page}) => {
 test('player does not stay in queue after reloading the page', async ({
 	page,
 }) => {
-	await page.goto('/')
+	await page.goto('/?showUpdatesModal=false')
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
@@ -34,8 +34,6 @@ test('player does not stay in queue after reloading the page', async ({
 	})
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
-	// Close the update notification if it exists
-	await page.getByText('Close').click()
 	await page.getByText('Public Game').click()
 
 	let queue = await (

@@ -121,9 +121,10 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 
 				if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {

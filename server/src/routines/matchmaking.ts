@@ -142,7 +142,7 @@ function* gameManager(game: GameModel) {
 		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
 	} finally {
 		if (game.task) yield* cancel(game.task)
-		game.afterGameEnd.call()
+		game.hooks.afterGameEnd.call()
 
 		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(
@@ -298,15 +298,7 @@ export function* createPrivateGame(
 	}
 
 	// Add to private queue with code
-	const gameCode = (Math.random() + 1).toString(16).substring(2, 8)
-	const spectatorCode = (Math.random() + 1).toString(16).substring(2, 8)
-	root.privateQueue[gameCode] = {
-		createdTime: Date.now(),
-		playerId,
-		gameCode,
-		spectatorCode,
-		spectatorsWaiting: [],
-	}
+	let {gameCode, spectatorCode} = root.createPrivateGame(playerId)
 
 	// Send code to player
 	broadcast([player], {
@@ -449,12 +441,25 @@ export function* cancelPrivateGame(
 		if (info.playerId && info.playerId === playerId) {
 			const player = root.players[info.playerId]
 			if (player) {
-				broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
+				broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
 			}
 
 			root.hooks.privateCancelled.call(code)
 			delete root.privateQueue[code]
 			console.log(`Private game cancelled. Code: ${code}`)
+		}
+	}
+}
+
+export function* leavePrivateQueue(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PRIVATE_QUEUE>,
+) {
+	const {playerId} = msg
+
+	for (let code in root.privateQueue) {
+		const info = root.privateQueue[code]
+		if (info.playerId && info.playerId === playerId) {
+			info.playerId = null
 		}
 	}
 }

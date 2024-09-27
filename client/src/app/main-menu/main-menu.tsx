@@ -3,6 +3,7 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
+import debugOptions from 'debug'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
@@ -12,6 +13,7 @@ import css from './main-menu.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
@@ -37,10 +39,12 @@ function MainMenu({setMenuSection}: Props) {
 			{!latestUpdateView ||
 			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
 				parseInt(latestUpdateView) ? (
-				<UpdatesModal
-					updatesOpen={updatesOpen}
-					setUpdatesOpen={setUpdatesOpen}
-				/>
+				debugOptions.showUpdatesModal && (
+					<UpdatesModal
+						updatesOpen={updatesOpen}
+						setUpdatesOpen={setUpdatesOpen}
+					/>
+				)
 			) : (
 				<></>
 			)}

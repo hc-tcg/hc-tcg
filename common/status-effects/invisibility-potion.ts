@@ -14,7 +14,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 	name: 'Hidden!',
 	description: "Your opponent's next attack will miss.",
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
@@ -22,9 +22,10 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 		let multipliedDamage = false
 
 		observer.subscribeWithPriority(
-			player.opponentPlayer.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 0)
@@ -47,7 +48,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 	name: 'Spotted!',
 	description: "Your opponent's next attack will deal double damage.",
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
@@ -55,9 +56,10 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 		let multipliedDamage = false
 
 		observer.subscribeWithPriority(
-			player.opponentPlayer.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 2)

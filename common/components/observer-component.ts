@@ -1,6 +1,6 @@
 import {Entity, ObserverEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
-import type {Hook, PriorityHook} from '../types/hooks'
+import type {Hook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {PrioritiesT, Priority, PriorityDict} from '../types/priorities'
 import type {CardComponent} from './card-component'
 import type {StatusEffectComponent} from './status-effect-component'
@@ -33,7 +33,7 @@ export class ObserverComponent {
 	 * from the board), please use a status effect or `oneShot` instead.
 	 */
 	public subscribe<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
+		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
 		fun: Args,
 	) {
 		hook.add(this.entity, fun)
@@ -44,7 +44,7 @@ export class ObserverComponent {
 	 * removed when the observer is destroyed.
 	 */
 	public subscribeBefore<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
+		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
 		fun: Args,
 	) {
 		hook.addBefore(this.entity, fun)
