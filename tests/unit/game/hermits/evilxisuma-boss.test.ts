@@ -6,8 +6,10 @@ import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
 import GoldArmor from 'common/cards/default/effects/gold-armor'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import MumboJumboRare from 'common/cards/default/hermits/mumbojumbo-rare'
 import RendogRare from 'common/cards/default/hermits/rendog-rare'
 import BalancedItem from 'common/cards/default/items/balanced-common'
+import PranksterDoubleItem from 'common/cards/default/items/prankster-rare'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
@@ -24,6 +26,7 @@ import {
 	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
+	getWinner,
 	pick,
 	playCardFromHand,
 	testBossFight,
@@ -242,6 +245,55 @@ function* testNineAttached(game: GameModel) {
 	).toHaveLength(3)
 }
 
+function* testChallengerVictory(game: GameModel) {
+	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 0)
+	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 1)
+	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 2)
+	yield* playCardFromHand(game, PranksterDoubleItem, 'item', 0, 0)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* bossAttack(game, '50DMG')
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, PranksterDoubleItem, 'item', 1, 0)
+	yield* attack(game, 'secondary')
+	yield* endTurn(game)
+
+	yield* bossAttack(game, '50DMG')
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	expect(game.opponentPlayer.lives).toBe(2)
+	yield* endTurn(game)
+
+	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* endTurn(game)
+
+	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	expect(game.opponentPlayer.lives).toBe(1)
+	yield* endTurn(game)
+
+	yield* bossAttack(game, '50DMG', 'ABLAZE', 'EFFECTCARD')
+	expect(game.opponentPlayer.lives).toBe(2)
+	yield* endTurn(game)
+
+	yield* changeActiveHermit(game, 1)
+	yield* attack(game, 'secondary')
+	yield* endTurn(game)
+
+	yield* bossAttack(game, '50DMG', 'ABLAZE', 'EFFECTCARD')
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+}
+
 describe('Test Evil X Boss Fight', () => {
 	test('Test Boss versus consecutive Amnesia', () => {
 		testBossFight(
@@ -288,6 +340,78 @@ describe('Test Evil X Boss Fight', () => {
 				],
 			},
 			{startWithAllCards: true},
+		)
+	})
+
+	test('Test challenger victory against boss', () => {
+		testBossFight(
+			{
+				playerDeck: [
+					MumboJumboRare,
+					MumboJumboRare,
+					MumboJumboRare,
+					PranksterDoubleItem,
+					PranksterDoubleItem,
+				],
+				saga: testChallengerVictory,
+				then: (game) => {
+					expect(getWinner(game)).toBe('playerOne')
+					expect(game.endInfo.reason).toBe('lives')
+				},
+			},
+			{startWithAllCards: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Test boss victory against challenger', () => {
+		testBossFight(
+			{
+				playerDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+					yield* bossAttack(game, '90DMG')
+				},
+				then: (game) => {
+					expect(getWinner(game)).toBe('EX')
+					expect(game.endInfo.reason).toBe('hermits')
+				},
+			},
+			{startWithAllCards: true, oneShotMode: true},
+		)
+
+		testBossFight(
+			{
+				playerDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+					yield* bossAttack(game, '90DMG')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* bossAttack(game, '90DMG')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 2)
+					yield* endTurn(game)
+
+					yield* bossAttack(game, '90DMG')
+				},
+				then: (game) => {
+					expect(getWinner(game)).toBe('EX')
+					expect(game.endInfo.reason).toBe('lives')
+				},
+			},
+			{startWithAllCards: true, oneShotMode: true},
 		)
 	})
 })

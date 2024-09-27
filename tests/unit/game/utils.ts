@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {Card} from 'common/cards/base/types'
 import EvilXisumaBossHermitCard, {
 	BOSS_ATTACK,
@@ -191,6 +190,8 @@ export function* finishModalRequest(
 export function getWinner(
 	game: GameModel,
 ): 'playerOne' | 'playerTwo' | undefined {
+	if (game.endInfo.deadPlayerEntities.length === 0)
+		throw new Error('There are no dead players that lost')
 	let winnerComponent = game.components.find(
 		PlayerComponent,
 		(game, player) => !game.endInfo.deadPlayerEntities.includes(player.entity),
@@ -381,8 +382,8 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 	const attackType = game.state.turn.availableActions.find(
 		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
 	)
-	assert(bossCard !== null, 'Boss card not found to attack with')
-	assert(attackType !== undefined, 'Boss can not attack right now.')
+	if (bossCard === null) throw new Error('Boss card not found to attack with')
+	if (attackType === undefined) throw new Error('Boss can not attack right now')
 	supplyBossAttack(bossCard, attack)
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_TURN_ACTION,

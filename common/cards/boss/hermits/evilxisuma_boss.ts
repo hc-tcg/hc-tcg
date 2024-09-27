@@ -16,12 +16,7 @@ import {
 } from '../../../status-effects/singleturn-attack-disabled'
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
-import {
-	afterAttack,
-	afterDefence,
-	beforeAttack,
-	beforeDefence,
-} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
 import {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
@@ -237,7 +232,7 @@ const EvilXisumaBossHermitCard: Hermit = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
@@ -272,7 +267,7 @@ const EvilXisumaBossHermitCard: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
@@ -338,15 +333,16 @@ const EvilXisumaBossHermitCard: Hermit = {
 		})
 		let lastAttackDisabledByAmnesia = false
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_REMOVE_STATUS,
-			(_attack) => {
+			game.hooks.beforeAttack,
+			beforeAttack.EFFECT_REMOVE_STATUS,
+			(attack) => {
+				if (attack.player.entity === player.entity) return
 				removeImmuneEffects(game, component.slot)
 				// Prevent Grand Architect's "Amnesia" disabling boss damage consecutively
 				// Evil Xisuma's "Derp Coin" disables after a modal request, so this shouldn't nerf consecutive heads
 				const amnesiaEffect = game.components.find(
 					StatusEffectComponent<CardComponent>,
-					query.effect.targetIsCardAnd(query.card.entity(component.entity)),
+					query.effect.targetEntity(component.entity),
 					query.effect.is(
 						PrimaryAttackDisabledEffect,
 						SecondaryAttackDisabledEffect,
@@ -364,8 +360,8 @@ const EvilXisumaBossHermitCard: Hermit = {
 
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			() => {
 				if (
 					!component.slot.inRow() ||
@@ -384,7 +380,7 @@ const EvilXisumaBossHermitCard: Hermit = {
 					// Reward card
 					opponentPlayer.draw(1)
 				} else {
-					observer.unsubscribe(player.hooks.afterDefence)
+					observer.unsubscribe(game.hooks.afterAttack)
 				}
 			},
 		)
