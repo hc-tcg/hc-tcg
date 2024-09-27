@@ -1,8 +1,8 @@
+import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getCardsInDeck} from './cards'
 import {requestUrlRoot} from './utils'
-import {DEBUG} from 'common/config'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {

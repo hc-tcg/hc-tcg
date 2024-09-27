@@ -12,8 +12,7 @@ import store from './store'
 // @ts-ignore
 global.getState = () => store.getState()
 
-
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search)
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(

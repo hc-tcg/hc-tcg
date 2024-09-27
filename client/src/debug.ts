@@ -1,4 +1,4 @@
-import { DEBUG } from "common/config"
+import {DEBUG} from 'common/config'
 
 const urlParams = new URLSearchParams(window.location.search)
 
@@ -12,6 +12,5 @@ if (DEBUG) {
 		debugOptions.showUpdateModal = false
 	}
 }
-
 
 export default debugOptions
