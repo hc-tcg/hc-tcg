@@ -9,7 +9,13 @@ export class RootModel {
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
 		string,
-		{createdTime: number; playerId: string | null}
+		{
+			createdTime: number
+			playerId: string | null
+			gameCode: string | undefined
+			spectatorCode: string | undefined
+			spectatorsWaiting: Array<string>
+		}
 	> = {}
 	public hooks = {
 		newGame: new Hook<string, (game: GameModel) => void>(),

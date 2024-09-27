@@ -4,17 +4,12 @@
 # Requires the server to be built before running.
 #
 
+source $(git rev-parse --show-toplevel)/tests/sh/utils
+
 set -o pipefail
 
 PORT=55576
 HOST="http://localhost:$PORT"
-
-cleanup() {
-  echo "Closing server on port $PORT."
-  kill -9 $(lsof -t -i:$PORT)
-}
-
-trap cleanup EXIT
 
 test_card_images_exist() {
   test_hermit=$(curl $HOST/api/cards | jq '.[] | select(.id == "ethoslab_common")')
@@ -52,14 +47,7 @@ test_card_token_costs() {
   test $api_cost -eq "$(($helsknight_rare_cost + $welsknight_rare_cost))"
 }
 
-output_file=$(mktemp)
-PORT=$PORT npm run server &> $output_file &
-while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
-  # Wait for the server to start
-  sleep .1
-done
-
-echo 'Server started! Running tests.'
+start_server $PORT
 
 echo 'Running `test_card_images_exist`'
 test_card_images_exist

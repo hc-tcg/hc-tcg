@@ -136,6 +136,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
+	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -150,6 +151,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
+	isSpectator: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 

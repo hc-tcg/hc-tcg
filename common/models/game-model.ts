@@ -101,7 +101,8 @@ export function gameSettingsFromEnv(): GameSettings {
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
-	private internalCode: string | null
+	private internalGameCode: string | null
+	private internalSpectatorCode: string | null
 
 	public readonly settings: GameSettings
 
@@ -127,7 +128,8 @@ export class GameModel {
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
 		options?: {
-			code?: string
+			gameCode?: string
+			spectatorCode?: string
 			randomizeOrder?: false
 		},
 	) {
@@ -137,7 +139,8 @@ export class GameModel {
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = options.code || null
+		this.internalGameCode = options.gameCode || null
+		this.internalSpectatorCode = options.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -208,8 +211,12 @@ export class GameModel {
 		return this.internalId
 	}
 
-	public get code() {
-		return this.internalCode
+	public get gameCode() {
+		return this.internalGameCode
+	}
+
+	public get spectatorCode() {
+		return this.internalSpectatorCode
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {
