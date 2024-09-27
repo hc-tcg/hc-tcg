@@ -19,9 +19,9 @@ function MainMenu({setMenuSection}: Props) {
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () =>
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-	const handleCreatePrivateGame = () => setMenuSection('create-private')
-	const handleJoinPrivateGame = () =>
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_JOIN})
+	const handlePrivateGame = () => setMenuSection('private-game')
+	const handleSoloGame = () => setMenuSection('boss-landing')
+
 	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
@@ -70,16 +70,16 @@ function MainMenu({setMenuSection}: Props) {
 						<Button
 							variant="stone"
 							id={css.privateCreate}
-							onClick={handleCreatePrivateGame}
+							onClick={handleSoloGame}
 						>
-							Create Private Game
+							Solo Game
 						</Button>
 						<Button
 							variant="stone"
 							id={css.privateJoin}
-							onClick={handleJoinPrivateGame}
+							onClick={handlePrivateGame}
 						>
-							Join Private Game
+							Private Game
 						</Button>
 						<Button variant="stone" id={css.deck} onClick={handleDeck}>
 							Browse Decks
