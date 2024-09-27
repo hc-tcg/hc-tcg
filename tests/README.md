@@ -2,10 +2,10 @@
 
 Hermitcraft TCG uses four types of tests:
 
-	- Unit Tests: `npm run test:unit`
-	- Snapshot Tests: `npm run test:snapshot`
-	- End To End Tests: `npm run test:e2e`
-	- Shell Script Tests: `npm run test:api`
+- Unit Tests: `npm run test:unit`
+- Snapshot Tests: `npm run test:snapshot`
+- End To End Tests: `npm run test:e2e`
+- Shell Script Tests: `npm run test:api`
 
 ### Unit Tests
 Unit tests are used for redux saga and various functions and components.
