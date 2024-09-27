@@ -12,7 +12,6 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText('Close').click()
 	await page.getByText('Join Private Game').click()
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
 	await page.getByLabel('Enter game or spectator code:').fill('Enter')
