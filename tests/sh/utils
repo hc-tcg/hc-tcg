@@ -10,5 +10,13 @@ start_server() {
     sleep .1
   done
 	echo "Server started on port $PORT!"
+
+  cleanup() {
+    echo "Closing server on port $PORT."
+    kill -9 $(lsof -t -i:$PORT)
+  }
+
+  trap cleanup EXIT
 }
+
 
