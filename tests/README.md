@@ -16,6 +16,13 @@ We use snapshot tests primarily to test the frontend. Snapshot tests are done us
 End To End (e2e) Tests are used to verify the client behaves correctly.
 Playwright is used to implement e2e tests.
 
+Special query parameters are made available when running in debug mode to be used in e2e tests.
+
+| Query Param | Description |
+| ----------- | ----------- |
+| showUpdateModal | If `false`, do not show the update modal on login |
+
+
 ## Shell Tests
 Shell scripts are used to test the hc-tcg API. `curl` and `jq` must be installed to run these tests.
 
