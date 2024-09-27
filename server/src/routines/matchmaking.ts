@@ -441,7 +441,7 @@ export function* cancelPrivateGame(
 		if (info.playerId && info.playerId === playerId) {
 			const player = root.players[info.playerId]
 			if (player) {
-				broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
+				broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
 			}
 
 			root.hooks.privateCancelled.call(code)
