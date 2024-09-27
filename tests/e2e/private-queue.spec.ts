@@ -50,7 +50,7 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 
 	expect(
 		await (
-			await fetch(`http://localhost:9000/debug/private-queue/${apiSecret}`)
+			await fetch(`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`)
 		).json(),
 	).toHaveProperty('playerId', playerId)
 
@@ -58,7 +58,7 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 
 	expect(
 		await (
-			await fetch(`http://localhost:9000/debug/private-queue/${apiSecret}`)
+			await fetch(`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`)
 		).json(),
 	).toHaveProperty('playerId', null)
 })
