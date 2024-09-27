@@ -1,6 +1,10 @@
 #!/bin/bash
+#
+# Utils for HC-TCG API tests.
+#
 
 # Start server on the port specified by $1.
+# The server is automatically closed when the script exits.
 start_server() {
   PORT=$1
   output_file=$(mktemp)
@@ -18,5 +22,3 @@ start_server() {
 
   trap cleanup EXIT
 }
-
-
