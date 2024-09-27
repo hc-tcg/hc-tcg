@@ -12,18 +12,10 @@ import type {
 	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
-import {
-	afterAttack,
-	afterDefence,
-	beforeAttack,
-	beforeDefence,
-	onTurnEnd,
-} from '../types/priorities'
+import {onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
-import {ComponentQuery} from './query'
 import {RowComponent} from './row-component'
-import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
@@ -89,32 +81,6 @@ export class PlayerComponent {
 
 		/** Hook that returns attacks to execute */
 		getAttack: GameHook<() => AttackModel | null>
-		/** Hook called before the main attack loop, for every attack from our side of the board */
-		beforeAttack: PriorityHook<
-			(attack: AttackModel) => void,
-			typeof beforeAttack
-		>
-		/** Hook called before the main attack loop, for every attack targeting our side of the board */
-		beforeDefence: PriorityHook<
-			(attack: AttackModel) => void,
-			typeof beforeDefence
-		>
-		/**
-		 * Hook called after the main attack loop is completed, for every attack from our side of the board.
-		 * Attacks added from this hook will not be executed.
-		 *
-		 * This is called after actions are marked as completed and blocked
-		 */
-		afterAttack: PriorityHook<(attack: AttackModel) => void, typeof afterAttack>
-		/**
-		 * Hook called after the main attack loop, for every attack targeting our side of the board
-		 *
-		 * This is called after actions are marked as completed and blocked
-		 */
-		afterDefence: PriorityHook<
-			(attack: AttackModel) => void,
-			typeof afterDefence
-		>
 
 		/**
 		 * Hook called at the start of the turn
@@ -151,11 +117,6 @@ export class PlayerComponent {
 				newActiveHermit: CardComponent,
 			) => void
 		>
-		/** Hook called when the `slot.locked` combinator is called.
-		 * Returns a combinator that verifies if the slot is locked or not.
-		 * Locked slots cannot be chosen in some combinator expressions.
-		 */
-		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
@@ -183,16 +144,11 @@ export class PlayerComponent {
 			afterApply: new GameHook(),
 			getAttackRequests: new GameHook(),
 			getAttack: new GameHook(),
-			beforeAttack: new PriorityHook(beforeAttack),
-			beforeDefence: new PriorityHook(beforeDefence),
-			afterAttack: new PriorityHook(afterAttack),
-			afterDefence: new PriorityHook(afterDefence),
 			onTurnStart: new GameHook(),
 			onTurnEnd: new PriorityHook(onTurnEnd),
 			onCoinFlip: new GameHook(),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
-			freezeSlots: new GameHook(),
 		}
 	}
 

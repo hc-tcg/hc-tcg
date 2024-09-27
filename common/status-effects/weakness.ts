@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {beforeDefence} from '../types/priorities'
+import {beforeAttack} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<CardComponent> = {
@@ -16,7 +16,7 @@ const WeaknessEffect: Counter<CardComponent> = {
 	counter: 3,
 	counterType: 'turns',
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent,
@@ -33,8 +33,8 @@ const WeaknessEffect: Counter<CardComponent> = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.FORCE_WEAKNESS_ATTACK,
+			game.hooks.beforeAttack,
+			beforeAttack.FORCE_WEAKNESS_ATTACK,
 			(attack) => {
 				if (!target.slot.inRow()) return
 				if (

@@ -17,7 +17,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 	counter: 1,
 	counterType: 'number',
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,
 		target: CardComponent,
 		observer: ObserverComponent,
@@ -28,9 +28,10 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 		let previousUses = 0
 
 		observer.subscribeWithPriority(
-			target.player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
+				if (attack.player.entity !== target.player.entity) return
 				if (effect.counter === null) return
 				if (previousUses < effect.counter) jopacityUsedThisTurn = true
 				else if (attack.isAttacker(target.entity)) effect.remove()
