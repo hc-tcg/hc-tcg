@@ -10,12 +10,12 @@ Convert a deck code to a list of cards.
 
 - POST `/api/deck/cost`
 
-Request Body: Array<hermit name>
+Request Body: Array<hermit id as string>
 Returns the cost of a deck containing the listed cards.
 
 - GET `/api/games/create`
 
-Creates a new game and returns the codes to join it.
+Creates a new game and returns the codes to join it. The game code will time out after five minutes.
 
 | Field | Type | Description |
 | :----------- | :--------------: | -------------------------: |
@@ -26,7 +26,7 @@ Creates a new game and returns the codes to join it.
 
 - DELETE `/api/games/cancel`
 
-Cancel a game made with the HC-TCG API
+Cancel a game made with the HC-TCG API.
 
 Request Body:
 | Field | Type | Description |
