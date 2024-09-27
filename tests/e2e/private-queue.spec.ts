@@ -14,9 +14,9 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 	await page.getByPlaceholder(' ').press('Enter')
 	await page.getByText('Join Private Game').click()
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
-	await page.getByLabel('Enter game or spectator code:').fill('Enter')
+	await page.getByLabel('Enter game or spectator code:').press('Enter')
 
-	expect(await page.isVisible('Waiting'))
+	await page.getByText('Waiting').waitFor()
 
 	await fetch('http://localhost:9000/api/games/delete', {
 		method: 'DELETE',
@@ -26,7 +26,7 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 		}),
 	})
 
-	expect(await page.isVisible('Public Game'))
+	await page.getByText('Public Game').waitFor()
 })
 
 test('Player is removed from private queue when they press "Cancel"', async ({
@@ -45,9 +45,9 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 	await page.getByPlaceholder(' ').press('Enter')
 	await page.getByText('Join Private Game').click()
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
-	await page.getByLabel('Enter game or spectator code:').fill('Enter')
+	await page.getByLabel('Enter game or spectator code:').press('Enter')
 
-	await page.waitForTimeout(1000)
+	await page.getByText('Cancel').waitFor()
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
 
