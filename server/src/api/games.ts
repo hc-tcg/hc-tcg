@@ -2,9 +2,20 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 
-function cancelGame(game: {playerId: string | null; gameCode: string}) {
+function cancelGame(game: {
+	playerId: string | null
+	gameCode: string
+	spectatorsWaiting: Array<string>
+}) {
 	if (game.playerId) {
 		const player = root.players[game.playerId]
+		if (player) {
+			broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
+		}
+	}
+
+	for (const spectator of game.spectatorsWaiting) {
+		const player = root.players[spectator]
 		if (player) {
 			broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
 		}
