@@ -25,7 +25,6 @@ import {
 
 describe('Test Pixl World Build', () => {
 	test('World Build Functionality', () => {
-		return
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -93,7 +92,6 @@ describe('Test Pixl World Build', () => {
 	})
 
 	test('Does not deal extra damage if hermit was activated by backlash KO', () => {
-		return
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -134,7 +132,6 @@ describe('Test Pixl World Build', () => {
 
 	// Test interactions with Grianch which allows two attacks in one turn
 	test('Deals extra damage when swapped with Ladder and activated by backlash KO', () => {
-		return
 		testGame(
 			{
 				playerOneDeck: [GrianchRare, Thorns],

@@ -6,7 +6,7 @@ import {
 import query from '../../../components/query'
 import {CardEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -15,6 +15,8 @@ const hermitStartingRow = new GameValue<Record<CardEntity, number | undefined>>(
 		return {}
 	},
 )
+
+const HAS_MOVED = -1
 
 const PixlriffsRare: Hermit = {
 	...hermit,
@@ -65,11 +67,34 @@ const PixlriffsRare: Hermit = {
 			newObserver.subscribe(player.hooks.onAttach, (instance) => {
 				if (!instance.slot.inRow() || instance.slot.type !== 'hermit') return
 				hermitStartingRow.get(game)[instance.entity] = instance.slot.row.index
+
+				newObserver.subscribe(instance.hooks.onChangeSlot, (newSlot) => {
+					if (
+						newSlot.type === 'hermit' &&
+						newSlot.player.entity === player.entity
+					)
+						hermitStartingRow.get(game)[instance.entity] = HAS_MOVED
+				})
 			})
 
 			newObserver.subscribe(player.hooks.onDetach, (instance) => {
 				delete hermitStartingRow.get(game)[instance.entity]
+				newObserver.unsubscribe(instance.hooks.onChangeSlot)
 			})
+
+			newObserver.subscribeWithPriority(
+				player.hooks.afterAttack,
+				afterAttack.UPDATE_POST_ATTACK_STATE,
+				(_attack) => {
+					const record = hermitStartingRow.get(game)
+					Object.keys(record).forEach((entity) => {
+						const card = game.components.get<CardComponent>(entity)
+						if (!card || !card.slot.inRow()) return
+						if (card.slot.row.index !== record[entity])
+							record[entity] = HAS_MOVED
+					})
+				},
+			)
 		})
 	},
 	onAttach(
@@ -91,7 +116,6 @@ const PixlriffsRare: Hermit = {
 					startingRowIndex !== undefined &&
 					startingRowIndex !== player.activeRow?.index
 				) {
-					// TODO: Handle "Puppetry"/"Role Play" + Ender Pearl + "Jumpscare" + Naughty Regift to move, return to original row, then use "World Build" in the same turn
 					attack.addDamage(component.entity, 40)
 				}
 			},
