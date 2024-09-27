@@ -47,23 +47,27 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
 	await page.getByLabel('Enter game or spectator code:').fill('Enter')
 
-  await page.waitForTimeout(1000)
+	await page.waitForTimeout(1000)
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
 
 	expect(
 		await (
-			await fetch(`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`)
+			await fetch(
+				`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`,
+			)
 		).json(),
 	).toHaveProperty('playerId', playerId)
 
 	await page.getByText('Cancel').click()
 
-  await page.waitForTimeout(1000)
+	await page.waitForTimeout(1000)
 
 	expect(
 		await (
-			await fetch(`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`)
+			await fetch(
+				`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`,
+			)
 		).json(),
 	).toHaveProperty('playerId', null)
 })
