@@ -451,6 +451,19 @@ export function* cancelPrivateGame(
 	}
 }
 
+export function* leavePrivateQueue(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PRIVATE_QUEUE>,
+) {
+	const {playerId} = msg
+
+	for (let code in root.privateQueue) {
+		const info = root.privateQueue[code]
+		if (info.playerId && info.playerId === playerId) {
+			info.playerId = null
+		}
+	}
+}
+
 export function* spectatePrivateGameQueueLeave(
 	msg: RecievedClientMessage<
 		typeof clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE
