@@ -88,10 +88,10 @@ const PixlriffsRare: Hermit = {
 				(_attack) => {
 					const record = hermitStartingRow.get(game)
 					Object.keys(record).forEach((entity) => {
-						const card = game.components.get<CardComponent>(entity)
+						const card = game.components.get(entity as CardEntity)
 						if (!card || !card.slot.inRow()) return
-						if (card.slot.row.index !== record[entity])
-							record[entity] = HAS_MOVED
+						if (card.slot.row.index !== record[card.entity])
+							record[card.entity] = HAS_MOVED
 					})
 				},
 			)
