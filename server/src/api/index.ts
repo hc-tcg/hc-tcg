@@ -32,5 +32,12 @@ export function addApi(app: Express) {
 		app.get('/debug/root-state/queue', (_req, res) => {
 			res.send(root.queue)
 		})
+		app.get('/debug/root-state/private-queue/:apiSecret', (req, res) => {
+			res.send(
+				Object.values(root.privateQueue).find(
+					(q) => q.apiSecret === req.params.apiSecret,
+				),
+			)
+		})
 	}
 }

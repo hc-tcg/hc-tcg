@@ -8,7 +8,7 @@ const debugOptions = {
 }
 
 if (DEBUG) {
-	if (JSON.parse(urlParams.get('showUpdatesModal') || '') == 'false') {
+	if (JSON.parse(urlParams.get('showUpdatesModal') || '') === false) {
 		debugOptions.showUpdatesModal = false
 	}
 }

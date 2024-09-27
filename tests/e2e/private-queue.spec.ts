@@ -28,3 +28,37 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 
 	expect(await page.isVisible('Public Game'))
 })
+
+test('Player is removed from private queue when they press "Cancel"', async ({
+	page,
+}) => {
+	await page.goto('/?showUpdatesModal=false')
+	let playerId = await page.evaluate(() => global.getState().session.playerId)
+
+	let privateGame = await (
+		await fetch('http://localhost:9000/api/games/create')
+	).json()
+
+	let gameCode = privateGame.gameCode
+	let apiSecret = privateGame.apiSecret
+
+	await page.getByPlaceholder(' ').fill('Test Player')
+	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByText('Join Private Game').click()
+	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
+	await page.getByLabel('Enter game or spectator code:').fill('Enter')
+
+	expect(
+		await (
+			await fetch(`http://localhost:9000/debug/private-queue/${apiSecret}`)
+		).json(),
+	).toHaveProperty('playerId', playerId)
+
+	await page.getByText('Cancel').click()
+
+	expect(
+		await (
+			await fetch(`http://localhost:9000/debug/private-queue/${apiSecret}`)
+		).json(),
+	).toHaveProperty('playerId', null)
+})
