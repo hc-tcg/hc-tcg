@@ -13,7 +13,7 @@ start_server() {
     # Wait for the server to start
     sleep .1
   done
-	echo "Server started on port $PORT!"
+  echo "Server started on port $PORT!"
 
   cleanup() {
     echo "Closing server on port $PORT."
