@@ -26,7 +26,7 @@ Additionally debug mode endpoints are enabled.
 
 | Endpoint | Description |
 | ---      | ----        |
-| GET /debug/root-state/queue | Returns the players that are in the public queue |
+| GET `/debug/root-state/queue` | Returns the players that are in the public queue |
 
 ## Shell Tests
 Shell scripts are used to test the hc-tcg API. `curl` and `jq` must be installed to run these tests.
