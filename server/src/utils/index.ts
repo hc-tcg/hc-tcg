@@ -5,7 +5,9 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
+import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
+import {Hook, PriorityHook} from 'common/types/hooks'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.components
@@ -33,10 +35,14 @@ export function printHooksState(game: GameModel) {
 	// Second loop to populate instancesInfo and customValues
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
-		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
+		for (const [hookName, hookValue] of [
+			...Object.entries(player.hooks),
+			...Object.entries(game.hooks),
+		] satisfies [string, Hook<string, any> | PriorityHook<any, any>][]) {
 			hookValue.listeners.forEach(([observer, _args, _key], i) => {
 				let target = game.components.get(
-					game.components.get(observer)?.wrappingEntity || null,
+					game.components.get(observer as ObserverEntity)?.wrappingEntity ||
+						null,
 				)
 				if (!(target instanceof CardComponent)) return
 				const pos = target.slot

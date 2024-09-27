@@ -142,7 +142,7 @@ function* gameManager(game: GameModel) {
 		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
 	} finally {
 		if (game.task) yield* cancel(game.task)
-		game.afterGameEnd.call()
+		game.hooks.afterGameEnd.call()
 
 		const gameType = game.gameCode ? 'Private' : 'Public'
 		console.log(

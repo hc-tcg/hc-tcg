@@ -40,7 +40,7 @@ const WormManRare: Hermit = {
 		let pendingObserver: ObserverComponent | null = null
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
