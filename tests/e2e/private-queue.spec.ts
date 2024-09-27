@@ -18,7 +18,7 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 
 	await page.getByText('Waiting').waitFor()
 
-	await fetch('http://localhost:9000/api/games/delete', {
+	await fetch('http://localhost:9000/api/games/cancel', {
 		method: 'DELETE',
 		headers: {'Content-Type': 'application/json'},
 		body: JSON.stringify({
