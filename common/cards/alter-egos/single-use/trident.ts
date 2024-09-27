@@ -42,7 +42,7 @@ const Trident: SingleUse = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return

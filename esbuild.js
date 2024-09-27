@@ -22,6 +22,7 @@ await build({
 	],
 	define: {
 		__APP_VERSION__: `'${getAppVersion()}'`,
+		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),
 	},
 })
 

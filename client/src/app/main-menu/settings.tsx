@@ -69,6 +69,7 @@ function Settings({setMenuSection}: Props) {
 	const handleCredits = () => setMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
+
 	const handleUpdates = () => {
 		setUpdatesOpen(true)
 	}

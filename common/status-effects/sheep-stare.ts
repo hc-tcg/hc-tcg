@@ -18,7 +18,7 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 	description:
 		'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
@@ -26,9 +26,10 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 		let coinFlipResult: CoinFlipResult | null = null
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_CHANGE_TARGET,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isAttacker(player.getActiveHermit()?.entity)) return
 
 				// No need to flip a coin for multiple attacks
@@ -55,9 +56,10 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
-			() => {
+			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (coinFlipResult) effect.remove()
 			},
 		)

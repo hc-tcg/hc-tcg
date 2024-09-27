@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {afterAttack, onTurnEnd} from '../types/priorities'
+import {onTurnEnd, rowRevive} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const DeathloopReady: StatusEffect<CardComponent> = {
@@ -25,8 +25,8 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 
 		// Add before so health can be checked reliably
 		observer.subscribeWithPriority(
-			opponentPlayer.hooks.afterAttack,
-			afterAttack.DEATHLOOP_REVIVE,
+			game.hooks.rowRevive,
+			rowRevive.DEATHLOOP_REVIVE,
 			(attack) => {
 				const row = attack.target
 				if (!row || row.health === null || row.health > 0) return

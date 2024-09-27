@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Utils for HC-TCG API tests.
+#
+
+# Start server on the port specified by $1.
+# The server is automatically closed when the script exits.
+start_server() {
+  PORT=$1
+  output_file=$(mktemp)
+  PORT=$PORT npm run server &> $output_file &
+  while [[ -z $(cat $output_file | grep "Server listening on port") ]]; do
+    # Wait for the server to start
+    sleep .1
+  done
+  echo "Server started on port $PORT!"
+
+  cleanup() {
+    echo "Closing server on port $PORT."
+    kill -9 $(lsof -t -i:$PORT)
+  }
+
+  trap cleanup EXIT
+}

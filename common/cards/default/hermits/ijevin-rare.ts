@@ -38,10 +38,10 @@ const IJevinRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

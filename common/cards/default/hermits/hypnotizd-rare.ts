@@ -48,7 +48,7 @@ const HypnotizdRare: Hermit = {
 		let target: SlotComponent | null = null
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_SET_TARGET,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

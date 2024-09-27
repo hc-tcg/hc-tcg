@@ -3,6 +3,7 @@ import Thorns from 'common/cards/default/effects/thorns'
 import Totem from 'common/cards/default/effects/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GoodTimesWithScarRare from 'common/cards/default/hermits/goodtimeswithscar-rare'
+import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import PearlescentMoonCommon from 'common/cards/default/hermits/pearlescentmoon-common'
 import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'
@@ -318,6 +319,42 @@ describe('Test Totem of Undying', () => {
 				},
 			},
 			{startWithAllCards: true},
+		)
+	})
+
+	test('Test Totem revives rows before `afterAttack` requests are created', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Iskall85Common, Totem],
+				playerTwoDeck: [IJevinRare, Bow],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, Totem, 'attach', 1)
+					yield* endTurn(game)
+
+					// Manually set Iskall health to trigger zone
+					game.components.find(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.row.index(1),
+					)!.health = 10
+
+					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
+					yield* playCardFromHand(game, Bow, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					// "Peace Out" should create a request for the opponent to pick their AFK Hermit
+					expect(game.state.pickRequests).toHaveLength(1)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })

@@ -13,6 +13,7 @@ export const clientMessages = messages({
 	SPECTATE_PRIVATE_GAME_QUEUE_LEAVE: null,
 	JOIN_QUEUE: null,
 	LEAVE_QUEUE: null,
+	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
@@ -29,6 +30,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE},
 	{type: typeof clientMessages.JOIN_QUEUE},
 	{type: typeof clientMessages.LEAVE_QUEUE},
+	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
 	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
 	{
 		type: typeof clientMessages.TURN_ACTION
