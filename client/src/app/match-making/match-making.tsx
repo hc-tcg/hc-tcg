@@ -1,5 +1,7 @@
+import classNames from 'classnames'
 import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
+import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {
@@ -12,8 +14,6 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'
-import MenuLayout from 'components/menu-layout'
-import classNames from 'classnames'
 
 function MatchMaking() {
 	const dispatch = useMessageDispatch()
@@ -55,6 +55,7 @@ function MatchMaking() {
 						{spectatorCode}
 					</div>
 				</div>
+
 				<div className={css.privateLobbyRight}>
 					<form className={css.codeInput} onSubmit={handleCodeSubmit}>
 						<label htmlFor="gameCode">Enter game or spectator code:</label>
