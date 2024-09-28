@@ -1,7 +1,7 @@
 import Button from 'components/button'
+import TcgLogo from 'components/tcg-logo'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
-import TcgLogo from 'components/tcg-logo'
 
 type Props = {
 	setMenuSection: (section: string) => void

@@ -67,11 +67,7 @@ function MainMenu({setMenuSection}: Props) {
 						<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 							Public Game
 						</Button>
-						<Button
-							variant="stone"
-							id={css.soloGame}
-							onClick={handleSoloGame}
-						>
+						<Button variant="stone" id={css.soloGame} onClick={handleSoloGame}>
 							Solo Game
 						</Button>
 						<Button
