@@ -15,38 +15,36 @@ function PrivateGame({setMenuSection}: Props) {
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_JOIN})
 
 	return (
-		<>
+		<div className={css.body}>
 			<TcgLogo />
-			<div className={css.body}>
-				<div className={css.content}>
-					<div className={css.settings}>
-						<Button
-							variant="stone"
-							id={css.newPrivateGame}
-							onClick={handleNewPrivateGame}
-						>
-							Create Private Game
-						</Button>
-					</div>
-					<div className={css.settings}>
-						<Button
-							variant="stone"
-							id={css.newPrivateGame}
-							onClick={handleJoinPrivateGame}
-						>
-							Join Private Game
-						</Button>
-					</div>
+			<div className={css.privateGameContent}>
+				<div className={css.settings}>
 					<Button
-						type="button"
 						variant="stone"
-						onClick={() => setMenuSection('mainmenu')}
+						id={css.newPrivateGame}
+						onClick={handleNewPrivateGame}
 					>
-						Cancel
+						Create Private Game
 					</Button>
 				</div>
+				<div className={css.settings}>
+					<Button
+						variant="stone"
+						id={css.newPrivateGame}
+						onClick={handleJoinPrivateGame}
+					>
+						Join Private Game
+					</Button>
+				</div>
+				<Button
+					type="button"
+					variant="stone"
+					onClick={() => setMenuSection('mainmenu')}
+				>
+					Cancel
+				</Button>
 			</div>
-		</>
+		</div>
 	)
 }
 
