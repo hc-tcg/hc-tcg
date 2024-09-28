@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence} from '../types/priorities'
+import {afterAttack} from '../types/priorities'
 import {StatusEffect, statusEffect} from './status-effect'
 
 const MelodyEffect: StatusEffect<CardComponent> = {
@@ -17,7 +17,7 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 	applyCondition: (_game, card) =>
 		card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		target: CardComponent,
 		observer: ObserverComponent,
@@ -29,19 +29,14 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
-				if (!attack.isTargeting(target) || attack.target?.health) return
-				effect.remove()
-			},
-		)
-
-		observer.subscribeWithPriority(
-			effect.creator.player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
-			(attack) => {
-				if (!attack.isTargeting(effect.creator) || attack.target?.health) return
+				if (
+					(!attack.isTargeting(target) || attack.target?.health) &&
+					(attack.isTargeting(effect.creator) || attack.target?.health)
+				)
+					return
 				effect.remove()
 			},
 		)

@@ -43,7 +43,7 @@ const LDShadowLadyRare: Hermit = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

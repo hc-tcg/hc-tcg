@@ -16,8 +16,6 @@ const hermitStartingRow = new GameValue<Record<CardEntity, number | undefined>>(
 	},
 )
 
-const HAS_MOVED = -1
-
 const PixlriffsRare: Hermit = {
 	...hermit,
 	id: 'pixlriffs_rare',
@@ -73,7 +71,7 @@ const PixlriffsRare: Hermit = {
 						newSlot.type === 'hermit' &&
 						newSlot.player.entity === player.entity
 					)
-						hermitStartingRow.get(game)[instance.entity] = HAS_MOVED
+						hermitStartingRow.get(game)[instance.entity] = NaN
 				})
 			})
 
@@ -81,21 +79,21 @@ const PixlriffsRare: Hermit = {
 				delete hermitStartingRow.get(game)[instance.entity]
 				newObserver.unsubscribe(instance.hooks.onChangeSlot)
 			})
-
-			newObserver.subscribeWithPriority(
-				player.hooks.afterAttack,
-				afterAttack.UPDATE_POST_ATTACK_STATE,
-				(_attack) => {
-					const record = hermitStartingRow.get(game)
-					Object.keys(record).forEach((entity) => {
-						const card = game.components.get(entity as CardEntity)
-						if (!card || !card.slot.inRow()) return
-						if (card.slot.row.index !== record[card.entity])
-							record[card.entity] = HAS_MOVED
-					})
-				},
-			)
 		})
+
+		newObserver.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				const record = hermitStartingRow.get(game)
+				Object.keys(record).forEach((entity) => {
+					const card = game.components.get(entity as CardEntity)
+					if (!card || !card.slot.inRow()) return
+					if (card.slot.row.index !== record[card.entity])
+						record[card.entity] = NaN
+				})
+			},
+		)
 	},
 	onAttach(
 		game: GameModel,
@@ -105,7 +103,7 @@ const PixlriffsRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

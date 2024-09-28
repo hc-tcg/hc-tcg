@@ -26,10 +26,11 @@ const NaughtyRegiftEffect: StatusEffect<PlayerComponent> = {
 		observer: ObserverComponent,
 	): void {
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(_attack) => {
+			(attack) => {
 				if (game.currentPlayerEntity !== player.entity) return
+				if (attack.player.entity !== player.entity) return
 				if (!game.state.turn.completedActions.includes('PRIMARY_ATTACK')) return // Wait until Grianch flips tails on Naughty
 				game.removeCompletedActions(
 					'PRIMARY_ATTACK',

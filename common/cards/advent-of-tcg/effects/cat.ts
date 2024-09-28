@@ -27,7 +27,7 @@ const Cat: Attach = {
 	) {
 		const {player} = component
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				if (!component.slot.inRow()) return

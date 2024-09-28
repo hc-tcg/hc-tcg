@@ -51,6 +51,7 @@ const SplashPotionOfHarming: SingleUse = {
 				.newAttack({
 					attacker: component.entity,
 					target: opponentRows[0].entity,
+					player: player.entity,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
@@ -76,14 +77,14 @@ const SplashPotionOfHarming: SingleUse = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
 
 				applySingleUse(game)
 
-				observer.unsubscribe(player.hooks.beforeAttack)
+				observer.unsubscribe(game.hooks.beforeAttack)
 			},
 		)
 	},

@@ -30,14 +30,12 @@ const SmallishbeansAdventRare: Hermit = {
 			'Deal 20 extra damage for each item attached. Double items count twice.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

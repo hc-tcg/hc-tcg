@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack, beforeDefence} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {getFormattedName} from '../../../utils/game'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -26,8 +26,8 @@ const Trapdoor: Attach = {
 		let totalReduction = 0
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.TRAPDOOR_INTERCEPT_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.TRAPDOOR_INTERCEPT_DAMAGE,
 			(attack) => {
 				const target = attack.target
 				if (
@@ -80,7 +80,7 @@ const Trapdoor: Attach = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				totalReduction = 0

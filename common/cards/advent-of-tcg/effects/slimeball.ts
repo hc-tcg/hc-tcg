@@ -22,13 +22,13 @@ const Slimeball: Attach = {
 		query.not(query.slot.frozen),
 	),
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.freezeSlots, () => {
+		observer.subscribe(game.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				query.slot.player(player.entity),

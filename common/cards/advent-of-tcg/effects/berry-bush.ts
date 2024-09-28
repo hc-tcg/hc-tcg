@@ -33,12 +33,13 @@ const BerryBush: Attach & HasHealth = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			opponentPlayer.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(_attack) => {
+			(attack) => {
+				if (attack.player.entity !== opponentPlayer.entity) return
 				if (component.slot.inRow() && !component.slot.row.health) {
 					for (let i = 0; i < 2; i++) {
 						game.components.new(
@@ -60,7 +61,7 @@ const BerryBush: Attach & HasHealth = {
 					component.slot.row.damage(10)
 			},
 		)
-		observer.subscribe(player.hooks.freezeSlots, () => {
+		observer.subscribe(game.hooks.freezeSlots, () => {
 			if (!component.slot.inRow()) return query.nothing
 			return query.every(
 				query.slot.player(component.player.entity),
