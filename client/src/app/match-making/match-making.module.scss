@@ -28,6 +28,19 @@
 	gap: 1vh;
 }
 
+.privateLobby {
+	display: flex;
+	flex-direction: row;
+}
+
+.privateLobbyLeft {
+	padding: 10px;
+}
+
+.privateLobbyRight {
+	padding: 10px;
+}
+
 .content {
 	display: flex;
 	flex-direction: column;

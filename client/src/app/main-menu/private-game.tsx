@@ -18,24 +18,7 @@ function PrivateGame({setMenuSection}: Props) {
 		<div className={css.body}>
 			<TcgLogo />
 			<div className={css.privateGameContent}>
-				<div className={css.settings}>
-					<Button
-						variant="stone"
-						id={css.newPrivateGame}
-						onClick={handleNewPrivateGame}
-					>
-						Create Private Game
-					</Button>
-				</div>
-				<div className={css.settings}>
-					<Button
-						variant="stone"
-						id={css.newPrivateGame}
-						onClick={handleJoinPrivateGame}
-					>
-						Join Private Game
-					</Button>
-				</div>
+
 				<Button
 					type="button"
 					variant="stone"

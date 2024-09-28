@@ -311,11 +311,11 @@ export function* reconnectSaga() {
 function* matchmakingSaga() {
 	yield* takeEvery(localMessages.MATCHMAKING_QUEUE_JOIN, joinQueueSaga)
 	yield* takeEvery(
-		localMessages.MATCHMAKING_PRIVATE_GAME_CREATE,
+		localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY,
 		createPrivateGameSaga,
 	)
 	yield* takeEvery(
-		localMessages.MATCHMAKING_PRIVATE_GAME_JOIN,
+		localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY,
 		joinPrivateGameSaga,
 	)
 	yield* takeEvery(

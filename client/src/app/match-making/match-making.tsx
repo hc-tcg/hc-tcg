@@ -75,46 +75,45 @@ function MatchMaking() {
 						<p>Starting Game</p>
 					</>
 				)
-			case 'private_waiting':
+			case 'private_lobby':
 				return (
-					<>
-						<p>Waiting for opponent</p>
-						<div className={css.code} onClick={handleCodeClick}>
-							{gameCode}
-						</div>
-						<p>Spectator Code</p>
-						<div className={css.code} onClick={handleCodeClick}>
-							{spectatorCode}
-						</div>
-						<div className={css.options}>
-							<Button variant="stone" onClick={handleCancel}>
-								Cancel
-							</Button>
-						</div>
-					</>
-				)
-			case 'private_code_needed':
-				return (
-					<>
-						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-							<label htmlFor="gameCode">Enter game or spectator code:</label>
-							<input
-								className={invalidCode ? css.invalidCode : ''}
-								name="gameCode"
-								id="gameCode"
-								autoFocus
-							/>
-							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+					<div className={css.privateLobby}>
+						<div className={css.privateLobbyLeft}>
+							<p>Waiting for opponent</p>
+							<div className={css.code} onClick={handleCodeClick}>
+								{gameCode}
+							</div>
+							<p>Spectator Code</p>
+							<div className={css.code} onClick={handleCodeClick}>
+								{spectatorCode}
+							</div>
 							<div className={css.options}>
-								<Button type="button" variant="stone" onClick={handleCancel}>
+								<Button variant="stone" onClick={handleCancel}>
 									Cancel
 								</Button>
-								<Button type="submit" variant="stone">
-									Join
-								</Button>
 							</div>
-						</form>
-					</>
+						</div>
+						<div className={css.privateLobbyRight}>
+							<form className={css.codeInput} onSubmit={handleCodeSubmit}>
+								<label htmlFor="gameCode">Enter game or spectator code:</label>
+								<input
+									className={invalidCode ? css.invalidCode : ''}
+									name="gameCode"
+									id="gameCode"
+									autoFocus
+								/>
+								{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+								<div className={css.options}>
+									<Button type="button" variant="stone" onClick={handleCancel}>
+										Cancel
+									</Button>
+									<Button type="submit" variant="stone">
+										Join
+									</Button>
+								</div>
+							</form>
+						</div>
+					</div>
 				)
 		}
 	}

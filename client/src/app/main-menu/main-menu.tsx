@@ -19,7 +19,8 @@ function MainMenu({setMenuSection}: Props) {
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () =>
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-	const handlePrivateGame = () => setMenuSection('private-game')
+	const handlePrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 	const handleSoloGame = () => setMenuSection('boss-landing')
 
 	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
