@@ -1,21 +1,28 @@
 import {describe, expect, test} from '@jest/globals'
 import Slimeball from 'common/cards/advent-of-tcg/effects/slimeball'
 import DungeonTangoRare from 'common/cards/advent-of-tcg/hermits/dungeontango-rare'
+import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import LDShadowLadyRare from 'common/cards/advent-of-tcg/hermits/ldshadowlady-rare'
 import MonkeyfarmRare from 'common/cards/advent-of-tcg/hermits/monkeyfarm-rare'
+import DwarfImpulseRare from 'common/cards/alter-egos-iii/hermits/dwarfimpulse-rare'
 import KingJoelRare from 'common/cards/alter-egos-iii/hermits/kingjoel-rare'
 import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import String from 'common/cards/alter-egos/effects/string'
+import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
 import Ladder from 'common/cards/alter-egos/single-use/ladder'
 import WaterBucket from 'common/cards/default/effects/water-bucket'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
+import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import MinerItem from 'common/cards/default/items/miner-common'
 import CurseOfVanishing from 'common/cards/default/single-use/curse-of-vanishing'
+import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import Lead from 'common/cards/default/single-use/lead'
+import Looting from 'common/cards/default/single-use/looting'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {
@@ -23,6 +30,7 @@ import {
 	attack,
 	changeActiveHermit,
 	endTurn,
+	finishModalRequest,
 	pick,
 	playCardFromHand,
 	removeEffect,
@@ -178,10 +186,10 @@ describe('Test Slimeball', () => {
 		})
 	})
 
-	test('Slimeball prevents moving the entire row', () => {
+	test('Slimeball prevents moving the entire row, unless disabled by Golden Axe', () => {
 		testGame(
 			{
-				playerOneDeck: [LDShadowLadyRare],
+				playerOneDeck: [LDShadowLadyRare, GoldenAxe],
 				playerTwoDeck: [PoePoeSkizzRare, Slimeball, EnderPearl],
 				saga: function* (game) {
 					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
@@ -198,6 +206,19 @@ describe('Test Slimeball', () => {
 
 					yield* attack(game, 'secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(game.opponentPlayer.activeRow?.index).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -302,6 +323,234 @@ describe('Test Slimeball', () => {
 
 					yield* attack(game, 'secondary') // Test "Got 'Em"
 					expect(game.state.pickRequests).toHaveLength(0)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Slimeball prevents Looting removing items, unless disabled by Golden Axe', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Slimeball, BalancedItem],
+				playerTwoDeck: [GeminiTayRare, GoldenAxe, Looting],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Slimeball, 'attach', 0)
+					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					expect(game.getPickableSlots(Looting.attachCondition)).toStrictEqual(
+						[],
+					)
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Looting, 'single_use')
+					yield* applyEffect(game)
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)
+					expect(
+						game.currentPlayer.getHand().map((card) => card.props),
+					).toStrictEqual([BalancedItem])
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Golden Axe + Lead can remove an item card from a row with Slimeball', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					Slimeball,
+					BalancedItem,
+				],
+				playerTwoDeck: [GeminiTayRare, GoldenAxe, Lead],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Slimeball, 'attach', 0)
+					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Lead, 'single_use')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(0),
+					)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.slot(
+								query.slot.item,
+								query.slot.rowIndex(1),
+								query.slot.index(0),
+							),
+						)?.props,
+					).toStrictEqual(BalancedItem)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	// Test interactions with Grianch which allows two attacks in one turn
+	test('King Joel and Monkeyfarm can remove an item card from a row with Slimeball when disabled by D. Impulse secondary', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					GrianchRare,
+					EthosLabCommon,
+					Slimeball,
+					BalancedItem,
+					BalancedItem,
+				],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					DwarfImpulseRare,
+					KingJoelRare,
+					MonkeyfarmRare,
+					BadOmen,
+					GoldenAxe,
+					GoldenAxe,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Slimeball, 'attach', 0)
+					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 1)
+					yield* playCardFromHand(game, MonkeyfarmRare, 'hermit', 2)
+					yield* playCardFromHand(game, KingJoelRare, 'hermit', 3)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BalancedItem, 'item', 1, 1)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					// Attack with "Can I Axe You A Question?"
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					// Attack with "Monkeystep"
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(0),
+					)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.slot(query.slot.discardPile),
+							query.card.is(BalancedItem),
+						),
+					).not.toBe(null)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					// Attack with "Can I Axe You A Question?"
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					// Attack with "Steal"
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(3),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(1),
+					)
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(0),
+					)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.currentPlayer,
+							query.card.slot(
+								query.slot.item,
+								query.slot.rowIndex(1),
+								query.slot.index(0),
+							),
+							query.card.is(BalancedItem),
+						),
+					).not.toBe(null)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
