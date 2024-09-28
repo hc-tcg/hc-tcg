@@ -31,6 +31,11 @@
 .privateLobby {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	margin: auto;
+	max-width: 500px;
+  color: white;
+  font-size: 2.5vh;
 }
 
 .privateLobbyLeft {

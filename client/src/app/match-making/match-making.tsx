@@ -12,6 +12,8 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './match-making.module.scss'
+import MenuLayout from 'components/menu-layout'
+import classNames from 'classnames'
 
 function MatchMaking() {
 	const dispatch = useMessageDispatch()
@@ -33,6 +35,45 @@ function MatchMaking() {
 	const handleCodeClick = () => {
 		if (!gameCode) return
 		navigator.clipboard.writeText(gameCode)
+	}
+
+	if (status === 'private_lobby') {
+		return (
+			<MenuLayout
+				back={handleCancel}
+				title="Private Game Lobby"
+				returnText="Settings"
+				className={classNames(css.privateLobby)}
+			>
+				<div className={css.privateLobbyLeft}>
+					<p>Opponent Code</p>
+					<div className={css.code} onClick={handleCodeClick}>
+						{gameCode}
+					</div>
+					<p>Spectator Code</p>
+					<div className={css.code} onClick={handleCodeClick}>
+						{spectatorCode}
+					</div>
+				</div>
+				<div className={css.privateLobbyRight}>
+					<form className={css.codeInput} onSubmit={handleCodeSubmit}>
+						<label htmlFor="gameCode">Enter game or spectator code:</label>
+						<input
+							className={invalidCode ? css.invalidCode : ''}
+							name="gameCode"
+							id="gameCode"
+							autoFocus
+						/>
+						{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+						<div className={css.options}>
+							<Button type="submit" variant="stone">
+								Join
+							</Button>
+						</div>
+					</form>
+				</div>
+			</MenuLayout>
+		)
 	}
 
 	const Status = () => {
@@ -74,46 +115,6 @@ function MatchMaking() {
 						<Spinner />
 						<p>Starting Game</p>
 					</>
-				)
-			case 'private_lobby':
-				return (
-					<div className={css.privateLobby}>
-						<div className={css.privateLobbyLeft}>
-							<p>Waiting for opponent</p>
-							<div className={css.code} onClick={handleCodeClick}>
-								{gameCode}
-							</div>
-							<p>Spectator Code</p>
-							<div className={css.code} onClick={handleCodeClick}>
-								{spectatorCode}
-							</div>
-							<div className={css.options}>
-								<Button variant="stone" onClick={handleCancel}>
-									Cancel
-								</Button>
-							</div>
-						</div>
-						<div className={css.privateLobbyRight}>
-							<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-								<label htmlFor="gameCode">Enter game or spectator code:</label>
-								<input
-									className={invalidCode ? css.invalidCode : ''}
-									name="gameCode"
-									id="gameCode"
-									autoFocus
-								/>
-								{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
-								<div className={css.options}>
-									<Button type="button" variant="stone" onClick={handleCancel}>
-										Cancel
-									</Button>
-									<Button type="submit" variant="stone">
-										Join
-									</Button>
-								</div>
-							</form>
-						</div>
-					</div>
 				)
 		}
 	}

@@ -16,7 +16,6 @@ import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
-import PrivateGame from './main-menu/private-game'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
 
@@ -55,8 +54,6 @@ function App() {
 					return <DataSettings setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'private-game':
-					return <PrivateGame setMenuSection={setMenuSection} />
 				case 'boss-landing':
 					return <BossLanding setMenuSection={setMenuSection} />
 				case 'mainmenu':
