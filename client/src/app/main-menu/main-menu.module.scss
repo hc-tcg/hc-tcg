@@ -64,7 +64,7 @@ nav {
 	grid-template-areas:
 		"public"
 		"private-create"
-		"private-join"
+		"solo-game"
 		"deck"
 		"settings"
 		"logout";
@@ -79,8 +79,8 @@ nav {
 	grid-area: private-create;
 }
 
-#privateJoin {
-	grid-area: private-join;
+#soloGame {
+	grid-area: solo-game;
 }
 
 #deck {
@@ -321,7 +321,7 @@ nav {
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			"public public"
-			"private-create private-join"
+			"private-create solo-game"
 			"deck deck"
 			"logout settings";
 	}

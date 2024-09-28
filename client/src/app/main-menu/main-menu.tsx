@@ -69,14 +69,14 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button
 							variant="stone"
-							id={css.privateCreate}
+							id={css.soloGame}
 							onClick={handleSoloGame}
 						>
 							Solo Game
 						</Button>
 						<Button
 							variant="stone"
-							id={css.privateJoin}
+							id={css.privateCreate}
 							onClick={handlePrivateGame}
 						>
 							Private Game
