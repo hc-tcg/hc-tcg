@@ -57,6 +57,32 @@
 	margin-inline: auto;
 }
 
+.privateGameContent {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2vh;
+	margin-top: 5vh;
+	animation: fadeIn 250ms ease-in-out forwards;
+
+	p,
+	label {
+		color: white;
+		font-size: 2.5vh;
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
+		user-select: none;
+	}
+
+	button {
+		font-size: 2vh;
+		width: 30vh;
+		height: 5vh;
+		line-height: 100%;
+		padding: 0 2vh;
+	}
+}
+
 nav {
 	margin-top: 5vh;
 	display: grid;
@@ -64,7 +90,7 @@ nav {
 	grid-template-areas:
 		"public"
 		"private-create"
-		"private-join"
+		"solo-game"
 		"deck"
 		"settings"
 		"logout";
@@ -79,8 +105,8 @@ nav {
 	grid-area: private-create;
 }
 
-#privateJoin {
-	grid-area: private-join;
+#soloGame {
+	grid-area: solo-game;
 }
 
 #deck {
@@ -93,6 +119,30 @@ nav {
 
 #logout {
 	grid-area: logout;
+}
+
+.body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-top: 10vh;
+
+	form {
+		width: 25vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	input {
+		width: 25vh;
+		text-align: center;
+		border-radius: 0.5vh;
+		border: 0.3vh solid var(--gray-900);
+		height: 5vh;
+		font-size: 2vh;
+	}
 }
 
 /* Boss Landing Page */
@@ -321,7 +371,7 @@ nav {
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			"public public"
-			"private-create private-join"
+			"private-create solo-game"
 			"deck deck"
 			"logout settings";
 	}

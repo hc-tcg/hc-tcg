@@ -174,10 +174,7 @@ export function inGame(playerId: PlayerId) {
 }
 
 export function inQueue(playerId: string) {
-	return (
-		root.queue.some((id) => id === playerId) ||
-		Object.keys(root.privateQueue).some((id) => id === playerId)
-	)
+	return root.queue.some((id) => id === playerId)
 }
 
 function* randomMatchmakingSaga() {
@@ -481,6 +478,11 @@ export function* joinPrivateGame(
 		(q) => q.spectatorCode === code,
 	)
 	if (gameQueue) {
+		// Players can not spectate games they started.
+		if (gameQueue.playerId === player.id) {
+			broadcast([player], {type: serverMessages.INVALID_CODE})
+			return
+		}
 		gameQueue.spectatorsWaiting.push(player.id)
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_WAITING,
@@ -497,6 +499,12 @@ export function* joinPrivateGame(
 
 	// If there is another player, start game, otherwise, add us to queue
 	if (info.playerId) {
+		// If we want to join our own game, that is an error
+		if (info.playerId === player.id) {
+			broadcast([player], {type: serverMessages.INVALID_CODE})
+			return
+		}
+
 		// Create new game for these 2 players
 		const existingPlayer = root.players[info.playerId]
 		if (!existingPlayer) {

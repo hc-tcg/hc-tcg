@@ -44,8 +44,7 @@ export const localMessages = messages({
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
-	MATCHMAKING_PRIVATE_GAME_CREATE: null,
-	MATCHMAKING_PRIVATE_GAME_JOIN: null,
+	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
 	MATCHMAKING_CLEAR: null,
@@ -120,8 +119,6 @@ type Messages = [
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_CREATE},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_JOIN},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string
@@ -136,6 +133,7 @@ type Messages = [
 	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
+	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState

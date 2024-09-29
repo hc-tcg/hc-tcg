@@ -26,15 +26,14 @@ const matchmakingReducer = (
 				status: 'random_waiting',
 			}
 		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
-		case localMessages.MATCHMAKING_PRIVATE_GAME_CREATE:
 			return {
 				...state,
 				status: 'loading',
 			}
-		case localMessages.MATCHMAKING_PRIVATE_GAME_JOIN:
+		case localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY:
 			return {
 				...state,
-				status: 'private_code_needed',
+				status: 'private_lobby',
 				invalidCode: false,
 			}
 		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER:
@@ -52,12 +51,12 @@ const matchmakingReducer = (
 				...state,
 				gameCode: action.gameCode,
 				spectatorCode: action.spectatorCode,
-				status: 'private_waiting',
+				status: 'private_lobby',
 			}
 		case localMessages.MATCHMAKING_CODE_INVALID:
 			return {
 				...state,
-				status: 'private_code_needed',
+				status: 'private_lobby',
 				invalidCode: true,
 			}
 		case localMessages.MATCHMAKING_CODE_SET:

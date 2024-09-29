@@ -28,6 +28,35 @@
 	gap: 1vh;
 }
 
+.privateLobby {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+  color: white;
+  font-size: 2.5vh;
+}
+
+.privateLobbyLeft {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+
+	p,
+	label {
+		color: white;
+		font-size: 2.5vh;
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
+		user-select: none;
+	}
+}
+
+.privateLobbyRight {
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+}
+
 .content {
 	display: flex;
 	flex-direction: column;
