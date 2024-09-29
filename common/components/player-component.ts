@@ -7,7 +7,6 @@ import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
 	CoinFlip,
-	CoinFlipResult,
 	CurrentCoinFlip,
 	TurnActions,
 	UsedHermitAttackInfo,

@@ -21,7 +21,7 @@ const COIN_FLIP_ARRAY = COIN_FLIP_WEIGHTS.reduce((acc, [count, weight]) => {
 	return acc
 }, [])
 
-const COIN_FLIP_FORCED_ARRAY = COIN_FLIP_WEIGHTS.reduce(
+const COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
 	(acc, [count, weight]) => {
 		acc.push(...new Array(weight).fill(count))
 		return acc
