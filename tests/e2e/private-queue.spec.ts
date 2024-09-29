@@ -12,7 +12,7 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText('Join Private Game').click()
+	await page.getByText(' Private Game').click()
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
 	await page.getByLabel('Enter game or spectator code:').press('Enter')
 
@@ -43,7 +43,7 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText('Join Private Game').click()
+	await page.getByText('Private Game').click()
 	await page.getByLabel('Enter game or spectator code:').fill(gameCode)
 	await page.getByLabel('Enter game or spectator code:').press('Enter')
 
