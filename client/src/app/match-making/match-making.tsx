@@ -91,7 +91,7 @@ function MatchMaking() {
 									</div>
 								)}
 							</div>
-							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+							<ErrorBanner hide={!invalidCode}>Invalid Code</ErrorBanner>
 						</form>
 					</div>
 				</div>
