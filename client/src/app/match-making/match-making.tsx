@@ -3,6 +3,7 @@ import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
 import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
+import {CopyIcon} from 'components/svgs'
 import TcgLogo from 'components/tcg-logo'
 import {
 	getGameCode,
@@ -53,11 +54,11 @@ function MatchMaking() {
 				<div className={css.privateLobbyLeft}>
 					<p>Opponent Code</p>
 					<div className={css.code} onClick={handleCodeClick}>
-						{gameCode}
+						<CopyIcon /> {gameCode}
 					</div>
 					<p>Spectator Code</p>
 					<div className={css.code} onClick={handleSpectatorCodeClick}>
-						{spectatorCode}
+						<CopyIcon /> {spectatorCode}
 					</div>
 				</div>
 
