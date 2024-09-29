@@ -48,7 +48,7 @@ function MatchMaking() {
 			<MenuLayout
 				back={handleCancel}
 				title="Private Game Lobby"
-				returnText="Settings"
+				returnText="Main Menu"
 				className={classNames(css.privateLobby)}
 			>
 				<div className={css.privateLobbyLeft}>
