@@ -49,35 +49,44 @@ function MatchMaking() {
 				back={handleCancel}
 				title="Private Game Lobby"
 				returnText="Main Menu"
-				className={classNames(css.privateLobby)}
+				className={classNames(css.privateLobbyMenu)}
 			>
-				<div className={css.privateLobbyLeft}>
-					<p>Opponent Code</p>
-					<div className={css.code} onClick={handleCodeClick}>
-						<CopyIcon /> {gameCode}
-					</div>
-					<p>Spectator Code</p>
-					<div className={css.code} onClick={handleSpectatorCodeClick}>
-						<CopyIcon /> {spectatorCode}
-					</div>
-				</div>
-
-				<div className={css.privateLobbyRight}>
-					<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-						<label htmlFor="gameCode">Enter game or spectator code:</label>
-						<input
-							className={invalidCode ? css.invalidCode : ''}
-							name="gameCode"
-							id="gameCode"
-							autoFocus
-						/>
-						{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
-						<div className={css.options}>
-							<Button type="submit" variant="stone">
-								Join
-							</Button>
+				<div className={css.privateLobby}>
+					<p>
+						{' '}
+						Share your game code or enter a game or spectator code to join a
+						game:{' '}
+					</p>
+					<div className={css.privateJoinGrid}>
+						<div className={css.privateLobbyLeft}>
+							<p>Opponent Code</p>
+							<div className={css.code} onClick={handleCodeClick}>
+								<CopyIcon /> {gameCode}
+							</div>
+							<p>Spectator Code</p>
+							<div className={css.code} onClick={handleSpectatorCodeClick}>
+								<CopyIcon /> {spectatorCode}
+							</div>
 						</div>
-					</form>
+						<form
+							className={classNames(css.privateLobbyRight, css.codeInput)}
+							onSubmit={handleCodeSubmit}
+						>
+							<label htmlFor="gameCode">Enter code:</label>
+							<input
+								className={invalidCode ? css.invalidCode : ''}
+								name="gameCode"
+								id="gameCode"
+								autoFocus
+							/>
+							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+							<div className={css.options}>
+								<Button type="submit" variant="stone">
+									Join
+								</Button>
+							</div>
+						</form>
+					</div>
 				</div>
 			</MenuLayout>
 		)

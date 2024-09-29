@@ -28,17 +28,49 @@
 	gap: 1vh;
 }
 
-.privateLobby {
-	display: flex;
-	flex-direction: row;
+.privateLobbyMenu {
 	align-items: center;
 	justify-content: center;
   color: white;
   font-size: 2.5vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.privateLobby {
+	align-items: center;
+	padding: 30px;
+	justify-content: center;
+  color: white;
+  font-size: 2.5vh;
+	color: var(--text-light);
+	background: var(--gray-600);
+	border: 2px solid black;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+
+	@media (orientation: portrait) {
+  	max-width: 80%;
+	}
+	@media (orientation: landscape) {
+  	max-width: 60vh;
+	}
+}
+
+.privateJoinGrid {
+	display: flex;
+  gap: 30px;
+	@media (orientation: portrait) {
+    	flex-direction: column;
+	}
+	@media (orientation: landscape) {
+    	flex-direction: row;
+	}
 }
 
 .privateLobbyLeft {
-	padding: 10px;
 	display: flex;
 	flex-direction: column;
 
@@ -46,13 +78,11 @@
 	label {
 		color: white;
 		font-size: 2.5vh;
-		filter: drop-shadow(2px 2px 0 var(--text-dark));
 		user-select: none;
 	}
 }
 
 .privateLobbyRight {
-	padding: 10px;
 	display: flex;
 	flex-direction: column;
 }
