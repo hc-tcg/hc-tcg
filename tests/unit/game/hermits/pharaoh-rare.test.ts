@@ -1,5 +1,4 @@
 import {describe, expect, test} from '@jest/globals'
-import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 import PharaohRare from 'common/cards/advent-of-tcg/hermits/pharaoh-rare'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import PotionOfWeakness from 'common/cards/alter-egos/single-use/potion-of-weakness'
@@ -19,6 +18,9 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../utils'
+
+// Circular imports must be included last
+import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 
 describe('Test Pharaoh Xibalba', () => {
 	test('Xibalba Functionality', () => {
