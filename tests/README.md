@@ -23,7 +23,7 @@ Special query parameters are made available when running in debug mode to be use
 
 | Query Param | Description |
 | ----------- | ----------- |
-| showUpdateModal | If `false`, do not show the update modal on login |
+| showUpdatesModal | If `false`, do not show the update modal on login |
 
 Additionally debug mode endpoints are enabled.
 

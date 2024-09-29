@@ -13,6 +13,7 @@ import {
 	createPrivateGame,
 	joinPrivateGame,
 	joinQueue,
+	leavePrivateQueue,
 	leaveQueue,
 	spectatePrivateGameQueueLeave,
 } from './matchmaking'
@@ -66,6 +67,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.CANCEL_PRIVATE_GAME:
 			return yield* cancelPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.LEAVE_PRIVATE_QUEUE:
+			return yield* leavePrivateQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CHAT_MESSAGE:

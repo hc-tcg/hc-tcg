@@ -37,6 +37,11 @@ function MatchMaking() {
 		navigator.clipboard.writeText(gameCode)
 	}
 
+	const handleSpectatorCodeClick = () => {
+		if (!spectatorCode) return
+		navigator.clipboard.writeText(spectatorCode)
+	}
+
 	if (status === 'private_lobby') {
 		return (
 			<MenuLayout
@@ -51,7 +56,7 @@ function MatchMaking() {
 						{gameCode}
 					</div>
 					<p>Spectator Code</p>
-					<div className={css.code} onClick={handleCodeClick}>
+					<div className={css.code} onClick={handleSpectatorCodeClick}>
 						{spectatorCode}
 					</div>
 				</div>

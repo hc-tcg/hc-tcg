@@ -147,6 +147,7 @@ function* joinPrivateGameSaga() {
 					success: call(
 						receiveMsg(socket, serverMessages.JOIN_PRIVATE_GAME_SUCCESS),
 					),
+					cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
 					invalidCode: call(receiveMsg(socket, serverMessages.INVALID_CODE)),
 					waitingForPlayer: call(
 						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
@@ -184,6 +185,7 @@ function* joinPrivateGameSaga() {
 					// Private game joined successfully - wait for game start or timeout
 					const queueResponse = yield* race({
 						gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
+						leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
 						timeout: call(
 							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
@@ -191,6 +193,11 @@ function* joinPrivateGameSaga() {
 
 					if (queueResponse.gameStart) {
 						yield* call(gameSaga)
+					}
+					if (queueResponse.leave) {
+						yield* sendMsg({
+							type: clientMessages.LEAVE_PRIVATE_QUEUE,
+						})
 					}
 				} else if (result.specateSuccess) {
 					yield* call(gameSaga, result.specateSuccess.localGameState)
@@ -202,6 +209,9 @@ function* joinPrivateGameSaga() {
 						matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
 						spectatePrivateGame: call(
 							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+						),
+						timeout: call(
+							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
 					})
 					if (result.spectatePrivateGame) {
