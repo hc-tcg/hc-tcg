@@ -181,6 +181,8 @@ export type LocalGameState = {
 	}
 
 	isBossGame: boolean
+
+	voiceLineQueue: Array<string>
 }
 
 type MessageSender =

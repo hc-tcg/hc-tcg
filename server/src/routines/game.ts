@@ -336,6 +336,8 @@ function* sendGameState(game: GameModel) {
 			localGameState,
 		})
 	})
+
+	game.voiceLineQueue = []
 }
 
 function* turnActionSaga(

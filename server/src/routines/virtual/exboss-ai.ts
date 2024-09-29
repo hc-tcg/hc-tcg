@@ -133,10 +133,7 @@ const ExBossAI: VirtualAI = {
 				throw new Error(`EX's active hermit cannot be found, please report`)
 			const bossAttack = getBossAttack(currentPlayer)
 			supplyBossAttack(bossCard, bossAttack)
-			broadcast(game.getPlayers(), {
-				type: serverMessages.VOICE_ANNOUNCE,
-				lines: bossAttack as string[],
-			})
+			game.voiceLineQueue.push(`/voice/${bossAttack}.ogg`)
 			yield* delay(bossAttack.length * 3000)
 			// Waits after announcing attack to perform the action
 			return attackAction
@@ -155,10 +152,7 @@ const ExBossAI: VirtualAI = {
 		if (nineEffect && nineEffect.counter === 0) {
 			const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 			supplyNineSpecial(nineEffect, nineSpecial)
-			broadcast(game.getPlayers(), {
-				type: serverMessages.VOICE_ANNOUNCE,
-				lines: [nineSpecial],
-			})
+			game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
 			yield* delay(10600)
 		}
 

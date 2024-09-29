@@ -41,7 +41,6 @@ export const serverMessages = messages({
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
 	CHAT_UPDATE: null,
-	VOICE_ANNOUNCE: null,
 })
 
 export type ServerMessages = [
