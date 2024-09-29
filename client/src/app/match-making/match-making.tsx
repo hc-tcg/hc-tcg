@@ -43,7 +43,7 @@ function MatchMaking() {
 		navigator.clipboard.writeText(spectatorCode)
 	}
 
-	if (status === 'private_lobby') {
+	if (status === 'private_lobby' || status === 'loading') {
 		return (
 			<MenuLayout
 				back={handleCancel}
@@ -80,9 +80,16 @@ function MatchMaking() {
 									id="gameCode"
 									autoFocus
 								/>
-								<Button type="submit" variant="default">
-									Join
-								</Button>
+								{status !== 'loading' && (
+									<Button type="submit" variant="default">
+										Join
+									</Button>
+								)}
+								{status === 'loading' && (
+									<div className={css.spinner}>
+										<Spinner />
+									</div>
+								)}
 							</div>
 							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
 						</form>
@@ -103,13 +110,6 @@ function MatchMaking() {
 						<Button variant="stone" onClick={handleCancel}>
 							Cancel
 						</Button>
-					</>
-				)
-			case 'loading':
-				return (
-					<>
-						<Spinner />
-						<p>Loading</p>
 					</>
 				)
 			case 'waiting_for_player':
