@@ -156,7 +156,13 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 				{SingleUseSlot()}
 			</div>
 
-			{isSpectator && (
+			{isSpectator && currentCoinFlip && (
+				<div className={classNames(css.actionSection, css.status)}>
+					{status}
+				</div>
+			)}
+
+			{isSpectator && !currentCoinFlip && (
 				<div className={classNames(css.actionSection, css.status)}>
 					{currentPlayer.censoredPlayerName}'s Turn
 				</div>
