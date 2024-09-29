@@ -73,18 +73,18 @@ function MatchMaking() {
 							onSubmit={handleCodeSubmit}
 						>
 							<label htmlFor="gameCode">Enter code:</label>
-							<input
-								className={invalidCode ? css.invalidCode : ''}
-								name="gameCode"
-								id="gameCode"
-								autoFocus
-							/>
-							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
-							<div className={css.options}>
-								<Button type="submit" variant="stone">
+							<div className={css.joinButton}>
+								<input
+									className={invalidCode ? css.invalidCode : ''}
+									name="gameCode"
+									id="gameCode"
+									autoFocus
+								/>
+								<Button type="submit" variant="default">
 									Join
 								</Button>
 							</div>
+							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
 						</form>
 					</div>
 				</div>

@@ -43,36 +43,39 @@
 	justify-content: center;
   color: white;
   font-size: 2.5vh;
-	color: var(--text-light);
-	background: var(--gray-600);
-	border: 2px solid black;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 15px;
 
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	padding: 2vh 2vh;
 
 	@media (orientation: portrait) {
   	max-width: 80%;
 	}
 	@media (orientation: landscape) {
-  	max-width: 60vh;
+  	max-width: 65vh;
 	}
 }
 
 .privateJoinGrid {
 	display: flex;
-  gap: 30px;
 	@media (orientation: portrait) {
     	flex-direction: column;
+      gap: 15px;
 	}
 	@media (orientation: landscape) {
     	flex-direction: row;
+      gap: 30px;
 	}
 }
 
 .privateLobbyLeft {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 
 	p,
 	label {
@@ -85,32 +88,17 @@
 .privateLobbyRight {
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 }
 
-.content {
+.joinButton {
 	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 2vh;
-	margin-top: 5vh;
-	opacity: 0;
-	animation: fadeIn 250ms ease-in-out forwards;
+	flex-direction: row;
 
-	p,
-	label {
-		color: white;
-		font-size: 2.5vh;
-		filter: drop-shadow(2px 2px 0 var(--text-dark));
-		user-select: none;
-	}
-
-	button {
-		font-size: 2vh;
-		width: 11vh;
-		height: 5vh;
-		line-height: 100%;
-		padding: 0 2vh;
+	input {
+    	font-size: 2.5vh;
+    	height: 100%;
+    	font-weight: bold;
 	}
 }
 
