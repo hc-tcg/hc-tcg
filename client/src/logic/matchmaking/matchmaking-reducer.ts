@@ -63,6 +63,7 @@ const matchmakingReducer = (
 			return {
 				...state,
 				status: 'loading',
+				invalidCode: false,
 			}
 		case localMessages.DISCONNECT:
 		case localMessages.MATCHMAKING_LEAVE:
