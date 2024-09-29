@@ -26,7 +26,6 @@ const matchmakingReducer = (
 				status: 'random_waiting',
 			}
 		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
-		case localMessages.MATCHMAKING_PRIVATE_GAME_CREATE:
 			return {
 				...state,
 				status: 'loading',
