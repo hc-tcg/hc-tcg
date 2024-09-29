@@ -94,11 +94,17 @@
 .joinButton {
 	display: flex;
 	flex-direction: row;
+  align-items: stretch;
+  height: 5vh;
 
 	input {
-    	font-size: 2.5vh;
-    	height: 100%;
-    	font-weight: bold;
+    font-size: 2.5vh;
+    font-weight: bold;
+    height: unset;
+	}
+
+	button {
+    height: unset;
 	}
 }
 
