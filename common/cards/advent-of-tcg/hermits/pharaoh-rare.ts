@@ -5,7 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -41,17 +41,26 @@ const PharaohRare: Hermit = {
 		observer: ObserverComponent,
 	) {
 		const {player} = component
-		let pickedAfkSlot: SlotComponent | null = null
 
-		// Pick the hermit to heal
-		observer.subscribe(
-			player.hooks.getAttackRequests,
-			(activeInstance, hermitAttackType) => {
-				// Make sure we are attacking
-				if (activeInstance.entity !== component.entity) return
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-				// Only secondary attack
-				if (hermitAttackType !== 'secondary') return
+				const healAmount = Math.min(
+					attack.nextAttacks.reduce(
+						(r, subAttack) =>
+							subAttack.isAttacker(component.entity) &&
+							subAttack.isType('secondary', 'weakness')
+								? r + subAttack.calculateDamage()
+								: r,
+						attack.calculateDamage(),
+					),
+					80,
+				)
+				if (healAmount === 0) return
 
 				const pickCondition = query.every(
 					query.slot.hermit,
@@ -59,8 +68,10 @@ const PharaohRare: Hermit = {
 					query.not(query.slot.empty),
 					query.not(query.slot.has(PharaohRare)),
 				)
-
 				if (!game.components.exists(SlotComponent, pickCondition)) return
+
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
 				game.addPickRequest({
 					player: player.entity,
@@ -68,45 +79,20 @@ const PharaohRare: Hermit = {
 					message: 'Pick an AFK Hermit from either side of the board',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						// Store the info to use later
-						pickedAfkSlot = pickedSlot
+						if (!pickedSlot.inRow()) return
+						pickedSlot.row.heal(healAmount)
+						const healedHermit = pickedSlot.getCard()
+						game.battleLog.addEntry(
+							player.entity,
+							`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
+								pickedSlot.row.index + 1
+							})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
+						)
 					},
 					onTimeout() {
 						// We didn't pick anyone to heal, so heal no one
 					},
 				})
-			},
-		)
-
-		// Heals the afk hermit *before* we actually do damage
-		observer.subscribeWithPriority(
-			game.hooks.beforeAttack,
-			beforeAttack.HERMIT_APPLY_ATTACK,
-			(attack) => {
-				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-					return
-				if (!pickedAfkSlot?.inRow()) return
-
-				const coinFlip = flipCoin(player, component)
-				if (coinFlip[0] === 'tails') return
-
-				const healAmount = attack.calculateDamage()
-				pickedAfkSlot.row.heal(healAmount)
-				const healedHermit = pickedAfkSlot.getCard()
-				game.battleLog.addEntry(
-					player.entity,
-					`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
-						pickedAfkSlot.row.index + 1
-					})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
-				)
-			},
-		)
-
-		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.UPDATE_POST_ATTACK_STATE,
-			(_attack) => {
-				pickedAfkSlot = null
 			},
 		)
 	},
