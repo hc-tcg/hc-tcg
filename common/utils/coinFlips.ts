@@ -11,9 +11,8 @@ const COIN_FLIP_WEIGHTS = [
 ]
 
 const COIN_FORCED_WEIGHTS = [
-	[2, 2],
+	[2, 3],
 	[3, 4],
-	[4, 1],
 ]
 
 const COIN_FLIP_ARRAY = COIN_FLIP_WEIGHTS.reduce((acc, [count, weight]) => {
