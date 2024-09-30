@@ -26,6 +26,7 @@
 	color: var(--text-light);
 	opacity: 0;
 	animation: contentShow 250ms 100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	pointer-events: all;
 }
 
 .center {
