@@ -309,8 +309,8 @@ export function testBossFight(
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {
-				name: 'EX',
-				censoredName: 'EX',
+				name: 'Evil Xisuma',
+				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
 				disableDeckingOut: true,
 			},

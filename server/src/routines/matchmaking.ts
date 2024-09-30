@@ -336,9 +336,9 @@ export function* createBossGame(
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
 	const newBossGame = setupSolitareGame(player, {
-		name: 'EX',
+		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
-		censoredName: 'EX',
+		censoredName: 'Evil Xisuma',
 		deck: [EvilXisumaBossHermitCard],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
