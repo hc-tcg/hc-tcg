@@ -41,7 +41,7 @@ function Modal({
 
 		// https://dev.to/mohitkyadav/how-to-trap-focus-in-react-3in8
 		if (e.key === 'Tab') {
-  		console.info([...focusableModalElements.values()])
+			console.info([...focusableModalElements.values()])
 			if (
 				![...focusableModalElements.values()].includes(
 					document.activeElement,
