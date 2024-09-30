@@ -25,9 +25,10 @@ function Modal({
 
 	useEffect(() => {
 		// https://medium.com/cstech/achieving-focus-trapping-in-a-react-modal-component-3f28f596f35b
-		focusableModalElements = (childrenRef as any).current.querySelectorAll(
+		focusableModalElements = (childrenRef as any).current?.querySelectorAll(
 			'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
 		)
+		if (!focusableModalElements) return
 		if (focusableModalElements.length === 0) return
 		focusableModalElements[focusableModalElements.length - 1].focus()
 		firstElement = focusableModalElements[0]
