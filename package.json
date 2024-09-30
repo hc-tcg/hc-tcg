@@ -52,6 +52,7 @@
 		"esbuild": "^0.19.2",
 		"esbuild-plugin-copy": "^2.1.1",
 		"jest": "^29.7.0",
+		"jest-environment-jsdom": "^29.7.0",
 		"jest-scss-transform": "^1.0.4",
 		"react-test-renderer": "^18.3.1",
 		"sass": "^1.58.3",
@@ -77,15 +78,19 @@
 		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
 		"test:api": "./tests/sh/test-api",
 		"test:unit": "jest tests/unit/ --detect-open-handles",
-		"test:snapshot": "jest tests/snapshots/",
-		"test:snapshot-update": "jest tests/snapshots/ --updateSnapshot",
+		"test:snapshot": "jest tests/snapshots/ --env jsdom",
+		"test:snapshot-update": "jest tests/snapshots/ --env jsdom --updateSnapshot",
 		"test:e2e": "playwright test",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
 	},
 	"browserslist": {
-		"production": [">0.2%", "not dead", "not op_mini all"],
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
 		"development": [
 			"last 1 chrome version",
 			"last 1 firefox version",
