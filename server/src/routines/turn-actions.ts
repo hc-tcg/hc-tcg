@@ -377,6 +377,8 @@ export function* pickRequestSaga(
 	return
 }
 
-export function* delaySaga(delayMs: number) {
-	yield* delay(delayMs)
+export function* delaySaga(game: GameModel, delayMs: number) {
+	if (game.viewers.length !== 0) {
+		yield* delay(delayMs)
+	}
 }

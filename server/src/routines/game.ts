@@ -413,7 +413,7 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
-				yield* call(delaySaga, turnAction.action.delay)
+				yield* call(delaySaga, game, turnAction.action.delay)
 				break
 			default:
 				// Unknown action type, ignore it completely
