@@ -367,7 +367,6 @@ function* turnActionSaga(
 				'PICK_REQUEST',
 				'MODAL_REQUEST',
 				'END_TURN',
-				'DELAY',
 			].includes(actionType) || availableActions.includes(actionType),
 			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
 		)

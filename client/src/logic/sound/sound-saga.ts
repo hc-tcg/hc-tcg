@@ -86,14 +86,12 @@ function* voiceQueuePlay() {
 	while (true) {
 		if (voiceLineQueue.length > 0 && voiceAudio.paused) {
 			const nextAudio = voiceLineQueue.shift()
-			console.log(nextAudio)
 			if (nextAudio) {
 				voiceSourceNode.connect(voiceGainNode)
 				voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
 				voiceAudio.pause()
 				voiceAudio.src = nextAudio
 				voiceAudio.currentTime = 0
-				console.log('PLAYING')
 				voiceAudio.play()
 			}
 		}
