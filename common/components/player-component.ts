@@ -6,7 +6,7 @@ import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
-	CoinFlipResult,
+	CoinFlip,
 	CurrentCoinFlip,
 	TurnActions,
 	UsedHermitAttackInfo,
@@ -96,10 +96,7 @@ export class PlayerComponent {
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
-			(
-				card: CardComponent,
-				coinFlips: Array<CoinFlipResult>,
-			) => Array<CoinFlipResult>
+			(card: CardComponent, coinFlips: Array<CoinFlip>) => Array<CoinFlip>
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.

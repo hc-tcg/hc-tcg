@@ -37,8 +37,12 @@ export class BattleLogModel {
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
-		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+		const heads = coinFlip.tosses.filter(
+			(flip) => flip.result === 'heads',
+		).length
+		const tails = coinFlip.tosses.filter(
+			(flip) => flip.result === 'tails',
+		).length
 
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'

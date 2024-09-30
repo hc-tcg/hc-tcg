@@ -23,12 +23,13 @@ export type LocalRowState = {
 }
 
 export type CoinFlipResult = 'heads' | 'tails'
+export type CoinFlip = {result: CoinFlipResult; forced: boolean}
 
 export type CurrentCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
@@ -37,7 +38,7 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
