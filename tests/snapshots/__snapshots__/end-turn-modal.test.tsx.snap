@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test End Turn Modal All play card actions 1`] = `
+<EndTurnModalInner
+  availableActions={
+    [
+      "PLAY_HERMIT_CARD",
+      "PLAY_ITEM_CARD",
+      "PLAY_SINGLE_USE_CARD",
+      "PLAY_EFFECT_CARD",
+      "CHANGE_ACTIVE_HERMIT",
+    ]
+  }
+/>
+`;
+
+exports[`Test End Turn Modal All play card actions 2`] = `
+<EndTurnModalInner
+  availableActions={
+    [
+      "PRIMARY_ATTACK",
+      "SECONDARY_ATTACK",
+      "SINGLE_USE_ATTACK",
+    ]
+  }
+/>
+`;
+
+exports[`Test End Turn Modal All play card actions and attacks 1`] = `
+<EndTurnModalInner
+  availableActions={
+    [
+      "PLAY_HERMIT_CARD",
+      "PLAY_ITEM_CARD",
+      "PLAY_SINGLE_USE_CARD",
+      "PLAY_EFFECT_CARD",
+      "CHANGE_ACTIVE_HERMIT",
+      "PRIMARY_ATTACK",
+      "SECONDARY_ATTACK",
+      "SINGLE_USE_ATTACK",
+    ]
+  }
+/>
+`;
+
+exports[`Test End Turn Modal No Actions 1`] = `
+<EndTurnModalInner
+  availableActions={[]}
+/>
+`;
+
+exports[`Test End Turn Modal Waiting actions 1`] = `
+<EndTurnModalInner
+  availableActions={
+    [
+      "WAIT_FOR_TURN",
+      "WAIT_FOR_OPPONENT_ACTION",
+    ]
+  }
+/>
+`;
