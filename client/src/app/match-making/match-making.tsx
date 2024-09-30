@@ -53,9 +53,8 @@ function MatchMaking() {
 			>
 				<div className={css.privateLobby}>
 					<p>
-						{' '}
-						Share your game code or enter a game or spectator code to join a
-						game:{' '}
+						Share your game or spectator code, enter a game code to join a game,
+						or enter a spectator game to specate a game.
 					</p>
 					<div className={css.privateJoinGrid}>
 						<div className={css.privateLobbyLeft}>
