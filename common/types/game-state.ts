@@ -104,7 +104,6 @@ export type TurnAction =
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
-	/** Used for bosses, send the game state and wait a specified amount of time */
 	| 'DELAY'
 
 export type GameRules = {
