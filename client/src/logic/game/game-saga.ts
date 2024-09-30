@@ -103,6 +103,11 @@ function* gameStateSaga(
 		time: action.time,
 	})
 
+	yield* put<LocalMessage>({
+		type: localMessages.QUEUE_VOICE,
+		lines: gameState.voiceLineQueue,
+	})
+
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
 		return
@@ -139,17 +144,6 @@ function* gameStateReceiver() {
 	}
 }
 
-function* voiceAnnounceReceiver() {
-	// constantly forward @sound/VOICE_ANNOUNCE messages from the server to the store
-	const socket = yield* select(getSocket)
-	while (true) {
-		const {lines} = yield call(
-			receiveMsg(socket, serverMessages.VOICE_ANNOUNCE),
-		)
-		yield put<LocalMessage>({type: localMessages.QUEUE_VOICE, lines: lines})
-	}
-}
-
 function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
@@ -157,7 +151,6 @@ function* gameActionsSaga(initialGameState?: LocalGameState) {
 				yield sendMsg({type: clientMessages.FORFEIT})
 			}),
 			fork(gameStateReceiver),
-			fork(voiceAnnounceReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),
 	)

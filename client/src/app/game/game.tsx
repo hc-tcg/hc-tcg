@@ -230,17 +230,27 @@ function Game() {
 		if (!gameState.isBossGame) return
 		if (endGameOverlay) {
 			if (endGameOverlay.outcome === 'you_won')
-				dispatch({type: localMessages.QUEUE_VOICE, lines: ['EXLOSE']})
-			else dispatch({type: localMessages.QUEUE_VOICE, lines: ['PLAYERLOSE']})
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/EXLOSE.ogg'],
+				})
+			else
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/PLAYERLOSE.ogg'],
+				})
 			return
 		}
 		const playerLostLife = lives[0] - prevLives[0] < 0
 		const opponentLostLife = lives[1] - prevLives[1] < 0
 		setPrevLives(lives)
 		if (opponentLostLife) {
-			dispatch({type: localMessages.QUEUE_VOICE, lines: ['EXLIFE']})
+			dispatch({type: localMessages.QUEUE_VOICE, lines: ['/voice/EXLIFE.ogg']})
 		} else if (playerLostLife) {
-			dispatch({type: localMessages.QUEUE_VOICE, lines: ['PLAYERLIFE']})
+			dispatch({
+				type: localMessages.QUEUE_VOICE,
+				lines: ['/voice/PLAYERLIFE.ogg'],
+			})
 		}
 	}, [...lives, endGameOverlay])
 

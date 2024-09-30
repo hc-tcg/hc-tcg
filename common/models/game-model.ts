@@ -112,6 +112,10 @@ export class GameModel {
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	/** Voice lines to play on the next game state update.
+	 * This is used for the Evil X boss fight.
+	 */
+	public voiceLineQueue: Array<string>
 
 	/** The objects used in the game. */
 	public components: ComponentTable
@@ -193,6 +197,7 @@ export class GameModel {
 		})
 
 		this.state = getGameState(this, options.randomizeOrder)
+		this.voiceLineQueue = []
 	}
 
 	public get logHeader() {

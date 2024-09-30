@@ -47,6 +47,7 @@ export const ActionMap: Record<TurnAction, string | null> = {
 	END_TURN: null,
 	WAIT_FOR_TURN: null,
 	MODAL_REQUEST: null,
+	DELAY: null,
 }
 
 function* endTurnActionSaga(): SagaIterator {

@@ -31,6 +31,7 @@ import {
 	applyEffectSaga,
 	attackSaga,
 	changeActiveHermitSaga,
+	delaySaga,
 	modalRequestSaga,
 	pickRequestSaga,
 	playCardSaga,
@@ -336,6 +337,8 @@ function* sendGameState(game: GameModel) {
 			localGameState,
 		})
 	})
+
+	game.voiceLineQueue = []
 }
 
 function* turnActionSaga(
@@ -406,10 +409,14 @@ function* turnActionSaga(
 					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
 				)
 				break
+			case 'DELAY':
+				yield* call(sendGameState, game)
+				yield* call(delaySaga, game, turnAction.action.delay)
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
-					'Recieved an action that does not exist. This is impossible.',
+					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
 				return
 		}
@@ -471,6 +478,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
+				'DELAY',
 			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10),

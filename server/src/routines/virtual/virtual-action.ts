@@ -24,7 +24,7 @@ export default function* virtualPlayerActionSaga(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
 	)
 	try {
-		const action = yield* component.getTurnAction()
+		const action = component.getNextTurnAction()
 		yield* put({
 			type: clientMessages.TURN_ACTION,
 			payload: {action, playerEntity: component.playerEntity},

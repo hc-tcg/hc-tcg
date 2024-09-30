@@ -1,7 +1,9 @@
+import assert from 'assert'
 import {AI_DEFINITIONS} from '../../server/src/routines/virtual'
-import {AIEntity, PlayerEntity} from '../entities'
-import {GameModel} from '../models/game-model'
-import {VirtualAI} from '../types/virtual-ai'
+import type {AIEntity, PlayerEntity} from '../entities'
+import type {GameModel} from '../models/game-model'
+import type {AnyTurnActionData} from '../types/turn-action-data'
+import type {VirtualAI} from '../types/virtual-ai'
 
 export class AIComponent {
 	readonly game: GameModel
@@ -9,6 +11,7 @@ export class AIComponent {
 
 	readonly playerEntity: PlayerEntity
 	readonly ai: VirtualAI
+	turnActionGenerator: Generator<AnyTurnActionData>
 
 	constructor(
 		game: GameModel,
@@ -24,10 +27,16 @@ export class AIComponent {
 		} else {
 			this.ai = AI_DEFINITIONS[ai]
 		}
+		this.turnActionGenerator = this.ai.getTurnActions(this.game, this)
 	}
 
-	public getTurnAction() {
-		return this.ai.getTurnAction(this.game, this)
+	public getNextTurnAction(): AnyTurnActionData {
+		let nextAction = this.turnActionGenerator.next()
+		assert(
+			!nextAction.done,
+			'Bosses should always be able to attack as long as the game is running.',
+		)
+		return nextAction.value
 	}
 
 	public get player() {

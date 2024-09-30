@@ -5,8 +5,8 @@ import {AnyTurnActionData} from './turn-action-data'
 export type VirtualAI = {
 	readonly id: string
 
-	getTurnAction(
+	getTurnActions(
 		game: GameModel,
 		component: AIComponent,
-	): Generator<any, AnyTurnActionData>
+	): Generator<AnyTurnActionData>
 }
