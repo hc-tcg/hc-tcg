@@ -25,7 +25,7 @@ describe('Test End Turn Modal', () => {
 			).toJSON(),
 		).toMatchSnapshot()
 	})
-	test('All play card actions', () => {
+	test('All attack actions', () => {
 		expect(
 			ReactTestRenderer.create(
 				<EndTurnModalInner
