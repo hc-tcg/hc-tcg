@@ -46,14 +46,16 @@ function* pickWithSelectedSaga(
 
 		yield* localPutCardInSlot(action, selectedCard)
 
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_TURN_ACTION,
-			action: {
-				type: actionType,
-				slot: pickInfo.slotEntity,
-				card: selectedCard,
-			},
-		})
+		if (pickInfo.card === null) {
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_TURN_ACTION,
+				action: {
+					type: actionType,
+					slot: pickInfo.slotEntity,
+					card: selectedCard,
+				},
+			})
+		}
 
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_CARD_SELECTED_SET,
