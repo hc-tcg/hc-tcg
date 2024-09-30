@@ -3,7 +3,7 @@ import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfal
 import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
-import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
+import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import GoldArmor from 'common/cards/default/effects/gold-armor'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import MumboJumboRare from 'common/cards/default/hermits/mumbojumbo-rare'
@@ -13,7 +13,7 @@ import PranksterDoubleItem from 'common/cards/default/items/prankster-rare'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import ExBossNineStatusEffect, {
+import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
 import {
@@ -36,7 +36,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 	yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 
 	yield* bossAttack(game, '50DMG')
 
@@ -102,7 +102,7 @@ function* testVersusRendogRare(game: GameModel) {
 	yield* playCardFromHand(game, RendogRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
@@ -154,7 +154,7 @@ function* testDirectlyOpposite(game: GameModel) {
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 
 	yield* endTurn(game)
 
@@ -163,9 +163,7 @@ function* testDirectlyOpposite(game: GameModel) {
 
 	yield* attack(game, 'secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
-		EvilXisumaBossHermitCard.health -
-			80 /* Renbob Secondary */ -
-			30 /* Anvil */,
+		EvilXisumaBoss.health - RenbobRare.secondary.damage - 30 /* Anvil */,
 	)
 
 	yield* endTurn(game)
@@ -184,8 +182,8 @@ function* testDirectlyOpposite(game: GameModel) {
 	)
 
 	expect(game.opponentPlayer.activeRow?.health).toBe(
-		EvilXisumaBossHermitCard.health -
-			90 /* PoePoe Skizz Secondary */ -
+		EvilXisumaBoss.health -
+			PoePoeSkizzRare.secondary.damage -
 			20 /* Additional Jumpscare damage */,
 	)
 }
@@ -198,10 +196,10 @@ function* testNineAttached(game: GameModel) {
 	yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
 	yield* endTurn(game)
 	// Boss Turn 1
-	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 	const nineEffect = game.components.filter(
 		StatusEffectComponent,
-		query.effect.is(ExBossNineStatusEffect),
+		query.effect.is(ExBossNineEffect),
 		query.effect.targetIsCardAnd(query.card.currentPlayer),
 	)[0]
 	expect(nineEffect).not.toBe(undefined)
@@ -252,7 +250,7 @@ function* testChallengerVictory(game: GameModel) {
 	yield* playCardFromHand(game, PranksterDoubleItem, 'item', 0, 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
@@ -371,7 +369,7 @@ describe('Test Evil X Boss Fight', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '90DMG')
 				},
 				then: (game) => {
@@ -391,7 +389,7 @@ describe('Test Evil X Boss Fight', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '90DMG')
 					yield* endTurn(game)
 

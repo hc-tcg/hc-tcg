@@ -9,7 +9,7 @@ import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import DyedEffect from './dyed'
 import EfficiencyEffect from './efficiency'
-import ExBossNineStatusEffect from './exboss-nine'
+import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
@@ -60,7 +60,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 
 	/* System Status Effect */
-	ExBossNineStatusEffect,
+	ExBossNineEffect,
 	UsedClockEffect,
 	DeathloopReady,
 	RevivedByDeathloopEffect,

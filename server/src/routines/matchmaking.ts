@@ -1,4 +1,4 @@
-import EvilXisumaBossHermitCard from 'common/cards/boss/hermits/evilxisuma_boss'
+import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	PlayerComponent,
@@ -339,7 +339,7 @@ export function* createBossGame(
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBossHermitCard],
+		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 	})

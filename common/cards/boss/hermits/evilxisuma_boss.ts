@@ -7,7 +7,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import ExBossNineStatusEffect from '../../../status-effects/exboss-nine'
+import ExBossNineEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'
 import PoisonEffect from '../../../status-effects/poison'
 import {
@@ -17,7 +17,7 @@ import {
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
-import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
+import EvilXisumaRare from '../../alter-egos/hermits/evilxisuma_rare'
 import {InstancedValue} from '../../base/card'
 import {Hermit} from '../../base/types'
 
@@ -113,8 +113,8 @@ function isBeingMocked(game: GameModel, component: CardComponent) {
 
 const damageDisabled = new InstancedValue<boolean>(() => false)
 
-const EvilXisumaBossHermitCard: Hermit = {
-	...EvilXisumaRareHermitCard,
+const EvilXisumaBoss: Hermit = {
+	...EvilXisumaRare,
 	id: 'evilxisuma_boss',
 	numericId: -1,
 	expansion: 'boss',
@@ -127,11 +127,7 @@ const EvilXisumaBossHermitCard: Hermit = {
 	) {
 		// Players who imitate this card should use regular attacks and not the boss'
 		if (isBeingMocked(game, component)) {
-			return EvilXisumaRareHermitCard.getAttack(
-				game,
-				component,
-				hermitAttackType,
-			)
+			return EvilXisumaRare.getAttack(game, component, hermitAttackType)
 		}
 
 		const bossAttack = bossAttacks.get(component)
@@ -206,13 +202,13 @@ const EvilXisumaBossHermitCard: Hermit = {
 		observer: ObserverComponent,
 	) {
 		if (isBeingMocked(game, component)) {
-			EvilXisumaRareHermitCard.onAttach(game, component, observer)
+			EvilXisumaRare.onAttach(game, component, observer)
 			return
 		}
 
 		// Apply an ailment to act on EX's ninth turn
 		game.components
-			.new(StatusEffectComponent, ExBossNineStatusEffect, component.entity)
+			.new(StatusEffectComponent, ExBossNineEffect, component.entity)
 			.apply(component.entity)
 
 		const {player, opponentPlayer} = component
@@ -387,4 +383,4 @@ const EvilXisumaBossHermitCard: Hermit = {
 	},
 }
 
-export default EvilXisumaBossHermitCard
+export default EvilXisumaBoss

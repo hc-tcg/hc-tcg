@@ -20,7 +20,7 @@ export const supplyNineSpecial = (
 	nineSpecial.set(effect.creator, value)
 }
 
-const ExBossNineStatusEffect: Counter<CardComponent> = {
+const ExBossNineEffect: Counter<CardComponent> = {
 	...systemStatusEffect,
 	id: 'exboss-nine',
 	icon: 'exboss-nine',
@@ -97,4 +97,4 @@ const ExBossNineStatusEffect: Counter<CardComponent> = {
 	},
 }
 
-export default ExBossNineStatusEffect
+export default ExBossNineEffect

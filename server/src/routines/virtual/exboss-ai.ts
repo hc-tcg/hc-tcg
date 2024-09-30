@@ -1,4 +1,4 @@
-import {
+import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
@@ -10,18 +10,12 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import ExBossNineStatusEffect, {
+import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
-import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {
-	AnyTurnActionData,
-	AttackActionData,
-	PlayCardActionData,
-} from 'common/types/turn-action-data'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
 const fireDropper = () => {
@@ -71,7 +65,7 @@ function getNextTurnAction(
 	game: GameModel,
 	component: AIComponent,
 ): Array<AnyTurnActionData> {
-	const {playerEntity} = component
+	const {player} = component
 
 	if (game.state.modalRequests.length) {
 		if (game.state.modalRequests[0].modal.name.startsWith('Lantern')) {
@@ -85,46 +79,39 @@ function getNextTurnAction(
 		}
 	}
 
-	const {currentPlayer} = game
-
 	if (game.state.turn.turnNumber === 2) {
-		const bossCard = currentPlayer
-			.getHand()
-			.find((card) => card.props.id === 'evilxisuma_boss')
+		const bossCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			query.card.is(EvilXisumaBoss),
+			query.card.slot(query.slot.hand),
+		)
 		const slot = game.components.findEntity(
 			BoardSlotComponent,
-			query.slot.currentPlayer,
+			query.slot.player(player.entity),
 			query.slot.hermit,
 		)
 		if (bossCard && slot) {
-			const playHermitCard: PlayCardActionData & {
-				playerEntity: PlayerEntity
-			} = {
-				type: 'PLAY_HERMIT_CARD',
-				slot,
-				card: {
-					props: WithoutFunctions(bossCard.props),
-					entity: bossCard.entity,
-					slot: bossCard.slotEntity,
-					turnedOver: false,
-					attackHint: null,
+			return [
+				{
+					type: 'PLAY_HERMIT_CARD',
+					slot,
+					card: {
+						props: WithoutFunctions(bossCard.props),
+						entity: bossCard.entity,
+						slot: bossCard.slotEntity,
+						turnedOver: false,
+						attackHint: null,
+					},
 				},
-				playerEntity,
-			}
-			return [playHermitCard]
+			]
 		}
 	}
 
 	const attackType = game.state.turn.availableActions.find(
-		(action): action is AttackAction =>
-			action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
 	)
 	if (attackType) {
-		const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
-			type: attackType,
-			playerEntity,
-		}
-
 		const bossCard = game.components.find(
 			CardComponent,
 			query.card.currentPlayer,
@@ -133,12 +120,15 @@ function getNextTurnAction(
 		)
 		if (bossCard === null)
 			throw new Error(`EX's active hermit cannot be found, please report`)
-		const bossAttack = getBossAttack(currentPlayer)
+		const bossAttack = getBossAttack(component.player)
 		supplyBossAttack(bossCard, bossAttack)
 		for (const sound of bossAttack) {
 			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
 		}
-		return [{type: 'DELAY', delay: bossAttack.length * 3000}, attackAction]
+		return [
+			{type: 'DELAY', delay: bossAttack.length * 3000},
+			{type: attackType},
+		]
 	}
 
 	if (!game.state.turn.availableActions.includes('END_TURN'))
@@ -146,8 +136,8 @@ function getNextTurnAction(
 
 	const nineEffect = game.components.find(
 		StatusEffectComponent,
-		query.effect.is(ExBossNineStatusEffect),
-		query.effect.targetIsCardAnd(query.card.currentPlayer),
+		query.effect.is(ExBossNineEffect),
+		query.effect.targetIsCardAnd(query.card.player(player.entity)),
 	)
 	if (nineEffect && nineEffect.counter === 0) {
 		const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
