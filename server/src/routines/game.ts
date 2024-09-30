@@ -243,8 +243,6 @@ function getAvailableActions(
 		filteredActions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
-	filteredActions.push('DELAY')
-
 	return filteredActions
 }
 
@@ -413,6 +411,7 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
+				yield* call(sendGameState, game)
 				yield* call(delaySaga, game, turnAction.action.delay)
 				break
 			default:

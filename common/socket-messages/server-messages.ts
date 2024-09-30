@@ -97,7 +97,6 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof serverMessages.VOICE_ANNOUNCE; lines: Array<string>},
 ]
 
 export type ServerMessage = Message<ServerMessages>
