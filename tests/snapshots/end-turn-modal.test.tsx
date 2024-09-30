@@ -1,19 +1,19 @@
 import {describe, expect, test} from '@jest/globals'
-import {EndTurnModalInner} from 'client/app/game/modals/end-turn-modal'
+import {EndTurnModalBody} from 'client/app/game/modals/end-turn-modal'
 import * as ReactTestRenderer from 'react-test-renderer'
 
 describe('Test End Turn Modal', () => {
 	test('No Actions', () => {
 		expect(
 			ReactTestRenderer.create(
-				<EndTurnModalInner availableActions={[]} />,
+				<EndTurnModalBody availableActions={[]} />,
 			).toJSON(),
 		).toMatchSnapshot()
 	})
 	test('All play card actions', () => {
 		expect(
 			ReactTestRenderer.create(
-				<EndTurnModalInner
+				<EndTurnModalBody
 					availableActions={[
 						'PLAY_HERMIT_CARD',
 						'PLAY_ITEM_CARD',
@@ -28,7 +28,7 @@ describe('Test End Turn Modal', () => {
 	test('All attack actions', () => {
 		expect(
 			ReactTestRenderer.create(
-				<EndTurnModalInner
+				<EndTurnModalBody
 					availableActions={[
 						'PRIMARY_ATTACK',
 						'SECONDARY_ATTACK',
@@ -41,7 +41,7 @@ describe('Test End Turn Modal', () => {
 	test('All play card actions and attacks', () => {
 		expect(
 			ReactTestRenderer.create(
-				<EndTurnModalInner
+				<EndTurnModalBody
 					availableActions={[
 						'PLAY_HERMIT_CARD',
 						'PLAY_ITEM_CARD',
@@ -59,7 +59,7 @@ describe('Test End Turn Modal', () => {
 	test('Waiting actions', () => {
 		expect(
 			ReactTestRenderer.create(
-				<EndTurnModalInner
+				<EndTurnModalBody
 					availableActions={['WAIT_FOR_TURN', 'WAIT_FOR_OPPONENT_ACTION']}
 				/>,
 			).toJSON(),

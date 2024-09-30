@@ -31,7 +31,7 @@ function EndTurnModal({closeModal}: Props) {
 		return null
 	}
 
-	let modal = EndTurnModalInner({availableActions, handleCancel, handleEndTurn})
+	let modal = EndTurnModalBody({availableActions, handleCancel, handleEndTurn})
 
 	if (modal !== null) {
 		return modal
@@ -40,7 +40,7 @@ function EndTurnModal({closeModal}: Props) {
 	handleEndTurn()
 }
 
-export function EndTurnModalInner({
+export function EndTurnModalBody({
 	availableActions,
 	handleCancel,
 	handleEndTurn,
