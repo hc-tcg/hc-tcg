@@ -1,12 +1,12 @@
+import {TurnAction} from 'common/types/game-state'
 import Button from 'components/button'
 import Modal from 'components/modal'
 import {getAvailableActions} from 'logic/game/game-selectors'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import {TurnAction} from 'common/types/game-state'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	closeModal: () => void

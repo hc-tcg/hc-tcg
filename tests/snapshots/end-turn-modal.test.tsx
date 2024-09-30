@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import * as ReactTestRenderer from 'react-test-renderer'
 import {EndTurnModalInner} from 'client/app/game/modals/end-turn-modal'
+import * as ReactTestRenderer from 'react-test-renderer'
 
 describe('Test End Turn Modal', () => {
 	test('No Actions', () => {
