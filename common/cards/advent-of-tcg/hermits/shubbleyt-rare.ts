@@ -4,6 +4,7 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {SelectCards} from '../../../types/modal-requests'
 import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -48,15 +49,20 @@ const ShubbleYTRare: Hermit = {
 				if (attack.type !== 'secondary') return
 				const topCard = player.getDeck().sort(CardComponent.compareOrder).at(0)
 				if (!topCard) return
+				let currentTopCard: CardComponent = topCard
 
-				game.addModalRequest({
+				const newObserver = game.components.new(
+					ObserverComponent,
+					component.entity,
+				)
+
+				const modal: SelectCards.Request = {
 					player: player.entity,
 					modal: {
 						type: 'selectCards',
-
 						name: 'Shelby - Parallel World',
 						description: 'Place your top card on bottom of deck?',
-						cards: [topCard.entity],
+						cards: [currentTopCard.entity],
 						selectionSize: 0,
 						cancelable: false,
 						primaryButton: {
@@ -69,10 +75,11 @@ const ShubbleYTRare: Hermit = {
 						},
 					},
 					onResult(modalResult) {
+						newObserver.unsubscribeFromEverything()
 						if (!modalResult) return 'SUCCESS'
 						if (!modalResult.result) return 'SUCCESS'
 
-						topCard.attach(
+						currentTopCard.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'back',
 							}),
@@ -80,8 +87,28 @@ const ShubbleYTRare: Hermit = {
 
 						return 'SUCCESS'
 					},
-					onTimeout() {},
-				})
+					onTimeout() {
+						newObserver.unsubscribeFromEverything()
+					},
+				}
+
+				game.addModalRequest(modal)
+
+				const updateModal = () => {
+					newObserver.unsubscribe(currentTopCard.hooks.onChangeSlot)
+					const topCard = player
+						.getDeck()
+						.sort(CardComponent.compareOrder)
+						.at(0)
+					if (!topCard) {
+						game.removeModalRequest(game.state.modalRequests.indexOf(modal))
+						return
+					}
+					currentTopCard = topCard
+					modal.modal.cards = [topCard.entity]
+					newObserver.subscribe(topCard.hooks.onChangeSlot, updateModal)
+				}
+				newObserver.subscribe(currentTopCard.hooks.onChangeSlot, updateModal)
 			},
 		)
 	},
