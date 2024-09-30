@@ -375,7 +375,7 @@ describe('Test Evil X Boss Fight', () => {
 					yield* bossAttack(game, '90DMG')
 				},
 				then: (game) => {
-					expect(getWinner(game)).toBe('EX')
+					expect(getWinner(game)).toBe('Evil Xisuma')
 					expect(game.endInfo.reason).toBe('hermits')
 				},
 			},
