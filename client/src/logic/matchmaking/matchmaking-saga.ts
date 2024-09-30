@@ -39,7 +39,7 @@ function* createBossGameSaga() {
 			yield* call(receiveMsg, socket, 'GAME_START')
 			yield* put<LocalMessage>({
 				type: localMessages.QUEUE_VOICE,
-				lines: ['EXSTART'],
+				lines: ['/voice/EXSTART.ogg'],
 			})
 			yield* call(gameSaga)
 		} catch (err) {

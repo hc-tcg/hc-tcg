@@ -24,7 +24,6 @@ import {
 } from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 import {delay} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
 
 const fireDropper = () => {
 	return Math.floor(Math.random() * 9)
@@ -133,7 +132,9 @@ const ExBossAI: VirtualAI = {
 				throw new Error(`EX's active hermit cannot be found, please report`)
 			const bossAttack = getBossAttack(currentPlayer)
 			supplyBossAttack(bossCard, bossAttack)
-			game.voiceLineQueue.push(`/voice/${bossAttack}.ogg`)
+			for (const sound of bossAttack) {
+				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
+			}
 			yield* delay(bossAttack.length * 3000)
 			// Waits after announcing attack to perform the action
 			return attackAction

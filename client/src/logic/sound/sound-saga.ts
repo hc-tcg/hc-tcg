@@ -2,7 +2,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery, takeLatest} from 'redux-saga/effects'
-import {select} from 'typed-redux-saga'
+import {delay, fork, select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
 
 const audioCtx = new AudioContext()
@@ -75,33 +75,29 @@ const voiceLineQueue: string[] = []
 function* playVoiceSaga(
 	action: LocalMessageTable[typeof localMessages.QUEUE_VOICE],
 ) {
-	try {
-		if (audioCtx.state !== 'running') return
-		const settings = yield* select(getSettings)
-		if (settings.voiceVolume === 0) return
+	if (audioCtx.state !== 'running') return
+	const settings = yield* select(getSettings)
+	if (settings.voiceVolume === 0) return
 
-		voiceLineQueue.push(
-			...action.lines.map((fileName) => `/voice/${fileName}.ogg`),
-		)
+	voiceLineQueue.push(...action.lines)
+}
 
-		if (voiceAudio.paused) {
-			voiceAudio.src = voiceLineQueue.shift() ?? ''
-			voiceSourceNode.connect(voiceGainNode)
-			voiceAudio.onended = () => {
-				const nextAudio = voiceLineQueue.shift()
-				if (nextAudio) {
-					voiceAudio.pause()
-					voiceAudio.src = nextAudio
-					voiceAudio.currentTime = 0
-					voiceAudio.play()
-				} else {
-					voiceSourceNode.disconnect(voiceGainNode)
-				}
+function* voiceQueuePlay() {
+	while (true) {
+		if (voiceLineQueue.length > 0 && voiceAudio.paused) {
+			const nextAudio = voiceLineQueue.shift()
+			console.log(nextAudio)
+			if (nextAudio) {
+				voiceSourceNode.connect(voiceGainNode)
+				voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
+				voiceAudio.pause()
+				voiceAudio.src = nextAudio
+				voiceAudio.currentTime = 0
+				console.log('PLAYING')
+				voiceAudio.play()
 			}
-			voiceAudio.play()
 		}
-	} catch (err) {
-		console.log(err)
+		yield* delay(100)
 	}
 }
 
@@ -151,6 +147,7 @@ function* soundSaga(): SagaIterator {
 	yield takeEvery(localMessages.QUEUE_VOICE, playVoiceSaga)
 	yield takeLatest(localMessages.PLAY_VOICE_TEST, playVoiceTest)
 	yield takeLatest(localMessages.SOUND_SECTION_CHANGE, stopVoiceChannel)
+	yield* fork(voiceQueuePlay)
 	document.addEventListener(
 		'click',
 		() => {
