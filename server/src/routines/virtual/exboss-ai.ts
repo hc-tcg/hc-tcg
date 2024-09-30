@@ -12,18 +12,17 @@ import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import ExBossNineStatusEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
 import {AttackAction} from 'common/types/game-state'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {
+	AnyTurnActionData,
 	AttackActionData,
 	PlayCardActionData,
 } from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {delay} from 'typed-redux-saga'
 
 const fireDropper = () => {
 	return Math.floor(Math.random() * 9)
@@ -68,96 +67,105 @@ function getBossAttack(player: PlayerComponent) {
 	return attackDef
 }
 
+function getNextTurnAction(
+	game: GameModel,
+	component: AIComponent,
+): Array<AnyTurnActionData> {
+	const {playerEntity} = component
+
+	if (game.state.modalRequests.length) {
+		if (game.state.modalRequests[0].modal.name.startsWith('Lantern')) {
+			// Handles when challenger plays "Lantern"
+			return [
+				{
+					type: 'MODAL_REQUEST',
+					modalResult: {result: true, cards: null},
+				},
+			]
+		}
+	}
+
+	const {currentPlayer} = game
+
+	if (game.state.turn.turnNumber === 2) {
+		const bossCard = currentPlayer
+			.getHand()
+			.find((card) => card.props.id === 'evilxisuma_boss')
+		const slot = game.components.findEntity(
+			BoardSlotComponent,
+			query.slot.currentPlayer,
+			query.slot.hermit,
+		)
+		if (bossCard && slot) {
+			const playHermitCard: PlayCardActionData & {
+				playerEntity: PlayerEntity
+			} = {
+				type: 'PLAY_HERMIT_CARD',
+				slot,
+				card: {
+					props: WithoutFunctions(bossCard.props),
+					entity: bossCard.entity,
+					slot: bossCard.slotEntity,
+					turnedOver: false,
+					attackHint: null,
+				},
+				playerEntity,
+			}
+			return [playHermitCard]
+		}
+	}
+
+	const attackType = game.state.turn.availableActions.find(
+		(action): action is AttackAction =>
+			action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+	)
+	if (attackType) {
+		const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
+			type: attackType,
+			playerEntity,
+		}
+
+		const bossCard = game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.active,
+			query.card.slot(query.slot.hermit),
+		)
+		if (bossCard === null)
+			throw new Error(`EX's active hermit cannot be found, please report`)
+		const bossAttack = getBossAttack(currentPlayer)
+		supplyBossAttack(bossCard, bossAttack)
+		for (const sound of bossAttack) {
+			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
+		}
+		return [{type: 'DELAY', delay: bossAttack.length * 3000}, attackAction]
+	}
+
+	if (!game.state.turn.availableActions.includes('END_TURN'))
+		throw new Error('EX does not know what to do in this state, please report')
+
+	const nineEffect = game.components.find(
+		StatusEffectComponent,
+		query.effect.is(ExBossNineStatusEffect),
+		query.effect.targetIsCardAnd(query.card.currentPlayer),
+	)
+	if (nineEffect && nineEffect.counter === 0) {
+		const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+		supplyNineSpecial(nineEffect, nineSpecial)
+		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
+		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]
+	}
+
+	return [{type: 'END_TURN'}]
+}
+
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
 
-	getTurnAction: function* (game: GameModel, component: AIComponent) {
-		const {playerEntity} = component
-
-		if (game.state.modalRequests.length)
-			if (game.state.modalRequests[0].modal.name.startsWith('Lantern'))
-				// Handles when challenger plays "Lantern"
-				return {
-					type: 'MODAL_REQUEST',
-					modalResult: {result: true, cards: null},
-				}
-
-		const {currentPlayer} = game
-
-		if (game.state.turn.turnNumber === 2) {
-			const bossCard = currentPlayer
-				.getHand()
-				.find((card) => card.props.id === 'evilxisuma_boss')
-			const slot = game.components.findEntity(
-				BoardSlotComponent,
-				query.slot.currentPlayer,
-				query.slot.hermit,
-			)
-			if (bossCard && slot) {
-				const playHermitCard: PlayCardActionData & {
-					playerEntity: PlayerEntity
-				} = {
-					type: 'PLAY_HERMIT_CARD',
-					slot,
-					card: {
-						props: WithoutFunctions(bossCard.props),
-						entity: bossCard.entity,
-						slot: bossCard.slotEntity,
-						turnedOver: false,
-						attackHint: null,
-					},
-					playerEntity,
-				}
-				return playHermitCard
-			}
+	getTurnActions: function* (game, component) {
+		while (true) {
+			yield* getNextTurnAction(game, component)
 		}
-
-		const attackType = game.state.turn.availableActions.find(
-			(action): action is AttackAction =>
-				action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
-		)
-		if (attackType) {
-			const attackAction: AttackActionData & {playerEntity: PlayerEntity} = {
-				type: attackType,
-				playerEntity,
-			}
-
-			const bossCard = game.components.find(
-				CardComponent,
-				query.card.currentPlayer,
-				query.card.active,
-				query.card.slot(query.slot.hermit),
-			)
-			if (bossCard === null)
-				throw new Error(`EX's active hermit cannot be found, please report`)
-			const bossAttack = getBossAttack(currentPlayer)
-			supplyBossAttack(bossCard, bossAttack)
-			for (const sound of bossAttack) {
-				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
-			}
-			yield* delay(bossAttack.length * 3000)
-			// Waits after announcing attack to perform the action
-			return attackAction
-		}
-
-		if (!game.state.turn.availableActions.includes('END_TURN'))
-			throw new Error(
-				'EX does not know what to do in this state, please report',
-			)
-
-		const nineEffect = game.components.find(
-			StatusEffectComponent,
-			query.effect.is(ExBossNineStatusEffect),
-			query.effect.targetIsCardAnd(query.card.currentPlayer),
-		)
-		if (nineEffect && nineEffect.counter === 0) {
-			const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
-			supplyNineSpecial(nineEffect, nineSpecial)
-			game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
-			yield* delay(10600)
-		}
-
-		return {type: 'END_TURN'}
 	},
 }
 

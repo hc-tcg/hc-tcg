@@ -31,6 +31,7 @@ import {
 	applyEffectSaga,
 	attackSaga,
 	changeActiveHermitSaga,
+	delaySaga,
 	modalRequestSaga,
 	pickRequestSaga,
 	playCardSaga,
@@ -242,6 +243,8 @@ function getAvailableActions(
 		filteredActions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
+	filteredActions.push('DELAY')
+
 	return filteredActions
 }
 
@@ -366,6 +369,7 @@ function* turnActionSaga(
 				'PICK_REQUEST',
 				'MODAL_REQUEST',
 				'END_TURN',
+				'DELAY',
 			].includes(actionType) || availableActions.includes(actionType),
 			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
 		)
@@ -408,6 +412,8 @@ function* turnActionSaga(
 					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
 				)
 				break
+			case 'DELAY':
+				yield* call(delaySaga, turnAction.action.delay)
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(

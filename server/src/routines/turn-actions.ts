@@ -16,6 +16,7 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
+import {delay} from 'typed-redux-saga'
 
 function getAttack(
 	game: GameModel,
@@ -374,4 +375,8 @@ export function* pickRequestSaga(
 	}
 
 	return
+}
+
+export function* delaySaga(delayMs: number) {
+	yield* delay(delayMs)
 }
