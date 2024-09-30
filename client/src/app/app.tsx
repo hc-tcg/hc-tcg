@@ -12,6 +12,7 @@ import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
+import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
@@ -53,6 +54,8 @@ function App() {
 					return <DataSettings setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
+				case 'boss-landing':
+					return <BossLanding setMenuSection={setMenuSection} />
 				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />

@@ -15,6 +15,56 @@ import {
 	takeEvery,
 } from 'typed-redux-saga'
 
+function* createBossGameSaga() {
+	function* matchmaking() {
+		const socket = yield* select(getSocket)
+		try {
+			// Send message to server to create the game
+			yield* sendMsg({type: clientMessages.CREATE_BOSS_GAME})
+
+			const createBossResponse = yield* race({
+				success: call(
+					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
+				),
+				failure: call(
+					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_FAILURE),
+				),
+			})
+
+			if (createBossResponse.failure) {
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+				return
+			}
+
+			yield* call(receiveMsg, socket, 'GAME_START')
+			yield* put<LocalMessage>({
+				type: localMessages.QUEUE_VOICE,
+				lines: ['/voice/EXSTART.ogg'],
+			})
+			yield* call(gameSaga)
+		} catch (err) {
+			console.error('Game crashed: ', err)
+		} finally {
+			if (yield* cancelled()) {
+				// Clear state and back to menu
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+				yield* put<LocalMessage>({type: localMessages.GAME_END})
+			}
+		}
+	}
+
+	const result = yield* race({
+		cancel: take('LEAVE_MATCHMAKING'),
+		matchmaking: call(matchmaking),
+	})
+
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+
+	if (result.cancel) {
+		yield* sendMsg({type: clientMessages.CANCEL_BOSS_GAME})
+	}
+}
+
 function* createPrivateGameSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
@@ -271,12 +321,16 @@ export function* reconnectSaga() {
 function* matchmakingSaga() {
 	yield* takeEvery(localMessages.MATCHMAKING_QUEUE_JOIN, joinQueueSaga)
 	yield* takeEvery(
-		localMessages.MATCHMAKING_PRIVATE_GAME_CREATE,
+		localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY,
 		createPrivateGameSaga,
 	)
 	yield* takeEvery(
-		localMessages.MATCHMAKING_PRIVATE_GAME_JOIN,
+		localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY,
 		joinPrivateGameSaga,
+	)
+	yield* takeEvery(
+		localMessages.MATCHMAKING_BOSS_GAME_CREATE,
+		createBossGameSaga,
 	)
 	yield* fork(reconnectSaga)
 }

@@ -23,6 +23,7 @@ export type PlayerDefs = {
 	name: string
 	minecraftName: string
 	censoredName: string
+	disableDeckingOut?: true
 }
 
 export class PlayerComponent {
@@ -38,6 +39,7 @@ export class PlayerComponent {
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
 	deckedOut: boolean
+	readonly disableDeckingOut: boolean
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -125,6 +127,7 @@ export class PlayerComponent {
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
 		this.deckedOut = false
+		this.disableDeckingOut = !!player.disableDeckingOut
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
@@ -203,7 +206,7 @@ export class PlayerComponent {
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
 		if (cards.length < amount) {
-			this.deckedOut = true
+			if (!this.disableDeckingOut) this.deckedOut = true
 		}
 		cards.forEach((card) => card.draw())
 		return cards

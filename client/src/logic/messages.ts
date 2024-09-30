@@ -43,8 +43,8 @@ export const localMessages = messages({
 	MINECRAFT_NAME_NEW: null,
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
-	MATCHMAKING_PRIVATE_GAME_CREATE: null,
-	MATCHMAKING_PRIVATE_GAME_JOIN: null,
+	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
 	MATCHMAKING_CLEAR: null,
@@ -82,6 +82,8 @@ export const localMessages = messages({
 	ALL_SETTINGS_RESET: null,
 	SOUND_PLAY: null,
 	SOUND_SECTION_CHANGE: null,
+	PLAY_VOICE_TEST: null,
+	QUEUE_VOICE: null,
 })
 
 type Messages = [
@@ -116,8 +118,7 @@ type Messages = [
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_CREATE},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_JOIN},
+	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string
@@ -132,6 +133,7 @@ type Messages = [
 	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
+	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState
@@ -212,6 +214,8 @@ type Messages = [
 	{type: typeof localMessages.ALL_SETTINGS_RESET},
 	{type: typeof localMessages.SOUND_PLAY; path: string},
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
+	{type: typeof localMessages.PLAY_VOICE_TEST},
+	{type: typeof localMessages.QUEUE_VOICE; lines: Array<string>},
 ]
 
 /** A message used locally on the client to update global state */

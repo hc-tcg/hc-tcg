@@ -32,7 +32,9 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled =
-		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
+		EXPANSIONS[card.expansion].disabled === true && card.expansion !== 'boss'
+			? 'disabled'
+			: 'enabled'
 
 	return (
 		<svg

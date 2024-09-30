@@ -1,6 +1,9 @@
+import classNames from 'classnames'
 import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
+import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
+import {CopyIcon} from 'components/svgs'
 import TcgLogo from 'components/tcg-logo'
 import {
 	getGameCode,
@@ -40,6 +43,61 @@ function MatchMaking() {
 		navigator.clipboard.writeText(spectatorCode)
 	}
 
+	if (status === 'private_lobby' || status === 'loading') {
+		return (
+			<MenuLayout
+				back={handleCancel}
+				title="Private Game Lobby"
+				returnText="Main Menu"
+				className={classNames(css.privateLobbyMenu)}
+			>
+				<div className={css.privateLobby}>
+					<p>
+						Share your opponent or spectator code, enter an opponent code to
+						join a game, or enter a spectator code to specate a game.
+					</p>
+					<div className={css.privateJoinGrid}>
+						<div className={css.privateLobbyLeft}>
+							<p>Opponent Code</p>
+							<div className={css.code} onClick={handleCodeClick}>
+								<CopyIcon /> {gameCode}
+							</div>
+							<p>Spectator Code</p>
+							<div className={css.code} onClick={handleSpectatorCodeClick}>
+								<CopyIcon /> {spectatorCode}
+							</div>
+						</div>
+						<form
+							className={classNames(css.privateLobbyRight, css.codeInput)}
+							onSubmit={handleCodeSubmit}
+						>
+							<label htmlFor="gameCode">Enter code:</label>
+							<div className={css.joinButton}>
+								<input
+									className={invalidCode ? css.invalidCode : ''}
+									name="gameCode"
+									id="gameCode"
+									autoFocus
+								/>
+								{status !== 'loading' && (
+									<Button type="submit" variant="default">
+										Join
+									</Button>
+								)}
+								{status === 'loading' && (
+									<div className={css.spinner}>
+										<Spinner />
+									</div>
+								)}
+							</div>
+							<ErrorBanner hide={!invalidCode}>Invalid Code</ErrorBanner>
+						</form>
+					</div>
+				</div>
+			</MenuLayout>
+		)
+	}
+
 	const Status = () => {
 		switch (status) {
 			default:
@@ -51,13 +109,6 @@ function MatchMaking() {
 						<Button variant="stone" onClick={handleCancel}>
 							Cancel
 						</Button>
-					</>
-				)
-			case 'loading':
-				return (
-					<>
-						<Spinner />
-						<p>Loading</p>
 					</>
 				)
 			case 'waiting_for_player':
@@ -78,47 +129,6 @@ function MatchMaking() {
 					<>
 						<Spinner />
 						<p>Starting Game</p>
-					</>
-				)
-			case 'private_waiting':
-				return (
-					<>
-						<p>Waiting for opponent</p>
-						<div className={css.code} onClick={handleCodeClick}>
-							{gameCode}
-						</div>
-						<p>Spectator Code</p>
-						<div className={css.code} onClick={handleSpectatorCodeClick}>
-							{spectatorCode}
-						</div>
-						<div className={css.options}>
-							<Button variant="stone" onClick={handleCancel}>
-								Cancel
-							</Button>
-						</div>
-					</>
-				)
-			case 'private_code_needed':
-				return (
-					<>
-						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-							<label htmlFor="gameCode">Enter game or spectator code:</label>
-							<input
-								className={invalidCode ? css.invalidCode : ''}
-								name="gameCode"
-								id="gameCode"
-								autoFocus
-							/>
-							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
-							<div className={css.options}>
-								<Button type="button" variant="stone" onClick={handleCancel}>
-									Cancel
-								</Button>
-								<Button type="submit" variant="stone">
-									Join
-								</Button>
-							</div>
-						</form>
 					</>
 				)
 		}

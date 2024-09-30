@@ -79,6 +79,8 @@ export type GameState = {
 		turnRemaining: number
 		opponentActionStartTime: number | null
 	}
+
+	isBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -103,6 +105,7 @@ export type TurnAction =
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
+	| 'DELAY'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -178,6 +181,10 @@ export type LocalGameState = {
 		turnStartTime: number
 		turnRemaining: number
 	}
+
+	isBossGame: boolean
+
+	voiceLineQueue: Array<string>
 }
 
 type MessageSender =

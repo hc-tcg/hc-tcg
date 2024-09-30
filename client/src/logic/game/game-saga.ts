@@ -103,6 +103,11 @@ function* gameStateSaga(
 		time: action.time,
 	})
 
+	yield* put<LocalMessage>({
+		type: localMessages.QUEUE_VOICE,
+		lines: gameState.voiceLineQueue,
+	})
+
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
 		return
