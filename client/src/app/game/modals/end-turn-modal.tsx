@@ -17,10 +17,6 @@ function EndTurnModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
-	if (!settings.confirmationDialogsEnabled) {
-		return null
-	}
-
 	const handleEndTurn = () => {
 		dispatch({type: localMessages.GAME_TURN_END})
 		closeModal()
@@ -30,9 +26,14 @@ function EndTurnModal({closeModal}: Props) {
 		closeModal()
 	}
 
+	if (!settings.confirmationDialogsEnabled) {
+		handleEndTurn()
+		return null
+	}
+
 	let modal = EndTurnModalInner({availableActions, handleCancel, handleEndTurn})
 
-	if (modal) {
+	if (modal !== null) {
 		return modal
 	}
 
