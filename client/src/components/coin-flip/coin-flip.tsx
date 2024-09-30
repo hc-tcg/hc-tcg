@@ -25,15 +25,6 @@ const CoinFlipComponent = ({name, tosses, amount}: Props) => {
 		const evenIterations = Math.floor((amount - flipOffset) / 2)
 		const extraFlip = (amount - flipOffset) % 2 !== 0
 
-		if (face.forced) {
-			if (face.result === 'heads') {
-				coinPics[1] = coinPics[0]
-			}
-			if (face.result === 'tails') {
-				coinPics[0] = coinPics[1]
-			}
-		}
-
 		if ((face.result === 'tails') !== extraFlip) coinPics.reverse()
 
 		return (
