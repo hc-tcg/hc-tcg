@@ -30,16 +30,14 @@ const HotguyRare: Hermit = {
 		power: 'When used with a Bow effect card, Bow damage doubles.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		let usingSecondaryAttack = false
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
@@ -48,8 +46,8 @@ const HotguyRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!usingSecondaryAttack) return
 				if (
@@ -62,7 +60,7 @@ const HotguyRare: Hermit = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				usingSecondaryAttack = false

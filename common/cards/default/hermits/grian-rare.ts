@@ -10,16 +10,6 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-// The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
-
-/*
-Some assumptions that make sense to me:
-- Shield can't be stolen as they get used up during the attack
-- If hermitMultiplier is 0 (e.g. invis potion), then shield don't get used and so you can steal it
-- Totem/Loyalty can be stolen unless it was used
-- If you choose to discard the card it gets discarded to your discard pile
-*/
-
 const GrianRare: Hermit = {
 	...hermit,
 	id: 'grian_rare',
@@ -51,7 +41,7 @@ const GrianRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
@@ -75,14 +65,16 @@ const GrianRare: Hermit = {
 					query.slot.active,
 					query.slot.attach,
 				)
-				const canAttach = game.components.find(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.not(query.slot.frozen),
-					query.slot.attach,
-					query.slot.active,
-					query.slot.empty,
-				)
+				const canAttach =
+					component.isAlive() &&
+					game.components.exists(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.not(query.slot.frozen),
+						query.slot.attach,
+						query.slot.active,
+						query.slot.empty,
+					)
 
 				game.addModalRequest({
 					player: player.entity,
@@ -105,8 +97,8 @@ const GrianRare: Hermit = {
 						},
 					},
 					onResult(modalResult) {
-						if (modalResult.result) {
-							if (attachSlot) opponentAttachCard.attach(attachSlot)
+						if (modalResult.result && canAttach && attachSlot) {
+							opponentAttachCard.attach(attachSlot)
 						} else {
 							opponentAttachCard.discard(component.player.entity)
 						}

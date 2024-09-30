@@ -32,6 +32,7 @@ const TargetBlock: SingleUse = {
 		singleUse.attachCondition,
 		query.exists(SlotComponent, pickCondition),
 	),
+	log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

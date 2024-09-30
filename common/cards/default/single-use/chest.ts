@@ -25,6 +25,7 @@ const Chest: SingleUse = {
 	attachCondition: query.every(singleUse.attachCondition, (game, _pos) => {
 		return game.components.exists(CardComponent, pickCondition)
 	}),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

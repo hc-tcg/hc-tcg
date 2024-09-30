@@ -37,8 +37,12 @@ export class BattleLogModel {
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
-		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+		const heads = coinFlip.tosses.filter(
+			(flip) => flip.result === 'heads',
+		).length
+		const tails = coinFlip.tosses.filter(
+			(flip) => flip.result === 'tails',
+		).length
 
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'
@@ -122,15 +126,17 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.slot.type === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return card.turnedOver
+				? `??? (${row.index + 1})`
+				: `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return card.turnedOver ? '???' : `${card.props.name}`
 	}
 
 	public addPlayCardEntry(
@@ -242,6 +248,7 @@ export class BattleLogModel {
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
+				attack: subAttack,
 			})
 
 			reducer += logMessage
@@ -295,7 +302,7 @@ export class BattleLogModel {
 		let oldHermit = this.game.components.get(oldHermitEntity)
 		let newHermit = this.game.components.get(newHermitEntity)
 
-		if (!newRow || !oldHermit || !newHermit) return
+		if (!newRow || !newHermit) return
 
 		if (oldHermit) {
 			this.logMessageQueue.push({

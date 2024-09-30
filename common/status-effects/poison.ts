@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
@@ -22,33 +22,37 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = target
-
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!target.slot.inRow()) return
-			const statusEffectAttack = game.newAttack({
-				attacker: effect.entity,
-				target: target.slot.row.entity,
-				player: opponentPlayer.entity,
-				type: 'status-effect',
-				log: (values) =>
-					`${values.target} took ${values.damage} damage from $bPoison$`,
-			})
-
-			let damage = 0
-			if (target.slot.row.health && target.slot.row.health >= 30) {
-				damage = 20
-			} else if (target.slot.row.health && target.slot.row.health >= 20) {
-				damage = 10
-			}
-			statusEffectAttack.addDamage(effect.entity, damage)
-
-			executeExtraAttacks(game, [statusEffectAttack])
-		})
+		const {opponentPlayer} = target
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!target.slot.inRow()) return
+				const statusEffectAttack = game.newAttack({
+					attacker: effect.entity,
+					target: target.slot.row.entity,
+					player: opponentPlayer.entity,
+					type: 'status-effect',
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $bPoison$`,
+				})
+
+				let damage = 0
+				if (target.slot.row.health && target.slot.row.health >= 30) {
+					damage = 20
+				} else if (target.slot.row.health && target.slot.row.health >= 20) {
+					damage = 10
+				}
+				statusEffectAttack.addDamage(effect.entity, damage)
+
+				executeExtraAttacks(game, [statusEffectAttack])
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!attack.isTargeting(target) || attack.target?.health) return
 				effect.remove()

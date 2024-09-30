@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -15,7 +15,7 @@ const GoldArmor: Attach = {
 	description:
 		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
@@ -24,8 +24,8 @@ const GoldArmor: Attach = {
 		let damageBlocked = 0
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_REDUCE_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.EFFECT_REDUCE_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(component) || attack.isType('status-effect'))
 					return
@@ -36,7 +36,7 @@ const GoldArmor: Attach = {
 						10 - damageBlocked,
 					)
 					damageBlocked += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 				}
 			},
 		)

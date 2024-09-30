@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterDefence, beforeDefence} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -23,10 +23,10 @@ const Shield: Attach = {
 		const {player} = component
 		let damageBlocked = 0
 
-		// Note that we are using beforeDefence because we want to activate on any attack to us, not just from the opponent
+		// Note that we want to activate on any attack to us, not just from the opponent
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_REDUCE_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.EFFECT_REDUCE_DAMAGE,
 			(attack) => {
 				if (!attack.isTargeting(component) || attack.isType('status-effect'))
 					return
@@ -37,14 +37,14 @@ const Shield: Attach = {
 						60 - damageBlocked,
 					)
 					damageBlocked += damageReduction
-					attack.reduceDamage(component.entity, damageReduction)
+					attack.addDamageReduction(component.entity, damageReduction)
 				}
 			},
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.DISCARD_SHIELD,
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (damageBlocked > 0 && attack.isTargeting(component)) {
 					// attack.isTargeting asserts `attack.target !== null` and `attack.targetEntity !== null`

@@ -38,22 +38,12 @@ const XBCraftedRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.IGNORE_CARDS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				// All attacks from our side should ignore opponent attached effect card this turn
-				attack.shouldIgnoreCards.push(
-					query.every(
-						query.card.opponentPlayer,
-						query.card.active,
-						query.card.slot(query.slot.attach),
-					),
-				)
 				game.components
 					.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
 					.apply(

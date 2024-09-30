@@ -25,6 +25,7 @@ export class PlayerModel {
 			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack(),
+			tags: [],
 		}
 
 		this.name = playerName
@@ -56,12 +57,13 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards)
-		if (validationMessage) return
+		const validationResult = validateDeck(newDeck.cards)
+		if (!validationResult.valid) return
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
 			cards: newDeck.cards,
+			tags: newDeck.tags,
 		}
 	}
 

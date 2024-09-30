@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeDefence} from '../../../types/priorities'
+import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 import DiamondArmor from './diamond-armor'
@@ -24,12 +24,12 @@ const Thorns: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {opponentPlayer} = component
 		let hasTriggered = false
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeDefence,
-			beforeDefence.EFFECT_CREATE_BACKLASH,
+			game.hooks.beforeAttack,
+			beforeAttack.REACT_TO_DAMAGE,
 			(attack) => {
 				// If we have already triggered once this turn do not do so again
 				if (hasTriggered) return
@@ -70,9 +70,13 @@ const Thorns: Attach = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			hasTriggered = false
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				hasTriggered = false
+			},
+		)
 	},
 }
 

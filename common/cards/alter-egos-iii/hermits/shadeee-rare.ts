@@ -38,8 +38,8 @@ const ShadeEERare: Hermit = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return

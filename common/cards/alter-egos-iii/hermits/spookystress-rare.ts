@@ -42,11 +42,9 @@ const SpookyStressRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		const {player} = component
-
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.ADD_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return

@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {beforeAttack} from '../types/priorities'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
@@ -14,18 +14,28 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 	name: 'Hidden!',
 	description: "Your opponent's next attack will miss.",
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
+		let multipliedDamage = false
+
 		observer.subscribeWithPriority(
-			player.opponentPlayer.hooks.beforeAttack,
-			beforeAttack.EFFECT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
+				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 0)
-				effect.remove()
+			},
+		)
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (multipliedDamage) effect.remove()
 			},
 		)
 	},
@@ -38,18 +48,28 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 	name: 'Spotted!',
 	description: "Your opponent's next attack will deal double damage.",
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
+		let multipliedDamage = false
+
 		observer.subscribeWithPriority(
-			player.opponentPlayer.hooks.beforeAttack,
-			beforeAttack.EFFECT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
+				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 2)
-				effect.remove()
+			},
+		)
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (multipliedDamage) effect.remove()
 			},
 		)
 	},

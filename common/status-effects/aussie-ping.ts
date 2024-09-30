@@ -5,7 +5,7 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
-import {afterAttack, beforeAttack} from '../types/priorities'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {flipCoin} from '../utils/coinFlips'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -29,9 +29,10 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 		let coinFlipResult: CoinFlipResult | null = null
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
-			beforeAttack.HERMIT_MODIFY_DAMAGE,
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 				if (!attack.attacker) return
 
@@ -53,10 +54,9 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
-			afterAttack.UPDATE_POST_ATTACK_STATE,
-			() => {
-				if (!coinFlipResult) return
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			(_) => {
 				effect.remove()
 				if (coinFlipResult === 'heads') {
 					game.components
@@ -69,19 +69,6 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 				}
 			},
 		)
-
-		observer.subscribe(player.hooks.onTurnEnd, (_) => {
-			effect.remove()
-			if (coinFlipResult === 'heads') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						AussiePingImmuneEffect,
-						effect.creator.entity,
-					)
-					.apply(player.entity)
-			}
-		})
 	},
 }
 

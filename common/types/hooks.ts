@@ -40,10 +40,8 @@ export class Hook<Listener extends any, Args extends (...args: any) => any> {
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
-	public call(...params: Parameters<Args>) {
-		return this.listeners.map(([_, listener]) =>
-			listener(...(params as Array<any>)),
-		)
+	public call(...params: Parameters<Args>): Array<ReturnType<Args>> {
+		return this.listeners.map(([_, listener]) => listener(...params))
 	}
 }
 
@@ -62,10 +60,10 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 	public callSome(
 		params: Parameters<Args>,
 		predicate: (instance: ObserverEntity) => boolean,
-	) {
+	): Array<ReturnType<Args>> {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
-			.map(([_, listener]) => listener(...(params as Array<any>)))
+			.map(([_, listener]) => listener(...params))
 	}
 }
 
@@ -77,9 +75,9 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 export class WaterfallHook<
 	Args extends (...args: any) => Parameters<Args>[0],
 > extends GameHook<Args> {
-	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
+	public override call(...params: Parameters<Args>): ReturnType<Args> {
 		return this.listeners.reduce((params, [_, listener]) => {
-			params[0] = listener(...(params as Array<any>))
+			params[0] = listener(...params)
 			return params
 		}, params)[0]
 	}
@@ -87,11 +85,11 @@ export class WaterfallHook<
 	public override callSome(
 		params: Parameters<Args>,
 		predicate: (instance: ObserverEntity) => boolean,
-	) {
+	): ReturnType<Args> {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
 			.reduce((params, [_, listener]) => {
-				params[0] = listener(...(params as Array<any>))
+				params[0] = listener(...params)
 				return params
 			}, params)[0]
 	}
@@ -100,16 +98,37 @@ export class WaterfallHook<
 /**
  * Custom hook class that works the same as a regular game hook, but requires a listener's priority.
  *
- * Allows listeners to be called in a more deterministic order, neccessary when listeners are dependent on the execution of other listeners.
+ * Allows listeners to be called in a more deterministic order, neccessary when listeners are dependent on the execution of
+ * other listeners.
+ * Listeners can be added or removed at any time without causing issues. Listeners added at the current priority or a later
+ * priority will always be called.
  */
 export class PriorityHook<
 	Args extends (...args: any) => any,
 	Priorities extends PriorityDict<Src>,
 	Src extends PrioritiesT = PrioritySrc<Priorities>,
 > {
-	public listeners: Array<
-		[instance: ObserverEntity, listener: Args, priority: number]
+	private _listeners: Record<
+		number,
+		Array<[instance: ObserverEntity, listener: Args, removed: boolean]>
 	> = []
+
+	public constructor(priorities: PriorityDict<Src>) {
+		for (const [_, priority] of Object.entries(priorities)) {
+			this._listeners[priority] = []
+		}
+	}
+
+	get listeners(): Array<[ObserverEntity, Args]> {
+		return Object.values(this._listeners).flatMap((listeners) =>
+			listeners
+				.filter(([_instance, _listener, removed]) => !removed)
+				.map<[ObserverEntity, Args]>(([instance, listener]) => [
+					instance,
+					listener,
+				]),
+		)
+	}
 
 	/** Adds a new listener to this hook */
 	public add(
@@ -117,24 +136,34 @@ export class PriorityHook<
 		priority: Priority<Src>,
 		listener: Args,
 	) {
-		this.listeners.push([instance, listener, priority])
-		this.listeners.sort((a, b) => a[2] - b[2])
+		this._listeners[priority].push([instance, listener, false])
 	}
 
 	/**
-	 * Removes all the listeners tied to a specific instance
+	 * Removes all the _listeners tied to a specific instance
 	 */
 	public remove(instance: ObserverEntity) {
-		this.listeners = this.listeners.filter(
-			([hookListener]) => hookListener !== instance,
-		)
+		for (const [key, _] of Object.entries(this._listeners)) {
+			let numKey = Number(key)
+			this._listeners[numKey]
+				.filter(([hookListener]) => hookListener === instance)
+				.map((x) => (x[2] = true))
+		}
 	}
 
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
-	public call(...params: Parameters<Args>) {
-		return this.listeners.map(([_listener, call]) => call(...params))
+	public call(...params: Parameters<Args>): Array<ReturnType<Args>> {
+		const results = []
+		for (const [key, _] of Object.entries(this._listeners)) {
+			const numKey = Number(key)
+			for (let i = 0; i < this._listeners[numKey].length; i++) {
+				if (this._listeners[numKey][i][2]) continue
+				results.push(this._listeners[numKey][i][1](...params))
+			}
+		}
+		return results
 	}
 
 	/**
@@ -143,9 +172,16 @@ export class PriorityHook<
 	public callSome(
 		params: Parameters<Args>,
 		predicate: (instance: ObserverEntity) => boolean,
-	) {
-		return this.listeners.flatMap(([instance, listener]) =>
-			predicate(instance) ? [listener(...params)] : [],
-		)
+	): Array<ReturnType<Args>> {
+		const results = []
+		for (const [key, _] of Object.entries(this._listeners)) {
+			const numKey = Number(key)
+			for (let i = 0; i < this._listeners[numKey].length; i++) {
+				if (this._listeners[numKey][i][2]) continue
+				if (!predicate(this._listeners[numKey][i][0])) continue
+				results.push(this._listeners[numKey][i][1](...params))
+			}
+		}
+		return results
 	}
 }

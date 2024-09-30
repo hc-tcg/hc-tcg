@@ -16,7 +16,7 @@ const PearlescentMoonRare: Hermit = {
 	name: 'Pearl',
 	expansion: 'default',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	type: 'terraform',
 	health: 300,
 	primary: {
@@ -43,10 +43,10 @@ const PearlescentMoonRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {opponentPlayer} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

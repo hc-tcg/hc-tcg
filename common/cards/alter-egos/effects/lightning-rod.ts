@@ -5,7 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -41,9 +41,10 @@ const LightningRod: Attach = {
 		let used = false
 
 		observer.subscribeWithPriority(
-			opponentPlayer.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.LIGHTNING_ROD_REDIRECT,
 			(attack) => {
+				if (attack.player.entity !== opponentPlayer.entity) return
 				if (!component.slot?.onBoard() || !component.slot.row) return
 				if (attack.type === 'status-effect' || attack.isBacklash) return
 				if (game.currentPlayer.entity !== opponentPlayer.entity) return
@@ -54,10 +55,14 @@ const LightningRod: Attach = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!used) return
-			component.discard()
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!used) return
+				component.discard()
+			},
+		)
 	},
 }
 

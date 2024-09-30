@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {afterDefence} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {executeExtraAttacks} from '../utils/attacks'
 import {StatusEffect, damageEffect} from './status-effect'
 
@@ -22,26 +22,30 @@ const FireEffect: StatusEffect<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = target
-
-		observer.subscribe(opponentPlayer.hooks.onTurnEnd, () => {
-			if (!target.slot.inRow()) return
-			const statusEffectAttack = game.newAttack({
-				attacker: effect.entity,
-				target: target.slot.row.entity,
-				player: opponentPlayer.entity,
-				type: 'status-effect',
-				log: (values) =>
-					`${values.target} took ${values.damage} damage from $bBurn$`,
-			})
-			statusEffectAttack.addDamage(target.entity, 20)
-
-			executeExtraAttacks(game, [statusEffectAttack])
-		})
+		const {opponentPlayer} = target
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (!target.slot.inRow()) return
+				const statusEffectAttack = game.newAttack({
+					attacker: effect.entity,
+					target: target.slot.row.entity,
+					player: opponentPlayer.entity,
+					type: 'status-effect',
+					log: (values) =>
+						`${values.target} took ${values.damage} damage from $bBurn$`,
+				})
+				statusEffectAttack.addDamage(target.entity, 20)
+
+				executeExtraAttacks(game, [statusEffectAttack])
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
 				if (!target.isAlive()) effect.remove()
 			},
