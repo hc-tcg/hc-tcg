@@ -75,7 +75,7 @@ function BossLanding({setMenuSection}: Props) {
 	return (
 		<MenuLayout
 			back={() => setMenuSection('mainmenu')}
-			title="Challenge Evil X"
+			title="Single Player"
 			returnText="Main Menu"
 			className={css.bossLanding}
 		>
