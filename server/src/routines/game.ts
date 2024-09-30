@@ -414,10 +414,11 @@ function* turnActionSaga(
 				break
 			case 'DELAY':
 				yield* call(delaySaga, turnAction.action.delay)
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
-					'Recieved an action that does not exist. This is impossible.',
+					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
 				return
 		}
@@ -479,6 +480,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
+				'DELAY',
 			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10),
