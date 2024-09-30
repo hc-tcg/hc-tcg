@@ -7,6 +7,7 @@ import {
 	getGameState,
 	getIsSpectator,
 	getOpponentName,
+	getPlayerEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -24,6 +25,7 @@ function Chat() {
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
+	const playerEntity = useSelector(getPlayerEntity)
 	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
@@ -168,12 +170,13 @@ function Chat() {
 							minute: '2-digit',
 						})
 
-						let isOpponent
+						let isOpponent: boolean
 						if (isSpectator) {
 							isOpponent =
-								players && players[order[0]]?.playerId === line.sender.id
+								!!players &&
+								[order[0], players[order[0]]?.playerId].includes(line.sender.id)
 						} else {
-							isOpponent = playerId !== line.sender.id
+							isOpponent = ![playerId, playerEntity].includes(line.sender.id)
 						}
 
 						if (line.message.TYPE === 'LineNode') {
