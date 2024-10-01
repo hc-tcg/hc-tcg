@@ -15,12 +15,7 @@ import {
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
-import {
-	DifferentTextNode,
-	formatText,
-	LineNode,
-	PlaintextNode,
-} from '../utils/formatting'
+import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 

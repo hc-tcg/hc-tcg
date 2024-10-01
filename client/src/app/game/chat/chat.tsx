@@ -1,5 +1,6 @@
 import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
+import {FormattedTextNode} from 'common/utils/formatting'
 import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
 import {
@@ -15,7 +16,6 @@ import {getPlayerId, getPlayerName} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
-import {FormattedTextNode} from 'common/utils/formatting'
 
 function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)
