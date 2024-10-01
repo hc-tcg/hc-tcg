@@ -158,9 +158,11 @@ export function LineBreakNode(): LineBreakNode {
 
 export type LineNode = {
 	TYPE: 'LineNode'
+	text: string
 }
-export function LineBreak(): LineNode {
-	return {TYPE: 'LineNode'}
+
+export function LineNode(text: string): LineNode {
+	return {TYPE: 'LineNode', text}
 }
 
 export type TabNode = {

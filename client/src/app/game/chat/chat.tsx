@@ -179,15 +179,12 @@ function Chat() {
 					let sender: 'opponent' | 'system' | 'me' = isOpponent
 						? 'opponent'
 						: 'me'
-					if (line.sender.type === 'system') {
-						sender = 'system'
-					}
 
 					return {
 						message: line.message,
 						sender,
-						senderName: 'TEST NAME',
 						createdAt: line.createdAt,
+						isBattleLogMessage: line.sender.type === 'system',
 					}
 				})}
 				showLog={showLog}
@@ -206,8 +203,8 @@ function Chat() {
 type ChatContentProps = {
 	chatMessages: Array<{
 		message: FormattedTextNode
-		sender: 'system' | 'me' | 'opponent'
-		senderName: string
+		isBattleLogMessage: boolean
+		sender: 'me' | 'opponent'
 		createdAt: number
 	}>
 	showLog: boolean
@@ -223,8 +220,7 @@ export const ChatContent = ({
 		<div className={css.messagesWrapper}>
 			<div className={css.messages}>
 				{chatMessages.slice().map((line) => {
-					if (line.sender === 'system' && showLog === false)
-						return <span></span>
+					if (line.isBattleLogMessage && showLog === false) return <span></span>
 					const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 						hour: '2-digit',
 						minute: '2-digit',
@@ -234,12 +230,11 @@ export const ChatContent = ({
 						return (
 							<div className={css.message}>
 								<span className={css.turnTag}>
-									{line.sender === 'opponent'
-										? `${line.senderName}'s`.toLocaleUpperCase()
-										: 'YOUR'}{' '}
-									TURN
+									{FormattedText(line.message, {
+										isOpponent: line.sender === 'opponent',
+										isSelectable: false,
+									})}
 								</span>
-								<span className={css.line}></span>
 							</div>
 						)
 					}
@@ -249,11 +244,12 @@ export const ChatContent = ({
 							<span className={css.time}>{hmTime}</span>
 							<span
 								className={classNames(
-									line.sender === 'system' ? css.systemMessage : css.text,
+									line.isBattleLogMessage ? css.systemMessage : css.text,
 								)}
 							>
 								{FormattedText(line.message, {
-									isSelectable: line.sender === 'opponent',
+									isOpponent: line.sender === 'opponent',
+									isSelectable: true,
 									censorProfanity: profanityFilterEnabled,
 								})}
 							</span>

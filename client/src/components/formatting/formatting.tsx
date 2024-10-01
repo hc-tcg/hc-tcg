@@ -73,7 +73,7 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 		case 'TabNode':
 			return <span className={css.tab}></span>
 		case 'LineNode':
-			return <span className={css.line} />
+			return <span className={css.line}> {node.text} </span>
 	}
 }
 
