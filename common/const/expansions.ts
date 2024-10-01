@@ -11,6 +11,7 @@ export type ExpansionT =
 	| 'alter_egos_iii'
 	| 'advent_of_tcg'
 	| 'dream'
+	| 'boss'
 
 export type ExpansionDict = {
 	readonly [Expansion in ExpansionT]: ExpansionInfo
@@ -24,4 +25,5 @@ export const EXPANSIONS: ExpansionDict = {
 	alter_egos_iii: {name: 'Alter Egos Pt. III', disabled: false},
 	advent_of_tcg: {name: 'Advent of TCG', disabled: false},
 	dream: {name: 'Dream', disabled: true},
+	boss: {name: 'Boss', disabled: true},
 }

@@ -46,6 +46,14 @@ const RenbobRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				if (!component.slot.inRow()) return
+				// Renbob should not retarget if opponent can only play one Hermit
+				if (
+					game.components.filter(
+						RowComponent,
+						query.row.player(attack.player.opponentPlayer.entity),
+					).length === 1
+				)
+					return
 				attack.setTarget(
 					component.entity,
 					game.components.find(

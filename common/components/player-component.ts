@@ -6,7 +6,7 @@ import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
-	CoinFlipResult,
+	CoinFlip,
 	CurrentCoinFlip,
 	TurnActions,
 	UsedHermitAttackInfo,
@@ -23,6 +23,7 @@ export type PlayerDefs = {
 	name: string
 	minecraftName: string
 	censoredName: string
+	disableDeckingOut?: true
 }
 
 export class PlayerComponent {
@@ -38,6 +39,7 @@ export class PlayerComponent {
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
 	deckedOut: boolean
+	readonly disableDeckingOut: boolean
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -94,10 +96,7 @@ export class PlayerComponent {
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: GameHook<
-			(
-				card: CardComponent,
-				coinFlips: Array<CoinFlipResult>,
-			) => Array<CoinFlipResult>
+			(card: CardComponent, coinFlips: Array<CoinFlip>) => Array<CoinFlip>
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
@@ -128,6 +127,7 @@ export class PlayerComponent {
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
 		this.deckedOut = false
+		this.disableDeckingOut = !!player.disableDeckingOut
 		this.pickableSlots = null
 		this.activeRowEntity = null
 
@@ -206,7 +206,7 @@ export class PlayerComponent {
 	public draw(amount: number): Array<CardComponent> {
 		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
 		if (cards.length < amount) {
-			this.deckedOut = true
+			if (!this.disableDeckingOut) this.deckedOut = true
 		}
 		cards.forEach((card) => card.draw())
 		return cards

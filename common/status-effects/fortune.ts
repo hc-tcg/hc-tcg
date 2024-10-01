@@ -21,7 +21,8 @@ const FortuneEffect: StatusEffect<PlayerComponent> = {
 	) {
 		observer.subscribe(player.hooks.onCoinFlip, (_card, coinFlips) => {
 			for (let i = 0; i < coinFlips.length; i++) {
-				coinFlips[i] = 'heads'
+				coinFlips[i].result = 'heads'
+				coinFlips[i].forced = true
 			}
 			return coinFlips
 		})

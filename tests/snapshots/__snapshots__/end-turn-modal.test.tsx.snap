@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test End Turn Modal All attack actions 1`] = `
+[
+  <div />,
+  <div
+    className=""
+  >
+    <div>
+      <span>
+        End Turn
+      </span>
+      <button
+        onClick={[Function]}
+        tabIndex={-1}
+      >
+        <img
+          alt="close"
+          src="/images/CloseX.svg"
+        />
+      </button>
+    </div>
+    <div>
+       
+      <div>
+        <p>
+          Are you sure you want to end your turn? These actions are still available:
+        </p>
+        <hr />
+        <ul>
+          <li>
+            Attacking opponent with a primary attack
+          </li>
+          <li>
+            Attacking opponent with a secondary attack
+          </li>
+          <li>
+            Attacking opponent with a single use effect
+          </li>
+        </ul>
+      </div>
+      <div>
+        <button
+          className=""
+        >
+          Cancel
+        </button>
+        <button
+          className=""
+        >
+          End Turn
+        </button>
+      </div>
+       
+    </div>
+  </div>,
+]
+`;
+
+exports[`Test End Turn Modal All play card actions 1`] = `
+[
+  <div />,
+  <div
+    className=""
+  >
+    <div>
+      <span>
+        End Turn
+      </span>
+      <button
+        onClick={[Function]}
+        tabIndex={-1}
+      >
+        <img
+          alt="close"
+          src="/images/CloseX.svg"
+        />
+      </button>
+    </div>
+    <div>
+       
+      <div>
+        <p>
+          Are you sure you want to end your turn? These actions are still available:
+        </p>
+        <hr />
+        <ul>
+          <li>
+            Playing a hermit card
+          </li>
+          <li>
+            Playing an item card
+          </li>
+          <li>
+            Playing a single use effect card
+          </li>
+          <li>
+            Playing an attach effect card
+          </li>
+          <li>
+            Changing your active hermit
+          </li>
+        </ul>
+      </div>
+      <div>
+        <button
+          className=""
+        >
+          Cancel
+        </button>
+        <button
+          className=""
+        >
+          End Turn
+        </button>
+      </div>
+       
+    </div>
+  </div>,
+]
+`;
+
+exports[`Test End Turn Modal All play card actions and attacks 1`] = `
+[
+  <div />,
+  <div
+    className=""
+  >
+    <div>
+      <span>
+        End Turn
+      </span>
+      <button
+        onClick={[Function]}
+        tabIndex={-1}
+      >
+        <img
+          alt="close"
+          src="/images/CloseX.svg"
+        />
+      </button>
+    </div>
+    <div>
+       
+      <div>
+        <p>
+          Are you sure you want to end your turn? These actions are still available:
+        </p>
+        <hr />
+        <ul>
+          <li>
+            Playing a hermit card
+          </li>
+          <li>
+            Playing an item card
+          </li>
+          <li>
+            Playing a single use effect card
+          </li>
+          <li>
+            Playing an attach effect card
+          </li>
+          <li>
+            Changing your active hermit
+          </li>
+          <li>
+            Attacking opponent with a primary attack
+          </li>
+          <li>
+            Attacking opponent with a secondary attack
+          </li>
+          <li>
+            Attacking opponent with a single use effect
+          </li>
+        </ul>
+      </div>
+      <div>
+        <button
+          className=""
+        >
+          Cancel
+        </button>
+        <button
+          className=""
+        >
+          End Turn
+        </button>
+      </div>
+       
+    </div>
+  </div>,
+]
+`;
+
+exports[`Test End Turn Modal No Actions 1`] = `null`;
+
+exports[`Test End Turn Modal Waiting actions 1`] = `null`;

@@ -508,6 +508,9 @@ export function getLocalGameState(
 
 		players,
 		timer,
+
+		isBossGame: game.state.isBossGame,
+		voiceLineQueue: game.voiceLineQueue,
 	}
 
 	return localGameState

@@ -3,10 +3,12 @@ import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
 import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
+import Cubfan135Rare from 'common/cards/default/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import PvPItem from 'common/cards/default/items/pvp-common'
+import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
 import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
 import {
 	CardComponent,
@@ -368,6 +370,46 @@ describe('Test Zombie Cleo', () => {
 				saga: testPuppetingTotalAnonymity,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, WormManRare, EthosLabCommon],
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test("Test using Puppetry on Let's Go with Chorus Fruit", () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, Cubfan135Rare, ChorusFruit],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 1)
+					yield* playCardFromHand(game, ChorusFruit, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(game.currentPlayer.activeRow?.index).toBe(1)
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					expect(game.currentPlayer.activeRow?.index).toBe(0)
+				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)

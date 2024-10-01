@@ -221,6 +221,39 @@ function Game() {
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
 
+	// Play EX voice lines on hermit deaths and game end
+	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
+		(id) => gameState.players[id].lives,
+	)
+	const [prevLives, setPrevLives] = useState(lives)
+	useEffect(() => {
+		if (!gameState.isBossGame) return
+		if (endGameOverlay) {
+			if (endGameOverlay.outcome === 'you_won')
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/EXLOSE.ogg'],
+				})
+			else
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/PLAYERLOSE.ogg'],
+				})
+			return
+		}
+		const playerLostLife = lives[0] - prevLives[0] < 0
+		const opponentLostLife = lives[1] - prevLives[1] < 0
+		setPrevLives(lives)
+		if (opponentLostLife) {
+			dispatch({type: localMessages.QUEUE_VOICE, lines: ['/voice/EXLIFE.ogg']})
+		} else if (playerLostLife) {
+			dispatch({
+				type: localMessages.QUEUE_VOICE,
+				lines: ['/voice/PLAYERLIFE.ogg'],
+			})
+		}
+	}, [...lives, endGameOverlay])
+
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()

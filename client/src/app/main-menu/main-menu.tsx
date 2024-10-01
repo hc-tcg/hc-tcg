@@ -19,10 +19,10 @@ function MainMenu({setMenuSection}: Props) {
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () =>
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-	const handleCreatePrivateGame = () =>
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_CREATE})
-	const handleJoinPrivateGame = () =>
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_JOIN})
+	const handlePrivateGame = () =>
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+	const handleSoloGame = () => setMenuSection('boss-landing')
+
 	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
@@ -68,19 +68,15 @@ function MainMenu({setMenuSection}: Props) {
 						<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 							Public Game
 						</Button>
-						<Button
-							variant="stone"
-							id={css.privateCreate}
-							onClick={handleCreatePrivateGame}
-						>
-							Create Private Game
+						<Button variant="stone" id={css.soloGame} onClick={handleSoloGame}>
+							Single Player
 						</Button>
 						<Button
 							variant="stone"
-							id={css.privateJoin}
-							onClick={handleJoinPrivateGame}
+							id={css.privateCreate}
+							onClick={handlePrivateGame}
 						>
-							Join Private Game
+							Private Game
 						</Button>
 						<Button variant="stone" id={css.deck} onClick={handleDeck}>
 							Browse Decks

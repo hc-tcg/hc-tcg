@@ -9,6 +9,7 @@ import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
 	cancelPrivateGame,
+	createBossGame,
 	createPrivateGame,
 	joinPrivateGame,
 	joinQueue,
@@ -42,6 +43,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.LEAVE_QUEUE:
 			return yield* leaveQueue(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.CREATE_BOSS_GAME:
+			return yield* createBossGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CREATE_PRIVATE_GAME:

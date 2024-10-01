@@ -25,6 +25,8 @@ export const serverMessages = messages({
 	PRIVATE_GAME_TIMEOUT: null,
 	LEAVE_QUEUE_SUCCESS: null,
 	LEAVE_QUEUE_FAILURE: null,
+	CREATE_BOSS_GAME_SUCCESS: null,
+	CREATE_BOSS_GAME_FAILURE: null,
 	CREATE_PRIVATE_GAME_SUCCESS: null,
 	CREATE_PRIVATE_GAME_FAILURE: null,
 	JOIN_PRIVATE_GAME_SUCCESS: null,
@@ -68,6 +70,8 @@ export type ServerMessages = [
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
 	{type: typeof serverMessages.LEAVE_QUEUE_FAILURE},
+	{type: typeof serverMessages.CREATE_BOSS_GAME_SUCCESS},
+	{type: typeof serverMessages.CREATE_BOSS_GAME_FAILURE},
 	{
 		type: typeof serverMessages.CREATE_PRIVATE_GAME_SUCCESS
 		gameCode: string
