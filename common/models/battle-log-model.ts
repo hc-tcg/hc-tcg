@@ -15,7 +15,12 @@ import {
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
-import {DifferentTextNode, formatText, LineNode, PlaintextNode} from '../utils/formatting'
+import {
+	DifferentTextNode,
+	formatText,
+	LineNode,
+	PlaintextNode,
+} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 
@@ -347,7 +352,7 @@ export class BattleLogModel {
 				id: this.game.opponentPlayer.entity,
 			},
 			createdAt: Date.now(),
-			message: DifferentTextNode(PlaintextNode("YOUR TURN"), LineNode("OPPONENTS TURN")),
+			message: LineNode(),
 		})
 
 		broadcast(this.game.getPlayers(), {

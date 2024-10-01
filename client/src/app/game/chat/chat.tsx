@@ -11,13 +11,10 @@ import {
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getPlayerId} from 'logic/session/session-selectors'
+import {getPlayerId, getPlayerName} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
-import {LocalPlayerState, Message} from 'common/types/game-state'
-import {PlayerEntity} from 'common/entities'
-import {PlayerId} from 'common/models/player-model'
 import {FormattedTextNode} from 'common/utils/formatting'
 
 function clamp(n: number, min: number, max: number): number {
@@ -30,6 +27,7 @@ function Chat() {
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
 	const playerEntity = useSelector(getPlayerEntity)
+	const playerName = useSelector(getPlayerName)
 	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
@@ -176,9 +174,9 @@ function Chat() {
 						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
 					}
 
-					let sender: 'opponent' | 'system' | 'me' = isOpponent
-						? 'opponent'
-						: 'me'
+					let sender: 'playerOne' | 'playerTwo' = isOpponent
+						? 'playerTwo'
+						: 'playerOne'
 
 					return {
 						message: line.message,
@@ -189,6 +187,8 @@ function Chat() {
 				})}
 				showLog={showLog}
 				profanityFilterEnabled={settings.profanityFilterEnabled}
+				isSpectating={isSpectator}
+				playerNames={[playerName, opponentName]}
 			/>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input autoComplete="off" autoFocus name="message" maxLength={140} />
@@ -204,17 +204,21 @@ type ChatContentProps = {
 	chatMessages: Array<{
 		message: FormattedTextNode
 		isBattleLogMessage: boolean
-		sender: 'me' | 'opponent'
+		sender: 'playerOne' | 'playerTwo'
 		createdAt: number
 	}>
 	showLog: boolean
 	profanityFilterEnabled: boolean
+	isSpectating: boolean
+	playerNames: [string?, string?]
 }
 
 export const ChatContent = ({
 	chatMessages,
 	showLog,
 	profanityFilterEnabled,
+	isSpectating,
+	playerNames,
 }: ChatContentProps) => {
 	return (
 		<div className={css.messagesWrapper}>
@@ -227,14 +231,34 @@ export const ChatContent = ({
 					})
 
 					if (line.message.TYPE === 'LineNode') {
+						if (isSpectating) {
+							return (
+								<div className={css.message}>
+									<span className={css.turnTag}>
+										{FormattedText(line.message, {
+											isOpponent: line.sender === 'playerTwo',
+											isSelectable: false,
+										})}
+										{line.sender === 'playerOne' &&
+											playerNames[0]?.toLocaleUpperCase()}
+										{line.sender === 'playerTwo' &&
+											playerNames[1]?.toLocaleUpperCase()}
+										'S TURN
+									</span>
+									<span className={css.line}></span>
+								</div>
+							)
+						}
+
 						return (
 							<div className={css.message}>
 								<span className={css.turnTag}>
-									{FormattedText(line.message, {
-										isOpponent: line.sender === 'opponent',
-										isSelectable: false,
-									})}
+									{line.sender === 'playerOne' && 'YOUR'}
+									{line.sender === 'playerTwo' &&
+										playerNames[1]?.toLocaleUpperCase()}
+									'S TURN
 								</span>
+								<span className={css.line}></span>
 							</div>
 						)
 					}
@@ -248,7 +272,7 @@ export const ChatContent = ({
 								)}
 							>
 								{FormattedText(line.message, {
-									isOpponent: line.sender === 'opponent',
+									isOpponent: line.sender === 'playerTwo',
 									isSelectable: true,
 									censorProfanity: profanityFilterEnabled,
 								})}

@@ -33,6 +33,7 @@ export function* chatMessage(
 		(_game, component) => component.player.id === playerId,
 	)?.spectator
 
+	console.log('Recieved chat message: ' + JSON.stringify(action.playerId))
 	game.chat.push({
 		sender: {
 			type: 'viewer',
