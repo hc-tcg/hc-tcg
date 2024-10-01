@@ -277,6 +277,7 @@ const EvilXisumaBoss: Hermit = {
 						query.slot.active,
 						query.slot.item,
 						query.not(query.slot.empty),
+						query.not(query.slot.frozen),
 						(_game, slot) => slot.getCard()?.isItem() === true,
 					)
 					if (

@@ -11,6 +11,7 @@ import String from 'common/cards/alter-egos/effects/string'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
 import Ladder from 'common/cards/alter-egos/single-use/ladder'
+import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import WaterBucket from 'common/cards/default/effects/water-bucket'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
@@ -23,17 +24,26 @@ import CurseOfVanishing from 'common/cards/default/single-use/curse-of-vanishing
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import Lead from 'common/cards/default/single-use/lead'
 import Looting from 'common/cards/default/single-use/looting'
-import {CardComponent, SlotComponent} from 'common/components'
+import {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
 import query from 'common/components/query'
+import ExBossNineEffect, {
+	supplyNineSpecial,
+} from 'common/status-effects/exboss-nine'
 import {
 	applyEffect,
 	attack,
+	bossAttack,
 	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
 	pick,
 	playCardFromHand,
 	removeEffect,
+	testBossFight,
 	testGame,
 } from '../utils'
 
@@ -422,6 +432,49 @@ describe('Test Slimeball', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Slimeball prevents Evil Xisuma boss discarding an item card, unless EX uses NINEATTACHED', () => {
+		testBossFight(
+			{
+				playerDeck: [EthosLabCommon, Slimeball, BalancedItem],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Slimeball, 'attach', 0)
+					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+					yield* bossAttack(game, '50DMG', 'HEAL150', 'ITEMCARD')
+					expect(game.state.pickRequests).toHaveLength(0)
+					expect(
+						game.components.find(CardComponent, query.card.is(BalancedItem))
+							?.slot.type,
+					).toBe('item')
+
+					while (game.state.turn.turnNumber < 18) {
+						yield* endTurn(game)
+					}
+
+					supplyNineSpecial(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ExBossNineEffect),
+						)!,
+						'NINEATTACHED',
+					)
+					yield* endTurn(game)
+
+					expect(
+						game.currentPlayer
+							.getDiscarded()
+							.sort(CardComponent.compareOrder)
+							.map((card) => card.props),
+					).toStrictEqual([Slimeball, BalancedItem])
+				},
+			},
+			{startWithAllCards: true},
 		)
 	})
 
