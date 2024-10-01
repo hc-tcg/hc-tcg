@@ -6,9 +6,10 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import GoldenAxe from '../../default/single-use/golden-axe'
 
 const LDShadowLadyRare: Hermit = {
 	...hermit,
@@ -33,7 +34,7 @@ const LDShadowLadyRare: Hermit = {
 		cost: ['terraform', 'terraform', 'any'],
 		damage: 90,
 		power:
-			"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
+			"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available. If there's no open slots available, their active Hermit takes 60hp additional damage.",
 	},
 	onAttach(
 		game: GameModel,
@@ -42,23 +43,34 @@ const LDShadowLadyRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.HERMIT_ATTACK_REQUESTS,
-			(attack) => {
-				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+		let pickedRow: RowComponent | null = null
+
+		const opponentHasMovableActive = () => {
+			const opponentActive = game.components.find(
+				SlotComponent,
+				query.slot.opponent,
+				query.slot.hermit,
+				query.slot.active,
+			)
+
+			return (
+				opponentActive !== null &&
+				(!query.slot.frozen(game, opponentActive) ||
+					game.components.exists(
+						CardComponent,
+						query.card.is(GoldenAxe),
+						query.card.slot(query.slot.singleUse),
+					))
+			)
+		}
+
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(instance, attackType) => {
+				if (instance.entity !== component.entity || attackType !== 'secondary')
 					return
 
-				if (
-					!game.components.exists(
-						SlotComponent,
-						query.slot.opponent,
-						query.slot.hermit,
-						query.slot.active,
-						query.not(query.slot.frozen),
-					)
-				)
-					return
+				if (!opponentHasMovableActive()) return
 
 				const pickCondition = query.every(
 					query.slot.hermit,
@@ -78,23 +90,43 @@ const LDShadowLadyRare: Hermit = {
 						if (!pickedSlot.inRow()) return
 						if (opponentPlayer.activeRow === null) return
 
-						game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
+						pickedRow = pickedSlot.row
 					},
 					onTimeout() {
 						if (opponentPlayer.activeRow === null) return
 
-						const emptyOpponentRow = game.components.find(
+						pickedRow = game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.not(query.row.active),
 							query.not(query.row.hasHermit),
 						)
-
-						if (!emptyOpponentRow) return
-
-						game.swapRows(opponentPlayer.activeRow, emptyOpponentRow)
 					},
 				})
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || !attack.isType('secondary'))
+					return
+				if (!opponentHasMovableActive() || opponentPlayer.activeRow === null)
+					return
+				if (pickedRow === null) {
+					attack.addDamage(component.entity, 60)
+				} else {
+					game.swapRows(opponentPlayer.activeRow, pickedRow)
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				pickedRow = null
 			},
 		)
 	},

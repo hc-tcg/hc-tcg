@@ -206,6 +206,9 @@ describe('Test Slimeball', () => {
 
 					yield* attack(game, 'secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						PoePoeSkizzRare.health - LDShadowLadyRare.secondary.damage,
+					)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -219,6 +222,12 @@ describe('Test Slimeball', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(game.opponentPlayer.activeRow?.index).toBe(1)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						PoePoeSkizzRare.health -
+							LDShadowLadyRare.secondary.damage -
+							40 /** Golden Axe damage */ -
+							LDShadowLadyRare.secondary.damage,
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
