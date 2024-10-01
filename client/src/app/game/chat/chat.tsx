@@ -163,13 +163,11 @@ function Chat() {
 			</div>
 			<ChatContent
 				chatMessages={chatMessages.map((line) => {
-					if (!players) throw new Error()
-
 					let isOpponent: boolean
 					if (isSpectator) {
 						isOpponent =
 							!!players &&
-							[order[0], players[order[0]]?.playerId].includes(line.sender.id)
+							[order[1], players[order[1]]?.playerId].includes(line.sender.id)
 					} else {
 						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
 					}
@@ -241,9 +239,10 @@ export const ChatContent = ({
 										})}
 										{line.sender === 'playerOne' &&
 											playerNames[0]?.toLocaleUpperCase()}
+										'S
 										{line.sender === 'playerTwo' &&
 											playerNames[1]?.toLocaleUpperCase()}
-										'S TURN
+										{' TURN'}
 									</span>
 									<span className={css.line}></span>
 								</div>
@@ -256,7 +255,7 @@ export const ChatContent = ({
 									{line.sender === 'playerOne' && 'YOUR'}
 									{line.sender === 'playerTwo' &&
 										playerNames[1]?.toLocaleUpperCase()}
-									'S TURN
+									{' TURN'}
 								</span>
 								<span className={css.line}></span>
 							</div>
@@ -272,7 +271,8 @@ export const ChatContent = ({
 								)}
 							>
 								{FormattedText(line.message, {
-									isOpponent: line.sender === 'playerTwo',
+									isOpponent: line.sender === 'playerTwo' || isSpectating,
+									color: line.sender === 'playerOne' ? 'blue' : 'orange',
 									isSelectable: true,
 									censorProfanity: profanityFilterEnabled,
 								})}

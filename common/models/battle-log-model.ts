@@ -340,11 +340,11 @@ export class BattleLogModel {
 		this.sendLogs()
 	}
 
-	public addTurnEndEntry() {
+	public addTurnStartEntry() {
 		this.game.chat.push({
 			sender: {
 				type: 'system',
-				id: this.game.opponentPlayer.entity,
+				id: this.game.currentPlayer.entity,
 			},
 			createdAt: Date.now(),
 			message: LineNode(),

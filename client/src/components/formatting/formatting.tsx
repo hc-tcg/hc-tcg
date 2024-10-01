@@ -5,6 +5,7 @@ import css from './formatting.module.scss'
 type DisplaySettings = {
 	isSelectable?: boolean
 	isOpponent?: boolean
+	color?: 'blue' | 'orange'
 	censorProfanity?: boolean
 }
 
@@ -32,7 +33,8 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 				<span
 					className={classNames(
 						css[node.format],
-						settings.isOpponent ? css.viewedByOpponent : '',
+						settings.color === 'blue' ? css.player : '',
+						settings.color === 'orange' ? css.opponent : '',
 						...textCssClasses,
 					)}
 				>
