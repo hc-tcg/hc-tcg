@@ -15,6 +15,10 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
+import {LocalPlayerState, Message} from 'common/types/game-state'
+import {PlayerEntity} from 'common/entities'
+import {PlayerId} from 'common/models/player-model'
+import {FormattedTextNode} from 'common/utils/formatting'
 
 function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)
@@ -159,67 +163,104 @@ function Chat() {
 					<img src="/images/CloseX.svg" alt="close" />
 				</button>
 			</div>
+			<ChatContent
+				chatMessages={chatMessages.map((line) => {
+					if (!players) throw new Error()
 
-			<div className={css.messagesWrapper}>
-				<div className={css.messages}>
-					{chatMessages.slice().map((line) => {
-						if (line.sender.type === 'system' && showLog === false)
-							return <span></span>
-						const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
-							hour: '2-digit',
-							minute: '2-digit',
-						})
+					let isOpponent: boolean
+					if (isSpectator) {
+						isOpponent =
+							!!players &&
+							[order[0], players[order[0]]?.playerId].includes(line.sender.id)
+					} else {
+						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
+					}
 
-						let isOpponent: boolean
-						if (isSpectator) {
-							isOpponent =
-								!!players &&
-								[order[0], players[order[0]]?.playerId].includes(line.sender.id)
-						} else {
-							isOpponent = ![playerId, playerEntity].includes(line.sender.id)
-						}
+					let sender: 'opponent' | 'system' | 'me' = isOpponent
+						? 'opponent'
+						: 'me'
+					if (line.sender.type === 'system') {
+						sender = 'system'
+					}
 
-						if (line.message.TYPE === 'LineNode') {
-							return (
-								<div className={css.message}>
-									<span className={css.turnTag}>
-										{isOpponent
-											? `${opponentName}'s`.toLocaleUpperCase()
-											: 'YOUR'}{' '}
-										TURN
-									</span>
-									<span className={css.line}></span>
-								</div>
-							)
-						}
-
-						return (
-							<div className={css.message}>
-								<span className={css.time}>{hmTime}</span>
-								<span
-									className={classNames(
-										line.sender.type === 'system'
-											? css.systemMessage
-											: css.text,
-									)}
-								>
-									{FormattedText(line.message, {
-										isOpponent,
-										censorProfanity: settings.profanityFilterEnabled,
-									})}
-								</span>
-							</div>
-						)
-					})}
-				</div>
-			</div>
-
+					return {
+						message: line.message,
+						sender,
+						senderName: 'TEST NAME',
+						createdAt: line.createdAt,
+					}
+				})}
+				showLog={showLog}
+				profanityFilterEnabled={settings.profanityFilterEnabled}
+			/>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input autoComplete="off" autoFocus name="message" maxLength={140} />
 				<Button variant="default" size="small">
 					Send
 				</Button>
 			</form>
+		</div>
+	)
+}
+
+type ChatContentProps = {
+	chatMessages: Array<{
+		message: FormattedTextNode
+		sender: 'system' | 'me' | 'opponent'
+		senderName: string
+		createdAt: number
+	}>
+	showLog: boolean
+	profanityFilterEnabled: boolean
+}
+
+export const ChatContent = ({
+	chatMessages,
+	showLog,
+	profanityFilterEnabled,
+}: ChatContentProps) => {
+	return (
+		<div className={css.messagesWrapper}>
+			<div className={css.messages}>
+				{chatMessages.slice().map((line) => {
+					if (line.sender === 'system' && showLog === false)
+						return <span></span>
+					const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
+						hour: '2-digit',
+						minute: '2-digit',
+					})
+
+					if (line.message.TYPE === 'LineNode') {
+						return (
+							<div className={css.message}>
+								<span className={css.turnTag}>
+									{line.sender === 'opponent'
+										? `${line.senderName}'s`.toLocaleUpperCase()
+										: 'YOUR'}{' '}
+									TURN
+								</span>
+								<span className={css.line}></span>
+							</div>
+						)
+					}
+
+					return (
+						<div className={css.message}>
+							<span className={css.time}>{hmTime}</span>
+							<span
+								className={classNames(
+									line.sender === 'system' ? css.systemMessage : css.text,
+								)}
+							>
+								{FormattedText(line.message, {
+									isSelectable: line.sender === 'opponent',
+									censorProfanity: profanityFilterEnabled,
+								})}
+							</span>
+						</div>
+					)
+				})}
+			</div>
 		</div>
 	)
 }
