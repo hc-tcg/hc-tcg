@@ -3,10 +3,9 @@ import react from '@vitejs/plugin-react'
 import {defineConfig} from 'vite'
 import CONFIG from '../common/config/server-config.json'
 import {getAppVersion} from '../version'
-import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineConfig({
-	plugins: [react(), topLevelAwait()],
+	plugins: [react()],
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),
