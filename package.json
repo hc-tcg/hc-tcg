@@ -39,7 +39,7 @@
 		"typed-redux-saga": "^1.5.0",
 		"zod": "^3.23.8"
 	},
-	"dvDependencies": {
+	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
 		"@playwright/experimental-ct-react": "^1.47.2",
 		"@playwright/test": "^1.47.2",
@@ -60,7 +60,8 @@
 		"ts-jest": "^29.1.3",
 		"tsx": "^3.12.7",
 		"typescript": "^5.1.6",
-		"vite": "^5.4.8"
+		"vite": "^5.4.8",
+		"vite-plugin-string-replace": "^1.1.3"
 	},
 	"scripts": {
 		"start": "npm run server",
