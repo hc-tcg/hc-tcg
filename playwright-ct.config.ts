@@ -32,6 +32,7 @@ export default defineConfig({
 
 		ctPort: 3100,
 		ctViteConfig: {
+			publicDir: path.resolve(__dirname, "client/public/"),
 			resolve: {
 				alias: {
 					client: path.resolve(__dirname, 'client/src'),

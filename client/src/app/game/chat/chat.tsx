@@ -125,42 +125,7 @@ function Chat() {
 	}
 
 	return (
-		<div
-			className={css.chat}
-			style={style}
-			onClick={(e) => {
-				dispatch({
-					type: localMessages.SETTINGS_SET,
-					setting: {
-						key: 'chatSize',
-						value: {
-							w: e.currentTarget.offsetWidth,
-							h: e.currentTarget.offsetHeight,
-						},
-					},
-				})
-			}}
-		>
-			<div className={css.header} {...bindChatPos()}>
-				<p>Chatting with {opponentName}</p>
-				<Button
-					onClick={() =>
-						dispatch({
-							type: localMessages.SETTINGS_SET,
-							setting: {
-								key: 'showBattleLogs',
-								value: !showLog,
-							},
-						})
-					}
-					size="small"
-				>
-					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
-				</Button>
-				<button onClick={closeChat} className={css.close}>
-					<img src="/images/CloseX.svg" alt="close" />
-				</button>
-			</div>
+		<div style={style}>
 			<ChatContent
 				chatMessages={chatMessages.map((line) => {
 					let isOpponent: boolean
@@ -199,13 +164,11 @@ function Chat() {
 				profanityFilterEnabled={settings.profanityFilterEnabled}
 				isSpectating={isSpectator}
 				playerNames={[playerName, opponentName]}
+				bindChatPos={bindChatPos}
+				closeChat={closeChat}
+				handleNewMessage={handleNewMessage}
+				dispatch={dispatch}
 			/>
-			<form className={css.publisher} onSubmit={handleNewMessage}>
-				<input autoComplete="off" autoFocus name="message" maxLength={140} />
-				<Button variant="default" size="small">
-					Send
-				</Button>
-			</form>
 		</div>
 	)
 }
@@ -223,6 +186,10 @@ type ChatContentProps = {
 	profanityFilterEnabled: boolean
 	isSpectating: boolean
 	playerNames: [string?, string?]
+	bindChatPos?: () => {}
+	closeChat?: () => void
+	handleNewMessage?: (e: any) => void
+	dispatch?: ReturnType<typeof useMessageDispatch>
 }
 
 export const ChatContent = ({
@@ -231,71 +198,130 @@ export const ChatContent = ({
 	profanityFilterEnabled,
 	isSpectating,
 	playerNames,
+	bindChatPos,
+	closeChat,
+	handleNewMessage,
+	dispatch,
 }: ChatContentProps) => {
 	return (
-		<div className={css.messagesWrapper}>
-			<div className={css.messages}>
-				{chatMessages.map((line, lineNumber) => {
-					if (line.isBattleLogMessage && showLog === false) return <span></span>
-					const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
-						hour: '2-digit',
-						minute: '2-digit',
-					})
+		<>
+			<div
+				className={css.chat}
+				onClick={(e) => {
+					dispatch &&
+						dispatch({
+							type: localMessages.SETTINGS_SET,
+							setting: {
+								key: 'chatSize',
+								value: {
+									w: e.currentTarget.offsetWidth,
+									h: e.currentTarget.offsetHeight,
+								},
+							},
+						})
+				}}
+			>
+				<div
+					className={css.header}
+					{...(
+						bindChatPos ||
+						(() => {
+							return {}
+						})
+					)()}
+				>
+					<p>Chat with other players</p>
+					<Button
+						onClick={() =>
+							dispatch &&
+							dispatch({
+								type: localMessages.SETTINGS_SET,
+								setting: {
+									key: 'showBattleLogs',
+									value: !showLog,
+								},
+							})
+						}
+						size="small"
+					>
+						{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
+					</Button>
+					<button onClick={closeChat} className={css.close}>
+						<img src="/images/CloseX.svg" alt="close" />
+					</button>
+				</div>
+				<div className={css.messagesWrapper}>
+					<div className={css.messages}>
+						{chatMessages.map((line, lineNumber) => {
+							if (line.isBattleLogMessage && showLog === false)
+								return <span></span>
+							const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
+								hour: '2-digit',
+								minute: '2-digit',
+							})
 
-					if (line.message.TYPE === 'LineNode') {
-						if (isSpectating) {
+							if (line.message.TYPE === 'LineNode') {
+								if (isSpectating) {
+									return (
+										<div className={css.message} key={lineNumber}>
+											<span className={css.turnTag}>
+												{FormattedText(line.message, {
+													isOpponent: line.sender === 'playerTwo',
+													isSelectable: false,
+												})}
+												{line.sender === 'playerOne' &&
+													playerNames[0]?.toLocaleUpperCase()}
+												'S
+												{line.sender === 'playerTwo' &&
+													playerNames[1]?.toLocaleUpperCase()}
+												{' TURN'}
+											</span>
+											<span className={css.line}></span>
+										</div>
+									)
+								}
+
+								return (
+									<div className={css.message} key={lineNumber}>
+										<span className={css.turnTag}>
+											{line.sender === 'playerOne' && 'YOUR'}
+											{line.sender === 'playerTwo' &&
+												playerNames[1]?.toLocaleUpperCase()}
+											{' TURN'}
+										</span>
+										<span className={css.line}></span>
+									</div>
+								)
+							}
+
 							return (
 								<div className={css.message} key={lineNumber}>
-									<span className={css.turnTag}>
+									<span className={css.time}>{hmTime}</span>
+									<span
+										className={classNames(
+											line.isBattleLogMessage ? css.systemMessage : css.text,
+										)}
+									>
 										{FormattedText(line.message, {
-											isOpponent: line.sender === 'playerTwo',
-											isSelectable: false,
+											isOpponent: line.sender === 'playerTwo' || isSpectating,
+											color: line.sender === 'playerOne' ? 'blue' : 'orange',
+											isSelectable: true,
+											censorProfanity: profanityFilterEnabled,
 										})}
-										{line.sender === 'playerOne' &&
-											playerNames[0]?.toLocaleUpperCase()}
-										'S
-										{line.sender === 'playerTwo' &&
-											playerNames[1]?.toLocaleUpperCase()}
-										{' TURN'}
 									</span>
-									<span className={css.line}></span>
 								</div>
 							)
-						}
-
-						return (
-							<div className={css.message} key={lineNumber}>
-								<span className={css.turnTag}>
-									{line.sender === 'playerOne' && 'YOUR'}
-									{line.sender === 'playerTwo' &&
-										playerNames[1]?.toLocaleUpperCase()}
-									{' TURN'}
-								</span>
-								<span className={css.line}></span>
-							</div>
-						)
-					}
-
-					return (
-						<div className={css.message} key={lineNumber}>
-							<span className={css.time}>{hmTime}</span>
-							<span
-								className={classNames(
-									line.isBattleLogMessage ? css.systemMessage : css.text,
-								)}
-							>
-								{FormattedText(line.message, {
-									isOpponent: line.sender === 'playerTwo' || isSpectating,
-									color: line.sender === 'playerOne' ? 'blue' : 'orange',
-									isSelectable: true,
-									censorProfanity: profanityFilterEnabled,
-								})}
-							</span>
-						</div>
-					)
-				})}
+						})}
+					</div>
+				</div>
+				<form className={css.publisher} onSubmit={handleNewMessage}>
+					<input autoComplete="off" autoFocus name="message" maxLength={140} />
+					<Button variant="default" size="small">
+						Send
+					</Button>
+				</form>
 			</div>
-		</div>
+		</>
 	)
 }
 

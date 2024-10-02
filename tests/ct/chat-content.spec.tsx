@@ -39,16 +39,13 @@ test('A message', async ({mount}) => {
 	].reverse() as Array<ChatMessageDisplay>
 
 	const component = await mount(
-		<div style={{width: '500px', height: '500px'}}>
-			<ChatContent
-				chatMessages={messages}
-				showLog={true}
-				isSpectating={true}
-				profanityFilterEnabled={false}
-				playerNames={['Player One', 'Player Two']}
-			/>
-			,
-		</div>,
+		<ChatContent
+			chatMessages={messages}
+			showLog={true}
+			isSpectating={true}
+			profanityFilterEnabled={false}
+			playerNames={['Player One', 'Player Two']}
+		/>,
 	)
 	await expect(component).toHaveScreenshot()
 })
