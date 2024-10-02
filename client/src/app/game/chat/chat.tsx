@@ -223,7 +223,7 @@ export const ChatContent = ({
 	return (
 		<div className={css.messagesWrapper}>
 			<div className={css.messages}>
-				{chatMessages.slice().map((line) => {
+				{chatMessages.slice().map((line, lineNumber) => {
 					if (line.isBattleLogMessage && showLog === false) return <span></span>
 					const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 						hour: '2-digit',
@@ -233,7 +233,7 @@ export const ChatContent = ({
 					if (line.message.TYPE === 'LineNode') {
 						if (isSpectating) {
 							return (
-								<div className={css.message}>
+								<div className={css.message} key={lineNumber}>
 									<span className={css.turnTag}>
 										{FormattedText(line.message, {
 											isOpponent: line.sender === 'playerTwo',
@@ -252,7 +252,7 @@ export const ChatContent = ({
 						}
 
 						return (
-							<div className={css.message}>
+							<div className={css.message} key={lineNumber}>
 								<span className={css.turnTag}>
 									{line.sender === 'playerOne' && 'YOUR'}
 									{line.sender === 'playerTwo' &&
@@ -265,7 +265,7 @@ export const ChatContent = ({
 					}
 
 					return (
-						<div className={css.message}>
+						<div className={css.message} key={lineNumber}>
 							<span className={css.time}>{hmTime}</span>
 							<span
 								className={classNames(
