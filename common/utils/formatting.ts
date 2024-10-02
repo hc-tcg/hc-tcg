@@ -1,4 +1,4 @@
-import ProfaneWords from '../config/profanity-seed.json'
+import {PROFANITY_SEED} from '../config'
 
 /* Config object used by `formatedText`. */
 export type Config = {
@@ -345,7 +345,7 @@ function createCensoredTextNodes(
 
 	let lowercaseText = text.toLowerCase()
 
-	for (const word of ProfaneWords) {
+	for (const word of PROFANITY_SEED) {
 		while (true) {
 			let startIndex = lowercaseText.indexOf(word)
 

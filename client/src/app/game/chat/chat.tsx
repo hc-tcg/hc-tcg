@@ -172,9 +172,21 @@ function Chat() {
 						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
 					}
 
-					let sender: 'playerOne' | 'playerTwo' = isOpponent
+					let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
 						? 'playerTwo'
 						: 'playerOne'
+
+					if (
+						!!players &&
+						![
+							playerId,
+							playerEntity,
+							order[1],
+							players[order[1]]?.playerId,
+						].includes(line.sender.id)
+					) {
+						sender = 'spectator'
+					}
 
 					return {
 						message: line.message,
@@ -201,7 +213,7 @@ function Chat() {
 export type ChatMessageDisplay = {
 	message: FormattedTextNode
 	isBattleLogMessage: boolean
-	sender: 'playerOne' | 'playerTwo'
+	sender: 'playerOne' | 'playerTwo' | 'spectator'
 	createdAt: number
 }
 

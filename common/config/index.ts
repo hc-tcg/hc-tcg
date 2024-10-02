@@ -1,5 +1,13 @@
-import debugConfig from './debug-config.json'
-import config from './server-config.json'
+let debugConfig = {}
+let config = {}
+let profanitySeed = {}
+
+// This is a hack so playwright can build the project during tests.
+try {
+	debugConfig = require('./debug-config.json')
+	config = require('./server-config.json')
+	profanitySeed = require('./profanity-seed.json')
+} catch {}
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string
@@ -25,3 +33,5 @@ export const DEBUG = debug
 
 export const CONFIG = config
 export const DEBUG_CONFIG = debugConfig
+
+export const PROFANITY_SEED = profanitySeed
