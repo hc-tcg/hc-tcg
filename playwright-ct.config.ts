@@ -34,6 +34,7 @@ export default defineConfig({
 		ctViteConfig: {
 			resolve: {
 				alias: {
+					client: path.resolve(__dirname, 'client/src'),
 					server: path.resolve(__dirname, 'server'),
 					common: path.resolve(__dirname, 'common'),
 					types: path.resolve(__dirname, 'client/src/types'),
