@@ -56,9 +56,11 @@ const Slot = ({
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(
-			([card, _]) => card?.entity == selectedCard.entity,
-		)[0][1]
+		return (
+			cardsCanBePlacedIn.find(
+				([card, _]) => card.entity === selectedCard.entity,
+			)?.[1] || []
+		)
 	}
 
 	const getIsPickable = () => {

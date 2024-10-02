@@ -53,6 +53,10 @@ const gameReducer = (
 				localGameState: action.localGameState,
 				time: action.time,
 				openedModal: null,
+				selectedCard:
+					action.localGameState.hand.find(
+						(card) => card.entity === state.selectedCard?.entity,
+					) || null,
 			}
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
