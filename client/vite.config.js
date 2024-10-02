@@ -14,9 +14,9 @@ export default defineConfig({
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
 		__APP_VERSION__: `'${getAppVersion()}'`,
 	},
+	target: ["esnext"],
 	resolve: {
 		alias: {
-			fonts: path.resolve(__dirname, '../client/public/fonts/'),
 			server: path.resolve(__dirname, '../server'),
 			common: path.resolve(__dirname, '../common'),
 			types: path.resolve(__dirname, './src/types'),

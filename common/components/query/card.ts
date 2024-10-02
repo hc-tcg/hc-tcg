@@ -31,7 +31,7 @@ export function slot(
 	return (game, card) => {
 		return card.slot !== null
 			? query.every(...predicates)(game, card.slot)
-			: null || false
+			: false
 	}
 }
 
@@ -42,7 +42,7 @@ export function row(
 		if (!card.slot?.onBoard() || card.slot.row === null) return false
 		return card.slot !== null
 			? query.every(...predicates)(game, card.slot.row)
-			: null || false
+			: false
 	}
 }
 
