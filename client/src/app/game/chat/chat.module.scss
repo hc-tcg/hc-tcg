@@ -75,10 +75,6 @@
   }
 }
 
-.inset {
-  inset: 2.5vh;
-}
-
 .messagesWrapper {
   position: relative;
   overflow: hidden;
@@ -90,8 +86,6 @@
   border: 3px solid var(--gray-700);
   border-bottom: 3px solid var(--gray-400);
   box-shadow: inset 0 0 16px hsla(0deg, 0%, 10%, 100%);
-  width: 100%;
-  height: 100%;
 
   &::after {
     content: "";
@@ -105,6 +99,7 @@
 
 .messages {
   position: absolute;
+  inset: 2.5vh;
   padding-right: 1vh;
   overflow-x: hidden;
   overflow-y: auto;

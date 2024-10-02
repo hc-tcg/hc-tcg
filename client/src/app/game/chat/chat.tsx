@@ -161,47 +161,45 @@ function Chat() {
 					<img src="/images/CloseX.svg" alt="close" />
 				</button>
 			</div>
-			<div className={css.inset}>
-				<ChatContent
-					chatMessages={chatMessages.map((line) => {
-						let isOpponent: boolean
-						if (isSpectator) {
-							isOpponent =
-								!!players &&
-								[order[1], players[order[1]]?.playerId].includes(line.sender.id)
-						} else {
-							isOpponent = ![playerId, playerEntity].includes(line.sender.id)
-						}
-
-						let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
-							? 'playerTwo'
-							: 'playerOne'
-
-						if (
+			<ChatContent
+				chatMessages={chatMessages.map((line) => {
+					let isOpponent: boolean
+					if (isSpectator) {
+						isOpponent =
 							!!players &&
-							![
-								playerId,
-								playerEntity,
-								order[1],
-								players[order[1]]?.playerId,
-							].includes(line.sender.id)
-						) {
-							sender = 'spectator'
-						}
+							[order[1], players[order[1]]?.playerId].includes(line.sender.id)
+					} else {
+						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
+					}
 
-						return {
-							message: line.message,
-							sender,
-							createdAt: line.createdAt,
-							isBattleLogMessage: line.sender.type === 'system',
-						}
-					})}
-					showLog={showLog}
-					profanityFilterEnabled={settings.profanityFilterEnabled}
-					isSpectating={isSpectator}
-					playerNames={[playerName, opponentName]}
-				/>
-			</div>
+					let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
+						? 'playerTwo'
+						: 'playerOne'
+
+					if (
+						!!players &&
+						![
+							playerId,
+							playerEntity,
+							order[1],
+							players[order[1]]?.playerId,
+						].includes(line.sender.id)
+					) {
+						sender = 'spectator'
+					}
+
+					return {
+						message: line.message,
+						sender,
+						createdAt: line.createdAt,
+						isBattleLogMessage: line.sender.type === 'system',
+					}
+				})}
+				showLog={showLog}
+				profanityFilterEnabled={settings.profanityFilterEnabled}
+				isSpectating={isSpectator}
+				playerNames={[playerName, opponentName]}
+			/>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input autoComplete="off" autoFocus name="message" maxLength={140} />
 				<Button variant="default" size="small">
