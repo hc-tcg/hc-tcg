@@ -1,8 +1,16 @@
 import {expect, test} from '@playwright/experimental-ct-react'
-import {ChatContent} from 'client/app/game/chat/chat'
+import {ChatContent, ChatMessageDisplay} from 'client/app/game/chat/chat'
 
-test('event should work', async ({mount}) => {
+test('Empty Chat Messages Display Properly', async ({mount}) => {
 	let messages: Array<ChatMessageDisplay> = []
-	const component = await mount(<ChatContent chatMessages={messages} />)
+	const component = await mount(
+		<ChatContent
+			chatMessages={messages}
+			showLog={true}
+			isSpectating={false}
+			profanityFilterEnabled={false}
+			playerNames={['Player One', 'Player Two']}
+		/>,
+	)
 	await expect(component).toHaveScreenshot()
 })
