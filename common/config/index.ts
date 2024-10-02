@@ -33,5 +33,5 @@ export const DEBUG = debug
 
 export const CONFIG = config
 export const DEBUG_CONFIG = debugConfig
-
 export const PROFANITY_SEED = profanitySeed
+

@@ -24,15 +24,24 @@ test('A message', async ({mount}) => {
 			sender: 'spectator',
 			createdAt: 0,
 		},
+		{
+			message: formatText('$pPlayer One$, Hello, I am a player.'),
+			isBattleLogMessage: false,
+			sender: 'spectator',
+			createdAt: 0,
+		},
 	]
 	const component = await mount(
-		<ChatContent
-			chatMessages={messages}
-			showLog={true}
-			isSpectating={false}
-			profanityFilterEnabled={false}
-			playerNames={['Player One', 'Player Two']}
-		/>,
+		<div style={{width: '500px', height: '500px'}}>
+			<ChatContent
+				chatMessages={messages}
+				showLog={true}
+				isSpectating={false}
+				profanityFilterEnabled={false}
+				playerNames={['Player One', 'Player Two']}
+			/>
+			,
+		</div>,
 	)
 	await expect(component).toHaveScreenshot()
 })
