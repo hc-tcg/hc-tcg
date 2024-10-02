@@ -8,7 +8,7 @@ const SmallishbeansAdventRare: Hermit = {
 	...hermit,
 	id: 'smallishbeansadvent_rare',
 	numericId: 219,
-	name: 'Joel',
+	name: 'Stratos Joel',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
