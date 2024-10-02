@@ -19,15 +19,27 @@ test('Empty Chat Messages Display Properly', async ({mount}) => {
 test('A message', async ({mount}) => {
 	let messages: Array<ChatMessageDisplay> = [
 		{
-			message: formatText('$sSpectator$, Hello, I am a spectator.'),
+			message: formatText('$sSpectator$ Hello, I am a spectator FIRST MESSAGE.'),
 			isBattleLogMessage: false,
 			sender: 'spectator',
 			createdAt: 0,
 		},
 		{
-			message: formatText('$pPlayer One$, Hello, I am a player.'),
+			message: formatText('$sSpectator$ Hello, I am a spectator.'),
 			isBattleLogMessage: false,
 			sender: 'spectator',
+			createdAt: 0,
+		},
+		{
+			message: formatText('$pPlayer One$ Hello, I am a player.'),
+			isBattleLogMessage: false,
+			sender: 'playerOne',
+			createdAt: 0,
+		},
+		{
+			message: formatText('$pPlayer Two$ Hello, I am a player.'),
+			isBattleLogMessage: false,
+			sender: 'playerTwo',
 			createdAt: 0,
 		},
 	]
@@ -36,7 +48,7 @@ test('A message', async ({mount}) => {
 			<ChatContent
 				chatMessages={messages}
 				showLog={true}
-				isSpectating={false}
+				isSpectating={true}
 				profanityFilterEnabled={false}
 				playerNames={['Player One', 'Player Two']}
 			/>
