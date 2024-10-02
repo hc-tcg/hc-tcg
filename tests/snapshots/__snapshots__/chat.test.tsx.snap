@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test chat messages Basic Test 1`] = `
+<div>
+  <div>
+    <div>
+      <span>
+        YOUR
+         TURN
+      </span>
+      <span />
+    </div>
+    <div>
+      <span>
+        07:00 PM
+      </span>
+      <span
+        className=""
+      >
+        <span
+          className=""
+        >
+          Hello Everyone, I am Player One.
+        </span>
+      </span>
+    </div>
+    <div>
+      <span>
+        07:00 PM
+      </span>
+      <span
+        className=""
+      >
+        <span
+          className=""
+        >
+          Hello Everyone, I am Player Two.
+        </span>
+      </span>
+    </div>
+    <div>
+      <span>
+        PLAYER TWO
+         TURN
+      </span>
+      <span />
+    </div>
+  </div>
+</div>
+`;
