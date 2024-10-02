@@ -27,12 +27,11 @@ export default defineConfig({
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-		trace: 'on-first-retry',
+		trace: process.env.CI ? 'on-first-retry' : 'on',
 		/* Port to use for Playwright component endpoint. */
-
 		ctPort: 3100,
 		ctViteConfig: {
-			publicDir: path.resolve(__dirname, "client/public/"),
+			publicDir: path.resolve(__dirname, 'client/public/'),
 			resolve: {
 				alias: {
 					client: path.resolve(__dirname, 'client/src'),
