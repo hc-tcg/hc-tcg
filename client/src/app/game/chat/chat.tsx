@@ -198,13 +198,15 @@ function Chat() {
 	)
 }
 
+export type ChatMessageDisplay = {
+	message: FormattedTextNode
+	isBattleLogMessage: boolean
+	sender: 'playerOne' | 'playerTwo'
+	createdAt: number
+}
+
 type ChatContentProps = {
-	chatMessages: Array<{
-		message: FormattedTextNode
-		isBattleLogMessage: boolean
-		sender: 'playerOne' | 'playerTwo'
-		createdAt: number
-	}>
+	chatMessages: Array<ChatMessageDisplay>
 	showLog: boolean
 	profanityFilterEnabled: boolean
 	isSpectating: boolean
