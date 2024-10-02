@@ -1,0 +1,23 @@
+export default {
+	disableDeckValidation: true,
+	extraStartingCards: [],
+	noItemRequirements: true,
+	forceCoinFlip: false,
+	oneShotMode: false,
+	disableDamage: false,
+	disableDeckOut: false,
+	startWithAllCards: true,
+	unlimitedCards: false,
+	blockedActions: [],
+	availableActions: [],
+	shuffleDeck: true,
+	logErrorsToStderr: true,
+	logBoardState: true,
+	showHooksState: {
+		enabled: false,
+		clearConsole: true,
+	},
+	autoEndTurn: false,
+	logAttackHistory: false,
+	disableRewardCards: false,
+}
