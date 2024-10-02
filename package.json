@@ -83,6 +83,7 @@
 		"test:snapshot-update": "jest tests/snapshots/ --env jsdom --updateSnapshot",
 		"test:e2e": "playwright test -c playwright.config.ts",
 		"test:ct": "playwright test -c playwright-ct.config.ts",
+		"test:ct-update": "playwright test -c playwright-ct.config.ts -u",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
