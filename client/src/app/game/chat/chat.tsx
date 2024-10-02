@@ -161,6 +161,7 @@ function Chat() {
 					<img src="/images/CloseX.svg" alt="close" />
 				</button>
 			</div>
+			<div classNames={css.inset}>
 			<ChatContent
 				chatMessages={chatMessages.map((line) => {
 					let isOpponent: boolean
@@ -200,6 +201,7 @@ function Chat() {
 				isSpectating={isSpectator}
 				playerNames={[playerName, opponentName]}
 			/>
+			</div>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input autoComplete="off" autoFocus name="message" maxLength={140} />
 				<Button variant="default" size="small">
@@ -235,7 +237,7 @@ export const ChatContent = ({
 	return (
 		<div className={css.messagesWrapper}>
 			<div className={css.messages}>
-				{chatMessages.slice().map((line, lineNumber) => {
+				{chatMessages.map((line, lineNumber) => {
 					if (line.isBattleLogMessage && showLog === false) return <span></span>
 					const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 						hour: '2-digit',

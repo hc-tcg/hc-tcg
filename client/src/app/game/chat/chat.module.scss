@@ -75,6 +75,10 @@
   }
 }
 
+.inset {
+  inset: 2.5vh;
+}
+
 .messagesWrapper {
   position: relative;
   overflow: hidden;
@@ -101,7 +105,6 @@
 
 .messages {
   position: absolute;
-  inset: 2.5vh;
   padding-right: 1vh;
   overflow-x: hidden;
   overflow-y: auto;

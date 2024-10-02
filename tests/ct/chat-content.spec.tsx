@@ -17,13 +17,7 @@ test('Empty Chat Messages Display Properly', async ({mount}) => {
 })
 
 test('A message', async ({mount}) => {
-	let messages: Array<ChatMessageDisplay> = [
-		{
-			message: formatText('$sSpectator$ Hello, I am a spectator FIRST MESSAGE.'),
-			isBattleLogMessage: false,
-			sender: 'spectator',
-			createdAt: 0,
-		},
+	let messages = [
 		{
 			message: formatText('$sSpectator$ Hello, I am a spectator.'),
 			isBattleLogMessage: false,
@@ -42,7 +36,8 @@ test('A message', async ({mount}) => {
 			sender: 'playerTwo',
 			createdAt: 0,
 		},
-	]
+	].reverse() as Array<ChatMessageDisplay>
+
 	const component = await mount(
 		<div style={{width: '500px', height: '500px'}}>
 			<ChatContent
