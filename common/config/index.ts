@@ -1,6 +1,11 @@
-import debugConfig from './debug-config.json'
-import config from './server-config.json'
-import profanitySeed from './profanity-seed.json'
+const debugConfig = (
+	await import('./debug-config.json', {with: {type: 'json'}})
+).default
+const config = (await import('./server-config.json', {with: {type: 'json'}}))
+	.default
+const profanitySeed = (
+	await import('./profanity-seed.json', {with: {type: 'json'}})
+).default
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string
