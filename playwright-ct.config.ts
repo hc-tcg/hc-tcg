@@ -9,9 +9,9 @@ const __dirname = execSync('git rev-parse --show-toplevel').toString().trim()
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-	testDir: './tests/components/',
+	testDir: './tests/ct/',
 	/* The base directory, relative to the config file, for snapshot files created with toMatchSnapshot and toHaveScreenshot. */
-	snapshotDir: './__snapshots__',
+	snapshotDir: './tests/ct/__snapshots__',
 	/* Maximum time one test can run for. */
 	timeout: 10 * 1000,
 	/* Run tests in files in parallel */
