@@ -116,3 +116,21 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 		).spectatorsWaiting,
 	).toStrictEqual([])
 })
+
+test('Game is cancelled when back button is pressed', async ({page}) => {
+	await page.goto('/?showUpdatesModal=false')
+
+	await page.getByPlaceholder(' ').fill('Test Player')
+	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByText('Private Game').click()
+
+	expect(
+		(
+			await (
+				await fetch(
+					`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`,
+				)
+			).json()
+		).spectatorsWaiting,
+	).toStrictEqual([])
+})
