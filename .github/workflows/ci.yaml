@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run server tsc
         run: npm run server:tsc
@@ -46,7 +46,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run tests
         run: npm run test:unit
@@ -62,7 +62,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run tests
         run: npm run test:snapshot
@@ -78,7 +78,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run tests
         run: npm run test:ct
@@ -101,7 +101,7 @@ jobs:
           sudo apt-get install -y jq
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Build project
         run: npm run build
@@ -126,7 +126,7 @@ jobs:
       run: npx playwright install --with-deps
 
     - name: Create debug config
-      run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+      run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
     - name: Build the server
       run: npm run build

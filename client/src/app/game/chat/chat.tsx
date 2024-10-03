@@ -230,7 +230,7 @@ export const ChatContent = ({
 						})
 					)()}
 				>
-					<p>Chat with other players</p>
+					<p>Chat</p>
 					<Button
 						onClick={() =>
 							dispatch &&
