@@ -18,5 +18,6 @@
 		"clearConsole": true
 	},
 	"autoEndTurn": false,
-	"logAttackHistory": false
+	"logAttackHistory": false,
+	"disableRewardCards": false
 }

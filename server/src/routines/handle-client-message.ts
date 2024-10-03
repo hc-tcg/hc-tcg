@@ -6,12 +6,16 @@ import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {chatMessage} from './background/chat'
+import spectatorLeaveSaga from './background/spectators'
 import {
 	cancelPrivateGame,
+	createBossGame,
 	createPrivateGame,
 	joinPrivateGame,
 	joinQueue,
+	leavePrivateQueue,
 	leaveQueue,
+	spectatePrivateGameQueueLeave,
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
@@ -41,6 +45,10 @@ function* handler(message: RecievedClientMessage) {
 			return yield* leaveQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
+		case clientMessages.CREATE_BOSS_GAME:
+			return yield* createBossGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 		case clientMessages.CREATE_PRIVATE_GAME:
 			return yield* createPrivateGame(
 				message as RecievedClientMessage<typeof message.type>,
@@ -49,8 +57,20 @@ function* handler(message: RecievedClientMessage) {
 			return yield* joinPrivateGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
+		case clientMessages.SPECTATOR_LEAVE:
+			return yield* spectatorLeaveSaga(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE:
+			return yield* spectatePrivateGameQueueLeave(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 		case clientMessages.CANCEL_PRIVATE_GAME:
 			return yield* cancelPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.LEAVE_PRIVATE_QUEUE:
+			return yield* leavePrivateQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CHAT_MESSAGE:

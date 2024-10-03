@@ -4,6 +4,8 @@ import Button from 'components/button'
 import {FormattedText} from 'components/formatting/formatting'
 import {
 	getChatMessages,
+	getGameState,
+	getIsSpectator,
 	getOpponentName,
 	getPlayerEntity,
 } from 'logic/game/game-selectors'
@@ -23,11 +25,14 @@ function Chat() {
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
-	const opponentName = useSelector(getOpponentName)
 	const playerEntity = useSelector(getPlayerEntity)
+	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
+	const isSpectator = useSelector(getIsSpectator)
+	const players = useSelector(getGameState)?.players
+	const order = useSelector(getGameState)?.order || []
 
 	const viewingFromMobile = window.innerHeight > window.innerWidth
 
@@ -165,8 +170,15 @@ function Chat() {
 							minute: '2-digit',
 						})
 
-						const isOpponent =
-							playerId !== line.sender.id && playerEntity !== line.sender.id
+						let isOpponent: boolean
+						if (isSpectator) {
+							isOpponent =
+								!!players &&
+								[order[0], players[order[0]]?.playerId].includes(line.sender.id)
+						} else {
+							isOpponent = ![playerId, playerEntity].includes(line.sender.id)
+						}
+
 						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>

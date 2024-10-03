@@ -53,6 +53,10 @@ const gameReducer = (
 				localGameState: action.localGameState,
 				time: action.time,
 				openedModal: null,
+				selectedCard:
+					action.localGameState.hand.find(
+						(card) => card.entity === state.selectedCard?.entity,
+					) || null,
 			}
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
@@ -62,6 +66,7 @@ const gameReducer = (
 			return {...newGame}
 		case localMessages.GAME_START:
 		case localMessages.GAME_END:
+		case localMessages.GAME_SPECTATOR_LEAVE:
 			return {
 				...state,
 				localGameState: null,

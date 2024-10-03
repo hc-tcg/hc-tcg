@@ -26,6 +26,7 @@ class Glowstone extends CardOld {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(component, () => {
+			if (!opponentPlayer.pile.length) return // Do nothing if opponent has no more cards to draw
 			game.addModalRequest({
 				player: player.entity,
 				type: 'selectCards',

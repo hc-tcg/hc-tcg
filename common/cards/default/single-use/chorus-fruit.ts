@@ -24,7 +24,8 @@ const ChorusFruit: SingleUse = {
 	log: (values) => `${values.defaultLog} with {your|their} attack`,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
+		(game, _slot) =>
+			!game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game', 'betrayed']),
 		query.not(
 			query.exists(
 				SlotComponent,
@@ -49,14 +50,16 @@ const ChorusFruit: SingleUse = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isType('primary', 'secondary')) return
 
 				applySingleUse(game, component.slot)
 
-				observer.unsubscribe(player.hooks.afterAttack)
+				if (game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])) return
+
+				observer.unsubscribe(game.hooks.afterAttack)
 
 				game.addPickRequest({
 					player: player.entity,

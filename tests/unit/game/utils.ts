@@ -1,5 +1,15 @@
 import {Card} from 'common/cards/base/types'
-import {PlayerComponent, SlotComponent} from 'common/components'
+import EvilXisumaBossHermitCard, {
+	BOSS_ATTACK,
+	supplyBossAttack,
+} from 'common/cards/boss/hermits/evilxisuma_boss'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+} from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
@@ -180,6 +190,8 @@ export function* finishModalRequest(
 export function getWinner(
 	game: GameModel,
 ): 'playerOne' | 'playerTwo' | undefined {
+	if (game.endInfo.deadPlayerEntities.length === 0)
+		throw new Error('There are no dead players that lost')
 	let winnerComponent = game.components.find(
 		PlayerComponent,
 		(game, player) => !game.endInfo.deadPlayerEntities.includes(player.entity),
@@ -224,7 +236,8 @@ const defaultGameSettings = {
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 	logBoardState: true,
-}
+	disableRewardCards: false,
+} satisfies GameSettings
 
 /**
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
@@ -267,4 +280,116 @@ export function testGame(
 	}
 
 	if (options.then) options.then(game)
+}
+
+/**
+ * Works similarly to `testGame`, but for testing the Evil X boss fight
+ */
+export function testBossFight(
+	options: {
+		/**
+		 * @example
+		 * {
+		 * 	...
+		 * 	yield* endTurn(game)
+		 * 	// Boss' first turn
+		 * 	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+		 * 	yield* bossAttack(game, '50DMG')
+		 * 	...
+		 * }
+		 */
+		saga: (game: GameModel) => any
+		// This is the place to check the state of the game after it ends.
+		then?: (game: GameModel) => any
+		playerDeck: Array<Card>
+	},
+	settings?: Partial<GameSettings>,
+) {
+	let game = new GameModel(
+		getTestPlayer('playerOne', options.playerDeck),
+		{
+			model: {
+				name: 'Evil Xisuma',
+				censoredName: 'Evil Xisuma',
+				minecraftName: 'EvilXisuma',
+				disableDeckingOut: true,
+			},
+			deck: [EvilXisumaBossHermitCard],
+		},
+		{...defaultGameSettings, ...settings, disableRewardCards: true},
+		{randomizeOrder: false},
+	)
+
+	game.state.isBossGame = true
+
+	function destroyRow(row: RowComponent) {
+		game.components
+			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+			.forEach((slotEntity) => game.components.delete(slotEntity))
+		game.components.delete(row.entity)
+	}
+
+	// Remove challenger's rows other than indexes 0, 1, and 2
+	game.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			(_game, row) => row.index > 2,
+		)
+		.forEach(destroyRow)
+	// Remove boss' rows other than index 0
+	game.components
+		.filter(
+			RowComponent,
+			query.row.currentPlayer,
+			query.not(query.row.index(0)),
+		)
+		.forEach(destroyRow)
+	// Remove boss' item slots
+	game.components
+		.filterEntities(
+			BoardSlotComponent,
+			query.slot.currentPlayer,
+			query.slot.item,
+		)
+		.forEach((slotEntity) => game.components.delete(slotEntity))
+
+	let testEnded = false
+
+	testSagas(
+		call(function* () {
+			yield* call(gameSaga, game)
+		}),
+		call(function* () {
+			yield* call(options.saga, game)
+			testEnded = true
+		}),
+	)
+
+	if (!options.then && !testEnded) {
+		throw new Error('Game was ended before the test finished running.')
+	}
+
+	if (options.then) options.then(game)
+}
+
+export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
+	const bossCard = game.components.find(
+		CardComponent,
+		query.card.is(EvilXisumaBossHermitCard),
+		query.card.currentPlayer,
+	)
+	const attackType = game.state.turn.availableActions.find(
+		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+	)
+	if (bossCard === null) throw new Error('Boss card not found to attack with')
+	if (attackType === undefined) throw new Error('Boss can not attack right now')
+	supplyBossAttack(bossCard, attack)
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: game.currentPlayerEntity,
+		action: {
+			type: attackType,
+		},
+	})
 }

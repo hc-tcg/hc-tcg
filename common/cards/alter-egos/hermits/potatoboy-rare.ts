@@ -41,7 +41,7 @@ const PotatoBoyRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')

@@ -91,7 +91,7 @@ jobs:
         run: npm run build
 
       - name: Run tests
-        run: ./tests/test-api.sh
+        run: npm run test:api
 
   e2e:
     timeout-minutes: 60

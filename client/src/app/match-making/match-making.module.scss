@@ -22,12 +22,6 @@
 	}
 }
 
-.codeInput {
-	display: flex;
-	justify-content: center;
-	gap: 1vh;
-}
-
 .content {
 	display: flex;
 	flex-direction: column;
@@ -53,6 +47,95 @@
 		line-height: 100%;
 		padding: 0 2vh;
 	}
+}
+
+.codeInput {
+	display: flex;
+	justify-content: center;
+	gap: 1vh;
+}
+
+.privateLobbyMenu {
+	align-items: center;
+	justify-content: center;
+  color: white;
+  font-size: 2.5vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.privateLobby {
+	align-items: center;
+	padding: 30px;
+	justify-content: center;
+  color: white;
+  font-size: 2.5vh;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	padding: 2vh 2vh;
+
+	@media (orientation: portrait) {
+  	max-width: 80%;
+	}
+	@media (orientation: landscape) {
+  	max-width: 65vh;
+	}
+}
+
+.privateJoinGrid {
+	display: flex;
+	@media (orientation: portrait) {
+    	flex-direction: column;
+      gap: 15px;
+	}
+	@media (orientation: landscape) {
+    	flex-direction: row;
+      gap: 30px;
+	}
+}
+
+.privateLobbyLeft {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+
+	p,
+	label {
+		color: white;
+		font-size: 2.5vh;
+		user-select: none;
+	}
+}
+
+.privateLobbyRight {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+.joinButton {
+	display: flex;
+	flex-direction: row;
+  align-items: stretch;
+  height: 5vh;
+
+	input {
+    font-size: 2.5vh;
+    font-weight: bold;
+    height: unset;
+	}
+
+	.spinner, button {
+    height: unset;
+    width: 6vh;
+    align-items: center;
+    justify-content: center;
+	}	
 }
 
 .code {

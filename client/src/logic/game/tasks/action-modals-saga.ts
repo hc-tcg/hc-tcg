@@ -1,19 +1,17 @@
 import {TurnAction} from 'common/types/game-state'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
-import {select} from 'typed-redux-saga'
 import {
 	AttackModal,
 	ChangeHermitModal,
 	ConfirmModal,
 	CopyAttackModal,
 	EndTurnModal,
+	ExitModal,
 	ForfeitModal,
 	SelectCardsModal,
 } from '../../../app/game/modals'
-import {getAvailableActions} from '../game-selectors'
 
 export const MODAL_COMPONENTS = {
 	attack: AttackModal,
@@ -21,6 +19,7 @@ export const MODAL_COMPONENTS = {
 	forfeit: ForfeitModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
+	exit: ExitModal,
 
 	// Custom modals
 	copyAttack: CopyAttackModal,
@@ -45,26 +44,16 @@ export const ActionMap: Record<TurnAction, string | null> = {
 	END_TURN: null,
 	WAIT_FOR_TURN: null,
 	MODAL_REQUEST: null,
+	DELAY: null,
 }
 
 function* endTurnActionSaga(): SagaIterator {
 	while (true) {
 		yield take(localMessages.GAME_ACTIONS_END_TURN)
-		const availableActions = yield* select(getAvailableActions)
-		const settings = yield* select(getSettings)
-		if (
-			availableActions.some((action) => ActionMap[action] !== null) &&
-			settings.confirmationDialogsEnabled
-		) {
-			yield put<LocalMessage>({
-				type: localMessages.GAME_MODAL_OPENED_SET,
-				id: 'end-turn',
-			})
-		} else {
-			yield put<LocalMessage>({
-				type: localMessages.GAME_TURN_END,
-			})
-		}
+		yield put<LocalMessage>({
+			type: localMessages.GAME_MODAL_OPENED_SET,
+			id: 'end-turn',
+		})
 	}
 }
 

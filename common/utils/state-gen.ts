@@ -13,6 +13,7 @@ import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
+import {VirtualAI} from '../types/virtual-ai'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -24,6 +25,11 @@ type ComponentSetupOptions = {
 	startWithAllCards: boolean
 	unlimitedCards: boolean
 	extraStartingCards: Array<string>
+}
+
+export type OpponentDefs = PlayerDefs & {
+	deck: Array<number | string | Card>
+	virtualAI: VirtualAI
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -164,6 +170,8 @@ export function getGameState(
 			turnRemaining: 0,
 			opponentActionStartTime: null,
 		},
+
+		isBossGame: false,
 	}
 
 	return gameState

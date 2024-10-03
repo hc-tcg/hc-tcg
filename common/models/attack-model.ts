@@ -146,7 +146,7 @@ export class AttackModel {
 		if (type) {
 			return this.history.filter((history) => history.type == type)
 		}
-		return this.history
+		return [...this.history]
 	}
 
 	/** Returns the current attacker for this attack */
@@ -259,3 +259,18 @@ export class AttackModel {
 		return this.consolidateLogs(values, this.log.length - 1)
 	}
 }
+
+/** Safety type to prevent hooks modifying attack values */
+export type ReadonlyAttackModel = Omit<
+	Readonly<AttackModel>,
+	| 'redirect'
+	| 'addDamage'
+	| 'removeDamage'
+	| 'reduceDamage'
+	| 'multiplyDamage'
+	| 'setAttacker'
+	| 'setTarget'
+	| 'redirect'
+	| 'addNewAttack'
+	| 'updateLog'
+>

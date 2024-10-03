@@ -6,6 +6,7 @@ import {
 	PlayerComponent,
 	SlotComponent,
 } from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
@@ -19,7 +20,7 @@ import {
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
-import {actionChannel, call, delay, race, take} from 'typed-redux-saga'
+import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
@@ -30,11 +31,13 @@ import {
 	applyEffectSaga,
 	attackSaga,
 	changeActiveHermitSaga,
+	delaySaga,
 	modalRequestSaga,
 	pickRequestSaga,
 	playCardSaga,
 	removeEffectSaga,
 } from './turn-actions'
+import {virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -208,16 +211,16 @@ function getAvailableActions(
 				if (pickableSlots.length === 0) return reducer
 
 				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
-					return [...reducer, 'PLAY_HERMIT_CARD']
+					reducer.push('PLAY_HERMIT_CARD')
 				}
 				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
-					return [...reducer, 'PLAY_EFFECT_CARD']
+					reducer.push('PLAY_EFFECT_CARD')
 				}
 				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
-					return [...reducer, 'PLAY_ITEM_CARD']
+					reducer.push('PLAY_ITEM_CARD')
 				}
 				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
-					return [...reducer, 'PLAY_SINGLE_USE_CARD']
+					reducer.push('PLAY_SINGLE_USE_CARD')
 				}
 				return reducer
 			}, [] as TurnActions)
@@ -296,6 +299,7 @@ function* checkHermitHealth(game: GameModel) {
 				playerState.lives -= 1
 
 				// reward card
+				if (game.settings.disableRewardCards) continue
 				game.components
 					.filter(
 						CardComponent,
@@ -333,6 +337,8 @@ function* sendGameState(game: GameModel) {
 			localGameState,
 		})
 	})
+
+	game.voiceLineQueue = []
 }
 
 function* turnActionSaga(
@@ -403,10 +409,14 @@ function* turnActionSaga(
 					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
 				)
 				break
+			case 'DELAY':
+				yield* call(sendGameState, game)
+				yield* call(delaySaga, game, turnAction.action.delay)
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
-					'Recieved an action that does not exist. This is impossible.',
+					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
 				return
 		}
@@ -433,6 +443,19 @@ function* turnActionSaga(
 	}
 }
 
+function getPlayerAI(game: GameModel) {
+	const activePlayerEntity = game.state.turn.opponentAvailableActions.includes(
+		'WAIT_FOR_TURN',
+	)
+		? game.currentPlayerEntity
+		: game.opponentPlayerEntity
+
+	return game.components.find(
+		AIComponent,
+		(_game, ai) => ai.playerEntity === activePlayerEntity,
+	)
+}
+
 function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, currentPlayer} = game
 
@@ -455,6 +478,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
+				'DELAY',
 			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10),
@@ -522,6 +546,9 @@ function* turnActionsSaga(game: GameModel) {
 
 			yield* call(sendGameState, game)
 			game.battleLog.sendLogs()
+
+			const playerAI = getPlayerAI(game)
+			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),

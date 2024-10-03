@@ -3,6 +3,7 @@ import {LocalMessage, localMessages} from 'logic/messages'
 export type LocalSettings = {
 	soundVolume: number
 	musicVolume: number
+	voiceVolume: number
 	muted: boolean
 	profanityFilterEnabled: boolean
 	showChatWindow: boolean
@@ -18,6 +19,7 @@ export type LocalSettings = {
 	gameSide: string
 	minecraftName: string
 	deckSortingMethod: 'Alphabetical' | 'First Tag'
+	lastSelectedTag: string | null
 }
 
 export type LocalSetting = {
@@ -27,6 +29,7 @@ export type LocalSetting = {
 const defaultSettings: LocalSettings = {
 	soundVolume: 100,
 	musicVolume: 75,
+	voiceVolume: 75,
 	muted: false,
 	profanityFilterEnabled: true,
 	chatEnabled: true,
@@ -42,6 +45,7 @@ const defaultSettings: LocalSettings = {
 	gameSide: 'Left',
 	minecraftName: '',
 	deckSortingMethod: 'Alphabetical',
+	lastSelectedTag: null,
 }
 
 const getSettings = (): LocalSettings => {

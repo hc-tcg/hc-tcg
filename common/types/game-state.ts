@@ -23,12 +23,13 @@ export type LocalRowState = {
 }
 
 export type CoinFlipResult = 'heads' | 'tails'
+export type CoinFlip = {result: CoinFlipResult; forced: boolean}
 
 export type CurrentCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
@@ -37,7 +38,7 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
@@ -78,6 +79,8 @@ export type GameState = {
 		turnRemaining: number
 		opponentActionStartTime: number | null
 	}
+
+	isBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -102,6 +105,7 @@ export type TurnAction =
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
+	| 'DELAY'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -134,6 +138,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
+	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -148,6 +153,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
+	isSpectator: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 
@@ -175,6 +181,10 @@ export type LocalGameState = {
 		turnStartTime: number
 		turnRemaining: number
 	}
+
+	isBossGame: boolean
+
+	voiceLineQueue: Array<string>
 }
 
 type MessageSender =

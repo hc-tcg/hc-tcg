@@ -117,7 +117,7 @@ const Crossbow: SingleUse = {
 		})
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
@@ -125,7 +125,7 @@ const Crossbow: SingleUse = {
 				applySingleUse(game)
 
 				// Do not apply single use more than once
-				observer.unsubscribe(player.hooks.beforeAttack)
+				observer.unsubscribe(game.hooks.beforeAttack)
 			},
 		)
 	},

@@ -37,8 +37,12 @@ export class BattleLogModel {
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
-		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+		const heads = coinFlip.tosses.filter(
+			(flip) => flip.result === 'heads',
+		).length
+		const tails = coinFlip.tosses.filter(
+			(flip) => flip.result === 'tails',
+		).length
 
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'
@@ -122,15 +126,17 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.slot.type === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return card.turnedOver
+				? `??? (${row.index + 1})`
+				: `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return card.turnedOver ? '???' : `${card.props.name}`
 	}
 
 	public addPlayCardEntry(

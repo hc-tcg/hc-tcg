@@ -14,6 +14,9 @@ const config = {
 
 	moduleNameMapper: {
 		'^client/(.*)$': '<rootDir>/client/src/$1',
+		// Deal with weird imports in the client.
+		'^components/(.*)$': '<rootDir>/client/src/components/$1',
+		'^logic/(.*)$': '<rootDir>/client/src/logic/$1',
 		'^common/(.*)$': '<rootDir>/common/$1',
 		'^server/(.*)$': '<rootDir>/server/src/$1',
 		'^.+\\.scss$': 'jest-scss-transform',

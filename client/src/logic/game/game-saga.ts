@@ -36,6 +36,7 @@ import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
+import spectatorSaga from './tasks/spectators'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* sendMsg({
@@ -100,6 +101,11 @@ function* gameStateSaga(
 		type: localMessages.GAME_LOCAL_STATE_SET,
 		localGameState: gameState,
 		time: action.time,
+	})
+
+	yield* put<LocalMessage>({
+		type: localMessages.QUEUE_VOICE,
+		lines: gameState.voiceLineQueue,
 	})
 
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
@@ -174,7 +180,7 @@ function* opponentConnectionSaga() {
 function* gameSaga(initialGameState?: LocalGameState) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
-		all([fork(opponentConnectionSaga), fork(chatSaga)]),
+		all([fork(opponentConnectionSaga), fork(chatSaga), fork(spectatorSaga)]),
 	)
 
 	try {
@@ -186,6 +192,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
 			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
+			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {

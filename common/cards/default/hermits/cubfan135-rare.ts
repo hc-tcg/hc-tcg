@@ -39,7 +39,7 @@ const Cubfan135Rare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
@@ -52,8 +52,8 @@ const Cubfan135Rare: Hermit = {
 						query.slot.hermit,
 						query.not(query.slot.active),
 						query.not(query.slot.empty),
-						query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
-					)
+					) ||
+					game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 				)
 					return
 

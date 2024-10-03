@@ -36,6 +36,16 @@ function Settings({setMenuSection}: Props) {
 			},
 		})
 	}
+	const handleVoiceChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'voiceVolume',
+				value: parseInt(ev.currentTarget.value),
+			},
+		})
+		dispatch({type: localMessages.PLAY_VOICE_TEST})
+	}
 	const handleMuteSound = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
@@ -62,12 +72,17 @@ function Settings({setMenuSection}: Props) {
 		if (value !== 0) return `${value}%`
 		return 'Disabled'
 	}
-	const handleGameSettings = () => setMenuSection('game-settings')
-	const handleDataSettings = () => setMenuSection('data-settings')
+	const changeMenuSection = (section: string) => {
+		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
+		setMenuSection(section)
+	}
+	const handleGameSettings = () => changeMenuSection('game-settings')
+	const handleDataSettings = () => changeMenuSection('data-settings')
 
-	const handleCredits = () => setMenuSection('credits')
+	const handleCredits = () => changeMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
+
 	const handleUpdates = () => {
 		setUpdatesOpen(true)
 	}
@@ -86,7 +101,7 @@ function Settings({setMenuSection}: Props) {
 				<></>
 			)}
 			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
+				back={() => changeMenuSection('mainmenu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -99,6 +114,9 @@ function Settings({setMenuSection}: Props) {
 						</Slider>
 						<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 							Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
+						</Slider>
+						<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
+							Voice Lines Volume: {getPercentDescriptor(settings.voiceVolume)}
 						</Slider>
 						<Button variant="stone" onClick={handleMuteSound}>
 							Sound: {getBoolDescriptor(!settings.muted)}
