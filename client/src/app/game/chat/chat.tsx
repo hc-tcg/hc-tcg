@@ -98,6 +98,20 @@ function Chat() {
 		dispatch({type: localMessages.CHAT_MESSAGE, message: chatMessage})
 	}
 
+	const resizeChat = (e: any) => {
+		console.log('SAVE')
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'chatSize',
+				value: {
+					w: e.currentTarget.offsetWidth,
+					h: e.currentTarget.offsetHeight,
+				},
+			},
+		})
+	}
+
 	const closeChat = () => {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
@@ -135,22 +149,7 @@ function Chat() {
 	}
 
 	return (
-		<div
-			style={style}
-			className={css.chatWrapper}
-			onClick={(e) =>
-				dispatch({
-					type: localMessages.SETTINGS_SET,
-					setting: {
-						key: 'chatSize',
-						value: {
-							w: e.currentTarget.offsetWidth,
-							h: e.currentTarget.offsetHeight,
-						},
-					},
-				})
-			}
-		>
+		<div style={style} className={css.chatWrapper} onClick={resizeChat}>
 			<ChatContent
 				chatMessages={chatMessages.map((line) => {
 					let isOpponent: boolean
@@ -226,19 +225,12 @@ export const ChatContent = ({
 	bindChatPos,
 	closeChat,
 	handleNewMessage,
+	toggleBattleLog,
 }: ChatContentProps) => {
 	return (
 		<>
 			<div className={css.chat}>
-				<div
-					className={css.header}
-					{...(
-						bindChatPos ||
-						(() => {
-							return {}
-						})
-					)()}
-				>
+				<div className={css.header} {...bindChatPos()}>
 					<p>Chat</p>
 					<Button onClick={toggleBattleLog} size="small">
 						{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
