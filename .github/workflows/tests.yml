@@ -1,0 +1,195 @@
+
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - dev
+      - master
+      - beta
+      - christmas
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  unittest:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Run tests
+        run: npm run test:unit
+
+  snapshot-tests:
+    name: Snapshot Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Run tests
+        run: npm run test:snapshot
+
+	build-frontend:
+    name: Component Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: frontend-build
+          path: client/dist
+          retention-days: 1
+
+	build-backend:
+    name: Component Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Install dependencies
+        run: npm ci
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: backend-build
+          path: server/dist
+          retention-days: 1
+
+  component-tests:
+    name: Component Tests
+    runs-on: ubuntu-latest
+    needs: [frontned-build, backend-build]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Download Frontend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+
+      - name: Download Backend Build
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run tests
+        run: npm run test:ct
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-ct
+          path: playwright-report/
+          retention-days: 30
+
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          sudo apt-get install -y curl
+          sudo apt-get install -y jq
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run tests
+        run: npm run test:api
+
+  e2e:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    name: End to End Tests
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Create debug config
+      run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+    - name: Build the server
+      run: npm run build
+
+    - name: Run Playwright tests
+      run: npm run test:e2e
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-e2e
+        path: playwright-report/
+        retention-days: 30
+
+  build-docker:
+    name: Test Can Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        run: docker buildx build .
