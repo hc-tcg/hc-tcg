@@ -1,6 +1,6 @@
 import debugConfig from './debug-config.js'
-import config from './server-config.js'
 import profanitySeed from './profanity-seed.js'
+import config from './server-config.js'
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string

@@ -168,6 +168,20 @@ function* joinPrivateGameSaga() {
 						yield* put<LocalMessage>({
 							type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER,
 						})
+						let result = yield* race({
+							matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
+							spectatePrivateGame: call(
+								receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+							),
+							timeout: call(
+								receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+							),
+						})
+						if (result.matchmakingLeave) {
+							yield* sendMsg({
+								type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
+							})
+						}
 					}
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
