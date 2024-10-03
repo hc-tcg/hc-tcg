@@ -48,7 +48,7 @@ jobs:
       - name: Run tests
         run: npm run test:snapshot
 
-	build-frontend:
+  build-frontend:
     name: Component Tests
     runs-on: ubuntu-latest
     steps:
