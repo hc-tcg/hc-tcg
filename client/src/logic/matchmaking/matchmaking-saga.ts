@@ -65,7 +65,7 @@ function* createBossGameSaga() {
 	}
 }
 
-function* joinPrivateGameSaga() {
+function* privateLobbySaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 		try {
@@ -94,6 +94,9 @@ function* joinPrivateGameSaga() {
 					waitingForPlayer: call(
 						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
 					),
+					spectateSuccess: call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+					),
 					specateWaitSuccess: call(
 						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_WAITING),
 					),
@@ -107,21 +110,47 @@ function* joinPrivateGameSaga() {
 						type: localMessages.MATCHMAKING_CODE_INVALID,
 					})
 					continue
-				}
+				} else if (
+					result.joinPrivateGameSuccess ||
+					result.waitingForPlayer ||
+					result.createPrivateGameSuccess
+				) {
+					if (result.createPrivateGameSuccess) {
+						yield* put<LocalMessage>({
+							type: localMessages.MATCHMAKING_CODE_RECIEVED,
+							gameCode: result.createPrivateGameSuccess.gameCode,
+							spectatorCode: result.createPrivateGameSuccess.spectatorCode,
+						})
+					}
 
-				if (result.createPrivateGameSuccess) {
-					yield* put<LocalMessage>({
-						type: localMessages.MATCHMAKING_CODE_RECIEVED,
-						gameCode: result.createPrivateGameSuccess.gameCode,
-						spectatorCode: result.createPrivateGameSuccess.spectatorCode,
+					if (result.waitingForPlayer) {
+						yield* put<LocalMessage>({
+							type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER,
+						})
+					}
+
+					// Private game joined successfully - wait for game start or timeout
+					const queueResponse = yield* race({
+						gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
+						leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
+						timeout: call(
+							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+						),
 					})
-					yield* call(receiveMsg(socket, serverMessages.GAME_START))
+
+					if (queueResponse.gameStart) {
+						yield* call(gameSaga)
+					}
+					if (queueResponse.leave) {
+						yield* sendMsg({
+							type: clientMessages.LEAVE_PRIVATE_QUEUE,
+						})
+					}
 				} else if (result.createPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CLEAR,
 					})
-					return
 				} else if (result.joinPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
@@ -145,8 +174,12 @@ function* joinPrivateGameSaga() {
 							type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
 						})
 					}
+					if (result.spectatePrivateGame) {
+						yield* call(gameSaga)
+					}
+				} else if (result.spectateSuccess) {
+					yield* call(gameSaga, result.spectateSuccess.localGameState)
 				} else if (result.joinPrivateGameSuccess) {
-					yield* call(receiveMsg(socket, serverMessages.GAME_START))
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
@@ -197,33 +230,6 @@ function* joinPrivateGameSaga() {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
 		yield* sendMsg({type: clientMessages.CANCEL_PRIVATE_GAME})
 	}
-}
-function* waitForGameStartSaga() {
-	const socket = yield* select(getSocket)
-	// Private game joined successfully - wait for game start or timeout
-	const queueResponse = yield* race({
-		gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
-		spectateGameStart: call(
-			receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-		),
-		leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
-		timeout: call(receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT)),
-	})
-
-	if (queueResponse.gameStart || queueResponse.spectateGameStart) {
-		yield* call(gameSaga)
-	}
-	if (queueResponse.leave) {
-		yield* sendMsg({
-			type: clientMessages.LEAVE_PRIVATE_QUEUE,
-		})
-	}
-}
-
-function* privateLobbySaga() {
-	yield* fork(joinPrivateGameSaga)
-	yield* fork(createPrivateGameSaga)
-	yield* fork(waitForGameStartSaga)
 }
 
 function* joinQueueSaga() {
