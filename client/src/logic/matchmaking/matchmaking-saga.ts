@@ -142,11 +142,8 @@ function* privateLobbySaga() {
 					})
 
 					if (queueResponse.gameStart) {
-						// The game started so remove us from matchmaking.
-						yield* put<LocalMessage>({
-							type: localMessages.MATCHMAKING_LEAVE,
-						})
 						yield* call(gameSaga)
+						break
 					}
 
 					if (queueResponse.leave) {
@@ -188,10 +185,6 @@ function* privateLobbySaga() {
 						),
 					})
 					if (result.spectatePrivateGame) {
-						// The game started so remove us from matchmaking.
-						yield* put<LocalMessage>({
-							type: localMessages.MATCHMAKING_LEAVE,
-						})
 						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
 					}
 					if (result.matchmakingLeave || result.timeout) {
@@ -220,6 +213,11 @@ function* privateLobbySaga() {
 	}
 
 	yield* call(matchmaking)
+
+	// After the game is over, return to the main menu
+	yield* put<LocalMessage>({
+		type: localMessages.MATCHMAKING_LEAVE,
+	})
 }
 
 function* joinQueueSaga() {
