@@ -29,7 +29,7 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 	await page.getByText('Public Game').waitFor()
 })
 
-test('Player is removed from private queue when they press "Cancel"', async ({
+test('Player is removed from private queue when they press "Cancel" (Opponent Code)', async ({
 	page,
 }) => {
 	await page.goto('/?showUpdatesModal=false')
@@ -70,4 +70,49 @@ test('Player is removed from private queue when they press "Cancel"', async ({
 			)
 		).json(),
 	).toHaveProperty('playerId', null)
+})
+
+test('Player is removed from private queue when they press "Cancel" (Spectator Code)', async ({
+	page,
+}) => {
+	await page.goto('/?showUpdatesModal=false')
+
+	let privateGame = await (
+		await fetch('http://localhost:9000/api/games/create')
+	).json()
+
+	let spectatorCode = privateGame.spectatorCode
+	let apiSecret = privateGame.apiSecret
+
+	await page.getByPlaceholder(' ').fill('Test Player')
+	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByText('Private Game').click()
+	await page.getByLabel('Enter code:').fill(spectatorCode)
+	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByText('Cancel').waitFor()
+
+	expect(
+		(
+			await (
+				await fetch(
+					`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`,
+				)
+			).json()
+		).spectatorsWaiting,
+	).toHaveProperty('length', 1)
+
+	await page.getByText('Cancel').click()
+
+	await page.waitForTimeout(1000)
+
+	expect(
+		(
+			await (
+				await fetch(
+					`http://localhost:9000/debug/root-state/private-queue/${apiSecret}`,
+				)
+			).json()
+		).spectatorsWaiting,
+	).toStrictEqual([])
 })
