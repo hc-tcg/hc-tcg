@@ -74,7 +74,7 @@ const matchmakingReducer = (
 				status: null,
 				invalidCode: false,
 			}
-		case localMessages.MATCHMAKING_CLEAR:
+		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
 				gameCode: null,

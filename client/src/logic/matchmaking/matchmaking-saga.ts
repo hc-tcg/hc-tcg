@@ -33,7 +33,7 @@ function* createBossGameSaga() {
 			})
 
 			if (createBossResponse.failure) {
-				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 				return
 			}
 
@@ -48,7 +48,7 @@ function* createBossGameSaga() {
 		} finally {
 			if (yield* cancelled()) {
 				// Clear state and back to menu
-				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 				yield* put<LocalMessage>({type: localMessages.GAME_END})
 			}
 		}
@@ -59,7 +59,7 @@ function* createBossGameSaga() {
 		matchmaking: call(matchmaking),
 	})
 
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 
 	if (result.cancel) {
 		yield* sendMsg({type: clientMessages.CANCEL_BOSS_GAME})
@@ -154,16 +154,17 @@ function* privateLobbySaga() {
 				} else if (result.createPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
-						type: localMessages.MATCHMAKING_CLEAR,
+						type: localMessages.MATCHMAKING_LEAVE,
 					})
 				} else if (result.joinPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
-						type: localMessages.MATCHMAKING_CLEAR,
+						type: localMessages.MATCHMAKING_LEAVE,
 					})
 				} else if (result.spectateSuccess) {
 					yield* call(gameSaga, result.spectateSuccess.localGameState)
 				} else if (result.specateWaitSuccess) {
+					console.log('WAITING')
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
 					})
@@ -176,6 +177,7 @@ function* privateLobbySaga() {
 							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
 					})
+					console.log(result)
 					if (result.spectatePrivateGame) {
 						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
 					}
@@ -183,6 +185,9 @@ function* privateLobbySaga() {
 						yield* sendMsg({
 							type: clientMessages.LEAVE_PRIVATE_QUEUE,
 						})
+					}
+					if (result.timeout) {
+						yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 					}
 				}
 
@@ -194,24 +199,17 @@ function* privateLobbySaga() {
 			if (yield* cancelled()) {
 				yield put<LocalMessage>({type: localMessages.GAME_END})
 				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CLEAR,
+					type: localMessages.MATCHMAKING_LEAVE,
 				})
 			}
 			yield cancel(matchmakingCodeTask)
 		}
 	}
 
-	const result = yield* race({
-		cancel: take(localMessages.MATCHMAKING_CLEAR), // We pressed the leave button
-		matchmaking: call(matchmaking),
-	})
+	yield* call(matchmaking)
 
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
-
-	if (result.cancel) {
-		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
-		yield* sendMsg({type: clientMessages.CANCEL_PRIVATE_GAME})
-	}
+	// Make sure to leave if something went wrong
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 }
 
 function* joinQueueSaga() {
@@ -230,7 +228,7 @@ function* joinQueueSaga() {
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
 				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CLEAR,
+					type: localMessages.MATCHMAKING_LEAVE,
 				})
 				return
 			}
@@ -245,7 +243,7 @@ function* joinQueueSaga() {
 			if (yield* cancelled()) {
 				// Clear state and back to menu
 				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CLEAR,
+					type: localMessages.MATCHMAKING_LEAVE,
 				})
 				yield put<LocalMessage>({type: localMessages.GAME_END})
 			}
@@ -257,7 +255,7 @@ function* joinQueueSaga() {
 		matchmaking: call(matchmaking),
 	})
 
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 
 	if (result.leave) {
 		// Tell the server we left the queue
@@ -270,11 +268,11 @@ export function* reconnectSaga() {
 	const reconnectState = yield* call(
 		receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
 	)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 	if (!reconnectState.localGameState)
 		throw new Error('The user must be in a game when they reconnect')
 	yield* call(gameSaga, reconnectState.localGameState)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 }
 
 function* matchmakingSaga() {
