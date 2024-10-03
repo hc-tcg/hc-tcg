@@ -213,6 +213,11 @@ function* privateLobbySaga() {
 	}
 
 	yield* call(matchmaking)
+
+	// After the game is over, return to the main menu
+	yield* put<LocalMessage>({
+		type: localMessages.MATCHMAKING_LEAVE,
+	})
 }
 
 function* joinQueueSaga() {
