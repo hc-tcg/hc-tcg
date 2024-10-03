@@ -65,61 +65,6 @@ function* createBossGameSaga() {
 	}
 }
 
-function* createPrivateGameSaga() {
-	function* matchmaking() {
-		const socket = yield* select(getSocket)
-		try {
-			// Send message to server to create the game
-			yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
-
-			// Wait for response
-			const createGameResponse = yield* race({
-				success: call(
-					receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_SUCCESS),
-				),
-				failure: call(
-					receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_FAILURE),
-				),
-			})
-
-			if (createGameResponse.success) {
-				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CODE_RECIEVED,
-					gameCode: createGameResponse.success.gameCode,
-					spectatorCode: createGameResponse.success.spectatorCode,
-				})
-				yield* call(receiveMsg(socket, serverMessages.GAME_START))
-			} else {
-				// Something went wrong, go back to menu
-				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CLEAR,
-				})
-				return
-			}
-		} catch (err) {
-			console.error('Game crashed: ', err)
-		} finally {
-			if (yield* cancelled()) {
-				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_CLEAR,
-				})
-				yield* put<LocalMessage>({type: localMessages.GAME_END})
-			}
-		}
-	}
-
-	const result = yield* race({
-		cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
-		matchmaking: call(matchmaking),
-	})
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
-
-	if (result.cancel) {
-		// Tell the server the private game is cancelled
-		yield* sendMsg({type: clientMessages.CANCEL_PRIVATE_GAME})
-	}
-}
-
 function* joinPrivateGameSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
@@ -132,10 +77,16 @@ function* joinPrivateGameSaga() {
 				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
 
 				const result = yield* race({
-					failure: call(
+					createPrivateGameSuccess: call(
+						receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_SUCCESS),
+					),
+					createPrivateGameFailure: call(
+						receiveMsg(socket, serverMessages.CREATE_PRIVATE_GAME_FAILURE),
+					),
+					joinPrivateGameFailure: call(
 						receiveMsg(socket, serverMessages.JOIN_PRIVATE_GAME_FAILURE),
 					),
-					success: call(
+					joinPrivateGameSuccess: call(
 						receiveMsg(socket, serverMessages.JOIN_PRIVATE_GAME_SUCCESS),
 					),
 					cancel: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
@@ -158,31 +109,44 @@ function* joinPrivateGameSaga() {
 					continue
 				}
 
-				if (result.failure) {
+				if (result.createPrivateGameSuccess) {
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_CODE_RECIEVED,
+						gameCode: result.createPrivateGameSuccess.gameCode,
+						spectatorCode: result.createPrivateGameSuccess.spectatorCode,
+					})
+					yield* call(receiveMsg(socket, serverMessages.GAME_START))
+				} else if (result.createPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CLEAR,
 					})
-				} else if (result.success || result.waitingForPlayer) {
-					if (result.waitingForPlayer) {
-						yield* put<LocalMessage>({
-							type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER,
+					return
+				} else if (result.joinPrivateGameFailure) {
+					// Something went wrong, go back to menu
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_CLEAR,
+					})
+				} else if (result.waitingForPlayer) {
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER,
+					})
+					let result = yield* race({
+						matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
+						spectatePrivateGame: call(
+							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+						),
+						timeout: call(
+							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+						),
+					})
+					if (result.matchmakingLeave) {
+						yield* sendMsg({
+							type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
 						})
-						let result = yield* race({
-							matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
-							spectatePrivateGame: call(
-								receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-							),
-							timeout: call(
-								receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
-							),
-						})
-						if (result.matchmakingLeave) {
-							yield* sendMsg({
-								type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
-							})
-						}
 					}
+				} else if (result.joinPrivateGameSuccess) {
+					yield* call(receiveMsg(socket, serverMessages.GAME_START))
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
@@ -228,8 +192,6 @@ function* joinPrivateGameSaga() {
 		cancel: take(localMessages.MATCHMAKING_CLEAR), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
-
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_CLEAR})
 
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
