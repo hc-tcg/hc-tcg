@@ -24,7 +24,7 @@ function MatchMaking() {
 	const invalidCode = useSelector(getInvalidCode)
 
 	const handleCancel = () => {
-		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+		dispatch({type: localMessages.MATCHMAKING_CLEAR})
 	}
 
 	const handleCodeSubmit = (ev: React.SyntheticEvent<HTMLFormElement>) => {

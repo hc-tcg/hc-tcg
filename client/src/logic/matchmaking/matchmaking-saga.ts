@@ -6,6 +6,7 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
 	call,
+	cancel,
 	cancelled,
 	fork,
 	put,
@@ -71,7 +72,7 @@ function* privateLobbySaga() {
 
 		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
 
-		yield* fork(function* () {
+		const matchmakingCodeTask = yield* fork(function* () {
 			const {code} = yield* take<
 				LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
 			>(localMessages.MATCHMAKING_CODE_SET)
@@ -115,20 +116,14 @@ function* privateLobbySaga() {
 						type: localMessages.MATCHMAKING_CODE_INVALID,
 					})
 					continue
-				} else if (
-					result.joinPrivateGameSuccess ||
-					result.waitingForPlayer ||
-					result.spectateSuccess ||
-					result.createPrivateGameSuccess
-				) {
-					if (result.createPrivateGameSuccess) {
-						yield* put<LocalMessage>({
-							type: localMessages.MATCHMAKING_CODE_RECIEVED,
-							gameCode: result.createPrivateGameSuccess.gameCode,
-							spectatorCode: result.createPrivateGameSuccess.spectatorCode,
-						})
-					}
-
+				} else if (result.createPrivateGameSuccess) {
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_CODE_RECIEVED,
+						gameCode: result.createPrivateGameSuccess.gameCode,
+						spectatorCode: result.createPrivateGameSuccess.spectatorCode,
+					})
+					continue
+				} else if (result.joinPrivateGameSuccess || result.waitingForPlayer) {
 					if (result.waitingForPlayer) {
 						yield* put<LocalMessage>({
 							type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER,
@@ -139,16 +134,14 @@ function* privateLobbySaga() {
 					const queueResponse = yield* race({
 						gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
 						leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
-						spectatePrivateGame: call(
-							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-						),
 						timeout: call(
 							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
 					})
 
-					if (queueResponse.gameStart || queueResponse.spectatePrivateGame) {
+					if (queueResponse.gameStart) {
 						yield* call(gameSaga)
+						break
 					}
 
 					if (queueResponse.leave) {
@@ -166,6 +159,8 @@ function* privateLobbySaga() {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_CLEAR,
 					})
+				} else if (result.spectateSuccess) {
+					yield* call(gameSaga, result.spectateSuccess.localGameState)
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
@@ -200,6 +195,7 @@ function* privateLobbySaga() {
 					type: localMessages.MATCHMAKING_CLEAR,
 				})
 			}
+			yield cancel(matchmakingCodeTask)
 		}
 	}
 
