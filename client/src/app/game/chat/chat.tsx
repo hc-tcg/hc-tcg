@@ -271,7 +271,6 @@ export const ChatContent = ({
 												})}
 												{line.sender === 'playerOne' &&
 													playerNames[0]?.toLocaleUpperCase()}
-												'S
 												{line.sender === 'playerTwo' &&
 													playerNames[1]?.toLocaleUpperCase()}
 												{' TURN'}
@@ -286,7 +285,7 @@ export const ChatContent = ({
 										<span className={css.turnTag}>
 											{line.sender === 'playerOne' && 'YOUR'}
 											{line.sender === 'playerTwo' &&
-												playerNames[1]?.toLocaleUpperCase()}
+												playerNames[1]?.toLocaleUpperCase() + "'S"}
 											{' TURN'}
 										</span>
 										<span className={css.line}></span>
