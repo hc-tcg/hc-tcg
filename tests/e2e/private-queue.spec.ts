@@ -84,8 +84,6 @@ test('Player is removed from private queue when they press "Cancel" (Opponent Co
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
 
-	await page.waitForTimeout(1000)
-
 	expect(
 		await (
 			await fetch(
@@ -127,8 +125,6 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 
 	await page.getByText('Cancel').waitFor()
 
-	await page.waitForTimeout(1000)
-
 	expect(
 		(
 			await (
@@ -152,4 +148,46 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 			).json()
 		).spectatorsWaiting,
 	).toStrictEqual([])
+})
+
+test('Game starts for players and spectators', async ({
+	context,
+	page: playerOne,
+}) => {
+	const playerTwo = await context.newPage()
+	const spectator = await context.newPage()
+
+	await playerOne.goto('/?showUpdatesModal=false')
+	await playerTwo.goto('/?showUpdatesModal=false')
+	await spectator.goto('/?showUpdatesModal=false')
+
+	let privateGame = await (
+		await fetch('http://localhost:9000/api/games/create')
+	).json()
+
+	let gameCode = privateGame.gameCode
+	let spectatorCode = privateGame.spectatorCode
+
+	await spectator.getByPlaceholder(' ').fill('Spectator')
+	await spectator.getByPlaceholder(' ').press('Enter')
+	await spectator.getByText(' Private Game').click()
+	await spectator.getByLabel('Enter code:').fill(spectatorCode)
+	await spectator.getByLabel('Enter code:').press('Enter')
+
+	for (const player of [playerOne, playerTwo]) {
+		await player.getByPlaceholder(' ').fill('Test Player')
+		await player.getByPlaceholder(' ').press('Enter')
+		await player.getByText(' Private Game').click()
+		await player.getByLabel('Enter code:').fill(gameCode)
+		await player.getByLabel('Enter code:').press('Enter')
+	}
+
+	// Give the server a second to start the game
+	await playerOne.waitForTimeout(1000)
+
+	for (const player of [playerOne, playerTwo, spectator]) {
+		await expect(
+			await player.evaluate(() => global.getState().matchmaking.status),
+		).toBe('starting')
+	}
 })
