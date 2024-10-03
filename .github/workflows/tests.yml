@@ -68,7 +68,7 @@ jobs:
           path: client/dist
           retention-days: 1
 
-	build-backend:
+  build-backend:
     name: Component Tests
     runs-on: ubuntu-latest
     steps:
