@@ -161,10 +161,13 @@ function* privateLobbySaga() {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_LEAVE,
 					})
+				} else if (result.cancel) {
+					yield* sendMsg({
+						type: clientMessages.CANCEL_PRIVATE_GAME,
+					})
 				} else if (result.spectateSuccess) {
 					yield* call(gameSaga, result.spectateSuccess.localGameState)
 				} else if (result.specateWaitSuccess) {
-					console.log('WAITING')
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
 					})
@@ -177,7 +180,6 @@ function* privateLobbySaga() {
 							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
 					})
-					console.log(result)
 					if (result.spectatePrivateGame) {
 						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
 					}
@@ -207,9 +209,6 @@ function* privateLobbySaga() {
 	}
 
 	yield* call(matchmaking)
-
-	// Make sure to leave if something went wrong
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 }
 
 function* joinQueueSaga() {
