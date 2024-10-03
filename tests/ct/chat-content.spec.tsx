@@ -2,7 +2,7 @@ import {expect, test} from '@playwright/experimental-ct-react'
 import {ChatContent, ChatMessageDisplay} from 'client/app/game/chat/chat'
 import {LineNode, formatText} from 'common/utils/formatting'
 
-test.use({ viewport: { width: 800, height: 500 } });
+test.use({viewport: {width: 800, height: 500}})
 
 test('Players and spectators view messages correctly.', async ({mount}) => {
 	let messages = [
