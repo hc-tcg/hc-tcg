@@ -234,7 +234,15 @@ export const ChatContent = ({
 	return (
 		<>
 			<div className={css.chat} onClick={onClick} style={style}>
-				<div className={css.header} {...bindChatPos()}>
+				<div
+					className={css.header}
+					{...(
+						bindChatPos ||
+						(() => {
+							return {}
+						})
+					)()}
+				>
 					<p>Chat</p>
 					<Button onClick={toggleBattleLog} size="small">
 						{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
