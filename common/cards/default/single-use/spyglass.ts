@@ -35,10 +35,10 @@ const Spyglass: SingleUse = {
 				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
 
 			const getEntry = (card: CardComponent): string => {
-				return `$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
+				return `$p{You|${player.playerName}}$ discarded ${getFormattedName(
 					card.props.id,
 					true,
-				)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
+				)} from {$o${opponentPlayer.playerName}'s$|your} hand`
 			}
 
 			game.addModalRequest({
@@ -46,7 +46,7 @@ const Spyglass: SingleUse = {
 				modal: {
 					type: 'selectCards',
 					name: 'Spyglass',
-					description: canDiscard ? ': Select 1 card to discard' : '',
+					description: canDiscard ? 'Select 1 card to discard' : '',
 					cards: opponentPlayer.getHand().map((card) => card.entity),
 					selectionSize: canDiscard ? 1 : 0,
 					cancelable: true,
