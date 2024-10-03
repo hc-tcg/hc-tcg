@@ -91,7 +91,7 @@ jobs:
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
-    needs: [frontned-build, backend-build]
+    needs: [build-frontend, build-backend]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
