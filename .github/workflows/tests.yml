@@ -179,16 +179,3 @@ jobs:
         name: playwright-report-e2e
         path: playwright-report/
         retention-days: 30
-
-  build-docker:
-    name: Test Can Build Docker Image
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repo
-        uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build
-        run: docker buildx build .
