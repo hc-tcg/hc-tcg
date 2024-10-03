@@ -150,7 +150,7 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	).toStrictEqual([])
 })
 
-test('Game starts for players and spectators', async ({
+test('Game starts for players and spectators and places players back on title screen.', async ({
 	context,
 	page: playerOne,
 }) => {
@@ -189,5 +189,18 @@ test('Game starts for players and spectators', async ({
 		await expect(
 			await player.evaluate(() => global.getState().matchmaking.status),
 		).toBe('starting')
+	}
+
+	// After the game is over, players should be placed on the title screen.
+	await playerOne.getByTitle('Forfeit').click()
+	await playerOne.getByText('Forfeit', {exact: true}).click()
+
+	for (const player of [playerOne, playerTwo, spectator]) {
+		await player.getByText('Return').click()
+	}
+
+	for (const player of [playerOne, playerTwo, spectator]) {
+		// Verify the player is on the main menu.
+		await player.getByText('Public Game').waitFor()
 	}
 })
