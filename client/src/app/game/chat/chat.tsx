@@ -188,7 +188,14 @@ function Chat() {
 			showLog={showLog}
 			profanityFilterEnabled={settings.profanityFilterEnabled}
 			isSpectating={isSpectator}
-			playerNames={[playerName, opponentName]}
+			playerNames={
+				isSpectator
+					? [
+							players && players[order[0]].playerName,
+							players && players[order[1]].playerName,
+						]
+					: [playerName, opponentName]
+			}
 			bindChatPos={bindChatPos}
 			closeChat={closeChat}
 			handleNewMessage={handleNewMessage}
