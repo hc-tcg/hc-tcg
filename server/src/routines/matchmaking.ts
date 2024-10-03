@@ -534,13 +534,16 @@ export function* joinPrivateGame(
 
 		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
-		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
-		broadcast([root.players[root.privateQueue[code].playerId]], {
-			type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
-		})
-
 		// Remove this game from the queue, it's started
+		let tmpQueue = root.privateQueue[code]
 		delete root.privateQueue[code]
+
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+		if (tmpQueue.playerId) {
+			broadcast([root.players[tmpQueue.playerId]], {
+				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
+			})
+		}
 
 		yield* fork(gameManager, newGame)
 	} else {
