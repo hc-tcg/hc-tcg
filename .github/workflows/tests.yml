@@ -106,13 +106,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: server
+          path: server/dist
 
       - name: Download Backend Build
         uses: actions/download-artifact@v4
         with:
           name: backend-build
-          path: client
+          path: client/dist
 
       - name: Install dependencies
         run: npm ci
@@ -142,13 +142,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
-          path: server
+          path: server/dist
 
       - name: Download Backend Build
         uses: actions/download-artifact@v4
         with:
           name: backend-build
-          path: client
+          path: client/dist
 
       - uses: actions/setup-node@v4
         with:
@@ -179,13 +179,13 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: frontend-build
-        path: client
+        path: client/dist
 
     - name: Download Backend Build
       uses: actions/download-artifact@v4
       with:
         name: backend-build
-        path: server
+        path: server/dist
 
     - name: Run Playwright tests
       run: npm run test:e2e
