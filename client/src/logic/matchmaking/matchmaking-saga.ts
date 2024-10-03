@@ -181,7 +181,7 @@ function* privateLobbySaga() {
 					}
 					if (result.matchmakingLeave) {
 						yield* sendMsg({
-							type: clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE,
+							type: clientMessages.LEAVE_PRIVATE_QUEUE,
 						})
 					}
 				}
