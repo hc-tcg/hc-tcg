@@ -99,7 +99,7 @@ function Chat() {
 	}
 
 	const resizeChat = (e: any) => {
-		console.log('SAVE')
+		if (viewingFromMobile) return
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
@@ -149,51 +149,51 @@ function Chat() {
 	}
 
 	return (
-		<div style={style} className={css.chatWrapper} onClick={resizeChat}>
-			<ChatContent
-				chatMessages={chatMessages.map((line) => {
-					let isOpponent: boolean
-					if (isSpectator) {
-						isOpponent =
-							!!players &&
-							[order[1], players[order[1]]?.playerId].includes(line.sender.id)
-					} else {
-						isOpponent = ![playerId, playerEntity].includes(line.sender.id)
-					}
-
-					let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
-						? 'playerTwo'
-						: 'playerOne'
-
-					if (
+		<ChatContent
+			style={style}
+			onClick={resizeChat}
+			chatMessages={chatMessages.map((line) => {
+				let isOpponent: boolean
+				if (isSpectator) {
+					isOpponent =
 						!!players &&
-						![
-							playerId,
-							playerEntity,
-							order[1],
-							players[order[1]]?.playerId,
-						].includes(line.sender.id)
-					) {
-						sender = 'spectator'
-					}
+						[order[1], players[order[1]]?.playerId].includes(line.sender.id)
+				} else {
+					isOpponent = ![playerId, playerEntity].includes(line.sender.id)
+				}
 
-					return {
-						message: line.message,
-						sender,
-						createdAt: line.createdAt,
-						isBattleLogMessage: line.sender.type === 'system',
-					}
-				})}
-				showLog={showLog}
-				profanityFilterEnabled={settings.profanityFilterEnabled}
-				isSpectating={isSpectator}
-				playerNames={[playerName, opponentName]}
-				bindChatPos={bindChatPos}
-				closeChat={closeChat}
-				handleNewMessage={handleNewMessage}
-				toggleBattleLog={toggleBattleLog}
-			/>
-		</div>
+				let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
+					? 'playerTwo'
+					: 'playerOne'
+
+				if (
+					!!players &&
+					![
+						order[1],
+						players[order[1]]?.playerId,
+						order[0],
+						players[order[0]]?.playerId,
+					].includes(line.sender.id)
+				) {
+					sender = 'spectator'
+				}
+
+				return {
+					message: line.message,
+					sender,
+					createdAt: line.createdAt,
+					isBattleLogMessage: line.sender.type === 'system',
+				}
+			})}
+			showLog={showLog}
+			profanityFilterEnabled={settings.profanityFilterEnabled}
+			isSpectating={isSpectator}
+			playerNames={[playerName, opponentName]}
+			bindChatPos={bindChatPos}
+			closeChat={closeChat}
+			handleNewMessage={handleNewMessage}
+			toggleBattleLog={toggleBattleLog}
+		/>
 	)
 }
 
@@ -213,7 +213,9 @@ type ChatContentProps = {
 	bindChatPos?: () => {}
 	closeChat?: () => void
 	handleNewMessage?: (e: any) => void
-	toggleBattleLog: () => void
+	toggleBattleLog?: () => void
+	onClick?: (e: any) => void
+	style?: any
 }
 
 export const ChatContent = ({
@@ -226,10 +228,12 @@ export const ChatContent = ({
 	closeChat,
 	handleNewMessage,
 	toggleBattleLog,
+	onClick,
+	style,
 }: ChatContentProps) => {
 	return (
 		<>
-			<div className={css.chat}>
+			<div className={css.chat} onClick={onClick} style={style}>
 				<div className={css.header} {...bindChatPos()}>
 					<p>Chat</p>
 					<Button onClick={toggleBattleLog} size="small">
