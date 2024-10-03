@@ -73,11 +73,13 @@ function* privateLobbySaga() {
 		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
 
 		const matchmakingCodeTask = yield* fork(function* () {
-			const {code} = yield* take<
-				LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
-			>(localMessages.MATCHMAKING_CODE_SET)
+			while (true) {
+				const {code} = yield* take<
+					LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
+				>(localMessages.MATCHMAKING_CODE_SET)
 
-			yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
+				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
+			}
 		})
 
 		try {
