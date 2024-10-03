@@ -1,6 +1,8 @@
 import {expect, test} from '@playwright/test'
 
-test('Private queue is exited when API game is cancelled', async ({page}) => {
+test('Private queue is exited when API game is cancelled (Opponent Code)', async ({
+	page,
+}) => {
 	await page.goto('/?showUpdatesModal=false')
 
 	let privateGame = await (
@@ -14,6 +16,37 @@ test('Private queue is exited when API game is cancelled', async ({page}) => {
 	await page.getByPlaceholder(' ').press('Enter')
 	await page.getByText(' Private Game').click()
 	await page.getByLabel('Enter code:').fill(gameCode)
+	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByText('Waiting').waitFor()
+
+	await fetch('http://localhost:9000/api/games/cancel', {
+		method: 'DELETE',
+		headers: {'Content-Type': 'application/json'},
+		body: JSON.stringify({
+			code: apiSecret,
+		}),
+	})
+
+	await page.getByText('Public Game').waitFor()
+})
+
+test('Private queue is exited when API game is cancelled (Spectator Code)', async ({
+	page,
+}) => {
+	await page.goto('/?showUpdatesModal=false')
+
+	let privateGame = await (
+		await fetch('http://localhost:9000/api/games/create')
+	).json()
+
+	let spectatorCode = privateGame.spectatorCode
+	let apiSecret = privateGame.apiSecret
+
+	await page.getByPlaceholder(' ').fill('Test Player')
+	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByText(' Private Game').click()
+	await page.getByLabel('Enter code:').fill(spectatorCode)
 	await page.getByLabel('Enter code:').press('Enter')
 
 	await page.getByText('Waiting').waitFor()

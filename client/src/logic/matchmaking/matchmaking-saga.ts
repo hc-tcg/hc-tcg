@@ -151,6 +151,10 @@ function* privateLobbySaga() {
 							type: clientMessages.LEAVE_PRIVATE_QUEUE,
 						})
 					}
+
+					if (result.timeout) {
+						yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+					}
 				} else if (result.createPrivateGameFailure) {
 					// Something went wrong, go back to menu
 					yield* put<LocalMessage>({
@@ -183,7 +187,7 @@ function* privateLobbySaga() {
 					if (result.spectatePrivateGame) {
 						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
 					}
-					if (result.matchmakingLeave) {
+					if (result.matchmakingLeave || result.timeout) {
 						yield* sendMsg({
 							type: clientMessages.LEAVE_PRIVATE_QUEUE,
 						})
