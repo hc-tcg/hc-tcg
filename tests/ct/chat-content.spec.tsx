@@ -40,7 +40,7 @@ test('Players and spectators view messages correctly.', async ({mount}) => {
 		<ChatContent
 			chatMessages={messages}
 			showLog={true}
-			isSpectating={true}
+			isSpectating={false}
 			profanityFilterEnabled={false}
 			playerNames={['Player One', 'Player Two']}
 		/>,
