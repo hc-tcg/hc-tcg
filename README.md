@@ -31,7 +31,7 @@ By default, the client is hosted on port 3002.
 
 ## Configuration
 
-Your instance can be configured using the `common/config/server-config.json` file.
+Your instance can be configured using the `common/config/server-config.js` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
@@ -45,7 +45,7 @@ Your instance can be configured using the `common/config/server-config.json` fil
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
 
-You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.example.json` and rename it. On linux you can run `cp ./common/config/debug-config.example.json ./common/config/debug-config.json`, and on windows you can run `copy ./common/config/debug-config.example.json ./common/config/debug-config.json` to create the file.
+You can also configure debug settings using `common/config/debug-config.js`. To create it, copy `common/config/debug-config.example.js` and rename it. On linux you can run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js`, and on windows you can run `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` to create the file.
 
 | Key                   | Description                                                                 |
 | --------------------- | --------------------------------------------------------------------------- |
