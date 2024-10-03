@@ -42,36 +42,21 @@ export class Database {
 		await this.pool.end()
 	}
 
-	private async checkSecret(user_id: string, secret: string): Promise<boolean> {
-		try {
-			return (
-				(
-					await this.pool.query(
-						'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
-						[user_id, secret],
-					)
-				).rows.length > 0
-			)
-		} catch (err) {
-			console.log(err)
-			return false
-		}
-	}
-
 	/*** Insert a user into the Database. Returns `user`. */
 	public async insertUser(
 		username: string,
 		minecraftName: string | null,
 	): Promise<User | null> {
 		try {
-			const secret = await this.pool.query('SELECT * FROM uuid_generate_v4()')
+			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
+				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', 15))) RETURNING (user_id)",
 				[username, minecraftName, secret],
 			)
 			return {
 				uuid: user.rows[0]['user_id'],
-				secret: secret.rows[0]['uuid_generate_v4'],
+				secret: secret,
 				username: username,
 				minecraftName: minecraftName,
 			}
@@ -88,10 +73,8 @@ export class Database {
 		cards: Array<number>,
 		tags: Array<string>,
 		user_id: string,
-		secret: string,
 	): Promise<string | null> {
 		try {
-			// if (!(await this.checkSecret(user_id, secret))) return null
 			const deckResult = await this.pool.query(
 				'INSERT INTO decks (user_id, name, icon) values ($1,$2,$3) RETURNING (deck_code)',
 				[user_id, name, icon],
@@ -187,10 +170,8 @@ export class Database {
 	public async disassociateDeck(
 		deckCode: string,
 		user_id: string,
-		secret: string,
 	): Promise<void> {
 		try {
-			// if (!(await this.checkSecret(user_id, secret))) return
 			await this.pool.query(
 				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
@@ -208,15 +189,12 @@ export class Database {
 	// Set user info
 }
 
-export const setupDatabase = (
-	allCards: Array<Card>,
-	env: NodeJS.ProcessEnv,
-) => {
+export const setupDatabase = (allCards: Array<Card>, env: any) => {
 	const pool = new Pool({
-		host: env.HOST,
-		user: env.USER,
-		password: env.PASSWORD,
-		database: env.DATABASE,
+		host: env.POSTGRES_HOST,
+		user: env.POSTGRES_USER,
+		password: env.POSTGRES_PASSWORD,
+		database: env.POSTGRES_DATABASE,
 		max: 20,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,

@@ -1,10 +1,10 @@
 import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
 import {config} from 'dotenv'
-import {Databse, setupDatabase} from 'server/db/db'
+import {Database, setupDatabase} from 'server/db/db'
 
 describe('Test Database', () => {
-	let database: Databse
+	let database: Database
 
 	beforeAll(async () => {
 		const env = config()
@@ -52,7 +52,6 @@ describe('Test Database', () => {
 			playerDeck.cards,
 			playerDeck.tags,
 			user.uuid,
-			user.secret,
 		)
 
 		expect(code).not.toBeNull()
