@@ -51,6 +51,8 @@ test('Player is removed from private queue when they press "Cancel" (Opponent Co
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
 
+	await page.waitForTimeout(1000)
+
 	expect(
 		await (
 			await fetch(
@@ -91,6 +93,8 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	await page.getByLabel('Enter code:').press('Enter')
 
 	await page.getByText('Cancel').waitFor()
+
+	await page.waitForTimeout(1000)
 
 	expect(
 		(
