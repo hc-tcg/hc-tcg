@@ -108,6 +108,16 @@ function Chat() {
 		})
 	}
 
+	const toggleBattleLog = () => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'showBattleLogs',
+				value: !showLog,
+			},
+		})
+	}
+
 	// @TODO: Repopulate chat messages after reconnecting
 
 	let style = {
@@ -125,7 +135,22 @@ function Chat() {
 	}
 
 	return (
-		<div style={style}>
+		<div
+			style={style}
+			className={css.chatWrapper}
+			onClick={(e) =>
+				dispatch({
+					type: localMessages.SETTINGS_SET,
+					setting: {
+						key: 'chatSize',
+						value: {
+							w: e.currentTarget.offsetWidth,
+							h: e.currentTarget.offsetHeight,
+						},
+					},
+				})
+			}
+		>
 			<ChatContent
 				chatMessages={chatMessages.map((line) => {
 					let isOpponent: boolean
@@ -167,7 +192,7 @@ function Chat() {
 				bindChatPos={bindChatPos}
 				closeChat={closeChat}
 				handleNewMessage={handleNewMessage}
-				dispatch={dispatch}
+				toggleBattleLog={toggleBattleLog}
 			/>
 		</div>
 	)
@@ -189,7 +214,7 @@ type ChatContentProps = {
 	bindChatPos?: () => {}
 	closeChat?: () => void
 	handleNewMessage?: (e: any) => void
-	dispatch?: ReturnType<typeof useMessageDispatch>
+	toggleBattleLog: () => void
 }
 
 export const ChatContent = ({
@@ -201,26 +226,10 @@ export const ChatContent = ({
 	bindChatPos,
 	closeChat,
 	handleNewMessage,
-	dispatch,
 }: ChatContentProps) => {
 	return (
 		<>
-			<div
-				className={css.chat}
-				onClick={(e) => {
-					dispatch &&
-						dispatch({
-							type: localMessages.SETTINGS_SET,
-							setting: {
-								key: 'chatSize',
-								value: {
-									w: e.currentTarget.offsetWidth,
-									h: e.currentTarget.offsetHeight,
-								},
-							},
-						})
-				}}
-			>
+			<div className={css.chat}>
 				<div
 					className={css.header}
 					{...(
@@ -231,19 +240,7 @@ export const ChatContent = ({
 					)()}
 				>
 					<p>Chat</p>
-					<Button
-						onClick={() =>
-							dispatch &&
-							dispatch({
-								type: localMessages.SETTINGS_SET,
-								setting: {
-									key: 'showBattleLogs',
-									value: !showLog,
-								},
-							})
-						}
-						size="small"
-					>
+					<Button onClick={toggleBattleLog} size="small">
 						{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
 					</Button>
 					<button onClick={closeChat} className={css.close}>

@@ -1,9 +1,13 @@
-.chat {
+.chatWrapper {
   position: fixed;
+  z-index: 50;
+}
+
+.chat {
   inset: 0;
+  background: var(--gray-600);
   padding: 2vh;
   gap: 2vh;
-  background: var(--gray-600);
   z-index: 50;
   display: flex;
   flex-direction: column;
