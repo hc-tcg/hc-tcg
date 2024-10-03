@@ -60,3 +60,35 @@ test('Players and spectators view messages correctly.', async ({mount}) => {
 	await expect(component2).toHaveScreenshot()
 	await component2.unmount()
 })
+
+test('Batlte log messages are hidden properly.', async ({mount}) => {
+	let messages = [
+		{
+			message: formatText(
+				'This is a battle log message. If this shows up in the snapshot, the test has failed',
+			),
+			isBattleLogMessage: true,
+			sender: 'playerOne',
+			createdAt: 0,
+		},
+		{
+			message: formatText(
+				'This is not a battle log message so it should show.',
+			),
+			isBattleLogMessage: false,
+			sender: 'playerOne',
+			createdAt: 0,
+		},
+	].reverse() as Array<ChatMessageDisplay>
+
+	const component = await mount(
+		<ChatContent
+			chatMessages={messages}
+			showLog={false}
+			isSpectating={false}
+			profanityFilterEnabled={false}
+			playerNames={['Player One', 'Player Two']}
+		/>,
+	)
+	await expect(component).toHaveScreenshot()
+})
