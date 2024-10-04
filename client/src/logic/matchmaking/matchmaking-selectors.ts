@@ -8,8 +8,12 @@ export const getStatus = (state: RootState) => {
 	return getMatchmaking(state).status
 }
 
-export const getCode = (state: RootState) => {
-	return getMatchmaking(state).code
+export const getGameCode = (state: RootState) => {
+	return getMatchmaking(state).gameCode
+}
+
+export const getSpectatorCode = (state: RootState) => {
+	return getMatchmaking(state).spectatorCode
 }
 
 export const getInvalidCode = (state: RootState) => {

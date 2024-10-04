@@ -30,14 +30,14 @@ const LlamadadRare: Hermit = {
 		power: 'Flip a coin.\nIf heads, do an additional 40hp damage.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

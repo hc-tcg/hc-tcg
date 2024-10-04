@@ -43,7 +43,7 @@ const PoePoeSkizzRare: Hermit = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterAttack,
+			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
@@ -71,7 +71,10 @@ const PoePoeSkizzRare: Hermit = {
 						const jumpscareTarget = game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
-							query.row.index(component.slot.row.index),
+							game.components.filter(RowComponent, query.row.opponentPlayer)
+								.length > 1
+								? query.row.index(component.slot.row.index)
+								: query.anything, // Lets Jumpscare always damage opponent, if opponent only has a single row and player can move
 						)
 
 						if (!jumpscareTarget || !jumpscareTarget.getHermit()) return

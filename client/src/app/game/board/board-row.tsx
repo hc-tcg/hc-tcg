@@ -57,6 +57,7 @@ const BoardRow = ({
 		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
 	)
 
+	const itemSlots = rowState.items.length
 	const slotTypes: Array<BoardSlotTypeT> = [
 		'item',
 		'item',
@@ -67,6 +68,16 @@ const BoardRow = ({
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const slot = getSlotByLocation(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
+
+		if (slotType === 'item' && itemSlots <= slotIndex)
+			return (
+				<div
+					id={css[cssId]}
+					className={cn(css.slot, css[slotType], css.empty, {
+						[css.afk]: !active,
+					})}
+				/>
+			)
 
 		return (
 			<Slot

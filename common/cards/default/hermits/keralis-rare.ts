@@ -77,7 +77,7 @@ const KeralisRare: Hermit = {
 
 		// Heals the afk hermit *before* we actually do damage
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

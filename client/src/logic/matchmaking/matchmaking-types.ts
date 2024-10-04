@@ -1,8 +1,8 @@
 export type MatchmakingStatus =
 	| 'loading'
 	| 'random_waiting'
-	| 'private_waiting'
+	| 'private_lobby'
 	| 'waiting_for_player'
-	| 'private_code_needed'
+	| 'waiting_for_player_as_spectator'
 	| 'starting'
 	| null

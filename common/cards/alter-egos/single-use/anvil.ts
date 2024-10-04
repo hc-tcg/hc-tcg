@@ -12,6 +12,12 @@ import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
+function opponentHasMultipleRows(game: GameModel) {
+	return (
+		game.components.filter(RowComponent, query.row.opponentPlayer).length > 1
+	)
+}
+
 function getTargetHermits(game: GameModel, player: PlayerComponent) {
 	return game.components.filter(
 		RowComponent,
@@ -34,7 +40,9 @@ const Anvil: SingleUse = {
 	hasAttack: true,
 	attackPreview: (game) => {
 		const targets = getTargetHermits(game, game.currentPlayer)
-		if (targets.length === 0) return '$A0$'
+		if (targets.length === 0) {
+			return opponentHasMultipleRows(game) ? '$A0$' : '$A30$'
+		}
 		if (targets[0].index === game.currentPlayer.activeRow!.index) {
 			return targets.length === 1
 				? '$A30$'
@@ -49,55 +57,70 @@ const Anvil: SingleUse = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.getAttack, () => {
-			const attack = getTargetHermits(game, player).reduce(
-				(attacks: null | AttackModel, row) => {
-					if (!row.getHermit()) return attacks
-
-					const newAttack = game
-						.newAttack({
-							attacker: component.entity,
-							player: player.entity,
-							target: row.entity,
-							type: 'effect',
-							log:
-								attacks === null
-									? (values) =>
-											`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: (values) =>
-											`, ${values.target} for ${values.damage} damage`,
-						})
-						.addDamage(
-							component.entity,
-							row.index === player.activeRow?.index ? 30 : 10,
+		observer.subscribe(
+			player.hooks.getAttack,
+			opponentHasMultipleRows(game)
+				? () => {
+						const attack = getTargetHermits(game, player).reduce(
+							(attacks: null | AttackModel, row) => {
+								const newAttack = game
+									.newAttack({
+										attacker: component.entity,
+										player: player.entity,
+										target: row.entity,
+										type: 'effect',
+										log:
+											attacks === null
+												? (values) =>
+														`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+												: (values) =>
+														`, ${values.target} for ${values.damage} damage`,
+									})
+									.addDamage(
+										component.entity,
+										row.index === player.activeRow?.index ? 30 : 10,
+									)
+								if (attacks === null) {
+									return newAttack
+								} else {
+									attacks.addNewAttack(newAttack)
+									return attacks
+								}
+							},
+							null,
 						)
-					if (attacks === null) {
-						return newAttack
-					} else {
-						attacks.addNewAttack(newAttack)
-						return attacks
+						if (attack === null) {
+							// No valid targets
+							game.battleLog.addEntry(
+								component.player.entity,
+								`$p{You|${component.player.playerName}}$ used $eAnvil$ and missed`,
+							)
+							applySingleUse(game)
+						}
+						return attack
 					}
-				},
-				null,
-			)
-			if (attack === null) {
-				// No valid targets
-				game.battleLog.addEntry(
-					component.player.entity,
-					`$p{You|${component.player.playerName}}$ used $eAnvil$ and missed`,
-				)
-				applySingleUse(game)
-			}
-			return attack
-		})
+				: () =>
+						game
+							.newAttack({
+								attacker: component.entity,
+								target: game.components.findEntity(
+									RowComponent,
+									query.row.opponentPlayer,
+								),
+								type: 'effect',
+								log: (values) =>
+									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+							})
+							.addDamage(component.entity, 30),
+		)
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
 				if (attack.isAttacker(component.entity)) {
 					applySingleUse(game, component.slot)
-					observer.unsubscribe(player.hooks.beforeAttack)
+					observer.unsubscribe(game.hooks.beforeAttack)
 				}
 			},
 		)

@@ -1,0 +1,35 @@
+.container {
+	display: flex;
+	align-items: center;
+
+	.mainButton {
+		flex-grow: 1;
+	}
+}
+
+.component {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	padding: 0.7rem;
+	margin: 0.2rem;
+	flex-grow: 1;
+	background-color: #1a1d1d;
+	border-radius: 8px;
+	border: #1a1d1d 2px solid;
+	font-family: Minecraft;
+	font-size: 1rem;
+	color: var(--text-light);
+
+	&:hover {
+		border: var(--text-light) 2px solid;
+		background-color: #353838;
+	}
+}
+
+.fullTagColor {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	margin-right: 5px;
+}

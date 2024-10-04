@@ -15,7 +15,7 @@ import {
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
-import {formatText} from '../utils/formatting'
+import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 
@@ -37,8 +37,12 @@ export class BattleLogModel {
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
-		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+		const heads = coinFlip.tosses.filter(
+			(flip) => flip.result === 'heads',
+		).length
+		const tails = coinFlip.tosses.filter(
+			(flip) => flip.result === 'tails',
+		).length
 
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'
@@ -122,15 +126,17 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.slot.type === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return card.turnedOver
+				? `??? (${row.index + 1})`
+				: `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return card.turnedOver ? '???' : `${card.props.name}`
 	}
 
 	public addPlayCardEntry(
@@ -334,14 +340,14 @@ export class BattleLogModel {
 		this.sendLogs()
 	}
 
-	public addTurnEndEntry() {
+	public addTurnStartEntry() {
 		this.game.chat.push({
 			sender: {
 				type: 'system',
-				id: this.game.opponentPlayer.entity,
+				id: this.game.currentPlayer.entity,
 			},
 			createdAt: Date.now(),
-			message: {TYPE: 'LineNode'},
+			message: LineNode(),
 		})
 
 		broadcast(this.game.getPlayers(), {

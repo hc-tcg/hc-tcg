@@ -10,23 +10,26 @@ const config = {
 
 	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'ts', 'json'],
 
-	roots: ['tests', 'common', 'server'],
+	roots: ['tests/unit/'],
 
 	moduleNameMapper: {
 		'^client/(.*)$': '<rootDir>/client/src/$1',
+		// Deal with weird imports in the client.
+		'^components/(.*)$': '<rootDir>/client/src/components/$1',
+		'^logic/(.*)$': '<rootDir>/client/src/logic/$1',
 		'^common/(.*)$': '<rootDir>/common/$1',
 		'^server/(.*)$': '<rootDir>/server/src/$1',
+		'^.+\\.css$': ['jest-scss-transform', {modules: true}],
+		'^.+\\.scss$': ['jest-scss-transform', {modules: true}],
 	},
 
 	// A map from regular expressions to paths to transformers
 	transform: {
-		'^.+\\.tsx?$': [
+		'^.+\\.[jt]sx?$': [
 			'ts-jest',
 			{
-				diagnostics: {
-					warnOnly: true,
-				},
-				tsconfig: 'tests/tsconfig.json',
+				diagnostics: false,
+				tsconfig: 'tests/unit/tsconfig.json',
 			},
 		],
 	},

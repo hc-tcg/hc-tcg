@@ -24,7 +24,7 @@ client/dist-ssr
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-common/config/debug-config.json
+common/config/debug-config.js
 
 # Editor directories and files
 .vscode/*
@@ -35,3 +35,9 @@ fly.toml
 
 # Environment variables
 .env
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+tsconfig.buildinfo

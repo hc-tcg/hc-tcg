@@ -6,6 +6,7 @@ type DropdownOptions = {
 	name: string
 	key?: string
 	icon?: string
+	color?: string
 }
 
 type Props = {
@@ -42,6 +43,12 @@ const Dropdown = ({button, label, options, action}: Props) => {
 									style={{height: '1.5rem', width: '1.5rem'}}
 									alt={option.icon}
 								/>
+							)}
+							{option.color && (
+								<div
+									className={css.color}
+									style={{backgroundColor: option.color}}
+								></div>
 							)}
 							<span>{option.name}</span>
 						</DropdownMenu.RadioItem>

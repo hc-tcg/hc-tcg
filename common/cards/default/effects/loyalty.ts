@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {afterDefence} from '../../../types/priorities'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -23,8 +23,8 @@ const Loyalty: Attach = {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.afterDefence,
-			afterDefence.ON_ROW_DEATH,
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!component.slot.inRow() || component.slot.row.health) return
 				if (!attack.target || !attack.isTargeting(component)) return

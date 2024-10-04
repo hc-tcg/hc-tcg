@@ -6,13 +6,11 @@ import App from './app'
 
 import * as Toast from '@radix-ui/react-toast'
 import toastCSS from 'components/toast/toast.module.scss'
-import socket from './socket'
 import store from './store'
 
+// Make the store available in the playwright test.
 // @ts-ignore
-global.store = store
-// @ts-ignore
-global.socket = socket
+global.getState = () => store.getState()
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(

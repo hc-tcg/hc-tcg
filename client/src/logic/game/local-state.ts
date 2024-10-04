@@ -28,10 +28,14 @@ export function* localPutCardInSlot(
 	let row = action.row
 	let index = action.index
 
-	if (slot.slotType === 'single_use') {
+	if (slot.slotType === 'single_use' && board.singleUse.card === null) {
 		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
 	}
-	if (slot.slotType === 'hermit' && row !== undefined) {
+	if (
+		slot.slotType === 'hermit' &&
+		row !== undefined &&
+		board.rows[row].hermit.card === null
+	) {
 		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
 		board.rows[row].health = (
 			selectedCard as LocalCardInstance<HasHealth>
@@ -43,15 +47,27 @@ export function* localPutCardInSlot(
 
 		// If we couldn't before, we can always end our turn after playing a hermit
 		gameState.turn.availableActions.push('END_TURN')
+		yield* localRemoveCardFromHand(selectedCard)
 	}
-	if (slot.slotType === 'attach' && row !== undefined) {
+	if (
+		slot.slotType === 'attach' &&
+		row !== undefined &&
+		board.rows[row].attach.card === null
+	) {
 		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
+		yield* localRemoveCardFromHand(selectedCard)
 	}
-	if (slot.slotType === 'item' && row !== undefined && index !== undefined) {
+	if (
+		slot.slotType === 'item' &&
+		row !== undefined &&
+		index !== undefined &&
+		board.rows[row].items[index].card === null
+	) {
 		board.rows[row].items[index] = {
 			slot: slot.slotEntity,
 			card: selectedCard as any,
 		}
+		yield* localRemoveCardFromHand(selectedCard)
 
 		// When we place a item card, lets update the available actions to include what we have enough
 		// energy for.

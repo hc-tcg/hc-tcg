@@ -16,6 +16,10 @@ export const getCopyOfGameState = (state: RootState): LocalGameState | null => {
 	return JSON.parse(JSON.stringify(gameState))
 }
 
+export const getIsSpectator = (state: RootState): boolean => {
+	return getGameState(state)?.isSpectator || false
+}
+
 export const getTime = (state: RootState) => {
 	return getGame(state).time
 }

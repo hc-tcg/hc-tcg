@@ -7,6 +7,7 @@ import React from 'react'
 import {useRef} from 'react'
 import {useSelector} from 'react-redux'
 import * as THREE from 'three'
+import {isWebGL2Available} from 'three-stdlib'
 import css from './background.module.scss'
 
 type Props = {
@@ -24,6 +25,9 @@ type CameraProps = {
 
 const Panorama = ({panorama, camera, disabled}: Props) => {
 	const gameState = useSelector(getGameState)
+
+	if (!isWebGL2Available() || disabled || gameState)
+		return <div className={cn(css.background, css.canvas)} />
 
 	const Camera = ({
 		rotationEnabled,
@@ -80,9 +84,6 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 			</mesh>
 		)
 	}
-
-	if (disabled || gameState)
-		return <div className={cn(css.background, css.canvas)} />
 
 	return (
 		<Canvas linear flat className={css.canvas}>

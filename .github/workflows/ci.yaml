@@ -1,4 +1,4 @@
-name: CI Workflow
+name: CI
 
 on:
   push:
@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   run-linters:
-    name: Run linters
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -27,7 +27,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run server tsc
         run: npm run server:tsc
@@ -36,7 +36,7 @@ jobs:
         run: npm run lint
 
   unittest:
-    name: Run Unit Tests
+    name: Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -46,32 +46,98 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run tests
-        run: npm run test
+        run: npm run test:unit
 
-  build:
-    name: Test build
+  component-tests:
+    name: Component Tests
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repo
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-      - name: Build
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Run tests
+        run: npm run test:ct
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-ct
+          path: playwright-report/
+          retention-days: 30
+
+  api-tests:
+    name: API Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          sudo apt-get install -y curl
+          sudo apt-get install -y jq
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Build project
         run: npm run build
 
-  build-docker:
-    name: Test build docker image
-    runs-on: ubuntu-latest
+      - name: Run tests
+        run: npm run test:api
 
+  e2e:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    name: End to End Tests
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Create debug config
+      run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+    - name: Build the server
+      run: npm run build
+
+    - name: Run Playwright tests
+      run: npm run test:e2e
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report-e2e
+        path: playwright-report/
+        retention-days: 30
+
+  build-docker:
+    name: Test Can Build Docker Image
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repo
         uses: actions/checkout@v3

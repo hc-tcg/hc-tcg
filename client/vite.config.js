@@ -1,13 +1,14 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import {defineConfig} from 'vite'
-import CONFIG from '../common/config/server-config.json'
+import CONFIG from '../common/config/server-config.js'
 import {getAppVersion} from '../version'
 
 export default defineConfig({
 	plugins: [react()],
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
+		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),
 		__PORT__: JSON.stringify(CONFIG.port),
 		__LIMITS__: JSON.stringify(CONFIG.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
@@ -30,9 +31,12 @@ export default defineConfig({
 			localsConvention: 'camelCase',
 		},
 	},
-	build: {
-		minify: 'terser',
-	},
+	build:
+		process.env.NODE_ENV === 'production'
+			? {
+					minify: 'terser',
+				}
+			: {},
 	server: {
 		port: CONFIG.clientDevPort || 3002,
 	},

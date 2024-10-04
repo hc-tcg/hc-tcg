@@ -29,14 +29,14 @@ const FrenchralisRare: Hermit = {
 		power: 'If you have one life remaining, this attack does double damage.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
 		const {player} = component
 
 		observer.subscribeWithPriority(
-			player.hooks.beforeAttack,
+			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')

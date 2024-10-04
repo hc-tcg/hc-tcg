@@ -9,6 +9,7 @@ import {
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
 	getGameState,
+	getIsSpectator,
 	getPlayerState,
 	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
@@ -29,6 +30,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 	)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
+	const isSpectator = useSelector(getIsSpectator)
 	const boardState = currentPlayer?.board
 	const singleUse = boardState?.singleUse || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
@@ -154,13 +156,25 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 				{SingleUseSlot()}
 			</div>
 
-			{status && (
+			{isSpectator && currentCoinFlip && (
 				<div className={classNames(css.actionSection, css.status)}>
 					{status}
 				</div>
 			)}
 
-			{status === null && (
+			{isSpectator && !currentCoinFlip && (
+				<div className={classNames(css.actionSection, css.status)}>
+					{currentPlayer.censoredPlayerName}'s Turn
+				</div>
+			)}
+
+			{!isSpectator && status && (
+				<div className={classNames(css.actionSection, css.status)}>
+					{status}
+				</div>
+			)}
+
+			{!isSpectator && !status && (
 				<div className={classNames(css.actionSection, css.buttons)}>
 					{ActionButtons()}
 				</div>

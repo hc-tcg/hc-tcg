@@ -56,9 +56,11 @@ const Slot = ({
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(
-			([card, _]) => card?.entity == selectedCard.entity,
-		)[0][1]
+		return (
+			cardsCanBePlacedIn.find(
+				([card, _]) => card.entity === selectedCard.entity,
+			)?.[1] || []
+		)
 	}
 
 	const getIsPickable = () => {
@@ -112,7 +114,7 @@ const Slot = ({
 					{card.turnedOver ? (
 						<img src="/images/card-back.jpg" className={css.cardBack} />
 					) : (
-						<Card card={card.props} />
+						<Card card={card.props} displayTokenCost={false} />
 					)}
 				</div>
 			) : (
