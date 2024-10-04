@@ -46,14 +46,16 @@ export class Database {
 	public async insertUser(
 		username: string,
 		minecraftName: string | null,
+		bfDepth: number,
 	): Promise<User | null> {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', 15))) RETURNING (user_id)",
-				[username, minecraftName, secret],
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
+				[username, minecraftName, secret, bfDepth],
 			)
+			console.log(user)
 			return {
 				uuid: user.rows[0]['user_id'],
 				secret: secret,
@@ -195,7 +197,7 @@ export const setupDatabase = (allCards: Array<Card>, env: any) => {
 		user: env.POSTGRES_USER,
 		password: env.POSTGRES_PASSWORD,
 		database: env.POSTGRES_DATABASE,
-		max: 20,
+		max: 10,
 		idleTimeoutMillis: 30000,
 		connectionTimeoutMillis: 2000,
 	})

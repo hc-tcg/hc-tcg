@@ -27,7 +27,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User', 'ethoslab', 4)
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
 		expect(user?.minecraftName).toBe('ethoslab')
@@ -38,46 +38,52 @@ describe('Test Database', () => {
 	})
 
 	test('Add deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
-		if (!user) return
+		const user = await database.insertUser('Test User', 'ethoslab', 4)
 		const playerDeck = {
 			name: 'Testing deck',
 			icon: 'balanced',
 			cards: [1, 2, 2, 3, 4, 4, 5, 4],
 			tags: [],
 		}
-		const code = await database.insertDeck(
-			playerDeck.name,
-			playerDeck.icon,
-			playerDeck.cards,
-			playerDeck.tags,
-			user.uuid,
-		)
+
+		let code: string | null = null
 
 		expect(code).not.toBeNull()
-		expect(typeof code === 'string').toBeTruthy()
-		if (!code) return
 
-		const returnedDeck = await database.getDeckFromID(code)
-		expect(returnedDeck).not.toBeNull()
+		if (user) {
+			code = await database.insertDeck(
+				playerDeck.name,
+				playerDeck.icon,
+				playerDeck.cards,
+				playerDeck.tags,
+				user.uuid,
+			)
+		}
 
-		expect(returnedDeck?.name).toBe('Testing deck')
-		expect(returnedDeck?.icon).toBe('balanced')
+		if (code) {
+			expect(typeof code === 'string').toBeTruthy()
 
-		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 1).length,
-		).toEqual(1)
-		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 2).length,
-		).toEqual(2)
-		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 3).length,
-		).toEqual(1)
-		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 4).length,
-		).toEqual(3)
-		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 5).length,
-		).toEqual(1)
+			const returnedDeck = await database.getDeckFromID(code)
+			expect(returnedDeck).not.toBeNull()
+
+			expect(returnedDeck?.name).toBe('Testing deck')
+			expect(returnedDeck?.icon).toBe('balanced')
+
+			expect(
+				returnedDeck?.cards.filter((card) => card.numericId === 1).length,
+			).toEqual(1)
+			expect(
+				returnedDeck?.cards.filter((card) => card.numericId === 2).length,
+			).toEqual(2)
+			expect(
+				returnedDeck?.cards.filter((card) => card.numericId === 3).length,
+			).toEqual(1)
+			expect(
+				returnedDeck?.cards.filter((card) => card.numericId === 4).length,
+			).toEqual(3)
+			expect(
+				returnedDeck?.cards.filter((card) => card.numericId === 5).length,
+			).toEqual(1)
+		}
 	})
 })
