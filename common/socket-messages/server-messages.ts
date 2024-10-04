@@ -55,7 +55,7 @@ export type ServerMessages = [
 	},
 	{
 		type: typeof serverMessages.GAME_STATE_ON_RECONNECT
-		localGameState: LocalGameState | null
+		localGameState: LocalGameState
 		order: PlayerId[]
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
