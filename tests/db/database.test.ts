@@ -23,11 +23,12 @@ describe('Test Database', () => {
 	})
 
 	afterAll(async () => {
-		database.close()
+		await database.close()
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab', 4)
+		const user = await database.insertUser('Test User', 'ethoslab')
+		console.log(user)
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
 		expect(user?.minecraftName).toBe('ethoslab')
@@ -38,7 +39,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab', 4)
+		const user = await database.insertUser('Test User', 'ethoslab')
 		const playerDeck = {
 			name: 'Testing deck',
 			icon: 'balanced',
