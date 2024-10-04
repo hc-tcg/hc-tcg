@@ -10,7 +10,7 @@ const config = {
 
 	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'ts', 'json'],
 
-	roots: ['tests/unit/', 'tests/snapshots/'],
+	roots: ['tests/unit/'],
 
 	moduleNameMapper: {
 		'^client/(.*)$': '<rootDir>/client/src/$1',
@@ -29,7 +29,7 @@ const config = {
 			'ts-jest',
 			{
 				diagnostics: false,
-				tsconfig: 'tests/snapshots/tsconfig.json',
+				tsconfig: 'tests/unit/tsconfig.json',
 			},
 		],
 	},
