@@ -1,6 +1,7 @@
 .card {
 	position: relative;
 	background: rgb(226, 202, 139);
+	font-family: BangersRegular !important;
 
 	&.disabled {
 		filter: grayscale(1) brightness(0.9);

@@ -3,7 +3,6 @@
 Hermitcraft TCG uses four types of tests:
 
 - Unit Tests: `npm run test:unit`
-- Snapshot Tests: `npm run test:snapshot`
 - Component Tests: `npm run test:ct`
 - End To End Tests: `npm run test:e2e`
 - Shell Script Tests: `npm run test:api`
@@ -11,11 +10,6 @@ Hermitcraft TCG uses four types of tests:
 ### Unit Tests
 Unit tests are used for redux saga and various functions and components.
 Unit tests are done using `jest`
-
-### Snapshot Tests
-These tests are used to ensure the output of a function does not unexpectedly drift.
-We use snapshot tests primarily to test the frontend. Snapshot tests are done using `jest`.
-Snapshot tests can be updated using `npm run test:snapshot-update`.
 
 ### Component Tests
 These tests are used to ensure that a function renders as expected. This is done
