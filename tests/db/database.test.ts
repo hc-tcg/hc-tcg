@@ -46,44 +46,42 @@ describe('Test Database', () => {
 			tags: [],
 		}
 
+		if (!user) throw new Error('Expected user to not be null')
+
 		let code: string | null = null
 
-		expect(code).not.toBeNull()
+		code = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.cards,
+			playerDeck.tags,
+			user.uuid,
+		)
 
-		if (user) {
-			code = await database.insertDeck(
-				playerDeck.name,
-				playerDeck.icon,
-				playerDeck.cards,
-				playerDeck.tags,
-				user.uuid,
-			)
-		}
+		if (!code) throw new Error('Expected code to not be null')
 
-		if (code) {
-			expect(typeof code === 'string').toBeTruthy()
+		expect(typeof code === 'string').toBeTruthy()
 
-			const returnedDeck = await database.getDeckFromID(code)
-			expect(returnedDeck).not.toBeNull()
+		const returnedDeck = await database.getDeckFromID(code)
+		expect(returnedDeck).not.toBeNull()
 
-			expect(returnedDeck?.name).toBe('Testing deck')
-			expect(returnedDeck?.icon).toBe('balanced')
+		expect(returnedDeck?.name).toBe('Testing deck')
+		expect(returnedDeck?.icon).toBe('balanced')
 
-			expect(
-				returnedDeck?.cards.filter((card) => card.numericId === 1).length,
-			).toEqual(1)
-			expect(
-				returnedDeck?.cards.filter((card) => card.numericId === 2).length,
-			).toEqual(2)
-			expect(
-				returnedDeck?.cards.filter((card) => card.numericId === 3).length,
-			).toEqual(1)
-			expect(
-				returnedDeck?.cards.filter((card) => card.numericId === 4).length,
-			).toEqual(3)
-			expect(
-				returnedDeck?.cards.filter((card) => card.numericId === 5).length,
-			).toEqual(1)
-		}
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 1).length,
+		).toEqual(1)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 2).length,
+		).toEqual(2)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 3).length,
+		).toEqual(1)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 4).length,
+		).toEqual(3)
+		expect(
+			returnedDeck?.cards.filter((card) => card.numericId === 5).length,
+		).toEqual(1)
 	})
 })
