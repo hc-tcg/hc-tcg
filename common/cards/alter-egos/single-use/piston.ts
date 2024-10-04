@@ -89,7 +89,7 @@ const Piston: SingleUse = {
 				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false
 
-        game.sfxQueue.queue('sfx/Piston_extend.ogg')
+				game.sfxQueue.queue('sfx/Piston_extend.ogg')
 			},
 		})
 	},

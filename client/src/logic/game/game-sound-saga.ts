@@ -1,4 +1,3 @@
-import {isSingleUse} from 'common/cards/base/types'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {put, take} from 'typed-redux-saga'
