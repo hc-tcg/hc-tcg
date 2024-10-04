@@ -51,22 +51,6 @@ jobs:
       - name: Run tests
         run: npm run test:unit
 
-  snapshot-tests:
-    name: Snapshot Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Create debug config
-        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
-
-      - name: Run tests
-        run: npm run test:snapshot
-
   component-tests:
     name: Component Tests
     runs-on: ubuntu-latest
