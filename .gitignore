@@ -24,7 +24,7 @@ client/dist-ssr
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-common/config/debug-config.json
+common/config/debug-config.js
 
 # Editor directories and files
 .vscode/*
@@ -40,3 +40,4 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+tsconfig.buildinfo

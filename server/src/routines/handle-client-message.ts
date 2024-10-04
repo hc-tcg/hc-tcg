@@ -15,7 +15,6 @@ import {
 	joinQueue,
 	leavePrivateQueue,
 	leaveQueue,
-	spectatePrivateGameQueueLeave,
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
@@ -59,10 +58,6 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.SPECTATOR_LEAVE:
 			return yield* spectatorLeaveSaga(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE:
-			return yield* spectatePrivateGameQueueLeave(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CANCEL_PRIVATE_GAME:

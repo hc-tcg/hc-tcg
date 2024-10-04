@@ -19,12 +19,13 @@ const config = {
 		'^logic/(.*)$': '<rootDir>/client/src/logic/$1',
 		'^common/(.*)$': '<rootDir>/common/$1',
 		'^server/(.*)$': '<rootDir>/server/src/$1',
-		'^.+\\.scss$': 'jest-scss-transform',
+		'^.+\\.css$': ['jest-scss-transform', {modules: true}],
+		'^.+\\.scss$': ['jest-scss-transform', {modules: true}],
 	},
 
 	// A map from regular expressions to paths to transformers
 	transform: {
-		'^.+\\.tsx?$': [
+		'^.+\\.[jt]sx?$': [
 			'ts-jest',
 			{
 				diagnostics: false,
