@@ -15,7 +15,7 @@ import {
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
-import {formatText} from '../utils/formatting'
+import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 
@@ -340,14 +340,14 @@ export class BattleLogModel {
 		this.sendLogs()
 	}
 
-	public addTurnEndEntry() {
+	public addTurnStartEntry() {
 		this.game.chat.push({
 			sender: {
 				type: 'system',
-				id: this.game.opponentPlayer.entity,
+				id: this.game.currentPlayer.entity,
 			},
 			createdAt: Date.now(),
-			message: {TYPE: 'LineNode'},
+			message: LineNode(),
 		})
 
 		broadcast(this.game.getPlayers(), {

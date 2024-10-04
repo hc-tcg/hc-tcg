@@ -532,12 +532,19 @@ export function* joinPrivateGame(
 			})
 		}
 
-		// Remove this game from the queue, it's started
-		delete root.privateQueue[code]
-
 		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
+		// Remove this game from the queue, it's started
+		let tmpQueue = root.privateQueue[code]
+		delete root.privateQueue[code]
+
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+		if (tmpQueue.playerId) {
+			broadcast([root.players[tmpQueue.playerId]], {
+				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
+			})
+		}
+
 		yield* fork(gameManager, newGame)
 	} else {
 		// Assign this player to the game
@@ -572,32 +579,19 @@ export function* leavePrivateQueue(
 	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PRIVATE_QUEUE>,
 ) {
 	const {playerId} = msg
+	const player = root.players[playerId]
 
 	for (let code in root.privateQueue) {
 		const info = root.privateQueue[code]
 		if (info.playerId && info.playerId === playerId) {
 			info.playerId = null
 		}
-	}
-}
-
-export function* spectatePrivateGameQueueLeave(
-	msg: RecievedClientMessage<
-		typeof clientMessages.SPECTATE_PRIVATE_GAME_QUEUE_LEAVE
-	>,
-) {
-	const {playerId} = msg
-	const player = root.players[playerId]
-
-	for (let code in root.privateQueue) {
-		const info = root.privateQueue[code]
 		if (info.spectatorsWaiting.includes(player.id)) {
 			info.spectatorsWaiting = info.spectatorsWaiting.filter(
 				(x) => x !== player.id,
 			)
 		}
 	}
-	console.log('player was removed')
 }
 
 function onPlayerLeft(player: PlayerModel) {

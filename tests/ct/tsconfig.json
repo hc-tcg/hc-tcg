@@ -1,5 +1,11 @@
 {
 	"compilerOptions": {
+		"paths": {
+			"client/*": ["../../client/src/*"],
+			"common/*": ["../../common/*"],
+			"server/*": ["../../server/src/*"]
+		},
+		"allowJs": true,
 		"target": "esnext",
 		"module": "esnext",
 		"moduleResolution": "node",
@@ -9,7 +15,6 @@
 		"noEmit": true,
 		"noImplicitOverride": true,
 		"esModuleInterop": true,
-		"outDir": "./dist"
-	},
-	"include": ["."]
+		"jsx": "react-jsx"
+	}
 }

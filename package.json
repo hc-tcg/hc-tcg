@@ -41,6 +41,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.8.3",
+		"@playwright/experimental-ct-react": "^1.47.2",
 		"@playwright/test": "^1.47.2",
 		"@types/node": "^16.18.11",
 		"@types/react": "^18.0.26",
@@ -75,12 +76,14 @@
 		"client:tsc": "tsc --p client/",
 		"client:dev": "vite client",
 		"client:preview": "vite preview --port 3002 client/",
-		"test": "npm run test:jest && npm run test:api && npm run test:e2e",
+		"test": "npm run test:unit && npm run test:snapshot && npm run test:ct && npm run test:api && npm run test:e2e",
 		"test:api": "./tests/sh/test-api",
 		"test:unit": "jest tests/unit/ --detect-open-handles",
 		"test:snapshot": "jest tests/snapshots/ --env jsdom",
 		"test:snapshot-update": "jest tests/snapshots/ --env jsdom --updateSnapshot",
 		"test:e2e": "playwright test",
+		"test:ct": "playwright test -c playwright-ct.config.ts",
+		"test:ct-update": "npm run test:ct -- -u",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."
