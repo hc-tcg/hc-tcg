@@ -95,7 +95,7 @@ test('Batlte log messages are hidden properly.', async ({mount}) => {
 	await expect(component).toHaveScreenshot()
 })
 
-test('Batlte log messages do not have colors for formatting.', async ({
+test('Messages do not have colors for formatting.', async ({
 	mount,
 }) => {
 	let messages: Array<ChatMessageDisplay> = [
