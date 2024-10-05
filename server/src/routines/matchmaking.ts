@@ -132,7 +132,9 @@ function* gameManager(game: GameModel) {
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
 					game.components
 						.filter(PlayerComponent)
-						.forEach((player) => (player.coinFlips = []))
+						.forEach(
+							(player) => (gameState.players[player.entity].coinFlips = []),
+						)
 				}
 			}
 			const outcome = getGamePlayerOutcome(game, result, viewer)
