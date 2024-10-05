@@ -40,4 +40,5 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/tests/ct/template/.cache/
 tsconfig.buildinfo
