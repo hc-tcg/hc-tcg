@@ -117,6 +117,7 @@ test('Batlte log messages do not have colors for formatting.', async ({
 		/>,
 	)
 	await expect(component).toHaveScreenshot()
+	await component.unmount()
 	const component2 = await mount(
 		<ChatContent
 			chatMessages={messages}
