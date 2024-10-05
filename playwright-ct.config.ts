@@ -18,6 +18,7 @@ export default defineConfig({
 		trace: process.env.CI ? 'on-first-retry' : 'on',
 		timezoneId: 'America/New_York',
 		ctPort: 3100,
+		ctTemplateDir: 'tests/ct/template',
 		ctViteConfig: {
 			publicDir: path.resolve(__dirname, 'client/public/'),
 			resolve: {
