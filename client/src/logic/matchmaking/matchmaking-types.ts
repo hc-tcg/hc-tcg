@@ -4,5 +4,5 @@ export type MatchmakingStatus =
 	| 'private_lobby'
 	| 'waiting_for_player'
 	| 'waiting_for_player_as_spectator'
-	| 'starting'
+	| 'in_game'
 	| null

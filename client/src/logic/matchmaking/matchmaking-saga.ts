@@ -15,6 +15,7 @@ import {
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
+import {getMatchmaking} from './matchmaking-selectors'
 
 function* createBossGameSaga() {
 	function* matchmaking() {
@@ -273,14 +274,22 @@ function* joinQueueSaga() {
 
 export function* reconnectSaga() {
 	const socket = yield* select(getSocket)
-	const reconnectState = yield* call(
-		receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
-	)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-	if (!reconnectState.localGameState)
-		throw new Error('The user must be in a game when they reconnect')
-	yield* call(gameSaga, reconnectState.localGameState)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+
+	while (true) {
+		const reconnectState = yield* call(
+			receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
+		)
+
+		const matchmakingStatus = (yield* select(getMatchmaking)).status
+
+		if (matchmakingStatus === 'in_game') {
+			// A game saga is already running, don't start another one!
+			return
+		}
+
+		yield* call(gameSaga, reconnectState.localGameState)
+		yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+	}
 }
 
 function* matchmakingSaga() {

@@ -177,10 +177,30 @@ function* opponentConnectionSaga() {
 	}
 }
 
+function* reconnectSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const action = yield* call(
+			receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
+		)
+
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+			localGameState: action.localGameState,
+			time: Date.now(),
+		})
+	}
+}
+
 function* gameSaga(initialGameState?: LocalGameState) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
-		all([fork(opponentConnectionSaga), fork(chatSaga), fork(spectatorSaga)]),
+		all([
+			fork(opponentConnectionSaga),
+			fork(chatSaga),
+			fork(spectatorSaga),
+			fork(reconnectSaga),
+		]),
 	)
 
 	try {

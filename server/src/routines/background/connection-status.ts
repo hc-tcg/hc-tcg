@@ -16,6 +16,8 @@ export function* sendGameStateOnReconnect(
 	const playerId = action.player.id
 	const player = game.players[playerId]
 
+	// Do not remove this or games will not reconnect!
+	// This is because the client takes a long time to start up.
 	yield* delay(500)
 
 	if (game.state.timer.turnStartTime) {
