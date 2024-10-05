@@ -184,7 +184,7 @@ function* reconnectSaga() {
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
 
-    // There should be a game state because the player is in a game.
+		// There should be a game state because the player is in a game.
 		if (!action.game) continue
 
 		yield* put<LocalMessage>({

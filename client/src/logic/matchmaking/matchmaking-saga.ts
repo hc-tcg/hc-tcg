@@ -15,7 +15,6 @@ import {
 	take,
 	takeEvery,
 } from 'typed-redux-saga'
-import {getMatchmaking} from './matchmaking-selectors'
 
 function* createBossGameSaga() {
 	function* matchmaking() {
