@@ -181,12 +181,15 @@ function* reconnectSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const action = yield* call(
-			receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
+			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
+
+    // There should be a game state because the player is in a game.
+		if (!action.game) continue
 
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: action.localGameState,
+			localGameState: action.game,
 			time: Date.now(),
 		})
 	}

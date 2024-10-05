@@ -44,19 +44,19 @@ export const serverMessages = messages({
 })
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED},
+	{type: typeof serverMessages.PLAYER_RECONNECTED; game?: LocalGameState},
 	{type: typeof serverMessages.INVALID_PLAYER},
-	{type: typeof serverMessages.PLAYER_INFO; player: PlayerInfo},
+	{
+		type: typeof serverMessages.PLAYER_INFO
+		player: PlayerInfo
+		/** The game is the player is currently in a game */
+		game?: LocalGameState
+	},
 	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeckT},
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
 		updates: Record<string, Array<string>>
-	},
-	{
-		type: typeof serverMessages.GAME_STATE_ON_RECONNECT
-		localGameState: LocalGameState
-		order: PlayerId[]
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},

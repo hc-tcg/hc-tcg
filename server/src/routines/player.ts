@@ -1,15 +1,46 @@
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
-import {delay, put, race, take} from 'typed-redux-saga'
+import {delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {getLocalGameState} from 'utils/state-gen'
+import {ViewerComponent} from 'common/components/viewer-component'
+import {LocalGameState} from 'common/types/game-state'
+import {GameModel} from 'common/models/game-model'
+import {getGame} from 'selectors'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
+
+function getLocalGameStateForPlayer(
+	game: GameModel,
+	playerId: PlayerId,
+): LocalGameState | undefined {
+	const player = game.players[playerId]
+
+	if (game.state.timer.turnStartTime) {
+		const maxTime = game.settings.maxTurnTime * 1000
+		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
+		const graceTime = 1000
+		game.state.timer.turnRemaining = remainingTime + graceTime
+	}
+
+	let viewer = game.components.find(
+		ViewerComponent,
+		(_game, viewer) => viewer.playerId === player.id,
+	)
+
+	if (!viewer) {
+		console.error('Player tried to connect with invalid player id')
+		return undefined
+	}
+
+	return getLocalGameState(game, viewer)
+}
 
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
@@ -27,7 +58,11 @@ export function* playerConnectedSaga(
 				type: localMessages.PLAYER_RECONNECTED,
 				player: existingPlayer,
 			})
-			broadcast([existingPlayer], {type: serverMessages.PLAYER_RECONNECTED})
+			const game = yield* select(getGame(existingPlayer.id))
+			broadcast([existingPlayer], {
+				type: serverMessages.PLAYER_RECONNECTED,
+				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
+			})
 		} else {
 			console.log('invalid player connected')
 			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
@@ -44,8 +79,6 @@ export function* playerConnectedSaga(
 		type: localMessages.PLAYER_CONNECTED,
 		player: newPlayer,
 	})
-
-	yield* delay(500)
 
 	broadcast([newPlayer], {
 		type: serverMessages.PLAYER_INFO,
