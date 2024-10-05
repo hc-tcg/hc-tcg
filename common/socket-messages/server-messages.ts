@@ -16,7 +16,6 @@ export const serverMessages = messages({
 	NEW_DECK: null,
 	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
-	GAME_STATE_ON_RECONNECT: null,
 	OPPONENT_CONNECTION: null,
 	GAME_CRASH: null,
 	GAME_START: null,
