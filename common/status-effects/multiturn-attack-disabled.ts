@@ -18,6 +18,13 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 	counterType: 'turns',
 	name: 'Primary Attack Disabled',
 	description: "This hermit's primary attack is disabled for this turn.",
+	applyCondition: (_game, value) => {
+		return (
+			value instanceof CardComponent &&
+			value.isAlive() &&
+			!value.getStatusEffect(MultiturnPrimaryAttackDisabledEffect)
+		)
+	},
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -41,7 +48,19 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 			if (player.getActiveHermit()?.entity === target.entity) {
 				game.addBlockedActions(effect.entity, 'PRIMARY_ATTACK')
 			}
+
+			observer.subscribe(
+				player.hooks.onActiveRowChange,
+				(_oldHermit, newHermit) => {
+					if (newHermit.entity === target.entity)
+						game.addBlockedActions(effect.entity, 'PRIMARY_ATTACK')
+					else game.removeBlockedActions(effect.entity, 'PRIMARY_ATTACK')
+				},
+			)
 		})
+	},
+	onRemoval(game, effect, _target, _observer) {
+		game.removeBlockedActions(effect.entity, 'PRIMARY_ATTACK')
 	},
 }
 
@@ -53,6 +72,13 @@ export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 	counterType: 'turns',
 	name: 'Secondary Attack Disabled',
 	description: "This hermit's secondary attack is disabled for this turn.",
+	applyCondition: (_game, value) => {
+		return (
+			value instanceof CardComponent &&
+			value.isAlive() &&
+			!value.getStatusEffect(MultiturnSecondaryAttackDisabledEffect)
+		)
+	},
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -76,6 +102,18 @@ export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 			if (player.getActiveHermit()?.entity === target.entity) {
 				game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 			}
+
+			observer.subscribe(
+				player.hooks.onActiveRowChange,
+				(_oldHermit, newHermit) => {
+					if (newHermit.entity === target.entity)
+						game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
+					else game.removeBlockedActions(effect.entity, 'SECONDARY_ATTACK')
+				},
+			)
 		})
+	},
+	onRemoval(game, effect, _target, _observer) {
+		game.removeBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 	},
 }
