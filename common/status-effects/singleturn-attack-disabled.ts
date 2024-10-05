@@ -19,7 +19,6 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
-			value.isAlive() &&
 			!value.getStatusEffect(PrimaryAttackDisabledEffect)
 		)
 	},
@@ -66,7 +65,6 @@ export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
-			value.isAlive() &&
 			!value.getStatusEffect(SecondaryAttackDisabledEffect)
 		)
 	},

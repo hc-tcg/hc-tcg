@@ -21,7 +21,6 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
-			value.isAlive() &&
 			!value.getStatusEffect(MultiturnPrimaryAttackDisabledEffect)
 		)
 	},
@@ -75,7 +74,6 @@ export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
-			value.isAlive() &&
 			!value.getStatusEffect(MultiturnSecondaryAttackDisabledEffect)
 		)
 	},
