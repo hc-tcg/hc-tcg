@@ -101,7 +101,7 @@ test('Batlte log messages do not have colors for formatting.', async ({
 	let messages: Array<ChatMessageDisplay> = [
 		{
 			message: formatText('*Some formatted text*'),
-			isBattleLogMessage: true,
+			isBattleLogMessage: false,
 			sender: 'playerOne',
 			createdAt: 0,
 		},
@@ -110,7 +110,7 @@ test('Batlte log messages do not have colors for formatting.', async ({
 	const component = await mount(
 		<ChatContent
 			chatMessages={messages}
-			showLog={false}
+			showLog={true}
 			isSpectating={false}
 			profanityFilterEnabled={false}
 			playerNames={['Player One', 'Player Two']}
@@ -121,7 +121,7 @@ test('Batlte log messages do not have colors for formatting.', async ({
 	const component2 = await mount(
 		<ChatContent
 			chatMessages={messages}
-			showLog={false}
+			showLog={true}
 			isSpectating={true}
 			profanityFilterEnabled={false}
 			playerNames={['Player One', 'Player Two']}
