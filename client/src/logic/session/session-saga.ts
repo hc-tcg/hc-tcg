@@ -3,6 +3,8 @@ import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
+import gameSaga from 'logic/game/game-saga'
+import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	getActiveDeckName,
@@ -131,6 +133,16 @@ export function* loginSaga() {
 				type: localMessages.MINECRAFT_NAME_SET,
 				name: minecraftName,
 			})
+
+		if (result.playerReconnected.game) {
+			const matchmakingStatus = (yield* select(getMatchmaking)).status
+
+			// Only start a new game saga if the player is not in a game.
+			if (matchmakingStatus !== 'in_game') {
+				yield* call(gameSaga, result.playerReconnected.game)
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+			}
+		}
 	}
 
 	if (result.playerInfo) {
