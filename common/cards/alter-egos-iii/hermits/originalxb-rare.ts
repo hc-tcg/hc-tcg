@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import OriginalXBEffect from '../../../status-effects/original-xb'
+import GoMiningEffect from '../../../status-effects/go-mining'
 import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -49,7 +49,7 @@ const OriginalXBRare: Hermit = {
 					return
 
 				game.components
-					.new(StatusEffectComponent, OriginalXBEffect, component.entity)
+					.new(StatusEffectComponent, GoMiningEffect, component.entity)
 					.apply(opponentPlayer.entity)
 			},
 		)

@@ -13,6 +13,7 @@ import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import GoMiningEffect from './go-mining'
 import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
@@ -26,7 +27,6 @@ import {
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
-import OriginalXbEffect from './original-xb'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
@@ -82,7 +82,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 	ChromaKeyedEffect,
-	OriginalXbEffect,
+	GoMiningEffect,
 	RoyalProtectionEffect,
 	TargetBlockEffect,
 	GasLightEffect,
