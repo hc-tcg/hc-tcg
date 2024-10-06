@@ -50,13 +50,9 @@ const TinFoilChefRare: Hermit = {
 				const coinFlip = flipCoin(player, component)
 				if (coinFlip[0] === 'tails') return
 
-				const miningEffect = player.hasStatusEffect(GoMiningEffect)
-				if (miningEffect && miningEffect.counter !== null)
-					miningEffect.counter++
-				else
-					game.components
-						.new(StatusEffectComponent, GoMiningEffect, component.entity)
-						.apply(player.entity)
+				game.components
+					.new(StatusEffectComponent, GoMiningEffect, component.entity)
+					.apply(player.entity)
 			},
 		)
 	},

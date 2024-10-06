@@ -48,13 +48,9 @@ const OriginalXBRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const miningEffect = opponentPlayer.hasStatusEffect(GoMiningEffect)
-				if (miningEffect && miningEffect.counter !== null)
-					miningEffect.counter++
-				else
-					game.components
-						.new(StatusEffectComponent, GoMiningEffect, component.entity)
-						.apply(opponentPlayer.entity)
+				game.components
+					.new(StatusEffectComponent, GoMiningEffect, component.entity)
+					.apply(opponentPlayer.entity)
 			},
 		)
 	},

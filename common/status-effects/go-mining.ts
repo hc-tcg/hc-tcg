@@ -3,6 +3,7 @@ import {
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
@@ -17,12 +18,23 @@ const GoMiningEffect: Counter<PlayerComponent> = {
 	counter: 1,
 	counterType: 'number',
 	onApply(
-		_game: GameModel,
+		game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
 		if (!effect.counter) effect.counter = this.counter
+		const predecessor = game.components.find(
+			StatusEffectComponent,
+			query.effect.is(GoMiningEffect),
+			query.effect.targetEntity(player.entity),
+			(_game, value) => value.entity !== effect.entity,
+		)
+		if (predecessor) {
+			if (predecessor.counter !== null) predecessor.counter++
+			effect.remove()
+			return
+		}
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
