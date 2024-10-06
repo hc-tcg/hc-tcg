@@ -7,6 +7,7 @@ import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
+import {isCounter} from 'common/status-effects/status-effect'
 import {Hook, PriorityHook} from 'common/types/hooks'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
@@ -191,7 +192,9 @@ export function printBoardState(game: GameModel) {
 							StatusEffectComponent,
 							query.effect.targetIsCardAnd(query.card.slotEntity(slot.entity)),
 						)
-						.map((e) => e.props.name + ' ' + e.counter)
+						.map((e) =>
+							e.props.name + isCounter(e.props) ? ' ' + e.counter : '',
+						)
 						.join(', '),
 				)
 			}
@@ -256,7 +259,7 @@ export function printBoardState(game: GameModel) {
 		buffer.push(
 			...game.components
 				.filter(StatusEffectComponent, query.effect.targetEntity(playerEntity))
-				.map((e) => e.props.name)
+				.map((e) => (e.props.name + isCounter(e.props) ? ' ' + e.counter : ''))
 				.join(', '),
 		)
 		buffer.push('\n\n')
