@@ -5,7 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {MultiturnSecondaryAttackDisabledEffect} from '../../../status-effects/multiturn-attack-disabled'
+import TimeSkipDisabledEffect from '../../../status-effects/time-skip-disabled'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
 import {beforeAttack} from '../../../types/priorities'
@@ -80,24 +80,29 @@ const JoeHillsRare: Hermit = {
 				game.components
 					.new(StatusEffectComponent, UsedClockEffect, component.entity)
 					.apply(player.entity)
-
 				game.components
-					.filter(
-						CardComponent,
-						query.card.currentPlayer,
-						query.card.is(JoeHillsRare),
-					)
-					.forEach((joe) =>
-						game.components
-							.new(
-								StatusEffectComponent,
-								MultiturnSecondaryAttackDisabledEffect,
-								component.entity,
-							)
-							.apply(joe.entity),
-					)
+					.new(StatusEffectComponent, TimeSkipDisabledEffect, component.entity)
+					.apply(player.entity)
 			},
 		)
+
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
+			if (
+				!blockedActions.includes('SECONDARY_ATTACK') &&
+				game.components.exists(
+					StatusEffectComponent,
+					query.effect.is(TimeSkipDisabledEffect),
+					query.effect.targetIsPlayerAnd(query.player.entity(player.entity)),
+				) &&
+				query.every(query.card.active, query.card.is(JoeHillsRare))(
+					game,
+					component,
+				)
+			)
+				blockedActions.push('SECONDARY_ATTACK')
+
+			return blockedActions
+		})
 	},
 }
 

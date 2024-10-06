@@ -31,6 +31,15 @@ const SlownessEffect: Counter<CardComponent> = {
 				player.activeRowEntity === target.slot.row?.entity
 			)
 				game.addBlockedActions(this.icon, 'SECONDARY_ATTACK')
+
+			observer.subscribe(
+				player.hooks.onActiveRowChange,
+				(_oldHermit, newHermit) => {
+					if (newHermit.entity === target.entity)
+						game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
+					else game.removeBlockedActions(effect.entity, 'SECONDARY_ATTACK')
+				},
+			)
 		})
 
 		observer.subscribeWithPriority(
@@ -58,6 +67,7 @@ const SlownessEffect: Counter<CardComponent> = {
 					return
 				if (target.slot.row?.health) return
 				effect.remove()
+				game.removeBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 			},
 		)
 	},

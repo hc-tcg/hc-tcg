@@ -68,7 +68,7 @@ const EvilXisumaRare: Hermit = {
 					CardComponent,
 					opponentActiveHermitQuery,
 				)
-				if (!opponentActiveHermit) return
+				if (!opponentActiveHermit?.isAlive()) return
 
 				game.addModalRequest({
 					player: player.entity,
