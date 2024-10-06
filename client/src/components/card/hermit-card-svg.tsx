@@ -8,7 +8,7 @@ import {
 import {Hermit} from 'common/cards/base/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {memo} from 'react'
+import {memo, useEffect, useState} from 'react'
 import css from './hermit-card-svg.module.scss'
 
 export type HermitCardProps = {
