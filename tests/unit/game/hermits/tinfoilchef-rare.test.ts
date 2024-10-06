@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import OriginalXBRare from 'common/cards/alter-egos-iii/hermits/originalxb-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import TinFoilChefRare from 'common/cards/default/hermits/tinfoilchef-rare'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
-import TinFoilChefRare from 'common/cards/default/hermits/tinfoilchef-rare'
 
 describe('Test TFC Rare', () => {
 	test('TFC draws exactly one card.', () => {
