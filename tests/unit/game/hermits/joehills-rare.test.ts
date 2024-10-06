@@ -1,5 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
+import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
+import Clock from 'common/cards/default/single-use/clock'
 import {
 	applyEffect,
 	attack,
@@ -8,9 +11,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../utils'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
-import Clock from 'common/cards/default/single-use/clock'
 
 describe('Test Joe Time Skip', () => {
 	test('Time Skip functionality', () => {

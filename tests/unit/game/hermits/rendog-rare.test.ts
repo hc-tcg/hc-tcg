@@ -173,7 +173,6 @@ describe('Test Rendog Role Play', () => {
 		)
 	})
 
-	return
 	test('Using Role Play on Time Skip', () => {
 		testGame(
 			{
@@ -227,6 +226,27 @@ describe('Test Rendog Role Play', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Role Play is disabled when opponent has no Hermit cards', () => {
+		testGame(
+			{
+				playerOneDeck: [RendogRare],
+				playerTwoDeck: [ArmorStand],
+				saga: function* (game) {
+					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+					yield* endTurn(game)
+
+					expect(game.state.turn.availableActions).not.toContain(
+						'SECONDARY_ATTACK',
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })
