@@ -177,7 +177,7 @@ describe('Test Cat Effect Card', () => {
 						game.components.get(
 							(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 						)?.props,
-					).toStrictEqual(Thorns)
+					).toStrictEqual(Cat)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					yield* endTurn(game)
 
@@ -187,7 +187,7 @@ describe('Test Cat Effect Card', () => {
 							.sort(CardComponent.compareOrder)
 							.slice(-3)
 							.map((card) => card.props),
-					).toStrictEqual([Cat, IronSword, Thorns])
+					).toStrictEqual([IronSword, Cat, Thorns])
 				},
 			},
 			{forceCoinFlip: true},
