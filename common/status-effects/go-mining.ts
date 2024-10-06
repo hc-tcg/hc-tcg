@@ -5,29 +5,34 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {onTurnEnd} from '../types/priorities'
-import {StatusEffect, systemStatusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
-const OriginalXbEffect: StatusEffect<PlayerComponent> = {
+const GoMiningEffect: Counter<PlayerComponent> = {
 	...systemStatusEffect,
-	id: 'originalxb',
-	icon: 'originalxb',
-	name: 'Get Good',
-	description: 'Draw an additional card at the end of your turn.',
+	id: 'go-mining',
+	icon: 'go-mining',
+	name: 'Go Mining',
+	description:
+		'Draw an additional card at the end of your turn for each level of this status effect.',
+	counter: 1,
+	counterType: 'number',
 	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent<PlayerComponent>,
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
+		if (!effect.counter) effect.counter = this.counter
+
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				player.draw(1)
+				if (effect.counter) player.draw(effect.counter)
 				effect.remove()
 			},
 		)
 	},
 }
 
-export default OriginalXbEffect
+export default GoMiningEffect

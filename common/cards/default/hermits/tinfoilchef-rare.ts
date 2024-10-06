@@ -1,5 +1,10 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import GoMiningEffect from '../../../status-effects/go-mining'
 import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
@@ -45,7 +50,13 @@ const TinFoilChefRare: Hermit = {
 				const coinFlip = flipCoin(player, component)
 				if (coinFlip[0] === 'tails') return
 
-				game.currentPlayer.draw(1)
+				const miningEffect = player.hasStatusEffect(GoMiningEffect)
+				if (miningEffect && miningEffect.counter !== null)
+					miningEffect.counter++
+				else
+					game.components
+						.new(StatusEffectComponent, GoMiningEffect, component.entity)
+						.apply(player.entity)
 			},
 		)
 	},

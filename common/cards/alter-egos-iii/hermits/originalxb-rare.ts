@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import OriginalXBEffect from '../../../status-effects/original-xb'
+import GoMiningEffect from '../../../status-effects/go-mining'
 import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -48,9 +48,13 @@ const OriginalXBRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				game.components
-					.new(StatusEffectComponent, OriginalXBEffect, component.entity)
-					.apply(opponentPlayer.entity)
+				const miningEffect = opponentPlayer.hasStatusEffect(GoMiningEffect)
+				if (miningEffect && miningEffect.counter !== null)
+					miningEffect.counter++
+				else
+					game.components
+						.new(StatusEffectComponent, GoMiningEffect, component.entity)
+						.apply(opponentPlayer.entity)
 			},
 		)
 	},
