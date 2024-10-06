@@ -42,6 +42,7 @@ import SoulmateEffect from './soulmate'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import TFCDiscardedFromEffect from './tfc-discarded-from'
+import TimeSkipDisabledEffect from './time-skip-disabled'
 import {TrapHoleEffect} from './trap-hole'
 import TurnSkippedEffect from './turn-skipped'
 import UsedClockEffect from './used-clock'
@@ -90,6 +91,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	EfficiencyEffect,
 	LooseShellEffect,
 	TFCDiscardedFromEffect,
+	TimeSkipDisabledEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
 ]

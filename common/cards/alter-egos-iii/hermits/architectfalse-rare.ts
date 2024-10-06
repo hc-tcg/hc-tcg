@@ -59,6 +59,7 @@ const ArchitectFalseRare: Hermit = {
 				const lastAttack = player.opponentPlayer.lastHermitAttackInfo
 				if (!lastAttack || lastAttack.turn !== game.state.turn.turnNumber - 1)
 					return
+				if (!lastAttack.attacker.isAlive()) return
 
 				if (lastAttack.attackType === 'primary') {
 					game.components

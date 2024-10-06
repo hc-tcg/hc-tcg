@@ -3,7 +3,6 @@
 		"paths": {
 			"client/*": ["../../client/src/*"],
 			"common/*": ["../../common/*"],
-			"types/*": ["../../common/types/*"],
 			"server/*": ["../../server/src/*"]
 		},
 		"allowJs": true,

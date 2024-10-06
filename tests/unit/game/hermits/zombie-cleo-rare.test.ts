@@ -6,8 +6,10 @@ import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
 import Cubfan135Rare from 'common/cards/default/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
+import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import PvPItem from 'common/cards/default/items/pvp-common'
+import Bow from 'common/cards/default/single-use/bow'
 import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
 import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
 import {
@@ -19,13 +21,17 @@ import {
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
-import {MultiturnSecondaryAttackDisabledEffect} from 'common/status-effects/multiturn-attack-disabled'
+import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
+import {LocalCopyAttack} from 'common/types/server-requests'
+import {getLocalModalData} from 'server/utils/state-gen'
 import {
 	attack,
+	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
 	pick,
 	playCardFromHand,
+	removeEffect,
 	testGame,
 } from '../utils'
 
@@ -76,13 +82,60 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 	expect(
 		game.components.find(
 			StatusEffectComponent,
-			query.effect.is(MultiturnSecondaryAttackDisabledEffect),
+			query.effect.is(SecondaryAttackDisabledEffect),
 			query.effect.targetIsCardAnd(
 				query.card.opponentPlayer,
 				query.card.active,
 			),
 		),
+	).not.toBe(null)
+}
+
+function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
+	yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
+	yield* playCardFromHand(game, ChorusFruit, 'single_use')
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
 	)
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	expect(
+		game.components.find(
+			StatusEffectComponent,
+			query.effect.is(SecondaryAttackDisabledEffect),
+			query.effect.targetIsCardAnd(
+				query.card.opponentPlayer,
+				query.card.row(query.row.index(0)),
+			),
+		),
+	).not.toBe(null)
+	yield* endTurn(game)
+
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(0),
+	)
+	expect(
+		(
+			getLocalModalData(
+				game,
+				game.state.modalRequests[0].modal,
+			) as LocalCopyAttack.Data
+		).blockedActions,
+	).toContain('SECONDARY_ATTACK')
+	yield* finishModalRequest(game, {pick: 'primary'})
 }
 
 function* testPuppetryCanceling(game: GameModel) {
@@ -308,6 +361,54 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 	).toBe(false)
 }
 
+function* testPuppetingTimeSkip(game: GameModel) {
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	yield* playCardFromHand(game, JoeHillsRare, 'hermit', 1)
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	yield* finishModalRequest(game, {pick: 'secondary'})
+	yield* endTurn(game)
+
+	yield* changeActiveHermit(game, 1)
+	yield* endTurn(game)
+
+	yield* playCardFromHand(game, Bow, 'single_use')
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	expect(
+		(
+			getLocalModalData(
+				game,
+				game.state.modalRequests[0].modal,
+			) as LocalCopyAttack.Data
+		).blockedActions,
+	).toContain('SECONDARY_ATTACK')
+	yield* finishModalRequest(game, {pick: 'primary'})
+	yield* removeEffect(game)
+	yield* attack(game, 'secondary')
+	yield* pick(
+		game,
+		query.slot.currentPlayer,
+		query.slot.hermit,
+		query.slot.rowIndex(1),
+	)
+	yield* finishModalRequest(game, {pick: 'primary'})
+}
+
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
 		testGame(
@@ -326,6 +427,17 @@ describe('Test Zombie Cleo', () => {
 				saga: testAmnesiaDisablesPuppetry,
 				playerOneDeck: [ArchitectFalseRare],
 				playerTwoDeck: [ZombieCleoRare, EthosLabCommon],
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test Amnesia Blocks Mocking Attack with Puppetry', () => {
+		testGame(
+			{
+				saga: testAmnesiaBlocksPuppetryMock,
+				playerOneDeck: [ArchitectFalseRare],
+				playerTwoDeck: [EthosLabCommon, ZombieCleoRare, ChorusFruit],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
@@ -412,6 +524,17 @@ describe('Test Zombie Cleo', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Test using Puppetry on Time Skip', () => {
+		testGame(
+			{
+				saga: testPuppetingTimeSkip,
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, JoeHillsRare, Bow],
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

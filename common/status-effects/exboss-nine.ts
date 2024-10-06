@@ -56,7 +56,7 @@ const ExBossNineEffect: Counter<CardComponent> = {
 						// Discard the opponent's hand and have them draw one new card
 						game.battleLog.addEntry(
 							player.entity,
-							`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard {their|your} hand and draw a new card`,
+							`{$eYour$|$p${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|you} must discard {their|your} hand and draw a new card`,
 						)
 						game.components
 							.filter(
@@ -71,7 +71,7 @@ const ExBossNineEffect: Counter<CardComponent> = {
 						// Discard all cards attached to the opponent's active hermit
 						game.battleLog.addEntry(
 							player.entity,
-							`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard everything from {their|your} active Hermit`,
+							`{$eYour$|$p${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|you} must discard everything from {their|your} active Hermit`,
 						)
 						game.components
 							.filter(

@@ -653,6 +653,8 @@ export function* turnSaga(game: GameModel) {
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
+	game.battleLog.addTurnStartEntry()
+
 	// Call turn start hooks
 	currentPlayer.hooks.onTurnStart.call()
 
@@ -734,8 +736,6 @@ export function* turnSaga(game: GameModel) {
 			)
 		}
 	}
-
-	game.battleLog.addTurnEndEntry()
 
 	return 'DONE'
 }

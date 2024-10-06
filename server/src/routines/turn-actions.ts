@@ -17,6 +17,7 @@ import {
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
 import {delay} from 'typed-redux-saga'
+import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(
 	game: GameModel,
@@ -307,6 +308,13 @@ export function* modalRequestSaga(
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
+		assert(
+			!modal.pick ||
+				!(
+					getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
+				).blockedActions.includes(attackToAttackAction[modal.pick]),
+			`Client picked a blocked attack to copy: ${modal.pick}`,
+		)
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 

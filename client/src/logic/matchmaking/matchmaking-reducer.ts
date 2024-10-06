@@ -74,18 +74,10 @@ const matchmakingReducer = (
 				status: null,
 				invalidCode: false,
 			}
-		case localMessages.MATCHMAKING_CLEAR:
-			return {
-				...state,
-				gameCode: null,
-				spectatorCode: null,
-				status: null,
-				invalidCode: false,
-			}
 		case localMessages.GAME_START:
 			return {
 				...state,
-				status: 'starting',
+				status: 'in_game',
 			}
 		default:
 			return state

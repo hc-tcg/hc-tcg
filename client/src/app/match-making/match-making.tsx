@@ -124,7 +124,7 @@ function MatchMaking() {
 						</div>
 					</>
 				)
-			case 'starting':
+			case 'in_game':
 				return (
 					<>
 						<Spinner />
