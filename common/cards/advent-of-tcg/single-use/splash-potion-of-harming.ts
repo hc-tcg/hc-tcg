@@ -42,9 +42,12 @@ const SplashPotionOfHarming: SingleUse = {
 		const {opponentPlayer, player} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			const activeRow = opponentPlayer.activeRowEntity
+			const activeRow = opponentPlayer.activeRow
 			const opponentRows = getTargetHermits(game).sort(
-				(a, b) => a.index - b.index,
+				(a, b) =>
+					Number(a.index === opponentPlayer.activeRow?.index) ||
+					-Number(b.index === opponentPlayer.activeRow?.index) ||
+					a.index - b.index,
 			)
 
 			const attack = game
@@ -58,7 +61,7 @@ const SplashPotionOfHarming: SingleUse = {
 				})
 				.addDamage(
 					component.entity,
-					opponentRows[0].entity === activeRow ? 40 : 20,
+					opponentRows[0].entity === activeRow?.entity ? 40 : 20,
 				)
 
 			opponentRows.slice(1).forEach((row) => {
@@ -69,7 +72,7 @@ const SplashPotionOfHarming: SingleUse = {
 						type: 'effect',
 						log: (values) => `, ${values.target} for ${values.damage} damage`,
 					})
-					.addDamage(component.entity, row.entity === activeRow ? 40 : 20)
+					.addDamage(component.entity, 20)
 				attack.addNewAttack(newAttack)
 			})
 
