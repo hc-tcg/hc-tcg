@@ -59,7 +59,7 @@ function setupEcsForPlayer(
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: options.shuffleDeck ? 'random' : 'back',
+			position: 'back',
 		})
 		components.new(CardComponent, card, slot.entity)
 	}
@@ -111,7 +111,7 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
-	if (options.shuffleDeck)
+	if (options.shuffleDeck) {
 		while (
 			!sortedCards
 				.slice(0, amountOfStartingCards)
@@ -123,6 +123,7 @@ function setupEcsForPlayer(
 					if (card.slot.inDeck()) card.slot.order = i
 				})
 		}
+	}
 
 	for (let i = 0; i < options.extraStartingCards.length; i++) {
 		const id = options.extraStartingCards[i]
