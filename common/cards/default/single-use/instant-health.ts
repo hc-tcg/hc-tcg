@@ -10,11 +10,7 @@ import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-const pickCondition = query.every(
-	query.slot.hermit,
-	query.slot.currentPlayer,
-	query.not(query.slot.empty),
-)
+const pickCondition = query.every(query.slot.hermit, query.slot.currentPlayer)
 
 function newInstantHealth(
 	props: {
