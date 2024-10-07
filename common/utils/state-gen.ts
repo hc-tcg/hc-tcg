@@ -108,14 +108,22 @@ function setupEcsForPlayer(
 		)
 		.sort(CardComponent.compareOrder)
 
-	let index = sortedCards.findIndex((card) => card.isHermit())
+	const amountOfStartingCards =
+		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
-	if (index > 5) {
-		let a = sortedCards[index]
-		const swapIndex = Math.floor(Math.random() * 5)
+	if (
+		!sortedCards
+			.slice(0, amountOfStartingCards)
+			.some((card) => card.isHermit()) &&
+		options.shuffleDeck
+	) {
+		const hermits = sortedCards.filter((card) => card.isHermit())
+		let a = hermits[Math.floor(Math.random() * hermits.length)]
+		const index = sortedCards.indexOf(a)
+		const swapIndex = Math.floor(Math.random() * amountOfStartingCards)
 		let b = sortedCards[swapIndex]
 
-		if (a.slot?.inDeck() && b.slot?.inDeck()) {
+		if (a?.slot.inDeck() && b?.slot.inDeck()) {
 			let tmp = b.slot.order
 			a.slot.order = b.slot.order
 			b.slot.order = tmp
@@ -124,9 +132,6 @@ function setupEcsForPlayer(
 			sortedCards[swapIndex] = tmpCard
 		}
 	}
-
-	const amountOfStartingCards =
-		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
 	for (let i = 0; i < options.extraStartingCards.length; i++) {
 		const id = options.extraStartingCards[i]
