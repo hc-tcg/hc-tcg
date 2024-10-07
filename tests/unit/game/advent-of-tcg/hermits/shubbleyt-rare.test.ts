@@ -15,7 +15,7 @@ import {
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
-} from '../utils'
+} from '../../utils'
 
 describe('Test Shelby Parallel World', () => {
 	test('Parallel World Functionality', () => {

@@ -3,6 +3,7 @@ import Cat from 'common/cards/advent-of-tcg/effects/cat'
 import OriginalXBRare from 'common/cards/alter-egos-iii/hermits/originalxb-rare'
 import Thorns from 'common/cards/default/effects/thorns'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GrianRare from 'common/cards/default/hermits/grian-rare'
 import TinFoilChefRare from 'common/cards/default/hermits/tinfoilchef-rare'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/default/items/balanced-rare'
@@ -19,7 +20,7 @@ import {
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
-} from '../utils'
+} from '../../utils'
 
 describe('Test Cat Effect Card', () => {
 	test('Basic functionality', () => {
@@ -191,6 +192,43 @@ describe('Test Cat Effect Card', () => {
 				},
 			},
 			{forceCoinFlip: true},
+		)
+	})
+
+	test('Test Borrow does not trigger Cat when attached after flipping heads', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Cat, Cat],
+				playerTwoDeck: [GrianRare, ...Array(10).fill(BalancedItem)],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Cat, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					yield* attack(game, 'primary')
+					yield* finishModalRequest(game, {result: true, cards: null})
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.is(Cat),
+							query.card.currentPlayer,
+							query.card.active,
+						),
+					).not.toBe(null)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Cat, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* attack(game, 'primary')
+					expect(game.state.modalRequests).toHaveLength(2)
+					yield* finishModalRequest(game, {result: false, cards: null})
+					yield* finishModalRequest(game, {result: true, cards: null})
+					yield* endTurn(game)
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

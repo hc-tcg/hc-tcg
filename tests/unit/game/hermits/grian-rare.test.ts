@@ -1,5 +1,4 @@
 import {describe, expect, test} from '@jest/globals'
-import Cat from 'common/cards/advent-of-tcg/effects/cat'
 import Loyalty from 'common/cards/default/effects/loyalty'
 import Shield from 'common/cards/default/effects/shield'
 import Thorns from 'common/cards/default/effects/thorns'
@@ -259,43 +258,6 @@ describe('Test Grian Rare', () => {
 				noItemRequirements: true,
 				forceCoinFlip: true,
 			},
-		)
-	})
-
-	test('Test Borrow does not trigger Cat when attached after flipping heads', () => {
-		testGame(
-			{
-				playerOneDeck: [EthosLabCommon, Cat, Loyalty],
-				playerTwoDeck: [GrianRare, ...Array(10).fill(BalancedItem)],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Cat, 'attach', 0)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
-					yield* finishModalRequest(game, {result: true, cards: null})
-					expect(
-						game.components.find(
-							CardComponent,
-							query.card.is(Cat),
-							query.card.currentPlayer,
-							query.card.active,
-						),
-					).not.toBe(null)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, Loyalty, 'attach', 0)
-					yield* endTurn(game)
-
-					yield* attack(game, 'primary')
-					expect(game.state.modalRequests).toHaveLength(2)
-					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* endTurn(game)
-				},
-			},
-			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

@@ -17,7 +17,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from '../utils'
+} from '../../utils'
 
 // Circular imports must be included last
 import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'

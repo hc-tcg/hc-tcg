@@ -21,7 +21,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
-} from '../utils'
+} from '../../utils'
 
 describe('Test Pixl World Build', () => {
 	test('World Build Functionality', () => {

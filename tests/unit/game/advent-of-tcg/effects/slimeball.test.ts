@@ -45,7 +45,7 @@ import {
 	removeEffect,
 	testBossFight,
 	testGame,
-} from '../utils'
+} from '../../utils'
 
 // Circular imports must be included last
 import FireCharge from 'common/cards/alter-egos/single-use/fire-charge'
