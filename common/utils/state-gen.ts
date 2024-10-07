@@ -100,18 +100,22 @@ function setupEcsForPlayer(
 	}
 
 	// Ensure there is a hermit in the first 5 cards
-	const sortedCards = components
-		.filter(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.deck),
-		)
-		.sort(CardComponent.compareOrder)
+	const sortedCards = components.filter(
+		CardComponent,
+		query.card.player(playerEntity),
+		query.card.slot(query.slot.deck),
+	)
 
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? sortedCards.length : 7
 
 	if (options.shuffleDeck) {
+		sortedCards
+			.sort(() => Math.random() - 0.5)
+			.forEach((card, i) => {
+				if (card.slot.inDeck()) card.slot.order = i
+			})
+
 		while (
 			!sortedCards
 				.slice(0, amountOfStartingCards)
