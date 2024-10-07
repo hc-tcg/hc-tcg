@@ -90,8 +90,6 @@ const RendogRare: Hermit = {
 					)
 					.apply(component.entity)
 			observer.subscribe(player.hooks.onTurnStart, () => {
-				// Ren having the "Blocked Action" icon on turn one looks weird
-				if (game.state.turn.turnNumber <= 1) return
 				if (!game.components.exists(SlotComponent, pickCondition))
 					game.components
 						.new(
