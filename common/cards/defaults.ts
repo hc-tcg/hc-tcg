@@ -1,10 +1,10 @@
-import {CardComponent, ObserverComponent, RowComponent} from '../../components'
-import query from '../../components/query'
-import {AttackModel} from '../../models/attack-model'
-import {GameModel} from '../../models/game-model'
-import {HermitAttackType} from '../../types/attack'
-import type {CardCategoryT, PlayCardLog} from '../../types/cards'
-import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {CardComponent, ObserverComponent, RowComponent} from '../components'
+import query from '../components/query'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {HermitAttackType} from '../types/attack'
+import type {CardCategoryT, PlayCardLog} from '../types/cards'
+import {FormattedTextNode, formatText} from '../utils/formatting'
 import {Attach, Card, Hermit, SingleUse} from './types'
 
 export function getFormattedDescription(

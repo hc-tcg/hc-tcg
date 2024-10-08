@@ -6,7 +6,7 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from 'common/cards/base/types'
+} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {STRENGTHS} from 'common/const/strengths'
 import {GLOSSARY} from 'common/glossary'

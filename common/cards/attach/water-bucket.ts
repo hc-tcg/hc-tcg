@@ -1,4 +1,4 @@
-import String from '../../alter-egos/effects/string'
+import String from '../attach/string'
 import {
 	CardComponent,
 	ObserverComponent,

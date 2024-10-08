@@ -1,6 +1,6 @@
-import {CoinFlipResult} from '../../types/game-state'
 import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
+import {CoinFlipResult} from '../../types/game-state'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {flipCoin} from '../../utils/coinFlips'
