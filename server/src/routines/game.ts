@@ -1,4 +1,4 @@
-import {SingleUse} from 'common/cards/base/types'
+import {SingleUse} from 'common/cards/types'
 import {
 	CardComponent,
 	DiscardSlotComponent,
