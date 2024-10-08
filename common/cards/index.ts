@@ -2,12 +2,13 @@ import attachCardClasses from './attach'
 import hermitCardClasses from './hermits'
 import itemCardClasses from './items'
 import singleUseCardClasses from './single-use'
-// import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
+import bossHermitCards from './boss/hermits'
 import {Card} from './types'
 
 const allCardClasses: Array<Card> = [
 	...attachCardClasses,
 	...hermitCardClasses,
+	...bossHermitCards,
 	...itemCardClasses,
 	...singleUseCardClasses,
 ]
