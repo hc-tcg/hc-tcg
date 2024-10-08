@@ -19,6 +19,7 @@ import SpeedrunnerItem from './speedrunner-common'
 import SpeedrunnerDoubleItem from './speedrunner-rare'
 import TerraformItem from './terraform-common'
 import TerraformDoubleItem from './terraform-rare'
+import WildItem from './wild-common'
 
 const itemCardClasses: Array<Card> = [
 	BuilderItem,
@@ -41,6 +42,7 @@ const itemCardClasses: Array<Card> = [
 	TerraformDoubleItem,
 	MinerItem,
 	MinerDoubleItem,
+	WildItem,
 ]
 
 export default itemCardClasses
