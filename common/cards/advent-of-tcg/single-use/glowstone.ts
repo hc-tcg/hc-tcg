@@ -1,8 +1,8 @@
+import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import CardOld from '../../base/card'
-import {CardComponent} from '../../components'
-import {GameModel} from '../../models/game-model'
-import {singleUse} from '../defaults'
-import {SingleUse} from '../types'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class Glowstone extends CardOld {
 	props: SingleUse = {

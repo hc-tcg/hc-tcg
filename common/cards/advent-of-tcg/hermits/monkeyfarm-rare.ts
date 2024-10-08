@@ -1,10 +1,10 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
 import CardOld from '../../base/card'
-import {CardComponent} from '../../components'
-import {slot} from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {flipCoin} from '../../utils/coinFlips'
-import {hermit} from '../defaults'
-import {Hermit} from '../types'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class MonkeyfarmRare extends CardOld {
 	props: Hermit = {

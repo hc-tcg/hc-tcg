@@ -1,10 +1,10 @@
+import {CardComponent} from '../../../components'
+import {slot} from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {flipCoin} from '../../../utils/coinFlips'
 import CardOld from '../../base/card'
-import {CardComponent} from '../../components'
-import {slot} from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {flipCoin} from '../../utils/coinFlips'
-import {attach} from '../defaults'
-import {Attach} from '../types'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class BrewingStand extends CardOld {
 	props: Attach = {

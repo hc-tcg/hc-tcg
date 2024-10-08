@@ -1,9 +1,9 @@
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
 import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import CardOld from '../../base/card'
-import {AttackModel} from '../../models/attack-model'
-import {GameModel} from '../../models/game-model'
-import {attach} from '../defaults'
-import {Attach} from '../types'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class Trapdoor extends CardOld {
 	props: Attach = {

@@ -1,10 +1,10 @@
+import {CardComponent} from '../../../components'
+import {AttackModel} from '../../../models/attack-model'
+import {GameModel} from '../../../models/game-model'
+import {applySingleUse} from '../../../utils/board'
 import CardOld from '../../base/card'
-import {CardComponent} from '../../components'
-import {AttackModel} from '../../models/attack-model'
-import {GameModel} from '../../models/game-model'
-import {applySingleUse} from '../../utils/board'
-import {singleUse} from '../defaults'
-import {SingleUse} from '../types'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHarming extends CardOld {
 	props: SingleUse = {

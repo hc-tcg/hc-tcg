@@ -1,8 +1,8 @@
+import {CardComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
 import CardOld from '../../base/card'
-import {CardComponent} from '../../components'
-import {GameModel} from '../../models/game-model'
-import {hermit} from '../defaults'
-import {Hermit} from '../types'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class SmallishbeansAdventRare extends CardOld {
 	props: Hermit = {
