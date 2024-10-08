@@ -6,4 +6,5 @@ export function fisherYatesShuffle<T>(array: Array<T>) {
 		array[j] = array[i]
 		array[i] = tmp
 	}
+	return array
 }
