@@ -1,10 +1,10 @@
-import KingJoelCommon from '../hermits/kingjoel-common'
-import KingJoelRare from '../hermits/kingjoel-rare'
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
+import KingJoelCommon from '../hermits/kingjoel-common'
+import KingJoelRare from '../hermits/kingjoel-rare'
 import {Hermit} from '../types'
 import SmallishbeansCommon from './smallishbeans-common'
 

@@ -1,4 +1,3 @@
-import PoisonEffect from '../../status-effects/poison'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,
@@ -6,6 +5,7 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import PoisonEffect from '../../status-effects/poison'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

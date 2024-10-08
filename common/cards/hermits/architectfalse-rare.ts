@@ -1,13 +1,13 @@
 import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from '../../status-effects/singleturn-attack-disabled'
-import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../status-effects/singleturn-attack-disabled'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

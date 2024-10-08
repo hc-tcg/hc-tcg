@@ -1,7 +1,3 @@
-import {
-	InvisibilityPotionHeadsEffect,
-	InvisibilityPotionTailsEffect,
-} from '../../status-effects/invisibility-potion'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,
@@ -9,6 +5,10 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import {
+	InvisibilityPotionHeadsEffect,
+	InvisibilityPotionTailsEffect,
+} from '../../status-effects/invisibility-potion'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

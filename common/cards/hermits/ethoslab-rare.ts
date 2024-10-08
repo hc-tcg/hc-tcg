@@ -1,4 +1,3 @@
-import FireEffect from '../../status-effects/fire'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,
@@ -7,6 +6,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import FireEffect from '../../status-effects/fire'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

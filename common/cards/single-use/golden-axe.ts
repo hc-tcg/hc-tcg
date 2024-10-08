@@ -1,10 +1,10 @@
-import {IgnoreAttachSlotEffect} from '../../status-effects/ignore-attach'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import {IgnoreAttachSlotEffect} from '../../status-effects/ignore-attach'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'

@@ -1,4 +1,3 @@
-import FireEffect from '../../status-effects/fire'
 import String from '../../alter-egos/effects/string'
 import {
 	CardComponent,
@@ -8,6 +7,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import FireEffect from '../../status-effects/fire'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {attach, singleUse} from '../defaults'

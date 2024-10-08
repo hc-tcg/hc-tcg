@@ -1,10 +1,10 @@
-import GoMiningEffect from '../../status-effects/go-mining'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import GoMiningEffect from '../../status-effects/go-mining'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

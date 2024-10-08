@@ -1,4 +1,3 @@
-import SheepStareEffect from '../../status-effects/sheep-stare'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,
@@ -6,6 +5,7 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
+import SheepStareEffect from '../../status-effects/sheep-stare'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

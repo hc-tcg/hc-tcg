@@ -1,4 +1,3 @@
-import {TargetBlockEffect} from '../../status-effects/target-block'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -7,6 +6,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import {TargetBlockEffect} from '../../status-effects/target-block'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'

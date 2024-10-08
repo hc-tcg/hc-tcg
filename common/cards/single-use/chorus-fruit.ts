@@ -1,7 +1,7 @@
-import SleepingEffect from '../../status-effects/sleeping'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import SleepingEffect from '../../status-effects/sleeping'
 import {afterAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'

@@ -1,4 +1,3 @@
-import FireEffect from '../../status-effects/fire'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -6,6 +5,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import FireEffect from '../../status-effects/fire'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

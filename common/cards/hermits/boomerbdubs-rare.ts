@@ -1,4 +1,3 @@
-import FortuneEffect from '../../status-effects/fortune'
 import {SelectCards} from '../../../types/modal-requests'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
@@ -9,6 +8,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import FortuneEffect from '../../status-effects/fortune'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
