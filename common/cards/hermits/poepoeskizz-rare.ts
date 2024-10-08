@@ -1,8 +1,8 @@
-import {executeExtraAttacks} from '../../utils/attacks'
 import {CardComponent, ObserverComponent, RowComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {afterAttack} from '../../types/priorities'
+import {executeExtraAttacks} from '../../utils/attacks'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

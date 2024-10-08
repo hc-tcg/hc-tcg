@@ -4,12 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import GoldenAxe from '../single-use/golden-axe'
 import {CardEntity, RowEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'
 import {IgnoreAttachSlotEffect} from '../../status-effects/ignore-attach'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
+import GoldenAxe from '../single-use/golden-axe'
 import {Hermit} from '../types'
 
 const DwarfImpulseRare: Hermit = {

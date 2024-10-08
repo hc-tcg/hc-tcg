@@ -1,4 +1,4 @@
-import {CoinFlipResult} from '../../../types/game-state'
+import {CoinFlipResult} from '../../types/game-state'
 import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'

@@ -1,7 +1,7 @@
-import {CardComponent} from '../../components'
-import {TypeT} from '../../types/cards'
-import {DefaultDictionary} from '../../types/game-state'
-import {getCardRank} from '../../utils/ranks'
+import {CardComponent} from '../components'
+import {TypeT} from '../types/cards'
+import {DefaultDictionary} from '../types/game-state'
+import {getCardRank} from '../utils/ranks'
 import {Card, Hermit, isItem} from './types'
 
 export type CanAttachError =
