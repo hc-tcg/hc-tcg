@@ -5,7 +5,7 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import WaterBucket from '../../default/effects/water-bucket'
+import WaterBucket from '../attach/water-bucket'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'

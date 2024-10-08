@@ -1,6 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import Wolf from '../../default/effects/wolf'
+import Wolf from '../attach/wolf'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
