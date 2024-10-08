@@ -1,4 +1,4 @@
-import {Card} from '../types'
+import {Card} from '../../types'
 // boss cards
 import EvilXisumaBoss from './evilxisuma_boss'
 
