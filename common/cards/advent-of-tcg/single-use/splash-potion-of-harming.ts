@@ -1,6 +1,6 @@
-import {AttackModel} from '../../models/attack-model'
 import CardOld from '../../base/card'
 import {CardComponent} from '../../components'
+import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'

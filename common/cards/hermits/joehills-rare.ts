@@ -1,4 +1,3 @@
-import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -10,6 +9,7 @@ import TimeSkipDisabledEffect from '../../status-effects/time-skip-disabled'
 import TurnSkippedEffect from '../../status-effects/turn-skipped'
 import UsedClockEffect from '../../status-effects/used-clock'
 import {beforeAttack} from '../../types/priorities'
+import {flipCoin} from '../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

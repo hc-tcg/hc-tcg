@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack, onTurnEnd} from '../../types/priorities'
 import DiamondArmor from '../attach/diamond-armor'
 import GoldArmor from '../attach/gold-armor'
 import IronArmor from '../attach/iron-armor'
 import NetheriteArmor from '../attach/netherite-armor'
-import {GameModel} from '../../models/game-model'
-import {beforeAttack, onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
 

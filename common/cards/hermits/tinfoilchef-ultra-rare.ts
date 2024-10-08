@@ -1,4 +1,3 @@
-import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -9,6 +8,7 @@ import {RowEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'
 import TFCDiscardedFromEffect from '../../status-effects/tfc-discarded-from'
 import {beforeAttack} from '../../types/priorities'
+import {flipCoin} from '../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

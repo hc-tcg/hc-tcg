@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -12,6 +11,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../types/priorities'
+import {flipCoin} from '../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

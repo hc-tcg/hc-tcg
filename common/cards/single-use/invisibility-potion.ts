@@ -1,4 +1,3 @@
-import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -9,6 +8,7 @@ import {
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
 } from '../../status-effects/invisibility-potion'
+import {flipCoin} from '../../utils/coinFlips'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 
