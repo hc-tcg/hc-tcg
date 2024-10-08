@@ -1,4 +1,3 @@
-import String from '../attach/string'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -10,6 +9,7 @@ import {GameModel} from '../../models/game-model'
 import FireEffect from '../../status-effects/fire'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
+import String from '../attach/string'
 import {attach, singleUse} from '../defaults'
 import {Attach, SingleUse} from '../types'
 

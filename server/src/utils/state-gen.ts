@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
-import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
+import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import {
 	CardComponent,
 	PlayerComponent,

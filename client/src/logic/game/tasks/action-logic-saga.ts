@@ -1,4 +1,4 @@
-import {isSingleUse} from 'common/cards/base/types'
+import {isSingleUse} from 'common/cards/types'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
