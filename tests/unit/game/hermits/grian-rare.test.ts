@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import Loyalty from 'common/cards/attach/loyalty'
 import Shield from 'common/cards/attach/shield'
-import Thorns from 'common/cards/attach/thorns'
+import {Thorns} from 'common/cards/attach/thorns'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GrianRare from 'common/cards/hermits/grian-rare'
