@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
+import Thorns from 'common/cards/attach/thorns'
 import ThornsII from 'common/cards/attach/thorns_ii'
 import ThornsIII from 'common/cards/attach/thorns_iii'
-import Thorns from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import IronSword from 'common/cards/single-use/iron-sword'
 import {RowComponent} from 'common/components'

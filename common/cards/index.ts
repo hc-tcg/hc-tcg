@@ -1,8 +1,8 @@
 import attachCardClasses from './attach'
+import bossHermitCards from './boss/hermits'
 import hermitCardClasses from './hermits'
 import itemCardClasses from './items'
 import singleUseCardClasses from './single-use'
-import bossHermitCards from './boss/hermits'
 import {Card} from './types'
 
 const allCardClasses: Array<Card> = [

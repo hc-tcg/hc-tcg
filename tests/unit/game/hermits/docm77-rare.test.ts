@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import BadOmen from 'common/cards/single-use/bad-omen'
 import Docm77Rare from 'common/cards/hermits/docm77-rare'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'

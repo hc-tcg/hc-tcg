@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
 import TinFoilChefRare from 'common/cards/hermits/tinfoilchef-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'

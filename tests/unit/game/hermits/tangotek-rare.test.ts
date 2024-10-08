@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import Iskall85Rare from 'common/cards/hermits/iskall85-rare'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'

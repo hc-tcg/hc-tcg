@@ -1,11 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import ChainmailArmor from 'common/cards/attach/chainmail-armor'
-import Ladder from 'common/cards/single-use/ladder'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import RendogRare from 'common/cards/hermits/rendog-rare'
 import TinFoilChefUltraRare from 'common/cards/hermits/tinfoilchef-ultra-rare'
 import Chest from 'common/cards/single-use/chest'
+import Ladder from 'common/cards/single-use/ladder'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {

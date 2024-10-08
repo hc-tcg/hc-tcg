@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'

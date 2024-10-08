@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import PoultryManRare from 'common/cards/hermits/poultryman-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import Egg from 'common/cards/single-use/egg'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoldenAxe from 'common/cards/single-use/golden-axe'
 import query from 'common/components/query'
 import {

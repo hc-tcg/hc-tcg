@@ -1,17 +1,17 @@
 import {describe, expect, test} from '@jest/globals'
-import BoomerBdubsRare from 'common/cards/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/hermits/beetlejhost-rare'
-import WormManRare from 'common/cards/hermits/wormman-rare'
+import BoomerBdubsRare from 'common/cards/hermits/boomerbdubs-rare'
 import Cubfan135Rare from 'common/cards/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import HypnotizdRare from 'common/cards/hermits/hypnotizd-rare'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
+import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
+import WormManRare from 'common/cards/hermits/wormman-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import PvPItem from 'common/cards/items/pvp-common'
 import Bow from 'common/cards/single-use/bow'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
-import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import {
 	CardComponent,
 	RowComponent,

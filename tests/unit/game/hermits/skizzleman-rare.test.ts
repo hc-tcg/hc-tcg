@@ -1,11 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
-import Anvil from 'common/cards/single-use/anvil'
 import GoldArmor from 'common/cards/attach/gold-armor'
 import Thorns from 'common/cards/attach/thorns'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import LavaBucket from 'common/cards/single-use/lava-bucket'
 import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
+import Anvil from 'common/cards/single-use/anvil'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {

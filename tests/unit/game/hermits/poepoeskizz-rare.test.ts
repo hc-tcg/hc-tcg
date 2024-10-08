@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'

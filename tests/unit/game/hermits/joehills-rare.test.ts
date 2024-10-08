@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import BadOmen from 'common/cards/single-use/bad-omen'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import Clock from 'common/cards/single-use/clock'
 import {
 	applyEffect,
