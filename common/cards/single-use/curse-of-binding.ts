@@ -2,7 +2,7 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
+} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
 import {singleUse} from '../../base/defaults'

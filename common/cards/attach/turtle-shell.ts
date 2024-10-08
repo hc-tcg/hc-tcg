@@ -4,8 +4,8 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import LooseShellEffect from '../../../status-effects/loose-shell'

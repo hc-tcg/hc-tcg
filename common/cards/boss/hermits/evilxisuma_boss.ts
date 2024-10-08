@@ -4,8 +4,8 @@ import {
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ExBossNineEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'

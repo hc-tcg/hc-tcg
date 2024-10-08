@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {CardEntity, RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'

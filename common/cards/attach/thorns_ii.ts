@@ -1,5 +1,5 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'

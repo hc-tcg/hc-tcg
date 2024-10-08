@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../types'
 import SkizzlemanCommon from './skizzleman-common'
 import SkizzlemanRare from './skizzleman-rare'
 import SmallishbeansCommon from './smallishbeans-common'

@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {GasLightEffect} from '../../../status-effects/gas-light'
 import {beforeAttack} from '../../../types/priorities'

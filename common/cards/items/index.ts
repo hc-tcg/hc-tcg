@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../types'
 import BalancedItem from './balanced-common'
 import BalancedDoubleItem from './balanced-rare'
 import BuilderItem from './builder-common'

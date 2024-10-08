@@ -1,5 +1,5 @@
-import {CardComponent} from '../../../components'
-import {query, row, slot} from '../../../components/query'
+import {CardComponent} from '../../components'
+import {query, row, slot} from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import CardOld from '../../base/card'
 import {attach} from '../../base/defaults'

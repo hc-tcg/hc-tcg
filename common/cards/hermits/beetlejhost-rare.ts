@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 import {afterAttack, beforeAttack} from '../../../types/priorities'

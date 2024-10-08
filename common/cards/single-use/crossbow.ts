@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {RowEntity} from '../../../entities'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'

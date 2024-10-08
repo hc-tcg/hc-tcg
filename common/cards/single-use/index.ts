@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../types'
 import Bow from './bow'
 import Chest from './chest'
 import ChorusFruit from './chorus-fruit'

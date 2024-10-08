@@ -1,4 +1,4 @@
-import query from '../../../components/query'
+import query from '../../components/query'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 

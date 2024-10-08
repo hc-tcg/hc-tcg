@@ -1,4 +1,4 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'

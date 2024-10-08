@@ -1,49 +1,12 @@
 // import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import alterEgosIIHermitCards from './alter-egos-ii/hermits'
-import alterEgosIIIHermitCards from './alter-egos-iii/hermits'
-import alterEgosIIIItemCards from './alter-egos-iii/items'
-import alterEgoEffectCards from './alter-egos/effects'
-import alterEgosHermitCards from './alter-egos/hermits'
-import alterEgosSingleUseCards from './alter-egos/single-use'
-import {Card} from './base/types'
-import bossHermitCards from './boss/hermits'
-import defaultEffectCards from './default/effects'
-// import adventOfTcgEffectCards from './advent-of-tcg/effects'
-import defaultHermitCards from './default/hermits'
-// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
-import defaultItemCards from './default/items'
-import defaultSingleUseCards from './default/single-use'
-import seasonXHermitCards from './season-x/hermits'
-
-const effectCardClasses: Array<Card> = [
-	...defaultEffectCards,
-	...alterEgoEffectCards,
-	// ...adventOfTcgEffectCards,
-]
-
-const hermitCardClasses: Array<Card> = [
-	...defaultHermitCards,
-	...alterEgosHermitCards,
-	// ...adventOfTcgHermitCards,
-	...bossHermitCards,
-	...alterEgosIIHermitCards,
-	...seasonXHermitCards,
-	...alterEgosIIIHermitCards,
-]
-
-const itemCardClasses: Array<Card> = [
-	...defaultItemCards,
-	...alterEgosIIIItemCards,
-]
-
-const singleUseCardClasses: Array<Card> = [
-	...defaultSingleUseCards,
-	...alterEgosSingleUseCards,
-	// ...adventOfTcgSingleUseCards,
-]
+import {Card} from './types'
+import attachCardClasses from './attach'
+import hermitCardClasses from './hermits'
+import itemCardClasses from './items'
+import singleUseCardClasses from './single-use'
 
 const allCardClasses: Array<Card> = [
-	...effectCardClasses,
+	...attachCardClasses,
 	...hermitCardClasses,
 	...itemCardClasses,
 	...singleUseCardClasses,

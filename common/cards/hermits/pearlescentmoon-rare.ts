@@ -2,7 +2,7 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
+} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import {AussiePingEffect} from '../../../status-effects/aussie-ping'
 import {beforeAttack} from '../../../types/priorities'

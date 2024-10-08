@@ -3,8 +3,8 @@ import {
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'

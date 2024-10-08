@@ -2,7 +2,7 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
+} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import EfficiencyEffect from '../../../status-effects/efficiency'
 import {singleUse} from '../../base/defaults'

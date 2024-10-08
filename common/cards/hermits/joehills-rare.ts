@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import TimeSkipDisabledEffect from '../../../status-effects/time-skip-disabled'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'

@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'

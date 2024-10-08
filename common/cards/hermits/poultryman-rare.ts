@@ -1,5 +1,5 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
+import {CardComponent, ObserverComponent} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack} from '../../../types/priorities'
 import Egg from '../../alter-egos/single-use/egg'

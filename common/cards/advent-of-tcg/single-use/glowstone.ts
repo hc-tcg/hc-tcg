@@ -1,4 +1,4 @@
-import {CardComponent} from '../../../components'
+import {CardComponent} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'

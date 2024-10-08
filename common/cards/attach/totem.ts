@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {rowRevive} from '../../../types/priorities'
 import {attach} from '../../base/defaults'

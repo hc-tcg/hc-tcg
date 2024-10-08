@@ -1,4 +1,4 @@
-import {query} from '../../../components/query'
+import {query} from '../../components/query'
 import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'

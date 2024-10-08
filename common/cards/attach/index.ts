@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../types'
 import Bed from './bed'
 import DiamondArmor from './diamond-armor'
 import GoldArmor from './gold-armor'

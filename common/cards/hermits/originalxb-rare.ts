@@ -2,7 +2,7 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
+} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import GoMiningEffect from '../../../status-effects/go-mining'
 import {beforeAttack} from '../../../types/priorities'

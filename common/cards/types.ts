@@ -2,12 +2,12 @@ import type {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
-} from '../../components'
-import type {ComponentQuery} from '../../components/query'
-import {ExpansionT} from '../../const/expansions'
-import {AttackModel} from '../../models/attack-model'
-import {GameModel} from '../../models/game-model'
-import {HermitAttackType} from '../../types/attack'
+} from '../components'
+import type {ComponentQuery} from '../components/query'
+import {ExpansionT} from '../const/expansions'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {HermitAttackType} from '../types/attack'
 import type {
 	CardCategoryT,
 	CardRarityT,
@@ -15,9 +15,9 @@ import type {
 	PlayCardLog,
 	TokenCostT,
 	TypeT,
-} from '../../types/cards'
-import type {WithoutFunctions} from '../../types/server-requests'
-import {FormattedTextNode} from '../../utils/formatting'
+} from '../types/cards'
+import type {WithoutFunctions} from '../types/server-requests'
+import {FormattedTextNode} from '../utils/formatting'
 
 export type Card = {
 	id: string

@@ -3,8 +3,8 @@ import {
 	ObserverComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {applySingleUse} from '../../../utils/board'

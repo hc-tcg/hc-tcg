@@ -2,8 +2,8 @@ import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
+} from '../../components'
+import query from '../../components/query'
 import {RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'

@@ -1,4 +1,4 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
