@@ -1,10 +1,10 @@
+import SleepingEffect from '../../../status-effects/sleeping'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import SleepingEffect from '../../../status-effects/sleeping'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

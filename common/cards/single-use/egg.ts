@@ -1,14 +1,10 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../components'
+import {executeExtraAttacks} from '../../../utils/attacks'
+import {flipCoin} from '../../../utils/coinFlips'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {afterAttack} from '../../types/priorities'
-import {executeExtraAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../utils/board'
-import {flipCoin} from '../../../utils/coinFlips'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

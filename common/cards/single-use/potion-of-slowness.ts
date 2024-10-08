@@ -1,10 +1,10 @@
+import SlownessEffect from '../../../status-effects/slowness'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import SlownessEffect from '../../../status-effects/slowness'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

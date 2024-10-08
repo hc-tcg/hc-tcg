@@ -1,13 +1,13 @@
 import {
+	DeathloopReady,
+	RevivedByDeathloopEffect,
+} from '../../../status-effects/death-loop'
+import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import {
-	DeathloopReady,
-	RevivedByDeathloopEffect,
-} from '../../../status-effects/death-loop'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

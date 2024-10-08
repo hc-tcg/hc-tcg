@@ -1,8 +1,8 @@
-import {CardComponent} from '../../components'
 import {AttackModel} from '../../../models/attack-model'
-import {GameModel} from '../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
 import CardOld from '../../base/card'
+import {CardComponent} from '../../components'
+import {GameModel} from '../../models/game-model'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

@@ -1,3 +1,4 @@
+import SleepingEffect from '../../../status-effects/sleeping'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -5,7 +6,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import SleepingEffect from '../../../status-effects/sleeping'
 import {onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'

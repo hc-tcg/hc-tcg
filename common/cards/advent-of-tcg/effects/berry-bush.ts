@@ -1,7 +1,7 @@
+import CardOld from '../../base/card'
 import {CardComponent} from '../../components'
 import {query, slot} from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import CardOld from '../../base/card'
 import {attach} from '../defaults'
 import {Attach} from '../types'
 

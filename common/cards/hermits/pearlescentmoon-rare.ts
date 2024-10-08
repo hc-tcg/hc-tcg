@@ -1,10 +1,10 @@
+import {AussiePingEffect} from '../../../status-effects/aussie-ping'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import {AussiePingEffect} from '../../../status-effects/aussie-ping'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

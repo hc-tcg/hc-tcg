@@ -1,3 +1,4 @@
+import WeaknessEffect from '../../../status-effects/weakness'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -5,7 +6,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import WeaknessEffect from '../../../status-effects/weakness'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

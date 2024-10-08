@@ -1,3 +1,4 @@
+import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -5,7 +6,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

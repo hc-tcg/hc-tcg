@@ -1,10 +1,10 @@
+import FortuneStatusEffect from '../../../status-effects/fortune'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import FortuneStatusEffect from '../../../status-effects/fortune'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

@@ -1,17 +1,17 @@
 import assert from 'assert'
 import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../../../status-effects/singleturn-attack-disabled'
+import {flipCoin} from '../../../utils/coinFlips'
+import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from '../../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../types/priorities'
-import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

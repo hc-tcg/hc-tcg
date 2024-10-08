@@ -1,9 +1,9 @@
-// import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import {Card} from './types'
 import attachCardClasses from './attach'
 import hermitCardClasses from './hermits'
 import itemCardClasses from './items'
 import singleUseCardClasses from './single-use'
+// import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
+import {Card} from './types'
 
 const allCardClasses: Array<Card> = [
 	...attachCardClasses,

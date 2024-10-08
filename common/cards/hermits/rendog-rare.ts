@@ -1,3 +1,8 @@
+import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
+import {HermitAttackType} from '../../../types/attack'
+import {MockedAttack, setupMockCard} from '../../../utils/attacks'
+import ArmorStand from '../../alter-egos/effects/armor-stand'
+import {InstancedValue} from '../../base/card'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -6,11 +11,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
-import {HermitAttackType} from '../../../types/attack'
-import {MockedAttack, setupMockCard} from '../../../utils/attacks'
-import ArmorStand from '../../alter-egos/effects/armor-stand'
-import {InstancedValue} from '../../base/card'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

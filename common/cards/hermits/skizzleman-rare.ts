@@ -1,3 +1,4 @@
+import {GasLightEffect} from '../../../status-effects/gas-light'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -5,7 +6,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {GasLightEffect} from '../../../status-effects/gas-light'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

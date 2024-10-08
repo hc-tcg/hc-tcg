@@ -1,3 +1,5 @@
+import TurnSkippedEffect from '../../../status-effects/turn-skipped'
+import UsedClockEffect from '../../../status-effects/used-clock'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -6,8 +8,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import TurnSkippedEffect from '../../../status-effects/turn-skipped'
-import UsedClockEffect from '../../../status-effects/used-clock'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

@@ -1,8 +1,4 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {RowEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'

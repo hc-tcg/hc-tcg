@@ -1,10 +1,10 @@
+import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import {TrapHoleEffect} from '../../../status-effects/trap-hole'
 import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

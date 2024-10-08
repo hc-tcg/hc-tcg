@@ -1,5 +1,5 @@
-import {query} from '../../components/query'
 import CardOld from '../../base/card'
+import {query} from '../../components/query'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

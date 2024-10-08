@@ -1,14 +1,10 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../components'
-import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
 import {InstancedValue} from '../../base/card'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

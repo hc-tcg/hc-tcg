@@ -1,12 +1,8 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	RowComponent,
-} from '../../components'
+import {flipCoin} from '../../../utils/coinFlips'
+import {CardComponent, ObserverComponent, RowComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

@@ -1,9 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
+import Bow from '../../default/single-use/bow'
 import {GameModel} from '../../models/game-model'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
-import Bow from '../../default/single-use/bow'
 
 const HotguyRare: Hermit = {
 	...hermit,

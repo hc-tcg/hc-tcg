@@ -1,13 +1,9 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../components'
+import BetrayedEffect from '../../../status-effects/betrayed'
+import {PickRequest} from '../../../types/server-requests'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import BetrayedEffect from '../../../status-effects/betrayed'
 import {beforeAttack} from '../../types/priorities'
-import {PickRequest} from '../../../types/server-requests'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

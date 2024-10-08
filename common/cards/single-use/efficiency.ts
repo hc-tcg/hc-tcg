@@ -1,10 +1,10 @@
+import EfficiencyEffect from '../../../status-effects/efficiency'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import EfficiencyEffect from '../../../status-effects/efficiency'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

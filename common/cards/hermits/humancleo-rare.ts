@@ -1,12 +1,12 @@
+import BetrayedEffect from '../../../status-effects/betrayed'
+import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
 import {GameModel} from '../../models/game-model'
-import BetrayedEffect from '../../../status-effects/betrayed'
 import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

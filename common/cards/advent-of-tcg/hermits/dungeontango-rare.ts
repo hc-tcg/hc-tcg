@@ -1,7 +1,7 @@
+import CardOld from '../../base/card'
 import {CardComponent} from '../../components'
 import {slot} from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import CardOld from '../../base/card'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

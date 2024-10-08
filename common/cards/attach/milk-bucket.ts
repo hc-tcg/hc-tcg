@@ -1,3 +1,5 @@
+import BadOmenEffect from '../../../status-effects/badomen'
+import PoisonEffect from '../../../status-effects/poison'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -6,8 +8,6 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import BadOmenEffect from '../../../status-effects/badomen'
-import PoisonEffect from '../../../status-effects/poison'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {attach, singleUse} from '../defaults'

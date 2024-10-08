@@ -1,13 +1,13 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {beforeAttack, onTurnEnd} from '../../types/priorities'
-import {attach} from '../defaults'
-import {Attach} from '../types'
 import DiamondArmor from '../../default/effects/diamond-armor'
 import GoldArmor from '../../default/effects/gold-armor'
 import IronArmor from '../../default/effects/iron-armor'
 import NetheriteArmor from '../../default/effects/netherite-armor'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack, onTurnEnd} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const ThornsII: Attach = {
 	...attach,
