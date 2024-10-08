@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import GoldenAxe from '../../default/single-use/golden-axe'
+import GoldenAxe from '../single-use/golden-axe'
 import {CardEntity, RowEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'
 import {IgnoreAttachSlotEffect} from '../../status-effects/ignore-attach'

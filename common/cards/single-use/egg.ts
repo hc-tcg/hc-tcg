@@ -1,4 +1,4 @@
-import {executeExtraAttacks} from '../../../utils/attacks'
+import {executeExtraAttacks} from '../../utils/attacks'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'

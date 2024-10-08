@@ -1,4 +1,4 @@
-import {executeAttacks} from '../../../utils/attacks'
+import {executeAttacks} from '../../utils/attacks'
 import CardOld from '../../base/card'
 import {CardComponent} from '../../components'
 import {AttackModel} from '../../models/attack-model'

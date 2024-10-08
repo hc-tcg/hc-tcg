@@ -1,5 +1,5 @@
 import {CardComponent, ObserverComponent} from '../../components'
-import Bow from '../../default/single-use/bow'
+import Bow from '../single-use/bow'
 import {GameModel} from '../../models/game-model'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'

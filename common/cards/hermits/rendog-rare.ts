@@ -1,5 +1,5 @@
 import {HermitAttackType} from '../../../types/attack'
-import {MockedAttack, setupMockCard} from '../../../utils/attacks'
+import {MockedAttack, setupMockCard} from '../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
 import {InstancedValue} from '../../base/card'
 import {
