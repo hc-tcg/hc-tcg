@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {flipCoin} from '../../../utils/coinFlips'
+import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,

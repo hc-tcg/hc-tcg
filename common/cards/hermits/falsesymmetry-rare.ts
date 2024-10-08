@@ -1,4 +1,4 @@
-import {flipCoin} from '../../../utils/coinFlips'
+import {flipCoin} from '../../utils/coinFlips'
 import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'

@@ -1,5 +1,5 @@
 import {executeExtraAttacks} from '../../../utils/attacks'
-import {flipCoin} from '../../../utils/coinFlips'
+import {flipCoin} from '../../utils/coinFlips'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'

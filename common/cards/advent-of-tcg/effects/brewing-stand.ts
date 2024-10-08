@@ -1,4 +1,4 @@
-import {flipCoin} from '../../../utils/coinFlips'
+import {flipCoin} from '../../utils/coinFlips'
 import CardOld from '../../base/card'
 import {CardComponent} from '../../components'
 import {slot} from '../../components/query'

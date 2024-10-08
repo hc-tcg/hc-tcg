@@ -1,5 +1,5 @@
-import {SelectCards} from '../../../types/modal-requests'
-import {flipCoin} from '../../../utils/coinFlips'
+import {SelectCards} from '../../types/modal-requests'
+import {flipCoin} from '../../utils/coinFlips'
 import {
 	CardComponent,
 	ObserverComponent,
