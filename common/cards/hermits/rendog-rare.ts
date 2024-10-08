@@ -1,6 +1,6 @@
-import {HermitAttackType} from '../../../types/attack'
-import ArmorStand from '../../alter-egos/effects/armor-stand'
-import {InstancedValue} from '../../base/card'
+import {HermitAttackType} from '../../types/attack'
+import ArmorStand from '../attach/armor-stand'
+import {InstancedValue} from '../card'
 import {
 	CardComponent,
 	ObserverComponent,
