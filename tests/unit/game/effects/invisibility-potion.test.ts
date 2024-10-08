@@ -7,7 +7,7 @@ import WaterBucket from 'common/cards/attach/water-bucket'
 
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
-import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
+import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {InvisibilityPotionHeadsEffect} from 'common/status-effects/invisibility-potion'

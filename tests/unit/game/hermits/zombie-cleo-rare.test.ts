@@ -11,7 +11,7 @@ import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import PvPItem from 'common/cards/items/pvp-common'
 import Bow from 'common/cards/single-use/bow'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
-import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'
+import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import {
 	CardComponent,
 	RowComponent,

@@ -3,7 +3,7 @@ import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import Anvil from 'common/cards/single-use/anvil'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import PearlescentMoonRare from 'common/cards/hermits/pearlescentmoon-rare'
-import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
+import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {

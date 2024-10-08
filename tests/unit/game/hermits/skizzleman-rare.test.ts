@@ -5,7 +5,7 @@ import Thorns from 'common/cards/attach/thorns'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
-import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
+import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {
