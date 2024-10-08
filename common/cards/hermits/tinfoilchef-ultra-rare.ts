@@ -1,4 +1,4 @@
-import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
+import TFCDiscardedFromEffect from '../../status-effects/tfc-discarded-from'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

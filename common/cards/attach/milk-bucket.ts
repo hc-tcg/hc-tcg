@@ -1,5 +1,5 @@
-import BadOmenEffect from '../../../status-effects/badomen'
-import PoisonEffect from '../../../status-effects/poison'
+import BadOmenEffect from '../../status-effects/badomen'
+import PoisonEffect from '../../status-effects/poison'
 import {
 	CardComponent,
 	ObserverComponent,

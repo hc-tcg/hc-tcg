@@ -1,4 +1,4 @@
-import SlownessEffect from '../../../status-effects/slowness'
+import SlownessEffect from '../../status-effects/slowness'
 import {
 	CardComponent,
 	ObserverComponent,

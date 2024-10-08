@@ -1,4 +1,4 @@
-import FireEffect from '../../../status-effects/fire'
+import FireEffect from '../../status-effects/fire'
 import {
 	CardComponent,
 	ObserverComponent,

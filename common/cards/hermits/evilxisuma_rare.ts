@@ -2,7 +2,7 @@ import assert from 'assert'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from '../../../status-effects/singleturn-attack-disabled'
+} from '../../status-effects/singleturn-attack-disabled'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

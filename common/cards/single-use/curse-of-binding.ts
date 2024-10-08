@@ -1,4 +1,4 @@
-import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
+import CurseOfBindingEffect from '../../status-effects/curse-of-binding'
 import {
 	CardComponent,
 	ObserverComponent,

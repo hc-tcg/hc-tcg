@@ -1,4 +1,4 @@
-import SheepStareEffect from '../../../status-effects/sheep-stare'
+import SheepStareEffect from '../../status-effects/sheep-stare'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

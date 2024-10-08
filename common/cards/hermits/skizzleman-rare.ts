@@ -1,4 +1,4 @@
-import {GasLightEffect} from '../../../status-effects/gas-light'
+import {GasLightEffect} from '../../status-effects/gas-light'
 import {
 	CardComponent,
 	ObserverComponent,

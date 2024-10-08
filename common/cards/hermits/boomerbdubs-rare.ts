@@ -1,4 +1,4 @@
-import FortuneEffect from '../../../status-effects/fortune'
+import FortuneEffect from '../../status-effects/fortune'
 import {SelectCards} from '../../../types/modal-requests'
 import {flipCoin} from '../../../utils/coinFlips'
 import {

@@ -1,4 +1,4 @@
-import EfficiencyEffect from '../../../status-effects/efficiency'
+import EfficiencyEffect from '../../status-effects/efficiency'
 import {
 	CardComponent,
 	ObserverComponent,

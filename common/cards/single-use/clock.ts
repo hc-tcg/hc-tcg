@@ -1,5 +1,5 @@
-import TurnSkippedEffect from '../../../status-effects/turn-skipped'
-import UsedClockEffect from '../../../status-effects/used-clock'
+import TurnSkippedEffect from '../../status-effects/turn-skipped'
+import UsedClockEffect from '../../status-effects/used-clock'
 import {
 	CardComponent,
 	ObserverComponent,

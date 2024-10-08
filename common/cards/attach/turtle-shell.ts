@@ -1,5 +1,5 @@
 import assert from 'assert'
-import LooseShellEffect from '../../../status-effects/loose-shell'
+import LooseShellEffect from '../../status-effects/loose-shell'
 import {
 	CardComponent,
 	ObserverComponent,

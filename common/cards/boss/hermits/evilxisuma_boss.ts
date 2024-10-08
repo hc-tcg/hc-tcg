@@ -1,11 +1,11 @@
-import ExBossNineEffect from '../../../status-effects/exboss-nine'
-import FireEffect from '../../../status-effects/fire'
-import PoisonEffect from '../../../status-effects/poison'
+import ExBossNineEffect from '../../status-effects/exboss-nine'
+import FireEffect from '../../status-effects/fire'
+import PoisonEffect from '../../status-effects/poison'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from '../../../status-effects/singleturn-attack-disabled'
-import SlownessEffect from '../../../status-effects/slowness'
+} from '../../status-effects/singleturn-attack-disabled'
+import SlownessEffect from '../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import EvilXisumaRare from '../../alter-egos/hermits/evilxisuma_rare'
 import {InstancedValue} from '../../base/card'

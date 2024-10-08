@@ -1,4 +1,4 @@
-import SleepingEffect from '../../../status-effects/sleeping'
+import SleepingEffect from '../../status-effects/sleeping'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'

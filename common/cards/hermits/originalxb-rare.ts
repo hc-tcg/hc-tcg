@@ -1,4 +1,4 @@
-import GoMiningEffect from '../../../status-effects/go-mining'
+import GoMiningEffect from '../../status-effects/go-mining'
 import {
 	CardComponent,
 	ObserverComponent,

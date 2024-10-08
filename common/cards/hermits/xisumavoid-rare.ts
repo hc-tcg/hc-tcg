@@ -1,4 +1,4 @@
-import PoisonEffect from '../../../status-effects/poison'
+import PoisonEffect from '../../status-effects/poison'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

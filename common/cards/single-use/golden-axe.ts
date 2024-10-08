@@ -1,4 +1,4 @@
-import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
+import {IgnoreAttachSlotEffect} from '../../status-effects/ignore-attach'
 import {
 	CardComponent,
 	ObserverComponent,

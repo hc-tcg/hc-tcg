@@ -1,4 +1,4 @@
-import {AussiePingEffect} from '../../../status-effects/aussie-ping'
+import {AussiePingEffect} from '../../status-effects/aussie-ping'
 import {
 	CardComponent,
 	ObserverComponent,

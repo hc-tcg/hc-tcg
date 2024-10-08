@@ -1,4 +1,4 @@
-import {TargetBlockEffect} from '../../../status-effects/target-block'
+import {TargetBlockEffect} from '../../status-effects/target-block'
 import {
 	CardComponent,
 	ObserverComponent,

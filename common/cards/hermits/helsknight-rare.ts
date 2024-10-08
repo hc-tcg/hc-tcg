@@ -1,4 +1,4 @@
-import {TrapHoleEffect} from '../../../status-effects/trap-hole'
+import {TrapHoleEffect} from '../../status-effects/trap-hole'
 import {
 	CardComponent,
 	ObserverComponent,

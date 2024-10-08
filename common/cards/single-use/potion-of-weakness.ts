@@ -1,4 +1,4 @@
-import WeaknessEffect from '../../../status-effects/weakness'
+import WeaknessEffect from '../../status-effects/weakness'
 import {
 	CardComponent,
 	ObserverComponent,

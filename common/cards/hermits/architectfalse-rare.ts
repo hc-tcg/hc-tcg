@@ -1,7 +1,7 @@
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from '../../../status-effects/singleturn-attack-disabled'
+} from '../../status-effects/singleturn-attack-disabled'
 import {
 	CardComponent,
 	ObserverComponent,

@@ -1,4 +1,4 @@
-import RoyalProtectionEffect from '../../../status-effects/royal-protection'
+import RoyalProtectionEffect from '../../status-effects/royal-protection'
 import {
 	CardComponent,
 	ObserverComponent,

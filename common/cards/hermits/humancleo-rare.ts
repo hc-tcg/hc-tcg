@@ -1,4 +1,4 @@
-import BetrayedEffect from '../../../status-effects/betrayed'
+import BetrayedEffect from '../../status-effects/betrayed'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

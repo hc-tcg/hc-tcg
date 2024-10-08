@@ -1,4 +1,4 @@
-import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
+import {SecondaryAttackDisabledEffect} from '../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'

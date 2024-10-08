@@ -1,4 +1,4 @@
-import BetrayedEffect from '../../../status-effects/betrayed'
+import BetrayedEffect from '../../status-effects/betrayed'
 import {PickRequest} from '../../../types/server-requests'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'

@@ -1,6 +1,6 @@
-import TimeSkipDisabledEffect from '../../../status-effects/time-skip-disabled'
-import TurnSkippedEffect from '../../../status-effects/turn-skipped'
-import UsedClockEffect from '../../../status-effects/used-clock'
+import TimeSkipDisabledEffect from '../../status-effects/time-skip-disabled'
+import TurnSkippedEffect from '../../status-effects/turn-skipped'
+import UsedClockEffect from '../../status-effects/used-clock'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

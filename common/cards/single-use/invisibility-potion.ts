@@ -1,7 +1,7 @@
 import {
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
-} from '../../../status-effects/invisibility-potion'
+} from '../../status-effects/invisibility-potion'
 import {flipCoin} from '../../../utils/coinFlips'
 import {
 	CardComponent,

@@ -1,4 +1,4 @@
-import FortuneStatusEffect from '../../../status-effects/fortune'
+import FortuneStatusEffect from '../../status-effects/fortune'
 import {
 	CardComponent,
 	ObserverComponent,

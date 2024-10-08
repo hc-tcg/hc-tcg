@@ -1,7 +1,7 @@
 import {
 	DeathloopReady,
 	RevivedByDeathloopEffect,
-} from '../../../status-effects/death-loop'
+} from '../../status-effects/death-loop'
 import {
 	CardComponent,
 	ObserverComponent,

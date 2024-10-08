@@ -1,4 +1,4 @@
-import PoisonEffect from '../../../status-effects/poison'
+import PoisonEffect from '../../status-effects/poison'
 import {
 	CardComponent,
 	ObserverComponent,

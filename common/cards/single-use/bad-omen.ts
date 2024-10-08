@@ -1,4 +1,4 @@
-import BadOmenEffect from '../../../status-effects/badomen'
+import BadOmenEffect from '../../status-effects/badomen'
 import {
 	CardComponent,
 	ObserverComponent,

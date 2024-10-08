@@ -1,4 +1,4 @@
-import ChromaKeyedEffect from '../../../status-effects/chroma-keyed'
+import ChromaKeyedEffect from '../../status-effects/chroma-keyed'
 import {
 	CardComponent,
 	ObserverComponent,
