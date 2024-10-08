@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import Loyalty from 'common/cards/default/attach/loyalty'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import BalancedItem from 'common/cards/default/items/balanced-common'
+import Loyalty from 'common/cards/attach/loyalty'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BalancedItem from 'common/cards/items/balanced-common'
 import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 

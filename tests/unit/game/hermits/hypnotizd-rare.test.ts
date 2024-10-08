@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
-import MinerDoubleItem from 'common/cards/default/items/miner-rare'
-import Bow from 'common/cards/default/single-use/bow'
-import Efficiency from 'common/cards/default/single-use/efficiency'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import HypnotizdRare from 'common/cards/hermits/hypnotizd-rare'
+import MinerDoubleItem from 'common/cards/items/miner-rare'
+import Bow from 'common/cards/single-use/bow'
+import Efficiency from 'common/cards/single-use/efficiency'
 import {
 	RowComponent,
 	SlotComponent,

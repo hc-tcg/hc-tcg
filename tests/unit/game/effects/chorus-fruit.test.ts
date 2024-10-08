@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
-import BdoubleO100Rare from 'common/cards/default/hermits/bdoubleo100-rare'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
-import CurseOfBinding from 'common/cards/default/single-use/curse-of-binding'
+import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import ChorusFruit from 'common/cards/single-use/chorus-fruit'
+import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
 import {
 	applyEffect,

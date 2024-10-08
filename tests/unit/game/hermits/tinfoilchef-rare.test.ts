@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import TinFoilChefRare from 'common/cards/default/hermits/tinfoilchef-rare'
-import BalancedItem from 'common/cards/default/items/balanced-common'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import TinFoilChefRare from 'common/cards/hermits/tinfoilchef-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test TFC Rare', () => {

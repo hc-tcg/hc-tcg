@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
