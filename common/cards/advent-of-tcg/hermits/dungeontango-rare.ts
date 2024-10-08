@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -25,7 +26,7 @@ const DungeonTangoRare: Hermit = {
 		cost: ['any'],
 		damage: 40,
 		power:
-			'Discard 1 item card attached to this Hermit to draw a random Hermit card from your deck. If you have no more Hermit cards, keep the item card attached.',
+			'Discard 1 item card attached to this Hermit to search your deck for the first Hermit card to draw and then shuffle your deck. If you have no more Hermit cards, keep the item card attached.',
 	},
 	secondary: {
 		name: 'Ravager',
@@ -40,6 +41,8 @@ const DungeonTangoRare: Hermit = {
 	) {
 		const {player} = component
 
+		let pickedCard: CardComponent | null = null
+
 		observer.subscribe(
 			player.hooks.getAttackRequests,
 			(activeInstance, hermitAttackType) => {
@@ -48,8 +51,6 @@ const DungeonTangoRare: Hermit = {
 					hermitAttackType !== 'primary'
 				)
 					return
-
-				const hermitCard = player.getDeck().find((card) => card.isHermit())
 
 				const pickCondition = query.every(
 					query.slot.currentPlayer,
@@ -67,14 +68,37 @@ const DungeonTangoRare: Hermit = {
 					message: 'Choose an item card to discard',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						const pickedCard = pickedSlot.getCard()
-						if (!pickedCard || !hermitCard) return
-
-						pickedCard.discard()
-
-						hermitCard.draw()
+						pickedCard = pickedSlot.getCard()
+					},
+					onTimeout() {
+						const firstItem = game.components.find(SlotComponent, pickCondition)
+						if (!firstItem) return
+						pickedCard = firstItem.getCard()
 					},
 				})
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || !attack.isType('primary'))
+					return
+				if (pickedCard === null) return
+
+				const hermitCard = player.getDeck().find((card) => card.isHermit())
+				if (hermitCard) {
+					hermitCard.draw()
+					pickedCard.discard()
+				}
+
+				player
+					.getDeck()
+					.sort(() => Math.random() - 0.5)
+					.forEach((card, i) => {
+						if (card.slot.inDeck()) card.slot.order = i
+					})
 			},
 		)
 	},
