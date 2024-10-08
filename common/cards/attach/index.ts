@@ -1,4 +1,5 @@
 import {Card} from '../types'
+import ArmorStand from './armor-stand'
 import Bed from './bed'
 import DiamondArmor from './diamond-armor'
 import GoldArmor from './gold-armor'
