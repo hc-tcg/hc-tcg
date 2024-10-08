@@ -6,7 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '..'
-import {Card} from '../../cards/base/types'
+import {Card} from '../../cards/types'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'
 

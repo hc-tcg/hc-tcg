@@ -1,4 +1,4 @@
-import {Card} from '../cards/base/types'
+import {Card} from '../cards/types'
 import {
 	CardComponent,
 	ObserverComponent,
