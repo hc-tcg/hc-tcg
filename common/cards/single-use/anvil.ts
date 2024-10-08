@@ -1,4 +1,4 @@
-import {AttackModel} from '../../../models/attack-model'
+import {AttackModel} from '../../models/attack-model'
 import {
 	CardComponent,
 	ObserverComponent,

@@ -1,4 +1,4 @@
-import {AttackModel} from '../../../models/attack-model'
+import {AttackModel} from '../../models/attack-model'
 import {PickRequest} from '../../../types/server-requests'
 import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'

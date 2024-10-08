@@ -1,4 +1,4 @@
-import {AttackModel} from '../../../models/attack-model'
+import {AttackModel} from '../../models/attack-model'
 import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import CardOld from '../../base/card'
 import {GameModel} from '../../models/game-model'
