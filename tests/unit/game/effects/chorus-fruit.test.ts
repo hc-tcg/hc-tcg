@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import HumanCleoRare from 'common/cards/alter-egos/hermits/humancleo-rare'
+import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import BdoubleO100Rare from 'common/cards/default/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
-import MilkBucket from 'common/cards/default/effects/milk-bucket'
+import BadOmen from 'common/cards/single-use/bad-omen'
+import MilkBucket from 'common/cards/default/attach/milk-bucket'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import SplashPotionOfPoison from 'common/cards/default/single-use/splash-potion-of-poison'

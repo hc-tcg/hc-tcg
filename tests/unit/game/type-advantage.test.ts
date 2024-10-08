@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import HotguyCommon from 'common/cards/alter-egos-iii/hermits/hotguy-common'
-import PoultrymanCommon from 'common/cards/alter-egos/hermits/poultryman-common'
+import HotguyCommon from 'common/cards/hermits/hotguy-common'
+import PoultrymanCommon from 'common/cards/hermits/poultryman-common'
 import GoodTimesWithScarCommon from 'common/cards/default/hermits/goodtimeswithscar-common'
 import GrianCommon from 'common/cards/default/hermits/grian-common'
 import IJevinCommon from 'common/cards/default/hermits/ijevin-common'

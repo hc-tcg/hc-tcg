@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import BeetlejhostRare from 'common/cards/hermits/beetlejhost-rare'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'

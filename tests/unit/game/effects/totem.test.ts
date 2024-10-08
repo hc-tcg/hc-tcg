@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import Thorns from 'common/cards/default/effects/thorns'
-import Totem from 'common/cards/default/effects/totem'
+import Thorns from 'common/cards/default/attach/thorns'
+import Totem from 'common/cards/default/attach/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GoodTimesWithScarRare from 'common/cards/default/hermits/goodtimeswithscar-rare'
 import IJevinRare from 'common/cards/default/hermits/ijevin-rare'

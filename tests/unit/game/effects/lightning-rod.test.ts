@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
+import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Bow from 'common/cards/default/single-use/bow'
 import {RowComponent} from 'common/components'

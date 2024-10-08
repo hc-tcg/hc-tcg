@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import GoatfatherRare from 'common/cards/alter-egos/hermits/goatfather-rare'
+import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'

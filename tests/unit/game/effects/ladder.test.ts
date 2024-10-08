@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import Ladder from 'common/cards/alter-egos/single-use/ladder'
-import IronArmor from 'common/cards/default/effects/iron-armor'
+import Ladder from 'common/cards/single-use/ladder'
+import IronArmor from 'common/cards/default/attach/iron-armor'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import SmallishbeansCommon from 'common/cards/season-x/hermits/smallishbeans-common'

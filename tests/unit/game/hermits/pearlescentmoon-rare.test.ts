@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
-import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
+import Anvil from 'common/cards/single-use/anvil'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import PearlescentMoonRare from 'common/cards/default/hermits/pearlescentmoon-rare'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'

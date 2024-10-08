@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import KingJoelRare from 'common/cards/alter-egos-iii/hermits/kingjoel-rare'
-import Egg from 'common/cards/alter-egos/single-use/egg'
+import KingJoelRare from 'common/cards/hermits/kingjoel-rare'
+import Egg from 'common/cards/single-use/egg'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import WelsknightCommon from 'common/cards/default/hermits/welsknight-common'

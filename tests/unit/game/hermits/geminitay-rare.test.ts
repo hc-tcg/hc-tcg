@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import IronArmor from 'common/cards/default/effects/iron-armor'
-import Totem from 'common/cards/default/effects/totem'
+import IronArmor from 'common/cards/default/attach/iron-armor'
+import Totem from 'common/cards/default/attach/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'

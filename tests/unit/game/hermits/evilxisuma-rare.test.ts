@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
-import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
+import ArmorStand from 'common/cards/attach/armor-stand'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'

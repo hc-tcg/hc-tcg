@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import GoldArmor from 'common/cards/default/effects/gold-armor'
+import GoldArmor from 'common/cards/default/attach/gold-armor'
 import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 import WelsknightRare from 'common/cards/default/hermits/welsknight-rare'
 import {InstantHealthII} from 'common/cards/default/single-use/instant-health'

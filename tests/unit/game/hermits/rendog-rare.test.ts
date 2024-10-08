@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
+import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
 import RendogRare from 'common/cards/default/hermits/rendog-rare'
