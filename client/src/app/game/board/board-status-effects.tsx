@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffect from 'components/status-effects/status-effect'
 import Tooltip from 'components/tooltip'
-import statusEffectImageCss from '../../components/status-effects/status-effect.module.scss'
+import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
 import css from './board.module.scss'
 
 type ExpandStatusEffectProps = {
