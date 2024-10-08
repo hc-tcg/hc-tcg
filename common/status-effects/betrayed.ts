@@ -6,11 +6,13 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const BetrayedEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'betrayed',
 	icon: 'betrayed',
 	name: 'Betrayed',
 	description:
@@ -32,7 +34,12 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
-			game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			game.removeBlockedActions(
+				this.icon,
+				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
+				'END_TURN',
+			)
 
 			// Return if the opponent has no AFK Hermits to attack
 			if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -51,8 +58,16 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			// Return if no energy
 			if (
 				!activeHermit.isHermit() ||
-				(!hasEnoughEnergy(energy, activeHermit.props.primary.cost) &&
-					!hasEnoughEnergy(energy, activeHermit.props.secondary.cost))
+				(!hasEnoughEnergy(
+					energy,
+					activeHermit.props.primary.cost,
+					game.settings.noItemRequirements,
+				) &&
+					!hasEnoughEnergy(
+						energy,
+						activeHermit.props.secondary.cost,
+						game.settings.noItemRequirements,
+					))
 			) {
 				return
 			}
@@ -65,11 +80,19 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 				return
 			}
 
-			// The opponent needs to attack in this case, so prevent them switching or ending turn
-			game.addBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
+			// The opponent needs to attack in this case, so prevent them switching, using only a single use attack, or ending turn
+			game.addBlockedActions(
+				this.icon,
+				'CHANGE_ACTIVE_HERMIT',
+				'SINGLE_USE_ATTACK',
+				'END_TURN',
+			)
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
+		observer.subscribe(player.hooks.onActiveRowChange, () => {
+			if (game.currentPlayerEntity === player.entity) blockActions()
+		})
 		observer.subscribe(player.hooks.onAttach, blockActions)
 		observer.subscribe(player.hooks.onDetach, blockActions)
 
@@ -78,7 +101,10 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			player.hooks.getAttackRequests,
 			(_activeInstance, _hermitAttackType) => {
 				// Only pick if there is afk to pick
-				if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					pickedAfkHermit = null
+					return
+				}
 
 				game.addPickRequest({
 					player: player.entity,
@@ -89,7 +115,6 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 						pickedAfkHermit = pickedSlot
 					},
 					onTimeout() {
-						observer.unsubscribe(player.hooks.getAttackRequests)
 						const firstAfk = game.components.find(SlotComponent, pickCondition)
 						if (!firstAfk) return
 						pickedAfkHermit = firstAfk
@@ -98,25 +123,35 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			},
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isType('primary', 'secondary')) return
-			observer.unsubscribe(player.hooks.beforeAttack)
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_CHANGE_TARGET,
+			(attack) => {
+				if (attack.player.entity !== player.entity) return
+				if (!attack.isType('primary', 'secondary')) return
 
-			if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
-				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
-			}
+				if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
+					attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
+				}
 
-			// They attacked now, they can end turn or change hermits with Chorus Fruit
-			game.removeBlockedActions(this.icon, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
-		})
+				// They attacked now, they can end turn or change hermits with Chorus Fruit
+				game.removeBlockedActions(
+					this.icon,
+					'CHANGE_ACTIVE_HERMIT',
+					'SINGLE_USE_ATTACK',
+					'END_TURN',
+				)
+				effect.remove()
+			},
+		)
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			effect.remove()
-		})
-
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 

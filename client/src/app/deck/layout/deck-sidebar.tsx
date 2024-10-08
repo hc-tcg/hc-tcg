@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import {KebabMenuIcon} from 'components/svgs'
 import {ReactNode, useState} from 'react'
 import css from './deck-sidebar.module.scss'
 
@@ -8,23 +7,42 @@ type Props = {
 	header?: ReactNode
 	footer?: ReactNode
 	width?: 'normal' | 'half'
+	showHeader: boolean
+	showHeaderOnMobile: boolean
 }
 
-function DeckSidebar({children, header, footer, width}: Props) {
+function DeckSidebar({
+	children,
+	header,
+	footer,
+	width,
+	showHeader,
+	showHeaderOnMobile,
+}: Props) {
 	const [active, setActive] = useState<boolean>(true)
 
 	return (
 		<section className={classNames(css.sidebar, width && css[width])}>
-			<div className={css.header}>
-				{header}
-				<button
-					className={classNames(css.toggle, !active && css.open)}
-					onClick={() => setActive(!active)}
+			{showHeader && (
+				<div
+					className={classNames(
+						css.header,
+						!showHeaderOnMobile && css.hideOnMobile,
+					)}
 				>
-					<KebabMenuIcon />
-				</button>
-			</div>
-
+					{header}
+					<button
+						className={classNames(
+							css.toggle,
+							!active && css.open,
+							css.showOnMobile,
+						)}
+						onClick={() => setActive(!active)}
+					>
+						<img src="/images/card-icon.png" className={css.toggleImage}></img>
+					</button>
+				</div>
+			)}
 			<div className={classNames(css.bodyWrapper, active && css.hide)}>
 				<div className={css.body}>{children}</div>
 				{footer}

@@ -4,10 +4,23 @@
 	font-size: 16px;
 	width: max-content;
 	max-width: 29rem;
-	z-index: 110;
+	z-index: 130;
+	overflow: hidden;
+	background-color: rgba(10, 1, 15, 95%);
+	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
+	color: var(--gray-200);
+	padding: 8px;
+	border-radius: 4px;
 
 	&.showAboveModal {
 		z-index: 121;
+	}
+}
+
+@media screen and (max-width: 800px) {
+	.tooltip {
+		margin: 2vh;
+		overflow: hidden;
 	}
 }
 

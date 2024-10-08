@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -14,7 +15,7 @@ const IronArmor: Attach = {
 	description:
 		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn.',
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
@@ -22,19 +23,23 @@ const IronArmor: Attach = {
 
 		let damageBlocked = 0
 
-		observer.subscribe(player.hooks.onDefence, (attack) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect'))
-				return
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.EFFECT_REDUCE_DAMAGE,
+			(attack) => {
+				if (!attack.isTargeting(component) || attack.isType('status-effect'))
+					return
 
-			if (damageBlocked < 20) {
-				const damageReduction = Math.min(
-					attack.calculateDamage(),
-					20 - damageBlocked,
-				)
-				damageBlocked += damageReduction
-				attack.reduceDamage(component.entity, damageReduction)
-			}
-		})
+				if (damageBlocked < 20) {
+					const damageReduction = Math.min(
+						attack.calculateDamage(),
+						20 - damageBlocked,
+					)
+					damageBlocked += damageReduction
+					attack.addDamageReduction(component.entity, damageReduction)
+				}
+			},
+		)
 
 		const resetCounter = () => {
 			damageBlocked = 0

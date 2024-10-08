@@ -1,5 +1,6 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -28,20 +29,22 @@ const OverseerRare: Hermit = {
 		power: 'Attack damage doubles versus Farm types.',
 	},
 	onAttach(
-		_game: GameModel,
+		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.MODIFY_DAMAGE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-
-			const targetHermit = attack.target?.getHermit()
-			if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
-				attack.multiplyDamage(component.entity, 2)
-		})
+				const targetHermit = attack.target?.getHermit()
+				if (targetHermit?.isHermit() && targetHermit.props.type === 'farm')
+					attack.multiplyDamage(component.entity, 2)
+			},
+		)
 	},
 }
 

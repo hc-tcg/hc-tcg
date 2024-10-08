@@ -1,5 +1,4 @@
 import {CardComponent, PlayerComponent} from '../components'
-import {DEBUG_CONFIG} from '../config'
 import {CoinFlipResult} from '../types/game-state'
 
 /* Array of [coin flip number, weight of coinflip number] */
@@ -11,10 +10,23 @@ const COIN_FLIP_WEIGHTS = [
 	[8, 1],
 ]
 
+const COIN_FORCED_WEIGHTS = [
+	[2, 3],
+	[3, 4],
+]
+
 const COIN_FLIP_ARRAY = COIN_FLIP_WEIGHTS.reduce((acc, [count, weight]) => {
 	acc.push(...new Array(weight).fill(count))
 	return acc
 }, [])
+
+const COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
+	(acc, [count, weight]) => {
+		acc.push(...new Array(weight).fill(count))
+		return acc
+	},
+	[],
+)
 
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
@@ -22,31 +34,38 @@ export function flipCoin(
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
-	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = playerTossingCoin.game.components.get(
-		playerTossingCoin.activeRowEntity,
-	)
-	if (activeRowIndex === null) {
-		console.log(
-			`${card.props.numericId} attempted to flip coin with no active row!, that shouldn't be possible`,
-		)
-		return []
-	}
+	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 
-	let coinFlips: Array<CoinFlipResult> = []
+	let coinFlips: Array<{
+		result: CoinFlipResult
+		forced: boolean
+	}> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			coinFlips.push('heads')
+			coinFlips.push({
+				result: 'heads',
+				forced: true,
+			})
 		} else {
 			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? 'heads' : 'tails'
-			coinFlips.push(coinFlip)
+			coinFlips.push({
+				result: coinFlip,
+				forced: false,
+			})
 		}
 	}
 
-	const coinFlipAmount =
+	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
+
+	let coinFlipAmount =
 		COIN_FLIP_ARRAY[Math.floor(Math.random() * COIN_FLIP_ARRAY.length)]
 
-	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
+	if (coinFlips.map((c) => c.forced).every((c) => c)) {
+		coinFlipAmount =
+			COIN_FLIP_FORCED_ARRAY[
+				Math.floor(Math.random() * COIN_FLIP_FORCED_ARRAY.length)
+			]
+	}
 
 	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
@@ -59,5 +78,5 @@ export function flipCoin(
 		delay: coinFlipAmount * 350 + 1000,
 	})
 
-	return coinFlips
+	return coinFlips.map((f) => f.result)
 }

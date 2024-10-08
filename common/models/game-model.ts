@@ -7,12 +7,12 @@ import {
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
+import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
 import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	ActionResult,
 	DefaultDictionary,
 	GameEndOutcomeT,
 	GameEndReasonT,
@@ -21,23 +21,25 @@ import {
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
-import {Hook} from '../types/hooks'
+import {GameHook, Hook, PriorityHook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {afterAttack, beforeAttack} from '../types/priorities'
+import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
 import {
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
 } from '../utils/state-gen'
-import {AttackModel} from './attack-model'
+import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	public set(game: GameModel, value: T) {
-		if (game.id in this.values) {
-			game.afterGameEnd.add('GameValue<T>', () => this.clear(game))
+		if (!(game.id in this.values)) {
+			game.hooks.afterGameEnd.add('GameValue<T>', () => this.clear(game))
 		}
 		this.setValue(game.id, value)
 	}
@@ -51,24 +53,100 @@ export class GameValue<T> extends DefaultDictionary<GameModel, T> {
 	}
 }
 
+export type GameSettings = {
+	maxTurnTime: number
+	extraActionTime: number
+	showHooksState: {
+		enabled: boolean
+		clearConsole: boolean
+	}
+	blockedActions: Array<TurnAction>
+	availableActions: Array<TurnAction>
+	autoEndTurn: boolean
+	disableDeckOut: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	oneShotMode: boolean
+	extraStartingCards: Array<string>
+	disableDamage: boolean
+	noItemRequirements: boolean
+	forceCoinFlip: boolean
+	shuffleDeck: boolean
+	logErrorsToStderr: boolean
+	logBoardState: boolean
+	disableRewardCards: boolean
+}
+
+export function gameSettingsFromEnv(): GameSettings {
+	return {
+		maxTurnTime: CONFIG.limits.maxTurnTime,
+		extraActionTime: CONFIG.limits.extraActionTime,
+		showHooksState: DEBUG_CONFIG.showHooksState,
+		blockedActions: DEBUG_CONFIG.blockedActions,
+		availableActions: DEBUG_CONFIG.availableActions,
+		autoEndTurn: DEBUG_CONFIG.autoEndTurn,
+		disableDeckOut: DEBUG_CONFIG.disableDeckOut,
+		startWithAllCards: DEBUG_CONFIG.startWithAllCards,
+		unlimitedCards: DEBUG_CONFIG.unlimitedCards,
+		oneShotMode: DEBUG_CONFIG.oneShotMode,
+		extraStartingCards: DEBUG_CONFIG.extraStartingCards,
+		disableDamage: DEBUG_CONFIG.disableDamage,
+		noItemRequirements: DEBUG_CONFIG.noItemRequirements,
+		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
+		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
+		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
+		logBoardState: DEBUG_CONFIG.logBoardState,
+		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
+	}
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
-	private internalCode: string | null
+	private internalGameCode: string | null
+	private internalSpectatorCode: string | null
+
+	public readonly settings: GameSettings
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	/** Voice lines to play on the next game state update.
+	 * This is used for the Evil X boss fight.
+	 */
+	public voiceLineQueue: Array<string>
 
 	/** The objects used in the game. */
 	public components: ComponentTable
-	/** Hook for when the game ends and references needs to be disposed */
-	public afterGameEnd: Hook<string, () => void>
+	public hooks: {
+		/** Hook called before the main attack loop, for every attack from any source */
+		beforeAttack: PriorityHook<
+			(attack: AttackModel) => void,
+			typeof beforeAttack
+		>
+		/** Hook called after the main attack loop, one stage at a time, for every attack from any source */
+		afterAttack: PriorityHook<
+			(attack: ReadonlyAttackModel) => void,
+			typeof afterAttack
+		>
+		/** Hook called when the `slot.locked` combinator is called.
+		 * Returns a combinator that verifies if the slot is locked or not.
+		 * Locked slots cannot be chosen in some combinator expressions.
+		 */
+		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+		/** Hook called when the game ends for disposing references */
+		afterGameEnd: Hook<string, () => void>
+		/** Hook for reviving rows after all attacks are executed */
+		rowRevive: PriorityHook<
+			(attack: ReadonlyAttackModel) => void,
+			typeof rowRevive
+		>
+	}
 
 	public endInfo: {
-		deadPlayerEntities: Array<string>
-		winner: string | null
+		deadPlayerEntities: Array<PlayerEntity>
+		winner: PlayerId | null
 		outcome: GameEndOutcomeT | null
 		reason: GameEndReasonT | null
 	}
@@ -76,11 +154,21 @@ export class GameModel {
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
-		code?: string,
+		settings: GameSettings,
+		options?: {
+			gameCode?: string
+			spectatorCode?: string
+			randomizeOrder?: false
+		},
 	) {
+		options = options ?? {}
+
+		this.settings = settings
+
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalCode = code || null
+		this.internalGameCode = options.gameCode || null
+		this.internalSpectatorCode = options.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -94,10 +182,26 @@ export class GameModel {
 		}
 
 		this.components = new ComponentTable(this)
-		this.afterGameEnd = new Hook<string, () => void>()
-		setupComponents(this.components, player1, player2)
+		this.hooks = {
+			beforeAttack: new PriorityHook(beforeAttack),
+			rowRevive: new PriorityHook(rowRevive),
+			afterAttack: new PriorityHook(afterAttack),
+			freezeSlots: new GameHook(),
+			afterGameEnd: new Hook(),
+		}
+		setupComponents(this.components, player1, player2, {
+			shuffleDeck: settings.shuffleDeck,
+			startWithAllCards: settings.startWithAllCards,
+			unlimitedCards: settings.unlimitedCards,
+			extraStartingCards: settings.extraStartingCards,
+		})
 
-		this.state = getGameState(this)
+		this.state = getGameState(this, options.randomizeOrder)
+		this.voiceLineQueue = []
+	}
+
+	public get logHeader() {
+		return `Game ${this.id}:`
 	}
 
 	public get currentPlayerEntity() {
@@ -142,8 +246,12 @@ export class GameModel {
 		return this.internalId
 	}
 
-	public get code() {
-		return this.internalCode
+	public get gameCode() {
+		return this.internalGameCode
+	}
+
+	public get spectatorCode() {
+		return this.internalSpectatorCode
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {
@@ -248,10 +356,6 @@ export class GameModel {
 			allBlockedActions.push(...actions)
 		})
 		return allBlockedActions
-	}
-
-	public setLastActionResult(action: TurnAction, result: ActionResult) {
-		this.state.lastActionResult = {action, result}
 	}
 
 	public addPickRequest(newRequest: PickRequest, before = false) {

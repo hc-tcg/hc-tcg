@@ -1,8 +1,9 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {receiveMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {call, put, takeEvery, takeLatest} from 'typed-redux-saga'
+import {call, put, select, takeEvery, takeLatest} from 'typed-redux-saga'
 import {FbdbState} from './fbdb-reducer'
 
 const createAuthChannel = () => {
@@ -44,6 +45,7 @@ function* resetStatsSaga() {
 
 function* fbdbSaga(): SagaIterator {
 	if (!firebase) return
+	const socket = yield* select(getSocket)
 	const authChannel = yield* call(createAuthChannel)
 	yield* takeLatest(authChannel, authSaga)
 	yield* takeEvery('RESET_STATS', resetStatsSaga)
@@ -51,7 +53,7 @@ function* fbdbSaga(): SagaIterator {
 
 	while (true) {
 		const {outcome, won} = yield* call(
-			receiveMsg(serverMessages.GAME_OVER_STAT),
+			receiveMsg(socket, serverMessages.GAME_OVER_STAT),
 		)
 		if (global.dbObj.dbref) {
 			const stats = global.dbObj.stats

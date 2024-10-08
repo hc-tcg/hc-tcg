@@ -20,8 +20,7 @@
 	border: 2px solid var(--color-error-highlight);
 	background: var(--color-error);
 	color: var(--text-light);
-	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
-		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%)) drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
 	z-index: 11;
 }
 
@@ -78,11 +77,9 @@
 	font-size: 1rem;
 	color: gold;
 	text-indent: 3px;
-	background: linear-gradient(
-		to right,
-		rgba(var(--color-700), 0),
-		rgba(var(--color-900), 0.4)
-	);
+	background: linear-gradient(to right,
+			rgba(var(--color-700), 0),
+			rgba(var(--color-900), 0.4));
 	transition: all 0.25s ease-in-out;
 }
 
@@ -111,7 +108,7 @@
 		transform: translateY(1px);
 	}
 
-	> p {
+	>p {
 		font-size: 1rem;
 		filter: var(--text-shadow);
 		letter-spacing: 0.5px;
@@ -166,7 +163,7 @@
 	height: 2rem;
 	flex-shrink: 0;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -182,7 +179,7 @@
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -202,7 +199,7 @@
 	display: flex;
 	justify-content: stretch;
 
-	> * {
+	>* {
 		flex-grow: 1;
 	}
 }
@@ -259,7 +256,7 @@
 		color: var(--gray-200);
 	}
 
-	&:invalid[data-focused="true"] ~ .errorMessage {
+	&:invalid[data-focused="true"]~.errorMessage {
 		display: inline;
 		width: 100%;
 		color: red;
@@ -289,6 +286,7 @@
 	gap: 0.5rem;
 	padding: 0.5rem;
 	margin-bottom: 0.5rem;
+	width: 100%;
 
 	// background: var(--gray-800);
 	// border-bottom: 1px solid var(--gray-100);
@@ -297,8 +295,6 @@
 
 .editDeckInfoSettings {
 	display: flex;
-
-	// align-items: center;
 	gap: 0.5rem;
 }
 
@@ -319,7 +315,7 @@
 }
 
 .editableDeckName:not(:focus) {
-	&:invalid[data-focused="true"] ~ .errorMessage {
+	&:invalid[data-focused="true"]~.errorMessage {
 		display: block;
 		width: 100%;
 		color: red;
@@ -363,7 +359,7 @@
 		background-color: var(--gray-400);
 	}
 
-	> img {
+	>img {
 		height: 1.5rem;
 		width: 1.5rem;
 	}
@@ -391,14 +387,224 @@
 	}
 }
 
+.showOnMobile {
+	display: none;
+	visibility: hidden;
+}
+
+.mobileDeckPreview {
+	display: none;
+	visibility: hidden;
+	overflow: scroll;
+	width: 45%;
+}
+
+.mobileSelector {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: 1vh;
+}
+
+.mobileDeckStats {
+	display: flex;
+	flex-direction: row;
+	justify-content: right;
+	gap: 0.5rem;
+	width: 40%;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.mobileDeckName {
+	background-color: #2b2c2c;
+	padding: 0.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: none;
+	white-space: nowrap;
+}
+
+.mobileDeckNamePadding {
+	flex-grow: 1;
+}
+
+.mobileDeckNameText {
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	flex-shrink: 0;
+	max-width: 40%;
+
+	&.invalid {
+		filter: drop-shadow(1px 0px 0 var(--color-error)) drop-shadow(-1px 0px 0 var(--color-error)) drop-shadow(0px 1px 0 var(--color-error)) drop-shadow(0px -1px 0 var(--color-error));
+	}
+}
+
+.mobileDeckStat {
+	background-color: var(--gray-500);
+	border-radius: 6px;
+	width: 100%;
+	text-align: center;
+	padding: 0.5rem 0.75rem;
+	font-weight: 600;
+	font-size: 14px;
+}
+
+.mobileErrorIcon {
+	width: 5%;
+	padding-left: 0.5rem;
+}
+
+.deckListContainer {
+	flex-grow: 1;
+}
+
+.spacingItem {
+	flex-grow: 1;
+}
+
+.deckTagsForm {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+
+.customInput {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+	align-items: center;
+}
+
+.tagList {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.fullTagTitle {
+	background-color: var(--gray-600);
+	padding: 0.25rem;
+	border-radius: 4px;
+	border: var(--gray-600) 2px solid;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fullTag {
+	background-color: var(--gray-600);
+	padding: 0.5rem;
+	border-radius: 4px;
+	border: var(--gray-600) 2px solid;
+
+	&:hover {
+		border: var(--text-light) 2px solid;
+		background-color: #353838;
+	}
+}
+
+.fullTagColor {
+	padding-right: 15px;
+	border-radius: 50%;
+	margin-right: 5px;
+}
+
+.tagBox {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+}
+
+.multiColoredCircleBorder {
+	border-radius: 50%;
+	filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 35%));
+}
+
+.multiColoredCircle {
+	width: 1rem;
+	height: 1rem;
+	display: flex;
+	flex-direction: column;
+	clip-path: circle(0.5rem at center);
+}
+
+.singleTag {
+	flex-grow: 1;
+}
+
+.submitButton {
+	padding: 0.75rem;
+}
+
+.importAndExport {
+	display: flex;
+	width: 100%;
+	gap: 0.5rem;
+}
+
+.footerTags {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+	flex-grow: 1;
+}
+
+.mobileTags {
+	display: flex;
+	flex-direction: row;
+}
+
+.removeButton {
+	flex-grow: 1;
+}
+
 /* MOBILE */
 @media screen and (max-width: 800px) {
 	.hideOnMobile {
 		display: none;
+		visibility: hidden;
+	}
+
+	.showOnMobile {
+		display: inherit;
+		visibility: visible;
+	}
+
+	.deckList {
+		width: 100%;
+		min-width: 100%;
+		max-width: 100%;
+		background-color: #2b2c2c;
+		height: 100%;
+		overflow: scroll;
+	}
+
+	.mobileDeckPreview {
+		display: inherit;
+		visibility: visible;
+	}
+
+	.deckListBox {
+		display: flex;
+		flex-direction: row;
+		gap: 1vh;
+		flex-grow: 1;
+		overflow: hidden;
 	}
 
 	.filterGroup {
 		justify-content: center;
+		gap: 0rem;
+		margin-bottom: 0px;
+	}
+
+	.editDeckInfo {
+		padding: 0px;
 	}
 }
 
@@ -417,8 +623,32 @@
 		background-color: var(--gray-400);
 	}
 
-	> img {
+	>img {
 		height: 1.5rem;
 		width: 1.5rem;
+	}
+}
+
+@media screen and (max-width: 365px) {
+	.mobileDeckStat {
+		padding: 0.2rem 0.2rem;
+	}
+
+	.mobileDeckName {
+		flex-wrap: wrap;
+	}
+
+	.mobileDeckNameText {
+		max-width: 80%;
+	}
+
+	.mobileDeckStats {
+		width: 100%;
+	}
+}
+
+@media (max-width: 440px) {
+	.mobileDeckPreview {
+		width: 30%;
 	}
 }

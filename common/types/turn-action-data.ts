@@ -1,4 +1,4 @@
-import {PlayerEntity, SlotEntity} from '../entities'
+import {SlotEntity} from '../entities'
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
 import {AttackAction, PlayCardAction} from './game-state'
@@ -28,6 +28,12 @@ export type PlayCardActionData = {
 	card: LocalCardInstance
 }
 
+/** Used for bosses, send the game state and wait a specified amount of time */
+export type WaitActionData = {
+	type: 'DELAY'
+	delay: number
+}
+
 export type ChangeActiveHermitActionData = {
 	type: 'CHANGE_ACTIVE_HERMIT'
 	entity: SlotEntity
@@ -35,7 +41,6 @@ export type ChangeActiveHermitActionData = {
 
 export type AttackActionData = {
 	type: AttackAction
-	player: PlayerEntity
 }
 
 export type PickSlotActionData = {
@@ -65,3 +70,4 @@ export type AnyTurnActionData =
 	| AttackActionData
 	| PickSlotActionData
 	| ModalResult
+	| WaitActionData

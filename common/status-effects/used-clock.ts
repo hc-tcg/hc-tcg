@@ -4,10 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const UsedClockEffect: Counter<PlayerComponent> = {
 	...systemStatusEffect,
+	id: 'used-clock',
 	icon: 'used-clock',
 	name: 'Clocked Out',
 	description: "Your opponent's turns cannot be skipped consecutively.",
@@ -21,11 +23,15 @@ const UsedClockEffect: Counter<PlayerComponent> = {
 	) {
 		if (effect.counter === null) effect.counter = this.counter
 
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			if (effect.counter === null) return
-			if (effect.counter === 0) effect.remove()
-			effect.counter--
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (effect.counter === null) return
+				if (effect.counter === 0) effect.remove()
+				effect.counter--
+			},
+		)
 	},
 }
 

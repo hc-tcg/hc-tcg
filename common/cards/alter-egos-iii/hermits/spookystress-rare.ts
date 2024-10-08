@@ -6,6 +6,7 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 import WaterBucket from '../../default/effects/water-bucket'
@@ -41,40 +42,44 @@ const SpookyStressRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		const {player} = component
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.ADD_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-
-			const waterBucketAttached = game.components.exists(
-				SlotComponent,
-				query.slot.has(WaterBucket),
-				query.slot.active,
-				query.slot.currentPlayer,
-			)
-
-			if (!waterBucketAttached) return
-
-			game.components
-				.filter(
-					RowComponent,
-					query.row.opponentPlayer,
-					query.not(query.row.active),
-					query.row.hermitSlotOccupied,
+				const waterBucketAttached = game.components.exists(
+					SlotComponent,
+					query.slot.has(WaterBucket),
+					query.slot.active,
+					query.slot.currentPlayer,
 				)
-				.forEach((row) => {
-					const newAttack = game.newAttack({
-						attacker: component.entity,
-						target: row.entity,
-						type: 'secondary',
-						log: (values) => `, ${values.target} for ${values.damage} damage`,
+
+				if (!waterBucketAttached) return
+
+				game.components
+					.filter(
+						RowComponent,
+						query.row.opponentPlayer,
+						query.not(query.row.active),
+						query.row.hermitSlotOccupied,
+					)
+					.forEach((row) => {
+						const newAttack = game.newAttack({
+							attacker: component.entity,
+							target: row.entity,
+							type: 'secondary',
+							log: (values) => `, ${values.target} for ${values.damage} damage`,
+						})
+						newAttack.addDamage(component.entity, 10)
+						newAttack.shouldIgnoreCards.push(
+							query.card.entity(component.entity),
+						)
+						attack.addNewAttack(newAttack)
 					})
-					newAttack.addDamage(component.entity, 10)
-					newAttack.shouldIgnoreCards.push(query.card.entity(component.entity))
-					attack.addNewAttack(newAttack)
-				})
-		})
+			},
+		)
 	},
 }
 

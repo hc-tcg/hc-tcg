@@ -10,7 +10,6 @@
 	color: var(--text-light);
 	font-size: 1.8vh;
 	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%)) drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
-	animation: shake 150ms 100ms forwards;
 
 	span {
 		display: grid;
@@ -23,12 +22,20 @@
 	}
 }
 
+.shake {
+	animation: shake 150ms 100ms forwards;
+}
+
 .text {
 	background: transparent;
 	border: none;
 	color: var(--color-error);
 	padding: 0;
 	min-height: 0;
+}
+
+.hide {
+	opacity: 0;
 }
 
 @keyframes shake {

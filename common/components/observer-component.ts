@@ -1,6 +1,7 @@
 import {Entity, ObserverEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
-import type {Hook} from '../types/hooks'
+import type {Hook, PriorityHook, WaterfallHook} from '../types/hooks'
+import {PrioritiesT, Priority, PriorityDict} from '../types/priorities'
 import type {CardComponent} from './card-component'
 import type {StatusEffectComponent} from './status-effect-component'
 
@@ -12,7 +13,7 @@ export class ObserverComponent {
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<CardComponent | StatusEffectComponent>
-	private hooks: Array<Hook<any, any>>
+	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
 	constructor(
 		game: GameModel,
@@ -32,7 +33,7 @@ export class ObserverComponent {
 	 * from the board), please use a status effect or `oneShot` instead.
 	 */
 	public subscribe<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
+		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
 		fun: Args,
 	) {
 		hook.add(this.entity, fun)
@@ -43,29 +44,28 @@ export class ObserverComponent {
 	 * removed when the observer is destroyed.
 	 */
 	public subscribeBefore<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
+		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
 		fun: Args,
 	) {
 		hook.addBefore(this.entity, fun)
 		this.hooks.push(hook)
 	}
 
-	/** Subscribe a specific hook and run the hook once. This hook is removed after it is called.
-	 * This hook is not removed when the observer is detached.
-	 */
-	public oneShot<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args>,
+	/** Subscribe to a priority hook with this observer. Functions similarly to `subscribe`. */
+	public subscribeWithPriority<
+		Args extends (...any: any) => any,
+		Priorities extends PrioritiesT,
+	>(
+		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
+		priority: Priority<Priorities>,
 		fun: Args,
 	) {
-		// @ts-ignore
-		let proxy = hook.add(this.entity, (...args) => {
-			hook.removeByProxy(proxy)
-			return fun(...args)
-		})
+		hook.add(this.entity, priority, fun)
+		this.hooks.push(hook)
 	}
 
 	/** Stop listening to a specific hook */
-	public unsubscribe(hook: Hook<ObserverEntity, any>) {
+	public unsubscribe(hook: Hook<ObserverEntity, any> | PriorityHook<any, any>) {
 		hook.remove(this.entity)
 	}
 

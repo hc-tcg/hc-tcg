@@ -9,15 +9,27 @@ import {
 } from '../components'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {DEBUG_CONFIG} from '../config'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
+import {VirtualAI} from '../types/virtual-ai'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
 	deck: Array<number | string | Card>
+}
+
+type ComponentSetupOptions = {
+	shuffleDeck: boolean
+	startWithAllCards: boolean
+	unlimitedCards: boolean
+	extraStartingCards: Array<string>
+}
+
+export type OpponentDefs = PlayerDefs & {
+	deck: Array<number | string | Card>
+	virtualAI: VirtualAI
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -29,12 +41,13 @@ export function setupComponents(
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
+	options: ComponentSetupOptions,
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck)
+	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
+	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
@@ -42,10 +55,11 @@ function setupEcsForPlayer(
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
+	options: ComponentSetupOptions,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'random',
+			position: 'back',
 		})
 		components.new(CardComponent, card, slot.entity)
 	}
@@ -86,52 +100,54 @@ function setupEcsForPlayer(
 	}
 
 	// Ensure there is a hermit in the first 5 cards
-	const sortedCards = components
-		.filter(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.deck),
-		)
-		.sort(CardComponent.compareOrder)
+	const cards = components.filter(
+		CardComponent,
+		query.card.player(playerEntity),
+		query.card.slot(query.slot.deck),
+	)
 
-	let index = sortedCards.findIndex((card) => card.isHermit())
+	const amountOfStartingCards =
+		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
-	if (index > 5) {
-		let a = sortedCards[index]
-		const swapIndex = Math.floor(Math.random() * 5)
-		let b = sortedCards[swapIndex]
+	if (options.shuffleDeck) {
+		cards
+			.sort(() => Math.random() - 0.5)
+			.forEach((card, i) => {
+				if (card.slot.inDeck()) card.slot.order = i
+			})
 
-		if (a.slot?.inDeck() && b.slot?.inDeck()) {
-			let tmp = b.slot.order
-			a.slot.order = b.slot.order
-			b.slot.order = tmp
-			let tmpCard = sortedCards[index]
-			sortedCards[index] = sortedCards[swapIndex]
-			sortedCards[swapIndex] = tmpCard
+		while (
+			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
+		) {
+			cards
+				.sort(() => Math.random() - 0.5)
+				.forEach((card, i) => {
+					if (card.slot.inDeck()) card.slot.order = i
+				})
 		}
 	}
 
-	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards
-			? sortedCards.length
-			: 7
-
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
+	for (let i = 0; i < options.extraStartingCards.length; i++) {
+		const id = options.extraStartingCards[i]
 		let slot = components.new(HandSlotComponent, playerEntity)
 		components.new(CardComponent, id, slot.entity)
 	}
 
-	sortedCards.slice(0, amountOfStartingCards).forEach((card) => {
+	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
 }
 
-export function getGameState(game: GameModel): GameState {
+export function getGameState(
+	game: GameModel,
+	randomizeOrder: boolean = true,
+): GameState {
 	const playerEntities = game.components.filter(PlayerComponent)
 
-	if (Math.random() >= 0.5) {
-		playerEntities.reverse()
+	if (randomizeOrder !== false) {
+		if (Math.random() >= 0.5) {
+			playerEntities.reverse()
+		}
 	}
 
 	const gameState: GameState = {
@@ -144,7 +160,6 @@ export function getGameState(game: GameModel): GameState {
 			currentAttack: null,
 		},
 		order: playerEntities.map((x) => x.entity),
-		lastActionResult: null,
 
 		pickRequests: [],
 		modalRequests: [],
@@ -154,6 +169,8 @@ export function getGameState(game: GameModel): GameState {
 			turnRemaining: 0,
 			opponentActionStartTime: null,
 		},
+
+		isBossGame: false,
 	}
 
 	return gameState

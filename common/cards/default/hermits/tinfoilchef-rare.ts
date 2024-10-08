@@ -1,5 +1,11 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import GoMiningEffect from '../../../status-effects/go-mining'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -34,15 +40,21 @@ const TinFoilChefRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
-			game.currentPlayer.draw(1)
-		})
+				game.components
+					.new(StatusEffectComponent, GoMiningEffect, component.entity)
+					.apply(player.entity)
+			},
+		)
 	},
 }
 

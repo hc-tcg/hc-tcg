@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import SheepStareEffect from '../../../status-effects/sheep-stare'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -39,17 +40,21 @@ const ZedaphPlaysRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
-				return
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
+					return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] !== 'heads') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] !== 'heads') return
 
-			game.components
-				.new(StatusEffectComponent, SheepStareEffect, component.entity)
-				.apply(opponentPlayer.entity)
-		})
+				game.components
+					.new(StatusEffectComponent, SheepStareEffect, component.entity)
+					.apply(opponentPlayer.entity)
+			},
+		)
 	},
 }
 

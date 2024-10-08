@@ -15,7 +15,7 @@ import {
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
-import {formatText} from '../utils/formatting'
+import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 
@@ -33,12 +33,16 @@ export class BattleLogModel {
 	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
-		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
+		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$`
 	}
 
 	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
-		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+		const heads = coinFlip.tosses.filter(
+			(flip) => flip.result === 'heads',
+		).length
+		const tails = coinFlip.tosses.filter(
+			(flip) => flip.result === 'tails',
+		).length
 
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? 'flipped $gheads$' : 'flipped $btails$'
@@ -87,6 +91,15 @@ export class BattleLogModel {
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
 			})
+
+			console.info(`${this.game.logHeader} ${firstEntry.description}`)
+		}
+
+		// We skip waiting for the logs to send if there are no players. This is because
+		// the coin flip delay confuses jest. Additionally we don't want to wait longer
+		// than what is needed in tests.
+		if (this.game.getPlayers().length === 0) {
+			return
 		}
 
 		await new Promise((e) =>
@@ -113,15 +126,17 @@ export class BattleLogModel {
 		if (card == null) return '$bINVALID VALUE$'
 
 		if (
-			card.props.category === 'hermit' &&
+			card.slot.type === 'hermit' &&
 			player &&
 			player.activeRowEntity !== row?.entity &&
 			row?.index !== undefined
 		) {
-			return `${card.props.name} (${row?.index + 1})`
+			return card.turnedOver
+				? `??? (${row.index + 1})`
+				: `${card.props.name} (${row?.index + 1})`
 		}
 
-		return `${card.props.name}`
+		return card.turnedOver ? '???' : `${card.props.name}`
 	}
 
 	public addPlayCardEntry(
@@ -233,6 +248,7 @@ export class BattleLogModel {
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
+				attack: subAttack,
 			})
 
 			reducer += logMessage
@@ -286,7 +302,7 @@ export class BattleLogModel {
 		let oldHermit = this.game.components.get(oldHermitEntity)
 		let newHermit = this.game.components.get(newHermitEntity)
 
-		if (!newRow || !oldHermit || !newHermit) return
+		if (!newRow || !newHermit) return
 
 		if (oldHermit) {
 			this.logMessageQueue.push({
@@ -324,14 +340,14 @@ export class BattleLogModel {
 		this.sendLogs()
 	}
 
-	public addTurnEndEntry() {
+	public addTurnStartEntry() {
 		this.game.chat.push({
 			sender: {
 				type: 'system',
-				id: this.game.opponentPlayer.entity,
+				id: this.game.currentPlayer.entity,
 			},
 			createdAt: Date.now(),
-			message: {TYPE: 'LineNode'},
+			message: LineNode(),
 		})
 
 		broadcast(this.game.getPlayers(), {

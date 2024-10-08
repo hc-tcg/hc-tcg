@@ -4,11 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {onTurnEnd} from '../types/priorities'
 import {StatusEffect, hiddenStatusEffect} from './status-effect'
 
 const TurnSkippedEffect: StatusEffect<PlayerComponent> = {
 	...hiddenStatusEffect,
-	name: 'Turn Skipped',
+	id: 'turn-skipped',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -29,9 +30,13 @@ const TurnSkippedEffect: StatusEffect<PlayerComponent> = {
 				'PLAY_EFFECT_CARD',
 			)
 		})
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
 

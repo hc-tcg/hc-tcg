@@ -5,6 +5,7 @@ import {
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {TrapHoleEffect} from '../../../status-effects/trap-hole'
+import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -38,15 +39,19 @@ const HelsknightRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
+		const {opponentPlayer} = component
 
-		observer.subscribe(player.hooks.onAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			game.components
-				.new(StatusEffectComponent, TrapHoleEffect, component.entity)
-				.apply(opponentPlayer.entity)
-		})
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				game.components
+					.new(StatusEffectComponent, TrapHoleEffect, component.entity)
+					.apply(opponentPlayer.entity)
+			},
+		)
 	},
 }
 

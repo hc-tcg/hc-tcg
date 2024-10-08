@@ -3,6 +3,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 
 const ProtectedEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
+	id: 'protected',
 	icon: 'protected',
 	name: "Sheriff's Protection",
 	description: 'This Hermit does not take damage on their first active turn.',

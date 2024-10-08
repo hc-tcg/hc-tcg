@@ -1,7 +1,13 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {RowEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
+import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
+import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -36,7 +42,14 @@ const TinFoilChefUltraRare: Hermit = {
 	) {
 		const {player, opponentPlayer} = component
 
-		let hasDiscardedFrom = new Set<RowEntity>()
+		const hasDiscardedFrom = (row: RowEntity): boolean => {
+			return game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(TFCDiscardedFromEffect),
+				query.effect.targetIsCardAnd(query.card.rowEntity(row)),
+				(_game, value) => value.creatorEntity === component.entity,
+			)
+		}
 
 		let targetCardQuery = query.every(
 			query.card.active,
@@ -44,22 +57,28 @@ const TinFoilChefUltraRare: Hermit = {
 			query.card.slot(query.slot.attach, query.not(query.slot.frozen)),
 		)
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			if (opponentPlayer.activeRow === null) return
-			// Can't discard two effect cards on the same hermit
-			if (hasDiscardedFrom.has(opponentPlayer.activeRow.entity)) return
-			if (!game.components.exists(CardComponent, targetCardQuery)) return
+				if (opponentPlayer.activeRow === null) return
+				// Can't discard two effect cards on the same hermit
+				if (hasDiscardedFrom(opponentPlayer.activeRow.entity)) return
+				if (!game.components.exists(CardComponent, targetCardQuery)) return
 
-			const coinFlip = flipCoin(player, component)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(player, component)
+				if (coinFlip[0] === 'tails') return
 
-			hasDiscardedFrom.add(opponentPlayer.activeRow.entity)
+				game.components
+					.new(StatusEffectComponent, TFCDiscardedFromEffect, component.entity)
+					.apply(opponentPlayer.activeRow.getHermit()?.entity)
 
-			game.components.find(CardComponent, targetCardQuery)?.discard()
-		})
+				game.components.find(CardComponent, targetCardQuery)?.discard()
+			},
+		)
 	},
 }
 

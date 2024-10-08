@@ -1,11 +1,8 @@
 import {CardComponent, ObserverComponent} from '../../../components'
-import {ObserverEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import {InstancedValue} from '../../base/card'
+import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-
-const observers = new InstancedValue<Array<ObserverEntity>>(() => [])
 
 const WormManRare: Hermit = {
 	...hermit,
@@ -40,58 +37,57 @@ const WormManRare: Hermit = {
 	): void {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
+		let pendingObserver: ObserverComponent | null = null
 
-			game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			observer.subscribe(player.hooks.onAttach, (attachedComponent) => {
-				game.addBlockedActions(this.id, 'PLAY_HERMIT_CARD')
-				attachedComponent.turnedOver = true
+				game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
 
-				const newObserver = game.components.new(
+				pendingObserver = game.components.new(
 					ObserverComponent,
-					attachedComponent.entity,
+					component.entity,
 				)
-				observers.set(component, [
-					...observers.get(component),
-					newObserver.entity,
-				])
 
-				newObserver.subscribe(
-					player.hooks.onActiveRowChange,
-					(_oldActiveHermit, newActiveHermit) => {
-						if (newActiveHermit.entity !== attachedComponent.entity) return
+				const newObserver = pendingObserver
+				newObserver.subscribe(player.hooks.onAttach, (attachedComponent) => {
+					game.addBlockedActions(this.id, 'PLAY_HERMIT_CARD')
+					newObserver.unsubscribe(player.hooks.onAttach)
+					pendingObserver = null
+					if (!component.slot.onBoard()) return
+
+					attachedComponent.turnedOver = true
+
+					newObserver.subscribe(
+						player.hooks.onActiveRowChange,
+						(_oldActiveHermit, newActiveHermit) => {
+							if (newActiveHermit.entity !== attachedComponent.entity) return
+							attachedComponent.turnedOver = false
+							newObserver.unsubscribeFromEverything()
+						},
+					)
+
+					newObserver.subscribe(player.hooks.onDetach, (instance) => {
+						if (instance.entity !== component.entity) return
 						attachedComponent.turnedOver = false
-						newObserver.unsubscribe(player.hooks.freezeSlots)
-					},
-				)
+						newObserver.unsubscribeFromEverything()
+					})
+				})
+			},
+		)
 
-				observer.unsubscribe(player.hooks.onAttach)
-			})
-		})
-
-		observer.subscribe(player.hooks.onTurnEnd, () => {
-			observer.unsubscribe(player.hooks.onAttach)
-		})
-	},
-	onDetach(
-		game: GameModel,
-		component: CardComponent,
-		_observer: ObserverComponent,
-	): void {
-		const {player} = component
-
-		observers.get(component).forEach((observerEntity) => {
-			const observer = game.components.get(observerEntity)
-			if (!observer) return
-			observer.unsubscribe(player.hooks.onActiveRowChange)
-
-			const attachedCard = game.components.get(observer.wrappingEntity)
-			if (!attachedCard || !(attachedCard instanceof CardComponent)) return
-			attachedCard.turnedOver = false
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+			() => {
+				pendingObserver?.unsubscribe(player.hooks.onAttach)
+				pendingObserver = null
+			},
+		)
 	},
 }
 

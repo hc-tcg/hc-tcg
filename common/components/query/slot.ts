@@ -117,6 +117,13 @@ export const index = (
 	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
+export const rowIndex = (
+	index: number | null | undefined,
+): ComponentQuery<SlotComponent> => {
+	return (_game, pos) =>
+		pos.inRow() && index !== null && pos.row.index === index
+}
+
 export const entity = (
 	entity: SlotEntity | null | undefined,
 ): ComponentQuery<SlotComponent> => {
@@ -140,15 +147,7 @@ export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
  * Use slot.player(player.entity) instead.
  */
 export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
-	const playerResult = game.currentPlayer.hooks.freezeSlots
-		.call()
-		.some((result) => result(game, pos))
-
-	const opponentResult = game.opponentPlayer.hooks.freezeSlots
-		.call()
-		.some((result) => result(game, pos))
-
-	return playerResult || opponentResult
+	return game.hooks.freezeSlots.call().some((result) => result(game, pos))
 }
 
 export function hasStatusEffect(

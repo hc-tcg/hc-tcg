@@ -3,13 +3,15 @@ import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
 	status: MatchmakingStatus
-	code: string | null
+	gameCode: string | null
+	spectatorCode: string | null
 	invalidCode: boolean
 }
 
 const defaultState: MatchmakingState = {
 	status: null,
-	code: null,
+	gameCode: null,
+	spectatorCode: null,
 	invalidCode: false,
 }
 
@@ -23,15 +25,15 @@ const matchmakingReducer = (
 				...state,
 				status: 'random_waiting',
 			}
-		case localMessages.MATCHMAKING_PRIVATE_GAME_CREATE:
+		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
 			return {
 				...state,
 				status: 'loading',
 			}
-		case localMessages.MATCHMAKING_PRIVATE_GAME_JOIN:
+		case localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY:
 			return {
 				...state,
-				status: 'private_code_needed',
+				status: 'private_lobby',
 				invalidCode: false,
 			}
 		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER:
@@ -39,43 +41,43 @@ const matchmakingReducer = (
 				...state,
 				status: 'waiting_for_player',
 			}
+		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR:
+			return {
+				...state,
+				status: 'waiting_for_player_as_spectator',
+			}
 		case localMessages.MATCHMAKING_CODE_RECIEVED:
 			return {
 				...state,
-				code: action.code,
-				status: 'private_waiting',
+				gameCode: action.gameCode,
+				spectatorCode: action.spectatorCode,
+				status: 'private_lobby',
 			}
 		case localMessages.MATCHMAKING_CODE_INVALID:
 			return {
 				...state,
-				status: 'private_code_needed',
+				status: 'private_lobby',
 				invalidCode: true,
 			}
 		case localMessages.MATCHMAKING_CODE_SET:
 			return {
 				...state,
-				code: action.code,
 				status: 'loading',
+				invalidCode: false,
 			}
 		case localMessages.DISCONNECT:
 		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
-				code: null,
-				status: null,
-				invalidCode: false,
-			}
-		case localMessages.MATCHMAKING_CLEAR:
-			return {
-				...state,
-				code: null,
+				gameCode: null,
+				spectatorCode: null,
 				status: null,
 				invalidCode: false,
 			}
 		case localMessages.GAME_START:
 			return {
 				...state,
-				status: 'starting',
+				status: 'in_game',
 			}
 		default:
 			return state

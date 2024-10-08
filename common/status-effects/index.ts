@@ -8,20 +8,24 @@ import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import DyedEffect from './dyed'
+import EfficiencyEffect from './efficiency'
+import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import GoMiningEffect from './go-mining'
+import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
+import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
-import OriginalXbEffect from './original-xb'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
@@ -35,12 +39,14 @@ import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
+import TFCDiscardedFromEffect from './tfc-discarded-from'
+import TimeSkipDisabledEffect from './time-skip-disabled'
 import {TrapHoleEffect} from './trap-hole'
 import TurnSkippedEffect from './turn-skipped'
 import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
-const effectClasses: Array<StatusEffect> = [
+export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
@@ -55,6 +61,7 @@ const effectClasses: Array<StatusEffect> = [
 	MelodyEffect,
 
 	/* System Status Effect */
+	ExBossNineEffect,
 	UsedClockEffect,
 	DeathloopReady,
 	RevivedByDeathloopEffect,
@@ -73,16 +80,20 @@ const effectClasses: Array<StatusEffect> = [
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
 	ChromaKeyedEffect,
-	OriginalXbEffect,
+	GoMiningEffect,
 	RoyalProtectionEffect,
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	IgnoreAttachSlotEffect,
+	EfficiencyEffect,
+	LooseShellEffect,
+	TFCDiscardedFromEffect,
+	TimeSkipDisabledEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
-	effectClasses.reduce((result: Record<string, StatusEffect>, effect) => {
-		result[effect.name] = effect
-		result[effect.icon] = effect
+	STATUS_EFFECTS_LIST.reduce((result: Record<string, StatusEffect>, effect) => {
+		result[effect.id] = effect
 		return result
 	}, {})

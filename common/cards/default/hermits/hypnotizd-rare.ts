@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BetrayedEffect from '../../../status-effects/betrayed'
+import {beforeAttack} from '../../../types/priorities'
 import {PickRequest} from '../../../types/server-requests'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -46,13 +47,17 @@ const HypnotizdRare: Hermit = {
 		const {player, opponentPlayer} = component
 		let target: SlotComponent | null = null
 
-		observer.subscribe(player.hooks.beforeAttack, (attack) => {
-			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
-				return
-			if (!target?.inRow()) return
-			attack.setTarget(component.entity, target.row.entity)
-			target = null
-		})
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_SET_TARGET,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!target?.inRow()) return
+				attack.setTarget(component.entity, target.row.entity)
+				target = null
+			},
+		)
 
 		observer.subscribe(
 			player.hooks.getAttackRequests,

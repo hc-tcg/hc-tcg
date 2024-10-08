@@ -8,6 +8,7 @@ import {Counter, statusEffect} from './status-effect'
 
 const BadOmenEffect: Counter<CardComponent> = {
 	...statusEffect,
+	id: 'badomen',
 	icon: 'badomen',
 	name: 'Bad Omen',
 	description: 'All coinflips are tails.',
@@ -41,7 +42,8 @@ const BadOmenEffect: Counter<CardComponent> = {
 				return coinFlips
 
 			for (let i = 0; i < coinFlips.length; i++) {
-				if (coinFlips[i]) coinFlips[i] = 'tails'
+				coinFlips[i].result = 'tails'
+				coinFlips[i].forced = true
 			}
 			return coinFlips
 		})

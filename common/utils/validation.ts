@@ -3,8 +3,19 @@ import {EXPANSIONS} from '../const/expansions'
 import {LocalCardInstance} from '../types/server-requests'
 import {getDeckCost} from './ranks'
 
-export function validateDeck(deckCards: Array<LocalCardInstance>) {
-	if (DEBUG_CONFIG.disableDeckValidation) return
+type ValidateDeckResult =
+	| {
+			valid: true
+	  }
+	| {
+			valid: false
+			reason: String
+	  }
+
+export function validateDeck(
+	deckCards: Array<LocalCardInstance>,
+): ValidateDeckResult {
+	if (DEBUG_CONFIG.disableDeckValidation) return {valid: true}
 
 	const limits = CONFIG.limits
 
@@ -14,11 +25,13 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	const hasDisabledCards = deckCards.some(
 		(card) => EXPANSIONS[card.props.expansion].disabled === true,
 	)
-	if (hasDisabledCards) return 'Deck must not include removed cards.'
+	if (hasDisabledCards)
+		return {valid: false, reason: 'Deck must not include removed cards.'}
 
 	// less than one hermit
 	const hasHermit = deckCards.some((card) => card.props.category === 'hermit')
-	if (!hasHermit) return 'Deck must have at least one Hermit.'
+	if (!hasHermit)
+		return {valid: false, reason: 'Deck must have at least one Hermit.'}
 
 	// more than max duplicates
 	const tooManyDuplicates =
@@ -32,22 +45,36 @@ export function validateDeck(deckCards: Array<LocalCardInstance>) {
 		})
 
 	if (tooManyDuplicates)
-		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`
+		return {
+			valid: false,
+			reason: `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`,
+		}
 
 	// more than max tokens
-	const deckCost = getDeckCost(deckCards)
+	const deckCost = getDeckCost(deckCards.map((card) => card.props))
 	if (deckCost > limits.maxDeckCost)
-		return `Deck cannot cost more than ${limits.maxDeckCost} tokens.`
+		return {
+			valid: false,
+			reason: `Deck cannot cost more than ${limits.maxDeckCost} tokens.`,
+		}
 
 	const exactAmount = limits.minCards === limits.maxCards
 	const exactAmountText = `Deck must have exactly ${limits.minCards} cards.`
 
 	if (deckCards.length < limits.minCards)
-		return exactAmount
-			? exactAmountText
-			: `Deck must have at least ${limits.minCards} cards.`
+		return {
+			valid: false,
+			reason: exactAmount
+				? exactAmountText
+				: `Deck must have at least ${limits.minCards} cards.`,
+		}
 	if (deckCards.length > limits.maxCards)
-		return exactAmount
-			? exactAmountText
-			: `Deck can not have more than ${limits.maxCards} cards.`
+		return {
+			valid: false,
+			reason: exactAmount
+				? exactAmountText
+				: `Deck can not have more than ${limits.maxCards} cards.`,
+		}
+
+	return {valid: true}
 }

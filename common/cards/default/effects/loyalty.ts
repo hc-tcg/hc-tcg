@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -21,19 +22,23 @@ const Loyalty: Attach = {
 	) {
 		const {player} = component
 
-		observer.subscribe(player.hooks.afterDefence, (attack) => {
-			if (!component.slot.inRow() || component.slot.row.health) return
-			if (!attack.target || !attack.isTargeting(component)) return
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(attack) => {
+				if (!component.slot.inRow() || component.slot.row.health) return
+				if (!attack.target || !attack.isTargeting(component)) return
 
-			game.components
-				.filter(
-					CardComponent,
-					query.card.player(player.entity),
-					query.card.row(query.row.index(attack.target.index)),
-					query.card.slot(query.slot.item),
-				)
-				.forEach((card) => card.draw())
-		})
+				game.components
+					.filter(
+						CardComponent,
+						query.card.player(player.entity),
+						query.card.row(query.row.index(attack.target.index)),
+						query.card.slot(query.slot.item),
+					)
+					.forEach((card) => card.draw())
+			},
+		)
 	},
 }
 

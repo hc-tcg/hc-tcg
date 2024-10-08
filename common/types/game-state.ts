@@ -23,12 +23,13 @@ export type LocalRowState = {
 }
 
 export type CoinFlipResult = 'heads' | 'tails'
+export type CoinFlip = {result: CoinFlipResult; forced: boolean}
 
 export type CurrentCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
@@ -37,7 +38,7 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlipResult>
+	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
 }
@@ -46,30 +47,6 @@ export type BattleLogT = {
 	player: PlayerEntity
 	description: string
 }
-
-export type GenericActionResult =
-	| 'SUCCESS'
-	| 'FAILURE_INVALID_DATA'
-	| 'FAILURE_NOT_APPLICABLE'
-	| 'FAILURE_ACTION_NOT_AVAILABLE'
-	| 'FAILURE_CANNOT_COMPLETE'
-	| 'FAILURE_UNKNOWN_ERROR'
-
-export type PlayCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_UNMET_CONDITION'
-	| 'FAILURE_UNMET_CONDITION_SILENT'
-
-export type PickCardActionResult =
-	| 'FAILURE_INVALID_PLAYER'
-	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_WRONG_PICK'
-
-export type ActionResult =
-	| GenericActionResult
-	| PlayCardActionResult
-	| PickCardActionResult
 
 export type {LocalModalData as ModalData} from './server-requests'
 
@@ -97,16 +74,13 @@ export type GameState = {
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
 
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
-
 	timer: {
 		turnStartTime: number
 		turnRemaining: number
 		opponentActionStartTime: number | null
 	}
+
+	isBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -131,6 +105,7 @@ export type TurnAction =
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
+	| 'DELAY'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -163,6 +138,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
+	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -177,6 +153,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
+	isSpectator: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 
@@ -191,11 +168,6 @@ export type LocalGameState = {
 	playerEntity: PlayerEntity
 	opponentPlayerEntity: PlayerEntity
 
-	lastActionResult: {
-		action: TurnAction
-		result: ActionResult
-	} | null
-
 	currentCardsCanBePlacedIn: Array<
 		[LocalCardInstance, Array<SlotEntity>]
 	> | null
@@ -209,6 +181,10 @@ export type LocalGameState = {
 		turnStartTime: number
 		turnRemaining: number
 	}
+
+	isBossGame: boolean
+
+	voiceLineQueue: Array<string>
 }
 
 type MessageSender =
@@ -233,6 +209,12 @@ export type GameLog = {
 	startHand2: Array<CardComponent>
 	startTimestamp: number
 	startDeck: string
+}
+
+export type UsedHermitAttackInfo = {
+	readonly attackType: 'primary' | 'secondary'
+	readonly attacker: CardComponent
+	readonly turn: number
 }
 
 export abstract class DefaultDictionary<Keys, Type> {

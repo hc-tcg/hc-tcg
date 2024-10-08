@@ -6,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
+import {afterAttack} from '../../../types/priorities'
 import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
@@ -23,7 +24,8 @@ const ChorusFruit: SingleUse = {
 	log: (values) => `${values.defaultLog} with {your|their} attack`,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		query.actionAvailable('CHANGE_ACTIVE_HERMIT'),
+		(game, _slot) =>
+			!game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game', 'betrayed']),
 		query.not(
 			query.exists(
 				SlotComponent,
@@ -47,33 +49,36 @@ const ChorusFruit: SingleUse = {
 	) {
 		const {player} = component
 
-		let switchedActiveHermit = false
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isType('primary', 'secondary')) return
 
-		observer.subscribe(player.hooks.afterAttack, () => {
-			if (switchedActiveHermit) return
-			switchedActiveHermit = true
+				applySingleUse(game, component.slot)
 
-			applySingleUse(game, component.slot)
+				if (game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])) return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick one of your Hermits to become the new active Hermit',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.hermit,
-					query.not(query.slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
-					if (pickedSlot.row.entity !== player.activeRowEntity) {
-						player.changeActiveRow(pickedSlot.row)
-					} else {
-						switchedActiveHermit = false
-					}
-				},
-			})
-		})
+				observer.unsubscribe(game.hooks.afterAttack)
+
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Pick one of your Hermits to become the new active Hermit',
+					canPick: query.every(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.not(query.slot.empty),
+					),
+					onResult(pickedSlot) {
+						if (!pickedSlot.inRow()) return
+						if (pickedSlot.row.entity !== player.activeRowEntity) {
+							player.changeActiveRow(pickedSlot.row)
+						}
+					},
+				})
+			},
+		)
 	},
 }
 

@@ -2,9 +2,11 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
+	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
@@ -58,12 +60,17 @@ const RendogRare: Hermit = {
 		if (!newAttack) return null
 
 		const attackName = mockedAttack.attackName
-		newAttack.updateLog(
-			(values) =>
-				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
-					values.target
-				} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`,
-		)
+		newAttack.updateLog((values) => {
+			if (
+				values.attack.getDamageMultiplier() === 0 ||
+				!values.attack.target?.getHermit()
+			) {
+				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked with ${values.attackName} and missed`
+			}
+			return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+				values.target
+			} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
+		})
 		return newAttack
 	},
 	onAttach(
@@ -72,6 +79,27 @@ const RendogRare: Hermit = {
 		observer: ObserverComponent,
 	) {
 		const {player} = component
+
+		if (query.card.is(RendogRare)(game, component)) {
+			if (!game.components.exists(SlotComponent, pickCondition))
+				game.components
+					.new(
+						StatusEffectComponent,
+						SecondaryAttackDisabledEffect,
+						component.entity,
+					)
+					.apply(component.entity)
+			observer.subscribe(player.hooks.onTurnStart, () => {
+				if (!game.components.exists(SlotComponent, pickCondition))
+					game.components
+						.new(
+							StatusEffectComponent,
+							SecondaryAttackDisabledEffect,
+							component.entity,
+						)
+						.apply(component.entity)
+			})
+		}
 
 		observer.subscribe(
 			player.hooks.getAttackRequests,
@@ -92,22 +120,21 @@ const RendogRare: Hermit = {
 
 						game.addModalRequest({
 							player: player.entity,
-							data: {
-								modalId: 'copyAttack',
-								payload: {
-									modalName: 'Rendog: Choose an attack to copy',
-									modalDescription:
-										"Which of the Hermit's attacks do you want to copy?",
-									hermitCard: pickedCard.entity,
-								},
+							modal: {
+								type: 'copyAttack',
+								name: 'Rendog: Choose an attack to copy',
+								description:
+									"Which of the Hermit's attacks do you want to copy?",
+								hermitCard: pickedCard.entity,
+								cancelable: true,
 							},
 							onResult: (modalResult) => {
-								if (!modalResult) return 'FAILURE_INVALID_DATA'
+								if (!modalResult) return
 								if (modalResult.cancel) {
 									// Cancel this attack so player can choose a different hermit to imitate
 									game.state.turn.currentAttack = null
 									game.cancelPickRequests()
-									return 'SUCCESS'
+									return
 								}
 
 								// Store the chosen attack to copy
@@ -116,7 +143,7 @@ const RendogRare: Hermit = {
 									setupMockCard(game, component, pickedCard, modalResult.pick),
 								)
 
-								return 'SUCCESS'
+								return
 							},
 							onTimeout: () => {
 								mockedAttacks.set(
@@ -132,13 +159,6 @@ const RendogRare: Hermit = {
 				})
 			},
 		)
-
-		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			if (!game.components.exists(SlotComponent, pickCondition))
-				blockedActions.push('SECONDARY_ATTACK')
-			return blockedActions
-		})
 	},
 	onDetach(
 		_game: GameModel,

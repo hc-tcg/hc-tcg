@@ -1,10 +1,4 @@
 .cardTooltip {
-	overflow: hidden;
-	background-color: rgba(10, 1, 15, 95%);
-	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
-	color: var(--gray-200);
-	padding: 8px;
-	border-radius: 4px;
 	pointer-events: none;
 
 	&.small {
@@ -22,18 +16,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
-}
-
-.tooltipSidebar {
-	position: absolute;
-	left: -250px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-
-	@media screen and (max-width: 80vh) {
-		visibility: hidden;
-	}
 }
 
 .tooltipBelow {
@@ -192,5 +174,34 @@
 
 	&.advent_of_tcg {
 		color: #de9292;
+	}
+}
+
+@media (max-width: 800px) {
+	.cardTooltip {
+		max-width: 90vw;
+	}
+
+	.cardTooltipContainer {
+		max-width: 90vw;
+		font-size: 12px;
+		overflow: hidden;
+	}
+
+	.smallText {
+		font-size: 12px;
+	}
+
+	.topLine {
+		gap: 8px;
+		font-size: 16px;
+	}
+
+	.description {
+		font-size: 16px;
+	}
+
+	.cardTooltip.small {
+		font-size: 14px;
 	}
 }
