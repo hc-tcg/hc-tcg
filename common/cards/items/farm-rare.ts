@@ -1,5 +1,5 @@
-import {item} from '../../base/defaults'
-import {Item} from '../../base/types'
+import {item} from '../defaults'
+import {Item} from '../types'
 
 const FarmDoubleItem: Item = {
 	...item,

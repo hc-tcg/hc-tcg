@@ -1,9 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const DiamondSword: SingleUse = {
 	...singleUse,

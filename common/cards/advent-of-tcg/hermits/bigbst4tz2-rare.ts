@@ -1,10 +1,10 @@
 import {CardComponent} from '../../components'
 import {AttackModel} from '../../../models/attack-model'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
 import CardOld from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 class BigBSt4tzRare extends CardOld {
 	props: Hermit = {

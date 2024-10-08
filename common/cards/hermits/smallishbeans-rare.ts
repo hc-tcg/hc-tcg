@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
 import KingJoelCommon from '../../alter-egos-iii/hermits/kingjoel-common'
 import KingJoelRare from '../../alter-egos-iii/hermits/kingjoel-rare'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 import SmallishbeansCommon from './smallishbeans-common'
 
 const SmallishbeansRare: Hermit = {

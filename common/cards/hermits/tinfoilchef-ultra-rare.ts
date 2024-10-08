@@ -4,13 +4,13 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {RowEntity} from '../../../entities'
-import {GameModel} from '../../../models/game-model'
+import {RowEntity} from '../../entities'
+import {GameModel} from '../../models/game-model'
 import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const TinFoilChefUltraRare: Hermit = {
 	...hermit,

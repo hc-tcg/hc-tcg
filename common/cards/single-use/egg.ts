@@ -4,13 +4,13 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {GameModel} from '../../models/game-model'
+import {afterAttack} from '../../types/priorities'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import {applySingleUse} from '../../../utils/board'
+import {applySingleUse} from '../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const pickCondition = query.every(
 	query.slot.opponent,

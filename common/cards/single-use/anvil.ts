@@ -6,11 +6,11 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {AttackModel} from '../../../models/attack-model'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 function opponentHasMultipleRows(game: GameModel) {
 	return (

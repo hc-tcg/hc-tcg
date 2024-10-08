@@ -5,15 +5,15 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack} from '../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const opponentActiveHermitQuery = query.every(
 	query.card.opponentPlayer,

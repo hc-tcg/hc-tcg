@@ -3,14 +3,14 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
 } from '../../../status-effects/invisibility-potion'
 import {flipCoin} from '../../../utils/coinFlips'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const InvisibilityPotion: SingleUse = {
 	...singleUse,

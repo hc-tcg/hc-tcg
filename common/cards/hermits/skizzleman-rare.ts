@@ -4,11 +4,11 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {GasLightEffect} from '../../../status-effects/gas-light'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const SkizzlemanRare: Hermit = {
 	...hermit,

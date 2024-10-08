@@ -5,13 +5,13 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import BadOmenEffect from '../../../status-effects/badomen'
 import PoisonEffect from '../../../status-effects/poison'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
-import {attach, singleUse} from '../../base/defaults'
-import {Attach, SingleUse} from '../../base/types'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
+import {attach, singleUse} from '../defaults'
+import {Attach, SingleUse} from '../types'
 
 function removeStatusEffects(
 	game: GameModel,

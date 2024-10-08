@@ -4,11 +4,11 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
-import {onTurnEnd} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {onTurnEnd} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const Bed: Attach = {
 	...attach,

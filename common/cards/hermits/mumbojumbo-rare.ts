@@ -1,10 +1,10 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.

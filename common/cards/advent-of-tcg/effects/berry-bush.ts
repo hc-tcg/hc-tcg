@@ -1,9 +1,9 @@
 import {CardComponent} from '../../components'
 import {query, slot} from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import CardOld from '../../base/card'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 class BerryBush extends CardOld {
 	props: Attach = {

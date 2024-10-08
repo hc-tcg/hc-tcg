@@ -4,13 +4,13 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
 import {InstancedValue} from '../../base/card'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const pickCondition = query.every(
 	query.slot.currentPlayer,

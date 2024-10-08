@@ -1,6 +1,6 @@
 import query from '../../components/query'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const String: Attach = {
 	...attach,

@@ -4,14 +4,14 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import TimeSkipDisabledEffect from '../../../status-effects/time-skip-disabled'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const JoeHillsRare: Hermit = {
 	...hermit,

@@ -6,12 +6,12 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {PlayerEntity} from '../../../entities'
-import {GameModel, GameValue} from '../../../models/game-model'
+import {PlayerEntity} from '../../entities'
+import {GameModel, GameValue} from '../../models/game-model'
 import LooseShellEffect from '../../../status-effects/loose-shell'
-import {beforeAttack, onTurnEnd} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {beforeAttack, onTurnEnd} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 type ActiveInfo = {
 	readonly hermit: CardComponent

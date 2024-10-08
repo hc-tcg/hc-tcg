@@ -3,11 +3,11 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const BdoubleO100Rare: Hermit = {
 	...hermit,

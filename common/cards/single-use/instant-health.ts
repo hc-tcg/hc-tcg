@@ -4,11 +4,11 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {CardRarityT, TokenCostT} from '../../../types/cards'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const pickCondition = query.every(query.slot.hermit, query.slot.currentPlayer)
 

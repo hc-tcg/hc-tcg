@@ -5,11 +5,11 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import TurnSkippedEffect from '../../../status-effects/turn-skipped'
 import UsedClockEffect from '../../../status-effects/used-clock'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const Clock: SingleUse = {
 	...singleUse,

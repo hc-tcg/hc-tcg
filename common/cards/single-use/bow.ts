@@ -4,12 +4,12 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {RowEntity} from '../../../entities'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {RowEntity} from '../../entities'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const pickCondition = query.every(
 	query.slot.opponent,

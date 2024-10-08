@@ -4,12 +4,12 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import SleepingEffect from '../../../status-effects/sleeping'
-import {afterAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {afterAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const ChorusFruit: SingleUse = {
 	...singleUse,

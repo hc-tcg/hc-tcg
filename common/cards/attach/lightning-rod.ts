@@ -4,10 +4,10 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack, onTurnEnd} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack, onTurnEnd} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const LightningRod: Attach = {
 	...attach,

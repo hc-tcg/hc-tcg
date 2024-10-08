@@ -4,10 +4,10 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {afterAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const Cubfan135Rare: Hermit = {
 	...hermit,

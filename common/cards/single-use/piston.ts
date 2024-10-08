@@ -4,11 +4,11 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {applySingleUse} from '../../../utils/board'
+import {GameModel} from '../../models/game-model'
+import {applySingleUse} from '../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const firstPickCondition = query.every(
 	query.slot.currentPlayer,

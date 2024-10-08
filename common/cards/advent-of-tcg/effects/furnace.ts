@@ -1,8 +1,8 @@
 import {CardComponent} from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import CardOld from '../../base/card'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 class Furnace extends CardOld {
 	props: Attach = {

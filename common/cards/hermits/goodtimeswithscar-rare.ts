@@ -3,14 +3,14 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {
 	DeathloopReady,
 	RevivedByDeathloopEffect,
 } from '../../../status-effects/death-loop'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const GoodTimesWithScarRare: Hermit = {
 	...hermit,

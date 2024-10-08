@@ -3,14 +3,14 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const ArchitectFalseRare: Hermit = {
 	...hermit,

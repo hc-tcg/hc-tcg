@@ -4,12 +4,12 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import BetrayedEffect from '../../../status-effects/betrayed'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack} from '../../types/priorities'
 import {PickRequest} from '../../../types/server-requests'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)

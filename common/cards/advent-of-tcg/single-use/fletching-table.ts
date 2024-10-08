@@ -1,7 +1,7 @@
 import {query} from '../../components/query'
 import CardOld from '../../base/card'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 class FletchingTable extends CardOld {
 	props: SingleUse = {

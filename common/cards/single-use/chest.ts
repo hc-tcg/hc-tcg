@@ -1,9 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {applySingleUse} from '../../../utils/board'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {applySingleUse} from '../../utils/board'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 import Clock from './clock'
 
 const pickCondition = query.every(

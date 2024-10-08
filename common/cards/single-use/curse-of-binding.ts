@@ -3,10 +3,10 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import CurseOfBindingEffect from '../../../status-effects/curse-of-binding'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const CurseOfBinding: SingleUse = {
 	...singleUse,

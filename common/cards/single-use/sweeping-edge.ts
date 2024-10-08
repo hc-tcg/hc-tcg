@@ -4,9 +4,9 @@ import {
 	SlotComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const discardCondition = query.every(
 	query.some(

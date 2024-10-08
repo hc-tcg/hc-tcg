@@ -5,13 +5,13 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
 import String from '../../alter-egos/effects/string'
-import {attach, singleUse} from '../../base/defaults'
-import {Attach, SingleUse} from '../../base/types'
+import {attach, singleUse} from '../defaults'
+import {Attach, SingleUse} from '../types'
 
 function removeFireEffect(
 	game: GameModel,

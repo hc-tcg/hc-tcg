@@ -4,12 +4,12 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import FireEffect from '../../../status-effects/fire'
-import {beforeAttack} from '../../../types/priorities'
+import {beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const EthosLabRare: Hermit = {
 	...hermit,

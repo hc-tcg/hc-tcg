@@ -1,9 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 import Wolf from '../../default/effects/wolf'
 
 const FiveAMPearlRare: Hermit = {

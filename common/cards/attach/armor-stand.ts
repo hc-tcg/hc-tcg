@@ -1,8 +1,8 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {attach, hermit} from '../../base/defaults'
-import {Attach, HasHealth} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {attach, hermit} from '../defaults'
+import {Attach, HasHealth} from '../types'
 
 const ArmorStand: Attach & HasHealth = {
 	...attach,

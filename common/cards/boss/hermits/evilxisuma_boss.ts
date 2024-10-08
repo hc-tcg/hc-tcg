@@ -6,7 +6,7 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import ExBossNineEffect from '../../../status-effects/exboss-nine'
 import FireEffect from '../../../status-effects/fire'
 import PoisonEffect from '../../../status-effects/poison'
@@ -16,10 +16,10 @@ import {
 } from '../../../status-effects/singleturn-attack-disabled'
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../types/priorities'
 import EvilXisumaRare from '../../alter-egos/hermits/evilxisuma_rare'
 import {InstancedValue} from '../../base/card'
-import {Hermit} from '../../base/types'
+import {Hermit} from '../types'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
 type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'

@@ -1,11 +1,11 @@
 import {CardComponent, ObserverComponent} from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import {CoinFlipResult} from '../../../types/game-state'
-import {beforeAttack} from '../../../types/priorities'
-import {applySingleUse} from '../../../utils/board'
+import {beforeAttack} from '../../types/priorities'
+import {applySingleUse} from '../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 const Trident: SingleUse = {
 	...singleUse,

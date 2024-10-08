@@ -1,8 +1,8 @@
 import {CardComponent, ObserverComponent} from '../../components'
-import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const ChainmailArmor: Attach = {
 	...attach,

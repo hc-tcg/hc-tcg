@@ -1,9 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
-import {GameModel} from '../../../models/game-model'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {GameModel} from '../../models/game-model'
+import {afterAttack, beforeAttack} from '../../types/priorities'
+import {attach} from '../defaults'
+import {Attach} from '../types'
 
 const Shield: Attach = {
 	...attach,

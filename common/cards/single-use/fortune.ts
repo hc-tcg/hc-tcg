@@ -3,10 +3,10 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../components'
-import {GameModel} from '../../../models/game-model'
+import {GameModel} from '../../models/game-model'
 import FortuneStatusEffect from '../../../status-effects/fortune'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../defaults'
+import {SingleUse} from '../types'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
 const Fortune: SingleUse = {
