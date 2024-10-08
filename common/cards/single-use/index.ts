@@ -33,8 +33,10 @@ import NetheriteSword from './netherite-sword'
 import Piston from './piston'
 import PotionOfSlowness from './potion-of-slowness'
 import PotionOfWeakness from './potion-of-weakness'
-import SplashPotionOfHealing from './splash-potion-of-healing'
-import SplashPotionOfHealingII from './splash-potion-of-healing-ii'
+import {
+	SplashPotionOfHealing,
+	SplashPotionOfHealingII,
+} from './splash-potion-of-healing'
 import SplashPotionOfPoison from './splash-potion-of-poison'
 import Spyglass from './spyglass'
 import SweepingEdge from './sweeping-edge'
