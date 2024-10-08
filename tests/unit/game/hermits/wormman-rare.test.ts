@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
-import ThornsIII from 'common/cards/attach/thorns_iii'
+import {ThornsIII} from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import PoultrymanCommon from 'common/cards/hermits/poultryman-common'
 import WormManRare from 'common/cards/hermits/wormman-rare'
