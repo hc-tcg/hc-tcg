@@ -39,12 +39,9 @@ export default defineConfig({
 			localsConvention: 'camelCase',
 		},
 	},
-	build:
-		process.env.NODE_ENV === 'production'
-			? {
-					minify: 'terser',
-				}
-			: {},
+	build: {
+		minify: process.env.NODE_ENV === 'production' ? 'terser' : undefined,
+	},
 	server: {
 		port: CONFIG.clientDevPort || 3002,
 	},

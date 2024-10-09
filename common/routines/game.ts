@@ -746,7 +746,7 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-export function setupGameSaga(
+export function* setupGameSaga(
 	props: GameProps,
 	sagas: {
 		onGameStart: (game: GameModel) => any
@@ -757,15 +757,14 @@ export function setupGameSaga(
 	},
 ) {
 	const game = new GameModel(props)
+	console.log('Game object created')
 
-	return (function* () {
-		while (true) {
-			game.state.turn.turnNumber++
-			yield* sagas.onGameStart(game)
-			const result = yield* call(turnActionsSaga, game, sagas.onTurnAction)
-			if (result === 'GAME_END') break
-		}
-	})()
+	while (true) {
+		game.state.turn.turnNumber++
+		yield* sagas.onGameStart(game)
+		const result = yield* call(turnActionsSaga, game, sagas.onTurnAction)
+		if (result === 'GAME_END') break
+	}
 }
 
 export default setupGameSaga

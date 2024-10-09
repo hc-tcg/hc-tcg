@@ -11,6 +11,10 @@ export function fisherYatesShuffle<T>(
 	)
 
 	for (let i = array.length - 1; i >= 1; i--) {
+		assert(
+			randomNumbers[i-1] !== undefined,
+			'Index should be in the array of numbers',
+		)
 		let j = Math.floor(randomNumbers[i] * (i + 1))
 		let tmp = array[j]
 		array[j] = array[i]

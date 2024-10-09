@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
@@ -334,9 +335,13 @@ export class GameModel {
 
 	/** Request a random number */
 	public randomNumber() {
+		assert(
+			this.randomNumberPointer < this.randomNumbers.length,
+			'Random number pointer should always be in the array.',
+		)
 		let number = this.randomNumbers[this.randomNumberPointer]
 		this.randomNumberPointer =
-			this.randomNumberPointer + (1 % this.randomNumbers.length)
+			(this.randomNumberPointer + 1) % this.randomNumbers.length
 		return number
 	}
 

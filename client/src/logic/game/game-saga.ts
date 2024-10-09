@@ -128,39 +128,15 @@ function* gameStateSaga(
 	yield cancel(logic)
 }
 
-function* gameStateReceiver() {
-	// constantly forward GAME_STATE messages from the server to the store
-	const socket = yield* select(getSocket)
-	while (true) {
-		const {localGameState} = yield* call(
-			receiveMsg(socket, serverMessages.GAME_STATE),
-		)
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: localGameState,
-			time: Date.now(),
-		})
-	}
-}
-
-function* gameActionsSaga(initialGameState?: LocalGameState) {
+function* gameActionsSaga() {
 	yield* fork(() =>
 		all([
 			takeEvery(localMessages.GAME_FORFEIT, function* () {
 				yield sendMsg({type: clientMessages.FORFEIT})
 			}),
-			fork(gameStateReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),
 	)
-
-	if (initialGameState) {
-		yield put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: initialGameState,
-			time: Date.now(),
-		})
-	}
 }
 
 function* opponentConnectionSaga() {
@@ -208,8 +184,19 @@ function* updateGameState(_turnAction: any, game: GameModel) {
 function* gameSaga(props: GameProps) {
 	const socket = yield* select(getSocket)
 
-	const gameSaga = setupGameSaga(props, {
+	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
+			console.log('Game start saga')
+
+			const backgroundTasks = yield* fork(() =>
+				all([
+					fork(opponentConnectionSaga),
+					fork(chatSaga),
+					fork(spectatorSaga),
+					fork(reconnectSaga),
+				]),
+			)
+
 			const playerEntity = yield* select(getPlayerEntity)
 			const isSpectator = yield* select(getIsSpectator)
 
@@ -222,22 +209,13 @@ function* gameSaga(props: GameProps) {
 		onTurnAction: updateGameState,
 	})
 
-	const backgroundTasks = yield* fork(() =>
-		all([
-			fork(opponentConnectionSaga),
-			fork(chatSaga),
-			fork(spectatorSaga),
-			fork(reconnectSaga),
-		]),
-	)
-
 	try {
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_START,
 		})
 
 		const result = yield* race({
-			game: call(gameActionsSaga, initialGameState),
+			game: call(gameActionsSaga),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
 			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),

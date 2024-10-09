@@ -45,24 +45,33 @@ function* gameManager(
 	spectatorCode?: string,
 ) {
 	// try {
-
 	let gameProps = {
 		player1: {
-			model: player1,
+			model: {
+				name: player1.name,
+				minecraftName: player1.minecraftName,
+				censoredName: player1.censoredName,
+			},
 			deck: player1.deck.cards.map((card) => card.props.numericId),
 		},
 		player2: {
-			model: player2,
+			model: {
+				name: player2.name,
+				minecraftName: player2.minecraftName,
+				censoredName: player2.censoredName,
+			},
 			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
 		settings: gameSettingsFromEnv(),
 		gameCode: code,
 		spectatorCode,
-		randomNumbers: Array(7777).map(() => Math.random()),
+		randomNumbers: Array(7777)
+			.fill(0)
+			.map(() => Math.random()),
 	}
 
-	let saga = setupGameSaga(gameProps, {
-		onGameStart: (game) => {
+	yield* setupGameSaga(gameProps, {
+		onGameStart: function* (game) {
 			broadcast(
 				viewers.map((p) => root.players[p]),
 				{
@@ -71,7 +80,7 @@ function* gameManager(
 				},
 			)
 		},
-		onTurnAction: (action, game) => {
+		onTurnAction: function* (action, game) {
 			console.log('Turn action recieved')
 			for (const viewer in viewers) {
 				broadcast([root.players[viewer]], {
