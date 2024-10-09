@@ -1,32 +1,29 @@
-import {SingleUse} from 'common/cards/base/types'
+import {buffers} from 'redux-saga'
+import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
+import {SingleUse} from '../cards/base/types'
 import {
 	CardComponent,
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
 	SlotComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
-import {serverMessages} from 'common/socket-messages/server-messages'
-import {TypeT} from 'common/types/cards'
-import {TurnAction, TurnActions} from 'common/types/game-state'
+} from '../components'
+import {AIComponent} from '../components/ai-component'
+import query from '../components/query'
+import {PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
+import {TypeT} from '../types/cards'
+import {TurnAction, TurnActions} from '../types/game-state'
 import {
+	AnyTurnActionData,
 	AttackActionData,
 	PickSlotActionData,
 	attackToAttackAction,
-} from 'common/types/turn-action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
-import {buffers} from 'redux-saga'
-import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
-import {printBoardState, printHooksState} from '../utils'
-import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
+} from '../types/turn-action-data'
+import {printBoardState, printHooksState} from '../utils/game'
+import {hasEnoughEnergy} from '../utils/attacks'
 
 import assert from 'assert'
-import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -38,10 +35,22 @@ import {
 	removeEffectSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import {Message, messages, MessageTable} from '../redux-messages'
 
-////////////////////////////////////////
-// @TODO sort this whole thing out properly
-/////////////////////////////////////////
+let gameMessages = messages({
+	TURN_ACTION: null,
+})
+
+export type GameMessages = [
+	{
+		type: typeof gameMessages.TURN_ACTION
+		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+	},
+]
+
+export type GameMessage = Message<GameMessages>
+export type GameMessageTable = MessageTable<GameMessages>
 
 export const getTimerForSeconds = (
 	game: GameModel,
@@ -247,10 +256,9 @@ function getAvailableActions(
 }
 
 function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (actionAny: any) => {
-		const action = actionAny as LocalMessage
+	return (action: any) => {
 		return (
-			action.type === localMessages.GAME_TURN_ACTION &&
+			action.type === gameMessages.TURN_ACTION &&
 			'playerEntity' in action &&
 			'action' in action &&
 			action.action.type === actionType &&
@@ -328,22 +336,9 @@ function* checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function* sendGameState(game: GameModel) {
-	game.viewers.forEach((viewer) => {
-		const localGameState = getLocalGameState(game, viewer)
-
-		broadcast([viewer.player], {
-			type: serverMessages.GAME_STATE,
-			localGameState,
-		})
-	})
-
-	game.voiceLineQueue = []
-}
-
 function* turnActionSaga(
 	game: GameModel,
-	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
+	turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
 
@@ -410,7 +405,6 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
-				yield* call(sendGameState, game)
 				yield* call(delaySaga, game, turnAction.action.delay)
 				break
 			default:
@@ -543,9 +537,6 @@ function* turnActionsSaga(game: GameModel) {
 
 			const graceTime = 1000
 			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
-
-			yield* call(sendGameState, game)
-			game.battleLog.sendLogs()
 
 			const playerAI = getPlayerAI(game)
 			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
@@ -753,10 +744,7 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(game: GameModel) {
-	console.info(
-		`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
-	)
+export function* gameSaga(game: GameModel) {
 	while (true) {
 		game.state.turn.turnNumber++
 		const result = yield* call(turnSaga, game)

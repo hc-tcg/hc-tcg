@@ -21,7 +21,7 @@ import {
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
-import gameSaga from 'server/routines/game'
+import gameSaga from 'common/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
