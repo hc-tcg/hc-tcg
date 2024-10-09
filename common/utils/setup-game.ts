@@ -130,6 +130,7 @@ function setupEcsForPlayer(
 		fisherYatesShuffle(cards, numbers).forEach((card, i) => {
 			if (card.slot.inDeck()) card.slot.order = i
 		})
+
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
