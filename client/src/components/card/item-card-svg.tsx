@@ -59,7 +59,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 					className={css.type}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={0}
 				>
 					ITEM
 				</text>
@@ -82,7 +82,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 						fill="black"
 						textAnchor="middle"
 						dominantBaseline="hanging"
-						key={Math.random()}
+						key={1}
 					>
 						x2
 					</text>
