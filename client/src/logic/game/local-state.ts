@@ -1,57 +1,58 @@
-import {CARDS} from '../cards'
+import {CARDS} from 'common/cards'
 import {
 	Card,
 	isAttach,
 	isHermit,
 	isItem,
 	isSingleUse,
-} from '../cards/base/types'
-import JoeHillsRare from '../cards/default/hermits/joehills-rare'
+} from 'common/cards/base/types'
+import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
 import {
 	CardComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '../components'
-import query from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
-import {CONFIG} from '../config'
-import {EXPANSIONS} from '../const/expansions'
-import {STRENGTHS} from '../const/strengths'
-import {CardEntity, PlayerEntity, newEntity} from '../entities'
-import {GameModel} from '../models/game-model'
+} from 'common/components'
+import query from 'common/components/query'
+import {ViewerComponent} from 'common/components/viewer-component'
+import {CONFIG} from 'common/config'
+import {EXPANSIONS} from 'common/const/expansions'
+import {STRENGTHS} from 'common/const/strengths'
+import {CardEntity, PlayerEntity, newEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
-} from '../status-effects/multiturn-attack-disabled'
+} from 'common/status-effects/multiturn-attack-disabled'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
-} from '../status-effects/singleturn-attack-disabled'
-import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
+} from 'common/status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	LocalPlayerState,
-} from '../types/game-state'
-import {ModalData} from '../types/modal-requests'
+} from 'common/types/game-state'
+import {ModalData} from 'common/types/modal-requests'
 import {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
 	WithoutFunctions,
-} from '../types/server-requests'
+} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
 // Dear Reader,
-// On 07/17/23, This still has not been sorted out properly. I think I might have
+// On 07/17/24, This still has not been sorted out properly. I think I might have
 // even made it worse.
 // Sincerely, Lunarmagpie
+// 10/09/24, Oh man, Im sorry but I think this is becomming even worse. - Luanrmagpie
 
 function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)

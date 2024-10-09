@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {delay} from 'typed-redux-saga'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {SlotEntity} from '../entities'
@@ -16,7 +17,6 @@ import {
 } from '../types/turn-action-data'
 import {executeAttacks} from '../utils/attacks'
 import {applySingleUse} from '../utils/board'
-import {delay} from 'typed-redux-saga'
 import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(

@@ -14,7 +14,6 @@ import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
-import {fisherYatesShuffle} from './fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -39,6 +38,7 @@ export type OpponentDefs = PlayerDefs & {
  * - Cards in the deck and hand
  */
 export function setupComponents(
+	game: GameModel,
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
@@ -47,12 +47,25 @@ export function setupComponents(
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
+	setupEcsForPlayer(
+		game,
+		components,
+		player1Component.entity,
+		player1.deck,
+		options,
+	)
+	setupEcsForPlayer(
+		game,
+		components,
+		player2Component.entity,
+		player2.deck,
+		options,
+	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
+	game: GameModel,
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
@@ -111,17 +124,16 @@ function setupEcsForPlayer(
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
 	if (options.shuffleDeck) {
-		fisherYatesShuffle(cards).forEach((card, i) => {
-			if (card.slot.inDeck()) card.slot.order = i
-		})
-
-		while (
-			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
-		) {
-			fisherYatesShuffle(cards).forEach((card, i) => {
-				if (card.slot.inDeck()) card.slot.order = i
-			})
-		}
+		// TODO
+		// do {
+		// 	game.requestRandomNumbers(cards.length, (numbers) => {
+		// 	fisherYatesShuffle(cards, numbers).forEach((card, i) => {
+		// 		if (card.slot.inDeck()) card.slot.order = i
+		// 	})
+		// } while (
+		// 	!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
+		// )
+		// })
 	}
 
 	for (let i = 0; i < options.extraStartingCards.length; i++) {
@@ -142,9 +154,11 @@ export function getGameState(
 	const playerEntities = game.components.filter(PlayerComponent)
 
 	if (randomizeOrder !== false) {
-		if (Math.random() >= 0.5) {
-			playerEntities.reverse()
-		}
+		game.requestRandomNumbers(1, ([n]) => {
+			if (n >= 0.5) {
+				playerEntities.reverse()
+			}
+		})
 	}
 
 	const gameState: GameState = {
@@ -160,6 +174,7 @@ export function getGameState(
 
 		pickRequests: [],
 		modalRequests: [],
+		randomNumberRequests: [],
 
 		timer: {
 			turnStartTime: 0,

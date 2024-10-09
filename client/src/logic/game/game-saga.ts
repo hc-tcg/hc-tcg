@@ -1,11 +1,11 @@
 import {PlayerEntity} from 'common/entities'
+import {GameModel, GameSettings} from 'common/models/game-model'
+import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {
-	AnyTurnActionData,
-	ChangeActiveHermitActionData,
-} from 'common/types/turn-action-data'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {PlayerSetupDefs} from 'common/utils/setup-game'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
@@ -23,12 +23,7 @@ import {
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {getEndGameOverlay} from './game-selectors'
-import {
-	localApplyEffect,
-	localChangeActiveHermit,
-	localEndTurn,
-	localRemoveEffect,
-} from './local-state'
+import {getLocalGameState} from './local-state'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
@@ -39,6 +34,12 @@ import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
+	yield* put<GameMessage>({
+		type: gameMessages.TURN_ACTION,
+		action: action,
+		playerEntity: entity,
+	})
+
 	yield* sendMsg({
 		type: clientMessages.TURN_ACTION,
 		playerEntity: entity,
@@ -62,10 +63,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		// This is updated for the client in slot-saga
 		yield* call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'APPLY_EFFECT') {
-		yield* localApplyEffect()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
-		yield* localRemoveEffect()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'PICK_REQUEST') {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
@@ -78,12 +77,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	) {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'END_TURN') {
-		yield* localEndTurn()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield* localChangeActiveHermit(
-			turnAction.action as ChangeActiveHermitActionData,
-		)
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
 }
@@ -195,8 +190,34 @@ function* reconnectSaga() {
 	}
 }
 
-function* gameSaga(initialGameState?: LocalGameState) {
+function* updateGameState(turnAction: any, game: GameModel) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+		localGameState: getLocalGameState(game),
+		time: Date.now(),
+	})
+}
+
+function* gameSaga(
+	player1: PlayerSetupDefs,
+	player2: PlayerSetupDefs,
+	settings: GameSettings,
+	options?: {
+		gameCode?: string
+		spectatorCode?: string
+		randomizeOrder?: false
+	},
+) {
 	const socket = yield* select(getSocket)
+
+	const gameSaga = setupGameSaga(
+		player1,
+		player2,
+		settings,
+		{onTurnAction: updateGameState},
+		options,
+	)
+
 	const backgroundTasks = yield* fork(() =>
 		all([
 			fork(opponentConnectionSaga),

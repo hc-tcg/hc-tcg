@@ -12,6 +12,7 @@ import {
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
 import {GameModel, GameSettings} from 'common/models/game-model'
+import gameSaga from 'common/routines/game'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
@@ -21,7 +22,6 @@ import {
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
-import gameSaga from 'common/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 

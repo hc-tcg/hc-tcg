@@ -20,7 +20,7 @@ import {
 	Message,
 	TurnAction,
 	TurnActions,
-} from '../types/setup-game'
+} from '../types/game-state'
 import {GameHook, Hook, PriorityHook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
@@ -30,7 +30,7 @@ import {
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
-} from '../utils/state-gen'
+} from '../utils/setup-game'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 import {PlayerId, PlayerModel} from './player-model'
@@ -325,6 +325,14 @@ export class GameModel {
 		if (turnState.blockedActions[key].length <= 0) {
 			delete turnState.blockedActions[key]
 		}
+	}
+
+	/** Request a random number */
+	public requestRandomNumbers(
+		amount: number,
+		then: (numbers: Array<number>) => void,
+	) {
+		this.state.randomNumberRequests.push([amount, then])
 	}
 
 	/** Returns true if the current blocked actions list includes the given action */

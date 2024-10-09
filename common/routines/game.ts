@@ -11,7 +11,7 @@ import {
 import {AIComponent} from '../components/ai-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
-import {GameModel} from '../models/game-model'
+import {GameModel, GameSettings} from '../models/game-model'
 import {TypeT} from '../types/cards'
 import {TurnAction, TurnActions} from '../types/game-state'
 import {
@@ -20,10 +20,12 @@ import {
 	PickSlotActionData,
 	attackToAttackAction,
 } from '../types/turn-action-data'
-import {printBoardState, printHooksState} from '../utils/game'
 import {hasEnoughEnergy} from '../utils/attacks'
+import {printBoardState, printHooksState} from '../utils/game'
 
 import assert from 'assert'
+import {Message, MessageTable, messages} from '../redux-messages'
+import {PlayerSetupDefs} from '../utils/setup-game'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -35,9 +37,8 @@ import {
 	removeEffectSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import {Message, messages, MessageTable} from '../redux-messages'
 
-let gameMessages = messages({
+export const gameMessages = messages({
 	TURN_ACTION: null,
 })
 
@@ -450,7 +451,7 @@ function getPlayerAI(game: GameModel) {
 	)
 }
 
-function* turnActionsSaga(game: GameModel) {
+function* turnActionsSaga(game: GameModel, onTurnActionSaga: any) {
 	const {opponentPlayer, currentPlayer} = game
 
 	const turnActionChannel = yield* actionChannel(
@@ -619,6 +620,7 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			// Run action logic
+			yield* call(raceResult.turnAction)
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
 			if (result === 'END_TURN') {
@@ -630,7 +632,7 @@ function* turnActionsSaga(game: GameModel) {
 	}
 }
 
-export function* turnSaga(game: GameModel) {
+export function* turnSaga(game: GameModel, onTurnAction: any) {
 	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state
@@ -669,7 +671,7 @@ export function* turnSaga(game: GameModel) {
 		}
 	}
 
-	const result = yield* call(turnActionsSaga, game)
+	const result = yield* call(turnActionsSaga, game, onTurnAction)
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Draw a card from deck when turn ends
@@ -744,12 +746,26 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-export function* gameSaga(game: GameModel) {
-	while (true) {
-		game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, game)
-		if (result === 'GAME_END') break
+export function setupGameSaga(
+	player1: PlayerSetupDefs,
+	player2: PlayerSetupDefs,
+	settings: GameSettings,
+	sagas: {onTurnAction: () => any},
+	options?: {
+		gameCode?: string
+		spectatorCode?: string
+		randomizeOrder?: false
+	},
+) {
+	const game = new GameModel(player1, player2, settings, options)
+
+	return function* () {
+		while (true) {
+			game.state.turn.turnNumber++
+			const result = yield* call(sagas.onTurnAction, game)
+			if (result === 'GAME_END') break
+		}
 	}
 }
 
-export default gameSaga
+export default setupGameSaga
