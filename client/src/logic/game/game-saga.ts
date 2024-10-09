@@ -22,7 +22,11 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay} from './game-selectors'
+import {
+	getEndGameOverlay,
+	getIsSpectator,
+	getPlayerEntity,
+} from './game-selectors'
 import {getLocalGameState} from './local-state'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
@@ -190,10 +194,13 @@ function* reconnectSaga() {
 	}
 }
 
-function* updateGameState(turnAction: any, game: GameModel) {
+function* updateGameState(_turnAction: any, game: GameModel) {
+	const playerEntity = yield* select(getPlayerEntity)
+	const isSpectator = yield* select(getIsSpectator)
+
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-		localGameState: getLocalGameState(game),
+		localGameState: getLocalGameState(game, playerEntity, isSpectator),
 		time: Date.now(),
 	})
 }

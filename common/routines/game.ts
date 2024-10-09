@@ -750,7 +750,9 @@ export function setupGameSaga(
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
 	settings: GameSettings,
-	sagas: {onTurnAction: () => any},
+	sagas: {
+		onTurnAction: (turnAction: AnyTurnActionData, game: GameModel) => any
+	},
 	options?: {
 		gameCode?: string
 		spectatorCode?: string
