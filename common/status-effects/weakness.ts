@@ -4,7 +4,6 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
-import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
@@ -25,12 +24,20 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 	) {
 		const player = target
 		const {opponentPlayer} = target
-		const weakType = player.getActiveHermit()?.entity.type
-		const strongType = opponentPlayer.getActiveHermit()?.entity.type
+
+		const playerActive = player.getActiveHermit()
+		const opponentActive = opponentPlayer.getActiveHermit()
+
+		if (!playerActive?.isHermit() || !opponentActive?.isHermit()) return
+
+		const weakType = playerActive.props.type
+		const strongType = opponentActive.props.type
 
 		if (!effect.counter) effect.counter = this.counter
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
+		effect.dynamicDescription = weakType + " is weak to " + strongType + " for the duration of this counter."
+
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
 			effect.counter--
 
@@ -41,20 +48,18 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 			game.hooks.beforeAttack,
 			beforeAttack.FORCE_WEAKNESS_ATTACK,
 			(attack) => {
-				const targetCardInfo = game.components.find(
-					CardComponent,
-					query.card.rowEntity(attack.targetEntity),
-					query.card.isHermit,
-				)
+				const targetCardInfo = attack.target?.getHermit()
+				if (!(attack.attacker instanceof CardComponent)) return
+				if (!attack.attacker.isHermit() || !targetCardInfo?.isHermit()) return
 
 				if (attack.createWeakness === 'never') return
 
 				if (
-					targetCardInfo?.props.type !== weakType ||
-					attack.attacker?.props.type !== strongType
-				) return
-
-				attack.createWeakness = 'always'
+					targetCardInfo.props.type == weakType &&
+					attack.attacker.props.type == strongType
+				) {
+					attack.createWeakness = 'always'
+				}
 			},
 		)
 	},
