@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -5,7 +6,8 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {beforeAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
@@ -60,7 +62,10 @@ const DungeonTangoRare: Hermit = {
 					query.not(query.slot.frozen),
 				)
 
-				if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					pickedCard = null
+					return
+				}
 
 				game.addPickRequest({
 					player: player.entity,
@@ -87,18 +92,35 @@ const DungeonTangoRare: Hermit = {
 					return
 				if (pickedCard === null) return
 
-				const hermitCard = player.getDeck().find((card) => card.isHermit())
+				const hermitCard = player
+					.getDeck()
+					.sort(CardComponent.compareOrder)
+					.find((card) => card.isHermit())
 				if (hermitCard) {
 					hermitCard.draw()
 					pickedCard.discard()
 				}
 
-				player
-					.getDeck()
-					.sort(() => Math.random() - 0.5)
-					.forEach((card, i) => {
-						if (card.slot.inDeck()) card.slot.order = i
-					})
+				const deckCards = player.getDeck()
+				const newOrder = fisherYatesShuffle(
+					deckCards.map((card) => {
+						assert(card.slot.inDeck())
+						return card.slot.order
+					}),
+				)
+				deckCards.forEach((card, i) => {
+					assert(card.slot.inDeck())
+					card.slot.order = newOrder[i]
+				})
+				deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				pickedCard = null
 			},
 		)
 	},
