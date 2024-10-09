@@ -1,5 +1,6 @@
 import {
 	CardComponent,
+	PlayerComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
@@ -7,25 +8,36 @@ import {GameModel} from '../models/game-model'
 import {beforeAttack} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
-const WeaknessEffect: Counter<CardComponent> = {
+const WeaknessEffect: Counter<PlayerComponent> = {
 	...statusEffect,
 	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
-	description: "This Hermit is weak to the opponent's active Hermit's type.",
+	description: "[weakType] is weak to [strongType] for the duration fo this counter.",
 	counter: 3,
 	counterType: 'turns',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		target: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = target
+		const player = target
+		const {opponentPlayer} = target
+
+		const playerActive = player.getActiveHermit()
+		const opponentActive = opponentPlayer.getActiveHermit()
+
+		if (!playerActive?.isHermit() || !opponentActive?.isHermit()) return
+
+		const weakType = playerActive.props.type
+		const strongType = opponentActive.props.type
 
 		if (!effect.counter) effect.counter = this.counter
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
+		effect.dynamicDescription = weakType + " is weak to " + strongType + " for the duration of this counter."
+
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
 			effect.counter--
 
@@ -36,13 +48,18 @@ const WeaknessEffect: Counter<CardComponent> = {
 			game.hooks.beforeAttack,
 			beforeAttack.FORCE_WEAKNESS_ATTACK,
 			(attack) => {
-				if (!target.slot.inRow()) return
+				const targetCardInfo = attack.target?.getHermit()
+				if (!(attack.attacker instanceof CardComponent)) return
+				if (!attack.attacker.isHermit() || !targetCardInfo?.isHermit()) return
+
+				if (attack.createWeakness === 'never') return
+
 				if (
-					attack.targetEntity !== target.slot.rowEntity ||
-					attack.createWeakness === 'never'
-				)
-					return
-				attack.createWeakness = 'always'
+					targetCardInfo.props.type == weakType &&
+					attack.attacker.props.type == strongType
+				) {
+					attack.createWeakness = 'always'
+				}
 			},
 		)
 	},
