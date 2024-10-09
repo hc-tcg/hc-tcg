@@ -19,6 +19,9 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './card-tooltip.module.scss'
+import query from 'common/components/query'
+import { StatusEffectComponent } from 'common/components'
+import { GameModel } from 'common/models/game-model'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -162,15 +165,22 @@ const getSidebarDescriptions = (
 ): React.ReactNode => {
 	return (card.sidebarDescriptions || []).map((description, i) => {
 		if (description.type === 'statusEffect') {
-			const statusEffect = description.name
-			return (
-				<div key={i} className={classNames(css.cardTooltip, css.small)}>
-					<b>
-						<u>{STATUS_EFFECTS[statusEffect].name}</u>
-					</b>
-					<p>{STATUS_EFFECTS[statusEffect].description}</p>
-				</div>
+			const statusEffect = STATUS_EFFECTS[description.name]
+			const dynamicDescription = game.components.find(
+				StatusEffectComponent,
+				query.effect.is(statusEffect)
 			)
+			if (dynamicDescription === "") {
+				return (
+					<div key={i} className={classNames(css.cardTooltip, css.small)}>
+						<b>
+							<u>{statusEffect.name}</u>
+						</b>
+						<p>{statusEffect.description}</p>
+					</div>
+				)
+			}
+			
 		}
 		if (description.type === 'glossary') {
 			const glossaryItem = description.name

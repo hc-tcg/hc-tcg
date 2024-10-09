@@ -1,27 +1,32 @@
 import {
 	CardComponent,
+	PlayerComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack} from '../types/priorities'
 import {Counter, statusEffect} from './status-effect'
 
-const WeaknessEffect: Counter<CardComponent> = {
+const WeaknessEffect: Counter<PlayerComponent> = {
 	...statusEffect,
 	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
-	description: "This Hermit is weak to the opponent's active Hermit's type.",
+	description: "[weakType] is weak to [strongType] for the duration fo this counter.",
 	counter: 3,
 	counterType: 'turns',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
-		target: CardComponent,
+		target: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = target
+		const player = target
+		const {opponentPlayer} = target
+		const weakType = player.getActiveHermit()?.entity.type
+		const strongType = opponentPlayer.getActiveHermit()?.entity.type
 
 		if (!effect.counter) effect.counter = this.counter
 
@@ -36,12 +41,19 @@ const WeaknessEffect: Counter<CardComponent> = {
 			game.hooks.beforeAttack,
 			beforeAttack.FORCE_WEAKNESS_ATTACK,
 			(attack) => {
-				if (!target.slot.inRow()) return
-				if (
-					attack.targetEntity !== target.slot.rowEntity ||
-					attack.createWeakness === 'never'
+				const targetCardInfo = game.components.find(
+					CardComponent,
+					query.card.rowEntity(attack.targetEntity),
+					query.card.isHermit,
 				)
-					return
+
+				if (attack.createWeakness === 'never') return
+
+				if (
+					targetCardInfo?.props.type !== weakType ||
+					attack.attacker?.props.type !== strongType
+				) return
+
 				attack.createWeakness = 'always'
 			},
 		)
