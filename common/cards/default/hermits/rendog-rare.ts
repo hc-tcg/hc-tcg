@@ -2,9 +2,11 @@ import {
 	CardComponent,
 	ObserverComponent,
 	SlotComponent,
+	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-attack-disabled'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
@@ -78,6 +80,27 @@ const RendogRare: Hermit = {
 	) {
 		const {player} = component
 
+		if (query.card.is(RendogRare)(game, component)) {
+			if (!game.components.exists(SlotComponent, pickCondition))
+				game.components
+					.new(
+						StatusEffectComponent,
+						SecondaryAttackDisabledEffect,
+						component.entity,
+					)
+					.apply(component.entity)
+			observer.subscribe(player.hooks.onTurnStart, () => {
+				if (!game.components.exists(SlotComponent, pickCondition))
+					game.components
+						.new(
+							StatusEffectComponent,
+							SecondaryAttackDisabledEffect,
+							component.entity,
+						)
+						.apply(component.entity)
+			})
+		}
+
 		observer.subscribe(
 			player.hooks.getAttackRequests,
 			(activeInstance, hermitAttackType) => {
@@ -136,13 +159,6 @@ const RendogRare: Hermit = {
 				})
 			},
 		)
-
-		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			if (!game.components.exists(SlotComponent, pickCondition))
-				blockedActions.push('SECONDARY_ATTACK')
-			return blockedActions
-		})
 	},
 	onDetach(
 		_game: GameModel,

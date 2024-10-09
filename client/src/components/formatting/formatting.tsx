@@ -33,8 +33,14 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 				<span
 					className={classNames(
 						css[node.format],
-						settings.color === 'blue' ? css.player : '',
-						settings.color === 'orange' ? css.opponent : '',
+						['player', 'opponent'].includes(node.format) &&
+							settings.color === 'blue'
+							? css.player
+							: '',
+						['player', 'opponent'].includes(node.format) &&
+							settings.color === 'orange'
+							? css.opponent
+							: '',
 						...textCssClasses,
 					)}
 				>

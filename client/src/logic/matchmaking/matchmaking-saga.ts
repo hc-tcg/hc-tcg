@@ -271,18 +271,6 @@ function* joinQueueSaga() {
 	}
 }
 
-export function* reconnectSaga() {
-	const socket = yield* select(getSocket)
-	const reconnectState = yield* call(
-		receiveMsg(socket, serverMessages.GAME_STATE_ON_RECONNECT),
-	)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-	if (!reconnectState.localGameState)
-		throw new Error('The user must be in a game when they reconnect')
-	yield* call(gameSaga, reconnectState.localGameState)
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-}
-
 function* matchmakingSaga() {
 	yield* takeEvery(localMessages.MATCHMAKING_QUEUE_JOIN, joinQueueSaga)
 	yield* takeEvery(
@@ -293,7 +281,6 @@ function* matchmakingSaga() {
 		localMessages.MATCHMAKING_BOSS_GAME_CREATE,
 		createBossGameSaga,
 	)
-	yield* fork(reconnectSaga)
 }
 
 export default matchmakingSaga

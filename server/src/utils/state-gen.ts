@@ -6,6 +6,7 @@ import {
 	isItem,
 	isSingleUse,
 } from 'common/cards/base/types'
+import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -28,6 +29,7 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from 'common/status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
@@ -207,7 +209,10 @@ export function getLocalCard<CardType extends Card>(
 	}
 }
 
-function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
+export function getLocalModalData(
+	game: GameModel,
+	modal: ModalData,
+): LocalModalData {
 	if (modal.type == 'selectCards') {
 		return {
 			...modal,
@@ -235,7 +240,10 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 					PrimaryAttackDisabledEffect,
 					MultiturnPrimaryAttackDisabledEffect,
 				),
-				query.effect.targetEntity(hermitCard.entity),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
 			)
 		) {
 			blockedActions.push('PRIMARY_ATTACK')
@@ -248,11 +256,24 @@ function getLocalModalData(game: GameModel, modal: ModalData): LocalModalData {
 					SecondaryAttackDisabledEffect,
 					MultiturnSecondaryAttackDisabledEffect,
 				),
-				query.effect.targetEntity(hermitCard.entity),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
 			)
 		) {
 			blockedActions.push('SECONDARY_ATTACK')
 		}
+
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(TimeSkipDisabledEffect),
+				query.effect.targetIsPlayerAnd(query.player.currentPlayer),
+			) &&
+			query.card.is(JoeHillsRare)(game, hermitCard)
+		)
+			blockedActions.push('SECONDARY_ATTACK')
 
 		return {
 			...modal,

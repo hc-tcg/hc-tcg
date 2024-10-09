@@ -90,6 +90,9 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
+		observer.subscribe(player.hooks.onActiveRowChange, () => {
+			if (game.currentPlayerEntity === player.entity) blockActions()
+		})
 		observer.subscribe(player.hooks.onAttach, blockActions)
 		observer.subscribe(player.hooks.onDetach, blockActions)
 

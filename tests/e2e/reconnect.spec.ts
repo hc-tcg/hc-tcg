@@ -55,3 +55,51 @@ test('player does not stay in queue after reloading the page', async ({
 		null,
 	)
 })
+
+test('Game state updates if socket is restarted during game.', async ({
+	page: playerOne,
+	context,
+}) => {
+	const playerTwo = await context.newPage()
+
+	await playerOne.goto('/?showUpdatesModal=false')
+	await playerTwo.goto('/?showUpdatesModal=false')
+
+	await playerOne.getByPlaceholder(' ').fill('Test Player')
+	await playerOne.getByPlaceholder(' ').press('Enter')
+	await playerTwo.getByPlaceholder(' ').fill('Test Player')
+	await playerTwo.getByPlaceholder(' ').press('Enter')
+
+	await playerOne.getByText('Public Game').click()
+	await playerTwo.getByText('Public Game').click()
+
+	// Mathcmaking can take up to 3 seconds
+	await playerOne.waitForTimeout(4000)
+
+	let firstGameStateTime = await playerOne.evaluate(
+		() => global.getState().game.time,
+	)
+
+	expect(typeof firstGameStateTime).toBe('number')
+
+	await playerOne.evaluate(() =>
+		global.getState().socketStatus.socket.disconnect(),
+	)
+
+	await playerOne.waitForTimeout(1000)
+
+	await playerOne.evaluate(() =>
+		global.getState().socketStatus.socket.connect(),
+	)
+
+	await playerOne.waitForTimeout(1000)
+
+	let secondGameStateTime = await playerOne.evaluate(
+		() => global.getState().game.time,
+	)
+
+	expect(typeof secondGameStateTime).toBe('number')
+
+	// The second game state should be newer because it was recieved on the reconnect.
+	expect(firstGameStateTime).toBeLessThan(secondGameStateTime)
+})

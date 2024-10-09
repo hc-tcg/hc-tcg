@@ -94,3 +94,36 @@ test('Batlte log messages are hidden properly.', async ({mount}) => {
 	)
 	await expect(component).toHaveScreenshot()
 })
+
+test('Messages do not have colors for formatting.', async ({mount}) => {
+	let messages: Array<ChatMessageDisplay> = [
+		{
+			message: formatText('*Some formatted text*'),
+			isBattleLogMessage: false,
+			sender: 'playerOne',
+			createdAt: 0,
+		},
+	]
+
+	const component = await mount(
+		<ChatContent
+			chatMessages={messages}
+			showLog={true}
+			isSpectating={false}
+			profanityFilterEnabled={false}
+			playerNames={['Player One', 'Player Two']}
+		/>,
+	)
+	await expect(component).toHaveScreenshot()
+	await component.unmount()
+	const component2 = await mount(
+		<ChatContent
+			chatMessages={messages}
+			showLog={true}
+			isSpectating={true}
+			profanityFilterEnabled={false}
+			playerNames={['Player One', 'Player Two']}
+		/>,
+	)
+	await expect(component2).toHaveScreenshot()
+})

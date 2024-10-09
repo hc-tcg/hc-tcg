@@ -145,9 +145,10 @@ const ZombieCleoRare: Hermit = {
 		)
 
 		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
-			if (!game.components.exists(SlotComponent, pickCondition)) {
-				blockedActions.push('SECONDARY_ATTACK')
-			}
+			if (query.card.is(ZombieCleoRare)(game, component))
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					blockedActions.push('SECONDARY_ATTACK')
+				}
 
 			return blockedActions
 		})

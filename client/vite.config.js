@@ -4,8 +4,16 @@ import {defineConfig} from 'vite'
 import CONFIG from '../common/config/server-config.js'
 import {getAppVersion} from '../version'
 
+import {ViteImageOptimizer} from 'vite-plugin-image-optimizer'
+
+let plugins = [react()]
+
+if (process.env.NODE_ENV === 'production') {
+	plugins.push(ViteImageOptimizer())
+}
+
 export default defineConfig({
-	plugins: [react()],
+	plugins: plugins,
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),

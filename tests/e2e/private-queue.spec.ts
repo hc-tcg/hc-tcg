@@ -188,7 +188,7 @@ test('Game starts for players and spectators and places players back on title sc
 	for (const player of [playerOne, playerTwo, spectator]) {
 		await expect(
 			await player.evaluate(() => global.getState().matchmaking.status),
-		).toBe('starting')
+		).toBe('in_game')
 	}
 
 	// After the game is over, players should be placed on the title screen.
