@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import {Card as CardObject} from 'common/cards/base/types'
+import {Card as CardObject} from 'common/cards/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'

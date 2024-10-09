@@ -1,4 +1,4 @@
-import type {Attach, Card, HasHealth} from '../cards/base/types'
+import type {Attach, Card, HasHealth} from '../cards/types'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'

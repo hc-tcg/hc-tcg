@@ -1,4 +1,4 @@
-import {SingleUse, isHermit} from 'common/cards/base/types'
+import {SingleUse, isHermit} from 'common/cards/types'
 import Modal from 'components/modal'
 import {
 	getAvailableActions,

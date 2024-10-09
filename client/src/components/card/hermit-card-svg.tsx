@@ -4,8 +4,8 @@ import {
 	getCardRankIcon,
 	getCardTypeIcon,
 	getHermitBackground,
-} from 'common/cards/base/card'
-import {Hermit} from 'common/cards/base/types'
+} from 'common/cards/card'
+import {Hermit} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'

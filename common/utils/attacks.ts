@@ -1,4 +1,4 @@
-import {Hermit} from '../cards/base/types'
+import {Hermit} from '../cards/types'
 import {CardComponent, ObserverComponent} from '../components'
 import query from '../components/query'
 import {WEAKNESS_DAMAGE} from '../const/damage'
