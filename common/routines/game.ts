@@ -759,13 +759,13 @@ export function setupGameSaga(
 ) {
 	const game = new GameModel(player1, player2, settings, options)
 
-	return function* () {
+	return (function* () {
 		while (true) {
 			game.state.turn.turnNumber++
 			const result = yield* call(sagas.onTurnAction, game)
 			if (result === 'GAME_END') break
 		}
-	}
+	})()
 }
 
 export default setupGameSaga
