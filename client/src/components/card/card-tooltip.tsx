@@ -7,21 +7,18 @@ import {
 	isItem,
 	isSingleUse,
 } from 'common/cards/base/types'
-import {EXPANSIONS} from 'common/const/expansions'
-import {STRENGTHS} from 'common/const/strengths'
-import {GLOSSARY} from 'common/glossary'
-import {STATUS_EFFECTS} from 'common/status-effects'
-import {CardRarityT, TypeT} from 'common/types/cards'
-import {WithoutFunctions} from 'common/types/server-requests'
-import {EmptyNode, FormattedTextNode, formatText} from 'common/utils/formatting'
-import {FormattedText} from 'components/formatting/formatting'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import { EXPANSIONS } from 'common/const/expansions'
+import { STRENGTHS } from 'common/const/strengths'
+import { GLOSSARY } from 'common/glossary'
+import { STATUS_EFFECTS } from 'common/status-effects'
+import { CardRarityT, TypeT } from 'common/types/cards'
+import { WithoutFunctions } from 'common/types/server-requests'
+import { EmptyNode, FormattedTextNode, formatText } from 'common/utils/formatting'
+import { FormattedText } from 'components/formatting/formatting'
+import { getSettings } from 'logic/local-settings/local-settings-selectors'
 import React from 'react'
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 import css from './card-tooltip.module.scss'
-import query from 'common/components/query'
-import { StatusEffectComponent } from 'common/components'
-import { GameModel } from 'common/models/game-model'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -47,9 +44,9 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 			(card.primary.power
 				? `**${card.primary.name}**\n*${card.primary.power}*`
 				: '') +
-				(card.secondary.power
-					? `**${card.secondary.name}**\n*${card.secondary.power}*`
-					: ''),
+			(card.secondary.power
+				? `**${card.secondary.name}**\n*${card.secondary.power}*`
+				: ''),
 		)
 	} else if (hasDescription(card)) {
 		text = formatText(`*${card.description}*`)
@@ -165,22 +162,15 @@ const getSidebarDescriptions = (
 ): React.ReactNode => {
 	return (card.sidebarDescriptions || []).map((description, i) => {
 		if (description.type === 'statusEffect') {
-			const statusEffect = STATUS_EFFECTS[description.name]
-			const dynamicDescription = game.components.find(
-				StatusEffectComponent,
-				query.effect.is(statusEffect)
+			const statusEffect = description.name
+			return (
+				<div key={i} className={classNames(css.cardTooltip, css.small)}>
+					<b>
+						<u>{STATUS_EFFECTS[statusEffect].name}</u>
+					</b>
+					<p>{STATUS_EFFECTS[statusEffect].description}</p>
+				</div>
 			)
-			if (dynamicDescription === "") {
-				return (
-					<div key={i} className={classNames(css.cardTooltip, css.small)}>
-						<b>
-							<u>{statusEffect.name}</u>
-						</b>
-						<p>{statusEffect.description}</p>
-					</div>
-				)
-			}
-			
 		}
 		if (description.type === 'glossary') {
 			const glossaryItem = description.name
@@ -196,7 +186,7 @@ const getSidebarDescriptions = (
 	})
 }
 
-const CardInstanceTooltip = ({card}: Props) => {
+const CardInstanceTooltip = ({ card }: Props) => {
 	const settings = useSelector(getSettings)
 
 	return (
