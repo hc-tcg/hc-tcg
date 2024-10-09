@@ -56,13 +56,16 @@ function* gameManager(
 
 	yield* setupGameSaga(gameProps, {
 		onGameStart: function* (game) {
-			broadcast(
-				viewers.map((p) => root.players[p]),
-				{
+			// Player one is added to the ECS first, Player two is added second
+			const players = game.components.filter(PlayerComponent)
+
+			viewers.forEach((p, index) => {
+				broadcast([root.players[p]], {
 					type: serverMessages.GAME_START,
 					props: gameProps,
-				},
-			)
+					playerEntity: players[index].entity,
+				})
+			})
 		},
 		onTurnAction: function* (action, game) {
 			console.log('Turn action recieved')

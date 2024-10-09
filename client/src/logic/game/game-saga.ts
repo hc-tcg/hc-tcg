@@ -181,13 +181,11 @@ function* updateGameState(_turnAction: any, game: GameModel) {
 	})
 }
 
-function* gameSaga(props: GameProps) {
+function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 	const socket = yield* select(getSocket)
 
 	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
-			console.log('Game start saga')
-
 			const backgroundTasks = yield* fork(() =>
 				all([
 					fork(opponentConnectionSaga),
@@ -202,7 +200,6 @@ function* gameSaga(props: GameProps) {
 				type: localMessages.GAME_START,
 			})
 
-			const playerEntity = game.state.order[0]
 			const isSpectator = false
 
 			// Set the first local state

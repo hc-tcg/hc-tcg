@@ -225,10 +225,6 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
 	public get players() {
 		return this.viewers.reduce(
 			(acc, viewer) => {
@@ -237,10 +233,6 @@ export class GameModel {
 			},
 			{} as Record<PlayerId, PlayerModel>,
 		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
 	}
 
 	public get createdTime() {
@@ -257,13 +249,6 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

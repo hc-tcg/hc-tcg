@@ -62,7 +62,11 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
-	{type: typeof serverMessages.GAME_START; props: GameProps},
+	{
+		type: typeof serverMessages.GAME_START
+		props: GameProps
+		playerEntity: PlayerEntity
+	},
 	{
 		type: typeof serverMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity

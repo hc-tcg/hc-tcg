@@ -755,7 +755,6 @@ export function* setupGameSaga(
 	},
 ) {
 	const game = new GameModel(props)
-	console.log('Game object created')
 
 	while (true) {
 		game.state.turn.turnNumber++
