@@ -35,6 +35,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {getPlayerId} from 'logic/session/session-selectors'
 
 function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* put<GameMessage>({
@@ -170,8 +171,8 @@ function* reconnectSaga() {
 }
 
 function* updateGameState(_turnAction: any, game: GameModel) {
-	const playerEntity = yield* select(getPlayerEntity)
-	const isSpectator = yield* select(getIsSpectator)
+	const playerEntity = game.state.order[0]
+	const isSpectator = false
 
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
@@ -193,14 +194,20 @@ function* gameSaga(props: GameProps) {
 					fork(chatSaga),
 					fork(spectatorSaga),
 					fork(reconnectSaga),
+					fork(gameActionsSaga),
 				]),
 			)
 
-			const playerEntity = yield* select(getPlayerEntity)
-			const isSpectator = yield* select(getIsSpectator)
-
 			yield* put<LocalMessage>({
-				type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+				type: localMessages.GAME_START,
+			})
+
+			const playerEntity = game.state.order[0]
+			const isSpectator = false
+
+			// Set the first local state
+			yield* putResolve<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_SET,
 				localGameState: getLocalGameState(game, playerEntity, isSpectator),
 				time: Date.now(),
 			})
