@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
@@ -335,7 +334,7 @@ export class GameModel {
 
 	/** Request a random number */
 	public randomNumber() {
-		assert(
+		console.assert(
 			this.randomNumberPointer < this.randomNumbers.length,
 			'Random number pointer should always be in the array.',
 		)

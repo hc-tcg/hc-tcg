@@ -1,12 +1,9 @@
-import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'

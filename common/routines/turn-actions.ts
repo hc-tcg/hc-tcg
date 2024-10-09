@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {delay} from 'typed-redux-saga'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
@@ -63,7 +62,7 @@ export function* attackSaga(
 		query.card.active,
 	)
 
-	assert(activeInstance, 'You can not attack without an active hermit.')
+	console.assert(activeInstance, 'You can not attack without an active hermit.')
 
 	if (checkForRequests) {
 		// First allow cards to add attack requests
@@ -130,23 +129,23 @@ export function* playCardSaga(
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
-	assert(slotEntity && localCard)
+	console.assert(slotEntity && localCard)
 
 	const card = game.components.find(
 		CardComponent,
 		query.card.entity(localCard.entity),
 	)
-	assert(card, 'You can not play a card that is not in the ECS')
+	console.assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
 
 	const pickedSlot = game.components.get(slotEntity)
-	assert(
+	console.assert(
 		pickedSlot && pickedSlot.onBoard(),
 		'A slot that is not on the board can not be picked: ' + pickedSlot,
 	)
 
-	assert(
+	console.assert(
 		!pickedSlot.getCard(),
 		'You can not play a card in a slot with a card in it',
 	)
@@ -159,7 +158,7 @@ export function* playCardSaga(
 	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
 	// It's the wrong kind of slot or does not satisfy the condition
-	assert(
+	console.assert(
 		canAttach,
 		'You can not play a card in a slot it cannot be attached to or at a time it can not be played.',
 	)
@@ -171,7 +170,7 @@ export function* playCardSaga(
 	if (pickedSlot.type === 'single_use') {
 		card.attach(pickedSlot)
 	} else {
-		assert(
+		console.assert(
 			row && rowIndex !== null,
 			'Placing a card on the board requires there to be a row.',
 		)
@@ -179,7 +178,7 @@ export function* playCardSaga(
 		switch (pickedSlot.type) {
 			case 'hermit': {
 				currentPlayer.hasPlacedHermit = true
-				assert(
+				console.assert(
 					card.isHealth(),
 					'Can not place a card that does not implement health to hermit slot: ' +
 						card.props.numericId,
@@ -201,7 +200,7 @@ export function* playCardSaga(
 				break
 			}
 			case 'attach': {
-				assert(
+				console.assert(
 					card.isAttach(),
 					'Attempted to add card that implement attach to an attach slot: ' +
 						card.props.numericId,
@@ -256,14 +255,17 @@ export function* changeActiveHermitSaga(
 		SlotComponent,
 		query.slot.entity(turnAction?.entity),
 	)
-	assert(pickedSlot?.inRow(), 'Active hermits must be on the board.')
+	console.assert(pickedSlot?.inRow(), 'Active hermits must be on the board.')
 	const row = pickedSlot.row
 
 	const hadActiveHermit = currentPlayer.activeRowEntity !== null
 
 	// Change row
 	const result = currentPlayer.changeActiveRow(row)
-	assert(result, 'Active row change actions should not be allowed to fail')
+	console.assert(
+		result,
+		'Active row change actions should not be allowed to fail',
+	)
 
 	if (hadActiveHermit) {
 		// We switched from one hermit to another, mark this action as completed
@@ -289,7 +291,7 @@ export function* modalRequestSaga(
 ): Generator<any, void> {
 	const modalRequest = game.state.modalRequests[0]
 
-	assert(
+	console.assert(
 		modalRequest,
 		`Client sent modal result without request! Result: ${modalResult}`,
 	)
@@ -307,7 +309,7 @@ export function* modalRequestSaga(
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
-		assert(
+		console.assert(
 			!modal.pick ||
 				!(
 					getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
@@ -336,11 +338,11 @@ export function* pickRequestSaga(
 	pickResult?: SlotEntity,
 ): Generator<any, void> {
 	// First validate data sent from client
-	assert(pickResult, 'Pick results cannot have an emtpy body.')
+	console.assert(pickResult, 'Pick results cannot have an emtpy body.')
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
-	assert(
+	console.assert(
 		pickRequest,
 		`Client sent pick result without request! Pick info: ${pickResult}`,
 	)
@@ -351,11 +353,11 @@ export function* pickRequestSaga(
 		query.slot.entity(pickResult),
 	)
 
-	assert(slotInfo, 'The slot that is picked must be in the ECS')
+	console.assert(slotInfo, 'The slot that is picked must be in the ECS')
 
 	const canPick = pickRequest.canPick(game, slotInfo)
 
-	assert(canPick, 'Invalid slots can not be picked.')
+	console.assert(canPick, 'Invalid slots can not be picked.')
 
 	const card = slotInfo.getCard()
 

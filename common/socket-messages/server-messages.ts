@@ -1,4 +1,5 @@
-import {Server} from 'http'
+import {PlayerEntity} from '../entities'
+import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {PlayerDeckT} from '../types/deck'
 import {
@@ -9,9 +10,7 @@ import {
 } from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
-import {PlayerEntity} from '../entities'
 import {AnyTurnActionData} from '../types/turn-action-data'
-import {GameProps} from '../models/game-model'
 
 export const serverMessages = messages({
 	PLAYER_RECONNECTED: null,

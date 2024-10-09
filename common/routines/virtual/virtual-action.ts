@@ -1,3 +1,4 @@
+import {delay, put} from 'typed-redux-saga'
 import {AIComponent} from '../../components/ai-component'
 import {GameModel} from '../../models/game-model'
 import {clientMessages} from '../../socket-messages/client-messages'
@@ -8,7 +9,6 @@ import {
 	formatNodefromShorthand,
 	formatText,
 } from '../../utils/formatting'
-import {delay, put} from 'typed-redux-saga'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500

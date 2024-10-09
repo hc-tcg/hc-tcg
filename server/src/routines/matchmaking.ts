@@ -9,33 +9,17 @@ import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+// import gameSaga, {getTimerForSeconds} from './game'
+// import ExBossAI from './virtual/exboss-ai'
+import setupGameSaga from 'common/routines/game'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-// import {OpponentDefs} from 'common/utils/state-gen'
-import {LocalMessageTable, localMessages} from 'messages'
-import {
-	all,
-	cancel,
-	delay,
-	fork,
-	join,
-	race,
-	spawn,
-	take,
-} from 'typed-redux-saga'
+import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {
-	getGameOutcome,
-	getGamePlayerOutcome,
-	getWinner,
-} from '../utils/win-conditions'
-// import gameSaga, {getTimerForSeconds} from './game'
-// import ExBossAI from './virtual/exboss-ai'
-import setupGameSaga from 'common/routines/game'
 
 function* gameManager(
 	player1: PlayerModel,

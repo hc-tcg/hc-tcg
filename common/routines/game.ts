@@ -11,7 +11,7 @@ import {
 import {AIComponent} from '../components/ai-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
-import {GameModel, GameProps, GameSettings} from '../models/game-model'
+import {GameModel, GameProps} from '../models/game-model'
 import {TypeT} from '../types/cards'
 import {TurnAction, TurnActions} from '../types/game-state'
 import {
@@ -23,9 +23,7 @@ import {
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
 
-import assert from 'assert'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {PlayerSetupDefs} from '../utils/setup-game'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -352,7 +350,7 @@ function* turnActionSaga(
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
-		assert(
+		console.assert(
 			![
 				'SINGLE_USE_ATTACK',
 				'PRIMARY_ATTACK',

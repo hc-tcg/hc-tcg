@@ -15,7 +15,6 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {CONFIG} from 'common/config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {STRENGTHS} from 'common/const/strengths'
