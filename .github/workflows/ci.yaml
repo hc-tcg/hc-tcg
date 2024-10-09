@@ -163,7 +163,7 @@ jobs:
         run: npm ci
 
       - name: Create debug config
-        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Test Database
         run: npm run test:db
