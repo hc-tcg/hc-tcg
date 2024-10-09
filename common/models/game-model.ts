@@ -20,7 +20,7 @@ import {
 	Message,
 	TurnAction,
 	TurnActions,
-} from '../types/game-state'
+} from '../types/setup-game'
 import {GameHook, Hook, PriorityHook} from '../types/hooks'
 import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
