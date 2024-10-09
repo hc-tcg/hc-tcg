@@ -144,6 +144,9 @@ export class GameModel {
 		>
 	}
 
+	private randomNumberPointer = 0
+	private randomNumbers: Array<number>
+
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
 		winner: PlayerId | null
@@ -151,24 +154,21 @@ export class GameModel {
 		reason: GameEndReasonT | null
 	}
 
-	constructor(
-		player1: PlayerSetupDefs,
-		player2: PlayerSetupDefs,
-		settings: GameSettings,
-		options?: {
-			gameCode?: string
-			spectatorCode?: string
-			randomizeOrder?: false
-		},
-	) {
-		options = options ?? {}
-
-		this.settings = settings
+	constructor(props: {
+		player1: PlayerSetupDefs
+		player2: PlayerSetupDefs
+		settings: GameSettings
+		gameCode?: string
+		spectatorCode?: string
+		randomizeOrder?: false
+		randomNumbers: Array<number>
+	}) {
+		this.settings = props.settings
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
+		this.internalGameCode = props.gameCode || null
+		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -181,6 +181,8 @@ export class GameModel {
 			reason: null,
 		}
 
+		this.randomNumbers = props.randomNumbers
+
 		this.components = new ComponentTable(this)
 		this.hooks = {
 			beforeAttack: new PriorityHook(beforeAttack),
@@ -189,14 +191,15 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this.components, player1, player2, {
-			shuffleDeck: settings.shuffleDeck,
-			startWithAllCards: settings.startWithAllCards,
-			unlimitedCards: settings.unlimitedCards,
-			extraStartingCards: settings.extraStartingCards,
+
+		setupComponents(this, this.components, props.player1, props.player2, {
+			shuffleDeck: props.settings.shuffleDeck,
+			startWithAllCards: props.settings.startWithAllCards,
+			unlimitedCards: props.settings.unlimitedCards,
+			extraStartingCards: props.settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(this, props.randomizeOrder)
 		this.voiceLineQueue = []
 	}
 
@@ -328,11 +331,11 @@ export class GameModel {
 	}
 
 	/** Request a random number */
-	public requestRandomNumbers(
-		amount: number,
-		then: (numbers: Array<number>) => void,
-	) {
-		this.state.randomNumberRequests.push([amount, then])
+	public randomNumber() {
+		let number = this.randomNumbers[this.randomNumberPointer]
+		this.randomNumberPointer =
+			this.randomNumberPointer + (1 % this.randomNumbers.length)
+		return number
 	}
 
 	/** Returns true if the current blocked actions list includes the given action */

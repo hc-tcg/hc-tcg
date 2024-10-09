@@ -14,6 +14,7 @@ import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
+import {fisherYatesShuffle} from './fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -123,17 +124,23 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
+	let numbers = new Array(cards.length).map(() => game.randomNumber())
+
 	if (options.shuffleDeck) {
-		// TODO
-		// do {
-		// 	game.requestRandomNumbers(cards.length, (numbers) => {
-		// 	fisherYatesShuffle(cards, numbers).forEach((card, i) => {
-		// 		if (card.slot.inDeck()) card.slot.order = i
-		// 	})
-		// } while (
-		// 	!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
-		// )
-		// })
+		fisherYatesShuffle(cards, numbers).forEach((card, i) => {
+			if (card.slot.inDeck()) card.slot.order = i
+		})
+		while (
+			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
+		) {
+			let temp = numbers.slice(0, 7)
+			// Find a slice with a hermit in it
+			numbers = [...numbers.slice(7), ...temp]
+
+			fisherYatesShuffle(cards, numbers).forEach((card, i) => {
+				if (card.slot.inDeck()) card.slot.order = i
+			})
+		}
 	}
 
 	for (let i = 0; i < options.extraStartingCards.length; i++) {
@@ -154,11 +161,9 @@ export function getGameState(
 	const playerEntities = game.components.filter(PlayerComponent)
 
 	if (randomizeOrder !== false) {
-		game.requestRandomNumbers(1, ([n]) => {
-			if (n >= 0.5) {
-				playerEntities.reverse()
-			}
-		})
+		if (game.randomNumber() >= 0.5) {
+			playerEntities.reverse()
+		}
 	}
 
 	const gameState: GameState = {

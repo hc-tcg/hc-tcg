@@ -10,37 +10,10 @@ import {LocalGameState} from 'common/types/game-state'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
-import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
-
-function getLocalGameStateForPlayer(
-	game: GameModel,
-	playerId: PlayerId,
-): LocalGameState | undefined {
-	const player = game.players[playerId]
-
-	if (game.state.timer.turnStartTime) {
-		const maxTime = game.settings.maxTurnTime * 1000
-		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
-		const graceTime = 1000
-		game.state.timer.turnRemaining = remainingTime + graceTime
-	}
-
-	let viewer = game.components.find(
-		ViewerComponent,
-		(_game, viewer) => viewer.playerId === player.id,
-	)
-
-	if (!viewer) {
-		console.error('Player tried to connect with invalid player id')
-		return undefined
-	}
-
-	return getLocalGameState(game, viewer)
-}
 
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],

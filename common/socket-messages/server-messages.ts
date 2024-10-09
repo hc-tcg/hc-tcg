@@ -1,3 +1,4 @@
+import {Server} from 'http'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {PlayerDeckT} from '../types/deck'
 import {
@@ -8,6 +9,8 @@ import {
 } from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
+import {PlayerEntity} from '../entities'
+import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const serverMessages = messages({
 	PLAYER_RECONNECTED: null,
@@ -20,6 +23,7 @@ export const serverMessages = messages({
 	GAME_CRASH: null,
 	GAME_START: null,
 	GAME_END: null,
+	GAME_TURN_ACTION: null,
 	PRIVATE_GAME_TIMEOUT: null,
 	LEAVE_QUEUE_SUCCESS: null,
 	LEAVE_QUEUE_FAILURE: null,
@@ -59,6 +63,11 @@ export type ServerMessages = [
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
 	{type: typeof serverMessages.GAME_START},
+	{
+		type: typeof serverMessages.GAME_TURN_ACTION
+		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+	},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null

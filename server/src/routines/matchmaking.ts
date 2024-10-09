@@ -14,7 +14,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {OpponentDefs} from 'common/utils/state-gen'
+// import {OpponentDefs} from 'common/utils/state-gen'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
@@ -28,143 +28,118 @@ import {
 } from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
 import {
 	getGameOutcome,
 	getGamePlayerOutcome,
 	getWinner,
 } from '../utils/win-conditions'
-import gameSaga, {getTimerForSeconds} from './game'
-import ExBossAI from './virtual/exboss-ai'
+// import gameSaga, {getTimerForSeconds} from './game'
+// import ExBossAI from './virtual/exboss-ai'
+import setupGameSaga from 'common/routines/game'
 
-function setupGame(
+function* gameManager(
 	player1: PlayerModel,
 	player2: PlayerModel,
+	viewers: Array<PlayerId>,
 	code?: string,
 	spectatorCode?: string,
-): GameModel {
-	let game = new GameModel(
+) {
+	// try {
+	let saga = setupGameSaga(
 		{
-			model: player1,
-			deck: player1.deck.cards.map((card) => card.props.numericId),
+			player1: {
+				model: player1,
+				deck: player1.deck.cards.map((card) => card.props.numericId),
+			},
+			player2: {
+				model: player2,
+				deck: player2.deck.cards.map((card) => card.props.numericId),
+			},
+			settings: gameSettingsFromEnv(),
+			gameCode: code,
+			spectatorCode,
+			randomNumbers: Array(7777).map(() => Math.random()),
 		},
 		{
-			model: player2,
-			deck: player2.deck.cards.map((card) => card.props.numericId),
+			onTurnAction: (action, game) => {
+				console.log('Turn action recieved')
+				for (const viewer in viewers) {
+					broadcast([root.players[viewer]], {
+						type: serverMessages.GAME_TURN_ACTION,
+						playerEntity: action.entity,
+						action: action.data,
+					})
+				}
+			},
 		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode},
 	)
 
-	let playerEntities = game.components.filterEntities(PlayerComponent)
+	return
 
-	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
-		player: player1,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
+	// 	const viewers = game.viewers
+	// 	const playerIds = viewers.map((viewer) => viewer.player.id)
 
-	game.components.new(ViewerComponent, {
-		player: player2,
-		spectator: false,
-		playerOnLeft: playerEntities[1],
-	})
+	// 	const gameType =
+	// 		playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
 
-	return game
-}
+	// 	console.info(
+	// 		`${game.logHeader}`,
+	// 		`${gameType} game started.`,
+	// 		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+	// 		'Total games:',
+	// 		root.getGameIds().length,
+	// 	)
 
-function* gameManager(game: GameModel) {
-	// @TODO this one method needs cleanup still
-	try {
-		const viewers = game.viewers
-		const playerIds = viewers.map((viewer) => viewer.player.id)
+	// 	game.broadcastToViewers({type: serverMessages.GAME_START})
+	// 	root.hooks.newGame.call(game)
+	// 	game.task = yield* spawn(gameSaga, game)
 
-		const gameType =
-			playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
+	// 	// Kill game on timeout or when user leaves for long time + cleanup after game
+	// 	const result = yield* race({
+	// 		// game ended (or crashed -> catch)
+	// 		gameEnd: join(game.task),
+	// 		// kill a game after two hours
+	// 		timeout: delay(1000 * 60 * 60),
+	// 		// kill game when a player is disconnected for too long
+	// 		playerRemoved: take<
+	// 			LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+	// 		>(
+	// 			(action: any) =>
+	// 				action.type === localMessages.PLAYER_REMOVED &&
+	// 				playerIds.includes(
+	// 					(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+	// 						.player.id,
+	// 				),
+	// 		),
+	// 		forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
+	// 			(action: any) =>
+	// 				action.type === clientMessages.FORFEIT &&
+	// 				playerIds.includes(
+	// 					(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
+	// 						.playerId,
+	// 				),
+	// 		),
+	// 	})
 
-		console.info(
-			`${game.logHeader}`,
-			`${gameType} game started.`,
-			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-			'Total games:',
-			root.getGameIds().length,
-		)
+	// 	game.endInfo.outcome = getGameOutcome(game, result)
+	// 	game.endInfo.winner = getWinner(game, result)
+	// } catch (err) {
+	// 	console.log('Error: ', err)
+	// 	game.endInfo.outcome = 'error'
+	// 	broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
+	// } finally {
+	// 	if (game.task) yield* cancel(game.task)
+	// 	game.hooks.afterGameEnd.call()
 
-		game.broadcastToViewers({type: serverMessages.GAME_START})
-		root.hooks.newGame.call(game)
-		game.task = yield* spawn(gameSaga, game)
+	// 	const gameType = game.gameCode ? 'Private' : 'Public'
+	// 	console.log(
+	// 		`${gameType} game ended. Total games:`,
+	// 		root.getGameIds().length - 1,
+	// 	)
 
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
-			// kill a game after two hours
-			timeout: delay(1000 * 60 * 60),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take<
-				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-			>(
-				(action: any) =>
-					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(
-						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-							.player.id,
-					),
-			),
-			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-				(action: any) =>
-					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(
-						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-							.playerId,
-					),
-			),
-		})
-
-		for (const viewer of game.viewers) {
-			const gameState = getLocalGameState(game, viewer)
-			if (gameState) {
-				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.reason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
-						.filter(PlayerComponent)
-						.forEach(
-							(player) => (gameState.players[player.entity].coinFlips = []),
-						)
-				}
-			}
-			const outcome = getGamePlayerOutcome(game, result, viewer)
-			// assert(game.endInfo.reason, 'Games can not end without a reason')
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_END,
-				gameState,
-				outcome,
-				reason: game.endInfo.reason || undefined,
-			})
-		}
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	} finally {
-		if (game.task) yield* cancel(game.task)
-		game.hooks.afterGameEnd.call()
-
-		const gameType = game.gameCode ? 'Private' : 'Public'
-		console.log(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1,
-		)
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
-	}
+	// 	delete root.games[game.id]
+	// 	root.hooks.gameRemoved.call(game)
+	// }
 }
 
 export function inGame(playerId: PlayerId) {
@@ -202,9 +177,14 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2)
-				root.addGame(newGame)
-				yield* fork(gameManager, newGame)
+				yield* fork(
+					gameManager,
+					player1,
+					player2,
+					[player1.id, player2.id],
+					undefined,
+					undefined,
+				)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)

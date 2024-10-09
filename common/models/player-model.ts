@@ -1,6 +1,5 @@
 import {Socket} from 'socket.io'
 import {PlayerDeckT} from '../../common/types/deck'
-import {getStarterPack} from '../../server/src/utils/state-gen'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 import {validateDeck} from '../utils/validation'
@@ -24,7 +23,8 @@ export class PlayerModel {
 		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
-			cards: getStarterPack(),
+			// @todo Generate a starter pack
+			cards: [],
 			tags: [],
 		}
 

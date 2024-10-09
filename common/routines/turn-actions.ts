@@ -17,7 +17,6 @@ import {
 } from '../types/turn-action-data'
 import {executeAttacks} from '../utils/attacks'
 import {applySingleUse} from '../utils/board'
-import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(
 	game: GameModel,

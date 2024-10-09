@@ -747,19 +747,23 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 export function setupGameSaga(
-	player1: PlayerSetupDefs,
-	player2: PlayerSetupDefs,
-	settings: GameSettings,
-	sagas: {
-		onTurnAction: (turnAction: AnyTurnActionData, game: GameModel) => any
-	},
-	options?: {
+	props: {
+		player1: PlayerSetupDefs
+		player2: PlayerSetupDefs
+		settings: GameSettings
 		gameCode?: string
 		spectatorCode?: string
 		randomizeOrder?: false
+		randomNumbers: Array<number>
+	},
+	sagas: {
+		onTurnAction: (
+			action: {data: AnyTurnActionData; entity: PlayerEntity},
+			game: GameModel,
+		) => any
 	},
 ) {
-	const game = new GameModel(player1, player2, settings, options)
+	const game = new GameModel(props)
 
 	return (function* () {
 		while (true) {

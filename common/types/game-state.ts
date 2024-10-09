@@ -73,7 +73,6 @@ export type GameState = {
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
-	randomNumberRequests: Array<[number, (x: Array<number>) => void]>
 
 	timer: {
 		turnStartTime: number
