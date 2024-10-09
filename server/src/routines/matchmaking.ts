@@ -45,34 +45,43 @@ function* gameManager(
 	spectatorCode?: string,
 ) {
 	// try {
-	let saga = setupGameSaga(
-		{
-			player1: {
-				model: player1,
-				deck: player1.deck.cards.map((card) => card.props.numericId),
-			},
-			player2: {
-				model: player2,
-				deck: player2.deck.cards.map((card) => card.props.numericId),
-			},
-			settings: gameSettingsFromEnv(),
-			gameCode: code,
-			spectatorCode,
-			randomNumbers: Array(7777).map(() => Math.random()),
+
+	let gameProps = {
+		player1: {
+			model: player1,
+			deck: player1.deck.cards.map((card) => card.props.numericId),
 		},
-		{
-			onTurnAction: (action, game) => {
-				console.log('Turn action recieved')
-				for (const viewer in viewers) {
-					broadcast([root.players[viewer]], {
-						type: serverMessages.GAME_TURN_ACTION,
-						playerEntity: action.entity,
-						action: action.data,
-					})
-				}
-			},
+		player2: {
+			model: player2,
+			deck: player2.deck.cards.map((card) => card.props.numericId),
 		},
-	)
+		settings: gameSettingsFromEnv(),
+		gameCode: code,
+		spectatorCode,
+		randomNumbers: Array(7777).map(() => Math.random()),
+	}
+
+	let saga = setupGameSaga(gameProps, {
+		onGameStart: (game) => {
+			broadcast(
+				viewers.map((p) => root.players[p]),
+				{
+					type: serverMessages.GAME_START,
+					props: gameProps,
+				},
+			)
+		},
+		onTurnAction: (action, game) => {
+			console.log('Turn action recieved')
+			for (const viewer in viewers) {
+				broadcast([root.players[viewer]], {
+					type: serverMessages.GAME_TURN_ACTION,
+					playerEntity: action.entity,
+					action: action.data,
+				})
+			}
+		},
+	})
 
 	return
 

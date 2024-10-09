@@ -1,5 +1,5 @@
 import {PlayerEntity} from 'common/entities'
-import {GameModel, GameSettings} from 'common/models/game-model'
+import {GameModel, GameProps, GameSettings} from 'common/models/game-model'
 import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
@@ -205,25 +205,22 @@ function* updateGameState(_turnAction: any, game: GameModel) {
 	})
 }
 
-function* gameSaga(
-	player1: PlayerSetupDefs,
-	player2: PlayerSetupDefs,
-	settings: GameSettings,
-	options?: {
-		gameCode?: string
-		spectatorCode?: string
-		randomizeOrder?: false
-	},
-) {
+function* gameSaga(props: GameProps) {
 	const socket = yield* select(getSocket)
 
-	const gameSaga = setupGameSaga(
-		player1,
-		player2,
-		settings,
-		{onTurnAction: updateGameState},
-		options,
-	)
+	const gameSaga = setupGameSaga(props, {
+		onGameStart: function* (game) {
+			const playerEntity = yield* select(getPlayerEntity)
+			const isSpectator = yield* select(getIsSpectator)
+
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				time: Date.now(),
+			})
+		},
+		onTurnAction: updateGameState,
+	})
 
 	const backgroundTasks = yield* fork(() =>
 		all([

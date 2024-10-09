@@ -11,6 +11,7 @@ import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {PlayerEntity} from '../entities'
 import {AnyTurnActionData} from '../types/turn-action-data'
+import {GameProps} from '../models/game-model'
 
 export const serverMessages = messages({
 	PLAYER_RECONNECTED: null,
@@ -62,7 +63,7 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
-	{type: typeof serverMessages.GAME_START},
+	{type: typeof serverMessages.GAME_START; props: GameProps},
 	{
 		type: typeof serverMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity

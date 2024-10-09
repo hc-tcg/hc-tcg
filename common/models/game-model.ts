@@ -100,6 +100,16 @@ export function gameSettingsFromEnv(): GameSettings {
 	}
 }
 
+export type GameProps = {
+	player1: PlayerSetupDefs
+	player2: PlayerSetupDefs
+	settings: GameSettings
+	gameCode?: string
+	spectatorCode?: string
+	randomizeOrder?: false
+	randomNumbers: Array<number>
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
@@ -154,15 +164,7 @@ export class GameModel {
 		reason: GameEndReasonT | null
 	}
 
-	constructor(props: {
-		player1: PlayerSetupDefs
-		player2: PlayerSetupDefs
-		settings: GameSettings
-		gameCode?: string
-		spectatorCode?: string
-		randomizeOrder?: false
-		randomNumbers: Array<number>
-	}) {
+	constructor(props: GameProps) {
 		this.settings = props.settings
 
 		this.internalCreatedTime = Date.now()

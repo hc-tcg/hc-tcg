@@ -11,7 +11,7 @@ import {
 import {AIComponent} from '../components/ai-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
-import {GameModel, GameSettings} from '../models/game-model'
+import {GameModel, GameProps, GameSettings} from '../models/game-model'
 import {TypeT} from '../types/cards'
 import {TurnAction, TurnActions} from '../types/game-state'
 import {
@@ -747,16 +747,9 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 export function setupGameSaga(
-	props: {
-		player1: PlayerSetupDefs
-		player2: PlayerSetupDefs
-		settings: GameSettings
-		gameCode?: string
-		spectatorCode?: string
-		randomizeOrder?: false
-		randomNumbers: Array<number>
-	},
+	props: GameProps,
 	sagas: {
+		onGameStart: (game: GameModel) => any
 		onTurnAction: (
 			action: {data: AnyTurnActionData; entity: PlayerEntity},
 			game: GameModel,
@@ -768,7 +761,8 @@ export function setupGameSaga(
 	return (function* () {
 		while (true) {
 			game.state.turn.turnNumber++
-			const result = yield* call(sagas.onTurnAction, game)
+			yield* sagas.onGameStart(game)
+			const result = yield* call(turnActionsSaga, game, sagas.onTurnAction)
 			if (result === 'GAME_END') break
 		}
 	})()
