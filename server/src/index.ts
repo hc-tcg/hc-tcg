@@ -2,9 +2,11 @@ import 'dotenv/config'
 import {createServer} from 'http'
 import path from 'path'
 import {fileURLToPath} from 'url'
+import {CARDS_LIST} from 'common/cards'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
+import {setupDatabase} from '../src/db/db'
 import {addApi} from './api'
 import startSocketIO from './sockets'
 
@@ -43,6 +45,8 @@ app.get('/', (_req, res) => {
 })
 
 addApi(app)
+export const database = setupDatabase(CARDS_LIST, process.env)
+database.new()
 
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
