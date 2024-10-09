@@ -309,12 +309,6 @@ function getLocalPlayerState(
 		query.card.slotEntity(singleUseSlot),
 	)
 
-	let viewerForPlayer = game.components.find(
-		ViewerComponent,
-		(_game, viewer) =>
-			!viewer.spectator && viewer.playerOnLeft.entity === playerState.entity,
-	)
-
 	if (!singleUseSlot) {
 		throw new Error('Slot is missing when generating local game state.')
 	}
@@ -376,7 +370,6 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewerForPlayer?.playerId,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -391,11 +384,12 @@ function getLocalPlayerState(
 
 export function getLocalGameState(
 	game: GameModel,
-	viewer: ViewerComponent,
+	playerEntity: PlayerEntity,
+	isSpectator: boolean,
 ): LocalGameState {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(_game, player) => player.entity == viewer.playerOnLeft.entity,
+		(_game, player) => player.entity == playerEntity,
 	)
 
 	if (!playerState)
@@ -404,15 +398,14 @@ export function getLocalGameState(
 	const opponentState = playerState.opponentPlayer
 
 	let isCurrentPlayer =
-		!viewer.spectator &&
-		viewer.playerOnLeft.entity === game.currentPlayer.entity
+		!isSpectator && playerEntity === game.currentPlayer.entity
 
 	const turnState = game.state.turn
 
 	// convert player states
 	const players: Record<PlayerEntity, LocalPlayerState> = {}
-	players[viewer.playerOnLeft.entity] = getLocalPlayerState(game, playerState)
-	players[viewer.playerOnRight.entity] = getLocalPlayerState(
+	players[playerEntity] = getLocalPlayerState(game, playerState)
+	players[game.otherPlayerEntity(playerEntity)] = getLocalPlayerState(
 		game,
 		opponentState,
 	)
@@ -422,17 +415,13 @@ export function getLocalGameState(
 	let currentPickMessage = null
 	let currentModalData = null
 
-	const currentPickRequest = viewer.spectator
-		? null
-		: game.state.pickRequests[0]
-	const currentModalRequest = viewer.spectator
-		? null
-		: game.state.modalRequests[0]
+	const currentPickRequest = isSpectator ? null : game.state.pickRequests[0]
+	const currentModalRequest = isSpectator ? null : game.state.modalRequests[0]
 
-	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
+	if (currentModalRequest?.player === playerEntity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
 		currentModalData = getLocalModalData(game, currentModalRequest.modal)
-	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
+	} else if (currentPickRequest?.player === playerEntity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
@@ -441,13 +430,13 @@ export function getLocalGameState(
 			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
-		if (currentPickRequest.player == viewer.playerOnLeft.entity) {
+		if (currentPickRequest.player == playerEntity) {
 			playerState.pickableSlots = game.getPickableSlots(
 				currentPickRequest.canPick,
 			)
 		}
 		// We also want to highlight the slots for the player that must select a slot
-		if (currentPickRequest.player == viewer.playerOnLeft.entity) {
+		if (currentPickRequest.player == playerEntity) {
 			playerState.pickableSlots = game.getPickableSlots(
 				currentPickRequest.canPick,
 			)
@@ -467,7 +456,7 @@ export function getLocalGameState(
 	}
 
 	const localGameState: LocalGameState = {
-		isSpectator: viewer.spectator,
+		isSpectator: isSpectator,
 		turn: {
 			turnNumber: turnState.turnNumber,
 			currentPlayerEntity: game.currentPlayer.entity,
@@ -483,7 +472,7 @@ export function getLocalGameState(
 			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
 
 		// personal info
-		hand: viewer.spectator
+		hand: isSpectator
 			? []
 			: game.components
 					.filter(
@@ -495,7 +484,7 @@ export function getLocalGameState(
 					)
 					.sort(CardComponent.compareOrder)
 					.map((card) => getLocalCard(game, card)),
-		pileCount: viewer.spectator
+		pileCount: isSpectator
 			? 0
 			: game.components.filter(
 					CardComponent,
@@ -504,7 +493,7 @@ export function getLocalGameState(
 						query.slot.deck,
 					),
 				).length,
-		discarded: viewer.spectator
+		discarded: isSpectator
 			? []
 			: game.components
 					.filter(
@@ -517,9 +506,9 @@ export function getLocalGameState(
 					.map((card) => getLocalCard(game, card)),
 
 		// The entity of the player on the left of the screen
-		playerEntity: players[viewer.playerOnLeft.entity].entity,
+		playerEntity: players[playerEntity].entity,
 		// The entity for the player on the the right of the screen
-		opponentPlayerEntity: players[viewer.playerOnRight.entity].entity,
+		opponentPlayerEntity: players[game.otherPlayerEntity(playerEntity)].entity,
 
 		currentCardsCanBePlacedIn: playerState
 			.getCardsCanBePlacedIn()
