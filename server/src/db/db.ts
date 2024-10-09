@@ -34,7 +34,7 @@ export class Database {
 			`
 			INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
 		`,
-			this.allCards.map((card) => card.numericId),
+			[this.allCards.map((card) => card.numericId)],
 		)
 	}
 
@@ -49,22 +49,17 @@ export class Database {
 	): Promise<User | null> {
 		const BF_DEPTH = 4
 
-		try {
-			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
-				.rows[0]['uuid_generate_v4']
-			const user = await this.pool.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, BF_DEPTH],
-			)
-			return {
-				uuid: user.rows[0]['user_id'],
-				secret: secret,
-				username: username,
-				minecraftName: minecraftName,
-			}
-		} catch (err) {
-			console.log(err)
-			return null
+		const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
+			.rows[0]['uuid_generate_v4']
+		const user = await this.pool.query(
+			"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
+			[username, minecraftName, secret, BF_DEPTH],
+		)
+		return {
+			uuid: user.rows[0]['user_id'],
+			secret: secret,
+			username: username,
+			minecraftName: minecraftName,
 		}
 	}
 
@@ -76,111 +71,92 @@ export class Database {
 		tags: Array<string>,
 		user_id: string,
 	): Promise<string | null> {
-		try {
-			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon) values ($1,$2,$3) RETURNING (deck_code)',
-				[user_id, name, icon],
-			)
-			const deckCode: string = deckResult.rows[0]['deck_code']
+		const deckResult = await this.pool.query(
+			'INSERT INTO decks (user_id, name, icon) values ($1,$2,$3) RETURNING (deck_code)',
+			[user_id, name, icon],
+		)
+		const deckCode: string = deckResult.rows[0]['deck_code']
 
-			const reformattedCards = cards.reduce(
-				(r: Array<{id: number; copies: number}>, card) => {
-					const index = r.findIndex((subcard) => subcard.id === card)
-					if (index >= 0) {
-						r[index].copies += 1
-						return r
-					}
-					return [...r, {id: card, copies: 1}]
-				},
-				[],
-			)
+		const reformattedCards = cards.reduce(
+			(r: Array<{id: number; copies: number}>, card) => {
+				const index = r.findIndex((subcard) => subcard.id === card)
+				if (index >= 0) {
+					r[index].copies += 1
+					return r
+				}
+				return [...r, {id: card, copies: 1}]
+			},
+			[],
+		)
 
-			await this.pool.query(
-				`
+		await this.pool.query(
+			`
 				INSERT INTO deck_cards (deck_code,card_id,copies) SELECT * FROM UNNEST ($1::text[],$2::int[],$3::int[]) 
 				ON CONFLICT DO NOTHING`,
-				[
-					Array(reformattedCards.length).fill(deckCode),
-					reformattedCards.map((card) => card.id),
-					reformattedCards.map((card) => card.copies),
-				],
-			)
-			return deckCode
-		} catch (err) {
-			console.log(err)
-			return null
-		}
+			[
+				Array(reformattedCards.length).fill(deckCode),
+				reformattedCards.map((card) => card.id),
+				reformattedCards.map((card) => card.copies),
+			],
+		)
+		return deckCode
 	}
 
 	/** Return the deck with a specific ID. */
 	public async getDeckFromID(deckCode: string): Promise<Deck | null> {
-		try {
-			const deck = (
-				await this.pool.query(
-					`SELECT * FROM decks
+		const deck = (
+			await this.pool.query(
+				`SELECT * FROM decks
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
 					WHERE decks.deck_code = $1
 					`,
-					[deckCode],
-				)
-			).rows
-			const code = deck[0]['deck_code']
-			const name = deck[0]['name']
-			const icon = deck[0]['icon']
-			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
-				return [
-					...r,
-					...Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id']),
-					),
-				]
-			}, [])
-			const tags: Array<string> = []
+				[deckCode],
+			)
+		).rows
+		const code = deck[0]['deck_code']
+		const name = deck[0]['name']
+		const icon = deck[0]['icon']
+		const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
+			return [
+				...r,
+				...Array(row['copies']).fill(
+					this.allCards.find((card) => card.numericId === row['card_id']),
+				),
+			]
+		}, [])
+		const tags: Array<string> = []
 
-			return {
-				code,
-				name,
-				icon,
-				cards,
-				tags,
-			}
-		} catch (err) {
-			console.log(err)
-			return null
+		return {
+			code,
+			name,
+			icon,
+			cards,
+			tags,
 		}
 	}
 
 	// This function is horribly written, need to redo it
 	/** Return the decks associated with a user. */
 	public async getDecks(user_id: string): Promise<Array<Deck | null>> {
-		try {
-			const decks = await this.pool.query(
-				'SELECT (code) FROM decks WHERE user_id = $1',
-				[user_id],
-			)
-			const allDecks: Array<Deck | null> = []
-			for (let i = 0; i < decks.rows.length; i++) {
-				allDecks.push(await this.getDeckFromID(decks.rows[i]['deck_code']))
-			}
-			return allDecks
-		} catch (err) {
-			console.log(err)
-			return []
+		const decks = await this.pool.query(
+			'SELECT (code) FROM decks WHERE user_id = $1',
+			[user_id],
+		)
+		const allDecks: Array<Deck | null> = []
+		for (let i = 0; i < decks.rows.length; i++) {
+			allDecks.push(await this.getDeckFromID(decks.rows[i]['deck_code']))
 		}
+		return allDecks
 	}
 	/** Disassociate a deck from a user. This is used when a deck is deleted or updated.*/
 	public async disassociateDeck(
 		deckCode: string,
 		user_id: string,
 	): Promise<void> {
-		try {
-			await this.pool.query(
-				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
-				[deckCode, user_id],
-			)
-		} catch (err) {
-			console.log(err)
-		}
+		await this.pool.query(
+			'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
+			[deckCode, user_id],
+		)
 	}
 	// Insert tag
 	// Delete tag
