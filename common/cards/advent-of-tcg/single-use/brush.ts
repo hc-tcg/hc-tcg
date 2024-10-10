@@ -23,6 +23,7 @@ const Brush: SingleUse = {
 		singleUse.attachCondition,
 		(_game, pos) => pos.player.getDeck().length >= 3,
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

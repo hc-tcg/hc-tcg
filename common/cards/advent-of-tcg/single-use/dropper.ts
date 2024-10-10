@@ -18,6 +18,7 @@ const Dropper: SingleUse = {
 	tokens: 0,
 	description: "Place a fletching table on the top of your opponent's deck",
 	showConfirmationModal: true,
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

@@ -24,6 +24,7 @@ const Glowstone: SingleUse = {
 		(_game, pos) =>
 			!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
 	),
+	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
