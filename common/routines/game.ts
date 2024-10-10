@@ -627,12 +627,8 @@ function* turnActionsSaga(
 			}
 
 			// Run action logic
-			yield* call(onTurnActionSaga, raceResult.turnAction, game)
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
-
-			if (update) {
-				yield* update(game)
-			}
+			yield* call(onTurnActionSaga, raceResult.turnAction, game)
 
 			if (result === 'END_TURN') {
 				break
