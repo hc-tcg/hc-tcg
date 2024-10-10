@@ -639,7 +639,11 @@ function* turnActionsSaga(
 			}
 		}
 	} catch (e) {
-		console.error(e)
+		if (game.settings.logErrorsToStderr) {
+			console.error(`${game.logHeader} ${(e as Error).stack}`.trimStart())
+		} else {
+			throw e
+		}
 	} finally {
 		turnActionChannel.close()
 	}

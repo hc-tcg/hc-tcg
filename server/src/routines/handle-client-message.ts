@@ -78,7 +78,6 @@ function* handler(message: RecievedClientMessage) {
 			// @todo Figure out this bug
 			if (actionMessage.payload === undefined) return
 
-			console.log('Turn action recieved')
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,

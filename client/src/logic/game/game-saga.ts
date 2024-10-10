@@ -40,7 +40,10 @@ import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 import {getPlayerId} from 'logic/session/session-selectors'
 
-export function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
+export function* sendTurnAction(
+	entity: PlayerEntity,
+	action: AnyTurnActionData,
+) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
 		action: action,
@@ -131,7 +134,7 @@ function* gameStateSaga(
 	yield cancel(logic)
 }
 
-function* handleGameTurnAction() {
+function* handleGameTurnActionSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const message = yield* call(
@@ -188,20 +191,10 @@ function* reconnectSaga() {
 	}
 }
 
-function* updateGameState(_turnAction: any, game: GameModel) {
-	const playerEntity = game.state.order[0]
-	const isSpectator = false
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-		localGameState: getLocalGameState(game, playerEntity, isSpectator),
-		time: Date.now(),
-	})
-}
-
 function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 	const socket = yield* select(getSocket)
 
+	console.log('RUNNING GAME')
 	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
 			const backgroundTasks = yield* fork(() =>
@@ -211,7 +204,7 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 					fork(spectatorSaga),
 					fork(reconnectSaga),
 					fork(gameActionsSaga),
-					fork(handleGameTurnAction),
+					fork(handleGameTurnActionSaga),
 				]),
 			)
 
@@ -237,7 +230,7 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 				time: Date.now(),
 			})
 		},
-		onTurnAction: updateGameState,
+		onTurnAction: function* () {},
 	})
 
 	return

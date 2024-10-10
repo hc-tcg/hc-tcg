@@ -97,10 +97,8 @@ function* gameManager(
 
 				const players = game.components.filter(PlayerComponent)
 
-				if (playerEntity === players[index].entity) {
-					// then `playerEntity` created this action so we don't need to send it back
-					return
-				}
+				// then `playerEntity` created this action so we don't need to send it back
+				if (playerEntity === players[index].entity) return
 
 				broadcast([root.players[p]], {
 					type: serverMessages.GAME_TURN_ACTION,

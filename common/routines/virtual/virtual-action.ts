@@ -18,6 +18,9 @@ export default function* virtualPlayerActionSaga(
 	game: GameModel,
 	component: AIComponent,
 ) {
+	// @todo THIS IS SCREWING THINGS UP PROBABLY
+	return
+
 	const coinFlips = game.currentPlayer.coinFlips
 	yield* delay(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
