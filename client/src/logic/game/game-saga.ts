@@ -15,6 +15,7 @@ import {
 	all,
 	call,
 	cancel,
+	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -51,7 +52,7 @@ export function* sendTurnAction(
 	})
 
 	yield* sendMsg({
-		type: clientMessages.TURN_ACTION,
+		type: clientMessages.GAME_TURN_ACTION,
 		action: action,
 		playerEntity: entity,
 	})
@@ -96,42 +97,52 @@ function* actionSaga(playerEntity: PlayerEntity) {
 function* gameStateSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
 ) {
-	const gameState: LocalGameState = action.localGameState
+	let logic: any = undefined
 
-	// First show coin flips, if any
-	yield* call(coinFlipSaga, gameState)
+	console.log('Starting game state saga:' + action.time)
 
-	// Actually update the local state
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_LOCAL_STATE_SET,
-		localGameState: gameState,
-		time: action.time,
-	})
+	try {
+		const gameState: LocalGameState = action.localGameState
 
-	yield* put<LocalMessage>({
-		type: localMessages.QUEUE_VOICE,
-		lines: gameState.voiceLineQueue,
-	})
+		// First show coin flips, if any
+		yield* call(coinFlipSaga, gameState)
 
-	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
-		return
+		// Actually update the local state
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: gameState,
+			time: action.time,
+		})
 
-	const logic = yield* fork(() =>
-		all([
-			fork(actionModalsSaga),
-			fork(slotSaga),
-			fork(actionLogicSaga, gameState),
-			fork(endTurnSaga),
-			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
-		]),
-	)
+		yield* put<LocalMessage>({
+			type: localMessages.QUEUE_VOICE,
+			lines: gameState.voiceLineQueue,
+		})
 
-	// Handle core funcionality
-	yield call(actionSaga, gameState.playerEntity)
+		if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
+		if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
+			return
 
-	// After we send an action, disable logic till the next game state is received
-	yield cancel(logic)
+		console.log('Waiting for player to do something')
+		logic = yield* fork(() =>
+			all([
+				fork(actionModalsSaga),
+				fork(slotSaga),
+				fork(actionLogicSaga, gameState),
+				fork(endTurnSaga),
+				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
+			]),
+		)
+
+		// Handle core funcionality
+		yield call(actionSaga, gameState.playerEntity)
+		console.log("should be ending")
+	} finally {
+		if (logic) {
+			console.log('Cancelling logic saga')
+			yield* cancel(logic)
+		}
+	}
 }
 
 function* handleGameTurnActionSaga() {
@@ -150,14 +161,7 @@ function* handleGameTurnActionSaga() {
 }
 
 function* gameActionsSaga() {
-	yield* fork(() =>
-		all([
-			takeEvery(localMessages.GAME_FORFEIT, function* () {
-				yield sendMsg({type: clientMessages.FORFEIT})
-			}),
-			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
-		]),
-	)
+	yield* takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga)
 }
 
 function* opponentConnectionSaga() {
@@ -194,7 +198,6 @@ function* reconnectSaga() {
 function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 	const socket = yield* select(getSocket)
 
-	console.log('RUNNING GAME')
 	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
 			const backgroundTasks = yield* fork(() =>

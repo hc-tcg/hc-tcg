@@ -772,9 +772,9 @@ export function* setupGameSaga(
 ) {
 	const game = new GameModel(props)
 
+	game.state.turn.turnNumber++
+	yield* sagas.onGameStart(game)
 	while (true) {
-		game.state.turn.turnNumber++
-		yield* sagas.onGameStart(game)
 		const result = yield* call(
 			turnActionsSaga,
 			game,
@@ -782,6 +782,7 @@ export function* setupGameSaga(
 			sagas.update,
 		)
 		if (result === 'GAME_END') break
+		game.state.turn.turnNumber++
 	}
 }
 

@@ -48,7 +48,6 @@ const gameReducer = (
 ): LocalGameRoot => {
 	switch (action.type) {
 		case localMessages.GAME_LOCAL_STATE_SET:
-			console.log("GAME LOCAL STATE SET")
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.localGameState,
