@@ -124,11 +124,11 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
-	let numbers = Array(cards.length)
-		.fill(0)
-		.map(() => game.randomNumber())
-
 	if (options.shuffleDeck) {
+		let numbers = Array(cards.length)
+			.fill(0)
+			.map(() => game.randomNumber())
+
 		fisherYatesShuffle(cards, numbers).forEach((card, i) => {
 			if (card.slot.inDeck()) card.slot.order = i
 		})
@@ -136,10 +136,10 @@ function setupEcsForPlayer(
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
-			let temp = numbers.slice(0, amountOfStartingCards)
-			numbers = [...numbers.slice(amountOfStartingCards), ...temp]
+			let numbers = Array(cards.length)
+				.fill(0)
+				.map(() => game.randomNumber())
 
-			// Find a slice with a hermit in it
 			fisherYatesShuffle(cards, numbers).forEach((card, i) => {
 				if (card.slot.inDeck()) card.slot.order = i
 			})
