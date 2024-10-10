@@ -40,7 +40,7 @@ import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 import {getPlayerId} from 'logic/session/session-selectors'
 
-function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
+export function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
 		action: action,
