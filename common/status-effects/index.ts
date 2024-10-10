@@ -26,6 +26,7 @@ import {
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
+import NaughtyRegiftEffect from './naughty-regift'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
@@ -37,6 +38,7 @@ import {
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SoulmateEffect from './soulmate'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import TFCDiscardedFromEffect from './tfc-discarded-from'
@@ -90,6 +92,8 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	LooseShellEffect,
 	TFCDiscardedFromEffect,
 	TimeSkipDisabledEffect,
+	SoulmateEffect,
+	NaughtyRegiftEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

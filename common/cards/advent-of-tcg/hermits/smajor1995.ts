@@ -1,76 +1,88 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
+import DyedEffect from '../../../status-effects/dyed'
+import {afterAttack} from '../../../types/priorities'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class Smajor1995Rare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'smajor1995_rare',
-		numericId: 218,
-		name: 'Scott',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 0,
-		type: 'builder',
-		health: 270,
-		primary: {
-			name: 'Color Splash',
-			cost: ['any'],
-			damage: 30,
-			power: null,
-		},
-		secondary: {
-			name: 'To Dye For',
-			cost: ['any', 'any', 'any'],
-			damage: 70,
-			power:
-				'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
-		},
-	}
-
-	public override onAttach(game: GameModel, component: CardComponent): void {
+const Smajor1995Rare: Hermit = {
+	...hermit,
+	id: 'smajor1995_rare',
+	numericId: 218,
+	name: 'Scott',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 0,
+	type: 'builder',
+	health: 270,
+	primary: {
+		name: 'Color Splash',
+		cost: ['any'],
+		damage: 30,
+		power: null,
+	},
+	secondary: {
+		name: 'To Dye For',
+		cost: ['any', 'any', 'any'],
+		damage: 70,
+		power:
+			'After your attack, select one of your AFK Hermits to use items of any type.',
+	},
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(component) ||
-				attack.type !== 'secondary'
-			)
-				return
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.HERMIT_ATTACK_REQUESTS,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
 
-			const pickCondition = slot.every(
-				slot.player,
-				slot.not(slot.active),
-				slot.not(slot.empty),
-				slot.hermit,
-			)
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.not(query.slot.active),
+					query.not(query.slot.empty),
+				)
 
-			if (!game.someSlotFulfills(pickCondition)) return
+				if (
+					!game.components.exists(
+						SlotComponent,
+						pickCondition,
+						query.not(query.slot.hasStatusEffect(DyedEffect)),
+					)
+				)
+					return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Choose an AFK Hermit to dye.',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.cardId || rowIndex === null) return
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an AFK Hermit to dye.',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const pickedCard = pickedSlot.getCard()
+						if (!pickedCard) return
 
-					applyStatusEffect(game, 'dyed', pickedSlot.cardId)
-				},
-			})
-		})
-	}
-
-	public override onDetach(_game: GameModel, component: CardComponent): void {
-		const {player} = component
-		player.hooks.onAttack.remove(component)
-	}
+						game.components
+							.new(StatusEffectComponent, DyedEffect, component.entity)
+							.apply(pickedCard.entity)
+					},
+				})
+			},
+		)
+	},
 }
 
 export default Smajor1995Rare

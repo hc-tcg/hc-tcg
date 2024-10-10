@@ -13,6 +13,7 @@ const pickCondition = query.every(
 	query.slot.opponent,
 	query.slot.active,
 	query.slot.item,
+	query.not(query.slot.frozen),
 	query.not(query.slot.empty),
 )
 

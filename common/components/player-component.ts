@@ -286,7 +286,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!newHermit)
 				throw new Error(
-					'Should not be able to change from no active row to an active row with no hermits.',
+					'Should not be able to change from no active row to an active row with no hermit.',
 				)
 			this.hooks.onActiveRowChange.call(null, newHermit)
 		}

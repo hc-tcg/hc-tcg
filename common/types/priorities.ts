@@ -53,6 +53,8 @@ export const beforeAttack = createPriorityDictionary({
 	EFFECT_REDUCE_DAMAGE: null,
 	/** Effects such as buckets can remove status effects created by an attack */
 	EFFECT_REMOVE_STATUS: null,
+	/** Trapdoor intercepting damage from an adjacent row */
+	TRAPDOOR_INTERCEPT_DAMAGE: null,
 	/** Listeners reacting to the whether the attack's target will be damaged */
 	REACT_TO_DAMAGE: null,
 })
