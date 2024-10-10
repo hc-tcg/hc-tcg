@@ -1,4 +1,3 @@
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -6,10 +5,8 @@ import {
 	SlotComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -26,11 +23,12 @@ import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
-} from '../utils/state-gen'
+} from '../utils/setup-game'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 import {PlayerId, PlayerModel} from './player-model'
@@ -100,6 +98,16 @@ export function gameSettingsFromEnv(): GameSettings {
 	}
 }
 
+export type GameProps = {
+	player1: PlayerSetupDefs
+	player2: PlayerSetupDefs
+	settings: GameSettings
+	gameCode?: string
+	spectatorCode?: string
+	randomizeOrder?: false
+	randomNumberSeed: string
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
@@ -144,6 +152,9 @@ export class GameModel {
 		>
 	}
 
+	private randomNumberPointer = 0
+	private randomNumberGenerator: () => number
+
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
 		winner: PlayerId | null
@@ -151,24 +162,13 @@ export class GameModel {
 		reason: GameEndReasonT | null
 	}
 
-	constructor(
-		player1: PlayerSetupDefs,
-		player2: PlayerSetupDefs,
-		settings: GameSettings,
-		options?: {
-			gameCode?: string
-			spectatorCode?: string
-			randomizeOrder?: false
-		},
-	) {
-		options = options ?? {}
-
-		this.settings = settings
+	constructor(props: GameProps) {
+		this.settings = props.settings
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
+		this.internalGameCode = props.gameCode || null
+		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -181,6 +181,10 @@ export class GameModel {
 			reason: null,
 		}
 
+		this.randomNumberGenerator = newRandomNumberGenerator(
+			props.randomNumberSeed,
+		)
+
 		this.components = new ComponentTable(this)
 		this.hooks = {
 			beforeAttack: new PriorityHook(beforeAttack),
@@ -189,14 +193,15 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this.components, player1, player2, {
-			shuffleDeck: settings.shuffleDeck,
-			startWithAllCards: settings.startWithAllCards,
-			unlimitedCards: settings.unlimitedCards,
-			extraStartingCards: settings.extraStartingCards,
+
+		setupComponents(this, this.components, props.player1, props.player2, {
+			shuffleDeck: props.settings.shuffleDeck,
+			startWithAllCards: props.settings.startWithAllCards,
+			unlimitedCards: props.settings.unlimitedCards,
+			extraStartingCards: props.settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(this, props.randomizeOrder)
 		this.voiceLineQueue = []
 	}
 
@@ -220,10 +225,6 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
 	public get players() {
 		return this.viewers.reduce(
 			(acc, viewer) => {
@@ -232,10 +233,6 @@ export class GameModel {
 			},
 			{} as Record<PlayerId, PlayerModel>,
 		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
 	}
 
 	public get createdTime() {
@@ -252,13 +249,6 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
@@ -325,6 +315,11 @@ export class GameModel {
 		if (turnState.blockedActions[key].length <= 0) {
 			delete turnState.blockedActions[key]
 		}
+	}
+
+	/** Request a random number */
+	public randomNumber() {
+		return this.randomNumberGenerator()
 	}
 
 	/** Returns true if the current blocked actions list includes the given action */

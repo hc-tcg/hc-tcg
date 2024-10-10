@@ -1,11 +1,10 @@
 import {PlayerEntity} from 'common/entities'
+import {GameProps} from 'common/models/game-model'
+import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {
-	AnyTurnActionData,
-	ChangeActiveHermitActionData,
-} from 'common/types/turn-action-data'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
@@ -22,13 +21,8 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay} from './game-selectors'
-import {
-	localApplyEffect,
-	localChangeActiveHermit,
-	localEndTurn,
-	localRemoveEffect,
-} from './local-state'
+import {getEndGameOverlay, getIsSpectator} from './game-selectors'
+import {getLocalGameState} from './local-state'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
@@ -38,11 +32,20 @@ import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 
-function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
-	yield* sendMsg({
-		type: clientMessages.TURN_ACTION,
-		playerEntity: entity,
+export function* sendTurnAction(
+	entity: PlayerEntity,
+	action: AnyTurnActionData,
+) {
+	yield* put<GameMessage>({
+		type: gameMessages.TURN_ACTION,
 		action: action,
+		playerEntity: entity,
+	})
+
+	yield* sendMsg({
+		type: clientMessages.GAME_TURN_ACTION,
+		action: action,
+		playerEntity: entity,
 	})
 }
 
@@ -62,10 +65,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		// This is updated for the client in slot-saga
 		yield* call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'APPLY_EFFECT') {
-		yield* localApplyEffect()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
-		yield* localRemoveEffect()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'PICK_REQUEST') {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
@@ -78,12 +79,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	) {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'END_TURN') {
-		yield* localEndTurn()
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield* localChangeActiveHermit(
-			turnAction.action as ChangeActiveHermitActionData,
-		)
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
 }
@@ -125,43 +122,26 @@ function* gameStateSaga(
 	// Handle core funcionality
 	yield call(actionSaga, gameState.playerEntity)
 
-	// After we send an action, disable logic till the next game state is received
-	yield cancel(logic)
+	yield* cancel(logic)
 }
 
-function* gameStateReceiver() {
-	// constantly forward GAME_STATE messages from the server to the store
+function* handleGameTurnActionSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
-		const {localGameState} = yield* call(
-			receiveMsg(socket, serverMessages.GAME_STATE),
+		const message = yield* call(
+			receiveMsg(socket, serverMessages.GAME_TURN_ACTION),
 		)
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: localGameState,
-			time: Date.now(),
+
+		yield* put<GameMessage>({
+			type: gameMessages.TURN_ACTION,
+			action: message.action,
+			playerEntity: message.playerEntity,
 		})
 	}
 }
 
-function* gameActionsSaga(initialGameState?: LocalGameState) {
-	yield* fork(() =>
-		all([
-			takeEvery(localMessages.GAME_FORFEIT, function* () {
-				yield sendMsg({type: clientMessages.FORFEIT})
-			}),
-			fork(gameStateReceiver),
-			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
-		]),
-	)
-
-	if (initialGameState) {
-		yield put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: initialGameState,
-			time: Date.now(),
-		})
-	}
+function* gameActionsSaga() {
+	yield* takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga)
 }
 
 function* opponentConnectionSaga() {
@@ -195,16 +175,56 @@ function* reconnectSaga() {
 	}
 }
 
-function* gameSaga(initialGameState?: LocalGameState) {
+function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 	const socket = yield* select(getSocket)
-	const backgroundTasks = yield* fork(() =>
-		all([
-			fork(opponentConnectionSaga),
-			fork(chatSaga),
-			fork(spectatorSaga),
-			fork(reconnectSaga),
-		]),
-	)
+
+	yield* setupGameSaga(props, {
+		onGameStart: function* (game) {
+			const backgroundTasks = yield* fork(() =>
+				all([
+					fork(opponentConnectionSaga),
+					fork(chatSaga),
+					fork(spectatorSaga),
+					fork(reconnectSaga),
+					fork(gameActionsSaga),
+					fork(handleGameTurnActionSaga),
+				]),
+			)
+
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_START,
+			})
+
+			const isSpectator = false
+
+			// Set the first local state
+			yield* putResolve<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_SET,
+				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				time: Date.now(),
+			})
+		},
+		update: function* (game) {
+			const isSpectator = yield* select(getIsSpectator)
+
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				time: Date.now(),
+			})
+		},
+		onTurnAction: function* (_, game) {
+			const isSpectator = yield* select(getIsSpectator)
+
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_SET,
+				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				time: Date.now(),
+			})
+		},
+	})
+
+	return
 
 	try {
 		yield* put<LocalMessage>({
@@ -212,7 +232,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		})
 
 		const result = yield* race({
-			game: call(gameActionsSaga, initialGameState),
+			game: call(gameActionsSaga),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
 			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),

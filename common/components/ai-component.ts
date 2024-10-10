@@ -1,5 +1,4 @@
-import assert from 'assert'
-import {AI_DEFINITIONS} from '../../server/src/routines/virtual'
+// import {AI_DEFINITIONS} from '../../server/src/routines/virtual'
 import type {AIEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {AnyTurnActionData} from '../types/turn-action-data'
@@ -32,7 +31,7 @@ export class AIComponent {
 
 	public getNextTurnAction(): AnyTurnActionData {
 		let nextAction = this.turnActionGenerator.next()
-		assert(
+		console.assert(
 			!nextAction.done,
 			'Bosses should always be able to attack as long as the game is running.',
 		)

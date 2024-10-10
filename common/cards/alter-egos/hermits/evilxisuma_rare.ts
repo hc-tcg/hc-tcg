@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -81,7 +80,7 @@ const EvilXisumaRare: Hermit = {
 						cancelable: false,
 					},
 					onResult(modalResult) {
-						assert(modalResult.pick)
+						console.assert(modalResult.pick)
 
 						const actionToBlock =
 							modalResult.pick === 'primary'

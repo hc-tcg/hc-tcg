@@ -28,8 +28,11 @@ export type ObserverEntity = Entity<ObserverComponent>
 export type ViewerEntity = Entity<ViewerComponent>
 
 /** Create a new entity */
-export function newEntity<T>(entityName: string): Entity<T> {
+export function newEntity<T>(
+	entityName: string,
+	randomNumber: number,
+): Entity<T> {
 	return `${entityName}-${Math.floor(
-		Math.random() * Number.MAX_SAFE_INTEGER,
+		randomNumber * Number.MAX_SAFE_INTEGER,
 	).toString(16)}` as Entity<T>
 }

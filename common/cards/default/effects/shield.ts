@@ -47,7 +47,7 @@ const Shield: Attach = {
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (damageBlocked > 0 && attack.isTargeting(component)) {
-					// attack.isTargeting asserts `attack.target !== null` and `attack.targetEntity !== null`
+					// attack.isTargeting console.asserts `attack.target !== null` and `attack.targetEntity !== null`
 					component.discard()
 					const hermitName = game.components.find(
 						CardComponent,

@@ -72,7 +72,7 @@ function* handler(message: RecievedClientMessage) {
 			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.TURN_ACTION:
+		case clientMessages.GAME_TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,

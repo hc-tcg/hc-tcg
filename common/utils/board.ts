@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
@@ -14,7 +13,7 @@ export function applySingleUse(
 		query.card.slot(query.slot.singleUse),
 	)
 
-	assert(
+	console.assert(
 		suCard,
 		'Can not apply single use card if there is not a single use on the board',
 	)

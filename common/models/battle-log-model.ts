@@ -1,4 +1,3 @@
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -98,9 +97,9 @@ export class BattleLogModel {
 		// We skip waiting for the logs to send if there are no players. This is because
 		// the coin flip delay confuses jest. Additionally we don't want to wait longer
 		// than what is needed in tests.
-		if (this.game.getPlayers().length === 0) {
-			return
-		}
+		// if (this.game.getPlayers().length === 0) {
+		// 	return
+		// }
 
 		await new Promise((e) =>
 			setTimeout(
@@ -112,10 +111,10 @@ export class BattleLogModel {
 			),
 		)
 
-		broadcast(this.game.getPlayers(), {
-			type: 'CHAT_UPDATE',
-			messages: this.game.chat,
-		})
+		// broadcast(this.game.getPlayers(), {
+		// 	type: 'CHAT_UPDATE',
+		// 	messages: this.game.chat,
+		// })
 	}
 
 	private genCardName(
@@ -350,10 +349,11 @@ export class BattleLogModel {
 			message: LineNode(),
 		})
 
-		broadcast(this.game.getPlayers(), {
-			type: 'CHAT_UPDATE',
-			messages: this.game.chat,
-		})
+		// @todo Fix the battle log
+		// broadcast(this.game.getPlayers(), {
+		// 	type: 'CHAT_UPDATE',
+		// 	messages: this.game.chat,
+		// })
 	}
 
 	public addStatusEffectEntry(

@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -83,7 +82,7 @@ const TurtleShell: Attach = {
 					}
 
 					const activeInfo = lastActiveHermit.get(game)[player.entity]
-					assert(activeInfo)
+					console.assert(activeInfo)
 					switch (activeInfo.stage) {
 						case 'activated':
 							lastActiveHermit.get(game)[player.entity] = {

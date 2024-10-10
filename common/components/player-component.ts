@@ -1,4 +1,3 @@
-import assert from 'assert'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -229,7 +228,7 @@ export class PlayerComponent {
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
 
-		assert(
+		console.assert(
 			newRow.playerId === this.entity,
 			"Should not be able to change to another player's row to make active",
 		)
@@ -320,7 +319,7 @@ export class PlayerComponent {
 	public updateLastUsedHermitAttack(attackType: HermitAttackType) {
 		if (attackType === 'single-use') return
 		const activeHermit = this.getActiveHermit()
-		assert(
+		console.assert(
 			activeHermit,
 			`${this.playerName} tried to attack without an active hermit`,
 		)
