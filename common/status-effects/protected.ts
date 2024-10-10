@@ -6,10 +6,10 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {afterAttack, beforeAttack, onTurnEnd} from '../types/priorities'
-import {StatusEffect, statusEffect} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const ProtectedEffect: StatusEffect<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'protected',
 	icon: 'protected',
 	name: "Sheriff's Protection",
@@ -22,7 +22,7 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 		)
 	},
 	applyLog: (values) =>
-		`${values.target} ${values.verb} selected for ${values.statusEffect}`,
+		`${values.target} was selected for ${values.statusEffect}`,
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -41,24 +41,56 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 			)
 			.forEach((effect) => effect.remove())
 
-		let becameActive = false
+		/** Keeps track of whether Sheriff's Protection is protecting its row and if it should timeout */
+		let state: 'activated' | 'defend-then-timeout' | 'inactive' = 'inactive'
 
-		observer.subscribeWithPriority(
-			player.hooks.onTurnEnd,
-			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
-			() => {
-				if (
-					target.slot.inRow() &&
-					player.activeRowEntity === target.slot.rowEntity
+		observer.subscribe(
+			player.hooks.onActiveRowChange,
+			(oldActiveHermit, newActiveHermit) => {
+				if (newActiveHermit.entity === target.entity) {
+					if (state !== 'defend-then-timeout') {
+						if (state === 'inactive') {
+							game.battleLog.addEntry(
+								player.entity,
+								`$p${target.props.name}$ is now protected by the Sheriff`,
+							)
+						}
+						state = 'activated'
+					}
+				} else if (
+					oldActiveHermit?.entity === target.entity &&
+					state !== 'defend-then-timeout'
 				) {
-					becameActive = true
+					if (target.slot.inRow() && state !== 'inactive') {
+						game.battleLog.addEntry(
+							player.entity,
+							`$p${target.props.name} (${target.slot.row.index + 1})$ is no longer protected by the Sheriff`,
+						)
+					}
+					state = 'inactive'
 				}
 			},
 		)
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (becameActive) {
-				effect.remove()
+		observer.subscribeWithPriority(
+			player.opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				if (state === 'defend-then-timeout') {
+					if (target.slot.inRow()) {
+						game.battleLog.addEntry(
+							player.entity,
+							`$e${ProtectedEffect.name}$ has ran out for $p${target.props.name} (${target.slot.row.index + 1})$`,
+						)
+					}
+					effect.remove()
+				}
+			},
+		)
+
+		observer.subscribe(player.opponentPlayer.hooks.onTurnStart, () => {
+			if (state === 'activated') {
+				state = 'defend-then-timeout'
 			}
 		})
 
@@ -66,7 +98,7 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_BLOCK_DAMAGE,
 			(attack) => {
-				if (!becameActive || !attack.isTargeting(target)) return
+				if (state === 'inactive' || !attack.isTargeting(target)) return
 				// Do not block backlash attacks
 				if (attack.isBacklash) return
 

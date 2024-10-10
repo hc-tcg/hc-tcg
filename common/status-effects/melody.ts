@@ -5,10 +5,10 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {afterAttack} from '../types/priorities'
-import {StatusEffect, statusEffect} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const MelodyEffect: StatusEffect<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'melody',
 	icon: 'melody',
 	name: "Ollie's Melody",
@@ -25,7 +25,15 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 		const {player} = target
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (target.slot.inRow()) target.slot.row.heal(10)
+			if (target.slot.inRow()) {
+				target.slot.row.heal(10)
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${target.props.name} (${target.slot.row.index + 1})$ was healed $g10hp$ by $e${
+						effect.props.name
+					}$`,
+				)
+			}
 		})
 
 		observer.subscribeWithPriority(
@@ -34,7 +42,7 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 			(attack) => {
 				if (
 					(!attack.isTargeting(target) || attack.target?.health) &&
-					(attack.isTargeting(effect.creator) || attack.target?.health)
+					(!attack.isTargeting(effect.creator) || attack.target?.health)
 				)
 					return
 				effect.remove()

@@ -4,10 +4,10 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {Counter, statusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
 const SmeltingEffect: Counter<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'smelting',
 	icon: 'smelting',
 	name: 'Smelting',

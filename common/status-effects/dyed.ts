@@ -5,16 +5,17 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {afterAttack} from '../types/priorities'
-import {StatusEffect, statusEffect} from './status-effect'
+import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const DyedEffect: StatusEffect<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'dyed',
 	icon: 'dyed',
 	name: 'Dyed',
 	description: 'This Hermit can use items of any type.',
 	applyCondition: (_game, card) =>
 		card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
+	applyLog: (values) => `${values.target} was $eDyed$`,
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent>,

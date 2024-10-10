@@ -57,7 +57,14 @@ const Smajor1995Rare: Hermit = {
 					query.not(query.slot.empty),
 				)
 
-				if (!game.components.exists(SlotComponent, pickCondition)) return
+				if (
+					!game.components.exists(
+						SlotComponent,
+						pickCondition,
+						query.not(query.slot.hasStatusEffect(DyedEffect)),
+					)
+				)
+					return
 
 				game.addPickRequest({
 					player: player.entity,

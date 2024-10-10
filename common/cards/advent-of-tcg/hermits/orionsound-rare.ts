@@ -1,6 +1,7 @@
 import {
 	CardComponent,
 	ObserverComponent,
+	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
@@ -42,8 +43,6 @@ const OrionSoundRare: Hermit = {
 	) {
 		const {player} = component
 
-		let cardsWithStatusEffects: Array<string> = []
-
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
@@ -55,6 +54,15 @@ const OrionSoundRare: Hermit = {
 					query.slot.hermit,
 					query.not(query.slot.empty),
 				)
+
+				if (
+					!game.components.exists(
+						SlotComponent,
+						pickCondition,
+						query.not(query.slot.hasStatusEffect(MelodyEffect)),
+					)
+				)
+					return
 
 				game.addPickRequest({
 					player: player.entity,
@@ -68,7 +76,6 @@ const OrionSoundRare: Hermit = {
 						game.components
 							.new(StatusEffectComponent, MelodyEffect, component.entity)
 							.apply(pickedCard.entity)
-						cardsWithStatusEffects.push(pickedCard.entity)
 					},
 				})
 			},
