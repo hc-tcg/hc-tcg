@@ -21,6 +21,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import {GameMessage, gameMessages} from 'common/routines/game'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -74,6 +75,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
+			// @todo Figure out this bug
+			if (actionMessage.payload === undefined) return
+
+			console.log('Turn action recieved')
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,

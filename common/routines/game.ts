@@ -449,7 +449,11 @@ function getPlayerAI(game: GameModel) {
 	)
 }
 
-function* turnActionsSaga(game: GameModel, onTurnActionSaga: any) {
+function* turnActionsSaga(
+	game: GameModel,
+	onTurnActionSaga: any,
+	update?: (game: GameModel) => any,
+) {
 	const {opponentPlayer, currentPlayer} = game
 
 	const turnActionChannel = yield* actionChannel(
@@ -537,6 +541,11 @@ function* turnActionsSaga(game: GameModel, onTurnActionSaga: any) {
 			const graceTime = 1000
 			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
 
+			// Update the board and clients so it has the correct available actions
+			if (update) {
+				yield* update(game)
+			}
+
 			const playerAI = getPlayerAI(game)
 			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
 
@@ -618,13 +627,16 @@ function* turnActionsSaga(game: GameModel, onTurnActionSaga: any) {
 			}
 
 			// Run action logic
-			yield* call(raceResult.turnAction)
+			console.log('At on turn action saga')
+			yield* call(onTurnActionSaga, raceResult.turnAction, game)
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
 			if (result === 'END_TURN') {
 				break
 			}
 		}
+	} catch (e) {
+		console.error(e)
 	} finally {
 		turnActionChannel.close()
 	}
@@ -748,8 +760,9 @@ export function* setupGameSaga(
 	props: GameProps,
 	sagas: {
 		onGameStart: (game: GameModel) => any
+		update?: (game: GameModel) => any
 		onTurnAction: (
-			action: {data: AnyTurnActionData; entity: PlayerEntity},
+			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
 			game: GameModel,
 		) => any
 	},
@@ -759,7 +772,12 @@ export function* setupGameSaga(
 	while (true) {
 		game.state.turn.turnNumber++
 		yield* sagas.onGameStart(game)
-		const result = yield* call(turnActionsSaga, game, sagas.onTurnAction)
+		const result = yield* call(
+			turnActionsSaga,
+			game,
+			sagas.onTurnAction,
+			sagas.update,
+		)
 		if (result === 'GAME_END') break
 	}
 }

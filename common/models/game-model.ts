@@ -26,6 +26,7 @@ import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
 	getGameState,
@@ -107,7 +108,7 @@ export type GameProps = {
 	gameCode?: string
 	spectatorCode?: string
 	randomizeOrder?: false
-	randomNumbers: Array<number>
+	randomNumberSeed: string
 }
 
 export class GameModel {
@@ -155,7 +156,7 @@ export class GameModel {
 	}
 
 	private randomNumberPointer = 0
-	private randomNumbers: Array<number>
+	private randomNumberGenerator: () => number
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
@@ -183,7 +184,9 @@ export class GameModel {
 			reason: null,
 		}
 
-		this.randomNumbers = props.randomNumbers
+		this.randomNumberGenerator = newRandomNumberGenerator(
+			props.randomNumberSeed,
+		)
 
 		this.components = new ComponentTable(this)
 		this.hooks = {
@@ -319,14 +322,7 @@ export class GameModel {
 
 	/** Request a random number */
 	public randomNumber() {
-		console.assert(
-			this.randomNumberPointer < this.randomNumbers.length,
-			'Random number pointer should always be in the array.',
-		)
-		let number = this.randomNumbers[this.randomNumberPointer]
-		this.randomNumberPointer =
-			(this.randomNumberPointer + 1) % this.randomNumbers.length
-		return number
+		return this.randomNumberGenerator()
 	}
 
 	/** Returns true if the current blocked actions list includes the given action */

@@ -11,15 +11,20 @@ import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 // import gameSaga, {getTimerForSeconds} from './game'
 // import ExBossAI from './virtual/exboss-ai'
-import setupGameSaga from 'common/routines/game'
+import setupGameSaga, {
+	GameMessage,
+	gameMessages,
+	GameMessageTable,
+} from 'common/routines/game'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {all, delay, fork} from 'typed-redux-saga'
+import {all, delay, fork, put, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {LocalMessage, localMessages, LocalMessageTable} from 'messages'
 
 function* gameManager(
 	player1: PlayerModel,
@@ -49,9 +54,7 @@ function* gameManager(
 		settings: gameSettingsFromEnv(),
 		gameCode: code,
 		spectatorCode,
-		randomNumbers: Array(7777)
-			.fill(0)
-			.map(() => Math.random()),
+		randomNumberSeed: Math.random().toString(36),
 	}
 
 	yield* setupGameSaga(gameProps, {
@@ -66,16 +69,45 @@ function* gameManager(
 					playerEntity: players[index].entity,
 				})
 			})
+
+			yield* fork(function* () {
+				while (true) {
+					let action = (yield* take(
+						localMessages.GAME_TURN_ACTION,
+					)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+
+					if (game.state.order.includes(action.playerEntity)) {
+						yield* put<GameMessage>({
+							type: gameMessages.TURN_ACTION,
+							playerEntity: action.playerEntity,
+							action: action.action,
+						})
+					}
+				}
+			})
 		},
-		onTurnAction: function* (action, game) {
-			console.log('Turn action recieved')
-			for (const viewer in viewers) {
-				broadcast([root.players[viewer]], {
+		onTurnAction: function* (
+			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
+			game,
+		) {
+			console.log('Turn action recieved:', action)
+
+			viewers.forEach((p, index) => {
+				const playerEntity = action.playerEntity
+
+				const players = game.components.filter(PlayerComponent)
+
+				if (playerEntity === players[index].entity) {
+					// then `playerEntity` created this action so we don't need to send it back
+					return
+				}
+
+				broadcast([root.players[p]], {
 					type: serverMessages.GAME_TURN_ACTION,
-					playerEntity: action.entity,
-					action: action.data,
+					playerEntity: action.playerEntity,
+					action: action.action,
 				})
-			}
+			})
 		},
 	})
 

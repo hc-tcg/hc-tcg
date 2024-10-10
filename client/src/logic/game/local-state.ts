@@ -168,7 +168,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	return deck.map((card) => {
 		return {
 			props: WithoutFunctions(CARDS[card.numericId]),
-			entity: newEntity('card-entity') as CardEntity,
+			entity: newEntity('card-entity', Math.random()) as CardEntity,
 			slot: null,
 			turnedOver: false,
 			attackHint: null,

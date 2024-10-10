@@ -2,8 +2,11 @@ import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
 import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
-import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
+import {
+	serverMessages,
+	ServerMessageTable,
+} from 'common/socket-messages/server-messages'
+import {LocalGameState, TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
@@ -46,8 +49,8 @@ function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
 
 	yield* sendMsg({
 		type: clientMessages.TURN_ACTION,
-		playerEntity: entity,
 		action: action,
+		playerEntity: entity,
 	})
 }
 
@@ -128,6 +131,21 @@ function* gameStateSaga(
 	yield cancel(logic)
 }
 
+function* handleGameTurnAction() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const message = yield* call(
+			receiveMsg(socket, serverMessages.GAME_TURN_ACTION),
+		)
+
+		yield* put<GameMessage>({
+			type: gameMessages.TURN_ACTION,
+			action: message.action,
+			playerEntity: message.playerEntity,
+		})
+	}
+}
+
 function* gameActionsSaga() {
 	yield* fork(() =>
 		all([
@@ -193,6 +211,7 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 					fork(spectatorSaga),
 					fork(reconnectSaga),
 					fork(gameActionsSaga),
+					fork(handleGameTurnAction),
 				]),
 			)
 
@@ -209,8 +228,19 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 				time: Date.now(),
 			})
 		},
+		update: function* (game) {
+			const isSpectator = yield* select(getIsSpectator)
+
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				time: Date.now(),
+			})
+		},
 		onTurnAction: updateGameState,
 	})
+
+	return
 
 	try {
 		yield* put<LocalMessage>({
