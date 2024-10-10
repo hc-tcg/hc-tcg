@@ -21,7 +21,7 @@ export function messages<T extends Record<string, null>>(
 ): MessageDict<T> {
 	let actionsDict: Record<string, string> = {}
 	for (const action of Object.keys(actions)) {
-		actionsDict[action] = prefix + '_' + action
+		actionsDict[action] = prefix + ':' + action
 	}
 	return actionsDict as any
 }
