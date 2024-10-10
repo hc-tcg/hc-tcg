@@ -21,10 +21,10 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalMessageTable, localMessages} from 'messages'
 import {all, delay, fork, put, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {LocalMessage, localMessages, LocalMessageTable} from 'messages'
 
 function* gameManager(
 	player1: PlayerModel,
@@ -90,8 +90,6 @@ function* gameManager(
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
 			game,
 		) {
-			console.log('Turn action recieved:', action)
-
 			viewers.forEach((p, index) => {
 				const playerEntity = action.playerEntity
 

@@ -21,7 +21,6 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {GameMessage, gameMessages} from 'common/routines/game'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {

@@ -1,12 +1,9 @@
 import {PlayerEntity} from 'common/entities'
-import {GameModel, GameProps} from 'common/models/game-model'
+import {GameProps} from 'common/models/game-model'
 import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
-import {
-	serverMessages,
-	ServerMessageTable,
-} from 'common/socket-messages/server-messages'
-import {LocalGameState, TurnAction} from 'common/types/game-state'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {LocalGameState} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
@@ -15,7 +12,6 @@ import {
 	all,
 	call,
 	cancel,
-	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -25,11 +21,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {
-	getEndGameOverlay,
-	getIsSpectator,
-	getPlayerEntity,
-} from './game-selectors'
+import {getEndGameOverlay, getIsSpectator} from './game-selectors'
 import {getLocalGameState} from './local-state'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
@@ -39,7 +31,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {getPlayerId} from 'logic/session/session-selectors'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -97,52 +88,41 @@ function* actionSaga(playerEntity: PlayerEntity) {
 function* gameStateSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
 ) {
-	let logic: any = undefined
+	const gameState: LocalGameState = action.localGameState
 
-	console.log('Starting game state saga:' + action.time)
+	// First show coin flips, if any
+	yield* call(coinFlipSaga, gameState)
 
-	try {
-		const gameState: LocalGameState = action.localGameState
+	// Actually update the local state
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_LOCAL_STATE_SET,
+		localGameState: gameState,
+		time: action.time,
+	})
 
-		// First show coin flips, if any
-		yield* call(coinFlipSaga, gameState)
+	yield* put<LocalMessage>({
+		type: localMessages.QUEUE_VOICE,
+		lines: gameState.voiceLineQueue,
+	})
 
-		// Actually update the local state
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_SET,
-			localGameState: gameState,
-			time: action.time,
-		})
+	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
+	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
+		return
 
-		yield* put<LocalMessage>({
-			type: localMessages.QUEUE_VOICE,
-			lines: gameState.voiceLineQueue,
-		})
+	const logic = yield* fork(() =>
+		all([
+			fork(actionModalsSaga),
+			fork(slotSaga),
+			fork(actionLogicSaga, gameState),
+			fork(endTurnSaga),
+			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
+		]),
+	)
 
-		if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-		if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
-			return
+	// Handle core funcionality
+	yield call(actionSaga, gameState.playerEntity)
 
-		console.log('Waiting for player to do something')
-		logic = yield* fork(() =>
-			all([
-				fork(actionModalsSaga),
-				fork(slotSaga),
-				fork(actionLogicSaga, gameState),
-				fork(endTurnSaga),
-				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
-			]),
-		)
-
-		// Handle core funcionality
-		yield call(actionSaga, gameState.playerEntity)
-		console.log("should be ending")
-	} finally {
-		if (logic) {
-			console.log('Cancelling logic saga')
-			yield* cancel(logic)
-		}
-	}
+	yield* cancel(logic)
 }
 
 function* handleGameTurnActionSaga() {
