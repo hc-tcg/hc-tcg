@@ -36,7 +36,7 @@ import {
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
-export const gameMessages = messages({
+export const gameMessages = messages('game', {
 	TURN_ACTION: null,
 })
 

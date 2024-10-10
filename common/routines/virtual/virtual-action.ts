@@ -28,7 +28,7 @@ export default function* virtualPlayerActionSaga(
 	try {
 		const action = component.getNextTurnAction()
 		yield* put({
-			type: clientMessages.TURN_ACTION,
+			type: clientMessages.GAME_TURN_ACTION,
 			payload: {action, playerEntity: component.playerEntity},
 			action: action,
 			playerEntity: component.playerEntity,

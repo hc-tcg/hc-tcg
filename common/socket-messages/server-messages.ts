@@ -12,7 +12,7 @@ import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const serverMessages = messages({
+export const serverMessages = messages('server', {
 	PLAYER_RECONNECTED: null,
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,
