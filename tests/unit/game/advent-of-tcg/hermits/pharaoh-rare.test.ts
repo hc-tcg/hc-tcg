@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 import PharaohRare from 'common/cards/advent-of-tcg/hermits/pharaoh-rare'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import PotionOfWeakness from 'common/cards/alter-egos/single-use/potion-of-weakness'
@@ -18,9 +19,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../../utils'
-
-// Circular imports must be included last
-import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 
 describe('Test Pharaoh Xibalba', () => {
 	test('Xibalba Functionality', () => {
@@ -244,7 +242,64 @@ describe('Test Pharaoh Xibalba', () => {
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, Knockback, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							EthosLabCommon.secondary.damage +
+							PharaohRare.secondary.damage,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Xibalba + 4 Trapdoors', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, PharaohRare],
+				playerTwoDeck: [
+					...Array(5).fill(EthosLabCommon),
+					...Array(4).fill(Trapdoor),
+					Knockback,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, PharaohRare, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 4)
 					yield* playCardFromHand(game, Knockback, 'single_use')
 					yield* attack(game, 'secondary')
 					yield* pick(

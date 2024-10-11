@@ -202,7 +202,12 @@ export class BattleLogModel {
 	) {
 		if (!attack.attacker) return
 
-		const attacks = [attack, ...attack.nextAttacks]
+		const getAllSubattacks = (thisAttack: AttackModel): Array<AttackModel> => {
+			if (thisAttack.type !== attack.type) return [thisAttack]
+			return [thisAttack, ...thisAttack.nextAttacks.flatMap(getAllSubattacks)]
+		}
+
+		const attacks = getAllSubattacks(attack)
 
 		let log = attacks.reduce((reducer, subAttack) => {
 			if (subAttack.type !== attack.type) {

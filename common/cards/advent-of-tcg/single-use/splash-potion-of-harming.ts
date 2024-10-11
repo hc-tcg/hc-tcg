@@ -30,9 +30,13 @@ const SplashPotionOfHarming: SingleUse = {
 		"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
 	hasAttack: true,
 	attackPreview: (game) => {
-		const targetAmount = getTargetHermits(game).length - 1
-		if (targetAmount === 0) return '$A40$'
-		return `$A40$ + $A20$ x ${targetAmount}`
+		const targets = getTargetHermits(game)
+		if (targets[0].index === game.currentPlayer.activeRow!.index) {
+			return targets.length === 1
+				? '$A40$'
+				: `$A40$ + $A20$ x ${targets.length - 1}`
+		}
+		return `$A20$ x ${targets.length}`
 	},
 	onAttach(
 		game: GameModel,
@@ -45,8 +49,8 @@ const SplashPotionOfHarming: SingleUse = {
 			const activeRow = opponentPlayer.activeRow
 			const opponentRows = getTargetHermits(game).sort(
 				(a, b) =>
-					Number(a.index === opponentPlayer.activeRow?.index) ||
-					-Number(b.index === opponentPlayer.activeRow?.index) ||
+					-Number(a.index === opponentPlayer.activeRow?.index) ||
+					Number(b.index === opponentPlayer.activeRow?.index) ||
 					a.index - b.index,
 			)
 

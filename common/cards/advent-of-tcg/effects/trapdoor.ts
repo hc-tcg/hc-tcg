@@ -1,8 +1,8 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
-import {getFormattedName} from '../../../utils/game'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -45,6 +45,8 @@ const Trapdoor: Attach = {
 					)
 				)
 					return
+				// Target Block cannot be ignored so don't try intercepting damage for log clarity
+				if (target.getHermit()?.getStatusEffect(TargetBlockEffect)) return
 
 				if (totalReduction < 40) {
 					const damageReduction = Math.min(
@@ -60,21 +62,16 @@ const Trapdoor: Attach = {
 							target: component.slot.rowEntity,
 							type: attack.type,
 							log: (values) =>
-								` (${values.damage} was intercepted by ${values.target} with ${getFormattedName(
-									component.props.id,
-									true,
-								)})`,
+								` (${values.damage} was intercepted by ${values.target} with $eTrapdoor$)`,
 						})
 						.addDamage(component.entity, damageReduction)
 					// newAttack should not run extra hooks for attacker, or be redirected back to the original target
 					newAttack.shouldIgnoreCards.push(
-						query.every(
-							...attack.shouldIgnoreCards,
-							query.card.entity(attack.attacker.entity),
-							query.card.rowEntity(attack.targetEntity),
-						),
+						...attack.shouldIgnoreCards,
+						query.card.entity(attack.attacker.entity),
+						query.card.rowEntity(attack.targetEntity),
 					)
-					attack.addNewAttack(newAttack)
+					attack.nextAttacks.unshift(newAttack)
 				}
 			},
 		)

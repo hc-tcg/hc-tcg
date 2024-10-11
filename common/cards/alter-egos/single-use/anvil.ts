@@ -19,13 +19,15 @@ function opponentHasMultipleRows(game: GameModel) {
 }
 
 function getTargetHermits(game: GameModel, player: PlayerComponent) {
-	return game.components.filter(
-		RowComponent,
-		query.row.opponentPlayer,
-		query.row.hermitSlotOccupied,
-		(_game, row) =>
-			player.activeRow !== null && row.index >= player.activeRow?.index,
-	)
+	return game.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.hermitSlotOccupied,
+			(_game, row) =>
+				player.activeRow !== null && row.index >= player.activeRow?.index,
+		)
+		.sort((a, b) => a.index - b.index)
 }
 const Anvil: SingleUse = {
 	...singleUse,

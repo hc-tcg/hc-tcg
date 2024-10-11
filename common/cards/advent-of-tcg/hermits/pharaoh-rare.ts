@@ -4,11 +4,18 @@ import {
 	SlotComponent,
 } from '../../../components'
 import query from '../../../components/query'
+import {ReadonlyAttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+
+function getAllSubattacks(
+	attack: ReadonlyAttackModel,
+): Array<ReadonlyAttackModel> {
+	return [attack, ...attack.nextAttacks.flatMap(getAllSubattacks)]
+}
 
 const PharaohRare: Hermit = {
 	...hermit,
@@ -49,13 +56,13 @@ const PharaohRare: Hermit = {
 					return
 
 				const healAmount = Math.min(
-					attack.nextAttacks.reduce(
+					getAllSubattacks(attack).reduce(
 						(r, subAttack) =>
 							subAttack.isAttacker(component.entity) &&
 							subAttack.isType('secondary', 'weakness')
 								? r + subAttack.calculateDamage()
 								: r,
-						attack.calculateDamage(),
+						0,
 					),
 					80,
 				)
