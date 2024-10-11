@@ -564,7 +564,7 @@ function* turnActionsSaga(
 			let turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION] =
 				raceResult.turnAction || {
 					type: gameMessages.TURN_ACTION,
-					playerEntity: game.currentPlayer,
+					playerEntity: game.currentPlayer.entity,
 					action: {type: 'TIMEOUT'},
 				}
 
