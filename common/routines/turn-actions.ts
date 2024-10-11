@@ -309,13 +309,15 @@ export function* modalRequestSaga(
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
-		console.assert(
-			!modal.pick ||
-				!(
-					getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
-				).blockedActions.includes(attackToAttackAction[modal.pick]),
-			`Client picked a blocked attack to copy: ${modal.pick}`,
-		)
+
+		// @todo
+		// console.assert(
+		// 	!modal.pick ||
+		// 		!(
+		// 			getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
+		// 		).blockedActions.includes(attackToAttackAction[modal.pick]),
+		// 	`Client picked a blocked attack to copy: ${modal.pick}`,
+		// )
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 

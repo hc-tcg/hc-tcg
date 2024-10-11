@@ -588,7 +588,6 @@ function* turnActionsSaga(
 	} finally {
 		turnActionChannel.close()
 	}
-	return 'GAME_END'
 }
 
 export function* turnSaga(game: GameModel, onTurnAction: any) {
