@@ -5,6 +5,7 @@ import {Database, setupDatabase} from 'server/db/db'
 
 describe('Test Database', () => {
 	let database: Database
+	const BF_DEPTH = 4
 
 	beforeAll(async () => {
 		const env = config()
@@ -27,8 +28,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
-		console.log(user)
+		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
 		expect(user?.minecraftName).toBe('ethoslab')
@@ -38,8 +38,27 @@ describe('Test Database', () => {
 		expect(typeof user?.secret === 'string').toBeTruthy()
 	})
 
+	test('Authenticate', async () => {
+		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
+		if (!user) throw new Error('Expected user to not be null')
+
+		const authenticatedUser = await database.authenticateUser(
+			user.uuid,
+			user.secret,
+		)
+		const incorrectUser = await database.authenticateUser(
+			user.uuid,
+			'e3b4f689-1c0e-4f5f-bfd8-cfa5b0d0654a',
+		)
+
+		expect(authenticatedUser?.username).toBe(user.username)
+		expect(authenticatedUser?.minecraftName).toBe(user.minecraftName)
+		expect(authenticatedUser?.uuid).toBe(user.uuid)
+		expect(incorrectUser).toBeNull()
+	})
+
 	test('Add deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
 		const playerDeck = {
 			name: 'Testing deck',
 			icon: 'balanced',

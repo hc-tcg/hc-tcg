@@ -49,7 +49,7 @@ const queries = {
 	);
 	CREATE TABLE IF NOT EXISTS user_titles(
 		user_id uuid REFERENCES users(user_id),
-		title_id uuid REFERENCES titles(user_id)
+		title_id uuid REFERENCES titles(title_id)
 	);
 		`,
 }

@@ -46,20 +46,38 @@ export class Database {
 	public async insertUser(
 		username: string,
 		minecraftName: string | null,
+		bfDepth: number,
 	): Promise<User | null> {
-		const BF_DEPTH = 4
-
 		const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 			.rows[0]['uuid_generate_v4']
 		const user = await this.pool.query(
 			"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-			[username, minecraftName, secret, BF_DEPTH],
+			[username, minecraftName, secret, bfDepth],
 		)
 		return {
 			uuid: user.rows[0]['user_id'],
 			secret: secret,
 			username: username,
 			minecraftName: minecraftName,
+		}
+	}
+
+	public async authenticateUser(
+		user_id: string,
+		secret: string,
+	): Promise<User | null> {
+		const user = await this.pool.query(
+			'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
+			[user_id, secret],
+		)
+
+		if (user.rows.length === 0) return null
+
+		return {
+			uuid: user.rows[0]['user_id'],
+			secret: secret,
+			username: user.rows[0]['username'],
+			minecraftName: user.rows[0]['minecraft_name'],
 		}
 	}
 
