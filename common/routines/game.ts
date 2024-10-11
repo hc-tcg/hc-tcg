@@ -36,6 +36,7 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import {ClientMessageTable} from '../socket-messages/client-messages'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -410,6 +411,9 @@ function* turnActionSaga(
 			case 'TIMEOUT':
 				yield* call(timeoutSaga, game)
 				endTurn = true
+				console.info(
+					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn due to a timeout.`,
+				)
 				break
 			case 'FORFEIT':
 				yield* call(forfeitSaga, game)
@@ -548,7 +552,7 @@ function* turnActionsSaga(
 			}
 
 			const graceTime = 1000
-			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
+			game.state.timer.turnRemaining = remainingTime + graceTime
 
 			// Update the board and clients so it has the correct available actions
 			if (update) {
@@ -563,17 +567,20 @@ function* turnActionsSaga(
 				timeout: delay(remainingTime + graceTime),
 			}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
 
+			let turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION] =
+				raceResult.turnAction || {
+					type: gameMessages.TURN_ACTION,
+					playerEntity: game.currentPlayer,
+					action: {type: 'TIMEOUT'},
+				}
+
 			// Reset coin flips
 			currentPlayer.coinFlips = []
 			opponentPlayer.coinFlips = []
 
 			// Run action logic
-			const result = yield* call(
-				turnActionSaga,
-				game,
-				raceResult.turnAction || 'TIMEOUT',
-			)
-			yield* call(onTurnActionSaga, raceResult.turnAction || 'TIMEOUT', game)
+			const result = yield* call(turnActionSaga, game, turnAction)
+			yield* call(onTurnActionSaga, turnAction, game)
 
 			if (result === 'END_TURN') {
 				break
@@ -590,7 +597,11 @@ function* turnActionsSaga(
 	}
 }
 
-export function* turnSaga(game: GameModel, onTurnAction: any) {
+export function* turnSaga(
+	game: GameModel,
+	onTurnActionSaga: any,
+	update?: (game: GameModel) => any,
+) {
 	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state
@@ -629,8 +640,7 @@ export function* turnSaga(game: GameModel, onTurnAction: any) {
 		}
 	}
 
-	const result = yield* call(turnActionsSaga, game, onTurnAction)
-	if (result === 'GAME_END') return 'GAME_END'
+	yield* call(turnActionsSaga, game, onTurnActionSaga, update)
 
 	// Draw a card from deck when turn ends
 	let drawCards = currentPlayer.draw(1)
@@ -720,12 +730,7 @@ export function* setupGameSaga(
 	game.state.turn.turnNumber++
 	yield* sagas.onGameStart(game)
 	while (true) {
-		const result = yield* call(
-			turnActionsSaga,
-			game,
-			sagas.onTurnAction,
-			sagas.update,
-		)
+		const result = yield* call(turnSaga, game, sagas.onTurnAction, sagas.update)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++
 	}

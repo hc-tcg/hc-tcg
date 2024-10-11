@@ -180,7 +180,7 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 
 	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
-			const backgroundTasks = yield* fork(() =>
+			yield* fork(() =>
 				all([
 					fork(opponentConnectionSaga),
 					fork(chatSaga),
