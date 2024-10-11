@@ -49,7 +49,7 @@ const HumanCleoRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(player, component, 2)
+				const coinFlip = flipCoin(game, player, component, 2)
 
 				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 				if (headsAmount < 2) return

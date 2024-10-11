@@ -66,7 +66,7 @@ const Egg: SingleUse = {
 
 						opponentPlayer.changeActiveRow(afkHermitSlot.row)
 
-						const coinFlip = flipCoin(player, component)
+						const coinFlip = flipCoin(game, player, component)
 						if (coinFlip[0] === 'heads') {
 							const eggAttack = game
 								.newAttack({

@@ -58,7 +58,7 @@ const VintageBeefRare: Hermit = {
 
 				if (removeFrom.length === 0) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] !== 'heads') return
 
 				removeFrom.forEach((effect) => effect.remove())
