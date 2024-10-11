@@ -214,13 +214,13 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 			})
 		},
 		onTurnAction: function* (_, game) {
-			const isSpectator = yield* select(getIsSpectator)
+			// const isSpectator = yield* select(getIsSpectator)
 
-			yield* put<LocalMessage>({
-				type: localMessages.GAME_LOCAL_STATE_SET,
-				localGameState: getLocalGameState(game, playerEntity, isSpectator),
-				time: Date.now(),
-			})
+			// yield* put<LocalMessage>({
+			// 	// type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+			// 	// localGameState: getLocalGameState(game, playerEntity, isSpectator),
+			// 	time: Date.now(),
+			// })
 		},
 	})
 
