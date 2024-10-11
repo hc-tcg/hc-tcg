@@ -568,7 +568,7 @@ function* turnActionsSaga(
 				game,
 				raceResult.turnAction || 'TIMEOUT',
 			)
-			yield* call(onTurnActionSaga, raceResult.turnAction, game)
+			yield* call(onTurnActionSaga, raceResult.turnAction || 'TIMEOUT', game)
 
 			if (result === 'END_TURN') {
 				break
