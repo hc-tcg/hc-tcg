@@ -21,7 +21,7 @@ const queries = {
 		loser uuid REFERENCES users(user_id),
 		winner_deck_code varchar(7) REFERENCES decks(deck_code),
 		loser_deck_code varchar(7) REFERENCES decks(deck_code),
-		tie boolean NOT NULL
+		outcome varchar(31) NOT NULL
 	);
 	CREATE TABLE IF NOT EXISTS cards(
 		card_id integer PRIMARY KEY NOT NULL

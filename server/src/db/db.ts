@@ -1,6 +1,8 @@
 import pg from 'pg'
 import QUERIES from './queries'
 import {Card} from 'common/cards/base/types'
+import {GameEndOutcomeT} from 'common/types/game-state'
+import {string} from 'zod'
 const {Pool} = pg
 
 export type User = {
@@ -183,6 +185,40 @@ export class Database {
 	// Get deck stats
 	// Get user info
 	// Set user info
+
+	/** Insert a game into the database */
+	public async insertGame(
+		firstPlayerDeckCode: string,
+		secondPlayerDeckCode: string,
+		firstPlayerUuid: string,
+		secondPlayerUuid: string,
+		outcome: GameEndOutcomeT,
+		winningPlayerUuid: string | null,
+	): Promise<void> {
+		const gameTime = Date.now()
+
+		let winner
+		let winningDeck
+		let loser
+		let losingDeck
+
+		if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
+			winner = firstPlayerUuid
+			winningDeck = firstPlayerDeckCode
+			loser = secondPlayerUuid
+			losingDeck = secondPlayerDeckCode
+		} else {
+			winner = secondPlayerUuid
+			winningDeck = secondPlayerDeckCode
+			loser = firstPlayerUuid
+			losingDeck = firstPlayerDeckCode
+		}
+
+		await this.pool.query(
+			'INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome) VALUES($1,$2,$3,$4,$5,$6)',
+			[gameTime, winner, loser, winningDeck, losingDeck, outcome],
+		)
+	}
 }
 
 export const setupDatabase = (allCards: Array<Card>, env: any) => {
