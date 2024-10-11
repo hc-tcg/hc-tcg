@@ -33,6 +33,7 @@ import {
 	pickRequestSaga,
 	playCardSaga,
 	removeEffectSaga,
+	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
@@ -406,6 +407,9 @@ function* turnActionSaga(
 			case 'DELAY':
 				yield* call(delaySaga, game, turnAction.action.delay)
 				break
+			case 'TIMEOUT':
+				yield* call(timeoutSaga, game)
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
@@ -558,76 +562,12 @@ function* turnActionsSaga(
 			currentPlayer.coinFlips = []
 			opponentPlayer.coinFlips = []
 
-			// Handle timeout
-			if (raceResult.timeout) {
-				// @TODO this works, but could be cleaned
-				const currentAttack = game.state.turn.currentAttack
-				let reset = false
-
-				// First check to see if the opponent had a pick request active
-				const currentPickRequest = game.state.pickRequests[0]
-				if (currentPickRequest) {
-					if (currentPickRequest.player === currentPlayer.entity) {
-						if (!!currentAttack) {
-							reset = true
-						}
-					} else {
-						reset = true
-					}
-				}
-
-				// Check to see if the opponent had a modal request active
-				const currentModalRequest = game.state.modalRequests[0]
-				if (currentModalRequest) {
-					if (currentModalRequest.player === currentPlayer.entity) {
-						if (!!currentAttack) {
-							reset = true
-						}
-					} else {
-						reset = true
-					}
-				}
-
-				if (reset) {
-					// Timeout current request and remove it
-					if (currentPickRequest) {
-						game.removePickRequest()
-					} else {
-						game.removeModalRequest()
-					}
-
-					// Reset timer to max time
-					game.state.timer.turnStartTime = Date.now()
-					game.state.timer.turnRemaining = game.settings.maxTurnTime
-
-					// Execute attack now if there's a current attack
-					if (!game.hasActiveRequests() && !!currentAttack) {
-						// There are no active requests left, and we're in the middle of an attack. Execute it now.
-						const turnAction: AttackActionData = {
-							type: attackToAttackAction[currentAttack],
-						}
-						yield* call(attackSaga, game, turnAction, false)
-					}
-
-					continue
-				}
-
-				const hasActiveHermit = game.components.exists(
-					CardComponent,
-					query.card.player(currentPlayer.entity),
-					query.card.slot(query.slot.active, query.slot.hermit),
-				)
-				if (hasActiveHermit) {
-					break
-				}
-
-				game.endInfo.reason = 'time'
-				game.endInfo.deadPlayerEntities = [currentPlayer.entity]
-				return 'GAME_END'
-			}
-
 			// Run action logic
-			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
+			const result = yield* call(
+				turnActionSaga,
+				game,
+				raceResult.turnAction || 'TIMEOUT',
+			)
 			yield* call(onTurnActionSaga, raceResult.turnAction, game)
 
 			if (result === 'END_TURN') {

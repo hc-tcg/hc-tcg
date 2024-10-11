@@ -1,4 +1,4 @@
-import {delay} from 'typed-redux-saga'
+import {call, delay} from 'typed-redux-saga'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {SlotEntity} from '../entities'
@@ -390,4 +390,74 @@ export function* delaySaga(game: GameModel, delayMs: number) {
 	if (game.viewers.length !== 0) {
 		yield* delay(delayMs)
 	}
+}
+
+export function* timeoutSaga(game: GameModel) {
+	// @TODO this works, but could be cleaned
+	const currentAttack = game.state.turn.currentAttack
+	let reset = false
+	let currentPlayer = game.currentPlayer
+
+	// First check to see if the opponent had a pick request active
+	const currentPickRequest = game.state.pickRequests[0]
+	if (currentPickRequest) {
+		if (currentPickRequest.player === currentPlayer.entity) {
+			if (!!currentAttack) {
+				reset = true
+			}
+		} else {
+			reset = true
+		}
+	}
+
+	// Check to see if the opponent had a modal request active
+	const currentModalRequest = game.state.modalRequests[0]
+	if (currentModalRequest) {
+		if (currentModalRequest.player === currentPlayer.entity) {
+			if (!!currentAttack) {
+				reset = true
+			}
+		} else {
+			reset = true
+		}
+	}
+
+	if (reset) {
+		// Timeout current request and remove it
+		if (currentPickRequest) {
+			game.removePickRequest()
+		} else {
+			game.removeModalRequest()
+		}
+
+		// Reset timer to max time
+		game.state.timer.turnStartTime = Date.now()
+		game.state.timer.turnRemaining = game.settings.maxTurnTime
+
+		// Execute attack now if there's a current attack
+		if (!game.hasActiveRequests() && !!currentAttack) {
+			// There are no active requests left, and we're in the middle of an attack. Execute it now.
+			const turnAction: AttackActionData = {
+				type: attackToAttackAction[currentAttack],
+			}
+			yield* call(attackSaga, game, turnAction, false)
+		}
+
+    // @todo
+		// continue
+	}
+
+	const hasActiveHermit = game.components.exists(
+		CardComponent,
+		query.card.player(currentPlayer.entity),
+		query.card.slot(query.slot.active, query.slot.hermit),
+	)
+	if (hasActiveHermit) {
+    // @todo
+		// break
+	}
+
+	game.endInfo.reason = 'time'
+	game.endInfo.deadPlayerEntities = [currentPlayer.entity]
+	return 'GAME_END'
 }

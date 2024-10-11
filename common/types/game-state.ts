@@ -98,6 +98,7 @@ export type TurnAction =
 	| PlayCardAction
 	| AttackAction
 	| 'END_TURN'
+	| 'TIMEOUT'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'

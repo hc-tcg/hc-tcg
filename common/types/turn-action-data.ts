@@ -56,6 +56,7 @@ export type ModalResult = {
 export type OtherTurnActions = {
 	type:
 		| 'END_TURN'
+		| 'TIMEOUT'
 		| 'APPLY_EFFECT'
 		| 'REMOVE_EFFECT'
 		| 'PICK_REQUEST'
