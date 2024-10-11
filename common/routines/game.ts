@@ -14,12 +14,7 @@ import {PlayerEntity} from '../entities'
 import {GameModel, GameProps} from '../models/game-model'
 import {TypeT} from '../types/cards'
 import {TurnAction, TurnActions} from '../types/game-state'
-import {
-	AnyTurnActionData,
-	AttackActionData,
-	PickSlotActionData,
-	attackToAttackAction,
-} from '../types/turn-action-data'
+import {AnyTurnActionData, PickSlotActionData} from '../types/turn-action-data'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
 
@@ -36,7 +31,6 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import {ClientMessageTable} from '../socket-messages/client-messages'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,

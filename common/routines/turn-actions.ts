@@ -445,7 +445,7 @@ export function* timeoutSaga(game: GameModel) {
 			yield* call(attackSaga, game, turnAction, false)
 		}
 
-    // @todo
+		// @todo
 		// continue
 	}
 
@@ -455,7 +455,7 @@ export function* timeoutSaga(game: GameModel) {
 		query.card.slot(query.slot.active, query.slot.hermit),
 	)
 	if (hasActiveHermit) {
-    // @todo
+		// @todo
 		// break
 	}
 

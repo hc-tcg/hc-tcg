@@ -29,7 +29,7 @@ const COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
 	[],
 )
 
-export function flipCoin(game, 
+export function flipCoin(
 	game: GameModel,
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,

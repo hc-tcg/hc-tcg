@@ -34,7 +34,8 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 
 				// No need to flip a coin for multiple attacks
 				if (!coinFlipResult) {
-					const coinFlip = flipCoin(game, 
+					const coinFlip = flipCoin(
+						game,
 						player.opponentPlayer,
 						effect.creator,
 						1,
