@@ -409,6 +409,7 @@ function* turnActionSaga(
 				break
 			case 'TIMEOUT':
 				yield* call(timeoutSaga, game)
+				endTurn = true
 				break
 			default:
 				// Unknown action type, ignore it completely
