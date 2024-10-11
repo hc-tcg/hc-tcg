@@ -713,7 +713,7 @@ export function* setupGameSaga(
 	sagas: {
 		onGameStart: (game: GameModel) => any
 		update?: (game: GameModel) => any
-		onTurnAction: (
+		onTurnAction?: (
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
 			game: GameModel,
 		) => any
@@ -724,7 +724,12 @@ export function* setupGameSaga(
 	game.state.turn.turnNumber++
 	yield* sagas.onGameStart(game)
 	while (true) {
-		const result = yield* call(turnSaga, game, sagas.onTurnAction, sagas.update)
+		const result = yield* call(
+			turnSaga,
+			game,
+			sagas.onTurnAction || function* () {},
+			sagas.update,
+		)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++
 	}
