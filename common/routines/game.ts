@@ -411,6 +411,10 @@ function* turnActionSaga(
 				yield* call(timeoutSaga, game)
 				endTurn = true
 				break
+			case 'FORFEIT':
+				yield* call(forfeitSaga, game)
+				endTurn = true
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
@@ -584,6 +588,7 @@ function* turnActionsSaga(
 	} finally {
 		turnActionChannel.close()
 	}
+	return 'GAME_END'
 }
 
 export function* turnSaga(game: GameModel, onTurnAction: any) {

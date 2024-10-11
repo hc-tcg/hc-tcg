@@ -99,6 +99,7 @@ export type TurnAction =
 	| AttackAction
 	| 'END_TURN'
 	| 'TIMEOUT'
+	| 'FORFEIT'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'
