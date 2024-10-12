@@ -49,7 +49,10 @@ export const serverMessages = messages('server', {
 export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
-		gameHistory?: Array<GameMessage>
+		game?: {
+			entity: PlayerEntity
+			history: Array<GameMessage>
+		}
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{

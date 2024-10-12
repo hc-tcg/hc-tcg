@@ -256,8 +256,6 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 	return (action: any) => {
 		return (
 			action.type === gameMessages.TURN_ACTION &&
-			'playerEntity' in action &&
-			'action' in action &&
 			action.action.type === actionType &&
 			action.playerEntity === playerEntity
 		)
@@ -462,7 +460,7 @@ function getPlayerAI(game: GameModel) {
 
 function* turnActionsSaga(
 	game: GameModel,
-	onTurnActionSaga: any,
+	onTurnActionSaga: (action: any, game: GameModel) => void,
 	update?: (game: GameModel) => any,
 ) {
 	const {opponentPlayer, currentPlayer} = game
@@ -597,7 +595,7 @@ function* turnActionsSaga(
 
 export function* turnSaga(
 	game: GameModel,
-	onTurnActionSaga: any,
+	onTurnActionSaga: (action: any, game: GameModel) => void,
 	update?: (game: GameModel) => any,
 ) {
 	const {currentPlayer, opponentPlayer} = game
@@ -736,13 +734,13 @@ export function* setupGameSaga(
 
 	game.state.turn.turnNumber++
 	yield* sagas.onGameStart(game)
+
+	if (sagas.onTurnAction === undefined) {
+		sagas.onTurnAction = function* () {}
+	}
+
 	while (true) {
-		const result = yield* call(
-			turnSaga,
-			game,
-			sagas.onTurnAction || function* () {},
-			sagas.update,
-		)
+		const result = yield* call(turnSaga, game, sagas.onTurnAction, sagas.update)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++
 	}

@@ -46,6 +46,7 @@ export function* sendTurnAction(
 		time: currentTime,
 	})
 
+  console.log("sending turn action")
 	yield* sendMsg({
 		type: clientMessages.GAME_TURN_ACTION,
 		action: action,
@@ -171,18 +172,22 @@ function* reconnectSaga(game: GameModel) {
 		)
 
 		assert(
-			action.gameHistory,
+			action.game?.history,
 			'There should be a game history because the player is in a game',
 		)
 
-		for (const history of action.gameHistory) {
+		for (const history of action.game.history) {
 			if (history.time <= game.lastTurnActionTime) continue
 			yield* put<GameMessage>(history)
 		}
 	}
 }
 
-function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
+function* gameSaga(
+	props: GameProps,
+	playerEntity: PlayerEntity,
+	history: Array<GameMessage>,
+) {
 	const socket = yield* select(getSocket)
 
 	yield* setupGameSaga(props, {
@@ -210,6 +215,12 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 				localGameState: getLocalGameState(game, playerEntity, isSpectator),
 				time: Date.now(),
 			})
+
+			if (history) {
+				for (const h of history) {
+					yield* put<GameMessage>(h)
+				}
+			}
 		},
 		update: function* (game) {
 			const isSpectator = yield* select(getIsSpectator)

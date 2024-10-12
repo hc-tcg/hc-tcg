@@ -9,6 +9,8 @@ import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {getEntityById} from './game'
+import {assert} from 'common/utils/assert'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
@@ -29,9 +31,20 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
+
+			const entity = getEntityById(game, existingPlayer.id)
+
+			assert(
+				entity,
+				'The game the player is in must have an entity for this player',
+			)
+
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
-				gameHistory: game.history,
+				game: {
+					entity,
+					history: game.history,
+				},
 			})
 		} else {
 			console.log('invalid player connected')

@@ -13,7 +13,7 @@ import setupGameSaga, {
 } from 'common/routines/game'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
-import {all, cancel, put, take} from 'typed-redux-saga'
+import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
@@ -31,7 +31,19 @@ export type ServerGameModel = {
 		playerId: PlayerId
 	}
 	props: GameProps
-	history: Array<GameMessageTable[typeof gameMessages.TURN_ACTION]>
+	history: Array<GameMessage>
+}
+
+export function getEntityById(
+	game: ServerGameModel,
+	id: PlayerId,
+): PlayerEntity | undefined {
+	if (game.playerOne.playerId === id) {
+		return game.playerOne.entity
+	}
+	if (game.playerTwo.playerId === id) {
+		return game.playerTwo.entity
+	}
 }
 
 type Props = {
@@ -103,8 +115,8 @@ export function* gameManagerSaga({
 				history: [],
 			}
 
-			backgroundSagas = all([
-				function* () {
+			yield* fork(all, [
+				call(function* () {
 					while (true) {
 						let action = (yield* take(
 							localMessages.GAME_TURN_ACTION,
@@ -119,8 +131,8 @@ export function* gameManagerSaga({
 							})
 						}
 					}
-				},
-				function* () {
+				}),
+				call(function* () {
 					while (true) {
 						let playerRemoved = yield* take<
 							LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
@@ -140,10 +152,8 @@ export function* gameManagerSaga({
 							playerEntity: playerRemoved,
 						})
 					}
-				},
+				}),
 			])
-
-			yield* backgroundSagas
 		},
 		onTurnAction: function* (
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
@@ -159,7 +169,9 @@ export function* gameManagerSaga({
 				// then `playerEntity` created this action so we don't need to send it back
 				if (playerEntity === players[index].entity) return
 
-				broadcast([root.players[p]], {
+				let player = root.players[p]
+
+				broadcast([player], {
 					type: serverMessages.GAME_TURN_ACTION,
 					playerEntity: action.playerEntity,
 					action: action.action,
