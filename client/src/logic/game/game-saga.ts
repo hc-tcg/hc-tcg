@@ -267,11 +267,10 @@ function* gameSaga(
 			})
 		},
 		onTurnAction: function* (action, game) {
-			if (!reconnectInformation) return
+			if (!reconnectInformation || isReadyToDisplay) return
 			let index = reconnectInformation.history.indexOf(action)
 			if (index === reconnectInformation.history.length - 1) {
 				isReadyToDisplay = true
-				console.log('Sending set timer action')
 				yield* put<GameMessage>({
 					type: gameMessages.TURN_ACTION,
 					playerEntity: game.currentPlayerEntity,
