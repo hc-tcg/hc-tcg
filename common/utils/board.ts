@@ -13,7 +13,7 @@ export function applySingleUse(
 		query.card.slot(query.slot.singleUse),
 	)
 
-	console.assert(
+	assert(
 		suCard,
 		'Can not apply single use card if there is not a single use on the board',
 	)

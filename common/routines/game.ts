@@ -31,6 +31,7 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import { assert } from '../utils/assert'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -346,7 +347,7 @@ function* turnActionSaga(
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
-		console.assert(
+		assert(
 			![
 				'SINGLE_USE_ATTACK',
 				'PRIMARY_ATTACK',

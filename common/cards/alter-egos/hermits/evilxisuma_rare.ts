@@ -10,6 +10,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../../types/priorities'
+import {assert} from '../../../utils/assert'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -80,7 +81,7 @@ const EvilXisumaRare: Hermit = {
 						cancelable: false,
 					},
 					onResult(modalResult) {
-						console.assert(modalResult.pick)
+						assert(modalResult.pick)
 
 						const actionToBlock =
 							modalResult.pick === 'primary'

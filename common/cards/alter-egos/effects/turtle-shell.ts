@@ -82,7 +82,7 @@ const TurtleShell: Attach = {
 					}
 
 					const activeInfo = lastActiveHermit.get(game)[player.entity]
-					console.assert(activeInfo)
+					assert(activeInfo)
 					switch (activeInfo.stage) {
 						case 'activated':
 							lastActiveHermit.get(game)[player.entity] = {

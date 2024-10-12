@@ -11,12 +11,13 @@ import setupGameSaga, {
 	GameMessageTable,
 } from 'common/routines/game'
 import {broadcast} from '../utils/comm'
-import {all, fork, put, take} from 'typed-redux-saga'
+import {all, cancel, fork, put, take} from 'typed-redux-saga'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {PlayerEntity} from 'common/entities'
 import {TurnAction} from 'common/types/game-state'
+import {assert} from 'common/utils/assert'
 
 /* Properties for a game running on the server */
 export type ServerGameModel = {
@@ -73,6 +74,7 @@ export function* gameManagerSaga({
 	}
 
 	let serverSideGame: ServerGameModel
+	let backgroundSagas: any = undefined
 
 	yield* setupGameSaga(gameProps, {
 		onGameStart: function* (game) {
@@ -102,8 +104,7 @@ export function* gameManagerSaga({
 				history: [],
 			}
 
-			// @todo Cancel this saga
-			yield* all([
+			backgroundSagas = all([
 				function* () {
 					while (true) {
 						let action = (yield* take(
@@ -141,6 +142,8 @@ export function* gameManagerSaga({
 					}
 				},
 			])
+
+			yield* backgroundSagas
 		},
 		onTurnAction: function* (
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
@@ -164,4 +167,11 @@ export function* gameManagerSaga({
 			})
 		},
 	})
+
+	assert(
+		backgroundSagas,
+		'The sagas running in the background of the game should be set when the game is started',
+	)
+
+	yield* cancel(backgroundSagas)
 }

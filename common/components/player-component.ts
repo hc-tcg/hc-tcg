@@ -12,6 +12,7 @@ import type {
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {onTurnEnd} from '../types/priorities'
+import {assert} from '../utils/assert'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -228,7 +229,7 @@ export class PlayerComponent {
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
 
-		console.assert(
+		assert(
 			newRow.playerId === this.entity,
 			"Should not be able to change to another player's row to make active",
 		)
@@ -319,7 +320,7 @@ export class PlayerComponent {
 	public updateLastUsedHermitAttack(attackType: HermitAttackType) {
 		if (attackType === 'single-use') return
 		const activeHermit = this.getActiveHermit()
-		console.assert(
+		assert(
 			activeHermit,
 			`${this.playerName} tried to attack without an active hermit`,
 		)

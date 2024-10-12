@@ -31,7 +31,7 @@ export class AIComponent {
 
 	public getNextTurnAction(): AnyTurnActionData {
 		let nextAction = this.turnActionGenerator.next()
-		console.assert(
+		assert(
 			!nextAction.done,
 			'Bosses should always be able to attack as long as the game is running.',
 		)
