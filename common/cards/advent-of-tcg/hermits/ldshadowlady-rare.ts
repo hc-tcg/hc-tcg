@@ -69,7 +69,7 @@ const LDShadowLadyRare: Hermit = {
 			(instance, attackType) => {
 				if (instance.entity !== component.entity || attackType !== 'secondary')
 					return
-
+				pickedRow = null
 				if (!opponentHasMovableActive()) return
 
 				const pickCondition = query.every(
