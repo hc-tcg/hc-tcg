@@ -46,7 +46,7 @@ export function* sendTurnAction(
 		time: currentTime,
 	})
 
-  console.log("sending turn action")
+	console.log('sending turn action')
 	yield* sendMsg({
 		type: clientMessages.GAME_TURN_ACTION,
 		action: action,
@@ -203,11 +203,12 @@ function* gameSaga(
 				]),
 			)
 
-			yield* put<LocalMessage>({
-				type: localMessages.GAME_START,
-			})
-
 			const isSpectator = false
+
+      // @todo Fix reloads
+			for (const h of history) {
+				yield* put<GameMessage>(h)
+			}
 
 			// Set the first local state
 			yield* putResolve<LocalMessage>({
@@ -216,11 +217,9 @@ function* gameSaga(
 				time: Date.now(),
 			})
 
-			if (history) {
-				for (const h of history) {
-					yield* put<GameMessage>(h)
-				}
-			}
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_START,
+			})
 		},
 		update: function* (game) {
 			const isSpectator = yield* select(getIsSpectator)

@@ -115,6 +115,8 @@ export function* gameManagerSaga({
 				history: [],
 			}
 
+			root.games[game.id] = serverSideGame
+
 			yield* fork(all, [
 				call(function* () {
 					while (true) {

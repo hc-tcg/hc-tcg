@@ -31,21 +31,25 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
+			console.log('Player connecting: ' + game)
 
-			const entity = getEntityById(game, existingPlayer.id)
+			if (game) {
+				const entity = getEntityById(game, existingPlayer.id)
 
-			assert(
-				entity,
-				'The game the player is in must have an entity for this player',
-			)
-
-			broadcast([existingPlayer], {
-				type: serverMessages.PLAYER_RECONNECTED,
-				game: {
+				assert(
 					entity,
-					history: game.history,
-				},
-			})
+					'The game the player is in must have an entity for this player',
+				)
+
+				broadcast([existingPlayer], {
+					type: serverMessages.PLAYER_RECONNECTED,
+					game: {
+						props: game.props,
+						entity,
+						history: game.history,
+					},
+				})
+			}
 		} else {
 			console.log('invalid player connected')
 			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})

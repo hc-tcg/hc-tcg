@@ -50,6 +50,7 @@ export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
 		game?: {
+			props: GameProps
 			entity: PlayerEntity
 			history: Array<GameMessage>
 		}

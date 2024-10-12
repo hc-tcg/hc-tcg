@@ -141,6 +141,7 @@ export function* loginSaga() {
 			if (matchmakingStatus !== 'in_game') {
 				yield* call(
 					gameSaga,
+					result.playerReconnected.game.props,
 					result.playerReconnected.game.entity,
 					result.playerReconnected.game.history,
 				)

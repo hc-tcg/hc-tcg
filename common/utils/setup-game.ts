@@ -126,7 +126,7 @@ function setupEcsForPlayer(
 
 	if (options.shuffleDeck) {
 		let numbers = Array(cards.length)
-			.fill(0)
+			.fill(null)
 			.map(() => game.randomNumber())
 
 		fisherYatesShuffle(cards, numbers).forEach((card, i) => {
@@ -137,7 +137,7 @@ function setupEcsForPlayer(
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
 			let numbers = Array(cards.length)
-				.fill(0)
+				.fill(null)
 				.map(() => game.randomNumber())
 
 			fisherYatesShuffle(cards, numbers).forEach((card, i) => {

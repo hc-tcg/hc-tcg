@@ -243,7 +243,7 @@ function* joinQueueSaga() {
 
 			// We have joined the queue, wait for game start
 			let resp = yield* call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga, resp.props, resp.playerEntity)
+			yield call(gameSaga, resp.props, resp.playerEntity, [])
 			console.log('end game sagas')
 		} catch (err) {
 			console.error('Game crashed: ', err)
