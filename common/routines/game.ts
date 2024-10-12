@@ -336,6 +336,7 @@ function* turnActionSaga(
 	turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
+	console.log(turnAction.action)
 
 	let endTurn = false
 
@@ -415,6 +416,11 @@ function* turnActionSaga(
 				return 'FORFEIT'
 				endTurn = true
 				break
+			case 'SET_TIMER':
+				console.log('Setting timer to' + turnAction.action.turnRemaining)
+				game.state.timer.turnRemaining = turnAction.action.turnRemaining
+				game.state.timer.turnStartTime = turnAction.action.turnStartTime
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
@@ -467,7 +473,7 @@ function* turnActionsSaga(
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
+			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT', 'SET_TIMER'].map((type) =>
 				playerAction(type, opponentPlayer.entity),
 			),
 			...[
@@ -485,6 +491,8 @@ function* turnActionsSaga(
 				'SECONDARY_ATTACK',
 				'END_TURN',
 				'DELAY',
+				'FORFEIT',
+				'SET_TIMER',
 			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10),

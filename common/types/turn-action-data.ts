@@ -58,6 +58,12 @@ export type Forfeit = {
 	player: PlayerEntity
 }
 
+export type SetTimer = {
+	type: 'SET_TIMER'
+	turnRemaining: number
+	turnStartTime: number
+}
+
 export type OtherTurnActions = {
 	type:
 		| 'END_TURN'
@@ -78,3 +84,4 @@ export type AnyTurnActionData =
 	| ModalResult
 	| WaitActionData
 	| Forfeit
+	| SetTimer

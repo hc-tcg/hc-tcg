@@ -13,6 +13,7 @@ import {
 	all,
 	call,
 	cancel,
+	delay,
 	fork,
 	put,
 	putResolve,
@@ -32,6 +33,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {isRegExp} from 'util'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -186,9 +188,19 @@ function* reconnectSaga(game: GameModel) {
 function* gameSaga(
 	props: GameProps,
 	playerEntity: PlayerEntity,
-	history: Array<GameMessage>,
+	reconnectInformation?: {
+		history: Array<GameMessage>
+		timer: {
+			turnRemaining: number
+			turnStartTime: number
+		}
+	},
 ) {
 	const socket = yield* select(getSocket)
+
+	let isReadyToDisplay = false
+
+	if (!reconnectInformation) isReadyToDisplay = true
 
 	yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
@@ -205,23 +217,47 @@ function* gameSaga(
 
 			const isSpectator = false
 
-      // @todo Fix reloads
-			for (const h of history) {
-				yield* put<GameMessage>(h)
+			if (isReadyToDisplay) {
+				// Set the first local state
+				yield* putResolve<LocalMessage>({
+					type: localMessages.GAME_LOCAL_STATE_SET,
+					localGameState: getLocalGameState(game, playerEntity, isSpectator),
+					time: Date.now(),
+				})
+
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_START,
+				})
 			}
 
-			// Set the first local state
-			yield* putResolve<LocalMessage>({
-				type: localMessages.GAME_LOCAL_STATE_SET,
-				localGameState: getLocalGameState(game, playerEntity, isSpectator),
-				time: Date.now(),
-			})
-
-			yield* put<LocalMessage>({
-				type: localMessages.GAME_START,
-			})
+			// Update the game state with the information from the reload
+			if (!reconnectInformation) return
+			if (reconnectInformation.history.length !== 0) {
+				yield* fork(function* () {
+					for (const h of reconnectInformation.history) {
+						yield* put<GameMessage>(h)
+					}
+				})
+			} else {
+				isReadyToDisplay = true
+				yield* put<GameMessage>({
+					type: gameMessages.TURN_ACTION,
+					playerEntity: game.currentPlayerEntity,
+					action: {
+						type: 'SET_TIMER',
+						turnRemaining: reconnectInformation.timer.turnRemaining,
+						turnStartTime: reconnectInformation.timer.turnStartTime,
+					},
+					time: Date.now(),
+				})
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_START,
+				})
+			}
 		},
 		update: function* (game) {
+			if (!isReadyToDisplay) return
+
 			const isSpectator = yield* select(getIsSpectator)
 
 			yield* put<LocalMessage>({
@@ -229,6 +265,27 @@ function* gameSaga(
 				localGameState: getLocalGameState(game, playerEntity, isSpectator),
 				time: Date.now(),
 			})
+		},
+		onTurnAction: function* (action, game) {
+			if (!reconnectInformation) return
+			let index = reconnectInformation.history.indexOf(action)
+			if (index === reconnectInformation.history.length - 1) {
+				isReadyToDisplay = true
+				console.log('Sending set timer action')
+				yield* put<GameMessage>({
+					type: gameMessages.TURN_ACTION,
+					playerEntity: game.currentPlayerEntity,
+					action: {
+						type: 'SET_TIMER',
+						turnRemaining: reconnectInformation.timer.turnRemaining,
+						turnStartTime: reconnectInformation.timer.turnStartTime,
+					},
+					time: Date.now(),
+				})
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_START,
+				})
+			}
 		},
 	})
 

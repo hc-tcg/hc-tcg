@@ -143,7 +143,10 @@ export function* loginSaga() {
 					gameSaga,
 					result.playerReconnected.game.props,
 					result.playerReconnected.game.entity,
-					result.playerReconnected.game.history,
+					{
+						history: result.playerReconnected.game.history,
+						timer: result.playerReconnected.game.timer,
+					},
 				)
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}

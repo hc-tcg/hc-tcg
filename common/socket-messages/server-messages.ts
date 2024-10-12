@@ -53,6 +53,10 @@ export type ServerMessages = [
 			props: GameProps
 			entity: PlayerEntity
 			history: Array<GameMessage>
+			timer: {
+				turnRemaining: number
+				turnStartTime: number
+			}
 		}
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},

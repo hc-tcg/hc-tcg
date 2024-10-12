@@ -47,6 +47,7 @@ export function* playerConnectedSaga(
 						props: game.props,
 						entity,
 						history: game.history,
+						timer: game.game.state.timer,
 					},
 				})
 			}
