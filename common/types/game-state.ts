@@ -87,8 +87,14 @@ export type GameOutcome =
 	| 'tie'
 	| {
 			winner: PlayerEntity
-			victoryReason: 'forfeit' | 'no-active-hermits' | 'decked-out' | 'lives'
+			victoryReason: GameVictoryReason
 	  }
+
+export type GameVictoryReason =
+	| 'forfeit'
+	| 'no-hermits-on-board'
+	| 'decked-out'
+	| 'lives'
 
 export type PlayCardAction =
 	| 'PLAY_HERMIT_CARD'

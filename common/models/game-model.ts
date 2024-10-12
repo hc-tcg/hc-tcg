@@ -13,6 +13,7 @@ import {
 	DefaultDictionary,
 	GameOutcome,
 	GameState,
+	GameVictoryReason,
 	Message,
 	TurnAction,
 	TurnActions,
@@ -158,7 +159,7 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		outcome?: GameOutcome
+		victoryReason?: GameVictoryReason
 	}
 
 	constructor(props: GameProps) {
@@ -175,7 +176,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			outcome: undefined,
+			victoryReason: undefined,
 		}
 
 		this.randomNumberGenerator = newRandomNumberGenerator(

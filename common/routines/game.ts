@@ -410,6 +410,7 @@ function* turnActionSaga(
 				break
 			case 'FORFEIT':
 				return 'FORFEIT'
+				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
 				endTurn = true
 				break
 			case 'SET_TIMER':
@@ -600,11 +601,11 @@ export function* turnSaga(
 	if (game.state.turn.turnNumber > 2) {
 		const turnStartDeadPlayers = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayers.length) {
-			game.endInfo.reason = turnStartDeadPlayers.every(
+			game.endInfo.victoryReason = turnStartDeadPlayers.every(
 				(deadPlayer) => deadPlayer.lives <= 0,
 			)
 				? 'lives'
-				: 'hermits'
+				: 'no-hermits-on-board'
 			game.endInfo.deadPlayerEntities = turnStartDeadPlayers.map(
 				(player) => player.entity,
 			)
@@ -621,6 +622,7 @@ export function* turnSaga(
 	)
 
 	if (turnActionResult === 'FORFEIT') {
+		game.endInfo.victoryReason = 'forfeit'
 		return 'GAME_END'
 	}
 
@@ -647,9 +649,9 @@ export function* turnSaga(
 	const deadPlayers: PlayerComponent[] = yield* call(checkHermitHealth, game)
 	if (deadPlayers.length) {
 		if (deadPlayers.every((player) => player.lives <= 0)) {
-			game.endInfo.reason = 'lives'
+			game.endInfo.victoryReason = 'lives'
 		} else {
-			game.endInfo.reason = 'hermits'
+			game.endInfo.victoryReason = 'no-hermits-on-board'
 		}
 		game.endInfo.deadPlayerEntities = deadPlayers.map((player) => player.entity)
 		return 'GAME_END'
@@ -657,7 +659,7 @@ export function* turnSaga(
 
 	const deckedOutPlayers: PlayerEntity[] = yield* call(checkDeckedOut, game)
 	if (deckedOutPlayers.length) {
-		game.endInfo.reason = 'cards'
+		game.endInfo.victoryReason = 'decked-out'
 		game.endInfo.deadPlayerEntities = deckedOutPlayers
 		return 'GAME_END'
 	}
@@ -696,7 +698,35 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function getGameResult(game: GameModel): GameOutcome {}
+function figureOutGameResult(game: GameModel): GameOutcome {
+	assert(
+		game.endInfo.deadPlayerEntities.length !== 0,
+		'Games can not end without at least one dead player',
+	)
+	assert(
+		game.endInfo.victoryReason !== undefined,
+		'Games can not end without a reason player',
+	)
+
+	if (game.endInfo.deadPlayerEntities.length === 2) {
+		return 'tie'
+	}
+
+	let alivePlayer = game.components.findEntity(
+		PlayerComponent,
+		(game, component) =>
+			!game.endInfo.deadPlayerEntities.includes(component.entity),
+	)
+	assert(
+		alivePlayer,
+		'The game must have a living player at the end if it was not a draw',
+	)
+
+	return {
+		winner: alivePlayer,
+		victoryReason: game.endInfo.victoryReason,
+	}
+}
 
 /** Run a game. This saga ends when the game is competle. Returns the game result. */
 export function* runGameSaga(
@@ -735,7 +765,7 @@ export function* runGameSaga(
 
 	turnActionChannel.close()
 
-	return 'tie'
+	return figureOutGameResult(game)
 }
 
 export default runGameSaga
