@@ -690,7 +690,7 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 /** Run a game. This saga ends when the game is competle. Returns the game result. */
-export function* setupGameSaga(
+export function* runGameSaga(
 	props: GameProps,
 	sagas: {
 		onGameStart: (game: GameModel) => any
@@ -729,4 +729,4 @@ export function* setupGameSaga(
 	return 'tie'
 }
 
-export default setupGameSaga
+export default runGameSaga

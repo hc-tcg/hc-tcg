@@ -1,6 +1,6 @@
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
-import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
+import runGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
@@ -199,7 +199,7 @@ function* gameSaga(
 
 	if (!reconnectInformation) isReadyToDisplay = true
 
-	const gameOutcome = yield* setupGameSaga(props, {
+	const gameOutcome = yield* runGameSaga(props, {
 		onGameStart: function* (game) {
 			yield* fork(() =>
 				all([
