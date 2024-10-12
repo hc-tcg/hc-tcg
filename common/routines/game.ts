@@ -1,4 +1,12 @@
-import {actionChannel, call, delay, fork, race, SagaGenerator, take} from 'typed-redux-saga'
+import {
+	actionChannel,
+	call,
+	delay,
+	fork,
+	race,
+	SagaGenerator,
+	take,
+} from 'typed-redux-saga'
 import {SingleUse} from '../cards/base/types'
 import {
 	CardComponent,
@@ -31,7 +39,6 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import {SagaIterator} from 'redux-saga'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -688,6 +695,8 @@ function* checkDeckedOut(game: GameModel) {
 		(_game, player) => player.deckedOut,
 	)
 }
+
+function getGameResult(game: GameModel): GameOutcome {}
 
 /** Run a game. This saga ends when the game is competle. Returns the game result. */
 export function* runGameSaga(

@@ -11,8 +11,7 @@ import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
 	DefaultDictionary,
-	GameEndOutcomeT,
-	GameEndReasonT,
+	GameOutcome,
 	GameState,
 	Message,
 	TurnAction,
@@ -159,9 +158,7 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		outcome?: GameOutcome
 	}
 
 	constructor(props: GameProps) {
@@ -178,9 +175,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			outcome: undefined,
 		}
 
 		this.randomNumberGenerator = newRandomNumberGenerator(
@@ -227,16 +222,6 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
 	}
 
 	public get createdTime() {

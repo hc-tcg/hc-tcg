@@ -1,4 +1,3 @@
-import {ViewerComponent} from 'common/components/viewer-component'
 import {
 	RecievedClientMessage,
 	clientMessages,
