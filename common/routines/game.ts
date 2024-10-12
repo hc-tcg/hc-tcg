@@ -1,4 +1,4 @@
-import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
+import {actionChannel, call, delay, fork, race, SagaGenerator, take} from 'typed-redux-saga'
 import {SingleUse} from '../cards/base/types'
 import {
 	CardComponent,
@@ -12,7 +12,7 @@ import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel, GameProps} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {TurnAction, TurnActions} from '../types/game-state'
+import {GameOutcome, TurnAction, TurnActions} from '../types/game-state'
 import {AnyTurnActionData, PickSlotActionData} from '../types/turn-action-data'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
@@ -31,6 +31,7 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import {SagaIterator} from 'redux-saga'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -688,6 +689,7 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
+/** Run a game. This saga ends when the game is competle. Returns the game result. */
 export function* setupGameSaga(
 	props: GameProps,
 	sagas: {
@@ -698,7 +700,7 @@ export function* setupGameSaga(
 			game: GameModel,
 		) => any
 	},
-) {
+): SagaGenerator<GameOutcome> {
 	const game = new GameModel(props)
 
 	const turnActionChannel = yield* actionChannel(gameMessages.TURN_ACTION)
@@ -723,6 +725,8 @@ export function* setupGameSaga(
 	}
 
 	turnActionChannel.close()
+
+	return 'tie'
 }
 
 export default setupGameSaga

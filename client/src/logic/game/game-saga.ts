@@ -199,7 +199,7 @@ function* gameSaga(
 
 	if (!reconnectInformation) isReadyToDisplay = true
 
-	yield* setupGameSaga(props, {
+	const gameOutcome = yield* setupGameSaga(props, {
 		onGameStart: function* (game) {
 			yield* fork(() =>
 				all([
