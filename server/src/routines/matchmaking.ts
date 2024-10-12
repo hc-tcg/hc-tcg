@@ -25,155 +25,72 @@ import {LocalMessageTable, localMessages} from 'messages'
 import {all, delay, fork, put, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {gameManagerSaga} from './game'
 
-function* gameManager(
-	player1: PlayerModel,
-	player2: PlayerModel,
-	viewers: Array<PlayerId>,
-	code?: string,
-	spectatorCode?: string,
-) {
-	// try {
-	let gameProps = {
-		player1: {
-			model: {
-				name: player1.name,
-				minecraftName: player1.minecraftName,
-				censoredName: player1.censoredName,
-			},
-			deck: player1.deck.cards.map((card) => card.props.numericId),
-		},
-		player2: {
-			model: {
-				name: player2.name,
-				minecraftName: player2.minecraftName,
-				censoredName: player2.censoredName,
-			},
-			deck: player2.deck.cards.map((card) => card.props.numericId),
-		},
-		settings: gameSettingsFromEnv(),
-		gameCode: code,
-		spectatorCode,
-		randomNumberSeed: Math.random().toString(36),
-	}
+// 	const viewers = game.viewers
+// 	const playerIds = viewers.map((viewer) => viewer.player.id)
 
-	yield* setupGameSaga(gameProps, {
-		onGameStart: function* (game) {
-			// Player one is added to the ECS first, Player two is added second
-			const players = game.components.filter(PlayerComponent)
+// 	const gameType =
+// 		playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
 
-			viewers.forEach((p, index) => {
-				broadcast([root.players[p]], {
-					type: serverMessages.GAME_START,
-					props: gameProps,
-					playerEntity: players[index].entity,
-				})
-			})
+// 	console.info(
+// 		`${game.logHeader}`,
+// 		`${gameType} game started.`,
+// 		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+// 		'Total games:',
+// 		root.getGameIds().length,
+// 	)
 
-			yield* fork(function* () {
-				while (true) {
-					let action = (yield* take(
-						localMessages.GAME_TURN_ACTION,
-					)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+// 	game.broadcastToViewers({type: serverMessages.GAME_START})
+// 	root.hooks.newGame.call(game)
+// 	game.task = yield* spawn(gameSaga, game)
 
-					if (game.state.order.includes(action.playerEntity)) {
-						yield* put<GameMessage>({
-							type: gameMessages.TURN_ACTION,
-							playerEntity: action.playerEntity,
-							action: action.action,
-						})
-					}
-				}
-			})
-		},
-		onTurnAction: function* (
-			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
-			game,
-		) {
-			viewers.forEach((p, index) => {
-				const playerEntity = action.playerEntity
+// 	// Kill game on timeout or when user leaves for long time + cleanup after game
+// 	const result = yield* race({
+// 		// game ended (or crashed -> catch)
+// 		gameEnd: join(game.task),
+// 		// kill a game after two hours
+// 		timeout: delay(1000 * 60 * 60),
+// 		// kill game when a player is disconnected for too long
+// 		playerRemoved: take<
+// 			LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+// 		>(
+// 			(action: any) =>
+// 				action.type === localMessages.PLAYER_REMOVED &&
+// 				playerIds.includes(
+// 					(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+// 						.player.id,
+// 				),
+// 		),
+// 		forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
+// 			(action: any) =>
+// 				action.type === clientMessages.FORFEIT &&
+// 				playerIds.includes(
+// 					(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
+// 						.playerId,
+// 				),
+// 		),
+// 	})
 
-				const players = game.components.filter(PlayerComponent)
+// 	game.endInfo.outcome = getGameOutcome(game, result)
+// 	game.endInfo.winner = getWinner(game, result)
+// } catch (err) {
+// 	console.log('Error: ', err)
+// 	game.endInfo.outcome = 'error'
+// 	broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
+// } finally {
+// 	if (game.task) yield* cancel(game.task)
+// 	game.hooks.afterGameEnd.call()
 
-				// then `playerEntity` created this action so we don't need to send it back
-				if (playerEntity === players[index].entity) return
+// 	const gameType = game.gameCode ? 'Private' : 'Public'
+// 	console.log(
+// 		`${gameType} game ended. Total games:`,
+// 		root.getGameIds().length - 1,
+// 	)
 
-				broadcast([root.players[p]], {
-					type: serverMessages.GAME_TURN_ACTION,
-					playerEntity: action.playerEntity,
-					action: action.action,
-				})
-			})
-		},
-	})
-
-	return
-
-	// 	const viewers = game.viewers
-	// 	const playerIds = viewers.map((viewer) => viewer.player.id)
-
-	// 	const gameType =
-	// 		playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
-
-	// 	console.info(
-	// 		`${game.logHeader}`,
-	// 		`${gameType} game started.`,
-	// 		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-	// 		'Total games:',
-	// 		root.getGameIds().length,
-	// 	)
-
-	// 	game.broadcastToViewers({type: serverMessages.GAME_START})
-	// 	root.hooks.newGame.call(game)
-	// 	game.task = yield* spawn(gameSaga, game)
-
-	// 	// Kill game on timeout or when user leaves for long time + cleanup after game
-	// 	const result = yield* race({
-	// 		// game ended (or crashed -> catch)
-	// 		gameEnd: join(game.task),
-	// 		// kill a game after two hours
-	// 		timeout: delay(1000 * 60 * 60),
-	// 		// kill game when a player is disconnected for too long
-	// 		playerRemoved: take<
-	// 			LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-	// 		>(
-	// 			(action: any) =>
-	// 				action.type === localMessages.PLAYER_REMOVED &&
-	// 				playerIds.includes(
-	// 					(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-	// 						.player.id,
-	// 				),
-	// 		),
-	// 		forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-	// 			(action: any) =>
-	// 				action.type === clientMessages.FORFEIT &&
-	// 				playerIds.includes(
-	// 					(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-	// 						.playerId,
-	// 				),
-	// 		),
-	// 	})
-
-	// 	game.endInfo.outcome = getGameOutcome(game, result)
-	// 	game.endInfo.winner = getWinner(game, result)
-	// } catch (err) {
-	// 	console.log('Error: ', err)
-	// 	game.endInfo.outcome = 'error'
-	// 	broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	// } finally {
-	// 	if (game.task) yield* cancel(game.task)
-	// 	game.hooks.afterGameEnd.call()
-
-	// 	const gameType = game.gameCode ? 'Private' : 'Public'
-	// 	console.log(
-	// 		`${gameType} game ended. Total games:`,
-	// 		root.getGameIds().length - 1,
-	// 	)
-
-	// 	delete root.games[game.id]
-	// 	root.hooks.gameRemoved.call(game)
-	// }
-}
+// 	delete root.games[game.id]
+// 	root.hooks.gameRemoved.call(game)
+// }
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -210,14 +127,11 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				yield* fork(
-					gameManager,
+				yield* fork(gameManagerSaga, {
 					player1,
 					player2,
-					[player1.id, player2.id],
-					undefined,
-					undefined,
-				)
+					viewers: [player1.id, player2.id],
+				})
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -396,7 +310,7 @@ export function* createBossGame(
 
 	root.addGame(newBossGame)
 
-	yield* fork(gameManager, newBossGame)
+	yield* fork(gameManagerSaga, newBossGame)
 }
 
 export function* createPrivateGame(
@@ -560,7 +474,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* fork(gameManager, newGame)
+		yield* fork(gameManagerSaga, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
