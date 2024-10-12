@@ -83,6 +83,13 @@ export type GameState = {
 	isBossGame: boolean
 }
 
+export type GameOutcome =
+	| 'tie'
+	| {
+			winner: PlayerEntity
+			victoryReason: 'forfeit' | 'no-active-hermits' | 'decked-out' | 'lives'
+	  }
+
 export type PlayCardAction =
 	| 'PLAY_HERMIT_CARD'
 	| 'PLAY_ITEM_CARD'
