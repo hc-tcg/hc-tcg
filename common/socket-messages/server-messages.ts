@@ -1,6 +1,7 @@
 import {PlayerEntity} from '../entities'
-import {GameProps} from '../models/game-model'
+import {GameModel, GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {GameMessage} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
 import {
 	GameEndOutcomeT,
@@ -46,7 +47,10 @@ export const serverMessages = messages('server', {
 })
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED; game?: LocalGameState},
+	{
+		type: typeof serverMessages.PLAYER_RECONNECTED
+		gameHistory?: Array<GameMessage>
+	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{
 		type: typeof serverMessages.PLAYER_INFO

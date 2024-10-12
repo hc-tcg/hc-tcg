@@ -1,4 +1,4 @@
-import {RootModel} from 'common/models/root-model'
+import {RootModel} from './root-model'
 import {plugins} from './plugins'
 
 // Create root and register plugins

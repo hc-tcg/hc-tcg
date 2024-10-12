@@ -175,3 +175,4 @@ export function* gameManagerSaga({
 
 	yield* cancel(backgroundSagas)
 }
+

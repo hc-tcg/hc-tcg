@@ -31,6 +31,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {assert} from 'common/utils/assert'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -164,14 +165,14 @@ function* reconnectSaga() {
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
 
-		// There should be a game state because the player is in a game.
-		if (!action.game) continue
+		assert(
+			action.gameHistory,
+			'There should be a game history because the player is in a game',
+		)
 
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: action.game,
-			time: Date.now(),
-		})
+		for (const history of action.gameHistory) {
+			yield* put<GameMessage>(history)
+		}
 	}
 }
 
