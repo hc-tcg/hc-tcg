@@ -32,6 +32,7 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import {ActionChannelEffect} from 'redux-saga/any'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -252,16 +253,6 @@ function getAvailableActions(
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (action: any) => {
-		return (
-			action.type === gameMessages.TURN_ACTION &&
-			action.action.type === actionType &&
-			action.playerEntity === playerEntity
-		)
-	}
-}
-
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
 function* checkHermitHealth(game: GameModel) {
@@ -336,7 +327,6 @@ function* turnActionSaga(
 	turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
-	console.log(turnAction.action)
 
 	let endTurn = false
 
@@ -417,7 +407,6 @@ function* turnActionSaga(
 				endTurn = true
 				break
 			case 'SET_TIMER':
-				console.log('Setting timer to' + turnAction.action.turnRemaining)
 				game.state.timer.turnRemaining = turnAction.action.turnRemaining
 				game.state.timer.turnStartTime = turnAction.action.turnStartTime
 				break
@@ -466,37 +455,11 @@ function getPlayerAI(game: GameModel) {
 
 function* turnActionsSaga(
 	game: GameModel,
+	turnActionChannel: any,
 	onTurnActionSaga: (action: any, game: GameModel) => void,
 	update?: (game: GameModel) => any,
 ) {
 	const {opponentPlayer, currentPlayer} = game
-
-	const turnActionChannel = yield* actionChannel(
-		[
-			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT', 'SET_TIMER'].map((type) =>
-				playerAction(type, opponentPlayer.entity),
-			),
-			...[
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'PICK_REQUEST',
-				'MODAL_REQUEST',
-				'CHANGE_ACTIVE_HERMIT',
-				'APPLY_EFFECT',
-				'REMOVE_EFFECT',
-				'SINGLE_USE_ATTACK',
-				'PRIMARY_ATTACK',
-				'SECONDARY_ATTACK',
-				'END_TURN',
-				'DELAY',
-				'FORFEIT',
-				'SET_TIMER',
-			].map((type) => playerAction(type, currentPlayer.entity)),
-		],
-		buffers.dropping(10),
-	)
 
 	try {
 		while (true) {
@@ -596,13 +559,12 @@ function* turnActionsSaga(
 		} else {
 			throw e
 		}
-	} finally {
-		turnActionChannel.close()
 	}
 }
 
 export function* turnSaga(
 	game: GameModel,
+	turnActionChannel: any,
 	onTurnActionSaga: (action: any, game: GameModel) => void,
 	update?: (game: GameModel) => any,
 ) {
@@ -647,6 +609,7 @@ export function* turnSaga(
 	let turnActionResult = yield* call(
 		turnActionsSaga,
 		game,
+		turnActionChannel,
 		onTurnActionSaga,
 		update,
 	)
@@ -740,6 +703,8 @@ export function* setupGameSaga(
 ) {
 	const game = new GameModel(props)
 
+	const turnActionChannel = yield* actionChannel(gameMessages.TURN_ACTION)
+
 	game.state.turn.turnNumber++
 	yield* sagas.onGameStart(game)
 
@@ -748,10 +713,18 @@ export function* setupGameSaga(
 	}
 
 	while (true) {
-		const result = yield* call(turnSaga, game, sagas.onTurnAction, sagas.update)
+		const result = yield* call(
+			turnSaga,
+			game,
+			turnActionChannel,
+			sagas.onTurnAction,
+			sagas.update,
+		)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++
 	}
+
+	turnActionChannel.close()
 }
 
 export default setupGameSaga

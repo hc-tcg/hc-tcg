@@ -48,7 +48,6 @@ export function* sendTurnAction(
 		time: currentTime,
 	})
 
-	console.log('sending turn action')
 	yield* sendMsg({
 		type: clientMessages.GAME_TURN_ACTION,
 		action: action,
@@ -240,18 +239,20 @@ function* gameSaga(
 				})
 			} else {
 				isReadyToDisplay = true
-				yield* put<GameMessage>({
-					type: gameMessages.TURN_ACTION,
-					playerEntity: game.currentPlayerEntity,
-					action: {
-						type: 'SET_TIMER',
-						turnRemaining: reconnectInformation.timer.turnRemaining,
-						turnStartTime: reconnectInformation.timer.turnStartTime,
-					},
-					time: Date.now(),
-				})
-				yield* put<LocalMessage>({
-					type: localMessages.GAME_START,
+				yield* fork(function* () {
+					yield* put<GameMessage>({
+						type: gameMessages.TURN_ACTION,
+						playerEntity: game.currentPlayerEntity,
+						action: {
+							type: 'SET_TIMER',
+							turnRemaining: reconnectInformation.timer.turnRemaining,
+							turnStartTime: reconnectInformation.timer.turnStartTime,
+						},
+						time: Date.now(),
+					})
+					yield* put<LocalMessage>({
+						type: localMessages.GAME_START,
+					})
 				})
 			}
 		},
