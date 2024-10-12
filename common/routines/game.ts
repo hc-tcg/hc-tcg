@@ -410,7 +410,7 @@ function* turnActionSaga(
 				)
 				break
 			case 'FORFEIT':
-				yield* call(forfeitSaga, game)
+				return 'FORFEIT'
 				endTurn = true
 				break
 			default:
@@ -576,8 +576,8 @@ function* turnActionsSaga(
 			const result = yield* call(turnActionSaga, game, turnAction)
 			yield* call(onTurnActionSaga, turnAction, game)
 
-			if (result === 'END_TURN') {
-				break
+			if (result === 'END_TURN' || result == 'FORFEIT') {
+				return result
 			}
 		}
 	} catch (e) {
@@ -634,7 +634,16 @@ export function* turnSaga(
 		}
 	}
 
-	yield* call(turnActionsSaga, game, onTurnActionSaga, update)
+	let turnActionResult = yield* call(
+		turnActionsSaga,
+		game,
+		onTurnActionSaga,
+		update,
+	)
+
+	if (turnActionResult === 'FORFEIT') {
+		return 'GAME_END'
+	}
 
 	// Draw a card from deck when turn ends
 	let drawCards = currentPlayer.draw(1)
