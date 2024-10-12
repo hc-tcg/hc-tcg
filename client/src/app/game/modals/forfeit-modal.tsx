@@ -1,9 +1,9 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
-import {localMessages, useMessageDispatch} from 'logic/messages'
-import css from './game-modals.module.scss'
 import {getPlayerEntity} from 'logic/game/game-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void

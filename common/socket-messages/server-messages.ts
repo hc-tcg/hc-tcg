@@ -1,5 +1,5 @@
 import {PlayerEntity} from '../entities'
-import {GameModel, GameProps} from '../models/game-model'
+import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {GameMessage} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
@@ -75,6 +75,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
+		time: number
 	},
 	{
 		type: typeof serverMessages.GAME_END

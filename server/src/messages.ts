@@ -33,6 +33,7 @@ type Messages = [
 		type: typeof localMessages.GAME_TURN_ACTION
 		action: AnyTurnActionData
 		playerEntity: PlayerEntity
+		time: number
 	},
 ]
 

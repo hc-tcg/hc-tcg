@@ -1,4 +1,5 @@
 import {PlayerComponent} from 'common/components'
+import {PlayerEntity} from 'common/entities'
 import {
 	GameModel,
 	GameProps,
@@ -10,14 +11,12 @@ import setupGameSaga, {
 	gameMessages,
 	GameMessageTable,
 } from 'common/routines/game'
-import {broadcast} from '../utils/comm'
-import {all, cancel, fork, put, take} from 'typed-redux-saga'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {assert} from 'common/utils/assert'
+import {all, cancel, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
-import {PlayerEntity} from 'common/entities'
-import {TurnAction} from 'common/types/game-state'
-import {assert} from 'common/utils/assert'
+import {broadcast} from '../utils/comm'
 
 /* Properties for a game running on the server */
 export type ServerGameModel = {
@@ -116,6 +115,7 @@ export function* gameManagerSaga({
 								type: gameMessages.TURN_ACTION,
 								playerEntity: action.playerEntity,
 								action: action.action,
+								time: action.time,
 							})
 						}
 					}
@@ -163,6 +163,7 @@ export function* gameManagerSaga({
 					type: serverMessages.GAME_TURN_ACTION,
 					playerEntity: action.playerEntity,
 					action: action.action,
+					time: action.time,
 				})
 			})
 		},
@@ -175,4 +176,3 @@ export function* gameManagerSaga({
 
 	yield* cancel(backgroundSagas)
 }
-

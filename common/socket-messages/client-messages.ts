@@ -38,6 +38,7 @@ export type ClientMessages = [
 		type: typeof clientMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
+		time: number
 	},
 	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},

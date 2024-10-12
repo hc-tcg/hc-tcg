@@ -19,6 +19,7 @@ import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
 
 import {Message, MessageTable, messages} from '../redux-messages'
+import {assert} from '../utils/assert'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -31,7 +32,6 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import { assert } from '../utils/assert'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
@@ -42,6 +42,7 @@ export type GameMessages = [
 		type: typeof gameMessages.TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
+		time: number
 	},
 ]
 
@@ -344,6 +345,8 @@ function* turnActionSaga(
 		turnAction.playerEntity === game.currentPlayer.entity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
+
+	game.lastTurnActionTime = turnAction.time
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.

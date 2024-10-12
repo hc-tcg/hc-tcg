@@ -1,3 +1,5 @@
+import {assert} from './assert'
+
 /** In place implementation of the Fisher-Yates shuffle */
 export function fisherYatesShuffle<T>(
 	array: Array<T>,

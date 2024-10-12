@@ -1,10 +1,11 @@
 import {PlayerEntity} from 'common/entities'
-import {GameProps} from 'common/models/game-model'
+import {GameModel, GameProps} from 'common/models/game-model'
 import setupGameSaga, {gameMessages, GameMessage} from 'common/routines/game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
@@ -31,22 +32,25 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {assert} from 'common/utils/assert'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
 	action: AnyTurnActionData,
 ) {
+	let currentTime = Date.now()
+
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
 		action: action,
 		playerEntity: entity,
+		time: currentTime,
 	})
 
 	yield* sendMsg({
 		type: clientMessages.GAME_TURN_ACTION,
 		action: action,
 		playerEntity: entity,
+		time: currentTime,
 	})
 }
 
@@ -137,6 +141,7 @@ function* handleGameTurnActionSaga() {
 			type: gameMessages.TURN_ACTION,
 			action: message.action,
 			playerEntity: message.playerEntity,
+			time: message.time,
 		})
 	}
 }
@@ -158,7 +163,7 @@ function* opponentConnectionSaga() {
 	}
 }
 
-function* reconnectSaga() {
+function* reconnectSaga(game: GameModel) {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const action = yield* call(
@@ -171,6 +176,7 @@ function* reconnectSaga() {
 		)
 
 		for (const history of action.gameHistory) {
+			if (history.time <= game.lastTurnActionTime) continue
 			yield* put<GameMessage>(history)
 		}
 	}
@@ -186,7 +192,7 @@ function* gameSaga(props: GameProps, playerEntity: PlayerEntity) {
 					fork(opponentConnectionSaga),
 					fork(chatSaga),
 					fork(spectatorSaga),
-					fork(reconnectSaga),
+					fork(reconnectSaga, game),
 					fork(gameActionsSaga),
 					fork(handleGameTurnActionSaga),
 				]),

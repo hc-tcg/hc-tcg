@@ -78,6 +78,7 @@ function* handler(message: RecievedClientMessage) {
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
+				time: actionMessage.payload.time,
 			})
 	}
 }

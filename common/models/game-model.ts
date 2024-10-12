@@ -125,6 +125,8 @@ export class GameModel {
 	 */
 	public voiceLineQueue: Array<string>
 
+	public lastTurnActionTime: number
+
 	/** The objects used in the game. */
 	public components: ComponentTable
 	public hooks: {
@@ -193,6 +195,8 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
+
+		this.lastTurnActionTime = 0
 
 		setupComponents(this, this.components, props.player1, props.player2, {
 			shuffleDeck: props.settings.shuffleDeck,
