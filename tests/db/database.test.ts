@@ -6,6 +6,12 @@ import {Database, setupDatabase} from 'server/db/db'
 describe('Test Database', () => {
 	let database: Database
 	const BF_DEPTH = 4
+	const playerDeck = {
+		name: 'Testing deck',
+		icon: 'balanced',
+		cards: [1, 2, 2, 3, 4, 4, 5, 4],
+		tags: [],
+	}
 
 	beforeAll(async () => {
 		const env = config()
@@ -20,10 +26,14 @@ describe('Test Database', () => {
 			...process.env,
 			...env,
 		})
-		return database.new()
+		await database.pool.query(
+			'BEGIN; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
+		)
+		return await database.new()
 	})
 
 	afterAll(async () => {
+		await database.pool.query('ROLLBACK')
 		await database.close()
 	})
 
@@ -59,12 +69,6 @@ describe('Test Database', () => {
 
 	test('Add deck', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
-		const playerDeck = {
-			name: 'Testing deck',
-			icon: 'balanced',
-			cards: [1, 2, 2, 3, 4, 4, 5, 4],
-			tags: [],
-		}
 
 		if (!user) throw new Error('Expected user to not be null')
 
@@ -103,5 +107,40 @@ describe('Test Database', () => {
 		expect(
 			returnedDeck?.cards.filter((card) => card.numericId === 5).length,
 		).toEqual(1)
+	})
+
+	test('Add game', async () => {
+		const winner = await database.insertUser('Winner', 'ethoslab', BF_DEPTH)
+		const loser = await database.insertUser('Winner', 'geminitay', BF_DEPTH)
+
+		if (!winner || !loser) throw new Error('Expected users to not be null')
+
+		const winnerDeckCode = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.cards,
+			playerDeck.tags,
+			winner.uuid,
+		)
+
+		const loserDeckCode = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.cards,
+			playerDeck.tags,
+			loser.uuid,
+		)
+
+		if (!winnerDeckCode || !loserDeckCode)
+			throw new Error('Expected deck codes to not be null')
+
+		await database.insertGame(
+			winnerDeckCode,
+			loserDeckCode,
+			winner.uuid,
+			loser.uuid,
+			'player_won',
+			winner.uuid,
+		)
 	})
 })

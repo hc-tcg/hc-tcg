@@ -2,7 +2,6 @@ import pg from 'pg'
 import QUERIES from './queries'
 import {Card} from 'common/cards/base/types'
 import {GameEndOutcomeT} from 'common/types/game-state'
-import {string} from 'zod'
 const {Pool} = pg
 
 export type User = {
@@ -29,10 +28,10 @@ export class Database {
 		this.allCards = allCards
 	}
 
-	public new() {
-		this.pool.query(QUERIES.SETUP_DB)
+	public async new() {
+		await this.pool.query(QUERIES.SETUP_DB)
 
-		this.pool.query(
+		await this.pool.query(
 			`
 			INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
 		`,
@@ -195,8 +194,6 @@ export class Database {
 		outcome: GameEndOutcomeT,
 		winningPlayerUuid: string | null,
 	): Promise<void> {
-		const gameTime = Date.now()
-
 		let winner
 		let winningDeck
 		let loser
@@ -215,8 +212,8 @@ export class Database {
 		}
 
 		await this.pool.query(
-			'INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome) VALUES($1,$2,$3,$4,$5,$6)',
-			[gameTime, winner, loser, winningDeck, losingDeck, outcome],
+			"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome) VALUES('now',$1,$2,$3,$4,$5)",
+			[winner, loser, winningDeck, losingDeck, outcome],
 		)
 	}
 }

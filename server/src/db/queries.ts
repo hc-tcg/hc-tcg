@@ -16,8 +16,8 @@ const queries = {
 		icon varchar(255) NOT NULL
 	);
 	CREATE TABLE IF NOT EXISTS games(
-		game_time date NOT NULL,
-		winer uuid REFERENCES users(user_id),
+		game_time timestamp NOT NULL,
+		winner uuid REFERENCES users(user_id),
 		loser uuid REFERENCES users(user_id),
 		winner_deck_code varchar(7) REFERENCES decks(deck_code),
 		loser_deck_code varchar(7) REFERENCES decks(deck_code),
