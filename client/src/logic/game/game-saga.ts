@@ -13,7 +13,6 @@ import {
 	all,
 	call,
 	cancel,
-	delay,
 	fork,
 	put,
 	putResolve,
@@ -33,7 +32,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {isRegExp} from 'util'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,

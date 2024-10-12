@@ -4,13 +4,13 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getEntityById} from './game'
-import {assert} from 'common/utils/assert'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
