@@ -29,9 +29,9 @@ export function addApi(app: Express) {
 		res.send(cancelApiGame(body.code))
 	})
 
-	app.delete('/api/stats', async (req, res) => {
-		let header = StatsHeader.parse(req.header)
-		return await getStats(root.db, header)
+	app.get('/api/stats', (req, res) => {
+		let header = StatsHeader.parse(req.headers)
+		res.send(getStats(root.db, header))
 	})
 
 	if (DEBUG) {

@@ -86,6 +86,7 @@ export class Database {
 				name varchar(255) NOT NULL,
 				color varchar(7) NOT NULL
 			);
+			ALTER TABLE user_tags DROP CONSTRAINT IF EXISTS color_hex_constraint;
 			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (color ~* '^#[a-f0-9]{6}$');
 			CREATE TABLE IF NOT EXISTS deck_tags(
 				deck_code varchar(7) REFERENCES decks(deck_code),

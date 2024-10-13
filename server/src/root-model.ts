@@ -34,7 +34,8 @@ export class RootModel {
 
 	public constructor() {
 		const env = dotenv.config()
-		this.db = setupDatabase(CARDS_LIST, env, 14)
+		this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
+		this.db.new()
 	}
 
 	public createPrivateGame(playerId: string | null) {
