@@ -93,6 +93,7 @@ export type GameOutcome =
 export type GameVictoryReason =
 	| 'forfeit'
 	| 'no-hermits-on-board'
+	| 'timeout-without-hermits'
 	| 'decked-out'
 	| 'lives'
 

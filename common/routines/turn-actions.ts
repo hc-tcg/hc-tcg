@@ -442,9 +442,6 @@ export function* timeoutSaga(game: GameModel) {
 			}
 			yield* call(attackSaga, game, turnAction, false)
 		}
-
-		// @todo
-		// continue
 	}
 
 	const hasActiveHermit = game.components.exists(
@@ -452,12 +449,12 @@ export function* timeoutSaga(game: GameModel) {
 		query.card.player(currentPlayer.entity),
 		query.card.slot(query.slot.active, query.slot.hermit),
 	)
+
 	if (hasActiveHermit) {
-		// @todo
-		// break
+		return
 	}
 
-	game.endInfo.reason = 'time'
+	game.endInfo.victoryReason = 'timeout-without-hermits'
 	game.endInfo.deadPlayerEntities = [currentPlayer.entity]
 	return 'GAME_END'
 }

@@ -10,6 +10,7 @@ import {
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
+	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
@@ -51,6 +52,7 @@ function Game() {
 	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const isSpectator = useSelector(getIsSpectator)
+	const playerEntity = useSelector(getPlayerEntity)
 	const [filter, setFilter] = useState<string>('')
 
 	if (!gameState || !playerState) return <p>Loading</p>
@@ -326,7 +328,24 @@ function Game() {
 
 			{renderModal(openedModal, handleOpenModal)}
 			<Chat />
-			{endGameOverlay?.outcome && <EndGameOverlay {...endGameOverlay} />}
+			{endGameOverlay?.outcome && (
+				<EndGameOverlay
+					{...endGameOverlay}
+					nameOfWinner={
+						endGameOverlay.outcome !== 'tie'
+							? gameState.players[endGameOverlay.outcome.winner].playerName
+							: null
+					}
+					viewer={
+						isSpectator
+							? {type: 'spectator'}
+							: {type: 'player', entity: playerEntity}
+					}
+					onClose={() => {
+						dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+					}}
+				/>
+			)}
 		</div>
 	)
 }

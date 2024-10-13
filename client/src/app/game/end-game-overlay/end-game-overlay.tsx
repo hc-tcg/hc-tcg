@@ -10,26 +10,35 @@ import {
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
+import {PlayerEntity} from 'common/entities'
 
-const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
-	const dispatch = useMessageDispatch()
-	const opponent = useSelector(getOpponentName)
-	const entity = useSelector(getPlayerEntity)
-	const turnNumber = useSelector(getGame).localGameState?.turn.turnNumber
+type Props = {
+	outcome: GameOutcome
+	viewer:
+		| {
+				type: 'player'
+				entity: PlayerEntity
+		  }
+		| {
+				type: 'spectator'
+		  }
+	onClose: () => void
+	nameOfWinner: string | null
+}
+
+const EndGameOverlay = ({outcome, viewer, onClose, nameOfWinner}: Props) => {
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
 
 	if (outcome === 'tie') {
 		myOutcome = 'tie'
-	} else if (entity === outcome.winner) {
+	} else if (viewer.type === 'spectator') {
+		myOutcome = 'win'
+	} else if (viewer.entity === outcome.winner) {
 		myOutcome = 'win'
 	} else {
 		myOutcome = 'loss'
-	}
-
-	const closeModal = () => {
-		dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
 	}
 
 	const OUTCOME_MSG = {
@@ -42,13 +51,8 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
 		'decked-out': 'ran out of cards.',
+		'timeout-without-hermits': 'ran out of time without an active hermit.',
 		forfeit: 'forfeit the game.',
-	}
-	function getReason(reason: GameVictoryReason) {
-		if (reason === 'no-hermits-on-board' && turnNumber && turnNumber <= 2) {
-			return 'ran out of time without an active hermit.'
-		}
-		return REASON_MSG[reason]
 	}
 
 	switch (myOutcome) {
@@ -67,7 +71,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	}
 
 	return (
-		<Dialog.Root open={!!outcome} onOpenChange={closeModal}>
+		<Dialog.Root open={!!outcome} onOpenChange={onClose}>
 			<Dialog.Portal container={document.getElementById('modal')}>
 				<Dialog.Overlay
 					className={cn(css.overlay, {
@@ -93,8 +97,8 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 					>
 						{outcome !== 'tie' && (
 							<span>
-								{myOutcome === 'win' ? opponent : 'You'}{' '}
-								{getReason(outcome.victoryReason)}
+								{myOutcome === 'win' ? nameOfWinner : 'You'}{' '}
+								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}
 
