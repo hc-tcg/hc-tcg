@@ -71,6 +71,7 @@ export type GameSettings = {
 	logErrorsToStderr: boolean
 	logBoardState: boolean
 	disableRewardCards: boolean
+	waitForCoinFlips: true
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -93,6 +94,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 		logBoardState: DEBUG_CONFIG.logBoardState,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
+		waitForCoinFlips: true,
 	}
 }
 

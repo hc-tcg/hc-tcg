@@ -97,9 +97,9 @@ export class BattleLogModel {
 		// We skip waiting for the logs to send if there are no players. This is because
 		// the coin flip delay confuses jest. Additionally we don't want to wait longer
 		// than what is needed in tests.
-		// if (this.game.getPlayers().length === 0) {
-		// 	return
-		// }
+		if (!this.game.settings.waitForCoinFlips) {
+			return
+		}
 
 		await new Promise((e) =>
 			setTimeout(
