@@ -34,6 +34,7 @@ import {getLocalCard} from 'client/logic/game/local-state'
 import {GameOutcome} from 'common/types/game-state'
 import {PlayerModel} from 'common/models/player-model'
 import {unmountComponentAtNode} from 'react-dom'
+import {PlayerEntity} from 'common/entities'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {
@@ -201,6 +202,28 @@ export function* finishModalRequest(
 		action: {
 			type: 'MODAL_REQUEST',
 			modalResult,
+		},
+	})
+}
+export function* timeout(game: GameModel) {
+	yield* put<GameMessage>({
+		type: gameMessages.TURN_ACTION,
+		playerEntity: game.currentPlayerEntity,
+		time: Date.now(),
+		action: {
+			type: 'TIMEOUT',
+		},
+	})
+}
+
+export function* forfeit(player: PlayerEntity) {
+	yield* put<GameMessage>({
+		type: gameMessages.TURN_ACTION,
+		playerEntity: player,
+		time: Date.now(),
+		action: {
+			type: 'FORFEIT',
+			player,
 		},
 	})
 }
