@@ -28,7 +28,8 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 
 	const component = await mount(
 		<EndGameOverlay
-			nameOfWinner={null}
+			nameOfWinner={"Winner Name"}
+			nameOfLoser={"Loser Name"}
 			outcome={{
 				winner: playerOneEntity,
 				victoryReason: 'no-hermits-on-board',
@@ -48,7 +49,8 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 
 	const component = await mount(
 		<EndGameOverlay
-			nameOfWinner={null}
+			nameOfWinner={"Winenr Name"}
+			nameOfLoser={"Loser Name"}
 			outcome={{
 				winner: playerOneEntity,
 				victoryReason: 'no-hermits-on-board',

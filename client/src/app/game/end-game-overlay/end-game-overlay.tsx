@@ -4,6 +4,7 @@ import {PlayerEntity} from 'common/entities'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import css from './end-game-overlay.module.scss'
+import {View} from '@react-three/drei'
 
 type Props = {
 	outcome: GameOutcome
@@ -17,9 +18,16 @@ type Props = {
 		  }
 	onClose?: () => void
 	nameOfWinner: string | null
+	nameOfLoser: string | null
 }
 
-const EndGameOverlay = ({outcome, viewer, onClose, nameOfWinner}: Props) => {
+const EndGameOverlay = ({
+	outcome,
+	viewer,
+	onClose,
+	nameOfWinner,
+	nameOfLoser,
+}: Props) => {
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
@@ -90,7 +98,9 @@ const EndGameOverlay = ({outcome, viewer, onClose, nameOfWinner}: Props) => {
 					>
 						{outcome !== 'tie' && (
 							<span>
-								{myOutcome === 'win' ? nameOfWinner : 'You'}{' '}
+								{viewer.type === 'spectator' && nameOfWinner}
+								{viewer.type === 'player' &&
+									(myOutcome === 'win' ? 'You' : nameOfLoser)}{' '}
 								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}

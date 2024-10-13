@@ -336,6 +336,17 @@ function Game() {
 							? gameState.players[endGameOverlay.outcome.winner].playerName
 							: null
 					}
+					nameOfLoser={
+						endGameOverlay.outcome !== 'tie'
+							? gameState.players[
+									Object.keys(gameState.players).find(
+										(k) =>
+											endGameOverlay.outcome !== 'tie' &&
+											k !== endGameOverlay.outcome.winner,
+									) as PlayerEntity
+								].playerName
+							: null
+					}
 					viewer={
 						isSpectator
 							? {type: 'spectator'}
