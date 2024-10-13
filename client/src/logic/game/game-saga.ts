@@ -42,6 +42,7 @@ export function* sendTurnAction(
 	action: AnyTurnActionData,
 ) {
 	let currentTime = Date.now()
+	console.log('Sending turn action')
 
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
@@ -116,10 +117,6 @@ function* gameStateSaga(
 		lines: gameState.voiceLineQueue,
 	})
 
-	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
-		return
-
 	const logic = yield* fork(() =>
 		all([
 			fork(actionModalsSaga),
@@ -152,8 +149,17 @@ function* handleGameTurnActionSaga() {
 	}
 }
 
-function* gameActionsSaga() {
+function* gameActionsSaga(
+	game: GameModel,
+	playerEntity: PlayerEntity,
+	isSpectator: boolean,
+) {
 	yield* takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga)
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+		localGameState: getLocalGameState(game, playerEntity, isSpectator),
+		time: Date.now(),
+	})
 }
 
 function* opponentConnectionSaga() {
@@ -209,18 +215,18 @@ function* gameSaga(
 
 	const gameSaga = runGameSaga(props, {
 		onGameStart: function* (game) {
+			const isSpectator = false
+
 			yield* fork(() =>
 				all([
 					fork(opponentConnectionSaga),
 					fork(chatSaga),
 					fork(spectatorSaga),
 					fork(reconnectSaga, game),
-					fork(gameActionsSaga),
+					fork(gameActionsSaga, game, playerEntity, isSpectator),
 					fork(handleGameTurnActionSaga),
 				]),
 			)
-
-			const isSpectator = false
 
 			if (isReadyToDisplay) {
 				// Set the first local state
