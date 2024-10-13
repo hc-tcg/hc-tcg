@@ -116,14 +116,16 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				yield* fork(gameManagerSaga, {
-					player1,
-					player2,
-					viewers: [
-						[player1.id, 'player'],
-						[player2.id, 'player'],
-					] satisfies Array<GameViewer>,
-				})
+				yield* fork(() =>
+					gameManagerSaga({
+						player1,
+						player2,
+						viewers: [
+							[player1.id, 'player'] satisfies GameViewer,
+							[player2.id, 'player'] satisfies GameViewer,
+						],
+					}),
+				)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
