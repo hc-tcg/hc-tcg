@@ -142,5 +142,55 @@ describe('Test Database', () => {
 			'player_won',
 			winner.uuid,
 		)
+
+		await database.insertGame(
+			winnerDeckCode,
+			loserDeckCode,
+			winner.uuid,
+			loser.uuid,
+			'forfeit',
+			loser.uuid,
+		)
+
+		await database.insertGame(
+			winnerDeckCode,
+			loserDeckCode,
+			winner.uuid,
+			loser.uuid,
+			'tie',
+			null,
+		)
+
+		const winningPlayerStats = await database.getUserStats(winner.uuid)
+		expect(winningPlayerStats?.wins).toBe(1)
+		expect(winningPlayerStats?.losses).toBe(0)
+		expect(winningPlayerStats?.forfeitWins).toBe(0)
+		expect(winningPlayerStats?.forfeitLosses).toBe(1)
+		expect(winningPlayerStats?.ties).toBe(1)
+		expect(winningPlayerStats?.gamesPlayed).toBe(3)
+
+		const losingPlayerStats = await database.getUserStats(loser.uuid)
+		expect(losingPlayerStats?.wins).toBe(0)
+		expect(losingPlayerStats?.losses).toBe(1)
+		expect(losingPlayerStats?.forfeitWins).toBe(1)
+		expect(losingPlayerStats?.forfeitLosses).toBe(0)
+		expect(losingPlayerStats?.ties).toBe(1)
+		expect(losingPlayerStats?.gamesPlayed).toBe(3)
+
+		const winningDeckStats = await database.getDeckStats(winnerDeckCode)
+		expect(winningDeckStats?.wins).toBe(1)
+		expect(winningDeckStats?.losses).toBe(0)
+		expect(winningDeckStats?.forfeitWins).toBe(0)
+		expect(winningDeckStats?.forfeitLosses).toBe(1)
+		expect(winningDeckStats?.ties).toBe(1)
+		expect(winningDeckStats?.gamesPlayed).toBe(3)
+
+		const losingDeckStats = await database.getDeckStats(loserDeckCode)
+		expect(losingDeckStats?.wins).toBe(0)
+		expect(losingDeckStats?.losses).toBe(1)
+		expect(losingDeckStats?.forfeitWins).toBe(1)
+		expect(losingDeckStats?.forfeitLosses).toBe(0)
+		expect(losingDeckStats?.ties).toBe(1)
+		expect(losingDeckStats?.gamesPlayed).toBe(3)
 	})
 })

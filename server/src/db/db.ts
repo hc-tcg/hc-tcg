@@ -19,6 +19,15 @@ export type Deck = {
 	cards: Array<Card>
 }
 
+export type Stats = {
+	gamesPlayed: number
+	wins: number
+	losses: number
+	ties: number
+	forfeitWins: number
+	forfeitLosses: number
+}
+
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
@@ -180,8 +189,61 @@ export class Database {
 	// Insert tag
 	// Delete tag
 	// Get tags
+
 	// Get user stats
+	public async getUserStats(uuid: string): Promise<Stats | null> {
+		const stats = await this.pool.query(
+			`
+			SELECT 
+			(SELECT count(*) FROM games WHERE winner = $1 AND outcome='player_won') as wins,
+			(SELECT count(*) FROM games WHERE loser = $1 AND outcome='player_won') as losses,
+			(SELECT count(*) FROM games WHERE winner = $1 AND outcome='forfeit') as forfeit_wins,
+			(SELECT count(*) FROM games WHERE loser = $1 AND outcome='forfeit') as forfeit_losses,
+			(SELECT count(*) FROM games WHERE winner = $1 OR loser = $1) as total,
+			(SELECT count(*) FROM games WHERE (winner = $1 OR loser = $1) 
+				AND outcome != 'player_won' AND outcome != 'forfeit') as ties
+			`,
+			[uuid],
+		)
+
+		const statRows = stats.rows[0]
+
+		return {
+			gamesPlayed: Number(statRows['total']),
+			wins: Number(statRows['wins']),
+			losses: Number(statRows['losses']),
+			forfeitWins: Number(statRows['forfeit_wins']),
+			forfeitLosses: Number(statRows['forfeit_losses']),
+			ties: Number(statRows['ties']),
+		}
+	}
 	// Get deck stats
+	public async getDeckStats(code: string): Promise<Stats | null> {
+		const stats = await this.pool.query(
+			`
+			SELECT 
+			(SELECT count(*) FROM games WHERE winner_deck_code = $1 AND outcome='player_won') as wins,
+			(SELECT count(*) FROM games WHERE loser_deck_code = $1 AND outcome='player_won') as losses,
+			(SELECT count(*) FROM games WHERE winner_deck_code = $1 AND outcome='forfeit') as forfeit_wins,
+			(SELECT count(*) FROM games WHERE loser_deck_code = $1 AND outcome='forfeit') as forfeit_losses,
+			(SELECT count(*) FROM games WHERE winner_deck_code = $1 OR loser_deck_code = $1) as total,
+			(SELECT count(*) FROM games WHERE (winner_deck_code = $1 OR loser_deck_code = $1) 
+				AND outcome != 'player_won' AND outcome != 'forfeit') as ties
+			`,
+			[code],
+		)
+
+		const statRows = stats.rows[0]
+
+		return {
+			gamesPlayed: Number(statRows['total']),
+			wins: Number(statRows['wins']),
+			losses: Number(statRows['losses']),
+			forfeitWins: Number(statRows['forfeit_wins']),
+			forfeitLosses: Number(statRows['forfeit_losses']),
+			ties: Number(statRows['ties']),
+		}
+	}
 	// Get user info
 	// Set user info
 
