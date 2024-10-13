@@ -17,36 +17,7 @@ import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-
-/* Properties for a game running on the server */
-export type ServerGameModel = {
-	game: GameModel
-	viewers: Array<GameViewer>
-	playerOne: {
-		entity: PlayerEntity
-		playerId: PlayerId
-	}
-	playerTwo: {
-		entity: PlayerEntity
-		playerId: PlayerId
-	}
-	props: GameProps
-	history: Array<GameMessage>
-}
-
-export type GameViewer = [PlayerId, 'player' | 'spectator']
-
-export function getEntityById(
-	game: ServerGameModel,
-	id: PlayerId,
-): PlayerEntity | undefined {
-	if (game.playerOne.playerId === id) {
-		return game.playerOne.entity
-	}
-	if (game.playerTwo.playerId === id) {
-		return game.playerTwo.entity
-	}
-}
+import {GameController, GameViewer} from 'game-controller'
 
 type Props = {
 	player1: PlayerModel
@@ -88,7 +59,7 @@ export function* gameManagerSaga({
 		randomNumberSeed: Math.random().toString(36),
 	}
 
-	let serverSideGame: ServerGameModel
+	let serverSideGame: GameController
 	let backgroundSagas: any = undefined
 
 	yield* setupGameSaga(gameProps, {

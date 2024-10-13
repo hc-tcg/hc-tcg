@@ -38,7 +38,7 @@ export function* chatMessage(
 		message: concatFormattedTextNodes(
 			FormatNode(
 				isSpectator ? 'spectator' : 'player',
-				PlaintextNode(`${game.players[playerId].name}`),
+				PlaintextNode(`${game.playerModels[playerId].name}`),
 			),
 			formatText(` ${message}`, {
 				censor: true,
@@ -47,7 +47,8 @@ export function* chatMessage(
 		),
 		createdAt: Date.now(),
 	})
-	broadcast(game.getPlayers(), {
+
+	game.broadcastToViewers({
 		type: serverMessages.CHAT_UPDATE,
 		messages: game.chat,
 	})
