@@ -100,7 +100,7 @@ const EndGameOverlay = ({
 							<span>
 								{viewer.type === 'spectator' && nameOfWinner}
 								{viewer.type === 'player' &&
-									(myOutcome === 'win' ? 'You' : nameOfLoser)}{' '}
+									(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
 								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}
