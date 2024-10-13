@@ -68,7 +68,7 @@ export function* gameManagerSaga({
 			const players = game.components.filter(PlayerComponent)
 
 			viewers.forEach((p, index) => {
-				broadcast([root.players[p[0]]], {
+				broadcast([root.players[p.id]], {
 					type: serverMessages.GAME_START,
 					props: gameProps,
 					playerEntity: players[index].entity,

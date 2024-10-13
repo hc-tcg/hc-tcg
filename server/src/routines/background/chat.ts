@@ -27,7 +27,7 @@ export function* chatMessage(
 	if (message.length > 140) return
 
 	const isSpectator =
-		(game.viewers.find(([id, _]) => id === playerId) || [])[1] === 'spectator'
+		game.viewers.find(({id}) => id === playerId)?.type === 'spectator'
 
 	game.chat.push({
 		sender: {

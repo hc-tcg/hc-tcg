@@ -16,7 +16,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {gameManagerSaga, GameViewer} from './game'
+import {gameManagerSaga} from './game'
 
 // 	const viewers = game.viewers
 // 	const playerIds = viewers.map((viewer) => viewer.player.id)
@@ -121,8 +121,8 @@ function* randomMatchmakingSaga() {
 						player1,
 						player2,
 						viewers: [
-							[player1.id, 'player'] satisfies GameViewer,
-							[player2.id, 'player'] satisfies GameViewer,
+							{id: player1.id, type: 'player'},
+							{id: player2.id, type: 'player'},
 						],
 					}),
 				)

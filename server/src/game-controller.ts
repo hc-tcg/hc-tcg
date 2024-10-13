@@ -8,7 +8,7 @@ import {Message} from 'common/types/game-state'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 
-export type GameViewer = [PlayerId, 'player' | 'spectator']
+export type GameViewer = {id: PlayerId; type: 'player' | 'spectator'}
 
 type Props = {
 	game: GameModel
@@ -50,7 +50,7 @@ export class GameController {
 
 	public broadcastToViewers(msg: ServerMessage) {
 		for (const viewer of this.viewers) {
-			broadcast([root.players[viewer[0]]], msg)
+			broadcast([root.players[viewer.id]], msg)
 		}
 	}
 
@@ -58,7 +58,7 @@ export class GameController {
 		let out: Record<PlayerId, PlayerModel> = {}
 
 		for (const player of this.viewers) {
-			out[player[0]] = root.players[player[0]]
+			out[player.id] = root.players[player.id]
 		}
 
 		return out

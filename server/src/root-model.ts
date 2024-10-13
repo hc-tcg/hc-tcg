@@ -1,10 +1,10 @@
 import {PlayerModel} from 'common/models/player-model'
-import {ServerGameModel} from 'routines/game'
 import {Hook} from '../../common/types/hooks'
+import {GameController} from 'game-controller'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
-	public games: Record<string, ServerGameModel> = {}
+	public games: Record<string, GameController> = {}
 	public queue: Array<string> = []
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
