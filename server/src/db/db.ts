@@ -11,6 +11,12 @@ export type User = {
 	minecraftName: string | null
 }
 
+export type UserWithoutSecret = {
+	uuid: string
+	username: string
+	minecraftName: string | null
+}
+
 export type Deck = {
 	code: string
 	name: string
@@ -31,10 +37,12 @@ export type Stats = {
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	private bfDepth: number
 
-	constructor(pool: pg.Pool, allCards: Array<Card>) {
+	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
 		this.pool = pool
 		this.allCards = allCards
+		this.bfDepth = bfDepth
 	}
 
 	public async new() {
@@ -56,13 +64,12 @@ export class Database {
 	public async insertUser(
 		username: string,
 		minecraftName: string | null,
-		bfDepth: number,
 	): Promise<User | null> {
 		const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 			.rows[0]['uuid_generate_v4']
 		const user = await this.pool.query(
 			"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-			[username, minecraftName, secret, bfDepth],
+			[username, minecraftName, secret, this.bfDepth],
 		)
 		return {
 			uuid: user.rows[0]['user_id'],
@@ -73,12 +80,12 @@ export class Database {
 	}
 
 	public async authenticateUser(
-		user_id: string,
+		uuid: string,
 		secret: string,
 	): Promise<User | null> {
 		const user = await this.pool.query(
 			'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
-			[user_id, secret],
+			[uuid, secret],
 		)
 
 		if (user.rows.length === 0) return null
@@ -165,10 +172,10 @@ export class Database {
 
 	// This function is horribly written, need to redo it
 	/** Return the decks associated with a user. */
-	public async getDecks(user_id: string): Promise<Array<Deck | null>> {
+	public async getDecks(uuid: string): Promise<Array<Deck | null>> {
 		const decks = await this.pool.query(
 			'SELECT (code) FROM decks WHERE user_id = $1',
-			[user_id],
+			[uuid],
 		)
 		const allDecks: Array<Deck | null> = []
 		for (let i = 0; i < decks.rows.length; i++) {
@@ -244,8 +251,41 @@ export class Database {
 			ties: Number(statRows['ties']),
 		}
 	}
-	// Get user info
-	// Set user info
+
+	/** Returns a user's username and minecraft name from their UUID*/
+	public async getUserInfo(uuid: string): Promise<UserWithoutSecret | null> {
+		const user = await this.pool.query(
+			'SELECT user_id,username,minecraft_name FROM users WHERE user_id = $1',
+			[uuid],
+		)
+
+		if (user.rows.length === 0) return null
+
+		return {
+			uuid: user.rows[0]['user_id'],
+			username: user.rows[0]['username'],
+			minecraftName: user.rows[0]['minecraft_name'],
+		}
+	}
+
+	/**Set a user's username */
+	public async setUsername(uuid: string, newUsername: string): Promise<void> {
+		await this.pool.query('UPDATE users SET username = $1 WHERE user_id = $2', [
+			newUsername,
+			uuid,
+		])
+	}
+
+	/**Set a user's minecraft name */
+	public async setMinecraftName(
+		uuid: string,
+		newMinecraftName: string,
+	): Promise<void> {
+		await this.pool.query(
+			'UPDATE users SET minecraft_name = $1 WHERE user_id = $2',
+			[newMinecraftName, uuid],
+		)
+	}
 
 	/** Insert a game into the database */
 	public async insertGame(
@@ -280,7 +320,11 @@ export class Database {
 	}
 }
 
-export const setupDatabase = (allCards: Array<Card>, env: any) => {
+export const setupDatabase = (
+	allCards: Array<Card>,
+	env: any,
+	bfDepth: number,
+) => {
 	const pool = new Pool({
 		host: env.POSTGRES_HOST,
 		user: env.POSTGRES_USER,
@@ -291,5 +335,5 @@ export const setupDatabase = (allCards: Array<Card>, env: any) => {
 		connectionTimeoutMillis: 2000,
 	})
 
-	return new Database(pool, allCards)
+	return new Database(pool, allCards, bfDepth)
 }

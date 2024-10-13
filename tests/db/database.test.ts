@@ -15,17 +15,21 @@ describe('Test Database', () => {
 
 	beforeAll(async () => {
 		const env = config()
-		database = setupDatabase(CARDS_LIST, {
-			...{
-				POSTGRES_DATABASE: 'hctcg',
-				POSTGRES_USER: 'hctcg',
-				POSTGRES_PASSWORD: 'hctcg',
-				POSTGRES_HOST: 'localhost',
-				POSTGRES_PORT: '5432',
+		database = setupDatabase(
+			CARDS_LIST,
+			{
+				...{
+					POSTGRES_DATABASE: 'hctcg',
+					POSTGRES_USER: 'hctcg',
+					POSTGRES_PASSWORD: 'hctcg',
+					POSTGRES_HOST: 'localhost',
+					POSTGRES_PORT: '5432',
+				},
+				...process.env,
+				...env,
 			},
-			...process.env,
-			...env,
-		})
+			BF_DEPTH,
+		)
 		await database.pool.query(
 			'BEGIN; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
 		)
@@ -38,7 +42,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add user', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
+		const user = await database.insertUser('Test User', 'ethoslab')
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
 		expect(user?.minecraftName).toBe('ethoslab')
@@ -49,7 +53,7 @@ describe('Test Database', () => {
 	})
 
 	test('Authenticate', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
+		const user = await database.insertUser('Test User', 'ethoslab')
 		if (!user) throw new Error('Expected user to not be null')
 
 		const authenticatedUser = await database.authenticateUser(
@@ -68,7 +72,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab', BF_DEPTH)
+		const user = await database.insertUser('Test User', 'ethoslab')
 
 		if (!user) throw new Error('Expected user to not be null')
 
@@ -109,9 +113,9 @@ describe('Test Database', () => {
 		).toEqual(1)
 	})
 
-	test('Add game', async () => {
-		const winner = await database.insertUser('Winner', 'ethoslab', BF_DEPTH)
-		const loser = await database.insertUser('Winner', 'geminitay', BF_DEPTH)
+	test('Add Game and check Stat Retrieval Works', async () => {
+		const winner = await database.insertUser('Winner', 'ethoslab')
+		const loser = await database.insertUser('Winner', 'geminitay')
 
 		if (!winner || !loser) throw new Error('Expected users to not be null')
 
@@ -192,5 +196,18 @@ describe('Test Database', () => {
 		expect(losingDeckStats?.forfeitLosses).toBe(0)
 		expect(losingDeckStats?.ties).toBe(1)
 		expect(losingDeckStats?.gamesPlayed).toBe(3)
+	})
+
+	test('Update Username and Minecraft Name', async () => {
+		const user = await database.insertUser('Ethoslab', 'ethoslab')
+		if (!user) throw new Error('Expected user to not be null')
+
+		await database.setUsername(user.uuid, 'GeminiTay')
+		await database.setMinecraftName(user.uuid, 'geminitay')
+
+		const updatedUser = await database.getUserInfo(user.uuid)
+
+		expect(updatedUser?.username).toBe('GeminiTay')
+		expect(updatedUser?.minecraftName).toBe('geminitay')
 	})
 })
