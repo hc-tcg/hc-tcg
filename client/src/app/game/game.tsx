@@ -230,8 +230,8 @@ function Game() {
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
 		if (!gameState.isBossGame) return
-		if (endGameOverlay) {
-			if (endGameOverlay.outcome === 'you_won')
+		if (endGameOverlay && endGameOverlay.outcome !== 'tie') {
+			if (endGameOverlay.outcome.winner === playerEntity)
 				dispatch({
 					type: localMessages.QUEUE_VOICE,
 					lines: ['/voice/EXLOSE.ogg'],
