@@ -29,7 +29,7 @@ import {
 import {assert} from 'common/utils/assert'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import {GameMessage} from 'server/messages'
+import {GameMessage} from 'common/routines/game'
 import {call, cancel, fork, put, take} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {
