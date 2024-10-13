@@ -193,11 +193,25 @@ export class Database {
 			[deckCode, user_id],
 		)
 	}
-	// Insert tag
+
+	/*** Insert a tag into the Database. Returns the tag code. */
+	public async insertTag(
+		uuid: string,
+		tagName: string,
+		tagColor: string,
+	): Promise<string | null> {
+		const tag = await this.pool.query(
+			'INSERT INTO user_tags (user_id, name, color) values ($1,$2,$3,$4) RETURNING (tag_id)',
+			[uuid, tagName, tagColor],
+		)
+		const tagId: string = tag.rows[0]['tag_id']
+		return tagId
+	}
+
 	// Delete tag
 	// Get tags
 
-	// Get user stats
+	/**Get a user's stats */
 	public async getUserStats(uuid: string): Promise<Stats | null> {
 		const stats = await this.pool.query(
 			`
@@ -224,7 +238,8 @@ export class Database {
 			ties: Number(statRows['ties']),
 		}
 	}
-	// Get deck stats
+
+	/**Get a deck's stats */
 	public async getDeckStats(code: string): Promise<Stats | null> {
 		const stats = await this.pool.query(
 			`
