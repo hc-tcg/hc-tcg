@@ -229,4 +229,51 @@ describe('Test Database', () => {
 		expect(allTags).toContainEqual(tag2)
 		expect(allTags).toContainEqual(tag3)
 	})
+
+	test('Retrieve Decks', async () => {
+		const user = await database.insertUser('Test User', 'ethoslab')
+		if (!user) throw new Error('Expected user to not be null')
+
+		const deck1 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			[1, 2, 2, 3, 4, 4, 4, 5],
+			playerDeck.tags,
+			user.uuid,
+		)
+
+		const deck2 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.cards,
+			playerDeck.tags,
+			user.uuid,
+		)
+
+		const deck3 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			[71, 32, 63, 5],
+			playerDeck.tags,
+			user.uuid,
+		)
+
+		const allDecks = await database.getDecks(user.uuid)
+		if (!allDecks) throw new Error('Expected decks to exist')
+
+		expect(allDecks.find((deck) => deck.code === deck1)).toBeTruthy()
+		expect(allDecks.find((deck) => deck.code === deck2)).toBeTruthy()
+		expect(allDecks.find((deck) => deck.code === deck3)).toBeTruthy()
+
+		const firstDeckNumericIds = allDecks
+			.find((deck) => deck.code === deck1)
+			?.cards.map((card) => card.numericId)
+
+		const thirdDeckNumericIds = allDecks
+			.find((deck) => deck.code === deck3)
+			?.cards.map((card) => card.numericId)
+
+		expect(firstDeckNumericIds).toStrictEqual([1, 2, 2, 3, 4, 4, 4, 5])
+		expect(thirdDeckNumericIds).toStrictEqual([71, 32, 63, 5])
+	})
 })

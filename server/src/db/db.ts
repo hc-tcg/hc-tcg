@@ -184,18 +184,52 @@ export class Database {
 		}
 	}
 
-	// This function is horribly written, need to redo it
 	/** Return the decks associated with a user. */
-	public async getDecks(uuid: string): Promise<Array<Deck | null>> {
-		const decks = await this.pool.query(
-			'SELECT (code) FROM decks WHERE user_id = $1',
-			[uuid],
-		)
-		const allDecks: Array<Deck | null> = []
-		for (let i = 0; i < decks.rows.length; i++) {
-			allDecks.push(await this.getDeckFromID(decks.rows[i]['deck_code']))
-		}
-		return allDecks
+	public async getDecks(uuid: string): Promise<Array<Deck> | null> {
+		const decksResult = (
+			await this.pool.query(
+				`SELECT 
+					decks.user_id,decks.deck_code,decks.previous_code,decks.name,decks.icon,
+					deck_cards.card_id,deck_cards.copies,deck_tags.tag_id FROM decks
+					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+					WHERE decks.user_id = $1
+					`,
+				[uuid],
+			)
+		).rows
+
+		const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
+			const code: string = row['deck_code']
+			const name: string = row['name']
+			const icon: string = row['icon']
+			const tag: string | null = row['tag_id']
+			const cardId: number = row['card_id']
+			const cards: Array<Card> = [
+				...Array(row['copies']).fill(
+					this.allCards.find((card) => card.numericId === row['card_id']),
+				),
+			]
+
+			const foundDeck = allDecks.find((deck) => deck.code === code)
+
+			if (!foundDeck) {
+				const newDeck: Deck = {code, name, icon, tags: tag ? [tag] : [], cards}
+				return [...allDecks, newDeck]
+			}
+
+			if (tag && !foundDeck.tags.includes(tag)) {
+				foundDeck.tags.push(tag)
+			}
+
+			if (foundDeck.cards.find((card) => card.numericId !== cardId)) {
+				foundDeck.cards = [...foundDeck.cards, ...cards]
+			}
+
+			return allDecks
+		}, [])
+
+		return decks
 	}
 
 	/** Disassociate a deck from a user. This is used when a deck is deleted or updated.*/
