@@ -6,7 +6,6 @@ import {
 	fork,
 	put,
 	race,
-	SagaGenerator,
 	take,
 } from 'typed-redux-saga'
 import {SingleUse} from '../cards/base/types'

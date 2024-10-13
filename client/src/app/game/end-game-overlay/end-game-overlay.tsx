@@ -1,11 +1,11 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
+import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {getOpponentName, getPlayerEntity} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 
 const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	const dispatch = useMessageDispatch()

@@ -11,7 +11,6 @@ import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
 	DefaultDictionary,
-	GameOutcome,
 	GameState,
 	GameVictoryReason,
 	Message,
@@ -31,7 +30,6 @@ import {
 } from '../utils/setup-game'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
