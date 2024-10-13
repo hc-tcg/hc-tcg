@@ -86,9 +86,7 @@ import {gameManagerSaga} from './game'
 export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
-		.some(
-			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
-		)
+		.some((game) => !!game.viewers.find((viewer) => viewer === playerId))
 }
 
 export function inQueue(playerId: string) {

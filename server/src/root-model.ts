@@ -57,7 +57,4 @@ export class RootModel {
 	public addPlayer(player: PlayerModel) {
 		this.players[player.id] = player
 	}
-	public addGame(game: GameModel) {
-		this.games[game.id] = game
-	}
 }

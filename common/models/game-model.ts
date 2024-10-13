@@ -109,11 +109,6 @@ export type GameProps = {
 }
 
 export class GameModel {
-	private internalCreatedTime: number
-	private internalId: string
-	private internalGameCode: string | null
-	private internalSpectatorCode: string | null
-
 	public readonly settings: GameSettings
 
 	public chat: Array<Message>
@@ -126,6 +121,8 @@ export class GameModel {
 	public voiceLineQueue: Array<string>
 
 	public lastTurnActionTime: number
+
+	public id: string
 
 	/** The objects used in the game. */
 	public components: ComponentTable
@@ -164,11 +161,8 @@ export class GameModel {
 
 	constructor(props: GameProps) {
 		this.settings = props.settings
+		this.id = Math.random().toString(16)
 
-		this.internalCreatedTime = Date.now()
-		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = props.gameCode || null
-		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -223,22 +217,6 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
-	}
-
-	public get createdTime() {
-		return this.internalCreatedTime
-	}
-
-	public get id() {
-		return this.internalId
-	}
-
-	public get gameCode() {
-		return this.internalGameCode
-	}
-
-	public get spectatorCode() {
-		return this.internalSpectatorCode
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

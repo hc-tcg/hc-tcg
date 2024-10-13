@@ -61,6 +61,8 @@ export function* gameManagerSaga({
 	code,
 	spectatorCode,
 }: Props) {
+	let identifierInRootState = Math.random().toString(16)
+
 	let gameProps = {
 		player1: {
 			model: {
@@ -115,7 +117,7 @@ export function* gameManagerSaga({
 				history: [],
 			}
 
-			root.games[game.id] = serverSideGame
+			root.games[identifierInRootState] = serverSideGame
 
 			backgroundSagas = fork(all, [
 				call(function* () {
@@ -191,4 +193,7 @@ export function* gameManagerSaga({
 	)
 
 	yield* cancel(backgroundSagas)
+
+	// Cleanup! Remove the game when its over.
+	delete root.games[identifierInRootState]
 }
