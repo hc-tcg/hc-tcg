@@ -2,7 +2,7 @@ import {expect, test} from '@playwright/experimental-ct-react'
 import EndGameOverlay from 'client/app/game/end-game-overlay'
 import {PlayerEntity} from 'common/entities'
 
-test('You won by killing all hermits!', async ({mount}) => {
+test('You won by killing all hermits!', async ({mount, page}) => {
 	let entity = 'playerOne' as PlayerEntity
 
 	const component = await mount(
@@ -18,5 +18,6 @@ test('You won by killing all hermits!', async ({mount}) => {
 			}}
 		/>,
 	)
+	
 	await expect(component).toHaveScreenshot()
 })
