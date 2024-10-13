@@ -42,7 +42,6 @@ export function* sendTurnAction(
 	action: AnyTurnActionData,
 ) {
 	let currentTime = Date.now()
-	console.log('Sending turn action')
 
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
@@ -100,52 +99,69 @@ function* actionSaga(playerEntity: PlayerEntity) {
 function* gameStateSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
 ) {
-	const gameState: LocalGameState = action.localGameState
+	let logic: any
+	try {
+		const gameState: LocalGameState = action.localGameState
 
-	// First show coin flips, if any
-	yield* call(coinFlipSaga, gameState)
+		// First show coin flips, if any
+		yield* call(coinFlipSaga, gameState)
 
-	// Actually update the local state
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_LOCAL_STATE_SET,
-		localGameState: gameState,
-		time: action.time,
-	})
+		// Actually update the local state
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: gameState,
+			time: action.time,
+		})
 
-	yield* put<LocalMessage>({
-		type: localMessages.QUEUE_VOICE,
-		lines: gameState.voiceLineQueue,
-	})
+		yield* put<LocalMessage>({
+			type: localMessages.QUEUE_VOICE,
+			lines: gameState.voiceLineQueue,
+		})
 
-	const logic = yield* fork(() =>
-		all([
-			fork(actionModalsSaga),
-			fork(slotSaga),
-			fork(actionLogicSaga, gameState),
-			fork(endTurnSaga),
-			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
-		]),
-	)
+		logic = yield* fork(() =>
+			all([
+				fork(actionModalsSaga),
+				fork(slotSaga),
+				fork(actionLogicSaga, gameState),
+				fork(endTurnSaga),
+				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
+			]),
+		)
 
-	// Handle core funcionality
-	yield call(actionSaga, gameState.playerEntity)
-
-	yield* cancel(logic)
+		// Handle core funcionality
+		yield call(actionSaga, gameState.playerEntity)
+	} finally {
+		if (logic !== undefined) yield* cancel(logic)
+	}
 }
 
-function* handleGameTurnActionSaga() {
+function* handleGameTurnActionSaga(game: GameModel) {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const message = yield* call(
 			receiveMsg(socket, serverMessages.GAME_TURN_ACTION),
 		)
 
-		yield* put<GameMessage>({
-			type: gameMessages.TURN_ACTION,
-			action: message.action,
-			playerEntity: message.playerEntity,
-			time: message.time,
-		})
+		let currentGameState = game.getStateHash()
+
+		// We already run this locally, so we don't need to run the state update again
+		if (currentGameState !== message.gameStateHash) {
+			yield* putResolve<GameMessage>({
+				type: gameMessages.TURN_ACTION,
+				action: message.action,
+				playerEntity: message.playerEntity,
+				time: message.time,
+			})
+		}
+
+		if (game.getStateHash() !== message.gameStateHash) {
+			// There was a desync between the client as server, @todo Fix it
+			console.log(
+				'Desync detected:',
+				game.getStateHash(),
+				message.gameStateHash,
+			)
+		}
 	}
 }
 
@@ -224,7 +240,7 @@ function* gameSaga(
 					fork(spectatorSaga),
 					fork(reconnectSaga, game),
 					fork(gameActionsSaga, game, playerEntity, isSpectator),
-					fork(handleGameTurnActionSaga),
+					fork(handleGameTurnActionSaga, game),
 				]),
 			)
 

@@ -121,6 +121,7 @@ export class GameModel {
 	public voiceLineQueue: Array<string>
 
 	public lastTurnActionTime: number
+	public actionsHandled: number
 
 	public id: string
 
@@ -153,6 +154,7 @@ export class GameModel {
 
 	private randomNumberPointer = 0
 	private randomNumberGenerator: () => number
+	private mostRecentState: string = ''
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
@@ -187,6 +189,7 @@ export class GameModel {
 		}
 
 		this.lastTurnActionTime = 0
+		this.actionsHandled = 0
 
 		setupComponents(this, this.components, props.player1, props.player2, {
 			shuffleDeck: props.settings.shuffleDeck,
@@ -201,6 +204,31 @@ export class GameModel {
 
 	public get logHeader() {
 		return `Game ${this.id}:`
+	}
+
+	public setStateHash() {
+		let actionsHandled = this.actionsHandled
+		let requests =
+			this.state.pickRequests.length + this.state.modalRequests.length
+		let componentCount = Object.keys(this.components.data).length
+		let board = this.components.filter(CardComponent, query.card.onBoard).length
+		let sumOfHealth = this.components
+			.filter(RowComponent)
+			.map((component) => component.health || -3)
+			.reduce((a, b) => a + b, 0)
+
+		this.mostRecentState = JSON.stringify({
+			requests,
+			componentCount,
+			board,
+			sumOfHealth,
+			actionsHandled,
+		})
+	}
+
+	/** Get a string trying to represent the state the game is in. This is used to detect desyncs between the server and clients. */
+	public getStateHash() {
+		return this.mostRecentState
 	}
 
 	public get currentPlayerEntity() {

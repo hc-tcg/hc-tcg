@@ -3,12 +3,7 @@ import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {GameMessage} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
+import {LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
@@ -84,6 +79,8 @@ export type ServerMessages = [
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 		time: number
+		/** A number approximating the game state, used to verify games are synced between the server and client. */
+		gameStateHash: string
 	},
 	{
 		type: typeof serverMessages.GAME_END

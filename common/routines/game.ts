@@ -363,7 +363,7 @@ function* turnActionSaga(
 				'MODAL_REQUEST',
 				'END_TURN',
 			].includes(actionType) || availableActions.includes(actionType),
-			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
+			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. Action: ${JSON.stringify(turnAction.action, undefined, 2)}`,
 		)
 
 		switch (actionType) {
@@ -420,11 +420,11 @@ function* turnActionSaga(
 				return 'FORFEIT'
 				break
 			case 'SET_TIMER':
+				game.actionsHandled -= 1
 				game.state.timer.turnRemaining = turnAction.action.turnRemaining
 				game.state.timer.turnStartTime = turnAction.action.turnStartTime
 				break
 			default:
-				// Unknown action type, ignore it completely
 				throw new Error(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
@@ -560,6 +560,9 @@ function* turnActionsSaga(
 
 			// Run action logic
 			const result = yield* call(turnActionSaga, game, turnAction)
+
+			game.actionsHandled += 1
+			game.setStateHash()
 			yield* call(onTurnActionSaga, turnAction, game)
 
 			if (result === 'END_TURN' || result == 'FORFEIT') {

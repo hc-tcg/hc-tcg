@@ -99,6 +99,7 @@ export function* gameManagerSaga({
 						)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 
 						if (game.state.order.includes(action.playerEntity)) {
+							console.log(action)
 							yield* put<GameMessage>({
 								type: gameMessages.TURN_ACTION,
 								playerEntity: action.playerEntity,
@@ -137,22 +138,14 @@ export function* gameManagerSaga({
 		) {
 			serverSideGame.history.push(action)
 
-			viewers.forEach((p, index) => {
-				const playerEntity = action.playerEntity
+			let gameStateHash = game.getStateHash()
 
-				const players = game.components.filter(PlayerComponent)
-
-				// then `playerEntity` created this action so we don't need to send it back
-				if (playerEntity === players[index].entity) return
-
-				let player = root.players[p]
-
-				broadcast([player], {
-					type: serverMessages.GAME_TURN_ACTION,
-					playerEntity: action.playerEntity,
-					action: action.action,
-					time: action.time,
-				})
+			serverSideGame.broadcastToViewers({
+				type: serverMessages.GAME_TURN_ACTION,
+				playerEntity: action.playerEntity,
+				action: action.action,
+				time: action.time,
+				gameStateHash,
 			})
 		},
 	})
