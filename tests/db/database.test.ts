@@ -73,8 +73,11 @@ describe('Test Database', () => {
 
 	test('Add and Retrieve Deck', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-
 		if (!user) throw new Error('Expected user to not be null')
+
+		const tag = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+
+		if (!tag) throw new Error('Expected tag to not be null')
 
 		let code: string | null = null
 
@@ -82,7 +85,7 @@ describe('Test Database', () => {
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.cards,
-			playerDeck.tags,
+			[tag.key],
 			user.uuid,
 		)
 
@@ -95,6 +98,7 @@ describe('Test Database', () => {
 
 		expect(returnedDeck?.name).toBe('Testing deck')
 		expect(returnedDeck?.icon).toBe('balanced')
+		expect(returnedDeck?.tags).toStrictEqual([tag.key])
 
 		expect(
 			returnedDeck?.cards.filter((card) => card.numericId === 1).length,
@@ -209,5 +213,20 @@ describe('Test Database', () => {
 
 		expect(updatedUser?.username).toBe('GeminiTay')
 		expect(updatedUser?.minecraftName).toBe('geminitay')
+	})
+
+	test('Add and Retrieve Tags', async () => {
+		const user = await database.insertUser('Test User', 'ethoslab')
+		if (!user) throw new Error('Expected user to not be null')
+
+		const tag1 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+		const tag2 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+		const tag3 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+
+		const allTags = await database.getTags(user.uuid)
+
+		expect(allTags).toContainEqual(tag1)
+		expect(allTags).toContainEqual(tag2)
+		expect(allTags).toContainEqual(tag3)
 	})
 })

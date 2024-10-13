@@ -2,6 +2,7 @@ import pg from 'pg'
 import QUERIES from './queries'
 import {Card} from 'common/cards/base/types'
 import {GameEndOutcomeT} from 'common/types/game-state'
+import {Tag} from 'common/types/deck'
 const {Pool} = pg
 
 export type User = {
@@ -103,7 +104,7 @@ export class Database {
 		name: string,
 		icon: string,
 		cards: Array<number>,
-		tags: Array<string>,
+		tagIds: Array<string>,
 		user_id: string,
 	): Promise<string | null> {
 		const deckResult = await this.pool.query(
@@ -134,6 +135,14 @@ export class Database {
 				reformattedCards.map((card) => card.copies),
 			],
 		)
+
+		if (tagIds.length > 0) {
+			await this.pool.query(
+				'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[])',
+				[Array(tagIds.length).fill(deckCode), tagIds],
+			)
+		}
+
 		return deckCode
 	}
 
@@ -143,6 +152,7 @@ export class Database {
 			await this.pool.query(
 				`SELECT * FROM decks
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
 					WHERE decks.deck_code = $1
 					`,
 				[deckCode],
@@ -152,6 +162,7 @@ export class Database {
 		const name = deck[0]['name']
 		const icon = deck[0]['icon']
 		const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
+			if (r.find((card) => card.numericId === row['card_id'])) return r
 			return [
 				...r,
 				...Array(row['copies']).fill(
@@ -159,7 +170,10 @@ export class Database {
 				),
 			]
 		}, [])
-		const tags: Array<string> = []
+		const tags: Array<string> = deck.reduce((r: Array<string>, row) => {
+			if (r.includes(row['tag_id'])) return r
+			return [...r, row['tag_id']]
+		}, [])
 
 		return {
 			code,
@@ -183,6 +197,7 @@ export class Database {
 		}
 		return allDecks
 	}
+
 	/** Disassociate a deck from a user. This is used when a deck is deleted or updated.*/
 	public async disassociateDeck(
 		deckCode: string,
@@ -199,17 +214,40 @@ export class Database {
 		uuid: string,
 		tagName: string,
 		tagColor: string,
-	): Promise<string | null> {
+	): Promise<Tag | null> {
 		const tag = await this.pool.query(
-			'INSERT INTO user_tags (user_id, name, color) values ($1,$2,$3,$4) RETURNING (tag_id)',
+			'INSERT INTO user_tags (user_id, name, color) values ($1,$2,$3) RETURNING tag_id,name,color',
 			[uuid, tagName, tagColor],
 		)
-		const tagId: string = tag.rows[0]['tag_id']
-		return tagId
+
+		return {
+			name: tag.rows[0]['name'],
+			color: tag.rows[0]['color'],
+			key: tag.rows[0]['tag_id'],
+		}
 	}
 
-	// Delete tag
-	// Get tags
+	/** Delete a tag from a user. */
+	public async deleteTag(uuid: string, tagId: string): Promise<void> {
+		await this.pool.query(
+			'DELETE FROM user_tags USING deck_tags WHERE tag_id = $1 user_id = $2',
+			[tagId, uuid],
+		)
+	}
+
+	/**Get tags a user has created */
+	public async getTags(uuid: string): Promise<Array<Tag>> {
+		const tags = await this.pool.query(
+			'SELECT tag_id,name,color FROM user_tags WHERE user_id = $1',
+			[uuid],
+		)
+
+		return tags.rows.map((row) => ({
+			name: row['name'],
+			color: row['color'],
+			key: row['tag_id'],
+		}))
+	}
 
 	/**Get a user's stats */
 	public async getUserStats(uuid: string): Promise<Stats | null> {
