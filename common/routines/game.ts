@@ -777,9 +777,6 @@ export function* runGameSaga(
 		type: gameMessages.GAME_END,
 		outcome: figureOutGameResult(game),
 	})
-
-	// Make sure this saga is cancelled.
-	yield* cancel()
 }
 
 export default runGameSaga
