@@ -71,7 +71,7 @@ export type GameSettings = {
 	logErrorsToStderr: boolean
 	logBoardState: boolean
 	disableRewardCards: boolean
-	waitForCoinFlips: true
+	waitForCoinFlips: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {

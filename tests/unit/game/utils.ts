@@ -243,6 +243,7 @@ const defaultGameSettings = {
 	logErrorsToStderr: false,
 	logBoardState: true,
 	disableRewardCards: false,
+	waitForCoinFlips: false,
 } satisfies GameSettings
 
 export function getWinner(
