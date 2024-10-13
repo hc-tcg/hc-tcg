@@ -4,6 +4,16 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {Tag} from 'common/types/deck'
 const {Pool} = pg
 
+export type DatabaseResult<T> =
+	| {
+			type: 'success'
+			body: T
+	  }
+	| {
+			type: 'failure'
+			reason?: string
+	  }
+
 export type User = {
 	uuid: string
 	secret: string
@@ -339,9 +349,10 @@ export class Database {
 	}
 
 	/**Get a user's stats */
-	public async getUserStats(uuid: string): Promise<Stats | null> {
-		const stats = await this.pool.query(
-			`
+	public async getUserStats(uuid: string): Promise<DatabaseResult<Stats>> {
+		try {
+			const stats = await this.pool.query(
+				`
 			SELECT 
 			(SELECT count(*) FROM games WHERE winner = $1 AND outcome='player_won') as wins,
 			(SELECT count(*) FROM games WHERE loser = $1 AND outcome='player_won') as losses,
@@ -351,18 +362,24 @@ export class Database {
 			(SELECT count(*) FROM games WHERE (winner = $1 OR loser = $1) 
 				AND outcome != 'player_won' AND outcome != 'forfeit') as ties
 			`,
-			[uuid],
-		)
+				[uuid],
+			)
 
-		const statRows = stats.rows[0]
+			const statRows = stats.rows[0]
 
-		return {
-			gamesPlayed: Number(statRows['total']),
-			wins: Number(statRows['wins']),
-			losses: Number(statRows['losses']),
-			forfeitWins: Number(statRows['forfeit_wins']),
-			forfeitLosses: Number(statRows['forfeit_losses']),
-			ties: Number(statRows['ties']),
+			return {
+				type: 'success',
+				body: {
+					gamesPlayed: Number(statRows['total']),
+					wins: Number(statRows['wins']),
+					losses: Number(statRows['losses']),
+					forfeitWins: Number(statRows['forfeit_wins']),
+					forfeitLosses: Number(statRows['forfeit_losses']),
+					ties: Number(statRows['ties']),
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 

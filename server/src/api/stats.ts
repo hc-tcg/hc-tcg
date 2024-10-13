@@ -8,6 +8,7 @@ type StatsResult =
 	  }
 	| {
 			type: 'failure'
+			reason?: string
 	  }
 
 export const StatsHeader = z.object({uuid: z.string()})
@@ -18,12 +19,13 @@ export async function getStats(
 ): Promise<StatsResult> {
 	let stats = await db.getUserStats(header.uuid)
 
-	if (stats) {
+	if (stats.type === 'success') {
+		console.log("Success")
 		return {
 			type: 'success',
-			stats,
+			stats: stats.body,
 		}
 	}
 
-	return {type: 'failure'}
+	return {type: 'failure', reason: stats.reason}
 }
