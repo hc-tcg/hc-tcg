@@ -44,7 +44,7 @@ const EndGameOverlay = ({
 
 	const OUTCOME_MSG = {
 		tie: 'It`s a tie',
-		win: 'You Won',
+		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
 	}
 
@@ -98,7 +98,7 @@ const EndGameOverlay = ({
 					>
 						{outcome !== 'tie' && (
 							<span>
-								{viewer.type === 'spectator' && nameOfWinner}
+								{viewer.type === 'spectator' && nameOfLoser}
 								{viewer.type === 'player' &&
 									(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
 								{REASON_MSG[outcome.victoryReason]}
