@@ -628,7 +628,6 @@ export function* turnSaga(
 	)
 
 	if (turnActionResult === 'FORFEIT') {
-		console.log('Forfeting')
 		game.endInfo.victoryReason = 'forfeit'
 		return 'GAME_END'
 	}
