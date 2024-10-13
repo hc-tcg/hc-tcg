@@ -41,7 +41,7 @@ describe('Test Database', () => {
 		await database.close()
 	})
 
-	test('Add user', async () => {
+	test('Add User', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 		expect(user).not.toBeNull()
 		expect(user?.username).toBe('Test User')
@@ -71,7 +71,7 @@ describe('Test Database', () => {
 		expect(incorrectUser).toBeNull()
 	})
 
-	test('Add deck', async () => {
+	test('Add and Retrieve Deck', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 
 		if (!user) throw new Error('Expected user to not be null')
@@ -113,7 +113,7 @@ describe('Test Database', () => {
 		).toEqual(1)
 	})
 
-	test('Add Game and check Stat Retrieval Works', async () => {
+	test('Add Game and Check Stat Retrieval Works', async () => {
 		const winner = await database.insertUser('Winner', 'ethoslab')
 		const loser = await database.insertUser('Winner', 'geminitay')
 
