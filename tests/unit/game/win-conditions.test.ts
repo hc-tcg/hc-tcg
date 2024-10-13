@@ -57,7 +57,7 @@ describe('Test Game Win Conditions', () => {
 				},
 				then: function* (game, outcome) {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
-					expect(outcome).toHaveProperty('victoryReason', 'decked-out')
+					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
 				},
 			},
 			{noItemRequirements: true, disableDeckOut: true},

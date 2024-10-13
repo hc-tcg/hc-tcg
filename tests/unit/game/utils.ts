@@ -317,7 +317,7 @@ export function testGame(
 								)) as GameMessageTable[typeof gameMessages.GAME_END]
 								assert(outcome.type, gameMessages.GAME_END)
 
-								yield* options.then(game, outcome.outcome)
+								options.then(game, outcome.outcome)
 							}
 
 							yield* cancel(gameSagaTask)

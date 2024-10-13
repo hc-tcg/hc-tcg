@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {attack, endTurn, forfeit, playCardFromHand, testGame} from './utils'
 
 describe('Test Game Utils', () => {
 	test('Test fails if game ends', () => {
@@ -30,14 +30,16 @@ describe('Test Game Utils', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (_game) {},
-				then: function* (_game, _outcome) {
+				saga: function* (game) {
+					yield* forfeit(game.currentPlayerEntity)
+				},
+				then: (_game, _outcome) => {
 					hasBeenRun = true
 				},
 			},
 			{oneShotMode: true},
 		)
 
-		expect(hasBeenRun)
+		expect(hasBeenRun).toBeTruthy()
 	})
 })
