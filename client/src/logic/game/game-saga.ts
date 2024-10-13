@@ -182,7 +182,11 @@ function* reconnectSaga(game: GameModel) {
 		)
 
 		for (const history of action.game.history) {
-			if (history.time <= game.lastTurnActionTime) continue
+			if (
+				history.type === gameMessages.TURN_ACTION &&
+				history.time <= game.lastTurnActionTime
+			)
+				continue
 			yield* put<GameMessage>(history)
 		}
 	}
@@ -199,8 +203,6 @@ function* gameSaga(
 		}
 	},
 ) {
-	const socket = yield* select(getSocket)
-
 	let isReadyToDisplay = false
 
 	if (!reconnectInformation) isReadyToDisplay = true
