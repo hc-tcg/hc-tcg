@@ -12,7 +12,6 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	const opponent = useSelector(getOpponentName)
 	const entity = useSelector(getPlayerEntity)
 	let animation
-	let winCondition = false
 
 	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
 
@@ -44,7 +43,6 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	switch (myOutcome) {
 		case 'win':
 			animation = '/images/animations/victory.gif'
-			winCondition = true
 			break
 		case 'loss':
 			animation = '/images/animations/defeat.gif'
@@ -62,7 +60,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 			<Dialog.Portal container={document.getElementById('modal')}>
 				<Dialog.Overlay
 					className={cn(css.overlay, {
-						[css.win]: winCondition,
+						[css.win]: myOutcome === 'win',
 					})}
 				/>
 				<Dialog.Content
@@ -84,7 +82,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 					>
 						{outcome !== 'tie' && (
 							<span>
-								{winCondition ? opponent : 'You'}{' '}
+								{myOutcome === 'loss' ? opponent : 'You'}{' '}
 								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}
