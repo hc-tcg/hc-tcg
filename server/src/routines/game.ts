@@ -117,7 +117,7 @@ export function* gameManagerSaga({
 
 			root.games[game.id] = serverSideGame
 
-			yield* fork(all, [
+			backgroundSagas = fork(all, [
 				call(function* () {
 					while (true) {
 						let action = (yield* take(
@@ -156,6 +156,8 @@ export function* gameManagerSaga({
 					}
 				}),
 			])
+
+			yield* backgroundSagas
 		},
 		onTurnAction: function* (
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
