@@ -1,5 +1,6 @@
-import {RootModel} from 'common/models/root-model'
+import {RootModel} from './root-model'
 
+/** The root of the server. */
 const root = new RootModel()
 
 export default root
