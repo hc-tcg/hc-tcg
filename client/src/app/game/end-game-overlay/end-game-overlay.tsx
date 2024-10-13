@@ -42,7 +42,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
 		'decked-out': 'ran out of cards.',
-		forfeit: 'forfeit the game',
+		forfeit: 'forfeit the game.',
 	}
 	function getReason(reason: GameVictoryReason) {
 		if (reason === 'no-hermits-on-board' && turnNumber && turnNumber <= 2) {
@@ -93,7 +93,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 					>
 						{outcome !== 'tie' && (
 							<span>
-								{myOutcome === 'loss' ? opponent : 'You'}{' '}
+								{myOutcome === 'win' ? opponent : 'You'}{' '}
 								{getReason(outcome.victoryReason)}
 							</span>
 						)}
