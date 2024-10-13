@@ -22,7 +22,7 @@ describe('Test Game Win Conditions', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* attack(game, 'secondary')
 				},
-				then: function* (game, outcome) {
+				then: (game, outcome) => {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'no-hermits-on-board')
 				},
@@ -39,7 +39,7 @@ describe('Test Game Win Conditions', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 				},
-				then: function* (game, outcome) {
+				then: (game, outcome) => {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'decked-out')
 				},
@@ -55,7 +55,7 @@ describe('Test Game Win Conditions', () => {
 				saga: function* (game) {
 					yield* forfeit(game.currentPlayerEntity)
 				},
-				then: function* (game, outcome) {
+				then: (game, outcome) => {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
 				},
