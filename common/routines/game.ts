@@ -1,8 +1,10 @@
 import {
 	actionChannel,
 	call,
+	cancel,
 	delay,
 	fork,
+	put,
 	race,
 	SagaGenerator,
 	take,
@@ -42,6 +44,7 @@ import {virtualPlayerActionSaga} from './virtual'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
+	GAME_END: null,
 })
 
 export type GameMessages = [
@@ -50,6 +53,10 @@ export type GameMessages = [
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 		time: number
+	},
+	{
+		type: typeof gameMessages.GAME_END
+		outcome: GameOutcome
 	},
 ]
 
@@ -409,9 +416,9 @@ function* turnActionSaga(
 				)
 				break
 			case 'FORFEIT':
-				return 'FORFEIT'
 				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
 				endTurn = true
+				return 'FORFEIT'
 				break
 			case 'SET_TIMER':
 				game.state.timer.turnRemaining = turnAction.action.turnRemaining
@@ -622,6 +629,7 @@ export function* turnSaga(
 	)
 
 	if (turnActionResult === 'FORFEIT') {
+		console.log('Forfeting')
 		game.endInfo.victoryReason = 'forfeit'
 		return 'GAME_END'
 	}
@@ -705,7 +713,7 @@ function figureOutGameResult(game: GameModel): GameOutcome {
 	)
 	assert(
 		game.endInfo.victoryReason !== undefined,
-		'Games can not end without a reason player',
+		'Games can not end without a reason',
 	)
 
 	if (game.endInfo.deadPlayerEntities.length === 2) {
@@ -728,7 +736,7 @@ function figureOutGameResult(game: GameModel): GameOutcome {
 	}
 }
 
-/** Run a game. This saga ends when the game is competle. Returns the game result. */
+/** Run a game. This saga ends when the game is competle. Send the game result with the gameMessage.GAME_END message. */
 export function* runGameSaga(
 	props: GameProps,
 	sagas: {
@@ -739,7 +747,7 @@ export function* runGameSaga(
 			game: GameModel,
 		) => any
 	},
-): SagaGenerator<GameOutcome> {
+) {
 	const game = new GameModel(props)
 
 	const turnActionChannel = yield* actionChannel(gameMessages.TURN_ACTION)
@@ -765,7 +773,13 @@ export function* runGameSaga(
 
 	turnActionChannel.close()
 
-	return figureOutGameResult(game)
+	yield* put<GameMessage>({
+		type: gameMessages.GAME_END,
+		outcome: figureOutGameResult(game),
+	})
+
+	// Make sure this saga is cancelled.
+	yield* cancel()
 }
 
 export default runGameSaga

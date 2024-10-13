@@ -1,59 +1,52 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
-import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
-import {getOpponentName} from 'logic/game/game-selectors'
+import {getOpponentName, getPlayerEntity} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
+import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 
-type Props = {
-	outcome?: GamePlayerEndOutcomeT
-	reason?: GameEndReasonT | null
-}
-
-const EndGameOverlay = ({outcome, reason}: Props) => {
+const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	const dispatch = useMessageDispatch()
 	const opponent = useSelector(getOpponentName)
+	const entity = useSelector(getPlayerEntity)
 	let animation
 	let winCondition = false
+
+	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
+
+	if (outcome === 'tie') {
+		myOutcome = 'tie'
+	} else if (entity === outcome.winner) {
+		myOutcome = 'win'
+	} else {
+		myOutcome = 'loss'
+	}
 
 	const closeModal = () => {
 		dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
 	}
 
 	const OUTCOME_MSG = {
-		client_crash: 'Game client crashed',
-		server_crash: 'Server crashed',
-		timeout: 'Game exceeded time limit (60+ minutes)',
-		forfeit_loss: 'You forfeit the game',
-		forfeit_win: `${opponent} forfeit the game`,
-		leave_win: `${opponent} left the game`,
-		leave_loss: `You left the game. ${opponent} won.`,
 		tie: 'It`s a tie',
-		unknown: 'Game ended unexpectedly, please report this on discord',
-		you_won: 'You Won',
-		you_lost: 'You Lost',
+		win: 'You Won',
+		loss: 'You Lost',
 	}
 
-	const REASON_MSG = {
-		hermits: 'lost all hermits.',
+	const REASON_MSG: Record<GameVictoryReason, string> = {
+		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
-		cards: 'ran out of cards.',
+		'decked-out': 'ran out of cards.',
 		time: 'ran out of time without an active hermit.',
-		error: 'there was an error',
 	}
 
-	switch (outcome) {
-		case 'you_won':
-		case 'leave_win':
-		case 'forfeit_win':
+	switch (myOutcome) {
+		case 'win':
 			animation = '/images/animations/victory.gif'
 			winCondition = true
 			break
-		case 'you_lost':
-		case 'leave_loss':
-		case 'forfeit_loss':
+		case 'loss':
 			animation = '/images/animations/defeat.gif'
 			break
 		default:
@@ -89,15 +82,14 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 							[css.win]: winCondition,
 						})}
 					>
-						{reason && (
+						{outcome !== 'tie' && (
 							<span>
-								{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
+								{winCondition ? opponent : 'You'}{' '}
+								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}
 
-						{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
-							? outcome && OUTCOME_MSG[outcome]
-							: null}
+						{OUTCOME_MSG[myOutcome]}
 						<Dialog.Close asChild>
 							<Button>Return to Main Menu</Button>
 						</Dialog.Close>

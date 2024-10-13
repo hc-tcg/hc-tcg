@@ -1,7 +1,6 @@
 import {BattleLogModel} from 'common/models/battle-log-model'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	Message,
@@ -20,8 +19,7 @@ type LocalGameRoot = {
 		info: null
 	} | null
 	endGameOverlay: {
-		reason: GameEndReasonT | null
-		outcome: GamePlayerEndOutcomeT
+		outcome: GameOutcome
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -94,7 +92,7 @@ const gameReducer = (
 			return {
 				...state,
 				endGameOverlay: {
-					reason: action.reason || null,
+					reason: action.outcome || null,
 					outcome: action.outcome,
 				},
 			}
