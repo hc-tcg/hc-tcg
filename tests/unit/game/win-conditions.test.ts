@@ -16,7 +16,7 @@ describe('Test Game Win Conditions', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* attack(game, 'secondary')
 				},
-				then: (game, outcome) => {
+				then: function* (game, outcome) {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'no-hermits-on-board')
 				},

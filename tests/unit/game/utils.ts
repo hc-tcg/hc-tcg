@@ -282,26 +282,29 @@ export function testGame(
 
 	testSaga(
 		call(function* () {
-			yield* runGameSaga(gameProps, {
-				onGameStart: function* (game) {
-					yield* fork(function* () {
-						yield* call(options.saga, game)
+			let gameSagaTask: any
+			gameSagaTask = yield* fork(() =>
+				runGameSaga(gameProps, {
+					onGameStart: function* (game) {
+						yield* fork(function* () {
+							yield* call(options.saga, game)
 
-						testEnded = true
+							testEnded = true
 
-						if (options.then) {
-							let outcome = (yield* take(
-								gameMessages.GAME_END,
-							)) as GameMessageTable[typeof gameMessages.GAME_END]
-							assert(outcome.type, gameMessages.GAME_END)
+							if (options.then) {
+								let outcome = (yield* take(
+									gameMessages.GAME_END,
+								)) as GameMessageTable[typeof gameMessages.GAME_END]
+								assert(outcome.type, gameMessages.GAME_END)
 
-							yield* options.then(game, outcome.outcome)
-						}
+								yield* options.then(game, outcome.outcome)
+							}
 
-						yield* cancel()
-					})
-				},
-			})
+							yield* cancel(gameSagaTask)
+						})
+					},
+				}),
+			)
 		}),
 	)
 
