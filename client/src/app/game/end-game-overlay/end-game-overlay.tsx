@@ -2,7 +2,11 @@ import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
-import {getOpponentName, getPlayerEntity} from 'logic/game/game-selectors'
+import {
+	getGame,
+	getOpponentName,
+	getPlayerEntity,
+} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
@@ -11,6 +15,7 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 	const dispatch = useMessageDispatch()
 	const opponent = useSelector(getOpponentName)
 	const entity = useSelector(getPlayerEntity)
+	const turnNumber = useSelector(getGame).localGameState?.turn.turnNumber
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
@@ -37,7 +42,13 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
 		'decked-out': 'ran out of cards.',
-		time: 'ran out of time without an active hermit.',
+		forfeit: 'forfeit the game',
+	}
+	function getReason(reason: GameVictoryReason) {
+		if (reason === 'no-hermits-on-board' && turnNumber && turnNumber <= 2) {
+			return 'ran out of time without an active hermit.'
+		}
+		return REASON_MSG[reason]
 	}
 
 	switch (myOutcome) {
@@ -77,13 +88,13 @@ const EndGameOverlay = ({outcome}: {outcome: GameOutcome}) => {
 					</Dialog.Title>
 					<Dialog.Description
 						className={cn(css.description, {
-							[css.win]: winCondition,
+							[css.win]: myOutcome === 'win',
 						})}
 					>
 						{outcome !== 'tie' && (
 							<span>
 								{myOutcome === 'loss' ? opponent : 'You'}{' '}
-								{REASON_MSG[outcome.victoryReason]}
+								{getReason(outcome.victoryReason)}
 							</span>
 						)}
 
