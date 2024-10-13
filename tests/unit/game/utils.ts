@@ -1,3 +1,4 @@
+import {getLocalCard} from 'client/logic/game/local-state'
 import {Card} from 'common/cards/base/types'
 import EvilXisumaBossHermitCard, {
 	BOSS_ATTACK,
@@ -11,15 +12,15 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import gameSaga, {
-	GameMessage,
-	GameMessages,
 	gameMessages,
 	GameMessageTable,
 	runGameSaga,
 } from 'common/routines/game'
 import {SlotTypeT} from 'common/types/cards'
+import {GameOutcome} from 'common/types/game-state'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,
@@ -28,13 +29,8 @@ import {
 import {assert} from 'common/utils/assert'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import {GameMessage, localMessages} from 'server/messages'
-import {call, cancel, fork, put, race, take} from 'typed-redux-saga'
-import {getLocalCard} from 'client/logic/game/local-state'
-import {GameOutcome} from 'common/types/game-state'
-import {PlayerModel} from 'common/models/player-model'
-import {unmountComponentAtNode} from 'react-dom'
-import {PlayerEntity} from 'common/entities'
+import {GameMessage} from 'server/messages'
+import {call, cancel, fork, put, take} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {
 	return {

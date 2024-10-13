@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import {getLocalModalData} from 'client/logic/game/local-state'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
@@ -23,7 +24,6 @@ import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
 import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'client/logic/game/local-state'
 import {
 	attack,
 	changeActiveHermit,

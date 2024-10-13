@@ -1,16 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
+import {PlayerEntity} from 'common/entities'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
-import {
-	getGame,
-	getOpponentName,
-	getPlayerEntity,
-} from 'logic/game/game-selectors'
-import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {PlayerEntity} from 'common/entities'
 
 type Props = {
 	outcome: GameOutcome
@@ -22,7 +15,7 @@ type Props = {
 		| {
 				type: 'spectator'
 		  }
-	onClose: () => void
+	onClose?: () => void
 	nameOfWinner: string | null
 }
 
