@@ -47,7 +47,7 @@ describe('Test Game Win Conditions', () => {
 			{noItemRequirements: true, disableDeckOut: false},
 		)
 	})
-	test('Forfeit results in victory.', () => {
+	test('Forfeit results in victory (current player)', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -57,6 +57,22 @@ describe('Test Game Win Conditions', () => {
 				},
 				then: (game, outcome) => {
 					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
+					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
+				},
+			},
+			{noItemRequirements: true, disableDeckOut: true},
+		)
+	})
+	test('Forfeit results in victory (opponent player)', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* forfeit(game.currentPlayerEntity)
+				},
+				then: (game, outcome) => {
+					expect(getWinner(game, outcome)?.playerName).toBe('playerOne')
 					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
 				},
 			},
