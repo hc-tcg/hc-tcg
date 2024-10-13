@@ -17,6 +17,7 @@ import {
 	all,
 	call,
 	cancel,
+	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -120,18 +121,16 @@ function* gameStateSaga(
 
 		logic = yield* fork(() =>
 			all([
-				fork(actionModalsSaga),
-				fork(slotSaga),
-				fork(actionLogicSaga, gameState),
-				fork(endTurnSaga),
+				call(slotSaga),
+				call(actionLogicSaga, gameState),
+				call(endTurnSaga),
 				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
 			]),
 		)
 
-		// Handle core funcionality
 		yield call(actionSaga, gameState.playerEntity)
 	} finally {
-		if (logic !== undefined) yield* cancel(logic)
+		yield* cancel(logic)
 	}
 }
 
@@ -142,10 +141,9 @@ function* handleGameTurnActionSaga(game: GameModel) {
 			receiveMsg(socket, serverMessages.GAME_TURN_ACTION),
 		)
 
-		let currentGameState = game.getStateHash()
+		// let currentGameState = game.getStateHash()
 
-		// We already run this locally, so we don't need to run the state update again
-		if (currentGameState !== message.gameStateHash) {
+		if (!game.handledActions.includes(message.time)) {
 			yield* putResolve<GameMessage>({
 				type: gameMessages.TURN_ACTION,
 				action: message.action,
@@ -235,12 +233,13 @@ function* gameSaga(
 
 			yield* fork(() =>
 				all([
-					fork(opponentConnectionSaga),
-					fork(chatSaga),
-					fork(spectatorSaga),
-					fork(reconnectSaga, game),
-					fork(gameActionsSaga, game, playerEntity, isSpectator),
-					fork(handleGameTurnActionSaga, game),
+					call(actionModalsSaga),
+					call(opponentConnectionSaga),
+					call(chatSaga),
+					call(spectatorSaga),
+					call(reconnectSaga, game),
+					call(gameActionsSaga, game, playerEntity, isSpectator),
+					call(handleGameTurnActionSaga, game),
 				]),
 			)
 

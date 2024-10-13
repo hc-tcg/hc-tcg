@@ -18,7 +18,6 @@ function EndTurnModal({closeModal}: Props) {
 	const settings = useSelector(getSettings)
 
 	const handleEndTurn = () => {
-  console.log("Dispatching turn end 2")
 		dispatch({type: localMessages.GAME_TURN_END})
 		closeModal()
 	}
@@ -35,10 +34,10 @@ function EndTurnModal({closeModal}: Props) {
 	let modal = EndTurnModalBody({availableActions, handleCancel, handleEndTurn})
 
 	if (modal !== null) {
+		console.log("Returning modal")
 		return modal
 	}
 
-  console.log("Dispatching turn end 1")
 	dispatch({type: localMessages.GAME_TURN_END})
 }
 

@@ -349,6 +349,8 @@ function* turnActionSaga(
 
 	game.lastTurnActionTime = turnAction.time
 
+	game.handledActions.push(turnAction.time)
+
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
 		assert(

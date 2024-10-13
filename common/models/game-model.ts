@@ -115,6 +115,7 @@ export class GameModel {
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	public handledActions: Array<number> = []
 	/** Voice lines to play on the next game state update.
 	 * This is used for the Evil X boss fight.
 	 */

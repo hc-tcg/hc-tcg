@@ -45,9 +45,12 @@ export const ActionMap: Record<TurnAction, string | null> = {
 	WAIT_FOR_TURN: null,
 	MODAL_REQUEST: null,
 	DELAY: null,
+	TIMEOUT: null,
+	FORFEIT: null,
+	SET_TIMER: null,
 }
 
-function* endTurnActionSaga(): SagaIterator {
+function* actionModalsSaga(): SagaIterator {
 	while (true) {
 		yield take(localMessages.GAME_ACTIONS_END_TURN)
 		yield put<LocalMessage>({
@@ -55,10 +58,6 @@ function* endTurnActionSaga(): SagaIterator {
 			id: 'end-turn',
 		})
 	}
-}
-
-function* actionModalsSaga(): SagaIterator {
-	yield fork(endTurnActionSaga)
 }
 
 export default actionModalsSaga
