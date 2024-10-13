@@ -738,7 +738,7 @@ function figureOutGameResult(game: GameModel): GameOutcome {
 export function* runGameSaga(
 	props: GameProps,
 	sagas: {
-		onGameStart: (game: GameModel) => any
+		onGameStart?: (game: GameModel) => any
 		update?: (game: GameModel) => any
 		onTurnAction?: (
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
@@ -751,7 +751,9 @@ export function* runGameSaga(
 	const turnActionChannel = yield* actionChannel(gameMessages.TURN_ACTION)
 
 	game.state.turn.turnNumber++
-	yield* sagas.onGameStart(game)
+	if (sagas.onGameStart) {
+		yield* sagas.onGameStart(game)
+	}
 
 	if (sagas.onTurnAction === undefined) {
 		sagas.onTurnAction = function* () {}

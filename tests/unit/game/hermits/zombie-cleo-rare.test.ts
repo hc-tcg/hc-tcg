@@ -23,7 +23,7 @@ import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
 import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'server/utils/state-gen'
+import {getLocalModalData} from 'client/logic/game/local-state'
 import {
 	attack,
 	changeActiveHermit,

@@ -23,4 +23,21 @@ describe('Test Game Utils', () => {
 			),
 		).toThrow()
 	})
+	test('`then` is run after the game is over.', () => {
+		let hasBeenRun = false
+
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (_game) {},
+				then: function* (_game, _outcome) {
+					hasBeenRun = true
+				},
+			},
+			{oneShotMode: true},
+		)
+
+		expect(hasBeenRun)
+	})
 })

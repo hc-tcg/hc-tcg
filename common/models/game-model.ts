@@ -102,7 +102,7 @@ export type GameProps = {
 	settings: GameSettings
 	gameCode?: string
 	spectatorCode?: string
-	randomizeOrder?: false
+	randomizeOrder?: boolean
 	randomNumberSeed: string
 }
 

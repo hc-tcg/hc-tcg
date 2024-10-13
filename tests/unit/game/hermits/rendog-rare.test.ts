@@ -8,7 +8,7 @@ import Crossbow from 'common/cards/default/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'server/utils/state-gen'
+import {getLocalModalData} from 'client/logic/game/local-state'
 import {
 	attack,
 	changeActiveHermit,
