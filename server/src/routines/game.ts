@@ -75,7 +75,7 @@ export function* gameManagerSaga({
 				})
 			})
 
-			serverSideGame = {
+			serverSideGame = new GameController({
 				game: game,
 				viewers,
 				playerOne: {
@@ -87,8 +87,7 @@ export function* gameManagerSaga({
 					entity: players[1].entity,
 				},
 				props: gameProps,
-				history: [],
-			}
+			})
 
 			root.games[identifierInRootState] = serverSideGame
 

@@ -10,7 +10,6 @@ import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {getEntityById} from './game'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
@@ -34,7 +33,7 @@ export function* playerConnectedSaga(
 			console.log('Player connecting: ' + game)
 
 			if (game) {
-				const entity = getEntityById(game, existingPlayer.id)
+				const entity = game.getEntityById(existingPlayer.id)
 
 				assert(
 					entity,
