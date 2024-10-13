@@ -21,7 +21,7 @@ import {broadcast} from '../utils/comm'
 /* Properties for a game running on the server */
 export type ServerGameModel = {
 	game: GameModel
-	viewers: Array<PlayerId>
+	viewers: Array<GameViewer>
 	playerOne: {
 		entity: PlayerEntity
 		playerId: PlayerId
@@ -33,6 +33,8 @@ export type ServerGameModel = {
 	props: GameProps
 	history: Array<GameMessage>
 }
+
+export type GameViewer = [PlayerId, 'player' | 'spectator']
 
 export function getEntityById(
 	game: ServerGameModel,
@@ -49,7 +51,7 @@ export function getEntityById(
 type Props = {
 	player1: PlayerModel
 	player2: PlayerModel
-	viewers: Array<PlayerId>
+	viewers: Array<GameViewer>
 	code?: string
 	spectatorCode?: string
 }

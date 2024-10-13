@@ -27,10 +27,8 @@ export function* chatMessage(
 	if (message.length < 1) return
 	if (message.length > 140) return
 
-	const isSpectator = game.components.find(
-		ViewerComponent,
-		(_game, component) => component.player.id === playerId,
-	)?.spectator
+	const isSpectator =
+		(game.viewers.find(([id, _]) => id === playerId) || [])[1] === 'spectator'
 
 	game.chat.push({
 		sender: {

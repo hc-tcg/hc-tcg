@@ -1,4 +1,3 @@
-import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {ServerGameModel} from 'routines/game'
 import {Hook} from '../../common/types/hooks'
