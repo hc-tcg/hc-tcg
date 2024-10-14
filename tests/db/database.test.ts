@@ -1,4 +1,5 @@
 import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
+import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
@@ -43,77 +44,80 @@ describe('Test Database', () => {
 
 	test('Add User', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-		expect(user).not.toBeNull()
-		expect(user?.username).toBe('Test User')
-		expect(user?.minecraftName).toBe('ethoslab')
-		expect(user?.uuid).toBeTruthy()
-		expect(user?.secret).toBeTruthy()
-		expect(typeof user?.uuid === 'string').toBeTruthy()
-		expect(typeof user?.secret === 'string').toBeTruthy()
+		assert(user.type === 'success', 'The user should be created successfully')
+		expect(user.body).not.toBeNull()
+		expect(user.body.username).toBe('Test User')
+		expect(user.body.minecraftName).toBe('ethoslab')
+		expect(user.body.uuid).toBeTruthy()
+		expect(user.body.secret).toBeTruthy()
+		expect(typeof user.body.uuid === 'string').toBeTruthy()
+		expect(typeof user.body.secret === 'string').toBeTruthy()
 	})
 
 	test('Authenticate', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-		if (!user) throw new Error('Expected user to not be null')
+		assert(user.type === 'success', 'The user should be created successfully')
 
 		const authenticatedUser = await database.authenticateUser(
-			user.uuid,
-			user.secret,
+			user.body.uuid,
+			user.body.secret,
 		)
 		const incorrectUser = await database.authenticateUser(
-			user.uuid,
+			user.body.uuid,
 			'e3b4f689-1c0e-4f5f-bfd8-cfa5b0d0654a',
 		)
 
-		expect(authenticatedUser?.username).toBe(user.username)
-		expect(authenticatedUser?.minecraftName).toBe(user.minecraftName)
-		expect(authenticatedUser?.uuid).toBe(user.uuid)
-		expect(incorrectUser).toBeNull()
+		assert(
+			authenticatedUser.type === 'success',
+			'The user should be created successfully',
+		)
+
+		expect(authenticatedUser.body.username).toBe(user.body.username)
+		expect(authenticatedUser.body.minecraftName).toBe(user.body.minecraftName)
+		expect(authenticatedUser.body.uuid).toBe(user.body.uuid)
+		expect(incorrectUser.type).toBe('failure')
 	})
 
 	test('Add and Retrieve Deck', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-		if (!user) throw new Error('Expected user to not be null')
+		assert(user.type === 'success', 'The user should be created successfully')
 
-		const tag = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+		const tag = await database.insertTag(user.body.uuid, 'Test Tag', '#FF0000')
+		assert(tag.type === 'success', 'The tag should be created successfully')
 
-		if (!tag) throw new Error('Expected tag to not be null')
-
-		let code: string | null = null
-
-		code = await database.insertDeck(
+		const code = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.cards,
-			[tag.key],
-			user.uuid,
+			[tag.body.key],
+			user.body.uuid,
+		)
+		assert(code.type === 'success', 'The deck should be created successfully')
+
+		const returnedDeck = await database.getDeckFromID(code.body)
+		assert(
+			returnedDeck.type === 'success',
+			'The deck should be retrieved successfully',
 		)
 
-		if (!code) throw new Error('Expected code to not be null')
-
-		expect(typeof code === 'string').toBeTruthy()
-
-		const returnedDeck = await database.getDeckFromID(code)
-		expect(returnedDeck).not.toBeNull()
-
-		expect(returnedDeck?.name).toBe('Testing deck')
-		expect(returnedDeck?.icon).toBe('balanced')
-		expect(returnedDeck?.tags).toStrictEqual([tag.key])
+		expect(returnedDeck.body.name).toBe('Testing deck')
+		expect(returnedDeck.body.icon).toBe('balanced')
+		expect(returnedDeck.body.tags).toStrictEqual([tag.body.key])
 
 		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 1).length,
+			returnedDeck.body.cards.filter((card) => card.numericId === 1).length,
 		).toEqual(1)
 		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 2).length,
+			returnedDeck.body.cards.filter((card) => card.numericId === 2).length,
 		).toEqual(2)
 		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 3).length,
+			returnedDeck.body.cards.filter((card) => card.numericId === 3).length,
 		).toEqual(1)
 		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 4).length,
+			returnedDeck.body.cards.filter((card) => card.numericId === 4).length,
 		).toEqual(3)
 		expect(
-			returnedDeck?.cards.filter((card) => card.numericId === 5).length,
+			returnedDeck.body.cards.filter((card) => card.numericId === 5).length,
 		).toEqual(1)
 	})
 
@@ -121,14 +125,18 @@ describe('Test Database', () => {
 		const winner = await database.insertUser('Winner', 'ethoslab')
 		const loser = await database.insertUser('Winner', 'geminitay')
 
-		if (!winner || !loser) throw new Error('Expected users to not be null')
+		assert(
+			winner.type === 'success',
+			'The winner should be created successfully',
+		)
+		assert(loser.type === 'success', 'The loser should be created successfully')
 
 		const winnerDeckCode = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.cards,
 			playerDeck.tags,
-			winner.uuid,
+			winner.body.uuid,
 		)
 
 		const loserDeckCode = await database.insertDeck(
@@ -136,110 +144,154 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			playerDeck.tags,
-			loser.uuid,
+			loser.body.uuid,
 		)
 
-		if (!winnerDeckCode || !loserDeckCode)
-			throw new Error('Expected deck codes to not be null')
+		assert(
+			winnerDeckCode.type === 'success',
+			'The deck should be created successfully',
+		)
+		assert(
+			loserDeckCode.type === 'success',
+			'The deck should be created successfully',
+		)
 
 		await database.insertGame(
-			winnerDeckCode,
-			loserDeckCode,
-			winner.uuid,
-			loser.uuid,
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
 			'player_won',
-			winner.uuid,
+			winner.body.uuid,
 		)
 
 		await database.insertGame(
-			winnerDeckCode,
-			loserDeckCode,
-			winner.uuid,
-			loser.uuid,
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
 			'forfeit',
-			loser.uuid,
+			loser.body.uuid,
 		)
 
 		await database.insertGame(
-			winnerDeckCode,
-			loserDeckCode,
-			winner.uuid,
-			loser.uuid,
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
 			'tie',
 			null,
 		)
 
-		const winningPlayerStats = await database.getUserStats(winner.uuid)
-		expect(winningPlayerStats?.wins).toBe(1)
-		expect(winningPlayerStats?.losses).toBe(0)
-		expect(winningPlayerStats?.forfeitWins).toBe(0)
-		expect(winningPlayerStats?.forfeitLosses).toBe(1)
-		expect(winningPlayerStats?.ties).toBe(1)
-		expect(winningPlayerStats?.gamesPlayed).toBe(3)
+		const winningPlayerStats = await database.getUserStats(winner.body.uuid)
+		assert(
+			winningPlayerStats.type === 'success',
+			'The stats should be retrieved successfully',
+		)
+		expect(winningPlayerStats.body.wins).toBe(1)
+		expect(winningPlayerStats.body.losses).toBe(0)
+		expect(winningPlayerStats.body.forfeitWins).toBe(0)
+		expect(winningPlayerStats.body.forfeitLosses).toBe(1)
+		expect(winningPlayerStats.body.ties).toBe(1)
+		expect(winningPlayerStats.body.gamesPlayed).toBe(3)
 
-		const losingPlayerStats = await database.getUserStats(loser.uuid)
-		expect(losingPlayerStats?.wins).toBe(0)
-		expect(losingPlayerStats?.losses).toBe(1)
-		expect(losingPlayerStats?.forfeitWins).toBe(1)
-		expect(losingPlayerStats?.forfeitLosses).toBe(0)
-		expect(losingPlayerStats?.ties).toBe(1)
-		expect(losingPlayerStats?.gamesPlayed).toBe(3)
+		const losingPlayerStats = await database.getUserStats(loser.body.uuid)
+		assert(
+			losingPlayerStats.type === 'success',
+			'The stats should be retrieved successfully',
+		)
+		expect(losingPlayerStats.body.wins).toBe(0)
+		expect(losingPlayerStats.body.losses).toBe(1)
+		expect(losingPlayerStats.body.forfeitWins).toBe(1)
+		expect(losingPlayerStats.body.forfeitLosses).toBe(0)
+		expect(losingPlayerStats.body.ties).toBe(1)
+		expect(losingPlayerStats.body.gamesPlayed).toBe(3)
 
-		const winningDeckStats = await database.getDeckStats(winnerDeckCode)
-		expect(winningDeckStats?.wins).toBe(1)
-		expect(winningDeckStats?.losses).toBe(0)
-		expect(winningDeckStats?.forfeitWins).toBe(0)
-		expect(winningDeckStats?.forfeitLosses).toBe(1)
-		expect(winningDeckStats?.ties).toBe(1)
-		expect(winningDeckStats?.gamesPlayed).toBe(3)
+		const winningDeckStats = await database.getDeckStats(winnerDeckCode.body)
+		assert(
+			winningDeckStats.type === 'success',
+			'The stats should be retrieved successfully',
+		)
+		expect(winningDeckStats.body.wins).toBe(1)
+		expect(winningDeckStats.body.losses).toBe(0)
+		expect(winningDeckStats.body.forfeitWins).toBe(0)
+		expect(winningDeckStats.body.forfeitLosses).toBe(1)
+		expect(winningDeckStats.body.ties).toBe(1)
+		expect(winningDeckStats.body.gamesPlayed).toBe(3)
 
-		const losingDeckStats = await database.getDeckStats(loserDeckCode)
-		expect(losingDeckStats?.wins).toBe(0)
-		expect(losingDeckStats?.losses).toBe(1)
-		expect(losingDeckStats?.forfeitWins).toBe(1)
-		expect(losingDeckStats?.forfeitLosses).toBe(0)
-		expect(losingDeckStats?.ties).toBe(1)
-		expect(losingDeckStats?.gamesPlayed).toBe(3)
+		const losingDeckStats = await database.getDeckStats(loserDeckCode.body)
+		assert(
+			losingDeckStats.type === 'success',
+			'The stats should be retrieved successfully',
+		)
+		expect(losingDeckStats.body.wins).toBe(0)
+		expect(losingDeckStats.body.losses).toBe(1)
+		expect(losingDeckStats.body.forfeitWins).toBe(1)
+		expect(losingDeckStats.body.forfeitLosses).toBe(0)
+		expect(losingDeckStats.body.ties).toBe(1)
+		expect(losingDeckStats.body.gamesPlayed).toBe(3)
 	})
 
 	test('Update Username and Minecraft Name', async () => {
 		const user = await database.insertUser('Ethoslab', 'ethoslab')
-		if (!user) throw new Error('Expected user to not be null')
+		assert(user.type === 'success', 'The user should be created successfully')
 
-		await database.setUsername(user.uuid, 'GeminiTay')
-		await database.setMinecraftName(user.uuid, 'geminitay')
+		await database.setUsername(user.body.uuid, 'GeminiTay')
+		await database.setMinecraftName(user.body.uuid, 'geminitay')
 
-		const updatedUser = await database.getUserInfo(user.uuid)
+		const updatedUser = await database.getUserInfo(user.body.uuid)
+		assert(
+			updatedUser.type === 'success',
+			'The updated user should be retrieved successfully',
+		)
 
-		expect(updatedUser?.username).toBe('GeminiTay')
-		expect(updatedUser?.minecraftName).toBe('geminitay')
+		expect(updatedUser.body.username).toBe('GeminiTay')
+		expect(updatedUser.body.minecraftName).toBe('geminitay')
 	})
 
 	test('Add and Retrieve Tags', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-		if (!user) throw new Error('Expected user to not be null')
+		assert(user.type === 'success', 'The user should be created successfully')
 
-		const tag1 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
-		const tag2 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
-		const tag3 = await database.insertTag(user.uuid, 'Test Tag', '#FF0000')
+		const tag1 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 1',
+			'#FF0000',
+		)
+		const tag2 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 2',
+			'#FF0000',
+		)
+		const tag3 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 3',
+			'#FF0000',
+		)
 
-		const allTags = await database.getTags(user.uuid)
+		assert(tag1.type === 'success', 'Tag 1 was created successfully')
+		assert(tag2.type === 'success', 'Tag 2 was created successfully')
+		assert(tag3.type === 'success', 'Tag 3 was created successfully')
 
-		expect(allTags).toContainEqual(tag1)
-		expect(allTags).toContainEqual(tag2)
-		expect(allTags).toContainEqual(tag3)
+		const allTags = await database.getTags(user.body.uuid)
+
+		assert(allTags.type === 'success', 'Tags were retrieved successfully')
+
+		expect(allTags.body).toContainEqual(tag1.body)
+		expect(allTags.body).toContainEqual(tag2.body)
+		expect(allTags.body).toContainEqual(tag3.body)
 	})
 
 	test('Retrieve Decks', async () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
-		if (!user) throw new Error('Expected user to not be null')
+		assert(user.type === 'success', 'The user should be created successfully')
 
 		const deck1 = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			[1, 2, 2, 3, 4, 4, 4, 5],
 			playerDeck.tags,
-			user.uuid,
+			user.body.uuid,
 		)
 
 		const deck2 = await database.insertDeck(
@@ -247,7 +299,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			playerDeck.tags,
-			user.uuid,
+			user.body.uuid,
 		)
 
 		const deck3 = await database.insertDeck(
@@ -255,22 +307,29 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			[71, 32, 63, 5],
 			playerDeck.tags,
-			user.uuid,
+			user.body.uuid,
 		)
 
-		const allDecks = await database.getDecks(user.uuid)
-		if (!allDecks) throw new Error('Expected decks to exist')
+		assert(deck1.type === 'success', 'Deck 1 was created successfu;ly')
+		assert(deck2.type === 'success', 'Deck 2 was created successfu')
+		assert(deck3.type === 'success', 'Deck 3 was created successfu')
 
-		expect(allDecks.find((deck) => deck.code === deck1)).toBeTruthy()
-		expect(allDecks.find((deck) => deck.code === deck2)).toBeTruthy()
-		expect(allDecks.find((deck) => deck.code === deck3)).toBeTruthy()
+		const allDecks = await database.getDecks(user.body.uuid)
+		assert(
+			allDecks.type === 'success',
+			'The decks should be retrieved successfully',
+		)
 
-		const firstDeckNumericIds = allDecks
-			.find((deck) => deck.code === deck1)
+		expect(allDecks.body.find((deck) => deck.code === deck1.body)).toBeTruthy()
+		expect(allDecks.body.find((deck) => deck.code === deck2.body)).toBeTruthy()
+		expect(allDecks.body.find((deck) => deck.code === deck3.body)).toBeTruthy()
+
+		const firstDeckNumericIds = allDecks.body
+			.find((deck) => deck.code === deck1.body)
 			?.cards.map((card) => card.numericId)
 
-		const thirdDeckNumericIds = allDecks
-			.find((deck) => deck.code === deck3)
+		const thirdDeckNumericIds = allDecks.body
+			.find((deck) => deck.code === deck3.body)
 			?.cards.map((card) => card.numericId)
 
 		expect(firstDeckNumericIds).toStrictEqual([1, 2, 2, 3, 4, 4, 4, 5])
