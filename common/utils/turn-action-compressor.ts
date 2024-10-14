@@ -311,17 +311,9 @@ export function turnActionToBuffer(
 	const headerBuffer = writeUIntToBuffer(replayActions[action.type].value, 1)
 	const argumentsBuffer = replayActions[action.type].compress(game, action)
 
-	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 10)
+	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
 
-	function getTimeBuffer(tenths: number, buffer?: Buffer): Buffer {
-		if (tenths < 0xff) {
-			if (!buffer) return writeUIntToBuffer(tenths, 1)
-			return Buffer.concat([buffer, writeUIntToBuffer(tenths, 1)])
-		}
-		return getTimeBuffer(tenths - 0xff, writeUIntToBuffer(0xff, 1))
-	}
-
-	const timeBuffer = getTimeBuffer(tenthsSinceLastAction)
+	const timeBuffer = writeUIntToBuffer(tenthsSinceLastAction, 2)
 
 	if (argumentsBuffer) {
 		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
@@ -339,12 +331,8 @@ export function bufferToTurnActions(
 		const actionNumber = buffer.readUInt8(cursor)
 		const action = replayActionsFromValues[actionNumber]
 		cursor++
-		let tenthsSinceLastAction = buffer.readUInt8(cursor)
-		cursor++
-		while (buffer.readUInt8(cursor) === 0xff) {
-			cursor++
-			tenthsSinceLastAction += buffer.readUInt8(cursor)
-		}
+		let tenthsSinceLastAction = buffer.readUInt16BE(cursor)
+		cursor += 2
 		if (action.bytes !== 'variable') {
 			const bytes = buffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
@@ -352,7 +340,7 @@ export function bufferToTurnActions(
 			if (turnAction)
 				replayActions.push({
 					action: turnAction,
-					millisecondsSinceLastAction: tenthsSinceLastAction * 10,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
 		} else {
 			const byteAmount = buffer.readUInt32BE(cursor)
@@ -362,7 +350,7 @@ export function bufferToTurnActions(
 			if (turnAction)
 				replayActions.push({
 					action: turnAction,
-					millisecondsSinceLastAction: tenthsSinceLastAction * 10,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
 		}
 		// We need to run the action to play the game to the next state here
