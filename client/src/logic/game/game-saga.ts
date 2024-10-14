@@ -51,8 +51,6 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 	>(localMessages.GAME_TURN_ACTION)
 
-	console.log(turnAction)
-
 	if (
 		[
 			'PLAY_HERMIT_CARD',
