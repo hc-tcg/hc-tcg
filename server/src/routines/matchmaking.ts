@@ -17,76 +17,12 @@ import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
-
-// 	const viewers = game.viewers
-// 	const playerIds = viewers.map((viewer) => viewer.player.id)
-
-// 	const gameType =
-// 		playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
-
-// 	console.info(
-// 		`${game.logHeader}`,
-// 		`${gameType} game started.`,
-// 		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-// 		'Total games:',
-// 		root.getGameIds().length,
-// 	)
-
-// 	game.broadcastToViewers({type: serverMessages.GAME_START})
-// 	root.hooks.newGame.call(game)
-// 	game.task = yield* spawn(gameSaga, game)
-
-// 	// Kill game on timeout or when user leaves for long time + cleanup after game
-// 	const result = yield* race({
-// 		// game ended (or crashed -> catch)
-// 		gameEnd: join(game.task),
-// 		// kill a game after two hours
-// 		timeout: delay(1000 * 60 * 60),
-// 		// kill game when a player is disconnected for too long
-// 		playerRemoved: take<
-// 			LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-// 		>(
-// 			(action: any) =>
-// 				action.type === localMessages.PLAYER_REMOVED &&
-// 				playerIds.includes(
-// 					(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-// 						.player.id,
-// 				),
-// 		),
-// 		forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-// 			(action: any) =>
-// 				action.type === clientMessages.FORFEIT &&
-// 				playerIds.includes(
-// 					(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-// 						.playerId,
-// 				),
-// 		),
-// 	})
-
-// 	game.endInfo.outcome = getGameOutcome(game, result)
-// 	game.endInfo.winner = getWinner(game, result)
-// } catch (err) {
-// 	console.log('Error: ', err)
-// 	game.endInfo.outcome = 'error'
-// 	broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-// } finally {
-// 	if (game.task) yield* cancel(game.task)
-// 	game.hooks.afterGameEnd.call()
-
-// 	const gameType = game.gameCode ? 'Private' : 'Public'
-// 	console.log(
-// 		`${gameType} game ended. Total games:`,
-// 		root.getGameIds().length - 1,
-// 	)
-
-// 	delete root.games[game.id]
-// 	root.hooks.gameRemoved.call(game)
-// }
+import {GameController, GameViewer} from 'game-controller'
 
 export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
-		.some((game) => !!game.viewers.find((viewer) => viewer === playerId))
+		.some((game) => !!game.viewers.find((viewer) => viewer.id === playerId))
 }
 
 export function inQueue(playerId: string) {
@@ -367,23 +303,16 @@ export function* joinPrivateGame(
 
 	// Check if spectator game is running first
 	const spectatorGame = Object.values(root.games).find(
-		(game) => game.spectatorCode === code,
+		(game) => game.props.spectatorCode === code,
 	)
 
 	if (spectatorGame) {
-		const viewer = spectatorGame.components.new(ViewerComponent, {
-			player: player,
-			spectator: true,
-			playerOnLeft: spectatorGame.state.order[0],
-		})
-
 		console.log(
-			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.props.gameCode}`,
 		)
-
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-			localGameState: getLocalGameState(spectatorGame, viewer),
+			game: spectatorGame.startupInformation(),
 		})
 
 		return
@@ -433,41 +362,34 @@ export function* joinPrivateGame(
 			return
 		}
 
-		const newGame = setupGame(
-			player,
-			existingPlayer,
-			root.privateQueue[code].gameCode,
-			root.privateQueue[code].spectatorCode,
-		)
+		let viewers: Array<GameViewer> = [
+			{id: existingPlayer.id, type: 'player'},
+			{id: player.id, type: 'player'},
+		]
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const viewer = newGame.components.new(ViewerComponent, {
-				player: root.players[playerId],
-				spectator: true,
-				playerOnLeft: newGame.state.order[0],
-			})
-			let gameState = getLocalGameState(newGame, viewer)
-
-			broadcast([root.players[playerId]], {
-				type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-				localGameState: gameState,
-			})
+			viewers.push({id: playerId, type: 'spectator'})
 		}
-
-		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
 		// Remove this game from the queue, it's started
 		let tmpQueue = root.privateQueue[code]
 		delete root.privateQueue[code]
 
+		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
+
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+
 		if (tmpQueue.playerId) {
 			broadcast([root.players[tmpQueue.playerId]], {
 				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
 			})
 		}
 
-		yield* fork(gameManagerSaga, newGame)
+		yield* gameManagerSaga({
+			player1: existingPlayer,
+			player2: player,
+			viewers,
+		})
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId

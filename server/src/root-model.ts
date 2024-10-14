@@ -1,4 +1,4 @@
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {GameController} from 'game-controller'
 import {Hook} from '../../common/types/hooks'
 
@@ -14,7 +14,7 @@ export class RootModel {
 			playerId: string | null
 			gameCode: string
 			spectatorCode: string | undefined
-			spectatorsWaiting: Array<string>
+			spectatorsWaiting: Array<PlayerId>
 			/** Code used by API consumers to cancel a game. */
 			apiSecret?: string | null
 		}

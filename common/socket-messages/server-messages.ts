@@ -1,7 +1,7 @@
 import {PlayerEntity} from '../entities'
 import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {GameMessage} from '../routines/game'
+import {GameMessage, GameStartupInformation} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
 import {LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -31,8 +31,8 @@ export const serverMessages = messages('server', {
 	JOIN_PRIVATE_GAME_FAILURE: null,
 	JOIN_QUEUE_SUCCESS: null,
 	JOIN_QUEUE_FAILURE: null,
-	SPECTATE_PRIVATE_GAME_START: null,
 	SPECTATE_PRIVATE_GAME_WAITING: null,
+	SPECTATE_PRIVATE_GAME_START: null,
 	INVALID_CODE: null,
 	WAITING_FOR_PLAYER: null,
 	PRIVATE_GAME_CANCELLED: null,
@@ -45,15 +45,7 @@ export const serverMessages = messages('server', {
 export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
-		game?: {
-			props: GameProps
-			entity: PlayerEntity
-			history: Array<GameMessage>
-			timer: {
-				turnRemaining: number
-				turnStartTime: number
-			}
-		}
+		game?: GameStartupInformation
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{
@@ -104,23 +96,17 @@ export type ServerMessages = [
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_FAILURE},
 	{type: typeof serverMessages.JOIN_QUEUE_SUCCESS},
 	{type: typeof serverMessages.JOIN_QUEUE_FAILURE},
+	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_WAITING},
 	{
 		type: typeof serverMessages.SPECTATE_PRIVATE_GAME_START
-		localGameState: LocalGameState
+		game: GameStartupInformation
 	},
-	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_WAITING},
 	{type: typeof serverMessages.INVALID_CODE},
 	{type: typeof serverMessages.WAITING_FOR_PLAYER},
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
-	{
-		type: typeof serverMessages.GAME_OVER_STAT
-		outcome: GameEndOutcomeT
-		won: boolean
-	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
 	{
 		type: typeof serverMessages.GAME_RECONNECT_INFORMATION
-
 		history: Array<GameMessage>
 		timer: {
 			turnRemaining: number

@@ -64,11 +64,18 @@ export function* gameManagerSaga({
 			const players = game.components.filter(PlayerComponent)
 
 			viewers.forEach((p, index) => {
-				broadcast([root.players[p.id]], {
-					type: serverMessages.GAME_START,
-					props: gameProps,
-					playerEntity: players[index].entity,
-				})
+				if (p.type === 'player') {
+					broadcast([root.players[p.id]], {
+						type: serverMessages.GAME_START,
+						props: gameProps,
+						playerEntity: players[index].entity,
+					})
+				} else {
+					broadcast([root.players[p.id]], {
+						type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+						game: serverSideGame.startupInformation(),
+					})
+				}
 			})
 
 			serverSideGame = new GameController({

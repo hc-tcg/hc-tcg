@@ -180,15 +180,11 @@ function* handleGameTurnActionSaga(game: GameModel) {
 	}
 }
 
-function* gameActionsSaga(
-	game: GameModel,
-	playerEntity: PlayerEntity,
-	isSpectator: boolean,
-) {
+function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 	yield* takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga)
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-		localGameState: getLocalGameState(game, playerEntity, isSpectator),
+		localGameState: getLocalGameState(game, playerEntity),
 		time: Date.now(),
 	})
 }
@@ -232,7 +228,7 @@ function* reconnectSaga(game: GameModel) {
 /** Run a game until completion */
 function* runGame(
 	props: GameProps,
-	playerEntity: PlayerEntity,
+	playerEntity?: PlayerEntity,
 	reconnectInformation?: {
 		history: Array<GameMessage>
 		timer: {
@@ -241,6 +237,7 @@ function* runGame(
 		}
 	},
 ) {
+	const isSpectator = playerEntity === undefined
 	let isReadyToDisplay = false
 	let backgroundTasks: any
 
@@ -248,8 +245,6 @@ function* runGame(
 
 	const gameSaga = runGameSaga(props, {
 		onGameStart: function* (game) {
-			const isSpectator = false
-
 			backgroundTasks = yield* fork(() =>
 				all([
 					call(actionModalsSaga),
@@ -266,7 +261,7 @@ function* runGame(
 				// Set the first local state
 				yield* putResolve<LocalMessage>({
 					type: localMessages.GAME_LOCAL_STATE_SET,
-					localGameState: getLocalGameState(game, playerEntity, isSpectator),
+					localGameState: getLocalGameState(game, playerEntity),
 					time: Date.now(),
 				})
 
@@ -305,11 +300,9 @@ function* runGame(
 		update: function* (game) {
 			if (!isReadyToDisplay) return
 
-			const isSpectator = yield* select(getIsSpectator)
-
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-				localGameState: getLocalGameState(game, playerEntity, isSpectator),
+				localGameState: getLocalGameState(game, playerEntity),
 				time: Date.now(),
 			})
 		},
@@ -359,7 +352,7 @@ function* requestGameReconnectInformation() {
 
 function* runGamesUntilCompletion(
 	props: GameProps,
-	playerEntity: PlayerEntity,
+	playerEntity?: PlayerEntity,
 	reconnectInformation?: {
 		history: Array<GameMessage>
 		timer: {
@@ -397,7 +390,7 @@ function* runGamesUntilCompletion(
 
 function* gameSaga(
 	props: GameProps,
-	playerEntity: PlayerEntity,
+	playerEntity?: PlayerEntity,
 	reconnectInformation?: {
 		history: Array<GameMessage>
 		timer: {

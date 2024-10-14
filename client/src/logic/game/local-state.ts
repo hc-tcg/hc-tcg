@@ -383,9 +383,15 @@ function getLocalPlayerState(
 
 export function getLocalGameState(
 	game: GameModel,
-	playerEntity: PlayerEntity,
-	isSpectator: boolean,
+	playerEntity?: PlayerEntity,
 ): LocalGameState {
+	const isSpectator = playerEntity === undefined
+
+	// If we are a spectator, display player one on the left
+	if (!playerEntity) {
+		playerEntity = game.state.order[0]
+	}
+
 	const playerState = game.components.find(
 		PlayerComponent,
 		(_game, player) => player.entity == playerEntity,

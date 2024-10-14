@@ -2,7 +2,7 @@ import {PlayerComponent} from 'common/components'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
-import {GameMessage} from 'common/routines/game'
+import {GameMessage, GameStartupInformation} from 'common/routines/game'
 import {ServerMessage} from 'common/socket-messages/server-messages'
 import {Message} from 'common/types/game-state'
 import root from 'serverRoot'
@@ -46,6 +46,15 @@ export class GameController {
 		this.playerOne = playerOne
 		this.playerTwo = playerTwo
 		this.props = props
+	}
+
+	public startupInformation(entity?: PlayerEntity): GameStartupInformation {
+		return {
+			props: this.props,
+			entity: entity,
+			history: this.history,
+			timer: this.game.state.timer,
+		}
 	}
 
 	public broadcastToViewers(msg: ServerMessage) {

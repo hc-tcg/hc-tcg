@@ -102,10 +102,10 @@ function* privateLobbySaga() {
 					waitingForPlayer: call(
 						receiveMsg(socket, serverMessages.WAITING_FOR_PLAYER),
 					),
-					spectateSuccess: call(
-						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-					),
 					specateWaitSuccess: call(
+						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_WAITING),
+					),
+					specateGameStart: call(
 						receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_WAITING),
 					),
 					timeout: call(
@@ -142,7 +142,11 @@ function* privateLobbySaga() {
 					})
 
 					if (queueResponse.gameStart) {
-						yield* call(gameSaga)
+						yield* call(
+							gameSaga,
+							queueResponse.gameStart.props,
+							queueResponse.gameStart.playerEntity,
+						)
 						break
 					}
 
@@ -169,23 +173,27 @@ function* privateLobbySaga() {
 					yield* sendMsg({
 						type: clientMessages.CANCEL_PRIVATE_GAME,
 					})
-				} else if (result.spectateSuccess) {
-					yield* call(gameSaga, result.spectateSuccess.localGameState)
+				} else if (result.specateGameStart) {
+					// @todo
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,
 					})
 					let result = yield* race({
 						matchmakingLeave: take(localMessages.MATCHMAKING_LEAVE),
-						spectatePrivateGame: call(
+						gameStart: call(
 							receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
 						),
 						timeout: call(
 							receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 						),
 					})
-					if (result.spectatePrivateGame) {
-						yield* call(gameSaga, result.spectatePrivateGame.localGameState)
+					if (result.gameStart) {
+						yield* call(
+							gameSaga,
+							result.gameStart.game.props,
+							result.gameStart.game.entity,
+						)
 					}
 					if (result.matchmakingLeave || result.timeout) {
 						yield* sendMsg({

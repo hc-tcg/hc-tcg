@@ -61,6 +61,17 @@ export type GameMessages = [
 export type GameMessage = Message<GameMessages>
 export type GameMessageTable = MessageTable<GameMessages>
 
+/** The information required to start a game on the client */
+export type GameStartupInformation = {
+	props: GameProps
+	entity?: PlayerEntity
+	history: Array<GameMessage>
+	timer: {
+		turnRemaining: number
+		turnStartTime: number
+	}
+}
+
 export const getTimerForSeconds = (
 	game: GameModel,
 	seconds: number,
