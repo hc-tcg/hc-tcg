@@ -328,7 +328,17 @@ function* runGame(
 	yield* take<GameMessage>(gameMessages.GAME_END)
 }
 
-async function* gameSaga(
+function* requestGameState() {
+	let socket = yield* select(getSocket)
+
+	yield* sendMsg({
+		type: clientMessages.REQUEST_GAME_HISTORY,
+	})
+
+	return yield* call(receiveMsg(socket, serverMessages.GAME_HISTORY))
+}
+
+function* gameSaga(
 	props: GameProps,
 	playerEntity: PlayerEntity,
 	reconnectInformation?: {
@@ -339,22 +349,19 @@ async function* gameSaga(
 		}
 	},
 ) {
-	console.log(props.id)
 	while (true) {
-		// yield* fork(runGame, props, playerEntity, reconnectInformation)
+		yield* fork(runGame, props, playerEntity, reconnectInformation)
 
-		// let result = yield* race({
-		// 	gameEnd: clientGameMessages.GAME_END,
-		// 	gameStateDesync: clientGameMessages.GAME_STATE_DESYNC,
-		// 	// @todo Spectator leave
-		// })
-		let history = await fetch(`/api/games/${props.id}/history`)
-		console.log(history)
+		let result = yield* race({
+			gameEnd: clientGameMessages.GAME_END,
+			gameStateDesync: clientGameMessages.GAME_STATE_DESYNC,
+			// @todo Spectator leave
+		})
 
 		if (result.gameEnd) {
 			break
 		} else if (result.gameStateDesync) {
-			let history = yield fetch(`/api/games/${props.id}/history`)
+			let history = yield* requestGameState()
 			console.log(history)
 			continue
 		}
