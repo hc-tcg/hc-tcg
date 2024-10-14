@@ -74,6 +74,7 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
+			console.log(actionMessage.payload.action)
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,

@@ -60,7 +60,7 @@ const playCard: ReplayAction = {
 		)
 		if (!slot) return null
 		const slotRow = slot.row?.index
-		if (!slotRow) return null
+		if (slotRow === undefined) return null
 		const slotColumn = getSlotIndex(slot)
 
 		const cardIndex = game.currentPlayer
@@ -91,8 +91,6 @@ const playCard: ReplayAction = {
 		)
 		if (!selectedSlot) return null
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
-		console.log(selectedCardIndex)
-		console.log(selectedCard)
 		return {
 			type: 'PLAY_EFFECT_CARD',
 			slot: selectedSlot,
@@ -332,7 +330,7 @@ export function bufferToTurnActions(
 		cursor++
 		let tenthsSinceLastAction = buffer.readInt8(cursor)
 		cursor++
-		while (tenthsSinceLastAction === 0xff) {
+		while (buffer.readInt8(cursor) === 0xff) {
 			cursor++
 			tenthsSinceLastAction += buffer.readInt8(cursor)
 		}
