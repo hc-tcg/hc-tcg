@@ -52,8 +52,7 @@ export class Database {
 				winner_deck_code varchar(7) REFERENCES decks(deck_code),
 				loser_deck_code varchar(7) REFERENCES decks(deck_code),
 				outcome varchar(31) NOT NULL,
-				winner_shuffle_order bytea NOT NULL,
-				loser_shuffle_order bytea NOT NULL,
+				seed varchar(15) NOT NULL,
 				replay bytea NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS cards(
@@ -505,8 +504,7 @@ export class Database {
 		secondPlayerUuid: string,
 		outcome: GameEndOutcomeT,
 		winningPlayerUuid: string | null,
-		firstPlayerShuffleOrder: Buffer,
-		secondPlayerShuffleOrder: Buffer,
+		seed: string,
 		replay: Buffer,
 	): Promise<DatabaseResult> {
 		try {
@@ -514,37 +512,22 @@ export class Database {
 			let winningDeck
 			let loser
 			let losingDeck
-			let winnerShuffleOrder
-			let loserShuffleOrder
 
 			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
 				winner = firstPlayerUuid
 				winningDeck = firstPlayerDeckCode
 				loser = secondPlayerUuid
 				losingDeck = secondPlayerDeckCode
-				winnerShuffleOrder = firstPlayerShuffleOrder
-				loserShuffleOrder = secondPlayerShuffleOrder
 			} else {
 				winner = secondPlayerUuid
 				winningDeck = secondPlayerDeckCode
 				loser = firstPlayerUuid
 				losingDeck = firstPlayerDeckCode
-				winnerShuffleOrder = secondPlayerShuffleOrder
-				loserShuffleOrder = firstPlayerShuffleOrder
 			}
 
 			await this.pool.query(
-				"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome, winner_shuffle_order, loser_shuffle_order, replay) VALUES('now',$1,$2,$3,$4,$5,$6,$7,$8)",
-				[
-					winner,
-					loser,
-					winningDeck,
-					losingDeck,
-					outcome,
-					winnerShuffleOrder,
-					loserShuffleOrder,
-					replay,
-				],
+				"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, replay) VALUES('now',$1,$2,$3,$4,$5,$6,$7)",
+				[winner, loser, winningDeck, losingDeck, outcome, seed, replay],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
