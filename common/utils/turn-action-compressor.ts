@@ -20,6 +20,11 @@ type ReplayAction = {
 	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
 }
 
+type ReplayActionData = {
+	action: AnyTurnActionData
+	millisecondsSinceLastAction: number
+}
+
 function writeIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
 	if (length === 1) {
 		const bytes = Buffer.alloc(1)
@@ -291,43 +296,68 @@ const replayActionsFromValues = Object.values(replayActions).reduce(
 
 export function turnActionsToBuffer(
 	game: GameModel,
-	turnActions: Array<AnyTurnActionData>,
+	action: AnyTurnActionData,
+	millisecondsSinceLastAction: number,
 ) {
-	const buffers = turnActions.reduce((r: Array<Buffer>, action) => {
-		const buffer = replayActions[action.type].compress(game, action)
-		if (buffer) {
-			r.push(writeIntToBuffer(replayActions[action.type].value, 1))
-			r.push(buffer)
+	const headerBuffer = writeIntToBuffer(replayActions[action.type].value, 1)
+	const argumentsBuffer = replayActions[action.type].compress(game, action)
+
+	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
+
+	function getTimeBuffer(tenths: number, buffer?: Buffer): Buffer {
+		if (tenths < 0xff) {
+			if (!buffer) return writeIntToBuffer(tenths, 1)
+			return Buffer.concat([buffer, writeIntToBuffer(tenths, 1)])
 		}
-		return r
-	}, [])
-	return Buffer.concat(buffers)
+		return getTimeBuffer(tenths - 0xff, writeIntToBuffer(0xff, 1))
+	}
+
+	const timeBuffer = getTimeBuffer(tenthsSinceLastAction)
+
+	if (argumentsBuffer) {
+		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
+	}
+	return Buffer.concat([headerBuffer, timeBuffer])
 }
 
 export function bufferToTurnActions(
 	game: GameModel,
 	buffer: Buffer,
-): Array<AnyTurnActionData> {
-	let i = 0
-	const turnActions: Array<AnyTurnActionData> = []
-	while (i < buffer.length) {
-		const actionNumber = buffer.readInt8(i)
+): Array<ReplayActionData> {
+	let cursor = 0
+	const replayActions: Array<ReplayActionData> = []
+	while (cursor < buffer.length) {
+		const actionNumber = buffer.readInt8(cursor)
 		const action = replayActionsFromValues[actionNumber]
-		i++
+		cursor++
+		let tenthsSinceLastAction = buffer.readInt8(cursor)
+		cursor++
+		while (tenthsSinceLastAction === 0xff) {
+			cursor++
+			tenthsSinceLastAction += buffer.readInt8(cursor)
+		}
 		if (action.bytes !== 'variable') {
-			const bytes = buffer.subarray(i, i + action.bytes)
-			i += action.bytes
+			const bytes = buffer.subarray(cursor, cursor + action.bytes)
+			cursor += action.bytes
 			const turnAction = action.decompress(game, bytes)
-			if (turnAction) turnActions.push(turnAction)
+			if (turnAction)
+				replayActions.push({
+					action: turnAction,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+				})
 		} else {
-			const byteAmount = buffer.readInt32BE(i)
-			i += 4
-			const bytes = buffer.subarray(i, byteAmount)
+			const byteAmount = buffer.readInt32BE(cursor)
+			cursor += 4
+			const bytes = buffer.subarray(cursor, byteAmount)
 			const turnAction = action.decompress(game, bytes)
-			if (turnAction) turnActions.push(turnAction)
+			if (turnAction)
+				replayActions.push({
+					action: turnAction,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+				})
 		}
 		// We need to run the action to play the game to the next state here
 	}
 
-	return turnActions
+	return replayActions
 }
