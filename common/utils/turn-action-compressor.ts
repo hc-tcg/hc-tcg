@@ -1,8 +1,8 @@
-import {getLocalCard} from '../../server/src/utils/state-gen'
 import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {TurnAction} from '../types/game-state'
+import {WithoutFunctions} from '../types/server-requests'
 import {
 	AnyTurnActionData,
 	PlayCardActionData,
@@ -20,18 +20,18 @@ type ReplayAction = {
 	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
 }
 
-function writeIntToBuffer(x: number, length: 8 | 16 | 32): Buffer {
-	if (length === 8) {
-		const bytes = Buffer.alloc(8)
+function writeIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
+	if (length === 1) {
+		const bytes = Buffer.alloc(1)
 		bytes.writeInt8(x)
 		return bytes
 	}
-	if (length === 16) {
-		const bytes = Buffer.alloc(16)
+	if (length === 2) {
+		const bytes = Buffer.alloc(2)
 		bytes.writeInt16BE(x)
 		return bytes
 	} else {
-		const bytes = Buffer.alloc(32)
+		const bytes = Buffer.alloc(4)
 		bytes.writeInt32BE(x)
 		return bytes
 	}
@@ -57,20 +57,21 @@ const playCard: ReplayAction = {
 		const slotRow = slot.row?.index
 		if (!slotRow) return null
 		const slotColumn = getSlotIndex(slot)
+
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
 		return Buffer.concat([
-			writeIntToBuffer(slotRow, 8),
-			writeIntToBuffer(slotColumn, 8),
-			writeIntToBuffer(cardIndex, 16),
+			writeIntToBuffer(slotRow, 1),
+			writeIntToBuffer(slotColumn, 1),
+			writeIntToBuffer(cardIndex, 2),
 		])
 	},
 	decompress(game, buffer): PlayCardActionData | null {
 		const selectedSlotRow = buffer.readInt8(0)
-		const selectedSlotColumn = buffer.readInt8(8)
-		const selectedCardIndex = buffer.readInt16BE(16)
+		const selectedSlotColumn = buffer.readInt8(1)
+		const selectedCardIndex = buffer.readInt16BE(2)
 
 		const selectedSlot = game.components.findEntity(
 			BoardSlotComponent,
@@ -85,10 +86,18 @@ const playCard: ReplayAction = {
 		)
 		if (!selectedSlot) return null
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
+		console.log(selectedCardIndex)
+		console.log(selectedCard)
 		return {
 			type: 'PLAY_EFFECT_CARD',
 			slot: selectedSlot,
-			card: getLocalCard(game, selectedCard),
+			card: {
+				props: WithoutFunctions(selectedCard.props),
+				entity: selectedCard.entity,
+				slot: selectedCard.slotEntity,
+				attackHint: null,
+				turnedOver: selectedCard.turnedOver,
+			},
 		}
 	},
 }
@@ -191,7 +200,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.entity(turnAction.entity),
 			)
 			if (!slot?.inRow()) return null
-			return writeIntToBuffer(slot.row.index, 8)
+			return writeIntToBuffer(slot.row.index, 1)
 		},
 		decompress(game, buffer) {
 			const rowIndex = buffer.readInt8(0)
@@ -212,7 +221,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		bytes: 'variable',
 		compress(_game, turnAction: PickSlotActionData) {
 			const buffer = Buffer.from(turnAction.entity)
-			return Buffer.concat([writeIntToBuffer(buffer.length, 32), buffer])
+			return Buffer.concat([writeIntToBuffer(buffer.length, 4), buffer])
 		},
 		decompress(_game, buffer) {
 			return {
@@ -227,10 +236,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		compress(_game, turnAction: ModalResult) {
 			const json = JSON.stringify(turnAction.modalResult)
 			const buffer = Buffer.from(json)
-			return Buffer.concat([writeIntToBuffer(buffer.length, 32), buffer])
+			return Buffer.concat([writeIntToBuffer(buffer.length, 4), buffer])
 		},
 		decompress(_game, buffer) {
-			return JSON.parse(JSON.stringify(buffer))
+			return JSON.parse(buffer.toString('utf-8'))
 		},
 	},
 	WAIT_FOR_TURN: {
@@ -261,7 +270,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		value: 0xf0,
 		bytes: 4,
 		compress(_game, turnAction: WaitActionData) {
-			return writeIntToBuffer(turnAction.delay, 32)
+			return writeIntToBuffer(turnAction.delay, 4)
 		},
 		decompress(_game, buffer) {
 			return {
@@ -286,7 +295,10 @@ export function turnActionsToBuffer(
 ) {
 	const buffers = turnActions.reduce((r: Array<Buffer>, action) => {
 		const buffer = replayActions[action.type].compress(game, action)
-		if (buffer) r.push(buffer)
+		if (buffer) {
+			r.push(writeIntToBuffer(replayActions[action.type].value, 1))
+			r.push(buffer)
+		}
 		return r
 	}, [])
 	return Buffer.concat(buffers)
@@ -303,17 +315,18 @@ export function bufferToTurnActions(
 		const action = replayActionsFromValues[actionNumber]
 		i++
 		if (action.bytes !== 'variable') {
-			const bits = buffer.subarray(i, i + action.bytes * 8)
-			i += action.bytes * 8
-			const turnAction = action.decompress(game, bits)
+			const bytes = buffer.subarray(i, i + action.bytes)
+			i += action.bytes
+			const turnAction = action.decompress(game, bytes)
 			if (turnAction) turnActions.push(turnAction)
 		} else {
 			const byteAmount = buffer.readInt32BE(i)
 			i += 4
-			const bits = buffer.subarray(i, byteAmount)
-			const turnAction = action.decompress(game, bits)
+			const bytes = buffer.subarray(i, byteAmount)
+			const turnAction = action.decompress(game, bytes)
 			if (turnAction) turnActions.push(turnAction)
 		}
+		// We need to run the action to play the game to the next state here
 	}
 
 	return turnActions
