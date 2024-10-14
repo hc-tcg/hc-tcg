@@ -158,12 +158,12 @@ function* handleGameTurnActionSaga(game: GameModel) {
 		}
 
 		if (game.getStateHash() !== message.gameStateHash) {
-			// There was a desync between the client as server, @todo Fix it
-			console.log(
-				'Desync detected:',
+			console.error(
+				'Desync between client and server detected:',
 				game.getStateHash(),
 				message.gameStateHash,
 			)
+			yield* put({type: clientGameMessages.GAME_STATE_DESYNC})
 		}
 	}
 }
@@ -326,6 +326,7 @@ function* runGame(
 	yield* fork(() => gameSaga)
 
 	yield* take<GameMessage>(gameMessages.GAME_END)
+	yield* put({type: clientGameMessages.GAME_END})
 }
 
 function* requestGameReconnectInformation() {
