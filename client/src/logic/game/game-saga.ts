@@ -178,6 +178,7 @@ function* handleGameTurnActionSaga(game: GameModel) {
 
 function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 	yield* fork(function* () {
+		let currentTask = undefined
 		while (true) {
 			let result = yield* race({
 				gameStateRecieved: take<
@@ -188,17 +189,18 @@ function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 				),
 			})
 
+			if (currentTask) yield* cancel(currentTask)
+
 			if (result.gameStateRecieved) {
-				yield* gameStateSaga(
-					result.gameStateRecieved.localGameState,
-					result.gameStateRecieved.time,
-				)
+				const gameState = result.gameStateRecieved.localGameState
+				const time = result.gameStateRecieved.time
+				currentTask = yield* fork(() => gameStateSaga(gameState, time))
 			} else if (result.gameEnd) {
-				yield* gameStateSaga(getLocalGameState(game, playerEntity), Date.now())
-				break
+				currentTask = yield* fork(() =>
+					gameStateSaga(getLocalGameState(game, playerEntity), Date.now()),
+				)
 			}
 		}
-		yield* cancel()
 	})
 
 	yield* put<LocalMessage>({
