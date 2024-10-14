@@ -20,6 +20,7 @@ function Settings({setMenuSection}: Props) {
 
 	useEffect(() => {
 		fetch('/api/stats', {headers: {uuid: '1234'}}).then((resp) => {
+			if (resp.status !== 200) return
 			resp.json().then((json) => setStats(json))
 		})
 	}, [])
