@@ -52,7 +52,7 @@ function getSlotIndex(slot: SlotComponent): number {
 
 const playCard: ReplayAction = {
 	value: 0x0,
-	bytes: 4,
+	bytes: 3,
 	compress(game, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
@@ -70,7 +70,7 @@ const playCard: ReplayAction = {
 		return Buffer.concat([
 			writeIntToBuffer(slotRow, 1),
 			writeIntToBuffer(slotColumn, 1),
-			writeIntToBuffer(cardIndex, 2),
+			writeIntToBuffer(cardIndex, 1),
 		])
 	},
 	decompress(game, buffer): PlayCardActionData | null {
