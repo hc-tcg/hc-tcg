@@ -328,14 +328,16 @@ function* runGame(
 	yield* take<GameMessage>(gameMessages.GAME_END)
 }
 
-function* requestGameState() {
+function* requestGameReconnectInformation() {
 	let socket = yield* select(getSocket)
 
 	yield* sendMsg({
-		type: clientMessages.REQUEST_GAME_HISTORY,
+		type: clientMessages.REQUEST_GAME_RECONNECT_INFORMATION,
 	})
 
-	return yield* call(receiveMsg(socket, serverMessages.GAME_HISTORY))
+	return yield* call(
+		receiveMsg(socket, serverMessages.GAME_RECONNECT_INFORMATION),
+	)
 }
 
 function* gameSaga(
@@ -361,8 +363,7 @@ function* gameSaga(
 		if (result.gameEnd) {
 			break
 		} else if (result.gameStateDesync) {
-			let history = yield* requestGameState()
-			console.log(history)
+			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
 		}
 	}

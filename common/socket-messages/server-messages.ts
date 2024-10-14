@@ -38,7 +38,7 @@ export const serverMessages = messages('server', {
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
-	GAME_HISTORY: null,
+	GAME_RECONNECT_INFORMATION: null,
 	CHAT_UPDATE: null,
 })
 
@@ -118,7 +118,15 @@ export type ServerMessages = [
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
-	{type: typeof serverMessages.GAME_HISTORY; history: Array<GameMessage>},
+	{
+		type: typeof serverMessages.GAME_RECONNECT_INFORMATION
+
+		history: Array<GameMessage>
+		timer: {
+			turnRemaining: number
+			turnStartTime: number
+		}
+	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 ]
 

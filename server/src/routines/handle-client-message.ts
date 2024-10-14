@@ -85,7 +85,7 @@ function* handler(message: RecievedClientMessage) {
 				playerEntity: actionMessage.payload.playerEntity,
 				time: actionMessage.payload.time,
 			})
-		case clientMessages.REQUEST_GAME_HISTORY:
+		case clientMessages.REQUEST_GAME_RECONNECT_INFORMATION:
 			let game = yield* select(getGame(message.playerId))
 			assert(
 				game,
@@ -93,8 +93,9 @@ function* handler(message: RecievedClientMessage) {
 			)
 
 			broadcast([root.players[message.playerId]], {
-				type: serverMessages.GAME_HISTORY,
+				type: serverMessages.GAME_RECONNECT_INFORMATION,
 				history: game.history,
+				timer: game.game.state.timer,
 			})
 
 			return
