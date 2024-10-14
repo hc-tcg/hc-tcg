@@ -17,6 +17,7 @@ import {
 	all,
 	call,
 	cancel,
+	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -223,6 +224,7 @@ function* gameSaga(
 	},
 ) {
 	let isReadyToDisplay = false
+	let backgroundTasks: any
 
 	if (!reconnectInformation) isReadyToDisplay = true
 
@@ -230,7 +232,7 @@ function* gameSaga(
 		onGameStart: function* (game) {
 			const isSpectator = false
 
-			yield* fork(() =>
+			backgroundTasks = yield* fork(() =>
 				all([
 					call(actionModalsSaga),
 					call(opponentConnectionSaga),
