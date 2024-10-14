@@ -1,15 +1,12 @@
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
-import {Message, messages, MessageTable} from 'common/redux-messages'
+import {Message, MessageTable, messages} from 'common/redux-messages'
 import runGameSaga, {
 	gameMessages,
 	GameMessage,
 	GameMessageTable,
 } from 'common/routines/game'
-import {
-	ClientMessage,
-	clientMessages,
-} from 'common/socket-messages/client-messages'
+import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome, LocalGameState} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
