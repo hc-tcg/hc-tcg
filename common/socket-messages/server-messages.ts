@@ -3,7 +3,7 @@ import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {GameMessage} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
-import {LocalGameState} from '../types/game-state'
+import {LocalGameState, TurnAction} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
@@ -38,6 +38,7 @@ export const serverMessages = messages('server', {
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
+	GAME_HISTORY: null,
 	CHAT_UPDATE: null,
 })
 
@@ -117,6 +118,7 @@ export type ServerMessages = [
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
+	{type: typeof serverMessages.GAME_HISTORY; history: Array<GameMessage>},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 ]
 

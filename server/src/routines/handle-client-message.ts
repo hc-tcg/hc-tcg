@@ -3,7 +3,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {LocalMessage, localMessages} from 'messages'
-import {put, takeEvery} from 'typed-redux-saga'
+import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
@@ -21,6 +21,11 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import {getGame} from 'selectors'
+import {broadcast} from 'utils/comm'
+import root from 'serverRoot'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {assert} from 'common/utils/assert'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -81,7 +86,18 @@ function* handler(message: RecievedClientMessage) {
 				time: actionMessage.payload.time,
 			})
 		case clientMessages.REQUEST_GAME_HISTORY:
-			let messgae = message as RecievedClientMessage<typeof message.type>
+			let game = yield* select(getGame(message.playerId))
+			assert(
+				game,
+				'The player should be in a game when they send the `REQUEST_GAME_HISTORY` message',
+			)
+
+			broadcast([root.players[message.playerId]], {
+				type: serverMessages.GAME_HISTORY,
+				history: game.history,
+			})
+
+			return
 	}
 }
 
