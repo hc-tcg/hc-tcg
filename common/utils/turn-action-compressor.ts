@@ -1,7 +1,7 @@
 import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {TurnAction} from '../types/game-state'
+import {PlayCardAction, TurnAction} from '../types/game-state'
 import {WithoutFunctions} from '../types/server-requests'
 import {
 	AnyTurnActionData,
@@ -83,16 +83,16 @@ const playCard: ReplayAction = {
 			query.slot.rowIndex(selectedSlotRow),
 			selectedSlotColumn < 3
 				? query.slot.index(selectedSlotColumn)
-				: selectedSlotColumn === 4
+				: selectedSlotColumn === 3
 					? query.slot.attach
-					: selectedSlotColumn === 5
+					: selectedSlotColumn === 4
 						? query.slot.hermit
 						: query.slot.singleUse,
 		)
 		if (!selectedSlot) return null
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
 		return {
-			type: 'PLAY_EFFECT_CARD',
+			type: replayActionsFromValues[this.value].turnAction as PlayCardAction,
 			slot: selectedSlot,
 			card: {
 				props: WithoutFunctions(selectedCard.props),
@@ -284,15 +284,18 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 }
 
-const replayActionsFromValues = Object.values(replayActions).reduce(
-	(all: Record<number, ReplayAction>, action) => {
-		all[action.value] = action
+const replayActionsFromValues = Object.entries(replayActions).reduce(
+	(
+		all: Record<number, ReplayAction & {turnAction: TurnAction}>,
+		[key, action],
+	) => {
+		all[action.value] = {...action, turnAction: key as TurnAction}
 		return all
 	},
 	{},
 )
 
-export function turnActionsToBuffer(
+export function turnActionToBuffer(
 	game: GameModel,
 	action: AnyTurnActionData,
 	millisecondsSinceLastAction: number,
