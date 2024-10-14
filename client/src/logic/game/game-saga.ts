@@ -1,14 +1,17 @@
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
-import {messages} from 'common/redux-messages'
+import {Message, messages, MessageTable} from 'common/redux-messages'
 import runGameSaga, {
 	gameMessages,
 	GameMessage,
 	GameMessageTable,
 } from 'common/routines/game'
-import {clientMessages} from 'common/socket-messages/client-messages'
+import {
+	ClientMessage,
+	clientMessages,
+} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
+import {GameOutcome, LocalGameState} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -42,6 +45,15 @@ const clientGameMessages = messages('client-game-message', {
 	GAME_END: null,
 	GAME_STATE_DESYNC: null,
 })
+
+type ClientGameMessages = [
+	{type: typeof clientGameMessages.GAME_END; outcome: GameOutcome},
+	{type: typeof clientGameMessages.GAME_STATE_DESYNC},
+]
+
+type ClientGameMessage = Message<ClientGameMessages>
+
+type ClientGameMessageTable = MessageTable<ClientGameMessages>
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -360,15 +372,17 @@ function* runGamesUntilCompletion(
 		yield* fork(runGame, props, playerEntity, reconnectInformation)
 
 		let result = yield* race({
-			gameEnd: take(clientGameMessages.GAME_END),
+			gameEnd: take<GameMessageTable[typeof clientGameMessages.GAME_END]>(
+				clientGameMessages.GAME_END,
+			),
 			gameStateDesync: take(clientGameMessages.GAME_STATE_DESYNC),
 			// @todo Spectator leave
 		})
 
 		if (result.gameEnd) {
 			console.log('Game ended! exiting...', result.gameEnd)
-			yield* put({
-				type: 'RUN_GAMES_UNTIL_COMPLETION_RETURN',
+			yield* put<ClientGameMessage>({
+				type: clientGameMessages.GAME_END,
 				outcome: result.gameEnd.outcome,
 			})
 			yield* cancel()
@@ -400,23 +414,24 @@ function* gameSaga(
 			reconnectInformation,
 		)
 
-		let gameOutcome = yield* take('RUN_GAMES_UNTIL_COMPLETION_RETURN')
-		console.log(gameOutcome)
+		let gameOutcome = yield* take<
+			ClientGameMessageTable[typeof clientGameMessages.GAME_END]
+		>(clientGameMessages.GAME_END)
 
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
 			outcome: gameOutcome.outcome,
 		})
 	} catch (err) {
+		// @todo Handle client crash
 		console.error('Client error: ', err)
-		yield put<LocalMessage>({
-			type: localMessages.GAME_END_OVERLAY_SHOW,
-		})
+		// yield put<LocalMessage>({
+		// 	type: localMessages.GAME_END_OVERLAY_SHOW,
+		// })
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
 		if (hasOverlay) yield take(localMessages.GAME_END_OVERLAY_HIDE)
 		yield put<LocalMessage>({type: localMessages.GAME_END})
-		yield cancel(backgroundTasks)
 	}
 }
 

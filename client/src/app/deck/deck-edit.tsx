@@ -214,7 +214,7 @@ const ALL_CARDS = sortCards(
 	CARDS_LIST.map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),
-			entity: newEntity('deck_editor_card'),
+			entity: newEntity('deck_editor_card', Math.random()),
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
@@ -321,7 +321,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				...loadedDeck.cards,
 				{
 					props: card.props,
-					entity: newEntity('card-entity') as CardEntity,
+					entity: newEntity('card-entity', Math.random()) as CardEntity,
 					slot: null,
 					turnedOver: false,
 					attackHint: null,

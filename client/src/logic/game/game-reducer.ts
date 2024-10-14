@@ -92,7 +92,6 @@ const gameReducer = (
 			return {
 				...state,
 				endGameOverlay: {
-					reason: action.outcome || null,
 					outcome: action.outcome,
 				},
 			}

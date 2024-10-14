@@ -69,7 +69,6 @@ export const localMessages = messages('client-local', {
 	GAME_TURN_END: null,
 	GAME_ACTIONS_ATTACK: null,
 	GAME_ACTIONS_END_TURN: null,
-	GAME_UPDATE: null,
 	GAME_SPECTATOR_LEAVE: null,
 	FIREBASE_AUTHED: null,
 	FIREBASE_STATS_RESET: null,
@@ -192,7 +191,6 @@ type Messages = [
 		action: AnyTurnActionData
 	},
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
-	{type: typeof localMessages.GAME_UPDATE},
 	{type: typeof localMessages.GAME_SPECTATOR_LEAVE},
 	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
 	{type: typeof localMessages.FIREBASE_STATS_RESET},
