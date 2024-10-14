@@ -363,6 +363,7 @@ function* gameSaga(
 		if (result.gameEnd) {
 			break
 		} else if (result.gameStateDesync) {
+			console.log('Attempting to fix client and server desync')
 			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
 		}
