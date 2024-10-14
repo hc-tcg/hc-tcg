@@ -114,13 +114,9 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	}
 }
 
-function* gameStateSaga(
-	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
-) {
+function* gameStateSaga(gameState: LocalGameState, time: number) {
 	let logic: any
 	try {
-		const gameState: LocalGameState = action.localGameState
-
 		// First show coin flips, if any
 		yield* call(coinFlipSaga, gameState)
 
@@ -128,7 +124,7 @@ function* gameStateSaga(
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: gameState,
-			time: action.time,
+			time: time,
 		})
 
 		yield* put<LocalMessage>({
@@ -181,7 +177,30 @@ function* handleGameTurnActionSaga(game: GameModel) {
 }
 
 function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
-	yield* takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga)
+	yield* fork(function* () {
+		while (true) {
+			let result = yield* race({
+				gameStateRecieved: take<
+					LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED]
+				>(localMessages.GAME_LOCAL_STATE_RECIEVED),
+				gameEnd: take<GameMessageTable[typeof gameMessages.GAME_END]>(
+					gameMessages.GAME_END,
+				),
+			})
+
+			if (result.gameStateRecieved) {
+				yield* gameStateSaga(
+					result.gameStateRecieved.localGameState,
+					result.gameStateRecieved.time,
+				)
+			} else if (result.gameEnd) {
+				yield* gameStateSaga(getLocalGameState(game, playerEntity), Date.now())
+				break
+			}
+		}
+		yield* cancel()
+	})
+
 	yield* put<LocalMessage>({
 		type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 		localGameState: getLocalGameState(game, playerEntity),
@@ -252,7 +271,7 @@ function* runGame(
 					call(chatSaga),
 					call(spectatorSaga),
 					call(reconnectSaga, game),
-					call(gameActionsSaga, game, playerEntity, isSpectator),
+					call(gameActionsSaga, game, playerEntity),
 					call(handleGameTurnActionSaga, game),
 				]),
 			)
@@ -260,7 +279,7 @@ function* runGame(
 			if (isReadyToDisplay) {
 				// Set the first local state
 				yield* putResolve<LocalMessage>({
-					type: localMessages.GAME_LOCAL_STATE_SET,
+					type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 					localGameState: getLocalGameState(game, playerEntity),
 					time: Date.now(),
 				})
@@ -334,7 +353,8 @@ function* runGame(
 		gameMessages.GAME_END,
 	)) as GameMessageTable[typeof gameMessages.GAME_END]
 
-	yield* cancel(backgroundTasks)
+	// yield* backgroundTasks
+
 	yield* put({type: clientGameMessages.GAME_END, outcome: message.outcome})
 }
 
@@ -369,7 +389,7 @@ function* runGamesUntilCompletion(
 				clientGameMessages.GAME_END,
 			),
 			gameStateDesync: take(clientGameMessages.GAME_STATE_DESYNC),
-			// @todo Spectator leave
+			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.gameEnd) {
@@ -384,6 +404,9 @@ function* runGamesUntilCompletion(
 			console.log('Attempting to fix client and server desync')
 			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
+		} else if (result.spectatorLeave) {
+			// @todo
+			break
 		}
 	}
 }

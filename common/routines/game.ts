@@ -789,6 +789,11 @@ export function* runGameSaga(
 
 	turnActionChannel.close()
 
+	// Make sure to show the last game state to the client.
+	if (sagas.update) {
+		yield* sagas.update(game)
+	}
+
 	yield* put<GameMessage>({
 		type: gameMessages.GAME_END,
 		outcome: figureOutGameResult(game),
