@@ -1,5 +1,5 @@
 import {getLocalCard} from '../../server/src/utils/state-gen'
-import {BoardSlotComponent, SlotComponent} from '../components'
+import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {TurnAction} from '../types/game-state'
@@ -8,6 +8,8 @@ import {
 	PlayCardActionData,
 	WaitActionData,
 	ModalResult,
+	PickSlotActionData,
+	ChangeActiveHermitActionData,
 } from '../types/turn-action-data'
 
 type ReplayAction = {
@@ -45,7 +47,7 @@ function getSlotIndex(slot: SlotComponent): number {
 
 const playCard: ReplayAction = {
 	value: 0x0,
-	chunks: 2,
+	chunks: 4,
 	compress(game, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
@@ -67,8 +69,8 @@ const playCard: ReplayAction = {
 	},
 	decompress(game, buffer): PlayCardActionData | null {
 		const selectedSlotRow = buffer.readInt8(0)
-		const selectedSlotColumn = buffer.readInt8(1)
-		const selectedCardIndex = buffer.readInt16BE(2)
+		const selectedSlotColumn = buffer.readInt8(8)
+		const selectedCardIndex = buffer.readInt16BE(16)
 
 		const selectedSlot = game.components.findEntity(
 			BoardSlotComponent,
@@ -157,20 +159,67 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	APPLY_EFFECT: {
-		...playCard,
 		value: 0x8,
+		chunks: 0,
+		compress() {
+			return null
+		},
+		decompress() {
+			return {
+				type: 'APPLY_EFFECT',
+			}
+		},
 	},
 	REMOVE_EFFECT: {
-		...playCard,
 		value: 0x9,
+		chunks: 0,
+		compress() {
+			return null
+		},
+		decompress() {
+			return {
+				type: 'REMOVE_EFFECT',
+			}
+		},
 	},
 	CHANGE_ACTIVE_HERMIT: {
-		...playCard,
 		value: 0xa,
+		chunks: 1,
+		compress(game, turnAction: ChangeActiveHermitActionData) {
+			const slot = game.components.find(
+				SlotComponent,
+				query.slot.entity(turnAction.entity),
+			)
+			if (!slot?.inRow()) return null
+			return writeIntToBuffer(slot.row.index, 8)
+		},
+		decompress(game, buffer) {
+			const rowIndex = buffer.readInt8(0)
+			const cardComponent = game.components.find(
+				CardComponent,
+				query.card.isHermit,
+				query.card.row(query.row.index(rowIndex)),
+			)
+			if (!cardComponent) return null
+			return {
+				type: 'CHANGE_ACTIVE_HERMIT',
+				entity: cardComponent.slot.entity,
+			}
+		},
 	},
 	PICK_REQUEST: {
-		...playCard,
 		value: 0xb,
+		chunks: 'variable',
+		compress(_game, turnAction: PickSlotActionData) {
+			const buffer = Buffer.from(turnAction.entity)
+			return Buffer.concat([writeIntToBuffer(buffer.length, 32), buffer])
+		},
+		decompress(_game, buffer) {
+			return {
+				type: 'PICK_REQUEST',
+				entity: buffer.toString('utf-8'),
+			}
+		},
 	},
 	MODAL_REQUEST: {
 		value: 0xc,
@@ -254,14 +303,14 @@ export function bufferToTurnActions(
 		const action = replayActionsFromValues[actionNumber]
 		i++
 		if (action.chunks !== 'variable') {
-			const chunks = buffer.subarray(i, i + action.chunks)
-			i += action.chunks
+			const chunks = buffer.subarray(i, i + action.chunks * 8)
+			i += action.chunks * 8
 			const turnAction = action.decompress(game, chunks)
 			if (turnAction) turnActions.push(turnAction)
 		} else {
-			const chunkAmount = buffer.readInt32BE(i)
+			const byteAmount = buffer.readInt32BE(i)
 			i += 4
-			const chunks = buffer.subarray(i, chunkAmount)
+			const chunks = buffer.subarray(i, byteAmount)
 			const turnAction = action.decompress(game, chunks)
 			if (turnAction) turnActions.push(turnAction)
 		}
