@@ -45,7 +45,7 @@ describe('Test Turn Action Compressor', () => {
 						},
 					}
 
-					const compressedActions = turnActionToBuffer(game, action, 190)
+					const compressedActions = turnActionToBuffer(game, action, 100)
 					console.log(compressedActions)
 					const firstRetrievedAction = bufferToTurnActions(
 						game,
@@ -60,6 +60,7 @@ describe('Test Turn Action Compressor', () => {
 
 					expect(slot.getCard()).not.toBe(null)
 					expect(game.currentPlayer.getHand().length).toEqual(1)
+					expect(firstRetrievedAction.millisecondsSinceLastAction).toEqual(100)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, logBoardState: false},

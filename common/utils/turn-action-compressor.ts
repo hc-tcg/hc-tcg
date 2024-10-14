@@ -12,6 +12,8 @@ import {
 	ChangeActiveHermitActionData,
 } from '../types/turn-action-data'
 
+const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
+
 type ReplayAction = {
 	value: number
 	// If bytes is variable, the following 4 bytes are used for length
@@ -25,19 +27,19 @@ type ReplayActionData = {
 	millisecondsSinceLastAction: number
 }
 
-function writeIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
+function writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
 	if (length === 1) {
 		const bytes = Buffer.alloc(1)
-		bytes.writeInt8(x)
+		bytes.writeUInt8(x)
 		return bytes
 	}
 	if (length === 2) {
 		const bytes = Buffer.alloc(2)
-		bytes.writeInt16BE(x)
+		bytes.writeUInt16BE(x)
 		return bytes
 	} else {
 		const bytes = Buffer.alloc(4)
-		bytes.writeInt32BE(x)
+		bytes.writeUInt32BE(x)
 		return bytes
 	}
 }
@@ -68,15 +70,15 @@ const playCard: ReplayAction = {
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
 		return Buffer.concat([
-			writeIntToBuffer(slotRow, 1),
-			writeIntToBuffer(slotColumn, 1),
-			writeIntToBuffer(cardIndex, 1),
+			writeUIntToBuffer(slotRow, 1),
+			writeUIntToBuffer(slotColumn, 1),
+			writeUIntToBuffer(cardIndex, 1),
 		])
 	},
 	decompress(game, buffer): PlayCardActionData | null {
-		const selectedSlotRow = buffer.readInt8(0)
-		const selectedSlotColumn = buffer.readInt8(1)
-		const selectedCardIndex = buffer.readInt16BE(2)
+		const selectedSlotRow = buffer.readUInt8(0)
+		const selectedSlotColumn = buffer.readUInt8(1)
+		const selectedCardIndex = buffer.readUInt8(2)
 
 		const selectedSlot = game.components.findEntity(
 			BoardSlotComponent,
@@ -203,10 +205,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.entity(turnAction.entity),
 			)
 			if (!slot?.inRow()) return null
-			return writeIntToBuffer(slot.row.index, 1)
+			return writeUIntToBuffer(slot.row.index, 1)
 		},
 		decompress(game, buffer) {
-			const rowIndex = buffer.readInt8(0)
+			const rowIndex = buffer.readUInt8(0)
 			const cardComponent = game.components.find(
 				CardComponent,
 				query.card.isHermit,
@@ -224,7 +226,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		bytes: 'variable',
 		compress(_game, turnAction: PickSlotActionData) {
 			const buffer = Buffer.from(turnAction.entity)
-			return Buffer.concat([writeIntToBuffer(buffer.length, 4), buffer])
+			return Buffer.concat([
+				writeUIntToBuffer(buffer.length, VARIABLE_BYTE_MAX),
+				buffer,
+			])
 		},
 		decompress(_game, buffer) {
 			return {
@@ -239,7 +244,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		compress(_game, turnAction: ModalResult) {
 			const json = JSON.stringify(turnAction.modalResult)
 			const buffer = Buffer.from(json)
-			return Buffer.concat([writeIntToBuffer(buffer.length, 4), buffer])
+			return Buffer.concat([
+				writeUIntToBuffer(buffer.length, VARIABLE_BYTE_MAX),
+				buffer,
+			])
 		},
 		decompress(_game, buffer) {
 			return JSON.parse(buffer.toString('utf-8'))
@@ -273,12 +281,12 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		value: 0xf0,
 		bytes: 4,
 		compress(_game, turnAction: WaitActionData) {
-			return writeIntToBuffer(turnAction.delay, 4)
+			return writeUIntToBuffer(turnAction.delay, 4)
 		},
 		decompress(_game, buffer) {
 			return {
 				type: 'DELAY',
-				delay: buffer.readInt32BE(0),
+				delay: buffer.readUInt32BE(0),
 			}
 		},
 	},
@@ -300,17 +308,17 @@ export function turnActionToBuffer(
 	action: AnyTurnActionData,
 	millisecondsSinceLastAction: number,
 ) {
-	const headerBuffer = writeIntToBuffer(replayActions[action.type].value, 1)
+	const headerBuffer = writeUIntToBuffer(replayActions[action.type].value, 1)
 	const argumentsBuffer = replayActions[action.type].compress(game, action)
 
-	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
+	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 10)
 
 	function getTimeBuffer(tenths: number, buffer?: Buffer): Buffer {
 		if (tenths < 0xff) {
-			if (!buffer) return writeIntToBuffer(tenths, 1)
-			return Buffer.concat([buffer, writeIntToBuffer(tenths, 1)])
+			if (!buffer) return writeUIntToBuffer(tenths, 1)
+			return Buffer.concat([buffer, writeUIntToBuffer(tenths, 1)])
 		}
-		return getTimeBuffer(tenths - 0xff, writeIntToBuffer(0xff, 1))
+		return getTimeBuffer(tenths - 0xff, writeUIntToBuffer(0xff, 1))
 	}
 
 	const timeBuffer = getTimeBuffer(tenthsSinceLastAction)
@@ -328,14 +336,14 @@ export function bufferToTurnActions(
 	let cursor = 0
 	const replayActions: Array<ReplayActionData> = []
 	while (cursor < buffer.length) {
-		const actionNumber = buffer.readInt8(cursor)
+		const actionNumber = buffer.readUInt8(cursor)
 		const action = replayActionsFromValues[actionNumber]
 		cursor++
-		let tenthsSinceLastAction = buffer.readInt8(cursor)
+		let tenthsSinceLastAction = buffer.readUInt8(cursor)
 		cursor++
-		while (buffer.readInt8(cursor) === 0xff) {
+		while (buffer.readUInt8(cursor) === 0xff) {
 			cursor++
-			tenthsSinceLastAction += buffer.readInt8(cursor)
+			tenthsSinceLastAction += buffer.readUInt8(cursor)
 		}
 		if (action.bytes !== 'variable') {
 			const bytes = buffer.subarray(cursor, cursor + action.bytes)
@@ -344,17 +352,17 @@ export function bufferToTurnActions(
 			if (turnAction)
 				replayActions.push({
 					action: turnAction,
-					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 10,
 				})
 		} else {
-			const byteAmount = buffer.readInt32BE(cursor)
-			cursor += 4
+			const byteAmount = buffer.readUInt32BE(cursor)
+			cursor += VARIABLE_BYTE_MAX
 			const bytes = buffer.subarray(cursor, byteAmount)
 			const turnAction = action.decompress(game, bytes)
 			if (turnAction)
 				replayActions.push({
 					action: turnAction,
-					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 10,
 				})
 		}
 		// We need to run the action to play the game to the next state here
