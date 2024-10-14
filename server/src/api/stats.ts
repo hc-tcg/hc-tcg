@@ -20,7 +20,6 @@ export async function getStats(
 	let stats = await db.getUserStats(header.uuid)
 
 	if (stats.type === 'success') {
-		console.log("Success")
 		return {
 			type: 'success',
 			stats: stats.body,
