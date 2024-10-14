@@ -421,6 +421,7 @@ function* turnActionSaga(
 				return 'FORFEIT'
 				break
 			case 'SET_TIMER':
+				// I really apoligize about this one.
 				game.actionsHandled -= 1
 				game.state.timer.turnRemaining = turnAction.action.turnRemaining
 				game.state.timer.turnStartTime = turnAction.action.turnStartTime
