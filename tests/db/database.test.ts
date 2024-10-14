@@ -163,6 +163,9 @@ describe('Test Database', () => {
 			loser.body.uuid,
 			'player_won',
 			winner.body.uuid,
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0x00, 0x01, 0x00, 0x04, 0x00, 0x00]),
 		)
 
 		await database.insertGame(
@@ -172,6 +175,9 @@ describe('Test Database', () => {
 			loser.body.uuid,
 			'forfeit',
 			loser.body.uuid,
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0x00, 0x01, 0x00, 0x04, 0x00, 0x00]),
 		)
 
 		await database.insertGame(
@@ -181,6 +187,9 @@ describe('Test Database', () => {
 			loser.body.uuid,
 			'tie',
 			null,
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0, 0, 0, 0]),
+			Buffer.from([0x00, 0x01, 0x00, 0x04, 0x00, 0x00]),
 		)
 
 		const winningPlayerStats = await database.getUserStats(winner.body.uuid)

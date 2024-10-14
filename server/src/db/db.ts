@@ -31,6 +31,7 @@ export class Database {
 			`
 			CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 			CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+			SET bytea_output = 'hex';
 			CREATE TABLE IF NOT EXISTS users(
 				user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 				secret varchar(255) NOT NULL,
@@ -50,7 +51,10 @@ export class Database {
 				loser uuid REFERENCES users(user_id),
 				winner_deck_code varchar(7) REFERENCES decks(deck_code),
 				loser_deck_code varchar(7) REFERENCES decks(deck_code),
-				outcome varchar(31) NOT NULL
+				outcome varchar(31) NOT NULL,
+				winner_shuffle_order bytea NOT NULL,
+				loser_shuffle_order bytea NOT NULL,
+				replay bytea NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS cards(
 				card_id integer PRIMARY KEY NOT NULL
@@ -501,28 +505,46 @@ export class Database {
 		secondPlayerUuid: string,
 		outcome: GameEndOutcomeT,
 		winningPlayerUuid: string | null,
+		firstPlayerShuffleOrder: Buffer,
+		secondPlayerShuffleOrder: Buffer,
+		replay: Buffer,
 	): Promise<DatabaseResult> {
 		try {
 			let winner
 			let winningDeck
 			let loser
 			let losingDeck
+			let winnerShuffleOrder
+			let loserShuffleOrder
 
 			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
 				winner = firstPlayerUuid
 				winningDeck = firstPlayerDeckCode
 				loser = secondPlayerUuid
 				losingDeck = secondPlayerDeckCode
+				winnerShuffleOrder = firstPlayerShuffleOrder
+				loserShuffleOrder = secondPlayerShuffleOrder
 			} else {
 				winner = secondPlayerUuid
 				winningDeck = secondPlayerDeckCode
 				loser = firstPlayerUuid
 				losingDeck = firstPlayerDeckCode
+				winnerShuffleOrder = secondPlayerShuffleOrder
+				loserShuffleOrder = firstPlayerShuffleOrder
 			}
 
 			await this.pool.query(
-				"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome) VALUES('now',$1,$2,$3,$4,$5)",
-				[winner, loser, winningDeck, losingDeck, outcome],
+				"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome, winner_shuffle_order, loser_shuffle_order, replay) VALUES('now',$1,$2,$3,$4,$5,$6,$7,$8)",
+				[
+					winner,
+					loser,
+					winningDeck,
+					losingDeck,
+					outcome,
+					winnerShuffleOrder,
+					loserShuffleOrder,
+					replay,
+				],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
