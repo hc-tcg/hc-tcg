@@ -63,6 +63,20 @@ export function* gameManagerSaga({
 			// Player one is added to the ECS first, Player two is added second
 			const players = game.components.filter(PlayerComponent)
 
+			serverSideGame = new GameController({
+				game: game,
+				viewers,
+				playerOne: {
+					playerId: player1.id,
+					entity: players[0].entity,
+				},
+				playerTwo: {
+					playerId: player2.id,
+					entity: players[1].entity,
+				},
+				props: gameProps,
+			})
+
 			viewers.forEach((p, index) => {
 				if (p.type === 'player') {
 					broadcast([root.players[p.id]], {
@@ -76,20 +90,6 @@ export function* gameManagerSaga({
 						game: serverSideGame.startupInformation(),
 					})
 				}
-			})
-
-			serverSideGame = new GameController({
-				game: game,
-				viewers,
-				playerOne: {
-					playerId: player1.id,
-					entity: players[0].entity,
-				},
-				playerTwo: {
-					playerId: player2.id,
-					entity: players[1].entity,
-				},
-				props: gameProps,
 			})
 
 			root.games[identifierInRootState] = serverSideGame
