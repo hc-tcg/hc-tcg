@@ -199,6 +199,7 @@ function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 				currentTask = yield* fork(() =>
 					gameStateSaga(getLocalGameState(game, playerEntity), Date.now()),
 				)
+				break
 			}
 		}
 	})
@@ -258,7 +259,6 @@ function* runGame(
 		}
 	},
 ) {
-	const isSpectator = playerEntity === undefined
 	let isReadyToDisplay = false
 	let backgroundTasks: any
 
