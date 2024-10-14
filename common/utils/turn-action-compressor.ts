@@ -14,10 +14,10 @@ import {
 
 type ReplayAction = {
 	value: number
-	// If variable the following 4 bytes are used for length
-	chunks: number | 'variable' // Each chunk is 8 bits
+	// If bytes is variable, the following 4 bytes are used for length
+	bytes: number | 'variable'
 	compress: (game: GameModel, turnAction: any) => Buffer | null
-	decompress: (game: GameModel, chunks: Buffer) => AnyTurnActionData | null
+	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
 }
 
 function writeIntToBuffer(x: number, length: 8 | 16 | 32): Buffer {
@@ -47,7 +47,7 @@ function getSlotIndex(slot: SlotComponent): number {
 
 const playCard: ReplayAction = {
 	value: 0x0,
-	chunks: 4,
+	bytes: 4,
 	compress(game, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
@@ -112,7 +112,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	SINGLE_USE_ATTACK: {
 		value: 0x4,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -124,7 +124,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	PRIMARY_ATTACK: {
 		value: 0x5,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -136,7 +136,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	SECONDARY_ATTACK: {
 		value: 0x6,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -148,7 +148,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	END_TURN: {
 		value: 0x7,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -160,7 +160,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	APPLY_EFFECT: {
 		value: 0x8,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -172,7 +172,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	REMOVE_EFFECT: {
 		value: 0x9,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -184,7 +184,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	CHANGE_ACTIVE_HERMIT: {
 		value: 0xa,
-		chunks: 1,
+		bytes: 1,
 		compress(game, turnAction: ChangeActiveHermitActionData) {
 			const slot = game.components.find(
 				SlotComponent,
@@ -209,7 +209,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	PICK_REQUEST: {
 		value: 0xb,
-		chunks: 'variable',
+		bytes: 'variable',
 		compress(_game, turnAction: PickSlotActionData) {
 			const buffer = Buffer.from(turnAction.entity)
 			return Buffer.concat([writeIntToBuffer(buffer.length, 32), buffer])
@@ -223,7 +223,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	MODAL_REQUEST: {
 		value: 0xc,
-		chunks: 'variable',
+		bytes: 'variable',
 		compress(_game, turnAction: ModalResult) {
 			const json = JSON.stringify(turnAction.modalResult)
 			const buffer = Buffer.from(json)
@@ -235,7 +235,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	WAIT_FOR_TURN: {
 		value: 0xd,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -247,7 +247,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	WAIT_FOR_OPPONENT_ACTION: {
 		value: 0xe,
-		chunks: 0,
+		bytes: 0,
 		compress() {
 			return null
 		},
@@ -259,7 +259,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	DELAY: {
 		value: 0xf0,
-		chunks: 4,
+		bytes: 4,
 		compress(_game, turnAction: WaitActionData) {
 			return writeIntToBuffer(turnAction.delay, 32)
 		},
@@ -302,16 +302,16 @@ export function bufferToTurnActions(
 		const actionNumber = buffer.readInt8(i)
 		const action = replayActionsFromValues[actionNumber]
 		i++
-		if (action.chunks !== 'variable') {
-			const chunks = buffer.subarray(i, i + action.chunks * 8)
-			i += action.chunks * 8
-			const turnAction = action.decompress(game, chunks)
+		if (action.bytes !== 'variable') {
+			const bits = buffer.subarray(i, i + action.bytes * 8)
+			i += action.bytes * 8
+			const turnAction = action.decompress(game, bits)
 			if (turnAction) turnActions.push(turnAction)
 		} else {
 			const byteAmount = buffer.readInt32BE(i)
 			i += 4
-			const chunks = buffer.subarray(i, byteAmount)
-			const turnAction = action.decompress(game, chunks)
+			const bits = buffer.subarray(i, byteAmount)
+			const turnAction = action.decompress(game, bits)
 			if (turnAction) turnActions.push(turnAction)
 		}
 	}
