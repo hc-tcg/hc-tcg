@@ -1,11 +1,6 @@
 import {PlayerComponent} from 'common/components'
-import {PlayerEntity} from 'common/entities'
-import {
-	GameModel,
-	GameProps,
-	gameSettingsFromEnv,
-} from 'common/models/game-model'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {gameSettingsFromEnv} from 'common/models/game-model'
+import {PlayerModel} from 'common/models/player-model'
 import setupGameSaga, {
 	GameMessage,
 	gameMessages,
@@ -13,11 +8,11 @@ import setupGameSaga, {
 } from 'common/routines/game'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
+import {GameController, GameViewer} from 'game-controller'
 import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {GameController, GameViewer} from 'game-controller'
 
 type Props = {
 	player1: PlayerModel
@@ -99,7 +94,6 @@ export function* gameManagerSaga({
 						)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 
 						if (game.state.order.includes(action.playerEntity)) {
-							console.log(action)
 							yield* put<GameMessage>({
 								type: gameMessages.TURN_ACTION,
 								playerEntity: action.playerEntity,

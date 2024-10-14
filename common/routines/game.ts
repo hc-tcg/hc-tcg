@@ -1,7 +1,6 @@
 import {
 	actionChannel,
 	call,
-	cancel,
 	delay,
 	fork,
 	put,

@@ -17,7 +17,6 @@ import {
 	all,
 	call,
 	cancel,
-	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -141,8 +140,8 @@ function* handleGameTurnActionSaga(game: GameModel) {
 			receiveMsg(socket, serverMessages.GAME_TURN_ACTION),
 		)
 
-		// let currentGameState = game.getStateHash()
-
+		// If the message time is handled, we already handled the message.
+		// Messages on the same milisecond are probably not going to happen.
 		if (!game.handledActions.includes(message.time)) {
 			yield* putResolve<GameMessage>({
 				type: gameMessages.TURN_ACTION,

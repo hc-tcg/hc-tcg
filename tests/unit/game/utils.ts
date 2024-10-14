@@ -19,6 +19,7 @@ import gameSaga, {
 	GameMessageTable,
 	runGameSaga,
 } from 'common/routines/game'
+import {GameMessage} from 'common/routines/game'
 import {SlotTypeT} from 'common/types/cards'
 import {GameOutcome} from 'common/types/game-state'
 import {LocalModalResult} from 'common/types/server-requests'
@@ -29,7 +30,6 @@ import {
 import {assert} from 'common/utils/assert'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
-import {GameMessage} from 'common/routines/game'
 import {call, cancel, fork, put, take} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>) {

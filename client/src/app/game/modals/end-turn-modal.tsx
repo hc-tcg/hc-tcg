@@ -37,7 +37,6 @@ function EndTurnModal({closeModal}: Props) {
 	let modal = EndTurnModalBody({availableActions, handleCancel, handleEndTurn})
 
 	if (modal !== null) {
-		console.log('Returning modal')
 		return modal
 	}
 

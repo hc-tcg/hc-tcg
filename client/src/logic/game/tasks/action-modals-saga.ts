@@ -1,7 +1,7 @@
 import {TurnAction} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
-import {fork, put, take} from 'redux-saga/effects'
+import {put, take} from 'redux-saga/effects'
 import {
 	AttackModal,
 	ChangeHermitModal,
