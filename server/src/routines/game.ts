@@ -40,6 +40,7 @@ export function* gameManagerSaga({
 			},
 			deck: player1.deck.cards.map((card) => card.props.numericId),
 		},
+		id: identifierInRootState,
 		player2: {
 			model: {
 				name: player2.name,

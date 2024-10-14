@@ -106,6 +106,7 @@ export type GameProps = {
 	spectatorCode?: string
 	randomizeOrder?: boolean
 	randomNumberSeed: string
+	id: string
 }
 
 export class GameModel {
@@ -164,7 +165,7 @@ export class GameModel {
 
 	constructor(props: GameProps) {
 		this.settings = props.settings
-		this.id = Math.random().toString(16)
+		this.id = props.id
 
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)

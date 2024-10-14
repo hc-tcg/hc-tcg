@@ -1,5 +1,6 @@
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
+import {messages} from 'common/redux-messages'
 import runGameSaga, {
 	gameMessages,
 	GameMessage,
@@ -17,7 +18,6 @@ import {
 	all,
 	call,
 	cancel,
-	cancelled,
 	fork,
 	put,
 	putResolve,
@@ -37,6 +37,11 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+
+const clientGameMessages = messages('client-game-message', {
+	GAME_END: null,
+	GAME_STATE_DESYNC: null,
+})
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -212,7 +217,8 @@ function* reconnectSaga(game: GameModel) {
 	}
 }
 
-function* gameSaga(
+/** Run a game until completion */
+function* runGame(
 	props: GameProps,
 	playerEntity: PlayerEntity,
 	reconnectInformation?: {
@@ -319,8 +325,44 @@ function* gameSaga(
 
 	yield* fork(() => gameSaga)
 
+	yield* take<GameMessage>(gameMessages.GAME_END)
+}
+
+async function* gameSaga(
+	props: GameProps,
+	playerEntity: PlayerEntity,
+	reconnectInformation?: {
+		history: Array<GameMessage>
+		timer: {
+			turnRemaining: number
+			turnStartTime: number
+		}
+	},
+) {
+	console.log(props.id)
+	while (true) {
+		// yield* fork(runGame, props, playerEntity, reconnectInformation)
+
+		// let result = yield* race({
+		// 	gameEnd: clientGameMessages.GAME_END,
+		// 	gameStateDesync: clientGameMessages.GAME_STATE_DESYNC,
+		// 	// @todo Spectator leave
+		// })
+		let history = await fetch(`/api/games/${props.id}/history`)
+		console.log(history)
+
+		if (result.gameEnd) {
+			break
+		} else if (result.gameStateDesync) {
+			let history = yield fetch(`/api/games/${props.id}/history`)
+			console.log(history)
+			continue
+		}
+	}
+
 	try {
 		const result = yield* race({
+			// @todo Change to different message type
 			game: take(gameMessages.GAME_END),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
