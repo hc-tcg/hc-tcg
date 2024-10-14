@@ -1,12 +1,13 @@
-import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import Slider from 'components/slider'
+import Button from 'components/button'
+import {Stats} from 'common/types/database'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -15,8 +16,14 @@ function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
-	// @todo Get stats working again
-	const totalGames = stats.w + stats.l + stats.fw + stats.fl + stats.t
+	const [stats, setStats] = useState<Stats | null>(null)
+
+	useEffect(() => {
+		fetch('/api/stats', {headers: {uuid: '1234'}}).then((resp) => {
+			if (resp.status !== 200) return
+			resp.json().then((json) => setStats(json))
+		})
+	}, [])
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
@@ -88,7 +95,11 @@ function Settings({setMenuSection}: Props) {
 	}
 
 	const winrate =
-		Math.round(((stats.w + stats.fw) / (totalGames - stats.t)) * 10000) / 100
+		stats !== null &&
+		Math.round(
+			((stats.wins + stats.forfeitWins) / (stats.gamesPlayed - stats.ties)) *
+				10000,
+		) / 100
 
 	return (
 		<>
@@ -146,31 +157,35 @@ function Settings({setMenuSection}: Props) {
 					<div className={css.stats}>
 						<div className={css.stat}>
 							<span>Games Played</span>
-							<span>{totalGames}</span>
+							<span>{stats?.gamesPlayed}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Wins</span>
-							<span>{stats.w}</span>
+							<span>{stats?.wins}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Losses</span>
-							<span>{stats.l}</span>
+							<span>{stats?.losses}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Ties</span>
-							<span>{stats.t}</span>
+							<span>{stats?.ties}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Forfeit Wins</span>
-							<span>{stats.fw}</span>
+							<span>{stats?.forfeitWins}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Forfeit Losses</span>
-							<span>{stats.fl}</span>
+							<span>{stats?.forfeitLosses}</span>
 						</div>
 						<div className={css.stat}>
 							<span>Winrate</span>
-							<span>{totalGames > stats.t ? winrate + '%' : 'N/A'}</span>
+							<span>
+								{stats !== null && stats.forfeitLosses > stats.ties
+									? winrate + '%'
+									: 'N/A'}
+							</span>
 						</div>
 					</div>
 				</div>
