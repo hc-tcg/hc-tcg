@@ -17,6 +17,9 @@ function EndTurnModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
+	// I do now know why I need this line! Seems to be an issue with the modals opening multiple times when react re-renders.
+	if (!availableActions.includes('END_TURN')) return
+
 	const handleEndTurn = () => {
 		dispatch({type: localMessages.GAME_TURN_END})
 		closeModal()
@@ -34,7 +37,7 @@ function EndTurnModal({closeModal}: Props) {
 	let modal = EndTurnModalBody({availableActions, handleCancel, handleEndTurn})
 
 	if (modal !== null) {
-		console.log("Returning modal")
+		console.log('Returning modal')
 		return modal
 	}
 

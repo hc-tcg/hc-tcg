@@ -201,15 +201,6 @@ function Game() {
 		}
 	}
 
-	let [modalToRender, setModalToRender] = useState<any>(null)
-	useEffect(() => {
-		if (openedModal === null || openedModal.id === null) {
-			setModalToRender(null)
-			return
-		}
-		setModalToRender(renderModal(openedModal, handleOpenModal))
-	}, [openedModal])
-
 	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
 		if (
@@ -335,7 +326,7 @@ function Game() {
 				)}
 			</div>
 
-			{modalToRender}
+			{renderModal(openedModal, handleOpenModal)}
 
 			<Chat />
 			{endGameOverlay?.outcome && (
