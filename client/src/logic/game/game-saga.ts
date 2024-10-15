@@ -40,20 +40,25 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {Client} from 'socket.io/dist/client'
 
-const clientGameMessages = messages('client-game-message', {
+const gameSagaMessages = messages('client-game-message', {
 	GAME_END: null,
 	GAME_STATE_DESYNC: null,
+	GAME_ACTION_SAGA_OVER: null,
+	WAITING_FOR_ACTION: null,
 })
 
-type ClientGameMessages = [
-	{type: typeof clientGameMessages.GAME_END; outcome: GameOutcome},
-	{type: typeof clientGameMessages.GAME_STATE_DESYNC},
+type GameSagaMessages = [
+	{type: typeof gameSagaMessages.GAME_END; outcome: GameOutcome},
+	{type: typeof gameSagaMessages.GAME_STATE_DESYNC},
+	{type: typeof gameSagaMessages.GAME_ACTION_SAGA_OVER},
+	{type: typeof gameSagaMessages.WAITING_FOR_ACTION},
 ]
 
-type ClientGameMessage = Message<ClientGameMessages>
+type GameSagaMessage = Message<GameSagaMessages>
 
-type ClientGameMessageTable = MessageTable<ClientGameMessages>
+type GameSagaMessageTable = MessageTable<GameSagaMessages>
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -114,34 +119,40 @@ function* actionSaga(playerEntity: PlayerEntity) {
 	}
 }
 
-function* gameStateSaga(gameState: LocalGameState, time: number) {
+function* gameStateSaga(
+	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
+) {
 	let logic: any
 	try {
+		console.log('HERE1')
 		// First show coin flips, if any
-		yield* call(coinFlipSaga, gameState)
+		yield* call(coinFlipSaga, action.localGameState)
+		console.log('HERE2')
 
 		// Actually update the local state
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_SET,
-			localGameState: gameState,
-			time: time,
+			localGameState: action.localGameState,
+			time: action.time,
 		})
 
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
-			lines: gameState.voiceLineQueue,
+			lines: action.localGameState.voiceLineQueue,
 		})
 
 		logic = yield* fork(() =>
 			all([
 				call(slotSaga),
-				call(actionLogicSaga, gameState),
+				call(actionLogicSaga, action.localGameState),
 				call(endTurnSaga),
 				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
 			]),
 		)
 
-		yield call(actionSaga, gameState.playerEntity)
+		yield* put({type: gameSagaMessages.WAITING_FOR_ACTION})
+
+		yield call(actionSaga, action.localGameState.playerEntity)
 	} finally {
 		yield* cancel(logic)
 	}
@@ -171,37 +182,26 @@ function* handleGameTurnActionSaga(game: GameModel) {
 				game.getStateHash(),
 				message.gameStateHash,
 			)
-			yield* put({type: clientGameMessages.GAME_STATE_DESYNC})
+			yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
 		}
 	}
 }
 
 function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 	yield* fork(function* () {
-		let currentTask = undefined
-		while (true) {
-			let result = yield* race({
-				gameStateRecieved: take<
-					LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED]
-				>(localMessages.GAME_LOCAL_STATE_RECIEVED),
-				gameEnd: take<GameMessageTable[typeof gameMessages.GAME_END]>(
-					gameMessages.GAME_END,
-				),
-			})
+		let saga = yield* takeLatest(
+			localMessages.GAME_LOCAL_STATE_RECIEVED,
+			gameStateSaga,
+		)
 
-			if (currentTask) yield* cancel(currentTask)
+		yield* take(gameMessages.GAME_END)
+		yield* take(gameSagaMessages.WAITING_FOR_ACTION)
 
-			if (result.gameStateRecieved) {
-				const gameState = result.gameStateRecieved.localGameState
-				const time = result.gameStateRecieved.time
-				currentTask = yield* fork(() => gameStateSaga(gameState, time))
-			} else if (result.gameEnd) {
-				currentTask = yield* fork(() =>
-					gameStateSaga(getLocalGameState(game, playerEntity), Date.now()),
-				)
-				break
-			}
-		}
+		yield* cancel(saga)
+
+		yield* put<GameSagaMessage>({
+			type: gameSagaMessages.GAME_ACTION_SAGA_OVER,
+		})
 	})
 
 	yield* put<LocalMessage>({
@@ -355,9 +355,11 @@ function* runGame(
 		gameMessages.GAME_END,
 	)) as GameMessageTable[typeof gameMessages.GAME_END]
 
-	// yield* backgroundTasks
+	yield* take(gameSagaMessages.GAME_ACTION_SAGA_OVER)
 
-	yield* put({type: clientGameMessages.GAME_END, outcome: message.outcome})
+	yield* cancel(backgroundTasks)
+
+	yield* put({type: gameSagaMessages.GAME_END, outcome: message.outcome})
 }
 
 function* requestGameReconnectInformation() {
@@ -387,17 +389,17 @@ function* runGamesUntilCompletion(
 		yield* fork(runGame, props, playerEntity, reconnectInformation)
 
 		let result = yield* race({
-			gameEnd: take<GameMessageTable[typeof clientGameMessages.GAME_END]>(
-				clientGameMessages.GAME_END,
+			gameEnd: take<GameMessageTable[typeof gameSagaMessages.GAME_END]>(
+				gameSagaMessages.GAME_END,
 			),
-			gameStateDesync: take(clientGameMessages.GAME_STATE_DESYNC),
+			gameStateDesync: take(gameSagaMessages.GAME_STATE_DESYNC),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.gameEnd) {
 			console.log('Game ended! exiting...', result.gameEnd)
-			yield* put<ClientGameMessage>({
-				type: clientGameMessages.GAME_END,
+			yield* put<GameSagaMessage>({
+				type: gameSagaMessages.GAME_END,
 				outcome: result.gameEnd.outcome,
 			})
 			yield* cancel()
@@ -433,8 +435,8 @@ function* gameSaga(
 		)
 
 		let gameOutcome = yield* take<
-			ClientGameMessageTable[typeof clientGameMessages.GAME_END]
-		>(clientGameMessages.GAME_END)
+			GameSagaMessageTable[typeof gameSagaMessages.GAME_END]
+		>(gameSagaMessages.GAME_END)
 
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
