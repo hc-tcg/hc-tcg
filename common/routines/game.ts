@@ -492,8 +492,8 @@ function* turnActionsSaga(
 	game: GameModel,
 	turnActionChannel: any,
 	onTurnActionSaga: (action: any, game: GameModel) => void,
+	delaySaga: (ms: number) => any,
 	update?: (game: GameModel) => any,
-	delaySaga?: (ms: number) => any,
 ) {
 	const {opponentPlayer, currentPlayer} = game
 
@@ -582,7 +582,7 @@ function* turnActionsSaga(
 			opponentPlayer.coinFlips = []
 
 			// Run action logic
-			const result = yield* call(turnActionSaga, game, turnAction, delaySaga)
+			const result = yield* turnActionSaga(game, turnAction, delaySaga)
 
 			for (const chatMessage of game.chat) {
 				yield* put<GameMessage>({
@@ -612,6 +612,7 @@ export function* turnSaga(
 	game: GameModel,
 	turnActionChannel: any,
 	onTurnActionSaga: (action: any, game: GameModel) => void,
+	delaySaga: (ms: number) => void,
 	update?: (game: GameModel) => any,
 ) {
 	const {currentPlayer, opponentPlayer} = game
@@ -664,6 +665,7 @@ export function* turnSaga(
 		game,
 		turnActionChannel,
 		onTurnActionSaga,
+		delaySaga,
 		update,
 	)
 
@@ -806,8 +808,8 @@ export function* runGameSaga(
 			game,
 			turnActionChannel,
 			sagas.onTurnAction,
-			sagas.update,
 			sagas.delay || delay,
+			sagas.update,
 		)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++
