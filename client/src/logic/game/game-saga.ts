@@ -1,17 +1,14 @@
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameProps} from 'common/models/game-model'
-import {Message, messages, MessageTable} from 'common/redux-messages'
+import {Message, MessageTable, messages} from 'common/redux-messages'
 import runGameSaga, {
 	gameMessages,
 	GameMessage,
 	GameMessageTable,
 } from 'common/routines/game'
-import {
-	ClientMessage,
-	clientMessages,
-} from 'common/socket-messages/client-messages'
+import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameOutcome, LocalGameState} from 'common/types/game-state'
+import {GameOutcome} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -30,7 +27,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay, getIsSpectator} from './game-selectors'
+import {getEndGameOverlay} from './game-selectors'
 import {getLocalGameState} from './local-state'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
@@ -40,7 +37,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {Client} from 'socket.io/dist/client'
 
 const gameSagaMessages = messages('client-game-message', {
 	GAME_END: null,

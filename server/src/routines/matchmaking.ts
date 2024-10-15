@@ -13,11 +13,11 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameViewer} from 'game-controller'
 import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
-import {GameController, GameViewer} from 'game-controller'
 
 export function inGame(playerId: PlayerId) {
 	return root
