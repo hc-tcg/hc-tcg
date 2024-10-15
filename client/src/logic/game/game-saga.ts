@@ -120,10 +120,8 @@ function* gameStateSaga(
 ) {
 	let logic: any
 	try {
-		console.log('HERE1')
 		// First show coin flips, if any
 		yield* call(coinFlipSaga, action.localGameState)
-		console.log('HERE2')
 
 		// Actually update the local state
 		yield* put<LocalMessage>({
@@ -393,7 +391,6 @@ function* runGamesUntilCompletion(
 		})
 
 		if (result.gameEnd) {
-			console.log('Game ended! exiting...', result.gameEnd)
 			yield* put<GameSagaMessage>({
 				type: gameSagaMessages.GAME_END,
 				outcome: result.gameEnd.outcome,
@@ -401,7 +398,7 @@ function* runGamesUntilCompletion(
 			yield* cancel()
 			break
 		} else if (result.gameStateDesync) {
-			console.log('Attempting to fix client and server desync')
+			console.error('Client and server desync detected. Attempting to fix...')
 			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
 		} else if (result.spectatorLeave) {
