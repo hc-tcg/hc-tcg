@@ -93,28 +93,6 @@ export class BattleLogModel {
 
 			console.info(`${this.game.logHeader} ${firstEntry.description}`)
 		}
-
-		// We skip waiting for the logs to send if there are no players. This is because
-		// the coin flip delay confuses jest. Additionally we don't want to wait longer
-		// than what is needed in tests.
-		if (!this.game.settings.waitForCoinFlips) {
-			return
-		}
-
-		await new Promise((e) =>
-			setTimeout(
-				e,
-				this.game.currentPlayer.coinFlips.reduce(
-					(r, flip) => r + flip.delay,
-					0,
-				),
-			),
-		)
-
-		// broadcast(this.game.getPlayers(), {
-		// 	type: 'CHAT_UPDATE',
-		// 	messages: this.game.chat,
-		// })
 	}
 
 	private genCardName(
@@ -348,12 +326,6 @@ export class BattleLogModel {
 			createdAt: Date.now(),
 			message: LineNode(),
 		})
-
-		// @todo Fix the battle log
-		// broadcast(this.game.getPlayers(), {
-		// 	type: 'CHAT_UPDATE',
-		// 	messages: this.game.chat,
-		// })
 	}
 
 	public addStatusEffectEntry(

@@ -4,7 +4,7 @@ import {GameModel, GameProps} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {GameMessage, GameStartupInformation} from 'common/routines/game'
 import {ServerMessage} from 'common/socket-messages/server-messages'
-import {Message} from 'common/types/game-state'
+import {ChatMessage} from 'common/types/game-state'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 
@@ -37,7 +37,7 @@ export class GameController {
 		playerId: PlayerId
 	}
 	props: GameProps
-	chat: Array<Message> = []
+	chat: Array<ChatMessage> = []
 	history: Array<GameMessage> = []
 
 	constructor({game, viewers, playerOne, playerTwo, props}: Props) {

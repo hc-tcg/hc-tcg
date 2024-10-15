@@ -20,7 +20,12 @@ import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel, GameProps} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {GameOutcome, TurnAction, TurnActions} from '../types/game-state'
+import {
+	ChatMessage,
+	GameOutcome,
+	TurnAction,
+	TurnActions,
+} from '../types/game-state'
 import {AnyTurnActionData, PickSlotActionData} from '../types/turn-action-data'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
@@ -42,6 +47,7 @@ import {virtualPlayerActionSaga} from './virtual'
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,
 	GAME_END: null,
+	CHAT_MESSAGE: null,
 })
 
 export type GameMessages = [
@@ -54,6 +60,10 @@ export type GameMessages = [
 	{
 		type: typeof gameMessages.GAME_END
 		outcome: GameOutcome
+	},
+	{
+		type: typeof gameMessages.CHAT_MESSAGE
+		message: ChatMessage
 	},
 ]
 
@@ -430,7 +440,6 @@ function* turnActionSaga(
 				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
 				endTurn = true
 				return 'FORFEIT'
-				break
 			case 'SET_TIMER':
 				// I really apoligize about this one.
 				game.actionsHandled -= 1
@@ -575,6 +584,13 @@ function* turnActionsSaga(
 			// Run action logic
 			const result = yield* call(turnActionSaga, game, turnAction, delaySaga)
 
+			for (const chatMessage of game.chat) {
+				yield* put<GameMessage>({
+					type: gameMessages.CHAT_MESSAGE,
+					message: chatMessage,
+				})
+			}
+
 			game.actionsHandled += 1
 			game.setStateHash()
 			yield* call(onTurnActionSaga, turnAction, game)
@@ -612,6 +628,13 @@ export function* turnSaga(
 	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
 	game.battleLog.addTurnStartEntry()
+
+	for (const chatMessage of game.chat) {
+		yield* put<GameMessage>({
+			type: gameMessages.CHAT_MESSAGE,
+			message: chatMessage,
+		})
+	}
 
 	// Call turn start hooks
 	currentPlayer.hooks.onTurnStart.call()

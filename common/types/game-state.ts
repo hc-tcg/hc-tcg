@@ -181,7 +181,7 @@ export type LocalGameState = {
 	voiceLineQueue: Array<string>
 }
 
-type MessageSender =
+type ChatMessageSender =
 	| {
 			type: 'viewer'
 			id: PlayerId
@@ -191,8 +191,8 @@ type MessageSender =
 			id: PlayerEntity
 	  }
 
-export type Message = {
-	sender: MessageSender
+export type ChatMessage = {
+	sender: ChatMessageSender
 	message: FormattedTextNode
 	createdAt: number
 }

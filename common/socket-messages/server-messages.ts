@@ -4,7 +4,7 @@ import {Message, MessageTable, messages} from '../redux-messages'
 import {GameMessage, GameStartupInformation} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
 import {LocalGameState} from '../types/game-state'
-import {Message as ChatMessage} from '../types/game-state'
+import {ChatMessage as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
@@ -74,12 +74,6 @@ export type ServerMessages = [
 		time: number
 		/** A number approximating the game state, used to verify games are synced between the server and client. */
 		gameStateHash: string
-	},
-	{
-		type: typeof serverMessages.GAME_END
-		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

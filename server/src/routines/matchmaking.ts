@@ -18,6 +18,7 @@ import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
+import ExBossAI from 'common/routines/virtual/exboss-ai'
 
 export function inGame(playerId: PlayerId) {
 	return root

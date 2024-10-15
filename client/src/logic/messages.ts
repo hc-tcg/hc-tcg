@@ -8,7 +8,7 @@ import {
 	LocalCurrentCoinFlip,
 	LocalGameState,
 } from 'common/types/game-state'
-import {Message as ChatMessage} from 'common/types/game-state'
+import {ChatMessage as ChatMessage} from 'common/types/game-state'
 import {
 	LocalCardInstance,
 	PlayerInfo,

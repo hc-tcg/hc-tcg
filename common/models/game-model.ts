@@ -13,7 +13,7 @@ import {
 	DefaultDictionary,
 	GameState,
 	GameVictoryReason,
-	Message,
+	ChatMessage,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
@@ -112,7 +112,7 @@ export type GameProps = {
 export class GameModel {
 	public readonly settings: GameSettings
 
-	public chat: Array<Message>
+	public chat: Array<ChatMessage>
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
