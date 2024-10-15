@@ -14,7 +14,12 @@ import {BoardSlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {LocalMessage, localMessages} from 'server/messages'
 import {put} from 'typed-redux-saga'
-import {WithoutFunctions} from 'common/types/server-requests'
+import {
+	LocalModalData,
+	LocalSelectCards,
+	WithoutFunctions,
+} from 'common/types/server-requests'
+import {SelectCards} from 'common/types/modal-requests'
 
 describe('Test Turn Action Compressor', () => {
 	test('Placing Cards', () => {
@@ -63,6 +68,45 @@ describe('Test Turn Action Compressor', () => {
 					expect(firstRetrievedAction.millisecondsSinceLastAction).toEqual(
 						51000,
 					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, logBoardState: false},
+		)
+	})
+
+	test('Modal Test', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				saga: function* (game: GameModel) {
+					const slot = game.components.find(
+						BoardSlotComponent,
+						query.slot.player(game.currentPlayer.entity),
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					const playerHand = game.currentPlayer.getHand()
+					const playerFirstCard = playerHand[0]
+					if (!slot) return
+
+					const result: LocalSelectCards.Result = {
+						result: true,
+						cards: [playerFirstCard.entity],
+					}
+
+					const compressedActions = turnActionToBuffer(
+						game,
+						{type: 'MODAL_REQUEST', modalResult: result},
+						100,
+					)
+					console.log(compressedActions)
+					const firstRetrievedAction = bufferToTurnActions(
+						game,
+						compressedActions,
+					)[0]
+
+					console.log(firstRetrievedAction)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, logBoardState: false},

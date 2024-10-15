@@ -1,9 +1,10 @@
 import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
+import {CardEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {SlotTypeT} from '../types/cards'
 import {PlayCardAction, TurnAction} from '../types/game-state'
-import {WithoutFunctions} from '../types/server-requests'
+import {WithoutFunctions, LocalModalResult} from '../types/server-requests'
 import {
 	AnyTurnActionData,
 	PlayCardActionData,
@@ -45,60 +46,85 @@ function writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
 	}
 }
 
+function writeBoolToBuffer(x: boolean): Buffer {
+	const bytes = Buffer.alloc(1)
+	bytes.writeInt8(Number(x))
+	return bytes
+}
+
+/**Returns a byte representing a slot's place on the board. */
+function packupBoardSlot(game: GameModel, slot: BoardSlotComponent | null) {
+	if (!slot || !slot.row) return writeUIntToBuffer(0, 1)
+	const slotIndex = slot.index && slot.index <= 3 ? slot.index : 0
+	const opponentSlot = slot.player.entity !== game.currentPlayer.entity
+
+	const slotTypeDict: Record<SlotTypeT, number> = {
+		hermit: 0b00,
+		attach: 0b01,
+		single_use: 0b10,
+		item: 0b11,
+		// These three shouldnt appear when this is used
+		hand: 0,
+		deck: 0,
+		discardPile: 0,
+	}
+
+	const slotType = slotTypeDict[slot.type]
+
+	return writeUIntToBuffer(
+		(slotType << 6) |
+			(slot.row.index << 3) |
+			(slotIndex << 1) |
+			(opponentSlot ? 1 : 0),
+		1,
+	)
+}
+
+function unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
+	const selectedSlotType = (byte & 0b11000000) >> 6
+	const selectedSlotRow = (byte & 0b00111000) >> 3
+	const selectedSlotIndex = (byte & 0b00000110) >> 1
+	const opponentSlot = Boolean(byte & 0b00000001)
+
+	const selectedSlot = game.components.find(
+		BoardSlotComponent,
+		query.slot.rowIndex(selectedSlotRow),
+		selectedSlotType === 0b00 ? query.slot.hermit : () => true,
+		selectedSlotType === 0b01 ? query.slot.attach : () => true,
+		selectedSlotType === 0b11 ? query.slot.singleUse : () => true,
+		selectedSlotType === 0b10 ? query.slot.item : () => true,
+		selectedSlotType === 0b10
+			? query.slot.index(selectedSlotIndex)
+			: () => true,
+		opponentSlot ? query.slot.opponent : query.slot.currentPlayer,
+	)
+	return selectedSlot
+}
+
 const playCard: ReplayAction = {
 	value: 0x0,
 	bytes: 2,
-	// Byte 1: `00` Type `000` Row `000` Index
+	// Byte 1: `00` Type `000` Row `00` Index `0` Player
 	// Byte 2: Hand position
 	compress(game, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
 			query.slot.entity(turnAction.slot),
 		)
-		if (!slot || !slot.row) return null
-		const slotIndex = slot.index ? slot.index : 0
 
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
-		const slotTypeDict: Record<SlotTypeT, number> = {
-			hermit: 0b00,
-			attach: 0b01,
-			single_use: 0b10,
-			item: 0b11,
-			// These three shouldnt appear when this is used
-			hand: 0,
-			deck: 0,
-			discardPile: 0,
-		}
-
-		const slotType = slotTypeDict[slot.type]
-
 		return Buffer.concat([
-			writeUIntToBuffer((slotType << 6) | (slot.row.index << 3) | slotIndex, 1),
+			packupBoardSlot(game, slot),
 			writeUIntToBuffer(cardIndex, 1),
 		])
 	},
 	decompress(game, buffer): PlayCardActionData | null {
-		const firstByte = buffer.readUInt8(0)
-		const selectedSlotRow = (firstByte & 0b11000000) >> 6
-		const selectedSlotType = (firstByte & 0b00111000) >> 3
-		const selectedSlotIndex = firstByte & 0b00000111
-		const selectedCardIndex = buffer.readUInt8(1)
-
-		const selectedSlot = game.components.findEntity(
-			BoardSlotComponent,
-			query.slot.rowIndex(selectedSlotRow),
-			selectedSlotType === 0b00 ? query.slot.hermit : () => true,
-			selectedSlotType === 0b01 ? query.slot.attach : () => true,
-			selectedSlotType === 0b11 ? query.slot.singleUse : () => true,
-			selectedSlotType === 0b10 ? query.slot.item : () => true,
-			selectedSlotType === 0b10
-				? query.slot.index(selectedSlotIndex)
-				: () => true,
-		)
+		const selectedSlot = unpackBoardSlot(game, buffer.readUint8(0))?.entity
 		if (!selectedSlot) return null
+		const selectedCardIndex = buffer.readUInt8(1)
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
 		return {
 			type: replayActionsFromValues[this.value].turnAction as PlayCardAction,
@@ -248,16 +274,140 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	MODAL_REQUEST: {
 		value: 0xc,
 		bytes: 'variable',
-		compress(_game, turnAction: ModalResult) {
-			const json = JSON.stringify(turnAction.modalResult)
-			const buffer = Buffer.from(json)
-			return Buffer.concat([
-				writeUIntToBuffer(buffer.length, VARIABLE_BYTE_MAX),
-				buffer,
-			])
+		compress(game, turnAction: ModalResult) {
+			if ('result' in turnAction.modalResult) {
+				const result = turnAction.modalResult.result
+				const cards = turnAction.modalResult.cards?.map((card): Buffer => {
+					const cardComponent = game.components.find(
+						CardComponent,
+						query.card.entity(card),
+					)
+					if (!cardComponent) return writeUIntToBuffer(0, 1)
+					const slot = cardComponent.slot
+					function getSlotType(slot: SlotComponent) {
+						if (slot.onBoard()) return 0b0000
+						if (slot.inHand() && slot.player) return 0b0001
+						if (slot.inHand() && slot.opponentPlayer) return 0b1001
+						if (slot.inDeck() && slot.player) return 0b0011
+						if (slot.inDeck() && slot.opponentPlayer) return 0b1011
+						return 0
+					}
+
+					const boardSlotPosition = slot.onBoard()
+						? packupBoardSlot(game, slot).readUInt8()
+						: 0
+					const handPosition = slot.inHand()
+						? game.currentPlayer
+								.getHand()
+								.findIndex((c) => c.entity === cardComponent.entity)
+						: 0
+					const deckPosition = slot.inHand()
+						? game.currentPlayer
+								.getDeck()
+								.findIndex((c) => c.entity === cardComponent.entity)
+						: 0
+
+					const finalBuffer = Buffer.concat([
+						writeUIntToBuffer(getSlotType(slot), 1),
+						writeUIntToBuffer(boardSlotPosition, 1),
+					])
+					return finalBuffer
+				})
+				if (!cards) return null
+				return Buffer.concat([
+					writeUIntToBuffer(0, 1),
+					writeBoolToBuffer(result),
+					...cards,
+				])
+			}
+			if ('cancel' in turnAction.modalResult) {
+				turnAction.modalResult.pick
+
+				let result = 0
+				if (turnAction.modalResult.cancel) result = 0
+				if (turnAction.modalResult.pick === 'primary') result = 1
+				if (turnAction.modalResult.pick === 'secondary') result = 2
+
+				return Buffer.concat([
+					writeUIntToBuffer(1, 1),
+					writeUIntToBuffer(result, 1),
+				])
+			}
+
+			return null
 		},
-		decompress(_game, buffer) {
-			return JSON.parse(buffer.toString('utf-8'))
+		decompress(game, buffer): ModalResult {
+			const type = buffer.readUInt8(0)
+			if (type === 0) {
+				const result = Boolean(buffer.readUInt8(1))
+				const cardsBytes = buffer.subarray(2, buffer.length)
+				console.log('Card bytes:' + cardsBytes.length)
+				const cards: Array<CardEntity> = []
+				for (let cursor = 0; cursor < cardsBytes.length; cursor += 2) {
+					const slotType = cardsBytes.readInt8(cursor)
+					const argument = cardsBytes.readInt8(cursor + 1)
+					const opponentSlot = Boolean((slotType & 0b1000) >> 3)
+
+					if ((slotType & 0b0111) === 0) {
+						const retrievedCard = unpackBoardSlot(game, argument)?.getCard()
+						if (retrievedCard) cards.push(retrievedCard.entity)
+					} else if ((slotType & 0b0111) === 1) {
+						if (opponentSlot) {
+							const retrievedCard = game.opponentPlayer.getHand()[argument]
+							cards.push(retrievedCard.entity)
+						} else {
+							const retrievedCard = game.currentPlayer.getHand()[argument]
+							cards.push(retrievedCard.entity)
+						}
+					} else if ((slotType & 0b0111) === 2) {
+						if (opponentSlot) {
+							const retrievedCard = game.opponentPlayer.getDeck()[argument]
+							cards.push(retrievedCard.entity)
+						} else {
+							const retrievedCard = game.currentPlayer.getDeck()[argument]
+							cards.push(retrievedCard.entity)
+						}
+					}
+				}
+
+				return {
+					type: 'MODAL_REQUEST',
+					modalResult: result
+						? {
+								result,
+								cards,
+							}
+						: {result, cards: null},
+				}
+			}
+			if (type == 1) {
+				const result = buffer.readUInt8(1)
+				if (result === 1) {
+					return {
+						type: 'MODAL_REQUEST',
+						modalResult: {
+							pick: 'primary',
+						},
+					}
+				}
+				if (result === 2) {
+					return {
+						type: 'MODAL_REQUEST',
+						modalResult: {
+							pick: 'secondary',
+						},
+					}
+				}
+				if (result === 0) {
+					return {
+						type: 'MODAL_REQUEST',
+						modalResult: {
+							cancel: true,
+						},
+					}
+				}
+			}
+			throw Error('Invalid type when parsing')
 		},
 	},
 	WAIT_FOR_TURN: {
@@ -327,6 +477,15 @@ export function turnActionToBuffer(
 	)
 
 	if (argumentsBuffer) {
+		if (replayActions[action.type].bytes === 'variable') {
+			const lengthBuffer = writeUIntToBuffer(argumentsBuffer.length, 2)
+			return Buffer.concat([
+				headerBuffer,
+				timeBuffer,
+				lengthBuffer,
+				argumentsBuffer,
+			])
+		}
 		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
 	}
 	return Buffer.concat([headerBuffer, timeBuffer])
@@ -356,9 +515,9 @@ export function bufferToTurnActions(
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
 		} else {
-			const byteAmount = buffer.readUInt32BE(cursor)
+			const byteAmount = buffer.readUInt16BE(cursor)
 			cursor += VARIABLE_BYTE_MAX
-			const bytes = buffer.subarray(cursor, byteAmount)
+			const bytes = buffer.subarray(cursor, cursor + byteAmount)
 			const turnAction = action.decompress(game, bytes)
 			if (turnAction)
 				replayActions.push({
