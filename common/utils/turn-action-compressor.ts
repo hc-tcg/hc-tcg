@@ -1,6 +1,7 @@
 import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {SlotTypeT} from '../types/cards'
 import {PlayCardAction, TurnAction} from '../types/game-state'
 import {WithoutFunctions} from '../types/server-requests'
 import {
@@ -44,52 +45,58 @@ function writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
 	}
 }
 
-function getSlotIndex(slot: SlotComponent): number {
-	if (slot.type === 'item' && slot.onBoard() && slot.index) return slot.index
-	if (slot.type === 'hermit') return 4
-	if (slot.type === 'attach') return 5
-	if (slot.type === 'single_use') return 6
-	return 15
-}
-
 const playCard: ReplayAction = {
 	value: 0x0,
-	bytes: 3,
+	bytes: 2,
+	// Byte 1: `00` Type `000` Row `000` Index
+	// Byte 2: Hand position
 	compress(game, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
 			query.slot.entity(turnAction.slot),
 		)
-		if (!slot) return null
-		const slotRow = slot.row?.index
-		if (slotRow === undefined) return null
-		const slotColumn = getSlotIndex(slot)
+		if (!slot || !slot.row) return null
+		const slotIndex = slot.index ? slot.index : 0
 
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
+		const slotTypeDict: Record<SlotTypeT, number> = {
+			hermit: 0b00,
+			attach: 0b01,
+			single_use: 0b10,
+			item: 0b11,
+			// These three shouldnt appear when this is used
+			hand: 0,
+			deck: 0,
+			discardPile: 0,
+		}
+
+		const slotType = slotTypeDict[slot.type]
+
 		return Buffer.concat([
-			writeUIntToBuffer(slotRow, 1),
-			writeUIntToBuffer(slotColumn, 1),
+			writeUIntToBuffer((slotType << 6) | (slot.row.index << 3) | slotIndex, 1),
 			writeUIntToBuffer(cardIndex, 1),
 		])
 	},
 	decompress(game, buffer): PlayCardActionData | null {
-		const selectedSlotRow = buffer.readUInt8(0)
-		const selectedSlotColumn = buffer.readUInt8(1)
-		const selectedCardIndex = buffer.readUInt8(2)
+		const firstByte = buffer.readUInt8(0)
+		const selectedSlotRow = (firstByte & 0b11000000) >> 6
+		const selectedSlotType = (firstByte & 0b00111000) >> 3
+		const selectedSlotIndex = firstByte & 0b00000111
+		const selectedCardIndex = buffer.readUInt8(1)
 
 		const selectedSlot = game.components.findEntity(
 			BoardSlotComponent,
 			query.slot.rowIndex(selectedSlotRow),
-			selectedSlotColumn < 3
-				? query.slot.index(selectedSlotColumn)
-				: selectedSlotColumn === 3
-					? query.slot.attach
-					: selectedSlotColumn === 4
-						? query.slot.hermit
-						: query.slot.singleUse,
+			selectedSlotType === 0b00 ? query.slot.hermit : () => true,
+			selectedSlotType === 0b01 ? query.slot.attach : () => true,
+			selectedSlotType === 0b11 ? query.slot.singleUse : () => true,
+			selectedSlotType === 0b10 ? query.slot.item : () => true,
+			selectedSlotType === 0b10
+				? query.slot.index(selectedSlotIndex)
+				: () => true,
 		)
 		if (!selectedSlot) return null
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
@@ -308,12 +315,16 @@ export function turnActionToBuffer(
 	action: AnyTurnActionData,
 	millisecondsSinceLastAction: number,
 ) {
-	const headerBuffer = writeUIntToBuffer(replayActions[action.type].value, 1)
 	const argumentsBuffer = replayActions[action.type].compress(game, action)
 
 	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
+	const timeLength = tenthsSinceLastAction > 255 ? 2 : 1
 
-	const timeBuffer = writeUIntToBuffer(tenthsSinceLastAction, 2)
+	const timeBuffer = writeUIntToBuffer(tenthsSinceLastAction, timeLength)
+	const headerBuffer = writeUIntToBuffer(
+		0b10000000 * (timeLength - 1) + replayActions[action.type].value,
+		1,
+	)
 
 	if (argumentsBuffer) {
 		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
@@ -328,11 +339,13 @@ export function bufferToTurnActions(
 	let cursor = 0
 	const replayActions: Array<ReplayActionData> = []
 	while (cursor < buffer.length) {
-		const actionNumber = buffer.readUInt8(cursor)
+		const actionNumber = buffer.readUInt8(cursor) & 0b00111111
+		const timeFormat = (buffer.readUInt8(cursor) & 0b10000000) >> 7
 		const action = replayActionsFromValues[actionNumber]
 		cursor++
-		let tenthsSinceLastAction = buffer.readUInt16BE(cursor)
-		cursor += 2
+		let tenthsSinceLastAction =
+			timeFormat === 1 ? buffer.readUInt16BE(cursor) : buffer.readUInt8(cursor)
+		cursor += 1 + timeFormat
 		if (action.bytes !== 'variable') {
 			const bytes = buffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
