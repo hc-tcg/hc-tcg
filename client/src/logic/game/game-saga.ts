@@ -18,6 +18,7 @@ import {
 	all,
 	call,
 	cancel,
+	delay,
 	fork,
 	put,
 	putResolve,
@@ -340,6 +341,10 @@ function* runGame(
 					type: localMessages.GAME_START,
 				})
 			}
+		},
+		delay: function* (ms) {
+			if (!isReadyToDisplay) return
+			yield* delay(ms)
 		},
 	})
 

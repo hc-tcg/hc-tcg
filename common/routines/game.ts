@@ -31,7 +31,6 @@ import {
 	applyEffectSaga,
 	attackSaga,
 	changeActiveHermitSaga,
-	delaySaga,
 	modalRequestSaga,
 	pickRequestSaga,
 	playCardSaga,
@@ -347,6 +346,7 @@ function* checkHermitHealth(game: GameModel) {
 function* turnActionSaga(
 	game: GameModel,
 	turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION],
+	delaySaga: (ms: number) => any,
 ) {
 	const actionType = turnAction.action.type
 
@@ -417,7 +417,7 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
-				yield* call(delaySaga, game, turnAction.action.delay)
+				yield* call(delaySaga, turnAction.action.delay)
 				break
 			case 'TIMEOUT':
 				yield* call(timeoutSaga, game)
@@ -484,6 +484,7 @@ function* turnActionsSaga(
 	turnActionChannel: any,
 	onTurnActionSaga: (action: any, game: GameModel) => void,
 	update?: (game: GameModel) => any,
+	delaySaga?: (ms: number) => any,
 ) {
 	const {opponentPlayer, currentPlayer} = game
 
@@ -572,7 +573,7 @@ function* turnActionsSaga(
 			opponentPlayer.coinFlips = []
 
 			// Run action logic
-			const result = yield* call(turnActionSaga, game, turnAction)
+			const result = yield* call(turnActionSaga, game, turnAction, delaySaga)
 
 			game.actionsHandled += 1
 			game.setStateHash()
@@ -760,6 +761,7 @@ export function* runGameSaga(
 			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
 			game: GameModel,
 		) => any
+		delay?: (ms: number) => void
 	},
 ) {
 	const game = new GameModel(props)
@@ -782,6 +784,7 @@ export function* runGameSaga(
 			turnActionChannel,
 			sagas.onTurnAction,
 			sagas.update,
+			sagas.delay || delay,
 		)
 		if (result === 'GAME_END') break
 		game.state.turn.turnNumber++

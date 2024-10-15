@@ -386,12 +386,6 @@ export function* pickRequestSaga(
 	return
 }
 
-export function* delaySaga(game: GameModel, delayMs: number) {
-	if (game.viewers.length !== 0) {
-		yield* delay(delayMs)
-	}
-}
-
 export function* timeoutSaga(game: GameModel) {
 	// @TODO this works, but could be cleaned
 	const currentAttack = game.state.turn.currentAttack
