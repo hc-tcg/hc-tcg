@@ -19,7 +19,7 @@ import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
-import {OpponentDefs} from 'common/utils/setup-game'
+import {AIOpponentDefs} from 'common/utils/setup-game'
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -148,7 +148,7 @@ export function* leaveQueue(
 
 function* setupSolitareGame(
 	player: PlayerModel,
-	opponent: OpponentDefs,
+	opponent: AIOpponentDefs,
 ) {
 	yield* gameManagerSaga({
 		player1: player,
@@ -156,8 +156,6 @@ function* setupSolitareGame(
 		viewers: [{id: player.id, type: 'player'}],
 		randomizeOrder: false,
 	})
-
-	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 }
 
 export function* createBossGame(

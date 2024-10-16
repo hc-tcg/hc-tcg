@@ -8,16 +8,17 @@ import setupGameSaga, {
 } from 'common/routines/game'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
-import {OpponentDefs} from 'common/utils/setup-game'
+import {AIOpponentDefs} from 'common/utils/setup-game'
 import {GameController, GameViewer} from 'game-controller'
 import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {AIComponent} from 'common/components/ai-component'
 
 type Props = {
 	player1: PlayerModel
-	player2: PlayerModel | OpponentDefs
+	player2: PlayerModel | AIOpponentDefs
 	viewers: Array<GameViewer>
 	randomizeOrder?: boolean
 	settings?: Partial<GameSettings>
@@ -79,6 +80,11 @@ export function* gameManagerSaga({
 		onGameStart: function* (game) {
 			// Player one is added to the ECS first, Player two is added second
 			const players = game.components.filter(PlayerComponent)
+
+			// Add the virtual AI if this is boss game
+			if ('virtualAI' in player2) {
+				game.components.new(AIComponent, game.state.order[1], player2.virtualAI)
+			}
 
 			serverSideGame = new GameController({
 				game: game,
