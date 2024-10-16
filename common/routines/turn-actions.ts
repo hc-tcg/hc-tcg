@@ -1,4 +1,4 @@
-import {call, delay} from 'typed-redux-saga'
+import {call} from 'typed-redux-saga'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {SlotEntity} from '../entities'

@@ -1,5 +1,5 @@
 import {PlayerComponent} from 'common/components'
-import {gameSettingsFromEnv} from 'common/models/game-model'
+import {GameSettings, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import setupGameSaga, {
 	GameMessage,
@@ -8,6 +8,7 @@ import setupGameSaga, {
 } from 'common/routines/game'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
+import {OpponentDefs} from 'common/utils/setup-game'
 import {GameController, GameViewer} from 'game-controller'
 import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
@@ -16,8 +17,10 @@ import {broadcast} from '../utils/comm'
 
 type Props = {
 	player1: PlayerModel
-	player2: PlayerModel
+	player2: PlayerModel | OpponentDefs
 	viewers: Array<GameViewer>
+	randomizeOrder?: boolean
+	settings?: Partial<GameSettings>
 	code?: string
 	spectatorCode?: string
 }
@@ -26,32 +29,46 @@ export function* gameManagerSaga({
 	player1,
 	player2,
 	viewers,
+	randomizeOrder,
 	code,
+	settings,
 	spectatorCode,
 }: Props) {
 	let identifierInRootState = Math.random().toString(16)
 
-	let gameProps = {
-		player1: {
-			model: {
-				name: player1.name,
-				minecraftName: player1.minecraftName,
-				censoredName: player1.censoredName,
-			},
-			deck: player1.deck.cards.map((card) => card.props.numericId),
-		},
-		id: identifierInRootState,
-		player2: {
+	let player2Model
+
+	if (player2 instanceof PlayerModel) {
+		player2Model = {
 			model: {
 				name: player2.name,
 				minecraftName: player2.minecraftName,
 				censoredName: player2.censoredName,
 			},
 			deck: player2.deck.cards.map((card) => card.props.numericId),
+		}
+	} else {
+		player2Model = {
+			model: {
+				name: player2.name,
+				minecraftName: player2.minecraftName,
+				censoredName: player2.censoredName,
+			},
+			deck: player2.deck,
+		}
+	}
+
+	let gameProps = {
+		player1: {
+			model: player1,
+			deck: player1.deck.cards.map((card) => card.props.numericId),
 		},
-		settings: gameSettingsFromEnv(),
+		id: identifierInRootState,
+		player2: player2Model,
+		settings: {...gameSettingsFromEnv(), ...settings},
 		gameCode: code,
 		spectatorCode,
+		randomizeOrder,
 		randomNumberSeed: Math.random().toString(36),
 	}
 
@@ -71,7 +88,7 @@ export function* gameManagerSaga({
 					entity: players[0].entity,
 				},
 				playerTwo: {
-					playerId: player2.id,
+					playerId: player2 instanceof PlayerModel ? player2.id : null,
 					entity: players[1].entity,
 				},
 				props: gameProps,
@@ -118,7 +135,10 @@ export function* gameManagerSaga({
 						>(
 							(action: any) =>
 								action.type === localMessages.PLAYER_REMOVED &&
-								[player1.id, player2.id].includes(
+								[
+									player1.id,
+									player2 instanceof PlayerModel ? player2.id : null,
+								].includes(
 									(
 										action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
 									).player.id,

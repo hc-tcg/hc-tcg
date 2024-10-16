@@ -8,6 +8,7 @@ import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+import ExBossAI from 'common/routines/virtual/exboss-ai'
 import {
 	RecievedClientMessage,
 	clientMessages,
@@ -18,7 +19,7 @@ import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
-import ExBossAI from 'common/routines/virtual/exboss-ai'
+import {OpponentDefs} from 'common/utils/setup-game'
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -145,33 +146,18 @@ export function* leaveQueue(
 	}
 }
 
-function setupSolitareGame(
+function* setupSolitareGame(
 	player: PlayerModel,
 	opponent: OpponentDefs,
-): GameModel {
-	const game = new GameModel(
-		{
-			model: player,
-			deck: player.deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: opponent,
-			deck: opponent.deck,
-		},
-		gameSettingsFromEnv(),
-		{gameCode: 'solitare', randomizeOrder: false},
-	)
-
-	const playerEntities = game.components.filterEntities(PlayerComponent)
-	game.components.new(ViewerComponent, {
-		player,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
+) {
+	yield* gameManagerSaga({
+		player1: player,
+		player2: opponent,
+		viewers: [{id: player.id, type: 'player'}],
+		randomizeOrder: false,
 	})
 
 	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
-
-	return game
 }
 
 export function* createBossGame(

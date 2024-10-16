@@ -10,10 +10,10 @@ import {PlayerEntity, SlotEntity} from '../entities'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
+	ChatMessage,
 	DefaultDictionary,
 	GameState,
 	GameVictoryReason,
-	ChatMessage,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'

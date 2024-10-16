@@ -1,9 +1,9 @@
 import {BattleLogModel} from 'common/models/battle-log-model'
 import {
+	ChatMessage,
 	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
-	ChatMessage,
 } from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'

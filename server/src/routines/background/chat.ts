@@ -1,8 +1,4 @@
-import {
-	gameMessages,
-	GameMessages,
-	GameMessageTable,
-} from 'common/routines/game'
+import {GameMessageTable, gameMessages} from 'common/routines/game'
 import {
 	RecievedClientMessage,
 	clientMessages,
