@@ -8,6 +8,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import FortuneEffect from '../../../status-effects/fortune'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
+import SpentFortuneEffect from '../../../status-effects/spent-fortune'
 import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
@@ -64,7 +65,10 @@ const GrianchRare: Hermit = {
 						}$`,
 					)
 				} else if (attack.type === 'secondary') {
+					const spentFortune = player.hasStatusEffect(SpentFortuneEffect)
+					spentFortune?.remove()
 					const coinFlip = flipCoin(player, component)
+					spentFortune?.apply(player.entity)
 
 					if (coinFlip[0] === 'tails') {
 						game.components
@@ -73,13 +77,21 @@ const GrianchRare: Hermit = {
 						return
 					}
 
-					game.components
-						.find(
-							StatusEffectComponent,
-							query.effect.is(FortuneEffect),
-							query.effect.targetEntity(player.entity),
-						)
-						?.remove()
+					const fortune = game.components.find(
+						StatusEffectComponent,
+						query.effect.is(FortuneEffect),
+						query.effect.targetEntity(player.entity),
+					)
+					if (fortune) {
+						fortune.remove()
+						game.components
+							.new(
+								StatusEffectComponent,
+								SpentFortuneEffect,
+								fortune.creatorEntity,
+							)
+							.apply(player.entity)
+					}
 
 					game.removeCompletedActions(
 						'PRIMARY_ATTACK',

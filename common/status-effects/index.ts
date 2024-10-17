@@ -39,6 +39,7 @@ import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
 import SoulmateEffect from './soulmate'
+import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import TFCDiscardedFromEffect from './tfc-discarded-from'
@@ -94,6 +95,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	TimeSkipDisabledEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
+	SpentFortuneEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
