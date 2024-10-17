@@ -1,14 +1,13 @@
-import {delay, put} from 'typed-redux-saga'
+import {put} from 'typed-redux-saga'
 import {AIComponent} from '../../components/ai-component'
 import {GameModel} from '../../models/game-model'
-import {clientMessages} from '../../socket-messages/client-messages'
-import {serverMessages} from '../../socket-messages/server-messages'
 import {
 	PlaintextNode,
 	concatFormattedTextNodes,
 	formatNodefromShorthand,
 	formatText,
 } from '../../utils/formatting'
+import {gameMessages} from '../game'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
@@ -17,18 +16,17 @@ function getRandomDelay() {
 export default function* virtualPlayerActionSaga(
 	game: GameModel,
 	component: AIComponent,
+	delaySaga: (ms: number) => any
 ) {
-	// @todo THIS IS SCREWING THINGS UP PROBABLY
-	return
-
 	const coinFlips = game.currentPlayer.coinFlips
-	yield* delay(
+	// @tdoo, use other delay function
+	yield* delaySaga(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
 	)
 	try {
 		const action = component.getNextTurnAction()
 		yield* put({
-			type: clientMessages.GAME_TURN_ACTION,
+			type: gameMessages.TURN_ACTION,
 			payload: {action, playerEntity: component.playerEntity},
 			action: action,
 			playerEntity: component.playerEntity,
@@ -44,10 +42,6 @@ export default function* virtualPlayerActionSaga(
 				type: 'system',
 				id: component.playerEntity,
 			},
-		})
-		broadcast(game.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: game.chat,
 		})
 	}
 }

@@ -427,7 +427,9 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
+				console.log('HELLO')
 				yield* call(delaySaga, turnAction.action.delay)
+				console.log('WORLD')
 				break
 			case 'TIMEOUT':
 				yield* call(timeoutSaga, game)
@@ -450,7 +452,6 @@ function* turnActionSaga(
 				throw new Error(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
-				return
 		}
 	} catch (e) {
 		if (game.settings.logErrorsToStderr) {
@@ -563,7 +564,9 @@ function* turnActionsSaga(
 			}
 
 			const playerAI = getPlayerAI(game)
-			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
+			console.log(playerAI)
+			if (playerAI)
+				yield* fork(virtualPlayerActionSaga, game, playerAI, delaySaga)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
