@@ -808,7 +808,7 @@ export function* runGameSaga(
 			game,
 			turnActionChannel,
 			sagas.onTurnAction,
-			sagas.delay || delay,
+			sagas.delay ?? delay,
 			sagas.update,
 		)
 		if (result === 'GAME_END') break

@@ -44,11 +44,7 @@ function* createBossGameSaga() {
 				lines: ['/voice/EXSTART.ogg'],
 			})
 
-			yield* call(
-				gameSaga,
-				gameStart.props,
-				gameStart.playerEntity,
-			)
+			yield* call(gameSaga, gameStart.props, gameStart.playerEntity)
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {

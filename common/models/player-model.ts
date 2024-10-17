@@ -3,6 +3,7 @@ import {PlayerDeckT} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 import {validateDeck} from '../utils/validation'
+import {getStarterPack} from '../utils/get-starter-pack'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -23,8 +24,7 @@ export class PlayerModel {
 		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
-			// @todo Generate a starter pack
-			cards: [],
+			cards: getStarterPack(),
 			tags: [],
 		}
 

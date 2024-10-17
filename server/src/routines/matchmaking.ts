@@ -1,12 +1,4 @@
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {
-	BoardSlotComponent,
-	PlayerComponent,
-	RowComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import ExBossAI from 'common/routines/virtual/exboss-ai'
 import {
@@ -19,7 +11,6 @@ import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
-import {AIOpponentDefs} from 'common/utils/setup-game'
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -145,7 +136,6 @@ export function* leaveQueue(
 		)
 	}
 }
-
 
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,

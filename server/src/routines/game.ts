@@ -1,4 +1,5 @@
 import {PlayerComponent} from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import {GameSettings, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import setupGameSaga, {
@@ -14,7 +15,6 @@ import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {AIComponent} from 'common/components/ai-component'
 
 type Props = {
 	player1: PlayerModel
@@ -61,7 +61,11 @@ export function* gameManagerSaga({
 
 	let gameProps = {
 		player1: {
-			model: player1,
+			model: {
+				name: player1.name,
+				minecraftName: player1.minecraftName,
+				censoredName: player1.censoredName,
+			},
 			deck: player1.deck.cards.map((card) => card.props.numericId),
 		},
 		id: identifierInRootState,
@@ -103,12 +107,13 @@ export function* gameManagerSaga({
 				},
 				playerTwo: {
 					playerId: player2 instanceof PlayerModel ? player2.id : null,
-					entity: players[1].entity,
+					entity: players[1]?.entity,
 				},
 				props: gameProps,
 			})
 
 			viewers.forEach((p, index) => {
+				console.log(p)
 				if (p.type === 'player') {
 					broadcast([root.players[p.id]], {
 						type: serverMessages.GAME_START,
