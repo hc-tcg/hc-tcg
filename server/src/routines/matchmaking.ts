@@ -165,7 +165,7 @@ export function* createBossGame(
 			minecraftName: 'EvilXisuma',
 			censoredName: 'Evil Xisuma',
 			deck: [EvilXisumaBoss],
-			virtualAI: ExBossAI,
+			virtualAI: ExBossAI.id,
 			disableDeckingOut: true,
 		},
 		viewers: [{id: player.id, type: 'player'}],

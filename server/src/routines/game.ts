@@ -54,6 +54,7 @@ export function* gameManagerSaga({
 				name: player2.name,
 				minecraftName: player2.minecraftName,
 				censoredName: player2.censoredName,
+				virtualAI: player2.virtualAI,
 			},
 			deck: player2.deck,
 		}
@@ -84,20 +85,6 @@ export function* gameManagerSaga({
 		onGameStart: function* (game) {
 			// Player one is added to the ECS first, Player two is added second
 			const players = game.components.filter(PlayerComponent)
-
-			// Add the virtual AI if this is boss game
-			// @todo Actually don't do this here since it needs to be done on the client
-			if ('virtualAI' in player2) {
-				let ai = game.components.new(
-					AIComponent,
-					game.state.order[1],
-					player2.virtualAI,
-				)
-				game.state.isBossGame = true
-
-				// Run the setup code for the boss
-				ai.ai.setup(game, ai)
-			}
 
 			serverSideGame = new GameController({
 				game: game,

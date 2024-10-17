@@ -4,6 +4,7 @@ import {
 	RowComponent,
 	SlotComponent,
 } from '../components'
+import {AIComponent} from '../components/ai-component'
 import query, {ComponentQuery} from '../components/query'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
@@ -24,6 +25,7 @@ import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
 import {newRandomNumberGenerator} from '../utils/random'
 import {
+	AISetupDefs,
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
@@ -100,7 +102,7 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export type GameProps = {
 	player1: PlayerSetupDefs
-	player2: PlayerSetupDefs
+	player2: PlayerSetupDefs | AISetupDefs
 	settings: GameSettings
 	gameCode?: string
 	spectatorCode?: string
@@ -154,7 +156,6 @@ export class GameModel {
 		>
 	}
 
-	private randomNumberPointer = 0
 	private randomNumberGenerator: () => number
 	private mostRecentState: string = ''
 
@@ -201,6 +202,11 @@ export class GameModel {
 		})
 
 		this.state = getGameState(this, props.randomizeOrder)
+
+		for (const ai of this.components.filter(AIComponent)) {
+			ai.ai.setup(this, ai)
+		}
+
 		this.voiceLineQueue = []
 	}
 
