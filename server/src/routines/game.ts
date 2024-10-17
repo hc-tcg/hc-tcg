@@ -86,6 +86,7 @@ export function* gameManagerSaga({
 			const players = game.components.filter(PlayerComponent)
 
 			// Add the virtual AI if this is boss game
+			// @todo Actually don't do this here since it needs to be done on the client
 			if ('virtualAI' in player2) {
 				let ai = game.components.new(
 					AIComponent,
@@ -113,7 +114,6 @@ export function* gameManagerSaga({
 			})
 
 			viewers.forEach((p, index) => {
-				console.log(p)
 				if (p.type === 'player') {
 					broadcast([root.players[p.id]], {
 						type: serverMessages.GAME_START,
