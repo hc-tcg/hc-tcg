@@ -83,8 +83,15 @@ export function* gameManagerSaga({
 
 			// Add the virtual AI if this is boss game
 			if ('virtualAI' in player2) {
-				game.components.new(AIComponent, game.state.order[1], player2.virtualAI)
+				let ai = game.components.new(
+					AIComponent,
+					game.state.order[1],
+					player2.virtualAI,
+				)
 				game.state.isBossGame = true
+
+				// Run the setup code for the boss
+				ai.ai.setup(game, ai)
 			}
 
 			serverSideGame = new GameController({

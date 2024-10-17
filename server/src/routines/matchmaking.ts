@@ -146,6 +146,7 @@ export function* leaveQueue(
 	}
 }
 
+
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {
