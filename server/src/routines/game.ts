@@ -1,5 +1,4 @@
 import {PlayerComponent} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
 import {GameSettings, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import setupGameSaga, {
