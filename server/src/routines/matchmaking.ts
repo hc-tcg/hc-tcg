@@ -146,18 +146,6 @@ export function* leaveQueue(
 	}
 }
 
-function* setupSolitareGame(
-	player: PlayerModel,
-	opponent: AIOpponentDefs,
-) {
-	yield* gameManagerSaga({
-		player1: player,
-		player2: opponent,
-		viewers: [{id: player.id, type: 'player'}],
-		randomizeOrder: false,
-	})
-}
-
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {
@@ -179,53 +167,19 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGame = setupSolitareGame(player, {
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
+	yield* gameManagerSaga({
+		player1: player,
+		player2: {
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			deck: [EvilXisumaBoss],
+			virtualAI: ExBossAI,
+			disableDeckingOut: true,
+		},
+		viewers: [{id: player.id, type: 'player'}],
+		randomizeOrder: false,
 	})
-	newBossGame.state.isBossGame = true
-
-	function destroyRow(row: RowComponent) {
-		newBossGame.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-		newBossGame.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGame.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGame.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGame.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-
-	newBossGame.settings.disableRewardCards = true
-
-	root.addGame(newBossGame)
-
-	yield* fork(gameManagerSaga, newBossGame)
 }
 
 export function* createPrivateGame(
