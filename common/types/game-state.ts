@@ -79,6 +79,8 @@ export type GameState = {
 		turnRemaining: number
 		opponentActionStartTime: number | null
 	}
+
+	isBossGame: boolean
 }
 
 export type GameOutcome =

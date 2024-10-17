@@ -19,7 +19,6 @@ export default function* virtualPlayerActionSaga(
 	delaySaga: (ms: number) => any
 ) {
 	const coinFlips = game.currentPlayer.coinFlips
-	// @tdoo, use other delay function
 	yield* delaySaga(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
 	)

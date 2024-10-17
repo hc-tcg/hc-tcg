@@ -205,6 +205,7 @@ export class GameModel {
 
 		for (const ai of this.components.filter(AIComponent)) {
 			ai.ai.setup(this, ai)
+			this.state.isBossGame = true
 		}
 
 		this.voiceLineQueue = []
