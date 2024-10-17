@@ -18,6 +18,7 @@ import ExBossNineEffect, {
 import {WithoutFunctions} from '../../types/server-requests'
 import {AnyTurnActionData} from '../../types/turn-action-data'
 import {VirtualAI} from '../../types/virtual-ai'
+import {assert} from '../../utils/assert'
 
 const fireDropper = () => {
 	return Math.floor(Math.random() * 9)
@@ -153,8 +154,18 @@ function getNextTurnAction(
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
 
-	setup(game, _component) {
+	setup(game, component) {
 		game.settings.disableRewardCards = true
+
+		let player = game.components.find(
+			PlayerComponent,
+			(_game, playerComponent) =>
+				playerComponent.entity === component.playerEntity,
+		)
+
+		assert(player, 'All AIs must have a player attached to them')
+
+		player.disableDeckingOut = true
 
 		function destroyRow(row: RowComponent) {
 			game.components

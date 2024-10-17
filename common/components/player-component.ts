@@ -39,7 +39,7 @@ export class PlayerComponent {
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
 	deckedOut: boolean
-	readonly disableDeckingOut: boolean
+	disableDeckingOut: boolean
 
 	pickableSlots: Array<SlotEntity> | null
 
