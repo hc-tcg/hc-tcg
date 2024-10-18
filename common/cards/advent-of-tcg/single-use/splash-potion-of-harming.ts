@@ -11,11 +11,18 @@ import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
 function getTargetHermits(game: GameModel) {
-	return game.components.filter(
-		RowComponent,
-		query.row.opponentPlayer,
-		query.row.hermitSlotOccupied,
-	)
+	return game.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.hermitSlotOccupied,
+		)
+		.sort(
+			(a, b) =>
+				-Number(a.index === game.opponentPlayer.activeRow?.index) ||
+				Number(b.index === game.opponentPlayer.activeRow?.index) ||
+				a.index - b.index,
+		)
 }
 
 const SplashPotionOfHarming: SingleUse = {
@@ -47,12 +54,7 @@ const SplashPotionOfHarming: SingleUse = {
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			const activeRow = opponentPlayer.activeRow
-			const opponentRows = getTargetHermits(game).sort(
-				(a, b) =>
-					-Number(a.index === opponentPlayer.activeRow?.index) ||
-					Number(b.index === opponentPlayer.activeRow?.index) ||
-					a.index - b.index,
-			)
+			const opponentRows = getTargetHermits(game)
 
 			const attack = game
 				.newAttack({

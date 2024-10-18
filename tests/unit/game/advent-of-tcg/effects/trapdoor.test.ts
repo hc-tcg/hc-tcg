@@ -104,6 +104,7 @@ describe('Test Trapdoor', () => {
 
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, Anvil, 'single_use')
+					expect(Anvil.attackPreview?.(game)).toBe('$A30$ + $A10$ x 2')
 					yield* attack(game, 'primary')
 					expect(
 						game.components.find(
@@ -164,6 +165,7 @@ describe('Test Trapdoor', () => {
 					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 3)
 					yield* playCardFromHand(game, WaterBucket, 'attach', 3)
 					yield* playCardFromHand(game, Anvil, 'single_use')
+					expect(Anvil.attackPreview?.(game)).toBe('$A30$')
 					yield* attack(game, 'secondary')
 					expect(
 						game.components.find(
@@ -233,6 +235,7 @@ describe('Test Trapdoor', () => {
 
 					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 3)
 					yield* playCardFromHand(game, Anvil, 'single_use')
+					expect(Anvil.attackPreview?.(game)).toBe('$A30$')
 					yield* attack(game, 'secondary')
 					expect(
 						game.components.find(
@@ -302,6 +305,9 @@ describe('Test Trapdoor', () => {
 
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, SplashPotionOfHarming, 'single_use')
+					expect(SplashPotionOfHarming.attackPreview?.(game)).toBe(
+						'$A40$ + $A20$ x 2',
+					)
 					yield* attack(game, 'primary')
 					expect(
 						game.components.find(
