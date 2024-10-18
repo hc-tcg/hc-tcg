@@ -12,7 +12,11 @@ import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
-import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {
+	GasLightEffect,
+	GasLightPotentialEffect,
+	GasLightTriggeredEffect,
+} from './gas-light'
 import GoMiningEffect from './go-mining'
 import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
@@ -88,6 +92,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	GasLightPotentialEffect,
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,
 	LooseShellEffect,
