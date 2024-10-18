@@ -91,7 +91,7 @@ const SplashPotionOfHarming: SingleUse = {
 
 				applySingleUse(game)
 
-				observer.unsubscribe(game.hooks.beforeAttack)
+				observer.unsubscribeFromEverything()
 			},
 		)
 	},

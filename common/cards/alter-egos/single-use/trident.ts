@@ -50,6 +50,7 @@ const Trident: SingleUse = {
 				coinflipResult = flipCoin(player, component)[0]
 
 				applySingleUse(game)
+				observer.unsubscribeFromEverything()
 			},
 		)
 
