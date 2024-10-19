@@ -1,11 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
+import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
 import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
 import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
+import HelsknightRare from 'common/cards/alter-egos/hermits/helsknight-rare'
 import HumanCleoRare from 'common/cards/alter-egos/hermits/humancleo-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import Egg from 'common/cards/alter-egos/single-use/egg'
 import Totem from 'common/cards/default/effects/totem'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
@@ -1034,6 +1037,135 @@ describe('Test The Grianch Naughty', () => {
 						ZombieCleoRare.health - GrianchRare.secondary.damage,
 					)
 					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Poultry Man only recycles Egg when used with secondary', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [PoultryManRare, BadOmen, Egg],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PoultryManRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Egg, 'single_use')
+					yield* attack(game, 'primary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+					expect(
+						game.opponentPlayer.getDiscarded().map((card) => card.props),
+					).toContain(Egg)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Using Gem "Geminislay" and Egg + Poultry Man secondary', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					GeminiTayRare,
+					PoultryManRare,
+					BadOmen,
+					Egg,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
+					yield* playCardFromHand(game, PoultryManRare, 'hermit', 2)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* playCardFromHand(game, Egg, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(
+						game.currentPlayer.getHand().map((card) => card.props),
+					).toStrictEqual([Egg])
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Hels "Trap Hole" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, Fortune],
+				playerTwoDeck: [HelsknightRare, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					expect(
+						game.currentPlayer.coinFlips.filter(
+							(coinFlip) => coinFlip.opponentFlip,
+						),
+					).toHaveLength(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
