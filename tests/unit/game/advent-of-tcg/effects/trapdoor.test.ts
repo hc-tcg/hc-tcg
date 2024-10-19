@@ -8,7 +8,9 @@ import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
 import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 import IronArmor from 'common/cards/default/effects/iron-armor'
+import Thorns from 'common/cards/default/effects/thorns'
 import WaterBucket from 'common/cards/default/effects/water-bucket'
+import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import VintageBeefCommon from 'common/cards/default/hermits/vintagebeef-common'
@@ -450,6 +452,72 @@ describe('Test Trapdoor', () => {
 					).toBe(
 						EthosLabCommon.health - (VintageBeefCommon.secondary.damage - 40),
 					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Wolf triggers when Trapdoor redirects all damage', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, Wolf, Trapdoor],
+				playerTwoDeck: [VintageBeefCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Wolf, 'attach', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						VintageBeefCommon.health - 20 /** Wolf */,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - VintageBeefCommon.primary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Thorns does not trigger when Trapdoor redirects all damage', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns, Trapdoor],
+				playerTwoDeck: [VintageBeefCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Thorns, 'attach', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						VintageBeefCommon.health,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - VintageBeefCommon.primary.damage)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

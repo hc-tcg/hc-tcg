@@ -3,6 +3,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
+import LightningRod from '../../alter-egos/effects/lightning-rod'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
@@ -69,7 +70,10 @@ const Trapdoor: Attach = {
 					newAttack.shouldIgnoreCards.push(
 						...attack.shouldIgnoreCards,
 						query.card.entity(attack.attacker.entity),
-						query.card.rowEntity(attack.targetEntity),
+						query.every(
+							query.card.rowEntity(attack.targetEntity),
+							query.card.is(Trapdoor, LightningRod),
+						),
 					)
 					attack.nextAttacks.unshift(newAttack)
 				}
