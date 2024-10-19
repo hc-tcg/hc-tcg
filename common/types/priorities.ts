@@ -29,8 +29,10 @@ export const beforeAttack = createPriorityDictionary({
 	IGNORE_CARDS: null,
 	/** Hermit cards updating the intended target of attacks created with a default target */
 	HERMIT_SET_TARGET: null,
-	/** Hermit abilities that set what target should be attacked instead */
-	HERMIT_CHANGE_TARGET: null,
+	/** Betrayed effect setting what target should be attacked instead, see also `beforeAttack.SHEEP_STARE_CHANGE_TARGET` */
+	BETRAYED_CHANGE_TARGET: null,
+	/** Sheep Stare effect setting what target should be attacked instead, Sheep Stare can overrule Betrayed in AoTCG */
+	SHEEP_STARE_CHANGE_TARGET: null,
 	/** Lightning Rod redirecting all damage from attacks */
 	LIGHTNING_ROD_REDIRECT: null,
 	/** Target Block redirecting all damage from attacks, effect overrules Lightning Rod  */

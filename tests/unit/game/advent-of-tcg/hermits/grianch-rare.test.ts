@@ -1,6 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
+import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
+import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
+import HumanCleoRare from 'common/cards/alter-egos/hermits/humancleo-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import Totem from 'common/cards/default/effects/totem'
@@ -8,7 +11,11 @@ import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import PearlescentMoonRare from 'common/cards/default/hermits/pearlescentmoon-rare'
 import RendogRare from 'common/cards/default/hermits/rendog-rare'
+import ZedaphPlaysRare from 'common/cards/default/hermits/zedaphplays-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
+import BuilderItem from 'common/cards/default/items/builder-common'
+import PvPDoubleItem from 'common/cards/default/items/pvp-rare'
+import Efficiency from 'common/cards/default/single-use/efficiency'
 import Fortune from 'common/cards/default/single-use/fortune'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
@@ -655,6 +662,378 @@ describe('Test The Grianch Naughty', () => {
 					).toBe(
 						SkizzlemanRare.health - 10 /** Anvil damage */ - 20 /** Gaslight */,
 					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Human Cleo "Betrayed" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
+				playerTwoDeck: [HumanCleoRare, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(game.currentPlayer.coinFlips).toHaveLength(1)
+					yield* attack(game, 'secondary')
+					expect(game.currentPlayer.coinFlips).toHaveLength(0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						HumanCleoRare.health - GrianchRare.secondary.damage,
+					)
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						HumanCleoRare.health - GrianchRare.secondary.damage,
+					)
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						HumanCleoRare.health -
+							GrianchRare.secondary.damage -
+							GrianchRare.secondary.damage,
+					)
+					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Human Cleo "Betrayed" + Evil Xisuma "Derpcoin"', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					GrianchRare,
+					EthosLabCommon,
+					BuilderItem,
+					PvPDoubleItem,
+					Efficiency,
+				],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					HumanCleoRare,
+					EvilXisumaRare,
+					PvPDoubleItem,
+					PvPDoubleItem,
+					BadOmen,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, BuilderItem, 'item', 0, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 1)
+					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 2)
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 0, 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 0, 1)
+					yield* playCardFromHand(game, Efficiency, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 0, 1)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* finishModalRequest(game, {pick: 'primary'})
+					yield* endTurn(game)
+
+					expect(game.state.turn.availableActions).toContain(
+						'CHANGE_ACTIVE_HERMIT',
+					)
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Worm Man "Total Anonymity" twice against "Betrayed"', () => {
+		testGame(
+			{
+				playerOneDeck: [RendogRare, BadOmen, EthosLabCommon],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					GrianchRare,
+					HumanCleoRare,
+					WormManRare,
+					BadOmen,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, RendogRare, 'hermit', 2)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 2)
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 1)
+					yield* playCardFromHand(game, WormManRare, 'hermit', 3)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					// Have Naughty flip tails then Betrayed flip 2 heads
+					game.components
+						.find(
+							StatusEffectComponent,
+							query.effect.is(BadOmenEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						)
+						?.remove()
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(3),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(game.state.turn.availableActions).toContain('END_TURN')
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					expect(game.state.turn.availableActions).not.toContain('END_TURN')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(3),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(2),
+						)?.health,
+					).toBe(
+						ZombieCleoRare.health -
+							GrianchRare.secondary.damage -
+							WormManRare.secondary.damage,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health - WormManRare.secondary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Zedaph "Sheep Stare" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
+				playerTwoDeck: [ZedaphPlaysRare, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.coinFlips).toHaveLength(1)
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.coinFlips).toHaveLength(0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						ZedaphPlaysRare.health - GrianchRare.secondary.damage,
+					)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							(ZedaphPlaysRare.primary.damage +
+								WEAKNESS_DAMAGE) /** Explorer -> Builder */ -
+							(ZedaphPlaysRare.primary.damage + WEAKNESS_DAMAGE),
+					)
+					yield* attack(game, 'secondary')
+					expect(
+						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
+					).toHaveLength(1)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						ZedaphPlaysRare.health - GrianchRare.secondary.damage,
+					)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							(ZedaphPlaysRare.primary.damage + WEAKNESS_DAMAGE) -
+							(ZedaphPlaysRare.primary.damage + WEAKNESS_DAMAGE) -
+							GrianchRare.secondary.damage,
+					)
+					yield* attack(game, 'secondary')
+					expect(
+						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
+					).toHaveLength(1)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						ZedaphPlaysRare.health - GrianchRare.secondary.damage,
+					)
+					expect(game.currentPlayer.activeRow).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Zedaph "Sheep Stare" + Human Cleo "Betrayed"', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					ZedaphPlaysRare,
+					HumanCleoRare,
+					BadOmen,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 1)
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 2)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'primary'})
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							ZedaphPlaysRare.primary.damage -
+							HumanCleoRare.secondary.damage,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						ZombieCleoRare.health - GrianchRare.secondary.damage,
+					)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(
+						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
+					).toHaveLength(1)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							ZedaphPlaysRare.primary.damage -
+							HumanCleoRare.secondary.damage -
+							GrianchRare.secondary.damage,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						ZombieCleoRare.health - GrianchRare.secondary.damage,
+					)
+					yield* endTurn(game)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
