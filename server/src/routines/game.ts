@@ -150,10 +150,22 @@ export function* gameManagerSaga({
 								),
 						)
 
-						// @todo: Make player forfeit when they are disconnected
+						let playerEntity = serverSideGame.getPlayerComponentById(
+							playerRemoved.player.id,
+						)?.entity
+						assert(
+							playerEntity,
+							'Players that are not in the game can not disconect',
+						)
+
 						yield* put<GameMessage>({
 							type: gameMessages.TURN_ACTION,
-							playerEntity: playerRemoved,
+							playerEntity,
+							time: Date.now(),
+							action: {
+								type: 'FORFEIT',
+								player: playerEntity,
+							},
 						})
 					}
 				}),

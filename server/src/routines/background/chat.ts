@@ -1,4 +1,3 @@
-import {GameMessageTable, gameMessages} from 'common/routines/game'
 import {
 	RecievedClientMessage,
 	clientMessages,
@@ -12,13 +11,6 @@ import {
 } from 'common/utils/formatting'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'
-
-export function* gameChatMessageSaga(
-	action: GameMessageTable[typeof gameMessages.CHAT_MESSAGE],
-) {
-	action.message
-	let game = yield* select(getGame(action.playerId))
-}
 
 export function* chatMessage(
 	action: RecievedClientMessage<typeof clientMessages.CHAT_MESSAGE>,

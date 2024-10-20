@@ -16,7 +16,7 @@ function getRandomDelay() {
 export default function* virtualPlayerActionSaga(
 	game: GameModel,
 	component: AIComponent,
-	delaySaga: (ms: number) => any
+	delaySaga: (ms: number) => any,
 ) {
 	const coinFlips = game.currentPlayer.coinFlips
 	yield* delaySaga(
