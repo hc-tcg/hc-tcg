@@ -45,37 +45,38 @@ function* resetStatsSaga() {
 
 function* fbdbSaga(): SagaIterator {
 	if (!firebase) return
-	const socket = yield* select(getSocket)
+	const _socket = yield* select(getSocket)
 	const authChannel = yield* call(createAuthChannel)
 	yield* takeLatest(authChannel, authSaga)
 	yield* takeEvery('RESET_STATS', resetStatsSaga)
 	firebase.auth().signInAnonymously()
 
-	while (true) {
-		const {outcome, won} = yield* call(
-			receiveMsg(socket, serverMessages.GAME_OVER_STAT),
-		)
-		if (global.dbObj.dbref) {
-			const stats = global.dbObj.stats
-			if (outcome == 'player_won' && won) {
-				stats.w += 1
-			}
-			if (outcome == 'player_won' && !won) {
-				stats.l += 1
-			}
-			if (outcome == 'forfeit' && won) {
-				stats.fw += 1
-			}
-			if (outcome == 'forfeit' && !won) {
-				stats.fl += 1
-			}
-			if (outcome == 'tie') {
-				// || 0 for records created before ties were a thing
-				stats.t = (stats.t || 0) + 1
-			}
-			global.dbObj.dbref.set(stats)
-		}
-	}
+	// @todo Fix stats
+	// while (true) {
+	// 	const {outcome, won} = yield* call(
+	// 		receiveMsg(socket, serverMessages.GAME_OVER_STAT),
+	// 	)
+	// 	if (global.dbObj.dbref) {
+	// 		const stats = global.dbObj.stats
+	// 		if (outcome == 'player_won' && won) {
+	// 			stats.w += 1
+	// 		}
+	// 		if (outcome == 'player_won' && !won) {
+	// 			stats.l += 1
+	// 		}
+	// 		if (outcome == 'forfeit' && won) {
+	// 			stats.fw += 1
+	// 		}
+	// 		if (outcome == 'forfeit' && !won) {
+	// 			stats.fl += 1
+	// 		}
+	// 		if (outcome == 'tie') {
+	// 			// || 0 for records created before ties were a thing
+	// 			stats.t = (stats.t || 0) + 1
+	// 		}
+	// 		global.dbObj.dbref.set(stats)
+	// 	}
+	// }
 }
 
 export default fbdbSaga

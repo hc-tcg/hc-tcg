@@ -203,6 +203,8 @@ export function getGameState(
 			turnRemaining: 0,
 			opponentActionStartTime: null,
 		},
+
+		isBossGame: false
 	}
 
 	return gameState
