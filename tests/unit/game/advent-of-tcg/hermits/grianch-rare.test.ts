@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
+import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
 import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
 import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
 import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
@@ -18,6 +19,7 @@ import ZedaphPlaysRare from 'common/cards/default/hermits/zedaphplays-rare'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
 import BuilderItem from 'common/cards/default/items/builder-common'
 import PvPDoubleItem from 'common/cards/default/items/pvp-rare'
+import ChorusFruit from 'common/cards/default/single-use/chorus-fruit'
 import Efficiency from 'common/cards/default/single-use/efficiency'
 import Fortune from 'common/cards/default/single-use/fortune'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
@@ -26,6 +28,10 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import BadOmenEffect from 'common/status-effects/badomen'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from 'common/status-effects/singleturn-attack-disabled'
 import {
 	applyEffect,
 	attack,
@@ -1166,6 +1172,118 @@ describe('Test The Grianch Naughty', () => {
 							(coinFlip) => coinFlip.opponentFlip,
 						),
 					).toHaveLength(1)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using G. Architect "Amnesia" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, Fortune],
+				playerTwoDeck: [ArchitectFalseRare, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* attack(game, 'secondary')
+					expect(
+						game.components.filter(
+							StatusEffectComponent,
+							query.effect.is(SecondaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(query.card.opponentPlayer),
+						).length,
+					).toBe(1)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('G. Architect "Amnesia" blocks ALL hermit attacks used last turn', () => {
+		testGame(
+			{
+				playerOneDeck: [ArchitectFalseRare, ArchitectFalseRare],
+				playerTwoDeck: [GrianchRare, GrianchRare, ChorusFruit],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* attack(game, 'primary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(PrimaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(query.card.opponentPlayer),
+						),
+					).not.toBe(null)
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(SecondaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(query.card.opponentPlayer),
+						),
+					).not.toBe(null)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 1)
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 1)
+					yield* playCardFromHand(game, ChorusFruit, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(SecondaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(
+								query.card.opponentPlayer,
+								query.card.afk,
+							),
+						),
+					).not.toBe(null)
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(SecondaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(
+								query.card.opponentPlayer,
+								query.card.active,
+							),
+						),
+					).not.toBe(null)
+					yield* endTurn(game)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
