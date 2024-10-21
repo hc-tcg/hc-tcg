@@ -61,29 +61,30 @@ function SelectDeck({
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	function sortDecks(decks: string[]): Array<PlayerDeckT> {
-		return decks
-			.map((d: any) => {
-				const deck: PlayerDeckT = JSON.parse(d)
-				return deck
-			})
-			.sort((a, b) => {
-				if (settings.deckSortingMethod === 'Alphabetical') {
-					return a.name.localeCompare(b.name)
-				}
-				if (settings.deckSortingMethod === 'First Tag') {
-					const aHasTags = a.tags && a.tags.length > 0
-					const bHasTags = b.tags && b.tags.length > 0
-					if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
-					if (!aHasTags && bHasTags) return 1
-					if (aHasTags && !bHasTags) return 0
-					const aFirstTag = a.tags![0]
-					const bFirstTag = b.tags![0]
-					return aFirstTag.localeCompare(bFirstTag)
-				}
-				//Default case so something is always returned
-				return 0
-			})
+	function parseDecks(decks: string[]): Array<PlayerDeckT> {
+		return decks.map((d: any) => {
+			const deck: PlayerDeckT = JSON.parse(d)
+			return deck
+		})
+	}
+	function sortDecks(decks: PlayerDeckT[]): Array<PlayerDeckT> {
+		return decks.sort((a, b) => {
+			if (settings.deckSortingMethod === 'Alphabetical') {
+				return a.name.localeCompare(b.name)
+			}
+			if (settings.deckSortingMethod === 'First Tag') {
+				const aHasTags = a.tags && a.tags.length > 0
+				const bHasTags = b.tags && b.tags.length > 0
+				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
+				if (!aHasTags && bHasTags) return 1
+				if (aHasTags && !bHasTags) return 0
+				const aFirstTag = a.tags![0]
+				const bFirstTag = b.tags![0]
+				return aFirstTag.localeCompare(bFirstTag)
+			}
+			//Default case so something is always returned
+			return 0
+		})
 	}
 
 	function filterDecks(decks: Array<PlayerDeckT>): Array<PlayerDeckT> {
@@ -93,7 +94,7 @@ function SelectDeck({
 		)
 	}
 	const [sortedDecks, setSortedDecks] = useState<Array<PlayerDeckT>>(
-		sortDecks(savedDecks),
+		sortDecks(parseDecks(savedDecks)),
 	)
 
 	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeckT>>(
@@ -215,8 +216,8 @@ function SelectDeck({
 
 		saveDeckInternal(deck)
 		setSavedDecks(getSavedDecks())
-		setSortedDecks(sortDecks([...savedDecks, JSON.stringify(deck)]))
-		setFilteredDecks(sortDecks([...savedDecks, JSON.stringify(deck)]))
+		setSortedDecks(sortDecks([...parseDecks(savedDecks), deck]))
+		setFilteredDecks(sortDecks([...parseDecks(savedDecks), deck]))
 	}
 	const saveDeckInternal = (deck: PlayerDeckT) => {
 		//Save new deck to Local Storage
@@ -232,10 +233,14 @@ function SelectDeck({
 		const decks = getSavedDecks()
 		setSavedDecks(decks)
 		setSortedDecks(
-			sortDecks(savedDecks).filter((deck) => deck.name !== loadedDeck.name),
+			sortDecks(parseDecks(savedDecks)).filter(
+				(deck) => deck.name !== loadedDeck.name,
+			),
 		)
 		setFilteredDecks(
-			sortDecks(savedDecks).filter((deck) => deck.name !== loadedDeck.name),
+			sortDecks(parseDecks(savedDecks)).filter(
+				(deck) => deck.name !== loadedDeck.name,
+			),
 		)
 		loadDeck(JSON.parse(decks[0]).name)
 	}
@@ -252,16 +257,15 @@ function SelectDeck({
 			newName = `${deck.name} Copy ${number}`
 			number++
 		}
-		saveDeck({...deck, name: newName})
+
+		const newDeck = {...deck, name: newName}
+
+		saveDeck(newDeck)
 
 		//Refresh saved deck list and load new deck
 		setSavedDecks(savedDecks)
-		setSortedDecks(
-			sortDecks([...savedDecks, JSON.stringify({...deck, name: newName})]),
-		)
-		setFilteredDecks(
-			sortDecks([...savedDecks, JSON.stringify({...deck, name: newName})]),
-		)
+		setSortedDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
+		setFilteredDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
