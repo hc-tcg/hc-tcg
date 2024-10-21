@@ -208,8 +208,15 @@ function SelectDeck({
 				deckExists = true
 			}
 		})
-		deckExists && setShowOverwriteModal(true)
-		!deckExists && saveDeckInternal(deck)
+		if (deckExists) {
+			setShowOverwriteModal(true)
+			return
+		}
+
+		saveDeckInternal(deck)
+		setSavedDecks(getSavedDecks())
+		setSortedDecks(sortDecks([...savedDecks, JSON.stringify(deck)]))
+		setFilteredDecks(sortDecks([...savedDecks, JSON.stringify(deck)]))
 	}
 	const saveDeckInternal = (deck: PlayerDeckT) => {
 		//Save new deck to Local Storage
