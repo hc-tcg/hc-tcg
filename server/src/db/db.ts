@@ -46,7 +46,8 @@ export class Database {
 				icon varchar(255) NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS games(
-				game_time timestamp NOT NULL,
+				start_time timestamp NOT NULL,
+				completion_time timestamp NOT NULL,
 				winner uuid REFERENCES users(user_id),
 				loser uuid REFERENCES users(user_id),
 				winner_deck_code varchar(7) REFERENCES decks(deck_code),
@@ -503,6 +504,7 @@ export class Database {
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
 		outcome: GameEndOutcomeT,
+		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
 		replay: Buffer,
@@ -526,8 +528,17 @@ export class Database {
 			}
 
 			await this.pool.query(
-				"INSERT INTO games (game_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, replay) VALUES('now',$1,$2,$3,$4,$5,$6,$7)",
-				[winner, loser, winningDeck, losingDeck, outcome, seed, replay],
+				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, replay) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8)",
+				[
+					gameLength,
+					winner,
+					loser,
+					winningDeck,
+					losingDeck,
+					outcome,
+					seed,
+					replay,
+				],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
