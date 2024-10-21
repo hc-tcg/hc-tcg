@@ -10,12 +10,7 @@ function* spectatorLeaveSaga(
 ) {
 	let game = yield* select(getGame(action.playerId))
 	if (!game) return
-
-	let viewer = game.components.find(
-		ViewerComponent,
-		(_game, component) => component.playerId === action.playerId,
-	)
-	if (viewer) game.components.delete(viewer.entity)
+	game.viewers = game.viewers.filter(id => id.id != action.playerId)
 }
 
 export default spectatorLeaveSaga
