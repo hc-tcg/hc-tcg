@@ -18,18 +18,26 @@ npm run server  # start the sever
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
-# Running in your development environment
+## Running in your development environment
+
+Before you can run the game locally, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
 
 ```sh
-npm ci               # install packges
+npm ci               # install packages
+
 npm run server:dev   # start the server and update automatically when you make changes
 npm run client:dev   # start the client and update automatically when you make changes
+
 npm run dev          # start both the client and server
 ```
+
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
 
 ## Configuration
+
+### Server Config
 
 Your instance can be configured using the `common/config/server-config.js` file.
 
@@ -45,7 +53,9 @@ Your instance can be configured using the `common/config/server-config.js` file.
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
 
-You can also configure debug settings using `common/config/debug-config.js`. To create it, copy `common/config/debug-config.example.js` and rename it. On linux you can run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js`, and on windows you can run `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` to create the file.
+### Debug Config
+
+You can configure debug settings using `common/config/debug-config.js`. See the developement environment section for instructions on how to creat this file.
 
 | Key                   | Description                                                                 |
 | --------------------- | --------------------------------------------------------------------------- |
@@ -60,7 +70,7 @@ You can also configure debug settings using `common/config/debug-config.js`. To 
 | unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
 | blockedActions        | Block specific actions every turn.                                          |
 | availableActions      | Make specific actions available every turn.                                 |
-| shuffleDeck           | Shuffe the player's decks at the start of the game.													|
+| shuffleDeck           | Shuffe the player's decks at the start of the game.                         |
 | logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
 | showHooksState        | Show hooks in the console.                                                  |
 | autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
@@ -68,6 +78,7 @@ You can also configure debug settings using `common/config/debug-config.js`. To 
 ### Formatting & coding style
 
 We run Biome's linter and formatter as part of the PR process. You can use these commands to lint your code:
+
 ```sh
 npm run lint      # check your code for linting and formatting issues
 npm run format    # format your code
