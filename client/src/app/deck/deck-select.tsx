@@ -33,7 +33,7 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import {ReactNode, useState} from 'react'
+import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
@@ -61,30 +61,44 @@ function SelectDeck({
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	const sortedDecks = savedDecks
-		.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
-		})
-		.sort((a, b) => {
-			if (settings.deckSortingMethod === 'Alphabetical') {
-				return a.name.localeCompare(b.name)
-			}
-			if (settings.deckSortingMethod === 'First Tag') {
-				const aHasTags = a.tags && a.tags.length > 0
-				const bHasTags = b.tags && b.tags.length > 0
-				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
-				if (!aHasTags && bHasTags) return 1
-				if (aHasTags && !bHasTags) return 0
-				const aFirstTag = a.tags![0]
-				const bFirstTag = b.tags![0]
-				return aFirstTag.localeCompare(bFirstTag)
-			}
-			//Default case so something is always returned
-			return 0
-		})
-	const [filteredDecks, setFilteredDecks] =
-		useState<Array<PlayerDeckT>>(sortedDecks)
+	function sortDecks(decks: string[]): Array<PlayerDeckT> {
+		return decks
+			.map((d: any) => {
+				const deck: PlayerDeckT = JSON.parse(d)
+				return deck
+			})
+			.sort((a, b) => {
+				if (settings.deckSortingMethod === 'Alphabetical') {
+					return a.name.localeCompare(b.name)
+				}
+				if (settings.deckSortingMethod === 'First Tag') {
+					const aHasTags = a.tags && a.tags.length > 0
+					const bHasTags = b.tags && b.tags.length > 0
+					if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
+					if (!aHasTags && bHasTags) return 1
+					if (aHasTags && !bHasTags) return 0
+					const aFirstTag = a.tags![0]
+					const bFirstTag = b.tags![0]
+					return aFirstTag.localeCompare(bFirstTag)
+				}
+				//Default case so something is always returned
+				return 0
+			})
+	}
+
+	function filterDecks(decks: Array<PlayerDeckT>): Array<PlayerDeckT> {
+		if (!settings.lastSelectedTag) return decks
+		return decks.filter((deck) =>
+			deck.tags?.includes(settings.lastSelectedTag!),
+		)
+	}
+	const [sortedDecks, setSortedDecks] = useState<Array<PlayerDeckT>>(
+		sortDecks(savedDecks),
+	)
+
+	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeckT>>(
+		filterDecks(sortedDecks),
+	)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
@@ -210,6 +224,12 @@ function SelectDeck({
 		deleteDeck(loadedDeck.name)
 		const decks = getSavedDecks()
 		setSavedDecks(decks)
+		setSortedDecks(
+			sortDecks(savedDecks).filter((deck) => deck.name !== loadedDeck.name),
+		)
+		setFilteredDecks(
+			sortDecks(savedDecks).filter((deck) => deck.name !== loadedDeck.name),
+		)
 		loadDeck(JSON.parse(decks[0]).name)
 	}
 	const canDuplicateDeck = () => {
@@ -228,8 +248,23 @@ function SelectDeck({
 		saveDeck({...deck, name: newName})
 
 		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
+		setSavedDecks(savedDecks)
+		setSortedDecks(
+			sortDecks([...savedDecks, JSON.stringify({...deck, name: newName})]),
+		)
+		setFilteredDecks(
+			sortDecks([...savedDecks, JSON.stringify({...deck, name: newName})]),
+		)
 	}
+
+	const selectedDeckRef = useRef<HTMLLIElement>(null)
+
+	useEffect(() => {
+		selectedDeckRef.current?.scrollIntoView({
+			behavior: 'instant',
+			block: 'nearest',
+		})
+	})
 
 	const deckList: ReactNode = filteredDecks.map(
 		(deck: PlayerDeckT, i: number) => {
@@ -239,6 +274,7 @@ function SelectDeck({
 						css.myDecksItem,
 						loadedDeck.name === deck.name && css.selectedDeck,
 					)}
+					ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
 					key={i}
 					onClick={() => {
 						playSwitchDeckSFX()
@@ -395,7 +431,9 @@ function SelectDeck({
 			<AlertModal
 				setOpen={showDuplicateDeckModal}
 				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
-				action={() => duplicateDeck(loadedDeck)}
+				action={() => {
+					duplicateDeck(loadedDeck)
+				}}
 				title="Duplicate Deck"
 				description={
 					canDuplicateDeck()
