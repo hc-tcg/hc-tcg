@@ -128,7 +128,7 @@ const addTag = (
 	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
 	setTags([...tags, tag])
-	setColor('ffffff')
+	setColor(color)
 }
 
 const selectTag = (
