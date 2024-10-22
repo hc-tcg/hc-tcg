@@ -306,7 +306,9 @@ function SelectDeck({
 							<div className={css.singleTag}></div>
 						</div>
 					)}
-					<div className={classNames(css.deckImage, css[deck.icon])}>
+					<div
+						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+					>
 						<img
 							src={'../images/types/type-' + deck.icon + '.png'}
 							alt={'deck-icon'}
@@ -475,7 +477,11 @@ function SelectDeck({
 						<>
 							<div className={css.headerGroup}>
 								<div
-									className={classNames(css.deckImage, css[loadedDeck.icon])}
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
 								>
 									<img
 										src={
@@ -531,7 +537,11 @@ function SelectDeck({
 									</div>
 								)}
 								<div
-									className={classNames(css.deckImage, css[loadedDeck.icon])}
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
 								>
 									<img
 										src={

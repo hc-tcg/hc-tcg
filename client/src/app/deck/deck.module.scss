@@ -167,7 +167,9 @@
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
+}
 
+.usesIcon {
 	&.farm {
 		background-color: rgb(124, 204, 12);
 	}
@@ -227,46 +229,6 @@
 	&:hover {
 		background: var(--gray-600);
 		filter: brightness(1.1);
-	}
-
-	&.farm {
-		background-color: rgb(124, 204, 12);
-	}
-
-	&.redstone {
-		background-color: rgb(185, 33, 42);
-	}
-
-	&.prankster {
-		background-color: rgb(116, 55, 168);
-	}
-
-	&.explorer {
-		background-color: rgb(103, 138, 190);
-	}
-
-	&.balanced {
-		background-color: rgb(101, 124, 50);
-	}
-
-	&.builder {
-		background-color: rgb(184, 162, 154);
-	}
-
-	&.pvp {
-		background-color: rgb(85, 202, 194);
-	}
-
-	&.speedrunner {
-		background-color: rgb(223, 226, 36);
-	}
-
-	&.terraform {
-		background-color: rgb(217, 119, 147);
-	}
-
-	&.miner {
-		background-color: rgb(110, 105, 108);
 	}
 }
 

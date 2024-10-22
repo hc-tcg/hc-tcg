@@ -637,6 +637,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											<button
 												className={classNames(
 													css.dropdownButton,
+													css.usesIcon,
 													css[loadedDeck.icon],
 												)}
 											>
