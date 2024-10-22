@@ -305,7 +305,7 @@ describe('Test Trapdoor', () => {
 					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, SplashPotionOfHarming, 'single_use')
 					expect(SplashPotionOfHarming.attackPreview?.(game)).toBe(
 						'$A40$ + $A20$ x 2',

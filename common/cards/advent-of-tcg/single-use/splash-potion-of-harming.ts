@@ -38,7 +38,10 @@ const SplashPotionOfHarming: SingleUse = {
 	hasAttack: true,
 	attackPreview: (game) => {
 		const targets = getTargetHermits(game)
-		if (targets[0].index === game.currentPlayer.activeRow!.index) {
+		if (targets.length === 0) {
+			return '$A0$'
+		}
+		if (targets[0].index === game.opponentPlayer.activeRow?.index) {
 			return targets.length === 1
 				? '$A40$'
 				: `$A40$ + $A20$ x ${targets.length - 1}`

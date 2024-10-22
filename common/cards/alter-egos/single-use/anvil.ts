@@ -45,7 +45,7 @@ const Anvil: SingleUse = {
 		if (targets.length === 0) {
 			return opponentHasMultipleRows(game) ? '$A0$' : '$A30$'
 		}
-		if (targets[0].index === game.currentPlayer.activeRow!.index) {
+		if (targets[0].index === game.currentPlayer.activeRow?.index) {
 			return targets.length === 1
 				? '$A30$'
 				: `$A30$ + $A10$ x ${targets.length - 1}`
