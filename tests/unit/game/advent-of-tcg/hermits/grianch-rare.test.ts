@@ -2,6 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
 import ArchitectFalseRare from 'common/cards/alter-egos-iii/hermits/architectfalse-rare'
+import BeetlejhostRare from 'common/cards/alter-egos-iii/hermits/beetlejhost-rare'
 import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
 import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
 import EvilXisumaRare from 'common/cards/alter-egos/hermits/evilxisuma_rare'
@@ -28,6 +29,7 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import BadOmenEffect from 'common/status-effects/badomen'
+import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
@@ -801,7 +803,7 @@ describe('Test The Grianch Naughty', () => {
 	test('Using Worm Man "Total Anonymity" twice against "Betrayed"', () => {
 		testGame(
 			{
-				playerOneDeck: [RendogRare, BadOmen, EthosLabCommon],
+				playerOneDeck: [RendogRare, BadOmen, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [
 					ZombieCleoRare,
 					GrianchRare,
@@ -884,6 +886,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
 					yield* endTurn(game)
 
 					expect(
@@ -1284,6 +1287,93 @@ describe('Test The Grianch Naughty', () => {
 						),
 					).not.toBe(null)
 					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Gem "Geminislay" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [GeminiTayRare, BadOmen, ...Array(3).fill(Anvil)],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						GeminiTayRare.health -
+							GrianchRare.secondary.damage -
+							WEAKNESS_DAMAGE /** Builder -> Terraform */,
+					)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'single-use')
+					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Beetlejhost "Jopacity" twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare],
+				playerTwoDeck: [BeetlejhostRare, BadOmen, Anvil],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							BeetlejhostRare.secondary.damage -
+							(BeetlejhostRare.secondary.damage - 10),
+					)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						)?.counter,
+					).toBe(2)
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'single-use')
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						)?.counter,
+					).toBe(2)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

@@ -55,7 +55,7 @@ const WormManRare: Hermit = {
 
 				const newObserver = pendingObserver
 				newObserver.subscribe(player.hooks.onAttach, (attachedComponent) => {
-					game.addBlockedActions(this.id, 'PLAY_HERMIT_CARD')
+					game.addBlockedActions('game', 'PLAY_HERMIT_CARD')
 					newObserver.unsubscribe(player.hooks.onAttach)
 					pendingObserver = null
 					if (!component.slot.onBoard()) return
