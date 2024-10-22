@@ -9,9 +9,8 @@ import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
 import {beforeAttack, onTurnEnd} from '../../../types/priorities'
-import {executeExtraAttacks} from '../../../utils/attacks'
 import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {Hermit, SingleUse} from '../../base/types'
 
 const cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(
 	() => {
@@ -126,34 +125,19 @@ const Biffa2001Rare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const counter = cardsPlayed.get(game)[player.entity]
+				let counter = cardsPlayed.get(game)[player.entity]
 				if (counter === undefined) return
 
-				observer.subscribe(player.hooks.onApply, () => {
-					const additionalAttack = game
-						.newAttack({
-							attacker: component.entity,
-							target: attack.targetEntity,
-							type: 'secondary',
-							log: (values) =>
-								`${values.attacker} dealt an extra ${values.damage} damage to ${values.target} for using a single use card with $v${this.secondary.name}$`,
-						})
-						.addDamage(component.entity, 20)
-					additionalAttack.shouldIgnoreCards.push(
-						query.card.entity(component.entity),
-					)
-
-					executeExtraAttacks(game, [additionalAttack])
-				})
-
-				observer.subscribeWithPriority(
-					player.hooks.onTurnEnd,
-					onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
-					() => {
-						observer.unsubscribe(player.hooks.onApply)
-						observer.unsubscribe(player.hooks.onTurnEnd)
-					},
-				)
+				if (
+					!player.singleUseCardUsed &&
+					game.components.find(
+						CardComponent<SingleUse>,
+						query.card.slot(query.slot.singleUse),
+						query.card.isSingleUse,
+					)?.props.showConfirmationModal === false
+				) {
+					counter = counter + 1
+				}
 
 				attack.addDamage(component.entity, 20 * counter)
 			},

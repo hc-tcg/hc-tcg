@@ -6,7 +6,7 @@ import {
 import query from '../../../components/query'
 import {ReadonlyAttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {afterAttack} from '../../../types/priorities'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -48,6 +48,36 @@ const PharaohRare: Hermit = {
 	) {
 		const {player} = component
 
+		let singleUseAttack: ReadonlyAttackModel | null = null
+		let activeSingleUse: CardComponent | null = null
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+
+				const su = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+				)
+				if (!su?.isSingleUse() || !su.props.hasAttack) return
+				activeSingleUse = su
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			(attack) => {
+				if (!activeSingleUse || singleUseAttack) return
+				if (!attack.isAttacker(activeSingleUse.entity)) return
+
+				singleUseAttack = attack
+			},
+		)
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.HERMIT_ATTACK_REQUESTS,
@@ -55,17 +85,27 @@ const PharaohRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const healAmount = Math.min(
-					getAllSubattacks(attack).reduce(
+				let healAmount = getAllSubattacks(attack).reduce(
+					(r, subAttack) =>
+						subAttack.isAttacker(component.entity) &&
+						subAttack.isType('secondary', 'weakness')
+							? r + subAttack.calculateDamage()
+							: r,
+					0,
+				)
+				if (singleUseAttack)
+					healAmount = getAllSubattacks(singleUseAttack).reduce(
 						(r, subAttack) =>
-							subAttack.isAttacker(component.entity) &&
-							subAttack.isType('secondary', 'weakness')
+							subAttack.isAttacker(activeSingleUse?.entity)
 								? r + subAttack.calculateDamage()
 								: r,
-						0,
-					),
-					80,
-				)
+						healAmount,
+					)
+
+				singleUseAttack = null
+				activeSingleUse = null
+
+				healAmount = Math.min(healAmount, 80)
 				if (healAmount === 0) return
 
 				const pickCondition = query.every(
