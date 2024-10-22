@@ -477,9 +477,10 @@
 .mobileDeckPreview {
 	display: none;
 	visibility: hidden;
-	overflow: scroll;
+	overflow: hidden;
 	width: 45%;
 	background-color: var(--gray-700);
+	height: 100%;
 }
 
 .mobileSelector {
