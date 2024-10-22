@@ -634,7 +634,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								<div className={css.editDeckInfoSettings}>
 									<Dropdown
 										button={
-											<button className={css.dropdownButton}>
+											<button
+												className={classNames(
+													css.dropdownButton,
+													css.usesIcon,
+													css[loadedDeck.icon],
+												)}
+											>
 												<img
 													src={`/images/types/type-${loadedDeck.icon}.png`}
 												/>

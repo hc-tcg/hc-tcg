@@ -292,24 +292,28 @@ function SelectDeck({
 						loadDeck(deck.name)
 					}}
 				>
-					<div className={css.deckImage}>
+					{deck.tags && deck.tags.length > 0 ? (
+						<div className={css.multiColoredCircle}>
+							{keysToTags(deck.tags).map((tag) => (
+								<div
+									className={css.singleTag}
+									style={{backgroundColor: tag.color}}
+								></div>
+							))}
+						</div>
+					) : (
+						<div className={css.multiColoredCircle}>
+							<div className={css.singleTag}></div>
+						</div>
+					)}
+					<div
+						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+					>
 						<img
 							src={'../images/types/type-' + deck.icon + '.png'}
 							alt={'deck-icon'}
 						/>
 					</div>
-					{deck.tags && deck.tags.length > 0 && (
-						<div className={css.multiColoredCircleBorder}>
-							<div className={css.multiColoredCircle}>
-								{keysToTags(deck.tags).map((tag) => (
-									<div
-										className={css.singleTag}
-										style={{backgroundColor: tag.color}}
-									></div>
-								))}
-							</div>
-						</div>
-					)}
 					{deck.name}
 				</li>
 			)
@@ -472,7 +476,13 @@ function SelectDeck({
 					header={
 						<>
 							<div className={css.headerGroup}>
-								<div className={css.deckImage}>
+								<div
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
+								>
 									<img
 										src={
 											'../images/types/type-' +
@@ -514,16 +524,6 @@ function SelectDeck({
 					mobileChildren={
 						<div className={css.mobileSelector}>
 							<div className={css.mobileDeckName}>
-								<div className={css.deckImage}>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
-								</div>
 								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
 									<div className={css.multiColoredCircleBorder}>
 										<div className={css.multiColoredCircle}>
@@ -536,6 +536,22 @@ function SelectDeck({
 										</div>
 									</div>
 								)}
+								<div
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
+								>
+									<img
+										src={
+											'../images/types/type-' +
+											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
+											'.png'
+										}
+										alt="deck-icon"
+									/>
+								</div>
 								<span
 									className={classNames(
 										css.mobileDeckNameText,
