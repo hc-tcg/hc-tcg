@@ -2,9 +2,14 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {assert} from 'common/utils/assert'
 import {LocalMessage, localMessages} from 'messages'
-import {put, takeEvery} from 'typed-redux-saga'
+import {getGame} from 'selectors'
+import root from 'serverRoot'
+import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {broadcast} from 'utils/comm'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
@@ -72,13 +77,28 @@ function* handler(message: RecievedClientMessage) {
 			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.TURN_ACTION:
+		case clientMessages.GAME_TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
-			yield* put<LocalMessage>({
+			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
+				time: actionMessage.payload.time,
 			})
+		case clientMessages.REQUEST_GAME_RECONNECT_INFORMATION:
+			let game = yield* select(getGame(message.playerId))
+			assert(
+				game,
+				'The player should be in a game when they send the `REQUEST_GAME_HISTORY` message',
+			)
+
+			broadcast([root.players[message.playerId]], {
+				type: serverMessages.GAME_RECONNECT_INFORMATION,
+				history: game.history,
+				timer: game.game.state.timer,
+			})
+
+			return
 	}
 }
 

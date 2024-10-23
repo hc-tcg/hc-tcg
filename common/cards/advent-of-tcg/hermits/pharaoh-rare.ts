@@ -55,7 +55,7 @@ class PharaohRare extends CardOld {
 				const attacker = getActiveRow(player)?.hermitCard
 				if (!attacker) return
 
-				const coinFlip = flipCoin(player, attacker)
+				const coinFlip = flipCoin(game, player, attacker)
 
 				if (coinFlip[0] === 'tails') return
 

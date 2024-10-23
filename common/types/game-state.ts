@@ -83,6 +83,20 @@ export type GameState = {
 	isBossGame: boolean
 }
 
+export type GameOutcome =
+	| 'tie'
+	| {
+			winner: PlayerEntity
+			victoryReason: GameVictoryReason
+	  }
+
+export type GameVictoryReason =
+	| 'forfeit'
+	| 'no-hermits-on-board'
+	| 'timeout-without-hermits'
+	| 'decked-out'
+	| 'lives'
+
 export type PlayCardAction =
 	| 'PLAY_HERMIT_CARD'
 	| 'PLAY_ITEM_CARD'
@@ -98,6 +112,8 @@ export type TurnAction =
 	| PlayCardAction
 	| AttackAction
 	| 'END_TURN'
+	| 'TIMEOUT'
+	| 'FORFEIT'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'
@@ -106,35 +122,13 @@ export type TurnAction =
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
 	| 'DELAY'
+	| 'SET_TIMER'
 
 export type GameRules = {
 	disableTimer: boolean
 }
 
 export type TurnActions = Array<TurnAction>
-
-export type GameEndOutcomeT =
-	| 'timeout'
-	| 'forfeit'
-	| 'tie'
-	| 'player_won'
-	| 'error'
-
-export type GamePlayerEndOutcomeT =
-	| 'client_crash'
-	| 'server_crash'
-	| 'timeout'
-	| 'forfeit_win'
-	| 'forfeit_loss'
-	| 'leave_win'
-	| 'leave_loss'
-	| 'tie'
-	| 'unknown'
-	| 'you_won'
-	| 'you_lost'
-	| null
-
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
@@ -187,7 +181,7 @@ export type LocalGameState = {
 	voiceLineQueue: Array<string>
 }
 
-type MessageSender =
+type ChatMessageSender =
 	| {
 			type: 'viewer'
 			id: PlayerId
@@ -197,8 +191,8 @@ type MessageSender =
 			id: PlayerEntity
 	  }
 
-export type Message = {
-	sender: MessageSender
+export type ChatMessage = {
+	sender: ChatMessageSender
 	message: FormattedTextNode
 	createdAt: number
 }

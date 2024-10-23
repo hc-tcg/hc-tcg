@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -11,6 +10,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../../types/priorities'
+import {assert} from '../../../utils/assert'
 import {flipCoin} from '../../../utils/coinFlips'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -60,7 +60,7 @@ const EvilXisumaRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 
 				if (coinFlip[0] !== 'heads') return
 

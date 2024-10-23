@@ -57,7 +57,7 @@ const EvilJevinRare: Hermit = {
 
 				if (pickableCards.length === 0) return
 
-				const coinFlip = flipCoin(player, component, 1)
+				const coinFlip = flipCoin(game, player, component, 1)
 				if (coinFlip[0] !== 'heads') return
 
 				game.addModalRequest({

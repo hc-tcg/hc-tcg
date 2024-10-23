@@ -35,7 +35,7 @@ class BrewingStand extends CardOld {
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, component)[0]
+			const flip = flipCoin(game, player, component)[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({

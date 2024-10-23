@@ -1,22 +1,24 @@
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
-} from 'common/cards/boss/hermits/evilxisuma_boss'
+} from '../../cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	CardComponent,
 	PlayerComponent,
+	RowComponent,
 	StatusEffectComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {GameModel} from 'common/models/game-model'
+} from '../../components'
+import {AIComponent} from '../../components/ai-component'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import ExBossNineEffect, {
 	supplyNineSpecial,
-} from 'common/status-effects/exboss-nine'
-import {WithoutFunctions} from 'common/types/server-requests'
-import {AnyTurnActionData} from 'common/types/turn-action-data'
-import {VirtualAI} from 'common/types/virtual-ai'
+} from '../../status-effects/exboss-nine'
+import {WithoutFunctions} from '../../types/server-requests'
+import {AnyTurnActionData} from '../../types/turn-action-data'
+import {VirtualAI} from '../../types/virtual-ai'
+import {assert} from '../../utils/assert'
 
 const fireDropper = () => {
 	return Math.floor(Math.random() * 9)
@@ -151,6 +153,52 @@ function getNextTurnAction(
 
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
+
+	setup(game, component) {
+		game.settings.disableRewardCards = true
+
+		let player = game.components.find(
+			PlayerComponent,
+			(_game, playerComponent) =>
+				playerComponent.entity === component.playerEntity,
+		)
+
+		assert(player, 'All AIs must have a player attached to them')
+
+		player.disableDeckingOut = true
+
+		function destroyRow(row: RowComponent) {
+			game.components
+				.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+				.forEach((slotEntity) => game.components.delete(slotEntity))
+			game.components.delete(row.entity)
+		}
+
+		// Remove challenger's rows other than indexes 0, 1, and 2
+		game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 2,
+			)
+			.forEach(destroyRow)
+		// Remove boss' rows other than index 0
+		game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach(destroyRow)
+		// Remove boss' item slots
+		game.components
+			.filterEntities(
+				BoardSlotComponent,
+				query.slot.currentPlayer,
+				query.slot.item,
+			)
+			.forEach((slotEntity) => game.components.delete(slotEntity))
+	},
 
 	getTurnActions: function* (game, component) {
 		while (true) {

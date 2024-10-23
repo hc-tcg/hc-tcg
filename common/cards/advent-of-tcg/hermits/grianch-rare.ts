@@ -51,7 +51,7 @@ class GrianchRare extends CardOld {
 			)
 				return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(game, player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') {
 				opponentPlayer.hooks.afterAttack.add(component, (_attack) => {

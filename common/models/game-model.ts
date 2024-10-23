@@ -1,23 +1,20 @@
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 } from '../components'
+import {AIComponent} from '../components/ai-component'
 import query, {ComponentQuery} from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
+	ChatMessage,
 	DefaultDictionary,
-	GameEndOutcomeT,
-	GameEndReasonT,
 	GameState,
-	Message,
+	GameVictoryReason,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
@@ -26,14 +23,15 @@ import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newRandomNumberGenerator} from '../utils/random'
 import {
+	AISetupDefs,
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
-} from '../utils/state-gen'
+} from '../utils/setup-game'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {PlayerId, PlayerModel} from './player-model'
 
 /** Type that allows for additional data about a game to be shared between components */
 export class GameValue<T> extends DefaultDictionary<GameModel, T> {
@@ -75,6 +73,7 @@ export type GameSettings = {
 	logErrorsToStderr: boolean
 	logBoardState: boolean
 	disableRewardCards: boolean
+	waitForCoinFlips: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -97,25 +96,38 @@ export function gameSettingsFromEnv(): GameSettings {
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 		logBoardState: DEBUG_CONFIG.logBoardState,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
+		waitForCoinFlips: true,
 	}
 }
 
-export class GameModel {
-	private internalCreatedTime: number
-	private internalId: string
-	private internalGameCode: string | null
-	private internalSpectatorCode: string | null
+export type GameProps = {
+	player1: PlayerSetupDefs
+	player2: PlayerSetupDefs | AISetupDefs
+	settings: GameSettings
+	gameCode?: string
+	spectatorCode?: string
+	randomizeOrder?: boolean
+	randomNumberSeed: string
+	id: string
+}
 
+export class GameModel {
 	public readonly settings: GameSettings
 
-	public chat: Array<Message>
+	public chat: Array<ChatMessage>
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	public handledActions: Array<number> = []
 	/** Voice lines to play on the next game state update.
 	 * This is used for the Evil X boss fight.
 	 */
 	public voiceLineQueue: Array<string>
+
+	public lastTurnActionTime: number
+	public actionsHandled: number
+
+	public id: string
 
 	/** The objects used in the game. */
 	public components: ComponentTable
@@ -144,31 +156,18 @@ export class GameModel {
 		>
 	}
 
+	private randomNumberGenerator: () => number
+	private mostRecentState: string = ''
+
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		victoryReason?: GameVictoryReason
 	}
 
-	constructor(
-		player1: PlayerSetupDefs,
-		player2: PlayerSetupDefs,
-		settings: GameSettings,
-		options?: {
-			gameCode?: string
-			spectatorCode?: string
-			randomizeOrder?: false
-		},
-	) {
-		options = options ?? {}
+	constructor(props: GameProps) {
+		this.settings = props.settings
+		this.id = props.id
 
-		this.settings = settings
-
-		this.internalCreatedTime = Date.now()
-		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -176,10 +175,12 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			victoryReason: undefined,
 		}
+
+		this.randomNumberGenerator = newRandomNumberGenerator(
+			props.randomNumberSeed,
+		)
 
 		this.components = new ComponentTable(this)
 		this.hooks = {
@@ -189,19 +190,54 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this.components, player1, player2, {
-			shuffleDeck: settings.shuffleDeck,
-			startWithAllCards: settings.startWithAllCards,
-			unlimitedCards: settings.unlimitedCards,
-			extraStartingCards: settings.extraStartingCards,
+
+		this.lastTurnActionTime = 0
+		this.actionsHandled = 0
+
+		setupComponents(this, this.components, props.player1, props.player2, {
+			shuffleDeck: props.settings.shuffleDeck,
+			startWithAllCards: props.settings.startWithAllCards,
+			unlimitedCards: props.settings.unlimitedCards,
+			extraStartingCards: props.settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(this, props.randomizeOrder)
+
+		for (const ai of this.components.filter(AIComponent)) {
+			ai.ai.setup(this, ai)
+			this.state.isBossGame = true
+		}
+
 		this.voiceLineQueue = []
 	}
 
 	public get logHeader() {
 		return `Game ${this.id}:`
+	}
+
+	public setStateHash() {
+		let actionsHandled = this.actionsHandled
+		let requests =
+			this.state.pickRequests.length + this.state.modalRequests.length
+		let componentCount = Object.keys(this.components.data).length
+		let board = this.components.filter(CardComponent, query.card.onBoard).length
+		let sumOfHealth = this.components
+			.filter(RowComponent)
+			.map((component) => component.health || -3)
+			.reduce((a, b) => a + b, 0)
+
+		this.mostRecentState = JSON.stringify({
+			requests,
+			componentCount,
+			board,
+			sumOfHealth,
+			actionsHandled,
+		})
+	}
+
+	/** Get a string trying to represent the state the game is in. This is used to detect desyncs between the server and clients. */
+	public getStateHash() {
+		return this.mostRecentState
 	}
 
 	public get currentPlayerEntity() {
@@ -218,47 +254,6 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
-	}
-
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
-	}
-
-	public get createdTime() {
-		return this.internalCreatedTime
-	}
-
-	public get id() {
-		return this.internalId
-	}
-
-	public get gameCode() {
-		return this.internalGameCode
-	}
-
-	public get spectatorCode() {
-		return this.internalSpectatorCode
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
@@ -325,6 +320,11 @@ export class GameModel {
 		if (turnState.blockedActions[key].length <= 0) {
 			delete turnState.blockedActions[key]
 		}
+	}
+
+	/** Request a random number */
+	public randomNumber() {
+		return this.randomNumberGenerator()
 	}
 
 	/** Returns true if the current blocked actions list includes the given action */

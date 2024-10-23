@@ -139,7 +139,15 @@ export function* loginSaga() {
 
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
-				yield* call(gameSaga, result.playerReconnected.game)
+				yield* call(
+					gameSaga,
+					result.playerReconnected.game.props,
+					result.playerReconnected.game.entity,
+					{
+						history: result.playerReconnected.game.history,
+						timer: result.playerReconnected.game.timer,
+					},
+				)
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}
 		}

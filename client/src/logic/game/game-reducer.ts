@@ -1,10 +1,9 @@
 import {BattleLogModel} from 'common/models/battle-log-model'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	ChatMessage,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
-	Message,
 } from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
@@ -20,10 +19,9 @@ type LocalGameRoot = {
 		info: null
 	} | null
 	endGameOverlay: {
-		reason: GameEndReasonT | null
-		outcome: GamePlayerEndOutcomeT
+		outcome: GameOutcome
 	} | null
-	chat: Array<Message>
+	chat: Array<ChatMessage>
 	battleLog: BattleLogModel | null
 	currentCoinFlip: LocalCurrentCoinFlip | null
 	opponentConnected: boolean
@@ -94,7 +92,6 @@ const gameReducer = (
 			return {
 				...state,
 				endGameOverlay: {
-					reason: action.reason || null,
 					outcome: action.outcome,
 				},
 			}
@@ -113,12 +110,6 @@ const gameReducer = (
 				...state,
 				currentCoinFlip: action.coinFlip,
 			}
-		// Update the board for the current player. This is used to put cards on the board before the
-		// server sends the new state.
-		// This updates based on outside mutations because I am so confused by redux and I want to ship
-		// the release tomorrow.
-		case localMessages.GAME_UPDATE:
-			return state
 
 		default:
 			return state

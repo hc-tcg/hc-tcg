@@ -1,178 +1,21 @@
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {
-	BoardSlotComponent,
-	PlayerComponent,
-	RowComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
+import ExBossAI from 'common/routines/virtual/exboss-ai'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {OpponentDefs} from 'common/utils/state-gen'
-import {LocalMessageTable, localMessages} from 'messages'
-import {
-	all,
-	cancel,
-	delay,
-	fork,
-	join,
-	race,
-	spawn,
-	take,
-} from 'typed-redux-saga'
+import {GameViewer} from 'game-controller'
+import {all, delay, fork} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
-import {
-	getGameOutcome,
-	getGamePlayerOutcome,
-	getWinner,
-} from '../utils/win-conditions'
-import gameSaga, {getTimerForSeconds} from './game'
-import ExBossAI from './virtual/exboss-ai'
-
-function setupGame(
-	player1: PlayerModel,
-	player2: PlayerModel,
-	code?: string,
-	spectatorCode?: string,
-): GameModel {
-	let game = new GameModel(
-		{
-			model: player1,
-			deck: player1.deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: player2,
-			deck: player2.deck.cards.map((card) => card.props.numericId),
-		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode},
-	)
-
-	let playerEntities = game.components.filterEntities(PlayerComponent)
-
-	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
-		player: player1,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(ViewerComponent, {
-		player: player2,
-		spectator: false,
-		playerOnLeft: playerEntities[1],
-	})
-
-	return game
-}
-
-function* gameManager(game: GameModel) {
-	// @TODO this one method needs cleanup still
-	try {
-		const viewers = game.viewers
-		const playerIds = viewers.map((viewer) => viewer.player.id)
-
-		const gameType =
-			playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
-
-		console.info(
-			`${game.logHeader}`,
-			`${gameType} game started.`,
-			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-			'Total games:',
-			root.getGameIds().length,
-		)
-
-		game.broadcastToViewers({type: serverMessages.GAME_START})
-		root.hooks.newGame.call(game)
-		game.task = yield* spawn(gameSaga, game)
-
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
-			// kill a game after two hours
-			timeout: delay(1000 * 60 * 60),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take<
-				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-			>(
-				(action: any) =>
-					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(
-						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-							.player.id,
-					),
-			),
-			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-				(action: any) =>
-					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(
-						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-							.playerId,
-					),
-			),
-		})
-
-		for (const viewer of game.viewers) {
-			const gameState = getLocalGameState(game, viewer)
-			if (gameState) {
-				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.reason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
-						.filter(PlayerComponent)
-						.forEach(
-							(player) => (gameState.players[player.entity].coinFlips = []),
-						)
-				}
-			}
-			const outcome = getGamePlayerOutcome(game, result, viewer)
-			// assert(game.endInfo.reason, 'Games can not end without a reason')
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_END,
-				gameState,
-				outcome,
-				reason: game.endInfo.reason || undefined,
-			})
-		}
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	} finally {
-		if (game.task) yield* cancel(game.task)
-		game.hooks.afterGameEnd.call()
-
-		const gameType = game.gameCode ? 'Private' : 'Public'
-		console.log(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1,
-		)
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
-	}
-}
+import {gameManagerSaga} from './game'
 
 export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
-		.some(
-			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
-		)
+		.some((game) => !!game.viewers.find((viewer) => viewer.id === playerId))
 }
 
 export function inQueue(playerId: string) {
@@ -202,9 +45,16 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2)
-				root.addGame(newGame)
-				yield* fork(gameManager, newGame)
+				yield* fork(() =>
+					gameManagerSaga({
+						player1,
+						player2,
+						viewers: [
+							{id: player1.id, type: 'player'},
+							{id: player2.id, type: 'player'},
+						],
+					}),
+				)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -287,35 +137,6 @@ export function* leaveQueue(
 	}
 }
 
-function setupSolitareGame(
-	player: PlayerModel,
-	opponent: OpponentDefs,
-): GameModel {
-	const game = new GameModel(
-		{
-			model: player,
-			deck: player.deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: opponent,
-			deck: opponent.deck,
-		},
-		gameSettingsFromEnv(),
-		{gameCode: 'solitare', randomizeOrder: false},
-	)
-
-	const playerEntities = game.components.filterEntities(PlayerComponent)
-	game.components.new(ViewerComponent, {
-		player,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
-
-	return game
-}
-
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {
@@ -337,53 +158,19 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGame = setupSolitareGame(player, {
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
+	yield* gameManagerSaga({
+		player1: player,
+		player2: {
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			deck: [EvilXisumaBoss],
+			virtualAI: ExBossAI.id,
+			disableDeckingOut: true,
+		},
+		viewers: [{id: player.id, type: 'player'}],
+		randomizeOrder: false,
 	})
-	newBossGame.state.isBossGame = true
-
-	function destroyRow(row: RowComponent) {
-		newBossGame.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-		newBossGame.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGame.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGame.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGame.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-
-	newBossGame.settings.disableRewardCards = true
-
-	root.addGame(newBossGame)
-
-	yield* fork(gameManager, newBossGame)
 }
 
 export function* createPrivateGame(
@@ -446,23 +233,16 @@ export function* joinPrivateGame(
 
 	// Check if spectator game is running first
 	const spectatorGame = Object.values(root.games).find(
-		(game) => game.spectatorCode === code,
+		(game) => game.props.spectatorCode === code,
 	)
 
 	if (spectatorGame) {
-		const viewer = spectatorGame.components.new(ViewerComponent, {
-			player: player,
-			spectator: true,
-			playerOnLeft: spectatorGame.state.order[0],
-		})
-
 		console.log(
-			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.props.gameCode}`,
 		)
-
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-			localGameState: getLocalGameState(spectatorGame, viewer),
+			game: spectatorGame.startupInformation(),
 		})
 
 		return
@@ -512,42 +292,34 @@ export function* joinPrivateGame(
 			return
 		}
 
-		const newGame = setupGame(
-			player,
-			existingPlayer,
-			root.privateQueue[code].gameCode,
-			root.privateQueue[code].spectatorCode,
-		)
-		root.addGame(newGame)
+		let viewers: Array<GameViewer> = [
+			{id: existingPlayer.id, type: 'player'},
+			{id: player.id, type: 'player'},
+		]
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const viewer = newGame.components.new(ViewerComponent, {
-				player: root.players[playerId],
-				spectator: true,
-				playerOnLeft: newGame.state.order[0],
-			})
-			let gameState = getLocalGameState(newGame, viewer)
-
-			broadcast([root.players[playerId]], {
-				type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-				localGameState: gameState,
-			})
+			viewers.push({id: playerId, type: 'spectator'})
 		}
-
-		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
 		// Remove this game from the queue, it's started
 		let tmpQueue = root.privateQueue[code]
 		delete root.privateQueue[code]
 
+		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
+
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+
 		if (tmpQueue.playerId) {
 			broadcast([root.players[tmpQueue.playerId]], {
 				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
 			})
 		}
 
-		yield* fork(gameManager, newGame)
+		yield* gameManagerSaga({
+			player1: existingPlayer,
+			player2: player,
+			viewers,
+		})
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
@@ -628,19 +400,5 @@ function* matchmakingSaga() {
 
 	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
-
-/*
- receive: CANCEL_PRIVATE_GAME
- send: WAITING_FOR_PLAYER, JOIN_PRIVATE_GAME_SUCCESS, JOIN_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_SUCCESS (with code)
- */
-
-// client sends join queue
-// we send back join queue success or fail, and client acts accordingly
-
-// 2 things happening at the same time when action is dispatched to store:
-// 1) reducer receives action and updates matchmaking state, therefore changing the client look to show - waiting for public game
-// 2) matchmaking saga also receives action, and sends data to client, then waiting for the game to start
-
-// send and receive nessage is how we communicate with the server,completely independent of the store and reducer
 
 export default matchmakingSaga

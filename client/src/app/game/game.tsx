@@ -10,6 +10,7 @@ import {
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
+	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
@@ -51,6 +52,7 @@ function Game() {
 	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 	const isSpectator = useSelector(getIsSpectator)
+	const playerEntity = useSelector(getPlayerEntity)
 	const [filter, setFilter] = useState<string>('')
 
 	if (!gameState || !playerState) return <p>Loading</p>
@@ -228,8 +230,8 @@ function Game() {
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
 		if (!gameState.isBossGame) return
-		if (endGameOverlay) {
-			if (endGameOverlay.outcome === 'you_won')
+		if (endGameOverlay && endGameOverlay.outcome !== 'tie') {
+			if (endGameOverlay.outcome.winner === playerEntity)
 				dispatch({
 					type: localMessages.QUEUE_VOICE,
 					lines: ['/voice/EXLOSE.ogg'],
@@ -325,8 +327,37 @@ function Game() {
 			</div>
 
 			{renderModal(openedModal, handleOpenModal)}
+
 			<Chat />
-			<EndGameOverlay {...endGameOverlay} />
+			{endGameOverlay?.outcome && (
+				<EndGameOverlay
+					{...endGameOverlay}
+					nameOfWinner={
+						endGameOverlay.outcome !== 'tie'
+							? gameState.players[endGameOverlay.outcome.winner].playerName
+							: null
+					}
+					nameOfLoser={
+						endGameOverlay.outcome !== 'tie'
+							? gameState.players[
+									Object.keys(gameState.players).find(
+										(k) =>
+											endGameOverlay.outcome !== 'tie' &&
+											k !== endGameOverlay.outcome.winner,
+									) as PlayerEntity
+								].playerName
+							: null
+					}
+					viewer={
+						isSpectator
+							? {type: 'spectator'}
+							: {type: 'player', entity: playerEntity}
+					}
+					onClose={() => {
+						dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+					}}
+				/>
+			)}
 		</div>
 	)
 }

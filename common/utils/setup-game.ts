@@ -7,17 +7,22 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
+import {AIComponent} from '../components/ai-component'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
-import {VirtualAI} from '../types/virtual-ai'
 import {fisherYatesShuffle} from './fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
+	deck: Array<number | string | Card>
+}
+
+export type AISetupDefs = {
+	model: AIOpponentDefs
 	deck: Array<number | string | Card>
 }
 
@@ -28,9 +33,9 @@ type ComponentSetupOptions = {
 	extraStartingCards: Array<string>
 }
 
-export type OpponentDefs = PlayerDefs & {
+export type AIOpponentDefs = PlayerDefs & {
 	deck: Array<number | string | Card>
-	virtualAI: VirtualAI
+	virtualAI: string
 }
 
 /* Set up the components that will be referenced during the game. This includes:
@@ -39,20 +44,44 @@ export type OpponentDefs = PlayerDefs & {
  * - Cards in the deck and hand
  */
 export function setupComponents(
+	game: GameModel,
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
-	player2: PlayerSetupDefs,
+	player2: PlayerSetupDefs | AISetupDefs,
 	options: ComponentSetupOptions,
 ) {
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
+	setupEcsForPlayer(
+		game,
+		components,
+		player1Component.entity,
+		player1.deck,
+		options,
+	)
+	setupEcsForPlayer(
+		game,
+		components,
+		player2Component.entity,
+		player2.deck,
+		options,
+	)
+
+	// Add the virtual AI if this is boss game
+	if ('virtualAI' in player2.model) {
+		game.components.new(
+			AIComponent,
+			player2Component.entity,
+			player2.model.virtualAI,
+		)
+	}
+
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
+	game: GameModel,
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
@@ -111,14 +140,22 @@ function setupEcsForPlayer(
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
 	if (options.shuffleDeck) {
-		fisherYatesShuffle(cards).forEach((card, i) => {
+		let numbers = Array(cards.length)
+			.fill(null)
+			.map(() => game.randomNumber())
+
+		fisherYatesShuffle(cards, numbers).forEach((card, i) => {
 			if (card.slot.inDeck()) card.slot.order = i
 		})
 
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
-			fisherYatesShuffle(cards).forEach((card, i) => {
+			let numbers = Array(cards.length)
+				.fill(null)
+				.map(() => game.randomNumber())
+
+			fisherYatesShuffle(cards, numbers).forEach((card, i) => {
 				if (card.slot.inDeck()) card.slot.order = i
 			})
 		}
@@ -142,7 +179,7 @@ export function getGameState(
 	const playerEntities = game.components.filter(PlayerComponent)
 
 	if (randomizeOrder !== false) {
-		if (Math.random() >= 0.5) {
+		if (game.randomNumber() >= 0.5) {
 			playerEntities.reverse()
 		}
 	}
@@ -167,7 +204,7 @@ export function getGameState(
 			opponentActionStartTime: null,
 		},
 
-		isBossGame: false,
+		isBossGame: false
 	}
 
 	return gameState

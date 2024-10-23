@@ -1,8 +1,8 @@
 import {Socket} from 'socket.io'
 import {PlayerDeckT} from '../../common/types/deck'
-import {getStarterPack} from '../../server/src/utils/state-gen'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
+import {getStarterPack} from '../utils/get-starter-pack'
 import {validateDeck} from '../utils/validation'
 
 export type PlayerId = string & {__player_id: never}

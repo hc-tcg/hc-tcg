@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -10,6 +9,7 @@ import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import LooseShellEffect from '../../../status-effects/loose-shell'
 import {beforeAttack, onTurnEnd} from '../../../types/priorities'
+import {assert} from '../../../utils/assert'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 

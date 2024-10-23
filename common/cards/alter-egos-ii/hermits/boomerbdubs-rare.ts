@@ -88,7 +88,7 @@ const BoomerBdubsRare: Hermit = {
 					onResult(modalResult) {
 						if (!modalResult?.result) return
 
-						const flip = flipCoin(player, activeHermit)[0]
+						const flip = flipCoin(game, player, activeHermit)[0]
 
 						if (flip === 'tails') {
 							flippedTails = true
@@ -124,7 +124,7 @@ const BoomerBdubsRare: Hermit = {
 						if (!modalResult) return 'SUCCESS'
 						if (!modalResult.result) return 'SUCCESS'
 
-						const flip = flipCoin(player, activeHermit)[0]
+						const flip = flipCoin(game, player, activeHermit)[0]
 
 						if (flip === 'tails') {
 							flippedTails = true

@@ -47,7 +47,7 @@ const ZedaphPlaysRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
 					return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] !== 'heads') return
 
 				game.components

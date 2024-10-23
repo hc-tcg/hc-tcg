@@ -50,7 +50,7 @@ class MonkeyfarmRare extends CardOld {
 			)
 				return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(game, player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
 			const pickCondition = slot.every(

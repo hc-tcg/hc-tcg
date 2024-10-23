@@ -47,7 +47,7 @@ const JinglerRare: Hermit = {
 
 				if (opponentPlayer.getHand().length === 0) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] === 'tails') return
 
 				game.addPickRequest({

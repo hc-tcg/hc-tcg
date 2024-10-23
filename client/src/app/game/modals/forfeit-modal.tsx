@@ -1,6 +1,8 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
+import {getPlayerEntity} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 
 type Props = {
@@ -8,9 +10,16 @@ type Props = {
 }
 function AttackModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
+	const player = useSelector(getPlayerEntity)
 
 	const handleYes = () => {
-		dispatch({type: localMessages.GAME_FORFEIT})
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'FORFEIT',
+				player,
+			},
+		})
 		closeModal()
 	}
 

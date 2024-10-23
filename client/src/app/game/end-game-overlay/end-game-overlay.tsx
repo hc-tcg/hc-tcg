@@ -1,59 +1,65 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
-import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
+import {PlayerEntity} from 'common/entities'
+import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
-import {getOpponentName} from 'logic/game/game-selectors'
-import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 
 type Props = {
-	outcome?: GamePlayerEndOutcomeT
-	reason?: GameEndReasonT | null
+	outcome: GameOutcome
+	viewer:
+		| {
+				type: 'player'
+				entity: PlayerEntity
+		  }
+		| {
+				type: 'spectator'
+		  }
+	onClose?: () => void
+	nameOfWinner: string | null
+	nameOfLoser: string | null
 }
 
-const EndGameOverlay = ({outcome, reason}: Props) => {
-	const dispatch = useMessageDispatch()
-	const opponent = useSelector(getOpponentName)
+const EndGameOverlay = ({
+	outcome,
+	viewer,
+	onClose,
+	nameOfWinner,
+	nameOfLoser,
+}: Props) => {
 	let animation
-	let winCondition = false
 
-	const closeModal = () => {
-		dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
+
+	if (outcome === 'tie') {
+		myOutcome = 'tie'
+	} else if (viewer.type === 'spectator') {
+		myOutcome = 'win'
+	} else if (viewer.entity === outcome.winner) {
+		myOutcome = 'win'
+	} else {
+		myOutcome = 'loss'
 	}
 
 	const OUTCOME_MSG = {
-		client_crash: 'Game client crashed',
-		server_crash: 'Server crashed',
-		timeout: 'Game exceeded time limit (60+ minutes)',
-		forfeit_loss: 'You forfeit the game',
-		forfeit_win: `${opponent} forfeit the game`,
-		leave_win: `${opponent} left the game`,
-		leave_loss: `You left the game. ${opponent} won.`,
 		tie: 'It`s a tie',
-		unknown: 'Game ended unexpectedly, please report this on discord',
-		you_won: 'You Won',
-		you_lost: 'You Lost',
+		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
+		loss: 'You Lost',
 	}
 
-	const REASON_MSG = {
-		hermits: 'lost all hermits.',
+	const REASON_MSG: Record<GameVictoryReason, string> = {
+		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
-		cards: 'ran out of cards.',
-		time: 'ran out of time without an active hermit.',
-		error: 'there was an error',
+		'decked-out': 'ran out of cards.',
+		'timeout-without-hermits': 'ran out of time without an active hermit.',
+		forfeit: 'forfeit the game.',
 	}
 
-	switch (outcome) {
-		case 'you_won':
-		case 'leave_win':
-		case 'forfeit_win':
+	switch (myOutcome) {
+		case 'win':
 			animation = '/images/animations/victory.gif'
-			winCondition = true
 			break
-		case 'you_lost':
-		case 'leave_loss':
-		case 'forfeit_loss':
+		case 'loss':
 			animation = '/images/animations/defeat.gif'
 			break
 		default:
@@ -65,11 +71,11 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 	}
 
 	return (
-		<Dialog.Root open={!!outcome} onOpenChange={closeModal}>
+		<Dialog.Root open={!!outcome} onOpenChange={onClose}>
 			<Dialog.Portal container={document.getElementById('modal')}>
 				<Dialog.Overlay
 					className={cn(css.overlay, {
-						[css.win]: winCondition,
+						[css.win]: myOutcome === 'win',
 					})}
 				/>
 				<Dialog.Content
@@ -86,18 +92,19 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 					</Dialog.Title>
 					<Dialog.Description
 						className={cn(css.description, {
-							[css.win]: winCondition,
+							[css.win]: myOutcome === 'win',
 						})}
 					>
-						{reason && (
+						{outcome !== 'tie' && (
 							<span>
-								{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
+								{viewer.type === 'spectator' && nameOfLoser}
+								{viewer.type === 'player' &&
+									(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
+								{REASON_MSG[outcome.victoryReason]}
 							</span>
 						)}
 
-						{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
-							? outcome && OUTCOME_MSG[outcome]
-							: null}
+						{OUTCOME_MSG[myOutcome]}
 						<Dialog.Close asChild>
 							<Button>Return to Main Menu</Button>
 						</Dialog.Close>

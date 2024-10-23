@@ -1,15 +1,14 @@
+import {PlayerEntity} from '../entities'
+import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {GameMessage, GameStartupInformation} from '../routines/game'
 import {PlayerDeckT} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
-import {Message as ChatMessage} from '../types/game-state'
+import {LocalGameState} from '../types/game-state'
+import {ChatMessage as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
+import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const serverMessages = messages({
+export const serverMessages = messages('server', {
 	PLAYER_RECONNECTED: null,
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,
@@ -20,6 +19,7 @@ export const serverMessages = messages({
 	GAME_CRASH: null,
 	GAME_START: null,
 	GAME_END: null,
+	GAME_TURN_ACTION: null,
 	PRIVATE_GAME_TIMEOUT: null,
 	LEAVE_QUEUE_SUCCESS: null,
 	LEAVE_QUEUE_FAILURE: null,
@@ -31,18 +31,22 @@ export const serverMessages = messages({
 	JOIN_PRIVATE_GAME_FAILURE: null,
 	JOIN_QUEUE_SUCCESS: null,
 	JOIN_QUEUE_FAILURE: null,
-	SPECTATE_PRIVATE_GAME_START: null,
 	SPECTATE_PRIVATE_GAME_WAITING: null,
+	SPECTATE_PRIVATE_GAME_START: null,
 	INVALID_CODE: null,
 	WAITING_FOR_PLAYER: null,
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
+	GAME_RECONNECT_INFORMATION: null,
 	CHAT_UPDATE: null,
 })
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED; game?: LocalGameState},
+	{
+		type: typeof serverMessages.PLAYER_RECONNECTED
+		game?: GameStartupInformation
+	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{
 		type: typeof serverMessages.PLAYER_INFO
@@ -58,12 +62,18 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_CRASH},
-	{type: typeof serverMessages.GAME_START},
 	{
-		type: typeof serverMessages.GAME_END
-		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		type: typeof serverMessages.GAME_START
+		props: GameProps
+		playerEntity: PlayerEntity
+	},
+	{
+		type: typeof serverMessages.GAME_TURN_ACTION
+		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+		time: number
+		/** A number approximating the game state, used to verify games are synced between the server and client. */
+		gameStateHash: string
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
@@ -80,20 +90,23 @@ export type ServerMessages = [
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_FAILURE},
 	{type: typeof serverMessages.JOIN_QUEUE_SUCCESS},
 	{type: typeof serverMessages.JOIN_QUEUE_FAILURE},
+	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_WAITING},
 	{
 		type: typeof serverMessages.SPECTATE_PRIVATE_GAME_START
-		localGameState: LocalGameState
+		game: GameStartupInformation
 	},
-	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_WAITING},
 	{type: typeof serverMessages.INVALID_CODE},
 	{type: typeof serverMessages.WAITING_FOR_PLAYER},
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
-	{
-		type: typeof serverMessages.GAME_OVER_STAT
-		outcome: GameEndOutcomeT
-		won: boolean
-	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
+	{
+		type: typeof serverMessages.GAME_RECONNECT_INFORMATION
+		history: Array<GameMessage>
+		timer: {
+			turnRemaining: number
+			turnStartTime: number
+		}
+	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 ]
 

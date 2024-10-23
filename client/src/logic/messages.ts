@@ -4,12 +4,11 @@ import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {PlayerDeckT} from 'common/types/deck'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 } from 'common/types/game-state'
-import {Message as ChatMessage} from 'common/types/game-state'
+import {ChatMessage as ChatMessage} from 'common/types/game-state'
 import {
 	LocalCardInstance,
 	PlayerInfo,
@@ -24,7 +23,7 @@ import {
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
 
-export const localMessages = messages({
+export const localMessages = messages('client-local', {
 	SOCKET_CONNECTING: null,
 	SOCKET_CONNECT: null,
 	SOCKET_DISCONNECT: null,
@@ -58,7 +57,6 @@ export const localMessages = messages({
 	GAME_CARD_SELECTED_SET: null,
 	GAME_MODAL_OPENED_SET: null,
 	GAME_SLOT_PICKED: null,
-	GAME_FORFEIT: null,
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
@@ -71,7 +69,6 @@ export const localMessages = messages({
 	GAME_TURN_END: null,
 	GAME_ACTIONS_ATTACK: null,
 	GAME_ACTIONS_END_TURN: null,
-	GAME_UPDATE: null,
 	GAME_SPECTATOR_LEAVE: null,
 	FIREBASE_AUTHED: null,
 	FIREBASE_STATS_RESET: null,
@@ -161,7 +158,6 @@ type Messages = [
 		row?: number
 		index?: number
 	},
-	{type: typeof localMessages.GAME_FORFEIT},
 	{
 		type: typeof localMessages.GAME_ATTACK_START
 		attackType: 'single-use' | 'primary' | 'secondary'
@@ -169,8 +165,7 @@ type Messages = [
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_HIDE
@@ -196,7 +191,6 @@ type Messages = [
 		action: AnyTurnActionData
 	},
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
-	{type: typeof localMessages.GAME_UPDATE},
 	{type: typeof localMessages.GAME_SPECTATOR_LEAVE},
 	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
 	{type: typeof localMessages.FIREBASE_STATS_RESET},

@@ -1,180 +1,400 @@
-import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
-import {LocalCardInstance} from 'common/types/server-requests'
-import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
-import {LocalMessageTable, localMessages} from 'logic/messages'
-import {put, select} from 'typed-redux-saga'
-import {getGameState, getPlayerState} from './game-selectors'
+import {Card} from 'common/cards/base/types'
+import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
+import query from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from 'common/status-effects/multiturn-attack-disabled'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from 'common/status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
+import {
+	CurrentCoinFlip,
+	LocalCurrentCoinFlip,
+	LocalGameState,
+	LocalPlayerState,
+} from 'common/types/game-state'
+import {ModalData} from 'common/types/modal-requests'
+import {
+	LocalCardInstance,
+	LocalModalData,
+	LocalStatusEffectInstance,
+	WithoutFunctions,
+} from 'common/types/server-requests'
 
-// This file has routines to force the client to update before a message is recieved from the server.
+////////////////////////////////////////
+// @TODO sort this whole thing out properly
+/////////////////////////////////////////
 
-/** Make the client look like a card has been placed in a slot */
-export function* localPutCardInSlot(
-	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
-	selectedCard: LocalCardInstance,
-) {
-	let gameState = yield* select(getGameState)
-	if (!gameState) throw new Error('Can not find game state')
+// Dear Reader,
+// On 07/17/24, This still has not been sorted out properly. I think I might have
+// even made it worse.
+// Sincerely, Lunarmagpie
+// 10/09/24, Oh man, Im sorry but I think this is becomming even worse. - Luanrmagpie
 
-	let playerState = Object.values(gameState?.players || {}).find(
-		(player) => player.entity === action.player,
-	)
-	if (!playerState) throw new Error('Player state not found.')
-
-	let board = playerState?.board
-	let slot = action.slotInfo
-	if (!board) return
-
-	let row = action.row
-	let index = action.index
-
-	if (slot.slotType === 'single_use' && board.singleUse.card === null) {
-		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
+function getLocalStatusEffect(effect: StatusEffectComponent) {
+	if (!effect.target) {
+		return null
 	}
-	if (
-		slot.slotType === 'hermit' &&
-		row !== undefined &&
-		board.rows[row].hermit.card === null
-	) {
-		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-		board.rows[row].health = (
-			selectedCard as LocalCardInstance<HasHealth>
-		).props.health
-
-		if (!board.activeRow) {
-			board.activeRow = board.rows[row].entity
-		}
-
-		// If we couldn't before, we can always end our turn after playing a hermit
-		gameState.turn.availableActions.push('END_TURN')
-		yield* localRemoveCardFromHand(selectedCard)
+	return {
+		props: WithoutFunctions(effect.props),
+		instance: effect.entity,
+		target:
+			effect.target instanceof CardComponent
+				? {type: 'card', card: effect.target.entity}
+				: {type: 'global', player: effect.target.entity},
+		counter: effect.counter,
 	}
-	if (
-		slot.slotType === 'attach' &&
-		row !== undefined &&
-		board.rows[row].attach.card === null
-	) {
-		board.rows[row].attach = {slot: slot.slotEntity, card: selectedCard as any}
-		yield* localRemoveCardFromHand(selectedCard)
-	}
-	if (
-		slot.slotType === 'item' &&
-		row !== undefined &&
-		index !== undefined &&
-		board.rows[row].items[index].card === null
-	) {
-		board.rows[row].items[index] = {
-			slot: slot.slotEntity,
-			card: selectedCard as any,
-		}
-		yield* localRemoveCardFromHand(selectedCard)
-
-		// When we place a item card, lets update the available actions to include what we have enough
-		// energy for.
-		let hermit = board.rows[row].hermit
-		let rowEnergy = board.rows[row].items.flatMap((item) => {
-			if (!item.card || !isItem(item.card.props)) return []
-			return item.card.props.energy
-		})
-		if (
-			hermit.card &&
-			isHermit(hermit.card.props) &&
-			isItem(selectedCard.props)
-		) {
-			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false)) {
-				gameState.turn.availableActions.push('PRIMARY_ATTACK')
-			}
-			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false)) {
-				gameState.turn.availableActions.push('SECONDARY_ATTACK')
-			}
-		}
-	}
-
-	yield* put({type: 'UPDATE_GAME'})
 }
 
-/** Make the client look like a card has been removed from the hand. */
-export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
-	let localPlayerState = yield* select(getGameState)
-
-	if (!localPlayerState?.hand) return
-
-	localPlayerState.hand = localPlayerState.hand.filter(
-		(card) => card.entity !== selectedCard.entity,
-	)
-
-	yield* put({type: 'UPDATE_GAME'})
-}
-
-export function* localApplyEffect() {
-	let playerState = yield* select(getPlayerState)
-
-	if (playerState?.board) {
-		playerState.board.singleUseCardUsed = true
+export function getLocalCard<CardType extends Card>(
+	game: GameModel,
+	card: CardComponent<CardType>,
+): LocalCardInstance<CardType> {
+	let attackPreview = null
+	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+		attackPreview = card.props.attackPreview(game)
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	return {
+		props: card.props as WithoutFunctions<CardType>,
+		entity: card.entity,
+		slot: card.slotEntity,
+		turnedOver: card.turnedOver,
+		attackHint: attackPreview,
+	}
 }
 
-export function* localRemoveEffect() {
-	let playerState = yield* select(getPlayerState)
-
-	if (playerState?.board) {
-		playerState.board.singleUse = {
-			slot: playerState?.board.singleUse.slot,
-			card: null,
+export function getLocalModalData(
+	game: GameModel,
+	modal: ModalData,
+): LocalModalData {
+	if (modal.type == 'selectCards') {
+		return {
+			...modal,
+			cards: modal.cards.map((entity) =>
+				getLocalCard(game, game.components.get(entity)!),
+			),
 		}
-	}
-
-	yield* put({type: 'UPDATE_GAME'})
-}
-
-export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
-	let playerState = yield* select(getPlayerState)
-	let gameState = yield* select(getGameState)
-
-	if (playerState?.board) {
-		// Rows are changed by sending a hermit slot.
-		for (let row of playerState.board.rows) {
-			if (row.hermit.slot === action.entity) {
-				playerState.board.activeRow = row.entity
-				break
-			}
-		}
-	}
-
-	if (gameState?.turn)
-		gameState.turn.availableActions = gameState.turn.availableActions.filter(
-			(action) =>
-				![
-					'SINGLE_USE_ATTACK',
-					'PRIMARY_ATTACK',
-					'SECONDARY_ATTACK',
-					'PLAY_HERMIT_CARD',
-					'PLAY_ITEM_CARD',
-					'PLAY_EFFECT_CARD',
-					'PLAY_SINGLE_USE_CARD',
-				].includes(action),
+	} else if (modal.type === 'copyAttack') {
+		let hermitCard = game.components.get(modal.hermitCard)!
+		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
+			[[]],
+			(observerEntity) => {
+				let observer = game.components.get(observerEntity)
+				return observer?.wrappingEntity === hermitCard.entity
+			},
 		)
 
-	yield* put({type: 'UPDATE_GAME'})
-}
+		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
+		 * blocked by status effects here.
+		 */
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(
+					PrimaryAttackDisabledEffect,
+					MultiturnPrimaryAttackDisabledEffect,
+				),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
+			)
+		) {
+			blockedActions.push('PRIMARY_ATTACK')
+		}
 
-/** Make the client look like the turn has ended */
-export function* localEndTurn() {
-	let localPlayerState = yield* select(getGameState)
-	if (localPlayerState?.turn) {
-		localPlayerState.turn.currentPlayerEntity =
-			localPlayerState?.opponentPlayerEntity
-		localPlayerState.turn.turnNumber++
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(
+					SecondaryAttackDisabledEffect,
+					MultiturnSecondaryAttackDisabledEffect,
+				),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
+			)
+		) {
+			blockedActions.push('SECONDARY_ATTACK')
+		}
+
+		if (
+			game.components.exists(
+				StatusEffectComponent,
+				query.effect.is(TimeSkipDisabledEffect),
+				query.effect.targetIsPlayerAnd(query.player.currentPlayer),
+			) &&
+			query.card.is(JoeHillsRare)(game, hermitCard)
+		)
+			blockedActions.push('SECONDARY_ATTACK')
+
+		return {
+			...modal,
+			hermitCard: getLocalCard(game, hermitCard),
+			blockedActions: blockedActions,
+		}
 	}
 
-	// When our turn ends we cannot do anything, so lets pretend that we have no actions to have the
-	// frontend update properly.
-	if (localPlayerState?.turn) localPlayerState.turn.availableActions = []
+	throw new Error('Uknown modal type')
+}
 
-	// Slots are cleared at the end of the turn
-	yield* localRemoveEffect()
+function getLocalCoinFlip(
+	game: GameModel,
+	coinFlip: CurrentCoinFlip,
+): LocalCurrentCoinFlip {
+	return {
+		...coinFlip,
+		card: getLocalCard(game, game.components.get(coinFlip.card)!),
+	}
+}
 
-	yield* put({type: 'UPDATE_GAME'})
+function getLocalPlayerState(
+	game: GameModel,
+	playerState: PlayerComponent,
+): LocalPlayerState {
+	let singleUseSlot = game.components.find(
+		SlotComponent,
+		query.slot.singleUse,
+	)?.entity
+	let singleUseCard = game.components.find(
+		CardComponent,
+		query.card.slotEntity(singleUseSlot),
+	)
+
+	if (!singleUseSlot) {
+		throw new Error('Slot is missing when generating local game state.')
+	}
+
+	let board = {
+		activeRow:
+			game.components.findEntity(
+				RowComponent,
+				query.row.active,
+				query.row.player(playerState.entity),
+			) || null,
+		singleUse: {
+			slot: singleUseSlot,
+			card: singleUseCard ? getLocalCard(game, singleUseCard) : null,
+		},
+		singleUseCardUsed: playerState.singleUseCardUsed,
+		rows: game.components
+			.filter(RowComponent, query.row.player(playerState.entity))
+			.map((row) => {
+				const hermitCard = row.getHermit()
+				const hermitSlot = row.getHermitSlot()
+				const attachCard = row.getAttach()
+				const attachSlot = row.getAttachSlot()
+
+				const items = row.getItemSlots().map((itemSlot) => {
+					let itemCard = game.components.find(
+						CardComponent,
+						query.card.slotEntity(itemSlot.entity),
+					)
+					return {
+						slot: itemSlot.entity,
+						card: itemCard ? getLocalCard(game, itemCard) : null,
+					}
+				})
+
+				if (!hermitSlot || !attachSlot)
+					throw new Error('Slot is missing when generating local game state.')
+
+				return [
+					row.index,
+					{
+						entity: row.entity,
+						hermit: {
+							slot: hermitSlot.entity,
+							card: hermitCard ? (getLocalCard(game, hermitCard) as any) : null,
+						},
+						attach: {
+							slot: attachSlot.entity,
+							card: attachCard ? (getLocalCard(game, attachCard) as any) : null,
+						},
+						items: items,
+						health: row.health,
+					},
+				] as const
+			})
+			.sort(([rowIndexA, _rowA], [rowIndexB, _rowB]) => rowIndexA - rowIndexB)
+			.map(([_, row]) => row),
+	}
+
+	const localPlayerState: LocalPlayerState = {
+		entity: playerState.entity,
+		playerName: playerState.playerName,
+		minecraftName: playerState.minecraftName,
+		censoredPlayerName: playerState.censoredPlayerName,
+		coinFlips: playerState.coinFlips.map((flip) =>
+			getLocalCoinFlip(game, flip),
+		),
+		lives: playerState.lives,
+		board: board,
+	}
+	return localPlayerState
+}
+
+export function getLocalGameState(
+	game: GameModel,
+	playerEntity?: PlayerEntity,
+): LocalGameState {
+	const isSpectator = playerEntity === undefined
+
+	// If we are a spectator, display player one on the left
+	if (!playerEntity) {
+		playerEntity = game.state.order[0]
+	}
+
+	const playerState = game.components.find(
+		PlayerComponent,
+		(_game, player) => player.entity == playerEntity,
+	)
+
+	if (!playerState)
+		throw new Error('Player should be added to ECS before fetching local state')
+
+	const opponentState = playerState.opponentPlayer
+
+	let isCurrentPlayer =
+		!isSpectator && playerEntity === game.currentPlayer.entity
+
+	const turnState = game.state.turn
+
+	// convert player states
+	const players: Record<PlayerEntity, LocalPlayerState> = {}
+	players[playerEntity] = getLocalPlayerState(game, playerState)
+	players[game.otherPlayerEntity(playerEntity)] = getLocalPlayerState(
+		game,
+		opponentState,
+	)
+
+	// Pick message or modal id
+	playerState.pickableSlots = null
+	let currentPickMessage = null
+	let currentModalData = null
+
+	const currentPickRequest = isSpectator ? null : game.state.pickRequests[0]
+	const currentModalRequest = isSpectator ? null : game.state.modalRequests[0]
+
+	if (currentModalRequest?.player === playerEntity) {
+		// We must send modal requests first, to stop pick requests from overwriting them.
+		currentModalData = getLocalModalData(game, currentModalRequest.modal)
+	} else if (currentPickRequest?.player === playerEntity) {
+		// Once there are no modal requests, send pick requests
+		currentPickMessage = currentPickRequest.message
+		// Add the card name before the request
+		const pickRequestCreator = game.components.get(currentPickRequest.id)
+		if (pickRequestCreator) {
+			currentPickMessage = `${pickRequestCreator.props.name}: ${currentPickMessage}`
+		}
+		// We also want to highlight the slots for the player that must select a slot
+		if (currentPickRequest.player == playerEntity) {
+			playerState.pickableSlots = game.getPickableSlots(
+				currentPickRequest.canPick,
+			)
+		}
+		// We also want to highlight the slots for the player that must select a slot
+		if (currentPickRequest.player == playerEntity) {
+			playerState.pickableSlots = game.getPickableSlots(
+				currentPickRequest.canPick,
+			)
+		}
+	}
+
+	let currentPickableSlots = playerState.pickableSlots
+
+	let timer = {
+		turnStartTime: game.state.timer.turnStartTime,
+		opponentActionStartTime: game.state.timer.opponentActionStartTime,
+		turnRemaining:
+			game.state.timer.turnStartTime +
+			999 +
+			game.settings.maxTurnTime * 1000 -
+			Date.now(),
+	}
+
+	const localGameState: LocalGameState = {
+		isSpectator: isSpectator,
+		turn: {
+			turnNumber: turnState.turnNumber,
+			currentPlayerEntity: game.currentPlayer.entity,
+			availableActions: isCurrentPlayer
+				? turnState.availableActions
+				: turnState.opponentAvailableActions,
+		},
+		order: game.state.order,
+		statusEffects: game.components
+			.filter(StatusEffectComponent)
+			.sort((a, b) => a.order - b.order)
+			.map(getLocalStatusEffect)
+			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
+
+		// personal info
+		hand: isSpectator
+			? []
+			: game.components
+					.filter(
+						CardComponent,
+						query.card.slot(
+							query.slot.player(playerState.entity),
+							query.slot.hand,
+						),
+					)
+					.sort(CardComponent.compareOrder)
+					.map((card) => getLocalCard(game, card)),
+		pileCount: isSpectator
+			? 0
+			: game.components.filter(
+					CardComponent,
+					query.card.slot(
+						query.slot.player(playerState.entity),
+						query.slot.deck,
+					),
+				).length,
+		discarded: isSpectator
+			? []
+			: game.components
+					.filter(
+						CardComponent,
+						query.card.slot(
+							query.slot.player(playerState.entity),
+							query.slot.discardPile,
+						),
+					)
+					.map((card) => getLocalCard(game, card)),
+
+		// The entity of the player on the left of the screen
+		playerEntity: players[playerEntity].entity,
+		// The entity for the player on the the right of the screen
+		opponentPlayerEntity: players[game.otherPlayerEntity(playerEntity)].entity,
+
+		currentCardsCanBePlacedIn: playerState
+			.getCardsCanBePlacedIn()
+			.map(([card, place]) => [getLocalCard(game, card), place]),
+		currentPickableSlots,
+		currentPickMessage,
+		currentModalData,
+
+		players,
+		timer,
+
+		isBossGame: game.state.isBossGame,
+		voiceLineQueue: game.voiceLineQueue,
+	}
+
+	return localGameState
 }

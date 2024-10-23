@@ -4,7 +4,7 @@ import {Message, MessageTable, messages} from '../redux-messages'
 import {PlayerDeckT} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const clientMessages = messages({
+export const clientMessages = messages('client', {
 	GET_UPDATES: null,
 	UPDATE_DECK: null,
 	UPDATE_MINECRAFT_NAME: null,
@@ -16,10 +16,11 @@ export const clientMessages = messages({
 	LEAVE_QUEUE: null,
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
-	TURN_ACTION: null,
+	GAME_TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
+	REQUEST_GAME_RECONNECT_INFORMATION: null,
 })
 
 export type ClientMessages = [
@@ -35,13 +36,15 @@ export type ClientMessages = [
 	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
 	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
 	{
-		type: typeof clientMessages.TURN_ACTION
+		type: typeof clientMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
+		time: number
 	},
 	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
+	{type: typeof clientMessages.REQUEST_GAME_RECONNECT_INFORMATION},
 ]
 
 export type ClientMessage = Message<ClientMessages>

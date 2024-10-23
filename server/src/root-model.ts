@@ -1,10 +1,10 @@
+import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {GameController} from 'game-controller'
 import {Hook} from '../../common/types/hooks'
-import {GameModel} from './game-model'
-import {PlayerModel} from './player-model'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
-	public games: Record<string, GameModel> = {}
+	public games: Record<string, GameController> = {}
 	public queue: Array<string> = []
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
@@ -14,14 +14,12 @@ export class RootModel {
 			playerId: string | null
 			gameCode: string
 			spectatorCode: string | undefined
-			spectatorsWaiting: Array<string>
+			spectatorsWaiting: Array<PlayerId>
 			/** Code used by API consumers to cancel a game. */
 			apiSecret?: string | null
 		}
 	> = {}
 	public hooks = {
-		newGame: new Hook<string, (game: GameModel) => void>(),
-		gameRemoved: new Hook<string, (game: GameModel) => void>(),
 		playerJoined: new Hook<string, (player: PlayerModel) => void>(),
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),
@@ -57,8 +55,5 @@ export class RootModel {
 	}
 	public addPlayer(player: PlayerModel) {
 		this.players[player.id] = player
-	}
-	public addGame(game: GameModel) {
-		this.games[game.id] = game
 	}
 }
