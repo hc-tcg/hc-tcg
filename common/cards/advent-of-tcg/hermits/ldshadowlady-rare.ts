@@ -20,7 +20,7 @@ const LDShadowLadyRare: Hermit = {
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 2,
 	type: 'terraform',
 	health: 290,
 	primary: {
@@ -34,7 +34,7 @@ const LDShadowLadyRare: Hermit = {
 		cost: ['terraform', 'terraform', 'any'],
 		damage: 90,
 		power:
-			"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available. If there's no open slots available, their active Hermit takes 60hp additional damage.",
+			"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available. If their Hermit can't be moved, their active Hermit takes 40hp additional damage.",
 	},
 	onAttach(
 		game: GameModel,
@@ -112,10 +112,9 @@ const LDShadowLadyRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || !attack.isType('secondary'))
 					return
-				if (!opponentHasMovableActive() || opponentPlayer.activeRow === null)
-					return
+				if (opponentPlayer.activeRow === null) return
 				if (pickedRow === null) {
-					attack.addDamage(component.entity, 60)
+					attack.addDamage(component.entity, 40)
 				} else {
 					game.swapRows(opponentPlayer.activeRow, pickedRow)
 				}
