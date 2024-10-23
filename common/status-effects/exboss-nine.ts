@@ -1,4 +1,3 @@
-import {InstancedValue} from '../cards/base/card'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -7,6 +6,7 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {onTurnEnd} from '../types/priorities'
+import {InstancedValue} from '../utils/instanced-value'
 import {Counter, systemStatusEffect} from './status-effect'
 
 export type NINE_SPECIAL = 'NINEDISCARD' | 'NINEATTACHED'
