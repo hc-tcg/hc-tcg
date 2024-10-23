@@ -1,4 +1,4 @@
-import {HasHealth, isHermit, isItem} from 'common/cards/base/types'
+import {HasHealth, isHermit, isItem} from 'common/cards/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'

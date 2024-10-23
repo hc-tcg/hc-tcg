@@ -17,9 +17,9 @@ import {
 import SlownessEffect from '../../../status-effects/slowness'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
-import EvilXisumaRare from '../../alter-egos/hermits/evilxisuma_rare'
-import {InstancedValue} from '../../base/card'
-import {Hermit} from '../../base/types'
+import {InstancedValue} from '../../card'
+import EvilXisumaRare from '../../hermits/evilxisuma_rare'
+import {Hermit} from '../../types'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
 type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'

@@ -1,5 +1,5 @@
 import {CARDS} from '../cards'
-import {Card} from '../cards/base/types'
+import {Card} from '../cards/types'
 
 export function getFormattedName(cardId: string, opponent: boolean) {
 	const cardInfo = CARDS[cardId]

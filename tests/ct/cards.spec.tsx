@@ -2,9 +2,9 @@ import {expect, test} from '@playwright/experimental-ct-react'
 import EffectCard from 'client/components/card/effect-card-svg'
 import HermitCard from 'client/components/card/hermit-card-svg'
 import ItemCard from 'client/components/card/item-card-svg'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import BuilderDoubleItem from 'common/cards/default/items/builder-rare'
-import GoldenAxe from 'common/cards/default/single-use/golden-axe'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BuilderDoubleItem from 'common/cards/items/builder-rare'
+import GoldenAxe from 'common/cards/single-use/golden-axe'
 
 test.use({viewport: {width: 400, height: 400}})
 

@@ -1,4 +1,4 @@
-import {Card} from '../cards/base/types'
+import {Card} from '../cards/types'
 import {RankT, TokenCostT} from '../types/cards'
 
 export function getCardVisualTokenCost(
