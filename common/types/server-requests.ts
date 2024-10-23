@@ -45,6 +45,7 @@ export type LocalStatusEffectInstance<
 > = {
 	readonly props: WithoutFunctions<Props>
 	readonly instance: string
+	readonly description: string
 	readonly target:
 		| {
 				type: 'card'
