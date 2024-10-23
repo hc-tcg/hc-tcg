@@ -1338,7 +1338,7 @@ describe('Test The Grianch Naughty', () => {
 					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
 					yield* playCardFromHand(game, BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
@@ -1372,8 +1372,120 @@ describe('Test The Grianch Naughty', () => {
 							StatusEffectComponent,
 							query.effect.is(ChromaKeyedEffect),
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
-						)?.counter,
-					).toBe(2)
+						),
+					).toBe(null)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Beetlejhost "Jopactity" + Cleo primary', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(
+						game.currentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
+					yield* attack(game, 'primary')
+					expect(
+						game.currentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect),
+					).toBe(null)
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							BeetlejhostRare.secondary.damage -
+							ZombieCleoRare.primary.damage,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Skizz "Gas Light" + Beetlejhost "Jopactity"', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					SkizzlemanRare,
+					BeetlejhostRare,
+					BadOmen,
+					Anvil,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 1)
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 2)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(
+						game.currentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
+					yield* endTurn(game)
+
+					expect(
+						game.opponentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

@@ -46,8 +46,10 @@ const Trapdoor: Attach = {
 					)
 				)
 					return
+				const targetHermit = target.getHermit()
+				if (!targetHermit) return
 				// Target Block cannot be ignored so don't try intercepting damage for log clarity
-				if (target.getHermit()?.getStatusEffect(TargetBlockEffect)) return
+				if (targetHermit.getStatusEffect(TargetBlockEffect)) return
 
 				if (totalReduction < 40) {
 					const damageReduction = Math.min(

@@ -94,10 +94,14 @@ const Anvil: SingleUse = {
 						if (attack === null) {
 							// No valid targets
 							game.battleLog.addEntry(
-								component.player.entity,
-								`$p{You|${component.player.playerName}}$ used $eAnvil$ and missed`,
+								player.entity,
+								`$p{You|${player.playerName}}$ used $eAnvil$ and missed`,
 							)
-							applySingleUse(game)
+							return game.newAttack({
+								attacker: component.entity,
+								player: player.entity,
+								type: 'effect',
+							})
 						}
 						return attack
 					}

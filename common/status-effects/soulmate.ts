@@ -53,6 +53,7 @@ const SoulmateEffect: StatusEffect<PlayerComponent> = {
 					attacker: effect.creatorEntity,
 					target: player.activeRowEntity,
 					type: 'status-effect',
+					isBacklash: true,
 					log: (values) =>
 						`${values.target} took ${values.damage} from $e${effect.props.name}$`,
 				})

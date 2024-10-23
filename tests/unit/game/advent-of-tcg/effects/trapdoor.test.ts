@@ -4,6 +4,7 @@ import SplashPotionOfHarming from 'common/cards/advent-of-tcg/single-use/splash-
 import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
 import GoatfatherRare from 'common/cards/alter-egos/hermits/goatfather-rare'
+import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
 import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
@@ -518,6 +519,29 @@ describe('Test Trapdoor', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - VintageBeefCommon.primary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Trapdoor does not redirect when Renbob "Hyperspace" attacks an empty row', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, Trapdoor],
+				playerTwoDeck: [RenbobRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, RenbobRare, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health,
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
