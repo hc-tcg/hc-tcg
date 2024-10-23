@@ -6,7 +6,7 @@ const LooseShellEffect: StatusEffect<CardComponent> = {
 	icon: 'loose-shell',
 	id: 'loose-shell',
 	name: 'Loose Shell',
-	description:
+	description: (_component) =>
 		'Turtle Shell will not protect this hermit until the next time they become active.',
 }
 

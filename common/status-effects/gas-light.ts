@@ -89,7 +89,8 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 	id: 'gas-light-triggered',
 	icon: 'gas-light',
 	name: 'Gas Light',
-	description: 'This hermit will take 20 damage at the end of your turn.',
+	description: (_component) =>
+		'This hermit will take 20 damage at the end of your turn.',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

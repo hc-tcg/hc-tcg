@@ -8,7 +8,7 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	icon: 'ignore-attach',
 	id: 'ignore-attach',
 	name: 'Ignore Attach Effect',
-	description:
+	description: (_component) =>
 		'Any attach effect on this hermit ignores damage for the rest of this turn.',
 	applyCondition(_game, value) {
 		return (

@@ -6,7 +6,7 @@ const DyedEffect: StatusEffect<CardComponent> = {
 	id: 'dyed',
 	icon: 'dyed',
 	name: 'Dyed',
-	description: 'Items attached to this Hermit become any type.',
+	description: (_component) => 'Items attached to this Hermit become any type.',
 	applyCondition: (_game, card) =>
 		card instanceof CardComponent && !card.getStatusEffect(DyedEffect),
 

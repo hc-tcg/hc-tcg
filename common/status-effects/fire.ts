@@ -13,7 +13,7 @@ const FireEffect: StatusEffect<CardComponent> = {
 	id: 'fire',
 	icon: 'fire',
 	name: 'Burn',
-	description:
+	description: (_component) =>
 		"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
 	applyLog: (values) => `${values.target} was $eBurned$`,
 	onApply(

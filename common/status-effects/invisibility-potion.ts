@@ -12,7 +12,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 	id: 'invisibility-potion-heads',
 	icon: 'invisibility-potion-heads',
 	name: 'Hidden!',
-	description: "Your opponent's next attack will miss.",
+	description: (_component) => "Your opponent's next attack will miss.",
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -46,7 +46,8 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 	id: 'invisibility-potion-tails',
 	icon: 'invisibility-potion-tails',
 	name: 'Spotted!',
-	description: "Your opponent's next attack will deal double damage.",
+	description: (_component) =>
+		"Your opponent's next attack will deal double damage.",
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

@@ -183,6 +183,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 	return {
 		props: WithoutFunctions(effect.props),
 		instance: effect.entity,
+		description: effect.props.description(effect),
 		target:
 			effect.target instanceof CardComponent
 				? {type: 'card', card: effect.target.entity}

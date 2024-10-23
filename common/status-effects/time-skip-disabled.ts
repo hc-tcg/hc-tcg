@@ -9,7 +9,7 @@ const TimeSkipDisabledEffect: Counter<PlayerComponent> = {
 	counter: 1,
 	counterType: 'turns',
 	name: 'Time Skip Disabled',
-	description: 'The attack "Time Skip" is disabled this turn.',
+	description: (_component) => 'The attack "Time Skip" is disabled this turn.',
 	onApply(_game, effect, player, observer) {
 		if (effect.counter === null) effect.counter = this.counter
 

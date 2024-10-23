@@ -25,7 +25,7 @@ const ExBossNineEffect: Counter<CardComponent> = {
 	id: 'exboss-nine',
 	icon: 'exboss-nine',
 	name: 'Boss Rules',
-	description:
+	description: (_component) =>
 		"At the end of EX's ninth turn, an additional move will be performed.",
 	counter: 8, // Starts at 8 and triggers at 0 turns remaining
 	counterType: 'turns',

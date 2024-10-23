@@ -12,7 +12,7 @@ const FortuneEffect: StatusEffect<PlayerComponent> = {
 	name: 'Fortune',
 	id: 'fortune',
 	icon: 'fortune',
-	description: 'Any coin flips this turn will roll heads.',
+	description: (_component) => 'Any coin flips this turn will roll heads.',
 	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,

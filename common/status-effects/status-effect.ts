@@ -25,7 +25,7 @@ export type StatusEffect<
 	name: string
 	/** A unique identifier for this status effect */
 	id: string
-	description: string
+	description: (component?: StatusEffectComponent) => string
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
@@ -90,7 +90,7 @@ export const hiddenStatusEffect = {
 	...statusEffect,
 	type: 'hiddenSystem' as StatusEffect['type'],
 	icon: '',
-	description: '',
+	description: (_?: StatusEffectComponent) => '',
 	name: '',
 	applyCondition: query.anything,
 	applyLog: null,

@@ -13,7 +13,7 @@ const GoMiningEffect: Counter<PlayerComponent> = {
 	id: 'go-mining',
 	icon: 'go-mining',
 	name: 'Go Mining',
-	description:
+	description: (_component) =>
 		'Draw an additional card at the end of your turn for each level of this status effect.',
 	counter: 1,
 	counterType: 'number',

@@ -13,7 +13,7 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 	id: 'poison',
 	icon: 'poison',
 	name: 'Poison',
-	description:
+	description: (_component) =>
 		"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 	applyLog: (values) => `${values.target} was $ePoisoned$`,
 	onApply(

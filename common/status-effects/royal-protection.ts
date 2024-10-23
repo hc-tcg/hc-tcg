@@ -12,7 +12,7 @@ const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 	id: 'royal-protection',
 	icon: 'royal_protection',
 	name: 'Royal Protection',
-	description:
+	description: (_component) =>
 		'Any damage dealt to a Hermit under Royal Protection is prevented.',
 	applyLog: (values) => `${values.target} was granted $eRoyal Protection$`,
 	onApply(

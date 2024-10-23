@@ -12,7 +12,7 @@ const SleepingEffect: Counter<CardComponent> = {
 	id: 'sleeping',
 	icon: 'sleeping',
 	name: 'Sleep',
-	description:
+	description: (_component) =>
 		'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 	counter: 3,
 	counterType: 'turns',

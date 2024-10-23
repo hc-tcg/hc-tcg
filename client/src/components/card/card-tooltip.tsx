@@ -168,7 +168,7 @@ const getSidebarDescriptions = (
 					<b>
 						<u>{STATUS_EFFECTS[statusEffect].name}</u>
 					</b>
-					<p>{STATUS_EFFECTS[statusEffect].description}</p>
+					<p>{STATUS_EFFECTS[statusEffect].description()}</p>
 				</div>
 			)
 		}

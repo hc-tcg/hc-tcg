@@ -15,7 +15,7 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 	id: 'sheep-stare',
 	icon: 'sheep-stare',
 	name: 'Sheep Stare',
-	description:
+	description: (_component) =>
 		'When you attack, flip a coin. If heads, the attacking hermit attacks themselves. Lasts until you attack or the end of the turn.',
 	onApply(
 		game: GameModel,

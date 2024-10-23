@@ -15,7 +15,8 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	id: 'primary-attack-disabled',
 	icon: 'primary-attack-disabled',
 	name: 'Primary Attack Disabled',
-	description: "This hermit's primary attack is disabled for this turn.",
+	description: (_component) =>
+		"This hermit's primary attack is disabled for this turn.",
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
@@ -64,7 +65,8 @@ export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 	id: 'secondary-attack-disabled',
 	icon: 'secondary-attack-disabled',
 	name: 'Secondary Attack Disabled',
-	description: "This hermit's secondary attack is disabled for this turn.",
+	description: (_component) =>
+		"This hermit's secondary attack is disabled for this turn.",
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&

@@ -15,7 +15,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 	id: 'betrayed',
 	icon: 'betrayed',
 	name: 'Betrayed',
-	description:
+	description: (_component) =>
 		'If your active hermit has the necessary items attached to attack and you have AFK Hermits, you must choose to attack one. Lasts until you attack.',
 	onApply(
 		game: GameModel,

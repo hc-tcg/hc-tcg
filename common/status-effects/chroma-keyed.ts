@@ -12,7 +12,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 	id: 'chroma-keyed',
 	icon: 'chroma-keyed',
 	name: 'Chroma Keyed',
-	description:
+	description: (_component) =>
 		'You deal 10hp less damage with "Jopacity" for each level of this status effect.',
 	counter: 1,
 	counterType: 'number',

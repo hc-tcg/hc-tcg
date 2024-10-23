@@ -6,7 +6,7 @@ const MuseumCollectionEffect: Counter<CardComponent> = {
 	id: 'museum-collection',
 	icon: 'museum-collection',
 	name: 'Museum Collection Size',
-	description:
+	description: (_component) =>
 		"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
 	counter: 0,
 	counterType: 'number',

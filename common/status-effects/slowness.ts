@@ -12,7 +12,7 @@ const SlownessEffect: Counter<CardComponent> = {
 	id: 'slowness',
 	icon: 'slowness',
 	name: 'Slowness',
-	description: 'This Hermit can only use their primary attack.',
+	description: (_component) => 'This Hermit can only use their primary attack.',
 	counter: 1,
 	counterType: 'turns',
 	onApply(

@@ -14,7 +14,7 @@ export const DeathloopReady: StatusEffect<CardComponent> = {
 	id: 'deathloop-ready',
 	icon: 'deathloop-ready',
 	name: 'Deathloop Ready',
-	description: 'This hermit will be revived on death.',
+	description: (_component) => 'This hermit will be revived on death.',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent<CardComponent<Card>, StatusEffect>,
@@ -85,5 +85,6 @@ export const RevivedByDeathloopEffect: StatusEffect<CardComponent> = {
 	id: 'revived-by-deathloop',
 	icon: 'revived-by-deathloop',
 	name: 'Revived',
-	description: "This hermit has been revived by Scar's deathloop attack.",
+	description: (_component) =>
+		"This hermit has been revived by Scar's deathloop attack.",
 }

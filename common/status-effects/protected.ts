@@ -6,7 +6,8 @@ const ProtectedEffect: StatusEffect<CardComponent> = {
 	id: 'protected',
 	icon: 'protected',
 	name: "Sheriff's Protection",
-	description: 'This Hermit does not take damage on their first active turn.',
+	description: (_component) =>
+		'This Hermit does not take damage on their first active turn.',
 
 	// override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent, ) {
 	// 	const {player} = component

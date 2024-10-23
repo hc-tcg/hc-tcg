@@ -14,7 +14,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 	id: 'aussie-ping',
 	icon: 'aussie-ping',
 	name: 'Weak Connection',
-	description:
+	description: (_component) =>
 		'When you attack, flip a coin. If heads, this attack misses. Lasts until you attack or the end of the turn.',
 	applyCondition: (_game, player) => {
 		if (!(player instanceof PlayerComponent)) return false
@@ -77,7 +77,7 @@ export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
 	id: 'aussie-ping-immune',
 	icon: 'aussie-ping-immune',
 	name: 'Strong Connection',
-	description: 'You are immune to Aussie Ping for the duration of this turn.',
+	description: (_component) =>  'You are immune to Aussie Ping for the duration of this turn.',
 	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,

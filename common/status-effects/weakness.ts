@@ -12,7 +12,8 @@ const WeaknessEffect: Counter<CardComponent> = {
 	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
-	description: "This Hermit is weak to the opponent's active Hermit's type.",
+	description: (_component) =>
+		"This Hermit is weak to the opponent's active Hermit's type.",
 	counter: 3,
 	counterType: 'turns',
 	onApply(

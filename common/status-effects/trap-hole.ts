@@ -15,7 +15,7 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 	id: 'trap-hole',
 	name: 'Trap Hole',
 	icon: 'trap-hole',
-	description:
+	description: (_component) =>
 		'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
 	onApply(
 		game: GameModel,

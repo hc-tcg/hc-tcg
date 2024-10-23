@@ -12,7 +12,8 @@ const UsedClockEffect: Counter<PlayerComponent> = {
 	id: 'used-clock',
 	icon: 'used-clock',
 	name: 'Clocked Out',
-	description: "Your opponent's turns cannot be skipped consecutively.",
+	description: (_component) =>
+		"Your opponent's turns cannot be skipped consecutively.",
 	counter: 1,
 	counterType: 'turns',
 	onApply(

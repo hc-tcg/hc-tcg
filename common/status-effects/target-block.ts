@@ -12,7 +12,7 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	id: 'target-block',
 	icon: 'target-block',
 	name: 'Made the target!',
-	description: 'This hermit will take all damage this turn.',
+	description: (_component) => 'This hermit will take all damage this turn.',
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

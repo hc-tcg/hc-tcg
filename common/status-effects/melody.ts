@@ -6,7 +6,7 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 	id: 'melody',
 	icon: 'melody',
 	name: "Ollie's Melody",
-	description: 'This Hermit heals 10hp every turn.',
+	description: (_component) => 'This Hermit heals 10hp every turn.',
 	applyCondition: (_game, card) =>
 		card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
 

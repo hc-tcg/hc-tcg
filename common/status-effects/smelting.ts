@@ -6,7 +6,7 @@ const SmeltingEffect: Counter<CardComponent> = {
 	id: 'smelting',
 	icon: 'smelting',
 	name: 'Smelting',
-	description:
+	description: (_component) =>
 		'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
 	counter: 4,
 	counterType: 'turns',

@@ -7,7 +7,7 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 	name: 'Efficiency',
 	id: 'efficiency',
 	icon: 'efficiency',
-	description:
+	description: (_component) =>
 		'You may use an attack from your active Hermit without having the necessary item cards attached.',
 	onApply(game, effect, player, observer) {
 		observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {

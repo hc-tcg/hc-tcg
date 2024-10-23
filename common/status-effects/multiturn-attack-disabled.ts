@@ -17,7 +17,8 @@ export const MultiturnPrimaryAttackDisabledEffect: Counter<CardComponent> = {
 	counter: 1,
 	counterType: 'turns',
 	name: 'Primary Attack Disabled',
-	description: "This hermit's primary attack is disabled for this turn.",
+	description: (_component) =>
+		"This hermit's primary attack is disabled for this turn.",
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
@@ -70,7 +71,8 @@ export const MultiturnSecondaryAttackDisabledEffect: Counter<CardComponent> = {
 	counter: 1,
 	counterType: 'turns',
 	name: 'Secondary Attack Disabled',
-	description: "This hermit's secondary attack is disabled for this turn.",
+	description: (_component) =>
+		"This hermit's secondary attack is disabled for this turn.",
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof CardComponent &&
