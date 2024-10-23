@@ -8,6 +8,7 @@ import {GameModel} from '../../../models/game-model'
 import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
+import {InstantHealthII} from '../../default/single-use/instant-health'
 
 const BerryBush: Attach & HasHealth = {
 	...attach,
@@ -44,7 +45,7 @@ const BerryBush: Attach & HasHealth = {
 					for (let i = 0; i < 2; i++) {
 						game.components.new(
 							CardComponent,
-							'instant_health_ii',
+							InstantHealthII,
 							game.components.new(HandSlotComponent, opponentPlayer.entity)
 								.entity,
 						)
