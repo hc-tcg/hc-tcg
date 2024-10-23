@@ -77,7 +77,8 @@ export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
 	id: 'aussie-ping-immune',
 	icon: 'aussie-ping-immune',
 	name: 'Strong Connection',
-	description: (_component) =>  'You are immune to Aussie Ping for the duration of this turn.',
+	description: (_component) =>
+		'You are immune to Aussie Ping for the duration of this turn.',
 	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,
