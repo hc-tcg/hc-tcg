@@ -10,7 +10,7 @@ import {SecondaryAttackDisabledEffect} from '../../../status-effects/singleturn-
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
-import {InstancedValue} from '../../base/card'
+import {InstancedValue} from '../../../utils/instanced-value'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
