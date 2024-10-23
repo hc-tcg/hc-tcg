@@ -6,6 +6,7 @@ import LDShadowLadyRare from 'common/cards/advent-of-tcg/hermits/ldshadowlady-ra
 import MonkeyfarmRare from 'common/cards/advent-of-tcg/hermits/monkeyfarm-rare'
 import DwarfImpulseRare from 'common/cards/alter-egos-iii/hermits/dwarfimpulse-rare'
 import KingJoelRare from 'common/cards/alter-egos-iii/hermits/kingjoel-rare'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import String from 'common/cards/alter-egos/effects/string'
 import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
@@ -17,11 +18,11 @@ import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
 import HypnotizdRare from 'common/cards/default/hermits/hypnotizd-rare'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import ZombieCleoRare from 'common/cards/default/hermits/zombiecleo-rare'
-import GeminiTayCommon from 'common/cards/default/hermits/geminitay-common'
 import BalancedItem from 'common/cards/default/items/balanced-common'
 import MinerItem from 'common/cards/default/items/miner-common'
 import CurseOfVanishing from 'common/cards/default/single-use/curse-of-vanishing'
 import GoldenAxe from 'common/cards/default/single-use/golden-axe'
+import {InstantHealthII} from 'common/cards/default/single-use/instant-health'
 import Lead from 'common/cards/default/single-use/lead'
 import Looting from 'common/cards/default/single-use/looting'
 import {
@@ -200,12 +201,17 @@ describe('Test Slimeball', () => {
 		testGame(
 			{
 				playerOneDeck: [LDShadowLadyRare, GoldenAxe],
-				playerTwoDeck: [GeminiTayCommon, Slimeball, EnderPearl],
+				playerTwoDeck: [
+					PoePoeSkizzRare,
+					Slimeball,
+					EnderPearl,
+					InstantHealthII,
+				],
 				saga: function* (game) {
 					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
 					yield* playCardFromHand(game, Slimeball, 'attach', 0)
 					expect(
 						game.getPickableSlots(EnderPearl.attachCondition),
@@ -217,12 +223,25 @@ describe('Test Slimeball', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						GeminiTayCommon.health -
+						PoePoeSkizzRare.health -
 							LDShadowLadyRare.secondary.damage -
 							40 /** Extra Damage from Lizzie's ability**/,
 					)
 					yield* endTurn(game)
 
+					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						PoePoeSkizzRare.health -
+							LDShadowLadyRare.secondary.damage -
+							40 /** Extra Damage from Lizzie's ability**/ +
+							60 /** Instant Health II */,
+					)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, GoldenAxe, 'single_use')
@@ -235,9 +254,10 @@ describe('Test Slimeball', () => {
 					)
 					expect(game.opponentPlayer.activeRow?.index).toBe(1)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						GeminiTayCommon.health -
+						PoePoeSkizzRare.health -
 							LDShadowLadyRare.secondary.damage -
-							40 /** Extra Damage from Lizzie's ability**/ -
+							40 /** Extra Damage from Lizzie's ability**/ +
+							60 /** Instant Health II */ -
 							40 /** Golden Axe damage */ -
 							LDShadowLadyRare.secondary.damage,
 					)

@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import BerryBush from 'common/cards/advent-of-tcg/effects/berry-bush'
+import Slimeball from 'common/cards/advent-of-tcg/effects/slimeball'
 import LDShadowLadyRare from 'common/cards/advent-of-tcg/hermits/ldshadowlady-rare'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Crossbow from 'common/cards/default/single-use/crossbow'
-import Slimeball from 'common/cards/advent-of-tcg/effects/slimeball'
 import query from 'common/components/query'
 import {
 	attack,
