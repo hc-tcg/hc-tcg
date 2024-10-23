@@ -17,7 +17,7 @@ const BerryBush: Attach & HasHealth = {
 	expansion: 'advent_of_tcg',
 	rarity: 'ultra_rare',
 	tokens: 2,
-	health: 50,
+	health: 30,
 	description:
 		"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 	attachCondition: query.every(

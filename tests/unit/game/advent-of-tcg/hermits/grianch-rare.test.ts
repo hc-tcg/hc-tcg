@@ -25,7 +25,11 @@ import Efficiency from 'common/cards/default/single-use/efficiency'
 import Fortune from 'common/cards/default/single-use/fortune'
 import InvisibilityPotion from 'common/cards/default/single-use/invisibility-potion'
 import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
-import {RowComponent, StatusEffectComponent} from 'common/components'
+import {
+	CardComponent,
+	RowComponent,
+	StatusEffectComponent,
+} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import BadOmenEffect from 'common/status-effects/badomen'
@@ -907,6 +911,59 @@ describe('Test The Grianch Naughty', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - WormManRare.secondary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using Worm Man "Total Anonymity" + Gem "Geminislay"', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					WormManRare,
+					GeminiTayRare,
+					BadOmen,
+					Anvil,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, WormManRare, 'hermit', 1)
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 2)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					expect(
+						game.components.find(CardComponent, query.card.is(Anvil))
+							?.turnedOver,
+					).toBe(false)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
