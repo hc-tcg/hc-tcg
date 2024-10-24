@@ -1,19 +1,20 @@
 import {
 	CardComponent,
-	PlayerComponent,
 	ObserverComponent,
+	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
-import { GameModel } from '../models/game-model'
-import { beforeAttack } from '../types/priorities'
-import { Counter, statusEffect } from './status-effect'
+import {GameModel} from '../models/game-model'
+import {beforeAttack} from '../types/priorities'
+import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<PlayerComponent> = {
 	...statusEffect,
 	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
-	description: "[weakType] is weak to [strongType] for the duration fo this counter.",
+	description:
+		'[weakType] is weak to [strongType] for the duration fo this counter.',
 	counter: 3,
 	counterType: 'turns',
 	onApply(
@@ -23,7 +24,7 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 		observer: ObserverComponent,
 	) {
 		const player = target
-		const { opponentPlayer } = target
+		const {opponentPlayer} = target
 
 		const playerActive = player.getActiveHermit()
 		const opponentActive = opponentPlayer.getActiveHermit()
@@ -33,10 +34,14 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 		const weakType = playerActive.props.type
 		const strongType = opponentActive.props.type
 		function capitalize(s: string) {
-			return s && String(s[0]).toUpperCase() + String(s).slice(1);
+			return s && String(s[0]).toUpperCase() + String(s).slice(1)
 		} // I just gabbed this from Stack.
 
-		effect.description = capitalize(weakType) + " type is weak to " + capitalize(strongType) + " type for the duration of this counter."
+		effect.description =
+			capitalize(weakType) +
+			' type is weak to ' +
+			capitalize(strongType) +
+			' type for the duration of this counter.'
 
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
