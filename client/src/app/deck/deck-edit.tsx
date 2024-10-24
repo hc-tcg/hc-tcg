@@ -393,6 +393,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 	const saveAndReturn = (deck: EditedDeck, initialDeck?: EditedDeck) => {
 		saveDeck(deck, initialDeck)
+		dispatch({type: localMessages.UPDATE_DECKS})
 		dispatch({
 			type: localMessages.TOAST_OPEN,
 			open: true,
