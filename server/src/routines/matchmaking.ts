@@ -36,6 +36,7 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import {pgDatabase} from 'index'
 
 function setupGame(
 	player1: PlayerModel,
@@ -161,6 +162,26 @@ function* gameManager(game: GameModel) {
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
+
+		const gamePlayers = game.getPlayers()
+		const winner = gamePlayers.find(
+			(player) => player.uuid === game.endInfo.winner,
+		)
+
+		if (gamePlayers[0].uuid && gamePlayers[1].uuid && game.endInfo.outcome) {
+			//@TODO set up decks so this can actually be added properly
+			pgDatabase.insertGame(
+				'', //@TODO Add p1 deck
+				'', //@TODO Add p2 deck
+				gamePlayers[0].uuid,
+				gamePlayers[1].uuid,
+				game.endInfo.outcome,
+				game.createdTime - Date.now(),
+				winner ? winner.uuid : null,
+				'', //@TODO Add seed
+				Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			)
+		}
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
