@@ -58,6 +58,7 @@ type GameSagaMessage = Message<GameSagaMessages>
 type GameSagaMessageTable = MessageTable<GameSagaMessages>
 
 export function* sendTurnAction(
+	game: GameModel,
 	entity: PlayerEntity,
 	action: AnyTurnActionData,
 ) {
@@ -67,6 +68,7 @@ export function* sendTurnAction(
 		type: gameMessages.TURN_ACTION,
 		action: action,
 		playerEntity: entity,
+		gameId: game.id,
 		time: currentTime,
 	})
 
@@ -78,7 +80,7 @@ export function* sendTurnAction(
 	})
 }
 
-function* actionSaga(playerEntity: PlayerEntity) {
+function* actionSaga(game: GameModel, playerEntity: PlayerEntity) {
 	const turnAction = yield* take<
 		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 	>(localMessages.GAME_TURN_ACTION)
@@ -92,31 +94,32 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		].includes(turnAction.action.type)
 	) {
 		// This is updated for the client in slot-saga
-		yield* call(sendTurnAction, playerEntity, turnAction.action)
+		yield* call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'APPLY_EFFECT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'PICK_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'MODAL_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (
 		['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(
 			turnAction.action.type,
 		)
 	) {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'END_TURN') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	} else if (turnAction.action.type === 'FORFEIT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+		yield call(sendTurnAction, game, playerEntity, turnAction.action)
 	}
 }
 
 function* gameStateSaga(
+	game: GameModel,
 	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
 ) {
 	let logic: any
@@ -147,7 +150,7 @@ function* gameStateSaga(
 
 		yield* put({type: gameSagaMessages.WAITING_FOR_ACTION})
 
-		yield call(actionSaga, action.localGameState.playerEntity)
+		yield call(actionSaga, game, action.localGameState.playerEntity)
 	} finally {
 		yield* cancel(logic)
 	}
@@ -167,6 +170,7 @@ function* handleGameTurnActionSaga(game: GameModel) {
 				type: gameMessages.TURN_ACTION,
 				action: message.action,
 				playerEntity: message.playerEntity,
+				gameId: game.id,
 				time: message.time,
 			})
 		}
@@ -186,7 +190,9 @@ function* gameActionsSaga(game: GameModel, playerEntity?: PlayerEntity) {
 	yield* fork(function* () {
 		let saga = yield* takeLatest(
 			localMessages.GAME_LOCAL_STATE_RECIEVED,
-			gameStateSaga,
+			(
+				action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
+			) => gameStateSaga(game, action),
 		)
 
 		yield* take(gameMessages.GAME_END)
@@ -300,6 +306,7 @@ function* runGame(
 					yield* put<GameMessage>({
 						type: gameMessages.TURN_ACTION,
 						playerEntity: game.currentPlayerEntity,
+						gameId: game.id,
 						action: {
 							type: 'SET_TIMER',
 							turnRemaining: reconnectInformation.timer.turnRemaining,
@@ -330,6 +337,7 @@ function* runGame(
 				yield* put<GameMessage>({
 					type: gameMessages.TURN_ACTION,
 					playerEntity: game.currentPlayerEntity,
+					gameId: game.id,
 					action: {
 						type: 'SET_TIMER',
 						turnRemaining: reconnectInformation.timer.turnRemaining,

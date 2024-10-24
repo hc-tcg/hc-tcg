@@ -129,6 +129,7 @@ export function* gameManagerSaga({
 								playerEntity: action.playerEntity,
 								action: action.action,
 								time: action.time,
+								gameId: game.id,
 							})
 						}
 					}
@@ -162,6 +163,7 @@ export function* gameManagerSaga({
 							type: gameMessages.TURN_ACTION,
 							playerEntity,
 							time: Date.now(),
+							gameId: game.id,
 							action: {
 								type: 'FORFEIT',
 								player: playerEntity,

@@ -52,16 +52,19 @@ export const gameMessages = messages('game', {
 
 export type GameMessages = [
 	{
+		gameId: string
 		type: typeof gameMessages.TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 		time: number
 	},
 	{
+		gameId: string
 		type: typeof gameMessages.GAME_END
 		outcome: GameOutcome
 	},
 	{
+		gameId: string
 		type: typeof gameMessages.CHAT_MESSAGE
 		message: ChatMessage
 	},
@@ -591,6 +594,7 @@ function* turnActionsSaga(
 				yield* put<GameMessage>({
 					type: gameMessages.CHAT_MESSAGE,
 					message: chatMessage,
+					gameId: game.id,
 				})
 			}
 
@@ -637,6 +641,7 @@ export function* turnSaga(
 		yield* put<GameMessage>({
 			type: gameMessages.CHAT_MESSAGE,
 			message: chatMessage,
+			gameId: game.id,
 		})
 	}
 
@@ -794,7 +799,10 @@ export function* runGameSaga(
 ) {
 	const game = new GameModel(props)
 
-	const turnActionChannel = yield* actionChannel(gameMessages.TURN_ACTION)
+	const turnActionChannel = yield* actionChannel(
+		(action: any) =>
+			action.gameId === game.id && action.type === gameMessages.TURN_ACTION,
+	)
 
 	game.state.turn.turnNumber++
 	if (sagas.onGameStart) {
@@ -828,6 +836,7 @@ export function* runGameSaga(
 	yield* put<GameMessage>({
 		type: gameMessages.GAME_END,
 		outcome: figureOutGameResult(game),
+		gameId: game.id,
 	})
 }
 
