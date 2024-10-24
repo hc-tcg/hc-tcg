@@ -226,7 +226,9 @@ export class BattleLogModel {
 
 			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
 			const weaknessDamage =
-				attack.isType('primary', 'secondary') && weaknessAttack
+				attack.isType('primary', 'secondary') &&
+				attack.createWeakness !== 'never' &&
+				weaknessAttack
 					? weaknessAttack.calculateDamage()
 					: 0
 

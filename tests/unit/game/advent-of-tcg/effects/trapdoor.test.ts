@@ -1,12 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
 import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 import SplashPotionOfHarming from 'common/cards/advent-of-tcg/single-use/splash-potion-of-harming'
+import PrincessGemRare from 'common/cards/alter-egos-iii/hermits/princessgem-rare'
 import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
 import GoatfatherRare from 'common/cards/alter-egos/hermits/goatfather-rare'
 import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
 import EnderPearl from 'common/cards/alter-egos/single-use/ender-pearl'
+import PotionOfWeakness from 'common/cards/alter-egos/single-use/potion-of-weakness'
 import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
 import IronArmor from 'common/cards/default/effects/iron-armor'
 import Thorns from 'common/cards/default/effects/thorns'
@@ -18,7 +20,15 @@ import VintageBeefCommon from 'common/cards/default/hermits/vintagebeef-common'
 import NetheriteSword from 'common/cards/default/single-use/netherite-sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../../utils'
+import {WEAKNESS_DAMAGE} from 'common/const/damage'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	pick,
+	playCardFromHand,
+	testGame,
+} from '../../utils'
 
 describe('Test Trapdoor', () => {
 	test('Trapdoor functionality', () => {
@@ -519,6 +529,102 @@ describe('Test Trapdoor', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - VintageBeefCommon.primary.damage)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
+		testGame(
+			{
+				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
+				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Wolf, Trapdoor],
+				saga: function* (game) {
+					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Wolf, 'attach', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						VintageBeefCommon.health -
+							PrincessGemRare.secondary.damage -
+							20 /** Wolf */,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						PrincessGemRare.health -
+							(VintageBeefCommon.primary.damage - 40) /** Trapdoor */ -
+							WEAKNESS_DAMAGE,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
+		testGame(
+			{
+				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
+				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Thorns, Trapdoor],
+				saga: function* (game) {
+					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Thorns, 'attach', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'primary')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						VintageBeefCommon.health -
+							PrincessGemRare.secondary.damage -
+							20 /** Thorns */,
+					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						PrincessGemRare.health -
+							(VintageBeefCommon.primary.damage - 40) /** Trapdoor */ -
+							WEAKNESS_DAMAGE,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

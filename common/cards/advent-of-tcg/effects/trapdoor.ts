@@ -65,7 +65,9 @@ const Trapdoor: Attach = {
 							target: component.slot.rowEntity,
 							type: attack.type,
 							log: (values) =>
-								` (${values.damage} was intercepted by ${values.target} with $eTrapdoor$)`,
+								values.attack.getDamageMultiplier()
+									? ` (${values.damage} was intercepted by ${values.target} with $eTrapdoor$)`
+									: ` ($b${damageReduction}hp$ was blocked by ${values.target} with $eTrapdoor$)`,
 						})
 						.addDamage(component.entity, damageReduction)
 					// newAttack should not run extra hooks for attacker, or be redirected back to the original target
