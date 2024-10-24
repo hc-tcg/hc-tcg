@@ -34,8 +34,8 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 		const weakType = playerActive.props.type
 		const strongType = opponentActive.props.type
 		function capitalize(s: string) {
-			return s && String(s[0]).toUpperCase() + String(s).slice(1)
-		} // I just gabbed this from Stack.
+			return s[0].toUpperCase() + s.slice(1)
+		}
 
 		effect.description =
 			capitalize(weakType) +
