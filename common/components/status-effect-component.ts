@@ -42,7 +42,7 @@ export class StatusEffectComponent<
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null
 		this.observerEntity = null
-		this.counter = isCounter(statusEffect) ? statusEffect.counter : null
+		this.counter = statusEffect.counter || null
 		this.description = statusEffect.description
 	}
 
