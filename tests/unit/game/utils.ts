@@ -55,6 +55,7 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 export function* endTurn(game: GameModel) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		time: Date.now(),
 		playerEntity: game.currentPlayer.entity,
 		action: {
@@ -104,6 +105,7 @@ export function* playCardFromHand(
 
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayer.entity,
 		time: Date.now(),
 		action: {
@@ -118,6 +120,7 @@ export function* playCardFromHand(
 export function* applyEffect(game: GameModel) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayer.entity,
 		time: Date.now(),
 		action: {
@@ -130,6 +133,7 @@ export function* applyEffect(game: GameModel) {
 export function* removeEffect(game: GameModel) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayer.entity,
 		time: Date.now(),
 		action: {
@@ -145,6 +149,7 @@ export function* attack(
 ) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayer.entity,
 		time: Date.now(),
 		action: {
@@ -157,6 +162,7 @@ export function* attack(
 export function* changeActiveHermit(game: GameModel, index: number) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayer.entity,
 		time: Date.now(),
 		action: {
@@ -177,6 +183,7 @@ export function* pick(
 ) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.state.pickRequests[0].player,
 		time: Date.now(),
 		action: {
@@ -193,6 +200,7 @@ export function* finishModalRequest(
 ) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.state.modalRequests[0].player,
 		time: Date.now(),
 		action: {
@@ -204,6 +212,7 @@ export function* finishModalRequest(
 export function* timeout(game: GameModel) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: game.currentPlayerEntity,
 		time: Date.now(),
 		action: {
@@ -212,9 +221,10 @@ export function* timeout(game: GameModel) {
 	})
 }
 
-export function* forfeit(player: PlayerEntity) {
+export function* forfeit(game: GameModel, player: PlayerEntity) {
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
 		playerEntity: player,
 		time: Date.now(),
 		action: {
@@ -438,6 +448,8 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 	supplyBossAttack(bossCard, attack)
 	yield* put<GameMessage>({
 		type: gameMessages.TURN_ACTION,
+		gameId: game.id,
+		time: Date.now(),
 		playerEntity: game.currentPlayerEntity,
 		action: {
 			type: attackType,
