@@ -5,6 +5,7 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {onTurnEnd} from '../types/priorities'
+import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const FortuneEffect: StatusEffect<PlayerComponent> = {
@@ -13,6 +14,13 @@ const FortuneEffect: StatusEffect<PlayerComponent> = {
 	id: 'fortune',
 	icon: 'fortune',
 	description: 'Any coin flips this turn will roll heads.',
+	applyCondition: (_game, value) => {
+		return (
+			value instanceof PlayerComponent &&
+			!value.hasStatusEffect(FortuneEffect) &&
+			!value.hasStatusEffect(SpentFortuneEffect)
+		)
+	},
 	onApply(
 		_game: GameModel,
 		effect: StatusEffectComponent,

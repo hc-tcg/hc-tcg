@@ -94,6 +94,7 @@ export class AttackModel {
 
 	/** Returns true if one of the passed in types are this attacks type */
 	public isType<This extends {type: AttackType}, T extends AttackType>(
+		this: This,
 		...types: Array<T>
 	): this is This & {type: T} {
 		return (types as Array<AttackType>).includes(this.type)
@@ -266,7 +267,7 @@ export type ReadonlyAttackModel = Omit<
 	| 'redirect'
 	| 'addDamage'
 	| 'removeDamage'
-	| 'reduceDamage'
+	| 'addDamageReduction'
 	| 'multiplyDamage'
 	| 'setAttacker'
 	| 'setTarget'

@@ -13,6 +13,9 @@ const CurseOfBindingEffect: StatusEffect<PlayerComponent> = {
 	icon: 'binded',
 	name: 'Curse of Binding',
 	description: 'You can not switch your active hermit this turn.',
+	applyCondition: (_game, value) =>
+		value instanceof PlayerComponent &&
+		!value.hasStatusEffect(CurseOfBindingEffect),
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,

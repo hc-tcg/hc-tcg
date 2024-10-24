@@ -37,8 +37,6 @@ const WormManRare: Hermit = {
 	): void {
 		const {player} = component
 
-		let pendingObserver: ObserverComponent | null = null
-
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
@@ -48,22 +46,20 @@ const WormManRare: Hermit = {
 
 				game.removeBlockedActions('game', 'PLAY_HERMIT_CARD')
 
-				pendingObserver = game.components.new(
+				const newObserver = game.components.new(
 					ObserverComponent,
 					component.entity,
 				)
 
-				const newObserver = pendingObserver
 				newObserver.subscribe(player.hooks.onAttach, (attachedComponent) => {
-					game.addBlockedActions(this.id, 'PLAY_HERMIT_CARD')
-					newObserver.unsubscribe(player.hooks.onAttach)
-					pendingObserver = null
+					game.addBlockedActions('game', 'PLAY_HERMIT_CARD')
+					newObserver.unsubscribeFromEverything()
 					if (!component.slot.onBoard()) return
 
 					attachedComponent.turnedOver = true
 
 					newObserver.subscribe(
-						player.hooks.onActiveRowChange,
+						attachedComponent.player.hooks.onActiveRowChange,
 						(_oldActiveHermit, newActiveHermit) => {
 							if (newActiveHermit.entity !== attachedComponent.entity) return
 							attachedComponent.turnedOver = false
@@ -77,15 +73,16 @@ const WormManRare: Hermit = {
 						newObserver.unsubscribeFromEverything()
 					})
 				})
-			},
-		)
 
-		observer.subscribeWithPriority(
-			player.hooks.onTurnEnd,
-			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
-			() => {
-				pendingObserver?.unsubscribe(player.hooks.onAttach)
-				pendingObserver = null
+				newObserver.subscribeWithPriority(
+					player.hooks.onTurnEnd,
+					onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
+					() => newObserver.unsubscribeFromEverything(),
+				)
+
+				newObserver.subscribe(player.hooks.getAttack, () =>
+					newObserver.unsubscribeFromEverything(),
+				)
 			},
 		)
 	},

@@ -12,7 +12,11 @@ import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
-import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
+import {
+	GasLightEffect,
+	GasLightPotentialEffect,
+	GasLightTriggeredEffect,
+} from './gas-light'
 import GoMiningEffect from './go-mining'
 import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
@@ -26,6 +30,7 @@ import {
 	MultiturnSecondaryAttackDisabledEffect,
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
+import NaughtyRegiftEffect from './naughty-regift'
 import PoisonEffect from './poison'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
@@ -37,6 +42,8 @@ import {
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SoulmateEffect from './soulmate'
+import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect} from './status-effect'
 import {TargetBlockEffect} from './target-block'
 import TFCDiscardedFromEffect from './tfc-discarded-from'
@@ -85,11 +92,15 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	TargetBlockEffect,
 	GasLightEffect,
 	GasLightTriggeredEffect,
+	GasLightPotentialEffect,
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,
 	LooseShellEffect,
 	TFCDiscardedFromEffect,
 	TimeSkipDisabledEffect,
+	SoulmateEffect,
+	NaughtyRegiftEffect,
+	SpentFortuneEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

@@ -44,6 +44,7 @@ const DiamondSword: SingleUse = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
 				applySingleUse(game)
+				observer.unsubscribeFromEverything()
 			},
 		)
 	},

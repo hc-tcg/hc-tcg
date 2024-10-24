@@ -30,6 +30,7 @@ function newGasLightAttack(
 				`${values.target} took ${values.damage} damage from $vGas Light$`,
 		})
 		.addDamage(effect.entity, 20)
+		.multiplyDamage(effect.entity, effect.counter || 0)
 }
 
 export const GasLightEffect: StatusEffect<CardComponent> = {
@@ -43,6 +44,39 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 		observer: ObserverComponent,
 	) {
 		let {opponentPlayer} = target
+
+		if (effect.counter === null) effect.counter = 1
+		let predecessor = game.components.find(
+			StatusEffectComponent,
+			query.effect.is(GasLightEffect, GasLightTriggeredEffect),
+			query.effect.targetEntity(target.entity),
+			(_game, value) => value.entity !== effect.entity,
+		)
+		if (predecessor) {
+			if (predecessor.counter !== null) predecessor.counter++
+			effect.remove()
+			return
+		}
+		predecessor = game.components.find(
+			StatusEffectComponent,
+			query.effect.is(GasLightPotentialEffect),
+			query.effect.targetEntity(target.entity),
+		)
+		if (predecessor) {
+			if (predecessor.counter === 1) {
+				game.components
+					.new(
+						StatusEffectComponent,
+						GasLightTriggeredEffect,
+						effect.creator.entity,
+					)
+					.apply(target.entity)
+				effect.remove()
+				predecessor.remove()
+				return
+			}
+			predecessor.remove()
+		}
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
@@ -63,13 +97,13 @@ export const GasLightEffect: StatusEffect<CardComponent> = {
 					return
 				}
 
-				game.components
-					.new(
-						StatusEffectComponent,
-						GasLightTriggeredEffect,
-						effect.creator.entity,
-					)
-					.apply(target.entity)
+				const triggered = game.components.new(
+					StatusEffectComponent,
+					GasLightTriggeredEffect,
+					effect.creator.entity,
+				)
+				triggered.apply(target.entity)
+				triggered.counter = effect.counter
 				effect.remove()
 			},
 		)
@@ -98,6 +132,8 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 	) {
 		let {opponentPlayer} = target
 
+		if (effect.counter === null) effect.counter = 1
+
 		observer.subscribeWithPriority(
 			opponentPlayer.hooks.onTurnEnd,
 			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
@@ -121,6 +157,47 @@ export const GasLightTriggeredEffect: StatusEffect<CardComponent> = {
 					)
 					effect.remove()
 				}
+			},
+		)
+	},
+}
+
+export const GasLightPotentialEffect: StatusEffect<CardComponent> = {
+	...hiddenStatusEffect,
+	id: 'gas-light-potential',
+	applyCondition: (_game, value) =>
+		value instanceof CardComponent &&
+		!value.getStatusEffect(
+			GasLightPotentialEffect,
+			GasLightEffect,
+			GasLightTriggeredEffect,
+		),
+	onApply(
+		game: GameModel,
+		effect: StatusEffectComponent,
+		target: CardComponent,
+		observer: ObserverComponent,
+	) {
+		let {opponentPlayer} = target
+
+		if (effect.counter === null) effect.counter = 0
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.REACT_TO_DAMAGE,
+			(attack) => {
+				if (!attack.isTargeting(target)) return
+				if (attack.calculateDamage() === 0) return
+
+				effect.counter = 1
+			},
+		)
+
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
 			},
 		)
 	},

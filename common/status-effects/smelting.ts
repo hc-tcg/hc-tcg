@@ -1,8 +1,13 @@
-import {CardComponent} from '../components'
-import {Counter, statusEffect} from './status-effect'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
+import {GameModel} from '../models/game-model'
+import {Counter, systemStatusEffect} from './status-effect'
 
 const SmeltingEffect: Counter<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'smelting',
 	icon: 'smelting',
 	name: 'Smelting',
@@ -10,28 +15,35 @@ const SmeltingEffect: Counter<CardComponent> = {
 		'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
 	counter: 4,
 	counterType: 'turns',
+	onApply(
+		game: GameModel,
+		effect: StatusEffectComponent<CardComponent>,
+		target: CardComponent,
+		observer: ObserverComponent,
+	) {
+		const {player} = target
 
-	// override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-	// 	const {player} = component
-
-	// 	player.hooks.onTurnStart.add(instance, () => {
-	// 		if (instance.counter === null) return
-	// 		instance.counter -= 1
-	// 		if (instance.counter === 0) {
-	// 			discardCard(game, pos.cardId)
-	// 			pos.rowId?.itemCards.forEach((card) => {
-	// 				if (!card) return
-	// 				card.card.props.numericId = card.card.props.numericId.replace('common', 'rare')
-	// 			})
-	// 		}
-	// 	})
-	// }
-
-	// override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-	// 	const {player} = component
-
-	// 	player.hooks.onTurnStart.remove(instance)
-	// }
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (effect.counter === null) return
+			effect.counter -= 1
+			if (effect.counter === 0) {
+				if (target.slot.inRow()) {
+					target.slot.row.getItems().forEach((item) => {
+						if (item.isItem() && item.props.id.includes('common')) {
+							// Create a new double item and delete the old single item
+							game.components.new(
+								CardComponent,
+								item.props.id.replace('common', 'rare'),
+								item.slotEntity,
+							)
+							game.components.delete(item.entity)
+						}
+					})
+				}
+				target.discard()
+			}
+		})
+	},
 }
 
 export default SmeltingEffect

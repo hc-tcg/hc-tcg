@@ -51,7 +51,11 @@ const GeminiTayRare: Hermit = {
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
-				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
+				game.removeBlockedActions(
+					'game',
+					'SINGLE_USE_ATTACK',
+					'PLAY_SINGLE_USE_CARD',
+				)
 				player.singleUseCardUsed = false
 			},
 		)

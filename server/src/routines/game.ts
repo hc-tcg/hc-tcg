@@ -142,7 +142,7 @@ function getAvailableActions(
 		// Su actions
 		if (su && !suUsed) {
 			actions.push('REMOVE_EFFECT')
-			actions.push('APPLY_EFFECT')
+			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
 		}
 
 		// Attack actions

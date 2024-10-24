@@ -3,8 +3,10 @@ import {
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
+import {GasLightEffect, GasLightTriggeredEffect} from './gas-light'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
@@ -29,6 +31,20 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 				if (!attack.isType('primary', 'secondary')) return
 				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 0)
+			},
+		)
+		observer.subscribe(
+			player.opponentPlayer.hooks.getAttackRequests,
+			(_active, _type) => {
+				if (!multipliedDamage) return
+				effect.remove()
+				game.components
+					.filter(
+						StatusEffectComponent,
+						query.effect.is(GasLightEffect, GasLightTriggeredEffect),
+						query.effect.targetIsCardAnd(query.card.opponentPlayer),
+					)
+					.forEach((effect) => (effect.counter = 0))
 			},
 		)
 		observer.subscribeWithPriority(
@@ -63,6 +79,20 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 				if (!attack.isType('primary', 'secondary')) return
 				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 2)
+			},
+		)
+		observer.subscribe(
+			player.opponentPlayer.hooks.getAttackRequests,
+			(_active, _type) => {
+				if (!multipliedDamage) return
+				effect.remove()
+				game.components
+					.filter(
+						StatusEffectComponent,
+						query.effect.is(GasLightEffect, GasLightTriggeredEffect),
+						query.effect.targetIsCardAnd(query.card.opponentPlayer),
+					)
+					.forEach((effect) => (effect.counter = (effect.counter || 0) * 2))
 			},
 		)
 		observer.subscribeWithPriority(

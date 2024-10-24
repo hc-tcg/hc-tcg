@@ -19,13 +19,15 @@ function opponentHasMultipleRows(game: GameModel) {
 }
 
 function getTargetHermits(game: GameModel, player: PlayerComponent) {
-	return game.components.filter(
-		RowComponent,
-		query.row.opponentPlayer,
-		query.row.hermitSlotOccupied,
-		(_game, row) =>
-			player.activeRow !== null && row.index >= player.activeRow?.index,
-	)
+	return game.components
+		.filter(
+			RowComponent,
+			query.row.opponentPlayer,
+			query.row.hermitSlotOccupied,
+			(_game, row) =>
+				player.activeRow !== null && row.index >= player.activeRow?.index,
+		)
+		.sort((a, b) => a.index - b.index)
 }
 const Anvil: SingleUse = {
 	...singleUse,
@@ -43,7 +45,7 @@ const Anvil: SingleUse = {
 		if (targets.length === 0) {
 			return opponentHasMultipleRows(game) ? '$A0$' : '$A30$'
 		}
-		if (targets[0].index === game.currentPlayer.activeRow!.index) {
+		if (targets[0].index === game.currentPlayer.activeRow?.index) {
 			return targets.length === 1
 				? '$A30$'
 				: `$A30$ + $A10$ x ${targets.length - 1}`
@@ -92,10 +94,14 @@ const Anvil: SingleUse = {
 						if (attack === null) {
 							// No valid targets
 							game.battleLog.addEntry(
-								component.player.entity,
-								`$p{You|${component.player.playerName}}$ used $eAnvil$ and missed`,
+								player.entity,
+								`$p{You|${player.playerName}}$ used $eAnvil$ and missed`,
 							)
-							applySingleUse(game)
+							return game.newAttack({
+								attacker: component.entity,
+								player: player.entity,
+								type: 'effect',
+							})
 						}
 						return attack
 					}
@@ -120,7 +126,7 @@ const Anvil: SingleUse = {
 			(attack) => {
 				if (attack.isAttacker(component.entity)) {
 					applySingleUse(game, component.slot)
-					observer.unsubscribe(game.hooks.beforeAttack)
+					observer.unsubscribeFromEverything()
 				}
 			},
 		)

@@ -1,85 +1,129 @@
-import {CardComponent} from '../../../components'
-import {slot} from '../../../components/query'
+import assert from 'assert'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
 
-class DungeonTangoRare extends CardOld {
-	props: Hermit = {
-		...hermit,
-		id: 'dungeontango_rare',
-		numericId: 208,
-		name: 'DM tango',
-		expansion: 'advent_of_tcg',
-		palette: 'advent_of_tcg',
-		background: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		type: 'miner',
-		health: 280,
-		primary: {
-			name: 'Lackey',
-			cost: ['any'],
-			damage: 40,
-			power:
-				'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
-		},
-		secondary: {
-			name: 'Ravager',
-			cost: ['miner', 'miner', 'any'],
-			damage: 90,
-			power: null,
-		},
-	}
-
-	override onAttach(
+const DungeonTangoRare: Hermit = {
+	...hermit,
+	id: 'dungeontango_rare',
+	numericId: 208,
+	name: 'DM tango',
+	expansion: 'advent_of_tcg',
+	palette: 'advent_of_tcg',
+	background: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	type: 'miner',
+	health: 280,
+	primary: {
+		name: 'Lackey',
+		cost: ['any'],
+		damage: 40,
+		power:
+			'Discard 1 item card attached to this Hermit to search your deck for the first Hermit card to draw and then shuffle your deck. If you have no more Hermit cards, keep the item card attached.',
+	},
+	secondary: {
+		name: 'Ravager',
+		cost: ['miner', 'miner', 'any'],
+		damage: 90,
+		power: null,
+	},
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
 		const {player} = component
 
-		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'primary') return
+		let pickedCard: CardComponent | null = null
 
-			let i: number = 0
-			do {
-				if (player.pile[i].props.id) {
-					break
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(activeInstance, hermitAttackType) => {
+				if (
+					activeInstance.entity !== component.entity ||
+					hermitAttackType !== 'primary'
+				)
+					return
+
+				const pickCondition = query.every(
+					query.slot.currentPlayer,
+					query.slot.item,
+					query.slot.active,
+					query.not(query.slot.empty),
+					query.not(query.slot.frozen),
+				)
+
+				if (!game.components.exists(SlotComponent, pickCondition)) {
+					pickedCard = null
+					return
 				}
-				i++
-			} while (i < player.pile.length)
 
-			if (i == player.pile.length) return
+				game.addPickRequest({
+					player: player.entity,
+					id: component.entity,
+					message: 'Choose an item card to discard',
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						pickedCard = pickedSlot.getCard()
+					},
+					onTimeout() {
+						const firstItem = game.components.find(SlotComponent, pickCondition)
+						if (!firstItem) return
+						pickedCard = firstItem.getCard()
+					},
+				})
+			},
+		)
 
-			game.addPickRequest({
-				player: player.entity,
-				id: this.props.id,
-				message: 'Choose an item card to discard',
-				canPick: slot.every(
-					slot.player,
-					slot.item,
-					slot.active,
-					slot.not(slot.empty),
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.cardId) return
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || !attack.isType('primary'))
+					return
+				if (pickedCard === null) return
 
-					discardCard(game, pickedSlot.cardId)
+				const hermitCard = player
+					.getDeck()
+					.sort(CardComponent.compareOrder)
+					.find((card) => card.isHermit())
+				if (hermitCard) {
+					hermitCard.draw()
+					pickedCard.discard()
+				}
 
-					player.hand.push(player.pile.splice(i, 1)[0])
-				},
-			})
-		})
-	}
+				const deckCards = player.getDeck()
+				const newOrder = fisherYatesShuffle(
+					deckCards.map((card) => {
+						assert(card.slot.inDeck())
+						return card.slot.order
+					}),
+				)
+				deckCards.forEach((card, i) => {
+					assert(card.slot.inDeck())
+					card.slot.order = newOrder[i]
+				})
+				deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
+			},
+		)
 
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		// Remove hooks
-		player.hooks.onAttack.remove(component)
-	}
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				pickedCard = null
+			},
+		)
+	},
 }
 
 export default DungeonTangoRare

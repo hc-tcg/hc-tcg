@@ -286,7 +286,7 @@ export class PlayerComponent {
 			let newHermit = newRow.getHermit()
 			if (!newHermit)
 				throw new Error(
-					'Should not be able to change from no active row to an active row with no hermits.',
+					'Should not be able to change from no active row to an active row with no hermit.',
 				)
 			this.hooks.onActiveRowChange.call(null, newHermit)
 		}
@@ -310,7 +310,7 @@ export class PlayerComponent {
 			)
 	}
 
-	private lastHermitAttack: null | UsedHermitAttackInfo = null
+	private lastHermitAttack: null | Array<UsedHermitAttackInfo> = null
 
 	/** Get details about the last hermit attack this player used. */
 	public get lastHermitAttackInfo() {
@@ -324,10 +324,13 @@ export class PlayerComponent {
 			activeHermit,
 			`${this.playerName} tried to attack without an active hermit`,
 		)
-		this.lastHermitAttack = {
+		const attackInfo = {
 			attackType,
 			attacker: activeHermit,
 			turn: this.game.state.turn.turnNumber,
 		}
+		if (this.lastHermitAttack?.[0].turn === attackInfo.turn)
+			this.lastHermitAttack.push(attackInfo)
+		else this.lastHermitAttack = [attackInfo]
 	}
 }

@@ -26,7 +26,7 @@ export namespace SelectCards {
 		description: string
 		cards: Array<CardEntity>
 		/** The amount of cards the player can select. Set to 0 if they do not need to slect cards. */
-		selectionSize: number
+		selectionSize: number | [min_inclusive: number, max_inclusive: number]
 		/** Show a close button on this modal. */
 		cancelable: boolean
 		primaryButton?: {

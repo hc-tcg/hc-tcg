@@ -1,65 +1,74 @@
-import {CardComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {SingleUse} from '../../base/types'
 
-class Glowstone extends CardOld {
-	props: SingleUse = {
-		...singleUse,
-		id: 'glowstone',
-		numericId: 224,
-		name: 'Glowstone',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 2,
-		description:
-			'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
-		showConfirmationModal: true,
-	}
-
-	override onAttach(
+const Glowstone: SingleUse = {
+	...singleUse,
+	id: 'glowstone',
+	numericId: 224,
+	name: 'Glowstone',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 2,
+	description:
+		"View the top 3 cards of your opponent's deck. Choose one for them to discard. The other 2 will be placed on the bottom of their deck in their original order.",
+	showConfirmationModal: true,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(_game, pos) =>
+			!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
+	),
+	log: (values) => values.defaultLog,
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
-		player.hooks.onApply.add(component, () => {
-			if (!opponentPlayer.pile.length) return // Do nothing if opponent has no more cards to draw
+		observer.subscribe(player.hooks.onApply, () => {
+			const topCards = opponentPlayer
+				.getDeck()
+				.sort(CardComponent.compareOrder)
+				.slice(0, 3)
+
 			game.addModalRequest({
 				player: player.entity,
-				type: 'selectCards',
-				modalName: 'Glowstone: Choose the card for your opponent to draw.',
-				modalDescription:
-					'The other two cards will be placed on the bottom of their deck.',
-				cards: opponentPlayer.pile
-					.slice(0, 3)
-					.map((card) => card.toLocalCardInstance()),
-				selectionSize: 1,
-				primaryButton: {
-					text: 'Confirm Selection',
-					variant: 'default',
+				modal: {
+					type: 'selectCards',
+					name: 'Glowstone: Choose the card for your opponent to discard.',
+					description:
+						'The other two cards will be placed on the bottom of their deck.',
+					cards: topCards.map((card) => card.entity),
+					selectionSize: 1,
+					primaryButton: {
+						text: 'Confirm Selection',
+						variant: 'default',
+					},
+					cancelable: false,
 				},
 				onResult(modalResult) {
-					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
-					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
+					if (!modalResult) return
+					if (!modalResult.cards) return
+					if (modalResult.cards.length !== 1) return
 
-					const card = modalResult.cards[0]
+					const drawCard = modalResult.cards[0]
 
-					const cards: Array<CardComponent> = []
-					const bottomCards: Array<CardComponent> = []
-
-					opponentPlayer.pile.slice(0, 3).forEach((c) => {
-						if (card.component === c.id) cards.push(c)
-						else bottomCards.push(c)
+					topCards.forEach((card) => {
+						if (drawCard.entity === card.entity) card.discard()
+						else
+							card.attach(
+								game.components.new(DeckSlotComponent, opponentPlayer.entity, {
+									position: 'back',
+								}),
+							)
 					})
-
-					opponentPlayer.pile = opponentPlayer.pile.slice(3)
-					bottomCards.forEach((c) => opponentPlayer.pile.push(c))
-
-					cards.forEach((c) => opponentPlayer.hand.push(c))
 
 					return 'SUCCESS'
 				},
@@ -68,12 +77,7 @@ class Glowstone extends CardOld {
 				},
 			})
 		})
-	}
-
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.onApply.remove(component)
-	}
+	},
 }
 
 export default Glowstone
