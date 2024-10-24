@@ -105,16 +105,15 @@ export class Database {
 
 	/*** Insert a user into the Database. Returns `user`. */
 	public async insertUser(
-		db: Database,
 		username: string,
 		minecraftName: string | null,
 	): Promise<DatabaseResult<User>> {
 		try {
-			const secret = (await db.pool.query('SELECT * FROM uuid_generate_v4()'))
+			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
-			const user = await db.pool.query(
+			const user = await this.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, db.bfDepth],
+				[username, minecraftName, secret, this.bfDepth],
 			)
 			return {
 				type: 'success',
@@ -131,12 +130,11 @@ export class Database {
 	}
 
 	public async authenticateUser(
-		db: Database,
 		uuid: string,
 		secret: string,
 	): Promise<DatabaseResult<User>> {
 		try {
-			const user = await db.pool.query(
+			const user = await this.pool.query(
 				'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
 				[uuid, secret],
 			)

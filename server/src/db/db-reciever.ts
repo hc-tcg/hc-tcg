@@ -12,8 +12,7 @@ export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_ADD_USER>,
 ) {
 	const result = yield* call(
-		pgDatabase.insertUser,
-		pgDatabase,
+		[pgDatabase, pgDatabase.insertUser],
 		action.payload.username ? action.payload.username : '',
 		action.payload.minecraftName,
 	)
@@ -33,8 +32,7 @@ export function* authenticateUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
 ) {
 	const result = yield* call(
-		pgDatabase.authenticateUser,
-		pgDatabase,
+		[pgDatabase, pgDatabase.authenticateUser],
 		action.payload.userId,
 		action.payload.secret,
 	)
