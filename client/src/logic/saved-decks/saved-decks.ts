@@ -1,10 +1,5 @@
-import {
-	UnsavedDeck,
-	SavedDeckT,
-	Tag,
-	deckToSavedDeck,
-	loadSavedDeck,
-} from 'common/types/deck'
+import {CARDS} from 'common/cards'
+import {UnsavedDeck, Tag} from 'common/types/deck'
 import {validateDeck} from 'common/utils/validation'
 
 export const getActiveDeckName = () => {
@@ -98,4 +93,14 @@ export const deleteTag = (tag: Tag) => {
 		savedDeck.tags = savedDeck.tags.filter((deckTag) => deckTag !== tag.key)
 		saveDeck(savedDeck)
 	})
+}
+
+export function toSavedDeck(deck: UnsavedDeck) {
+	return {
+		name: deck.name,
+		code: '',
+		icon: deck.icon,
+		tags: deck.tags ? deck.tags : [],
+		cards: deck.cards.map((card) => CARDS[card.props.id]),
+	}
 }

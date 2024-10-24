@@ -23,14 +23,11 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
-	deleteDeck,
 	getCreatedTags,
 	getLegacyDecks,
-	getSavedDeck,
-	getSavedDecks,
 	keysToTags,
-	saveDeck,
 	setActiveDeck,
+	toSavedDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
@@ -41,12 +38,13 @@ import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {Deck} from 'common/types/database'
 
 type Props = {
 	setMenuSection: (section: string) => void
-	setLoadedDeck: (deck: UnsavedDeck) => void
+	setLoadedDeck: (deck: Deck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
-	loadedDeck: UnsavedDeck
+	loadedDeck: Deck
 }
 
 function SelectDeck({
@@ -63,15 +61,16 @@ function SelectDeck({
 
 	console.log(databaseInfo.decks)
 
-	// STATE
-	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	function parseDecks(decks: string[]): Array<UnsavedDeck> {
-		return decks.map((d: any) => {
-			const deck: UnsavedDeck = JSON.parse(d)
-			return deck
+	const saveDeck = (deck: Deck) => {
+		dispatch({
+			type: localMessages.INSERT_DECK,
+			deck: deck,
 		})
 	}
-	function sortDecks(decks: UnsavedDeck[]): Array<UnsavedDeck> {
+
+	// STATE
+	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(databaseInfo.decks)
+	function sortDecks(decks: Deck[]): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
 				return a.name.localeCompare(b.name)
@@ -91,23 +90,21 @@ function SelectDeck({
 		})
 	}
 
-	function filterDecks(decks: Array<UnsavedDeck>): Array<UnsavedDeck> {
+	function filterDecks(decks: Array<Deck>): Array<Deck> {
 		if (!settings.lastSelectedTag) return decks
 		return decks.filter((deck) =>
 			deck.tags?.includes(settings.lastSelectedTag!),
 		)
 	}
-	const [sortedDecks, setSortedDecks] = useState<Array<UnsavedDeck>>(
-		sortDecks(parseDecks(savedDecks)),
+	const [sortedDecks, setSortedDecks] = useState<Array<Deck>>(
+		sortDecks(savedDecks),
 	)
 
-	const [filteredDecks, setFilteredDecks] = useState<Array<UnsavedDeck>>(
+	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>(
 		filterDecks(sortedDecks),
 	)
 
-	const savedDeckNames = savedDecks.map((deck) =>
-		deck ? getSavedDeck(deck)?.name : null,
-	)
+	const savedDeckNames = savedDecks.map((deck) => deck.name)
 	const [importedDeck, setImportedDeck] = useState<UnsavedDeck>({
 		name: 'undefined',
 		icon: 'any',
@@ -178,7 +175,7 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
-		saveDeck(playerDeck)
+		saveDeck(toSavedDeck(playerDeck))
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
@@ -188,22 +185,13 @@ function SelectDeck({
 		setShowImportModal(false)
 	}
 	const handleMassImportDecks = () => {
-		setSavedDecks(getSavedDecks())
+		// setSavedDecks(getSavedDecks())
 		setShowImportModal(false)
 	}
 
 	//DECK LOGIC
-	const loadDeck = (deckName: string) => {
-		if (!deckName)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-		const deck = getSavedDeck(deckName)
-		if (!deck)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-
-		setLoadedDeck({
-			...deck,
-			cards: deck.cards,
-		})
+	const loadDeck = (deck: Deck) => {
+		setLoadedDeck(deck)
 	}
 	const importDeck = (deck: UnsavedDeck) => {
 		let deckExists = false
@@ -218,58 +206,63 @@ function SelectDeck({
 			return
 		}
 
-		saveDeckInternal(deck)
-		setSavedDecks(getSavedDecks())
-		setSortedDecks(sortDecks([...parseDecks(savedDecks), deck]))
-		setFilteredDecks(sortDecks([...parseDecks(savedDecks), deck]))
+		// saveDeckInternal(deck)
+		setSavedDecks(databaseInfo.decks)
+		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
+		setFilteredDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
 	}
 	const saveDeckInternal = (deck: UnsavedDeck) => {
 		//Save new deck to Local Storage
-		saveDeck(deck)
-
-		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
-		loadDeck(deck.name)
+		setSavedDecks(databaseInfo.decks)
+		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
+		setFilteredDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
 	}
 	const deleteDeckInternal = () => {
-		dispatchToast(deleteToast)
-		deleteDeck(loadedDeck.name)
-		const decks = getSavedDecks()
-		setSavedDecks(decks)
-		setSortedDecks(
-			sortDecks(parseDecks(savedDecks)).filter(
-				(deck) => deck.name !== loadedDeck.name,
-			),
-		)
-		setFilteredDecks(
-			sortDecks(parseDecks(savedDecks)).filter(
-				(deck) => deck.name !== loadedDeck.name,
-			),
-		)
-		loadDeck(JSON.parse(decks[0]).name)
+		//@TODO This entire function
+		// dispatchToast(deleteToast)
+		// deleteDeck(loadedDeck.name)
+		// const decks = getSavedDecks()
+		// setSavedDecks(decks)
+		// setSortedDecks(
+		// 	sortDecks(parseDecks(savedDecks)).filter(
+		// 		(deck) => deck.name !== loadedDeck.name,
+		// 	),
+		// )
+		// setFilteredDecks(
+		// 	sortDecks(parseDecks(savedDecks)).filter(
+		// 		(deck) => deck.name !== loadedDeck.name,
+		// 	),
+		// )
+		// loadDeck(JSON.parse(decks[0]).name)
 	}
 	const canDuplicateDeck = () => {
-		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
+		return (
+			databaseInfo.decks.findIndex(
+				(deck) => deck.name === `${loadedDeck.name} Copy 9`,
+			) > -1
+		)
 	}
 	const duplicateDeck = (deck: UnsavedDeck) => {
 		//Save duplicated deck to Local Storage
 		let newName = `${deck.name} Copy`
 		let number = 2
 
-		while (getSavedDeck(newName)) {
+		while (
+			databaseInfo.decks.findIndex((deck) => deck.name === 'newName') > -1
+		) {
 			if (number > 9) return
 			newName = `${deck.name} Copy ${number}`
 			number++
 		}
 
-		const newDeck = {...deck, name: newName}
+		const newDeck = toSavedDeck({...deck, name: newName})
 
 		saveDeck(newDeck)
 
 		//Refresh saved deck list and load new deck
 		setSavedDecks(savedDecks)
-		setSortedDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
-		setFilteredDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
+		setSortedDecks(sortDecks([...savedDecks, newDeck]))
+		setFilteredDecks(sortDecks([...savedDecks, newDeck]))
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
@@ -281,48 +274,46 @@ function SelectDeck({
 		})
 	})
 
-	const deckList: ReactNode = filteredDecks.map(
-		(deck: UnsavedDeck, i: number) => {
-			return (
-				<li
-					className={classNames(
-						css.myDecksItem,
-						loadedDeck.name === deck.name && css.selectedDeck,
-					)}
-					ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
-					key={i}
-					onClick={() => {
-						playSwitchDeckSFX()
-						loadDeck(deck.name)
-					}}
-				>
-					{deck.tags && deck.tags.length > 0 ? (
-						<div className={css.multiColoredCircle}>
-							{keysToTags(deck.tags).map((tag) => (
-								<div
-									className={css.singleTag}
-									style={{backgroundColor: tag.color}}
-								></div>
-							))}
-						</div>
-					) : (
-						<div className={css.multiColoredCircle}>
-							<div className={css.singleTag}></div>
-						</div>
-					)}
-					<div
-						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
-					>
-						<img
-							src={'../images/types/type-' + deck.icon + '.png'}
-							alt={'deck-icon'}
-						/>
+	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
+		return (
+			<li
+				className={classNames(
+					css.myDecksItem,
+					loadedDeck.name === deck.name && css.selectedDeck,
+				)}
+				ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck)
+				}}
+			>
+				{deck.tags && deck.tags.length > 0 ? (
+					<div className={css.multiColoredCircle}>
+						{keysToTags(deck.tags).map((tag) => (
+							<div
+								className={css.singleTag}
+								style={{backgroundColor: tag.color}}
+							></div>
+						))}
 					</div>
-					{deck.name}
-				</li>
-			)
-		},
-	)
+				) : (
+					<div className={css.multiColoredCircle}>
+						<div className={css.singleTag}></div>
+					</div>
+				)}
+				<div
+					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+				>
+					<img
+						src={'../images/types/type-' + deck.icon + '.png'}
+						alt={'deck-icon'}
+					/>
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
 	const footerTags = (
 		<div className={css.footerTags}>
 			<Dropdown
@@ -772,7 +763,7 @@ function SelectDeck({
 									<Button
 										onClick={() => {
 											const conversionCount = convertLegacyDecks()
-											setSavedDecks(getSavedDecks())
+											setSavedDecks(databaseInfo.decks)
 
 											dispatch({
 												type: localMessages.TOAST_OPEN,

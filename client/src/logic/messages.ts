@@ -24,6 +24,7 @@ import {
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
 import {LocalDatabase} from './game/database/database-reducer'
+import {Deck} from 'common/types/database'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,
@@ -85,6 +86,7 @@ export const localMessages = messages({
 	SET_ID_AND_SECRET: null,
 	DATABASE_SET: null,
 	INSERT_DECK: null,
+	DECK_SET: null,
 })
 
 type Messages = [
@@ -221,7 +223,8 @@ type Messages = [
 		secret: string
 	},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
-	{type: typeof localMessages.INSERT_DECK; deck: UnsavedDeck},
+	{type: typeof localMessages.INSERT_DECK; deck: Deck},
+	{type: typeof localMessages.DECK_SET; deck: Deck},
 ]
 
 /** A message used locally on the client to update global state */

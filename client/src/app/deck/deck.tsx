@@ -4,11 +4,13 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {toSavedDeck} from 'logic/saved-decks/saved-decks'
+import {Deck} from 'common/types/database'
 
 export const cardGroupHeader = (
 	title: string,
@@ -27,7 +29,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-const Deck = ({setMenuSection}: Props) => {
+const DeckComponent = ({setMenuSection}: Props) => {
 	// REDUX
 	const playerDeck = useSelector(getPlayerDeck)
 	const dispatch = useMessageDispatch()
@@ -35,14 +37,14 @@ const Deck = ({setMenuSection}: Props) => {
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
-	const [loadedDeck, setLoadedDeck] = useState<UnsavedDeck>({...playerDeck})
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
 
 	//DECK LOGIC
 	const saveDeckInternal = (deck: UnsavedDeck) => {
 		//Save new deck to Database
 		dispatch({
 			type: localMessages.INSERT_DECK,
-			deck: deck,
+			deck: toSavedDeck(deck),
 		})
 
 		//Load new deck
@@ -94,4 +96,4 @@ const Deck = ({setMenuSection}: Props) => {
 	return router()
 }
 
-export default Deck
+export default DeckComponent

@@ -146,9 +146,9 @@ export function* loginSaga() {
 		})
 		let activeDeck = localStorage.getItem('activeDeck')
 		if (activeDeck) {
-			let deck = getSavedDeck(activeDeck)
-			console.log('Select previous active deck')
-			if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
+			// let deck = getSavedDeck(activeDeck)
+			// console.log('Select previous active deck')
+			// if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
 		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
@@ -188,9 +188,9 @@ export function* loginSaga() {
 			})
 		}
 
-		const activeDeckName = getActiveDeckName()
-		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
-		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
+		// const activeDeckName = getActiveDeckName()
+		// const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
+		// const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
 
 		//@TODO NEED TO SELECT DECK HERE
 

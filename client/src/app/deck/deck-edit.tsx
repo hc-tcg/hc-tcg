@@ -18,9 +18,7 @@ import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
-	deleteDeck,
 	getCreatedTags,
-	getSavedDeckNames,
 	keysToTags,
 	saveTag,
 } from 'logic/saved-decks/saved-decks'
