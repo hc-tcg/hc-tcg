@@ -33,7 +33,7 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import {ReactNode, useState} from 'react'
+import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
@@ -61,12 +61,14 @@ function SelectDeck({
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	const sortedDecks = savedDecks
-		.map((d: any) => {
+	function parseDecks(decks: string[]): Array<PlayerDeckT> {
+		return decks.map((d: any) => {
 			const deck: PlayerDeckT = JSON.parse(d)
 			return deck
 		})
-		.sort((a, b) => {
+	}
+	function sortDecks(decks: PlayerDeckT[]): Array<PlayerDeckT> {
+		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
 				return a.name.localeCompare(b.name)
 			}
@@ -83,8 +85,21 @@ function SelectDeck({
 			//Default case so something is always returned
 			return 0
 		})
-	const [filteredDecks, setFilteredDecks] =
-		useState<Array<PlayerDeckT>>(sortedDecks)
+	}
+
+	function filterDecks(decks: Array<PlayerDeckT>): Array<PlayerDeckT> {
+		if (!settings.lastSelectedTag) return decks
+		return decks.filter((deck) =>
+			deck.tags?.includes(settings.lastSelectedTag!),
+		)
+	}
+	const [sortedDecks, setSortedDecks] = useState<Array<PlayerDeckT>>(
+		sortDecks(parseDecks(savedDecks)),
+	)
+
+	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeckT>>(
+		filterDecks(sortedDecks),
+	)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
@@ -194,8 +209,15 @@ function SelectDeck({
 				deckExists = true
 			}
 		})
-		deckExists && setShowOverwriteModal(true)
-		!deckExists && saveDeckInternal(deck)
+		if (deckExists) {
+			setShowOverwriteModal(true)
+			return
+		}
+
+		saveDeckInternal(deck)
+		setSavedDecks(getSavedDecks())
+		setSortedDecks(sortDecks([...parseDecks(savedDecks), deck]))
+		setFilteredDecks(sortDecks([...parseDecks(savedDecks), deck]))
 	}
 	const saveDeckInternal = (deck: PlayerDeckT) => {
 		//Save new deck to Local Storage
@@ -210,6 +232,16 @@ function SelectDeck({
 		deleteDeck(loadedDeck.name)
 		const decks = getSavedDecks()
 		setSavedDecks(decks)
+		setSortedDecks(
+			sortDecks(parseDecks(savedDecks)).filter(
+				(deck) => deck.name !== loadedDeck.name,
+			),
+		)
+		setFilteredDecks(
+			sortDecks(parseDecks(savedDecks)).filter(
+				(deck) => deck.name !== loadedDeck.name,
+			),
+		)
 		loadDeck(JSON.parse(decks[0]).name)
 	}
 	const canDuplicateDeck = () => {
@@ -225,11 +257,25 @@ function SelectDeck({
 			newName = `${deck.name} Copy ${number}`
 			number++
 		}
-		saveDeck({...deck, name: newName})
+
+		const newDeck = {...deck, name: newName}
+
+		saveDeck(newDeck)
 
 		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
+		setSavedDecks(savedDecks)
+		setSortedDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
+		setFilteredDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
 	}
+
+	const selectedDeckRef = useRef<HTMLLIElement>(null)
+
+	useEffect(() => {
+		selectedDeckRef.current?.scrollIntoView({
+			behavior: 'instant',
+			block: 'nearest',
+		})
+	})
 
 	const deckList: ReactNode = filteredDecks.map(
 		(deck: PlayerDeckT, i: number) => {
@@ -239,30 +285,35 @@ function SelectDeck({
 						css.myDecksItem,
 						loadedDeck.name === deck.name && css.selectedDeck,
 					)}
+					ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
 					key={i}
 					onClick={() => {
 						playSwitchDeckSFX()
 						loadDeck(deck.name)
 					}}
 				>
-					<div className={css.deckImage}>
+					{deck.tags && deck.tags.length > 0 ? (
+						<div className={css.multiColoredCircle}>
+							{keysToTags(deck.tags).map((tag) => (
+								<div
+									className={css.singleTag}
+									style={{backgroundColor: tag.color}}
+								></div>
+							))}
+						</div>
+					) : (
+						<div className={css.multiColoredCircle}>
+							<div className={css.singleTag}></div>
+						</div>
+					)}
+					<div
+						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+					>
 						<img
 							src={'../images/types/type-' + deck.icon + '.png'}
 							alt={'deck-icon'}
 						/>
 					</div>
-					{deck.tags && deck.tags.length > 0 && (
-						<div className={css.multiColoredCircleBorder}>
-							<div className={css.multiColoredCircle}>
-								{keysToTags(deck.tags).map((tag) => (
-									<div
-										className={css.singleTag}
-										style={{backgroundColor: tag.color}}
-									></div>
-								))}
-							</div>
-						</div>
-					)}
 					{deck.name}
 				</li>
 			)
@@ -395,7 +446,9 @@ function SelectDeck({
 			<AlertModal
 				setOpen={showDuplicateDeckModal}
 				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
-				action={() => duplicateDeck(loadedDeck)}
+				action={() => {
+					duplicateDeck(loadedDeck)
+				}}
 				title="Duplicate Deck"
 				description={
 					canDuplicateDeck()
@@ -423,7 +476,13 @@ function SelectDeck({
 					header={
 						<>
 							<div className={css.headerGroup}>
-								<div className={css.deckImage}>
+								<div
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
+								>
 									<img
 										src={
 											'../images/types/type-' +
@@ -465,16 +524,6 @@ function SelectDeck({
 					mobileChildren={
 						<div className={css.mobileSelector}>
 							<div className={css.mobileDeckName}>
-								<div className={css.deckImage}>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
-								</div>
 								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
 									<div className={css.multiColoredCircleBorder}>
 										<div className={css.multiColoredCircle}>
@@ -487,6 +536,22 @@ function SelectDeck({
 										</div>
 									</div>
 								)}
+								<div
+									className={classNames(
+										css.deckImage,
+										css.usesIcon,
+										css[loadedDeck.icon],
+									)}
+								>
+									<img
+										src={
+											'../images/types/type-' +
+											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
+											'.png'
+										}
+										alt="deck-icon"
+									/>
+								</div>
 								<span
 									className={classNames(
 										css.mobileDeckNameText,

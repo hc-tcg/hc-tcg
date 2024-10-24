@@ -23,11 +23,15 @@ $card-size: 118px;
 .autoscale {
 	@for $i from 1 through 20 {
 		@container cardList (width > calc(#{$i} * #{$card-size})) {
-			@if $i > 3 {
+			@if $i >3 {
 				width: calc(100% / #{$i});
-			} @else if $i == 2 {
+			}
+
+			@else if $i ==2 {
 				width: 33%;
-			} @else if $i == 1 {
+			}
+
+			@else if $i ==1 {
 				width: 50%;
 			}
 		}
@@ -58,7 +62,7 @@ $card-size: 118px;
 	opacity: 0;
 	width: 0px;
 
-	> svg {
+	>svg {
 		transition: all $speed ease-in;
 		filter: scale(0);
 	}
@@ -78,7 +82,7 @@ $card-size: 118px;
 	transition: all $speed ease-in;
 	opacity: 1;
 
-	> svg {
+	>svg {
 		transition: all $speed ease-in;
 		opacity: 1;
 		filter: scale(100%);
@@ -91,7 +95,7 @@ $card-size: 118px;
 	margin-right: -$gap;
 	width: 0px;
 
-	> svg {
+	>svg {
 		transition: all $speed ease-in;
 		opacity: 0;
 		filter: scale(0);
@@ -106,6 +110,9 @@ $card-size: 118px;
 	justify-content: left;
 	align-items: start;
 	width: 100%;
+	padding: 0.25rem;
+	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 @media (max-width: 440px) {
