@@ -2,7 +2,7 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck} from '../types/database'
-import {PlayerDeckT} from '../types/deck'
+import {UnsavedDeck} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages({
@@ -31,7 +31,7 @@ export const clientMessages = messages({
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.UPDATE_DECK; deck: PlayerDeckT},
+	{type: typeof clientMessages.UPDATE_DECK; deck: UnsavedDeck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{type: typeof clientMessages.CREATE_BOSS_GAME},
 	{type: typeof clientMessages.CANCEL_BOSS_GAME},

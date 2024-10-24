@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT, Tag} from 'common/types/deck'
+import {UnsavedDeck, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -44,9 +44,9 @@ import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
-	setLoadedDeck: (deck: PlayerDeckT) => void
+	setLoadedDeck: (deck: UnsavedDeck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
-	loadedDeck: PlayerDeckT
+	loadedDeck: UnsavedDeck
 }
 
 function SelectDeck({
@@ -65,13 +65,13 @@ function SelectDeck({
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	function parseDecks(decks: string[]): Array<PlayerDeckT> {
+	function parseDecks(decks: string[]): Array<UnsavedDeck> {
 		return decks.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
+			const deck: UnsavedDeck = JSON.parse(d)
 			return deck
 		})
 	}
-	function sortDecks(decks: PlayerDeckT[]): Array<PlayerDeckT> {
+	function sortDecks(decks: UnsavedDeck[]): Array<UnsavedDeck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
 				return a.name.localeCompare(b.name)
@@ -91,24 +91,24 @@ function SelectDeck({
 		})
 	}
 
-	function filterDecks(decks: Array<PlayerDeckT>): Array<PlayerDeckT> {
+	function filterDecks(decks: Array<UnsavedDeck>): Array<UnsavedDeck> {
 		if (!settings.lastSelectedTag) return decks
 		return decks.filter((deck) =>
 			deck.tags?.includes(settings.lastSelectedTag!),
 		)
 	}
-	const [sortedDecks, setSortedDecks] = useState<Array<PlayerDeckT>>(
+	const [sortedDecks, setSortedDecks] = useState<Array<UnsavedDeck>>(
 		sortDecks(parseDecks(savedDecks)),
 	)
 
-	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeckT>>(
+	const [filteredDecks, setFilteredDecks] = useState<Array<UnsavedDeck>>(
 		filterDecks(sortedDecks),
 	)
 
 	const savedDeckNames = savedDecks.map((deck) =>
 		deck ? getSavedDeck(deck)?.name : null,
 	)
-	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
+	const [importedDeck, setImportedDeck] = useState<UnsavedDeck>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
@@ -182,7 +182,7 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
-	const handleImportDeck = (deck: PlayerDeckT) => {
+	const handleImportDeck = (deck: UnsavedDeck) => {
 		setImportedDeck(deck)
 		importDeck(deck)
 		setShowImportModal(false)
@@ -205,7 +205,7 @@ function SelectDeck({
 			cards: deck.cards,
 		})
 	}
-	const importDeck = (deck: PlayerDeckT) => {
+	const importDeck = (deck: UnsavedDeck) => {
 		let deckExists = false
 		savedDeckNames.map((name) => {
 			if (name === deck.name) {
@@ -223,7 +223,7 @@ function SelectDeck({
 		setSortedDecks(sortDecks([...parseDecks(savedDecks), deck]))
 		setFilteredDecks(sortDecks([...parseDecks(savedDecks), deck]))
 	}
-	const saveDeckInternal = (deck: PlayerDeckT) => {
+	const saveDeckInternal = (deck: UnsavedDeck) => {
 		//Save new deck to Local Storage
 		saveDeck(deck)
 
@@ -251,7 +251,7 @@ function SelectDeck({
 	const canDuplicateDeck = () => {
 		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
 	}
-	const duplicateDeck = (deck: PlayerDeckT) => {
+	const duplicateDeck = (deck: UnsavedDeck) => {
 		//Save duplicated deck to Local Storage
 		let newName = `${deck.name} Copy`
 		let number = 2
@@ -282,7 +282,7 @@ function SelectDeck({
 	})
 
 	const deckList: ReactNode = filteredDecks.map(
-		(deck: PlayerDeckT, i: number) => {
+		(deck: UnsavedDeck, i: number) => {
 			return (
 				<li
 					className={classNames(

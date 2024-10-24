@@ -1,5 +1,5 @@
 import {
-	PlayerDeckT,
+	UnsavedDeck,
 	SavedDeckT,
 	Tag,
 	deckToSavedDeck,
@@ -20,46 +20,6 @@ export const isActiveDeckValid = () => {
 	const activeDeck = activeDeckName ? getSavedDeck(activeDeckName)?.cards : null
 	const activeDeckValid = !!activeDeck && validateDeck(activeDeck).valid
 	return activeDeckValid
-}
-
-export const getSavedDeck = (name: string) => {
-	const hash = localStorage.getItem('Deck_' + name)
-
-	let deck: SavedDeckT | null = null
-	if (hash != null) {
-		deck = JSON.parse(hash)
-	}
-
-	return loadSavedDeck(deck)
-}
-
-export const saveDeck = (deck: PlayerDeckT) => {
-	const hash = 'Deck_' + deck.name
-	localStorage.setItem(hash, JSON.stringify(deckToSavedDeck(deck)))
-}
-
-export const deleteDeck = (name: string) => {
-	const hash = 'Deck_' + name
-	localStorage.removeItem(hash)
-}
-
-export const getSavedDecks = () => {
-	let lsKey
-	const decks = []
-
-	for (let i = 0; i < localStorage.length; i++) {
-		lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Deck_')) {
-			const key = localStorage.getItem(lsKey)
-			decks.push(key || '')
-		}
-	}
-	return decks.sort()
-}
-
-export const getSavedDeckNames = () => {
-	return getSavedDecks().map((name) => JSON.parse(name || '')?.name || '')
 }
 
 export const getLegacyDecks = () => {

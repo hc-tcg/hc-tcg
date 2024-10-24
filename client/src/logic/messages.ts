@@ -2,7 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
-import {PlayerDeckT} from 'common/types/deck'
+import {UnsavedDeck} from 'common/types/deck'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -38,8 +38,6 @@ export const localMessages = messages({
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
-	DECK_SET: null,
-	DECK_NEW: null,
 	MINECRAFT_NAME_SET: null,
 	MINECRAFT_NAME_NEW: null,
 	MATCHMAKING_QUEUE_JOIN: null,
@@ -86,6 +84,7 @@ export const localMessages = messages({
 	QUEUE_VOICE: null,
 	SET_ID_AND_SECRET: null,
 	DATABASE_SET: null,
+	INSERT_DECK: null,
 })
 
 type Messages = [
@@ -115,8 +114,6 @@ type Messages = [
 		image?: string
 	},
 	{type: typeof localMessages.TOAST_CLOSE},
-	{type: typeof localMessages.DECK_SET; deck: PlayerDeckT},
-	{type: typeof localMessages.DECK_NEW; deck: PlayerDeckT},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
@@ -224,6 +221,7 @@ type Messages = [
 		secret: string
 	},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
+	{type: typeof localMessages.INSERT_DECK; deck: UnsavedDeck},
 ]
 
 /** A message used locally on the client to update global state */

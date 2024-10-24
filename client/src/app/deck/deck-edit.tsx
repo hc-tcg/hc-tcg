@@ -3,7 +3,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeckT, Tag} from 'common/types/deck'
+import {UnsavedDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -76,7 +76,7 @@ const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
 }))
 
 type DeckNameT = {
-	loadedDeck: PlayerDeckT
+	loadedDeck: UnsavedDeck
 	setDeckName: (name: string) => void
 	isValid: (valid: boolean) => void
 }
@@ -151,8 +151,8 @@ const selectTag = (
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: PlayerDeckT, initialDeck?: PlayerDeckT) => void
-	deck: PlayerDeckT
+	saveDeck: (loadedDeck: UnsavedDeck, initialDeck?: UnsavedDeck) => void
+	deck: UnsavedDeck
 }
 
 const TYPE_ORDER = {
@@ -231,7 +231,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>(deck)
+	const [loadedDeck, setLoadedDeck] = useState<UnsavedDeck>(deck)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
@@ -393,7 +393,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
+	const saveAndReturn = (deck: UnsavedDeck, initialDeck?: UnsavedDeck) => {
 		saveDeck(deck, initialDeck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,

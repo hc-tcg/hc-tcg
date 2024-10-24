@@ -7,7 +7,7 @@ export type Tag = {
 	key: string
 }
 
-export type PlayerDeckT = {
+export type UnsavedDeck = {
 	name: string
 	icon:
 		| 'any'
@@ -47,24 +47,7 @@ export type SavedDeckT = {
 	tags: Array<string> | null
 }
 
-export function deckToSavedDeck(deck: PlayerDeckT): SavedDeckT {
-	let name = deck.name
-	let icon = deck.icon
-	let tags = deck.tags
-
-	let cards = deck.cards.map((card) => {
-		return {cardId: card.props.id, cardInstance: card.entity}
-	})
-
-	return {
-		name,
-		icon,
-		cards,
-		tags,
-	}
-}
-
-export function loadSavedDeck(deck: SavedDeckT | null): PlayerDeckT | null {
+export function loadSavedDeck(deck: SavedDeckT | null): UnsavedDeck | null {
 	if (!deck) return null
 
 	let name = deck.name

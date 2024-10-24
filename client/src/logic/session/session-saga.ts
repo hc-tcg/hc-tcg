@@ -6,12 +6,7 @@ import {validateDeck} from 'common/utils/validation'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {
-	getActiveDeckName,
-	getSavedDeck,
-	saveDeck,
-	setActiveDeck,
-} from 'logic/saved-decks/saved-decks'
+import {getActiveDeckName} from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
@@ -197,17 +192,7 @@ export function* loginSaga() {
 		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
 		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
 
-		// if active deck is not valid, generate and save a starter deck
-		if (activeDeckValid) {
-			// set player deck to active deck, and send to server
-			console.log('Selected previous active deck: ' + activeDeck.name)
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: activeDeck})
-		} else {
-			// use and save the generated starter deck
-			saveDeck(result.playerInfo.player.playerDeck)
-			setActiveDeck(result.playerInfo.player.playerDeck.name)
-			console.log('Generated new starter deck')
-		}
+		//@TODO NEED TO SELECT DECK HERE
 
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
@@ -256,12 +241,12 @@ export function* loginSaga() {
 export function* logoutSaga() {
 	const socket = yield* select(getSocket)
 
-	yield* takeEvery<LocalMessageTable[typeof localMessages.DECK_SET]>(
-		localMessages.DECK_SET,
-		function* (action) {
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
-		},
-	)
+	// yield* takeEvery<LocalMessageTable[typeof localMessages.DECK_SET]>(
+	// 	localMessages.DECK_SET,
+	// 	function* (action) {
+	// 		yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
+	// 	},
+	// )
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {
@@ -283,10 +268,15 @@ export function* logoutSaga() {
 export function* newDeckSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
-		const result = yield* call(receiveMsg(socket, serverMessages.NEW_DECK))
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.DECKS_RECIEVED),
+		)
 		yield put<LocalMessage>({
-			type: localMessages.DECK_NEW,
-			deck: result.deck,
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'decks',
+				value: result.decks,
+			},
 		})
 	}
 }
