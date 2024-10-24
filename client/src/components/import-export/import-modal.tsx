@@ -1,6 +1,6 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {TypeT} from 'common/types/cards'
-import {UnsavedDeck} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckFromHash} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
@@ -13,7 +13,7 @@ import css from './import-export.module.scss'
 type Props = {
 	setOpen: boolean
 	onClose: (isOpen: boolean) => void
-	importDeck: (deck: UnsavedDeck, noActiveChange?: boolean) => void
+	importDeck: (deck: EditedDeck, noActiveChange?: boolean) => void
 	handleMassImport: () => void
 }
 
@@ -25,7 +25,7 @@ export const ImportModal = ({
 }: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
-	const [deckIcon, setDeckIcon] = useState<UnsavedDeck['icon']>('any')
+	const [deckIcon, setDeckIcon] = useState<EditedDeck['icon']>('any')
 
 	//IMPORT DECK FUNCTION
 	const importFromHash = () => {

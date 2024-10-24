@@ -9,7 +9,7 @@ import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {StatusEffect} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
-import {UnsavedDeck} from './deck'
+import {EditedDeck} from './deck'
 import {TurnActions} from './game-state'
 
 export type PlayerInfo = {
@@ -18,7 +18,7 @@ export type PlayerInfo = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: UnsavedDeck
+	playerDeck: EditedDeck
 }
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */

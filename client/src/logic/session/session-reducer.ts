@@ -1,6 +1,6 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
-import {UnsavedDeck} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 
 type SessionState = {
@@ -8,7 +8,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: UnsavedDeck
+	playerDeck: EditedDeck
 	connecting: boolean
 	connected: boolean
 	errorType?:

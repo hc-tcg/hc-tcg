@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
-import {UnsavedDeck} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 
 export const localMessages = messages({
@@ -21,7 +21,7 @@ type Messages = [
 		playerName: string
 		playerSecret: string
 		minecraftName: string
-		deck: UnsavedDeck
+		deck: EditedDeck
 		socket: any
 	},
 	{type: typeof localMessages.CLIENT_DISCONNECTED; socket: any},

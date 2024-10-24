@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import {UnsavedDeck} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
@@ -9,7 +9,7 @@ import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {toSavedDeck} from 'logic/saved-decks/saved-decks'
+import {toEditDeck, toSavedDeck} from 'logic/saved-decks/saved-decks'
 import {Deck} from 'common/types/database'
 
 export const cardGroupHeader = (
@@ -40,18 +40,16 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
 
 	//DECK LOGIC
-	const saveDeckInternal = (deck: UnsavedDeck) => {
+	const saveDeckInternal = (deck: EditedDeck) => {
 		//Save new deck to Database
+		const savedDeck = toSavedDeck(deck)
 		dispatch({
 			type: localMessages.INSERT_DECK,
-			deck: toSavedDeck(deck),
+			deck: savedDeck,
 		})
 
 		//Load new deck
-		setLoadedDeck({
-			...deck,
-			cards: deck.cards,
-		})
+		setLoadedDeck(savedDeck)
 	}
 
 	// MODE ROUTER
@@ -63,7 +61,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						back={() => setMode('select')}
 						title={'Deck Editor'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
-						deck={loadedDeck}
+						deck={toEditDeck(loadedDeck)}
 					/>
 				)
 			case 'create':

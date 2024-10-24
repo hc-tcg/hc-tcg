@@ -3,7 +3,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {UnsavedDeck, Tag} from 'common/types/deck'
+import {EditedDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -74,7 +74,7 @@ const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
 }))
 
 type DeckNameT = {
-	loadedDeck: UnsavedDeck
+	loadedDeck: EditedDeck
 	setDeckName: (name: string) => void
 	isValid: (valid: boolean) => void
 }
@@ -149,8 +149,8 @@ const selectTag = (
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: UnsavedDeck, initialDeck?: UnsavedDeck) => void
-	deck: UnsavedDeck
+	saveDeck: (loadedDeck: EditedDeck, initialDeck?: EditedDeck) => void
+	deck: EditedDeck
 }
 
 const TYPE_ORDER = {
@@ -229,7 +229,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<UnsavedDeck>(deck)
+	const [loadedDeck, setLoadedDeck] = useState<EditedDeck>(deck)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
@@ -362,19 +362,19 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 		// if the nae has been changed, delete the old one
 		if (initialDeckState.name !== newDeck.name) {
-			deleteDeck(initialDeckState.name)
+			// deleteDeck(initialDeckState.name)
 		}
 
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
 
 		// Check to see if deck name already exists in Local Storage.
-		if (
-			getSavedDeckNames().find((name) => name === newDeck.name) &&
-			initialDeckState.name !== newDeck.name
-		) {
-			return setShowOverwriteModal(true)
-		}
+		// if (
+		// 	getSavedDeckNames().find((name) => name === newDeck.name) &&
+		// 	initialDeckState.name !== newDeck.name
+		// ) {
+		// 	return setShowOverwriteModal(true)
+		// }
 
 		// Set up tags
 		newDeck.tags = tags.map((tag) => tag.key)
@@ -391,7 +391,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: UnsavedDeck, initialDeck?: UnsavedDeck) => {
+	const saveAndReturn = (deck: EditedDeck, initialDeck?: EditedDeck) => {
 		saveDeck(deck, initialDeck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,

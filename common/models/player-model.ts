@@ -1,5 +1,5 @@
 import {Socket} from 'socket.io'
-import {UnsavedDeck} from '../../common/types/deck'
+import {EditedDeck} from '../../common/types/deck'
 import {getStarterPack} from '../../server/src/utils/state-gen'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
@@ -10,7 +10,7 @@ export type PlayerId = string & {__player_id: never}
 export class PlayerModel {
 	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: UnsavedDeck
+	private internalDeck: EditedDeck
 	public name: string
 	public minecraftName: string
 	public censoredName: string
@@ -59,7 +59,7 @@ export class PlayerModel {
 		}
 	}
 
-	setPlayerDeck(newDeck: UnsavedDeck) {
+	setPlayerDeck(newDeck: EditedDeck) {
 		if (!newDeck || !newDeck.cards) return
 		const validationResult = validateDeck(newDeck.cards)
 		if (!validationResult.valid) return

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {UnsavedDeck, Tag} from 'common/types/deck'
+import {EditedDeck, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -27,6 +27,7 @@ import {
 	getLegacyDecks,
 	keysToTags,
 	setActiveDeck,
+	toEditDeck,
 	toSavedDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
@@ -105,7 +106,7 @@ function SelectDeck({
 	)
 
 	const savedDeckNames = savedDecks.map((deck) => deck.name)
-	const [importedDeck, setImportedDeck] = useState<UnsavedDeck>({
+	const [importedDeck, setImportedDeck] = useState<EditedDeck>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
@@ -179,7 +180,7 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
-	const handleImportDeck = (deck: UnsavedDeck) => {
+	const handleImportDeck = (deck: EditedDeck) => {
 		setImportedDeck(deck)
 		importDeck(deck)
 		setShowImportModal(false)
@@ -193,7 +194,7 @@ function SelectDeck({
 	const loadDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
 	}
-	const importDeck = (deck: UnsavedDeck) => {
+	const importDeck = (deck: EditedDeck) => {
 		let deckExists = false
 		savedDeckNames.map((name) => {
 			if (name === deck.name) {
@@ -211,7 +212,7 @@ function SelectDeck({
 		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
 		setFilteredDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
 	}
-	const saveDeckInternal = (deck: UnsavedDeck) => {
+	const saveDeckInternal = (deck: EditedDeck) => {
 		//Save new deck to Local Storage
 		setSavedDecks(databaseInfo.decks)
 		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
@@ -242,7 +243,7 @@ function SelectDeck({
 			) > -1
 		)
 	}
-	const duplicateDeck = (deck: UnsavedDeck) => {
+	const duplicateDeck = (deck: EditedDeck) => {
 		//Save duplicated deck to Local Storage
 		let newName = `${deck.name} Copy`
 		let number = 2
@@ -373,15 +374,18 @@ function SelectDeck({
 		</div>
 	)
 	const validationResult = validateDeck(loadedDeck.cards)
+
+	const currentDeck = toEditDeck(loadedDeck)
+
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter(
+		hermits: currentDeck.cards.filter(
 			(card) => card.props.category === 'hermit',
 		),
-		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
-		attachableEffects: loadedDeck.cards.filter(
+		items: currentDeck.cards.filter((card) => card.props.category === 'item'),
+		attachableEffects: currentDeck.cards.filter(
 			(card) => card.props.category === 'attach',
 		),
-		singleUseEffects: loadedDeck.cards.filter(
+		singleUseEffects: currentDeck.cards.filter(
 			(card) => card.props.category === 'single_use',
 		),
 	}
@@ -410,7 +414,7 @@ function SelectDeck({
 			<ExportModal
 				setOpen={showExportModal}
 				onClose={() => setShowExportModal(!showExportModal)}
-				loadedDeck={loadedDeck}
+				loadedDeck={currentDeck}
 			/>
 			<MassExportModal
 				setOpen={showMassExportModal}
@@ -442,7 +446,7 @@ function SelectDeck({
 				setOpen={showDuplicateDeckModal}
 				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
 				action={() => {
-					duplicateDeck(loadedDeck)
+					duplicateDeck(currentDeck)
 				}}
 				title="Duplicate Deck"
 				description={
@@ -508,8 +512,7 @@ function SelectDeck({
 								</p>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
-										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
-										{CONFIG.limits.maxDeckCost}{' '}
+										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
@@ -566,15 +569,14 @@ function SelectDeck({
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									</div>
 									<div className={classNames(css.mobileDeckStat, css.tokens)}>
-										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
-										{CONFIG.limits.maxDeckCost}
+										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}
 									</div>
 								</div>
 							</div>
 							<div className={css.deckListBox}>
 								<div className={css.mobileDeckPreview}>
 									<MobileCardList
-										cards={sortCards(loadedDeck.cards)}
+										cards={sortCards(currentDeck.cards)}
 										small={true}
 									/>
 								</div>

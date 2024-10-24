@@ -7,7 +7,7 @@ export type Tag = {
 	key: string
 }
 
-export type UnsavedDeck = {
+export type EditedDeck = {
 	name: string
 	icon:
 		| 'any'
@@ -47,7 +47,7 @@ export type SavedDeckT = {
 	tags: Array<string> | null
 }
 
-export function loadSavedDeck(deck: SavedDeckT | null): UnsavedDeck | null {
+export function loadSavedDeck(deck: SavedDeckT | null): EditedDeck | null {
 	if (!deck) return null
 
 	let name = deck.name

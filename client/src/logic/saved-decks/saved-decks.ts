@@ -1,5 +1,8 @@
 import {CARDS} from 'common/cards'
-import {UnsavedDeck, Tag} from 'common/types/deck'
+import {CardEntity} from 'common/entities'
+import {Deck} from 'common/types/database'
+import {EditedDeck as EditedDeck, Tag} from 'common/types/deck'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {validateDeck} from 'common/utils/validation'
 
 export const getActiveDeckName = () => {
@@ -95,12 +98,29 @@ export const deleteTag = (tag: Tag) => {
 	})
 }
 
-export function toSavedDeck(deck: UnsavedDeck) {
+export function toSavedDeck(deck: EditedDeck): Deck {
 	return {
 		name: deck.name,
 		code: '',
 		icon: deck.icon,
 		tags: deck.tags ? deck.tags : [],
 		cards: deck.cards.map((card) => CARDS[card.props.id]),
+	}
+}
+
+export function toEditDeck(deck: Deck): EditedDeck {
+	return {
+		name: deck.name,
+		icon: deck.icon as EditedDeck['icon'],
+		tags: deck.tags ? deck.tags : [],
+		cards: deck.cards.map((card): LocalCardInstance => {
+			return {
+				props: WithoutFunctions(card),
+				entity: Math.random().toString() as CardEntity,
+				slot: null,
+				attackHint: null,
+				turnedOver: false,
+			}
+		}),
 	}
 }
