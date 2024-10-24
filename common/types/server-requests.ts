@@ -55,6 +55,7 @@ export type LocalStatusEffectInstance<
 				player: PlayerEntity
 		  }
 	readonly counter: number | null
+	readonly description: string
 }
 
 export type SlotInfo = {

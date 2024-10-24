@@ -20,7 +20,7 @@ const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
 					{statusEffect.target.type === 'card' ? 'Hermit' : 'Global'}
 				</div>
 			</div>
-			<div className={css.description}>{statusEffect.props.description}</div>
+			<div className={css.description}>{statusEffect.description}</div>
 			{isCounter(statusEffect.props) &&
 				statusEffect.props.counterType === 'number' && (
 					<div className={css.turnsRemaining}>

@@ -23,8 +23,6 @@ const SlownessEffect: Counter<CardComponent> = {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.counter
-
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (
 				target.slot?.onBoard() &&
