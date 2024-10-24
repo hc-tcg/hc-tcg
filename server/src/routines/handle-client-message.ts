@@ -21,6 +21,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
+import {addUser} from '../db/db-reciever'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -75,11 +76,15 @@ function* handler(message: RecievedClientMessage) {
 		case clientMessages.TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
 			console.log(actionMessage.payload.action)
-			yield* put<LocalMessage>({
+			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 			})
+		case clientMessages.PG_ADD_USER:
+			return yield* addUser(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 	}
 }
 

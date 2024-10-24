@@ -6,7 +6,7 @@ import {CARDS_LIST} from 'common/cards'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
-import {setupDatabase} from '../src/db/db'
+import {Database, setupDatabase} from '../src/db/db'
 import {addApi} from './api'
 import startSocketIO from './sockets'
 
@@ -49,3 +49,5 @@ addApi(app)
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
 })
+
+export const pgDatabase: Database = setupDatabase(CARDS_LIST, process.env, 8)

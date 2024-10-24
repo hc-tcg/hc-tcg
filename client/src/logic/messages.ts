@@ -83,6 +83,7 @@ export const localMessages = messages({
 	SOUND_SECTION_CHANGE: null,
 	PLAY_VOICE_TEST: null,
 	QUEUE_VOICE: null,
+	SET_ID_AND_SECRET: null,
 })
 
 type Messages = [
@@ -215,6 +216,11 @@ type Messages = [
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
 	{type: typeof localMessages.PLAY_VOICE_TEST},
 	{type: typeof localMessages.QUEUE_VOICE; lines: Array<string>},
+	{
+		type: typeof localMessages.SET_ID_AND_SECRET
+		userId: string
+		secret: string
+	},
 ]
 
 /** A message used locally on the client to update global state */

@@ -70,6 +70,7 @@ const createConnectErrorChannel = (socket: any) =>
 export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
+
 	console.log('session saga: ', session)
 	if (!session) {
 		const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
@@ -84,6 +85,7 @@ export function* loginSaga() {
 	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
 	const connectErrorChan = createConnectErrorChannel(socket)
+
 	const result = yield* race({
 		playerInfo: call(receiveMsg(socket, serverMessages.PLAYER_INFO)),
 		invalidPlayer: call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),
@@ -184,6 +186,52 @@ export function* loginSaga() {
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
+
+		const secret = localStorage.getItem('databaseInfo:secret')
+		const userId = localStorage.getItem('databaseInfo:userId')
+
+		// Create new database user to connect
+		if (!secret || !userId) {
+			yield* sendMsg({
+				type: clientMessages.PG_ADD_USER,
+				username: result.playerInfo.player.playerName,
+				minecraftName: minecraftName,
+			})
+
+			const userInfo = yield* race({
+				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
+				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+			})
+
+			if (userInfo.success?.user) {
+				yield* put<LocalMessage>({
+					type: localMessages.SET_ID_AND_SECRET,
+					userId: userInfo.success.user.uuid,
+					secret: userInfo.success.user.secret,
+				})
+
+				// Set socket information now that we authenticated
+				socket.auth.pgUserId = userInfo.success.user.uuid
+				socket.auth.pgUserSecret = userInfo.success.user.secret
+			}
+		} else {
+			yield* sendMsg({
+				type: clientMessages.PG_AUTHENTICATE,
+				userId: userId,
+				secret: secret,
+			})
+
+			const userInfo = yield* race({
+				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
+				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+			})
+
+			if (userInfo.success?.user) {
+				// Set socket information now that we authenticated
+				socket.auth.pgUserId = userInfo.success.user.uuid
+				socket.auth.pgUserSecret = userInfo.success.user.secret
+			}
+		}
 	}
 }
 

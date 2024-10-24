@@ -89,6 +89,8 @@ export class Database {
 			`,
 		)
 
+		console.log('Database connected')
+
 		await this.pool.query(
 			`
 			INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
@@ -105,13 +107,14 @@ export class Database {
 	public async insertUser(
 		username: string,
 		minecraftName: string | null,
+		db: Database,
 	): Promise<DatabaseResult<User>> {
 		try {
-			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
+			const secret = (await db.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
-			const user = await this.pool.query(
+			const user = await db.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, this.bfDepth],
+				[username, minecraftName, secret, db.bfDepth],
 			)
 			return {
 				type: 'success',
@@ -558,7 +561,7 @@ export const setupDatabase = (
 		password: env.POSTGRES_PASSWORD,
 		database: env.POSTGRES_DATABASE,
 		max: 10,
-		idleTimeoutMillis: 30000,
+		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,
 	})
 
