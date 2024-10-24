@@ -60,9 +60,6 @@ export class PlayerModel {
 	}
 
 	setPlayerDeck(newDeck: EditedDeck) {
-		if (!newDeck || !newDeck.cards) return
-		const validationResult = validateDeck(newDeck.cards)
-		if (!validationResult.valid) return
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,

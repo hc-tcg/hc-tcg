@@ -3,21 +3,15 @@ import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/database'
 import {EditedDeck as EditedDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {validateDeck} from 'common/utils/validation'
 
-export const getActiveDeckName = () => {
-	return localStorage.getItem('activeDeck')
+export const getActiveDeck = (): Deck | null => {
+	const deck = localStorage.getItem('activeDeck')
+	if (!deck) return null
+	return JSON.parse(deck) as Deck
 }
 
-export const setActiveDeck = (name: string) => {
-	localStorage.setItem('activeDeck', name)
-}
-
-export const isActiveDeckValid = () => {
-	const activeDeckName = getActiveDeckName()
-	const activeDeck = activeDeckName ? getSavedDeck(activeDeckName)?.cards : null
-	const activeDeckValid = !!activeDeck && validateDeck(activeDeck).valid
-	return activeDeckValid
+export const setActiveDeck = (deck: Deck) => {
+	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
 export const getLegacyDecks = () => {

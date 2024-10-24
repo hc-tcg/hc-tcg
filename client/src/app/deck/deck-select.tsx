@@ -171,11 +171,7 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (!validateDeck(toEditDeck(loadedDeck).cards).valid) {
-			return setShowValidateDeckModal(true)
-		}
-
-		setActiveDeck(loadedDeck.name)
+		setActiveDeck(loadedDeck)
 		dispatchToast(selectedDeckToast)
 
 		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
@@ -223,7 +219,7 @@ function SelectDeck({
 		})
 
 		const newSavedDecks = savedDecks.filter(
-			(deck) => deck.code !== deletedDeck.code,
+			(deck) => deck.name !== deletedDeck.name,
 		)
 
 		setSavedDecks(newSavedDecks)
@@ -233,7 +229,7 @@ function SelectDeck({
 			type: localMessages.DECK_SET,
 			deck: newSavedDecks[0],
 		})
-		setActiveDeck(loadedDeck.name)
+		setActiveDeck(newSavedDecks[0])
 	}
 	const canDuplicateDeck = () => {
 		return (
@@ -279,9 +275,9 @@ function SelectDeck({
 			<li
 				className={classNames(
 					css.myDecksItem,
-					loadedDeck.code === deck.code && css.selectedDeck,
+					loadedDeck.name === deck.name && css.selectedDeck,
 				)}
-				ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
+				ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
 				key={i}
 				onClick={() => {
 					playSwitchDeckSFX()
@@ -414,7 +410,7 @@ function SelectDeck({
 			<ExportModal
 				setOpen={showExportModal}
 				onClose={() => setShowExportModal(!showExportModal)}
-				loadedDeck={currentDeck}
+				loadedDeck={loadedDeck}
 			/>
 			<MassExportModal
 				setOpen={showMassExportModal}

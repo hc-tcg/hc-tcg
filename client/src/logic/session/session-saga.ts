@@ -2,11 +2,10 @@ import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
-import {validateDeck} from 'common/utils/validation'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {getActiveDeckName} from 'logic/saved-decks/saved-decks'
+import {getActiveDeck, toEditDeck} from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
@@ -145,12 +144,11 @@ export function* loginSaga() {
 			player: session,
 		})
 		yield* setupData(socket)
-		// let activeDeck = localStorage.getItem('activeDeck')
-		// if (activeDeck) {
-		// 	let deck = localStorage.getItem('databaseInfo:decks')
-		// 	console.log('Select previous active deck')
-		// 	if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
-		// }
+		let activeDeck = getActiveDeck()
+		if (activeDeck) {
+			console.log('Select previous active deck')
+			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
+		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
 			yield* put<LocalMessage>({
@@ -189,11 +187,17 @@ export function* loginSaga() {
 			})
 		}
 
-		// const activeDeckName = getActiveDeckName()
-		// const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
-		// const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
+		// Set active deck
+		const activeDeck = getActiveDeck()
 
-		//@TODO NEED TO SELECT DECK HERE
+		if (activeDeck) {
+			console.log('Selected previous active deck: ' + activeDeck.name)
+			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: toEditDeck(activeDeck),
+			})
+		}
 
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
