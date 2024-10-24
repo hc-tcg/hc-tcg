@@ -104,7 +104,7 @@ describe('Test Weakness', () => {
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
 					yield* endTurn(game)
 
-					yield* changeActiveHermit(game, 0)
+					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, ChorusFruit, 'single_use')
@@ -258,6 +258,7 @@ describe('Test Weakness', () => {
 					SmallishbeansRare,
 					SmallishbeansRare,
 					SmallishbeansRare,
+					PotionOfWeakness
 				],
 				saga: function* (game) {
 					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
