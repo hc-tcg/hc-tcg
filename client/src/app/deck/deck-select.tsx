@@ -229,6 +229,7 @@ function SelectDeck({
 			type: localMessages.DECK_SET,
 			deck: newSavedDecks[0],
 		})
+		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
 	}
 	const canDuplicateDeck = () => {

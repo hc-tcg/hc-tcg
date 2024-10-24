@@ -39,6 +39,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
 	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
+	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
 
 	//DECK LOGIC
 	const saveDeckInternal = (deck: EditedDeck) => {
