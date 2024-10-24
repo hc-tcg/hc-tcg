@@ -67,6 +67,9 @@ function SelectDeck({
 			type: localMessages.INSERT_DECK,
 			deck: deck,
 		})
+		setSavedDecks(databaseInfo.decks)
+		setSortedDecks(sortDecks([...savedDecks, deck]))
+		setFilteredDecks(sortDecks([...savedDecks, deck]))
 	}
 
 	// STATE
@@ -207,16 +210,7 @@ function SelectDeck({
 			return
 		}
 
-		// saveDeckInternal(deck)
-		setSavedDecks(databaseInfo.decks)
-		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
-		setFilteredDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
-	}
-	const saveDeckInternal = (deck: EditedDeck) => {
-		//Save new deck to Local Storage
-		setSavedDecks(databaseInfo.decks)
-		setSortedDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
-		setFilteredDecks(sortDecks([...savedDecks, toSavedDeck(deck)]))
+		saveDeck(toSavedDeck(deck))
 	}
 	const deleteDeckInternal = () => {
 		//@TODO This entire function
@@ -460,7 +454,7 @@ function SelectDeck({
 			<AlertModal
 				setOpen={showOverwriteModal}
 				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={() => saveDeckInternal(importedDeck)}
+				action={() => saveDeck(toSavedDeck(importedDeck))}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
 				actionText="Overwrite"
