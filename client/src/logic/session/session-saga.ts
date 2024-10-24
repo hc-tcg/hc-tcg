@@ -144,12 +144,13 @@ export function* loginSaga() {
 			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
-		let activeDeck = localStorage.getItem('activeDeck')
-		if (activeDeck) {
-			// let deck = getSavedDeck(activeDeck)
-			// console.log('Select previous active deck')
-			// if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
-		}
+		yield* setupData(socket)
+		// let activeDeck = localStorage.getItem('activeDeck')
+		// if (activeDeck) {
+		// 	let deck = localStorage.getItem('databaseInfo:decks')
+		// 	console.log('Select previous active deck')
+		// 	if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
+		// }
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
 			yield* put<LocalMessage>({

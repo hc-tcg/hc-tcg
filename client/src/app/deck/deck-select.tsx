@@ -179,6 +179,7 @@ function SelectDeck({
 		dispatchToast(selectedDeckToast)
 
 		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
+		dispatch({type: localMessages.UPDATE_DECKS})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
