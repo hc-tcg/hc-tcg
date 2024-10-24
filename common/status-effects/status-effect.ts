@@ -117,5 +117,5 @@ export const damageEffect = {
 export function isCounter<T extends CardComponent | PlayerComponent>(
 	effect: StatusEffect<T>,
 ): effect is Counter<T> {
-	return 'counter' in effect
+	return effect.counter !== undefined
 }
