@@ -21,7 +21,7 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {addUser} from '../db/db-reciever'
+import {addUser, authenticateUser} from '../db/db-reciever'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -83,6 +83,10 @@ function* handler(message: RecievedClientMessage) {
 			})
 		case clientMessages.PG_ADD_USER:
 			return yield* addUser(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.PG_AUTHENTICATE:
+			return yield* authenticateUser(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

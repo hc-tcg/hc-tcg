@@ -3,15 +3,14 @@ import {SagaIterator} from 'redux-saga'
 import {takeEvery} from 'redux-saga/effects'
 
 function* setDatabaseKeysSaga(
-	action: LocalMessageTable[typeof localMessages.SETTINGS_SET],
+	action: LocalMessageTable[typeof localMessages.SET_ID_AND_SECRET],
 ): SagaIterator {
-	const {key, value} = action.setting
-	const storeValue = JSON.stringify(value)
-	localStorage.setItem('settings:' + key, storeValue)
+	localStorage.setItem('databaseInfo:userId', action.userId)
+	localStorage.setItem('databaseInfo:secret', action.secret)
 }
 
 function* databaseKeysSaga() {
-	yield takeEvery(localMessages.SETTINGS_SET, setDatabaseKeysSaga)
+	yield takeEvery(localMessages.SET_ID_AND_SECRET, setDatabaseKeysSaga)
 }
 
 export default databaseKeysSaga

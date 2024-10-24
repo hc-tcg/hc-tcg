@@ -17,13 +17,13 @@ const defaultInfo: databaseInfo = {
 const getDatabaseInfo = (): databaseInfo => {
 	const storage = Object.entries(localStorage)
 
-	const settings = storage.filter(([key]) => {
+	const info = storage.filter(([key]) => {
 		return key.startsWith('databaseInfo:')
 	})
 
-	return settings.reduce((map, entry) => {
+	return info.reduce((map, entry) => {
 		const key = entry[0].replace(/^databaseInfo:/, '')
-		const value = JSON.parse(entry[1])
+		const value = entry[1]
 		// @ts-ignore
 		map[key] = value
 		return map

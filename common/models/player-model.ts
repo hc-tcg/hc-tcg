@@ -15,6 +15,8 @@ export class PlayerModel {
 	public minecraftName: string
 	public censoredName: string
 	public socket: Socket
+	public uuid: string | null
+	public authenticated: boolean
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -32,6 +34,8 @@ export class PlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 		this.socket = socket
+		this.uuid = null
+		this.authenticated = false
 	}
 
 	public get id() {

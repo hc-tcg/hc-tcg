@@ -209,10 +209,6 @@ export function* loginSaga() {
 					userId: userInfo.success.user.uuid,
 					secret: userInfo.success.user.secret,
 				})
-
-				// Set socket information now that we authenticated
-				socket.auth.pgUserId = userInfo.success.user.uuid
-				socket.auth.pgUserSecret = userInfo.success.user.secret
 			}
 		} else {
 			yield* sendMsg({
@@ -226,10 +222,7 @@ export function* loginSaga() {
 				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 			})
 
-			if (userInfo.success?.user) {
-				// Set socket information now that we authenticated
-				socket.auth.pgUserId = userInfo.success.user.uuid
-				socket.auth.pgUserSecret = userInfo.success.user.secret
+			if (userInfo.success) {
 			}
 		}
 	}
