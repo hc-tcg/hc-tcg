@@ -1,5 +1,5 @@
 import {RootState} from 'store'
 
-export const getDatabaseKeys = (state: RootState) => {
+export const getLocalDatabaseInfo = (state: RootState) => {
 	return state.databaseInfo
 }

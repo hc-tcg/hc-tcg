@@ -8,6 +8,7 @@ import css from './main-menu.module.scss'
 import Slider from 'components/slider'
 import Button from 'components/button'
 import {Stats} from 'common/types/database'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -15,15 +16,9 @@ type Props = {
 function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
-	const [stats, setStats] = useState<Stats | null>(null)
-
-	useEffect(() => {
-		fetch('/api/stats', {headers: {uuid: '1234'}}).then((resp) => {
-			if (resp.status !== 200) return
-			resp.json().then((json) => setStats(json))
-		})
-	}, [])
+	const stats = databaseInfo.stats
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({

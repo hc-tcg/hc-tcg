@@ -1,5 +1,5 @@
 import {Message, MessageTable, messages} from '../redux-messages'
-import {User} from '../types/database'
+import {Deck, Stats, User} from '../types/database'
 import {PlayerDeckT} from '../types/deck'
 import {
 	GameEndOutcomeT,
@@ -43,6 +43,8 @@ export const serverMessages = messages({
 	/**Postgres */
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
+	DECKS_RECIEVED: null,
+	STATS_RECIEVED: null,
 })
 
 export type ServerMessages = [
@@ -101,6 +103,8 @@ export type ServerMessages = [
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
+	{type: typeof serverMessages.DECKS_RECIEVED; decks: Array<Deck>},
+	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
 ]
 
 export type ServerMessage = Message<ServerMessages>

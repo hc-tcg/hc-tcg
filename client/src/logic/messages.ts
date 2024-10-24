@@ -23,6 +23,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {LocalDatabase} from './game/database/database-reducer'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,
@@ -84,6 +85,7 @@ export const localMessages = messages({
 	PLAY_VOICE_TEST: null,
 	QUEUE_VOICE: null,
 	SET_ID_AND_SECRET: null,
+	DATABASE_SET: null,
 })
 
 type Messages = [
@@ -221,6 +223,7 @@ type Messages = [
 		userId: string
 		secret: string
 	},
+	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 ]
 
 /** A message used locally on the client to update global state */

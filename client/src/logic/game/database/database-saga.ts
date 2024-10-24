@@ -9,8 +9,8 @@ function* setDatabaseKeysSaga(
 	localStorage.setItem('databaseInfo:secret', action.secret)
 }
 
-function* databaseKeysSaga() {
+function* databaseSaga() {
 	yield takeEvery(localMessages.SET_ID_AND_SECRET, setDatabaseKeysSaga)
 }
 
-export default databaseKeysSaga
+export default databaseSaga

@@ -5,14 +5,14 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
 import {useSelector} from 'react-redux'
-import {getDatabaseKeys} from 'logic/game/database/database-selectors'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function DataSettings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const databaseInfo = useSelector(getDatabaseKeys)
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const [modal, setModal] = useState<any>(null)
 

@@ -1,20 +1,32 @@
+import {Deck, Stats} from 'common/types/database'
 import {LocalMessage, localMessages} from 'logic/messages'
 
-export type databaseInfo = {
+export type DatabaseInfo = {
 	userId: string | null
 	secret: string | null
+	decks: Array<Deck>
+	stats: Stats
 }
 
-export type LocalSetting = {
-	[Key in keyof databaseInfo]: {key: Key; value: databaseInfo[Key]}
-}[keyof databaseInfo]
+export type LocalDatabase = {
+	[Key in keyof DatabaseInfo]: {key: Key; value: DatabaseInfo[Key]}
+}[keyof DatabaseInfo]
 
-const defaultInfo: databaseInfo = {
+const defaultInfo: DatabaseInfo = {
 	userId: null,
 	secret: null,
+	decks: [],
+	stats: {
+		gamesPlayed: 0,
+		wins: 0,
+		losses: 0,
+		ties: 0,
+		forfeitWins: 0,
+		forfeitLosses: 0,
+	},
 }
 
-const getDatabaseInfo = (): databaseInfo => {
+const getDatabaseInfo = (): DatabaseInfo => {
 	const storage = Object.entries(localStorage)
 
 	const info = storage.filter(([key]) => {
@@ -27,21 +39,23 @@ const getDatabaseInfo = (): databaseInfo => {
 		// @ts-ignore
 		map[key] = value
 		return map
-	}, {} as databaseInfo)
+	}, {} as DatabaseInfo)
 }
 
-const defaultState: databaseInfo = {...defaultInfo, ...getDatabaseInfo()}
+const defaultState: DatabaseInfo = {...defaultInfo, ...getDatabaseInfo()}
 
-const databaseKeysReducer = (
+const databaseReducer = (
 	state = defaultState,
 	action: LocalMessage,
-): databaseInfo => {
+): DatabaseInfo => {
 	switch (action.type) {
 		case localMessages.SET_ID_AND_SECRET:
 			return {...state, userId: action.userId, secret: action.secret}
+		case localMessages.DATABASE_SET:
+			return {...state, [action.data.key]: action.data.value}
 		default:
 			return state
 	}
 }
 
-export default databaseKeysReducer
+export default databaseReducer

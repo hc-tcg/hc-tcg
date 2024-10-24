@@ -40,6 +40,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -58,6 +59,9 @@ function SelectDeck({
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+
+	console.log(databaseInfo.decks)
 
 	// STATE
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)

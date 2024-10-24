@@ -1,4 +1,4 @@
-import databaseKeysReducer from 'logic/game/database/database-reducer'
+import databaseReducer from 'logic/game/database/database-reducer'
 import gameReducer from 'logic/game/game-reducer'
 import localSettingsReducer from 'logic/local-settings/local-settings-reducer'
 import matchmakingReducer from 'logic/matchmaking/matchmaking-reducer'
@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
 	socketStatus: socketReducer,
 	matchmaking: matchmakingReducer,
 	localSettings: localSettingsReducer,
-	databaseInfo: databaseKeysReducer,
+	databaseInfo: databaseReducer,
 })
 
 export default rootReducer

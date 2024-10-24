@@ -9,7 +9,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {call} from 'typed-redux-saga'
 
 export function* addUser(
-	action: RecievedClientMessage<typeof clientMessages.PG_ADD_USER>,
+	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
 ) {
 	const result = yield* call(
 		[pgDatabase, pgDatabase.insertUser],
@@ -45,5 +45,62 @@ export function* authenticateUser(
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
 	} else {
 		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+	}
+}
+
+export function* getDecks(
+	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
+) {
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+		return
+	}
+
+	const result = yield* call([pgDatabase, pgDatabase.getDecks], player.uuid)
+
+	if (result.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.DECKS_RECIEVED,
+			decks: result.body,
+		})
+	} else {
+		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+	}
+}
+
+export function* getStats(
+	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
+) {
+	const defaultStats = {
+		gamesPlayed: 0,
+		wins: 0,
+		losses: 0,
+		forfeitWins: 0,
+		forfeitLosses: 0,
+		ties: 0,
+	}
+
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: defaultStats,
+		})
+		return
+	}
+
+	const result = yield* call([pgDatabase, pgDatabase.getUserStats], player.uuid)
+
+	if (result.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: result.body,
+		})
+	} else {
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: defaultStats,
+		})
 	}
 }

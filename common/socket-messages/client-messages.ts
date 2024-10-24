@@ -1,6 +1,7 @@
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {Deck} from '../types/database'
 import {PlayerDeckT} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
@@ -22,7 +23,10 @@ export const clientMessages = messages({
 	CHAT_MESSAGE: null,
 	/**Postgres */
 	PG_AUTHENTICATE: null,
-	PG_ADD_USER: null,
+	PG_INSERT_USER: null,
+	GET_DECKS: null,
+	GET_STATS: null,
+	INSERT_DECK: null,
 })
 
 export type ClientMessages = [
@@ -51,10 +55,13 @@ export type ClientMessages = [
 		secret: string
 	},
 	{
-		type: typeof clientMessages.PG_ADD_USER
+		type: typeof clientMessages.PG_INSERT_USER
 		username: string | null
 		minecraftName: string | null
 	},
+	{type: typeof clientMessages.GET_DECKS},
+	{type: typeof clientMessages.GET_STATS},
+	{type: typeof clientMessages.INSERT_DECK; deck: Deck},
 ]
 
 export type ClientMessage = Message<ClientMessages>

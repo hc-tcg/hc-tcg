@@ -67,6 +67,32 @@ const createConnectErrorChannel = (socket: any) =>
 		return () => socket.off('connect_error', connectErrorListener)
 	})
 
+function* setupData(socket: any) {
+	yield* sendMsg({
+		type: clientMessages.GET_DECKS,
+	})
+	const decks = yield* call(receiveMsg(socket, serverMessages.DECKS_RECIEVED))
+	yield* put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'decks',
+			value: decks.decks,
+		},
+	})
+
+	yield* sendMsg({
+		type: clientMessages.GET_STATS,
+	})
+	const stats = yield* call(receiveMsg(socket, serverMessages.STATS_RECIEVED))
+	yield* put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'stats',
+			value: stats.stats,
+		},
+	})
+}
+
 export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
@@ -193,7 +219,7 @@ export function* loginSaga() {
 		// Create new database user to connect
 		if (!secret || !userId) {
 			yield* sendMsg({
-				type: clientMessages.PG_ADD_USER,
+				type: clientMessages.PG_INSERT_USER,
 				username: result.playerInfo.player.playerName,
 				minecraftName: minecraftName,
 			})
@@ -222,8 +248,7 @@ export function* loginSaga() {
 				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 			})
 
-			if (userInfo.success) {
-			}
+			if (userInfo.success) setupData(socket)
 		}
 	}
 }
