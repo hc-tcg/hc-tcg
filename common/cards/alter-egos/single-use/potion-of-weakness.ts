@@ -29,6 +29,11 @@ const PotionOfWeakness: SingleUse = {
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		query.slot.opponentHasActiveHermit,
+		(game, _pos) => {
+			const a = game.opponentPlayer.getActiveHermit()?.isHermit()
+			if (!a) return false
+			return a
+		},
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
