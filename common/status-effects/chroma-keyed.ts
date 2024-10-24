@@ -22,8 +22,6 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		if (!effect.counter) effect.counter = this.counter
-
 		let jopacityUsedThisTurn = false
 		let previousUses = 0
 
