@@ -101,7 +101,7 @@ export const deleteTag = (tag: Tag) => {
 export function toSavedDeck(deck: EditedDeck): Deck {
 	return {
 		name: deck.name,
-		code: '',
+		code: Math.random.toString(),
 		icon: deck.icon,
 		tags: deck.tags ? deck.tags : [],
 		cards: deck.cards.map((card) => CARDS[card.props.id]),

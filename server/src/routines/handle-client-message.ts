@@ -21,7 +21,13 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {addUser, authenticateUser, getDecks, getStats} from '../db/db-reciever'
+import {
+	addUser,
+	authenticateUser,
+	getDecks,
+	getStats,
+	insertDeck,
+} from '../db/db-reciever'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -91,6 +97,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GET_DECKS:
 			return yield* getDecks(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.INSERT_DECK:
+			return yield* insertDeck(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.GET_STATS:

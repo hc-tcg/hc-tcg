@@ -69,6 +69,31 @@ export function* getDecks(
 	}
 }
 
+export function* insertDeck(
+	action: RecievedClientMessage<typeof clientMessages.INSERT_DECK>,
+) {
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+		return
+	}
+
+	const result = yield* call(
+		[pgDatabase, pgDatabase.insertDeck],
+		action.payload.deck.name,
+		action.payload.deck.icon,
+		action.payload.deck.cards.map((card) => card.numericId),
+		action.payload.deck.tags,
+		player.uuid,
+	)
+
+	// if (result.type === 'success') {
+	// 	broadcast([player], {type: serverMessages.NEW_DECK, user: result.body})
+	// } else {
+	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+	// }
+}
+
 export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {

@@ -12,7 +12,9 @@ type ValidateDeckResult =
 			reason: String
 	  }
 
-export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
+export function validateDeck(
+	deckCards: Array<LocalCardInstance>,
+): ValidateDeckResult {
 	if (DEBUG_CONFIG.disableDeckValidation) return {valid: true}
 
 	const limits = CONFIG.limits

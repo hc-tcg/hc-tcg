@@ -38,11 +38,13 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
+	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
 
 	//DECK LOGIC
 	const saveDeckInternal = (deck: EditedDeck) => {
 		//Save new deck to Database
 		const savedDeck = toSavedDeck(deck)
+		setExtraDecks([...extraDecks, savedDeck])
 		dispatch({
 			type: localMessages.INSERT_DECK,
 			deck: savedDeck,
@@ -86,6 +88,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						setMenuSection={setMenuSection}
 						setMode={setMode}
 						loadedDeck={loadedDeck}
+						extraDecks={extraDecks}
 					/>
 				)
 		}

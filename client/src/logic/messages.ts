@@ -87,6 +87,7 @@ export const localMessages = messages({
 	DATABASE_SET: null,
 	INSERT_DECK: null,
 	DECK_SET: null,
+	UPDATE_DECKS: null,
 })
 
 type Messages = [
@@ -225,6 +226,7 @@ type Messages = [
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
 	{type: typeof localMessages.DECK_SET; deck: Deck},
+	{type: typeof localMessages.UPDATE_DECKS},
 ]
 
 /** A message used locally on the client to update global state */

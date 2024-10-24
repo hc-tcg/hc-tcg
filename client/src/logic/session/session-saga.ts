@@ -233,7 +233,7 @@ export function* loginSaga() {
 				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 			})
 
-			if (userInfo.success) setupData(socket)
+			if (userInfo.success) yield* setupData(socket)
 		}
 	}
 }
@@ -241,12 +241,18 @@ export function* loginSaga() {
 export function* logoutSaga() {
 	const socket = yield* select(getSocket)
 
-	// yield* takeEvery<LocalMessageTable[typeof localMessages.DECK_SET]>(
-	// 	localMessages.DECK_SET,
-	// 	function* (action) {
-	// 		yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
-	// 	},
-	// )
+	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
+		localMessages.INSERT_DECK,
+		function* (action) {
+			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
+		localMessages.INSERT_DECK,
+		function* () {
+			yield* sendMsg({type: clientMessages.GET_DECKS})
+		},
+	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {

@@ -46,6 +46,7 @@ type Props = {
 	setLoadedDeck: (deck: Deck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
 	loadedDeck: Deck
+	extraDecks: Array<Deck>
 }
 
 function SelectDeck({
@@ -53,14 +54,13 @@ function SelectDeck({
 	setMenuSection,
 	setMode,
 	loadedDeck,
+	extraDecks,
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
-
-	console.log(databaseInfo.decks)
 
 	const saveDeck = (deck: Deck) => {
 		dispatch({
@@ -73,7 +73,10 @@ function SelectDeck({
 	}
 
 	// STATE
-	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(databaseInfo.decks)
+	const [savedDecks, setSavedDecks] = useState<Array<Deck>>([
+		...databaseInfo.decks,
+		...extraDecks,
+	])
 	function sortDecks(decks: Deck[]): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
@@ -168,7 +171,7 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (!validateDeck(loadedDeck.cards).valid) {
+		if (!validateDeck(toEditDeck(loadedDeck).cards).valid) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -274,9 +277,9 @@ function SelectDeck({
 			<li
 				className={classNames(
 					css.myDecksItem,
-					loadedDeck.name === deck.name && css.selectedDeck,
+					loadedDeck.code === deck.code && css.selectedDeck,
 				)}
-				ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
+				ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
 				key={i}
 				onClick={() => {
 					playSwitchDeckSFX()
@@ -285,10 +288,11 @@ function SelectDeck({
 			>
 				{deck.tags && deck.tags.length > 0 ? (
 					<div className={css.multiColoredCircle}>
-						{keysToTags(deck.tags).map((tag) => (
+						{keysToTags(deck.tags).map((tag, i) => (
 							<div
 								className={css.singleTag}
 								style={{backgroundColor: tag.color}}
+								key={i}
 							></div>
 						))}
 					</div>
@@ -367,9 +371,9 @@ function SelectDeck({
 			{tagFilter.name}
 		</div>
 	)
-	const validationResult = validateDeck(loadedDeck.cards)
 
 	const currentDeck = toEditDeck(loadedDeck)
+	const validationResult = validateDeck(currentDeck.cards)
 
 	const selectedCards = {
 		hermits: currentDeck.cards.filter(
