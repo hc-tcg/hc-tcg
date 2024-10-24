@@ -12,12 +12,18 @@ import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const soulmateEffectDamage = 140
 
+function updateDescription(soulmateEffect: StatusEffectComponent) {
+	const {creator} = soulmateEffect
+	if (!creator.slot.inRow()) return
+	soulmateEffect.description = `If you knock out ${creator.props.name} (${creator.slot.row.index + 1}), your active Hermit takes ${soulmateEffectDamage}hp damage.`
+}
+
 const SoulmateEffect: StatusEffect<PlayerComponent> = {
 	...systemStatusEffect,
 	id: 'soulmate',
 	icon: 'soulmate',
 	name: 'Soulmate',
-	description: `If you knock out %CREATOR%, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
+	description: `If you knock out BigB, your active Hermit takes ${soulmateEffectDamage}hp damage.`,
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof PlayerComponent && !value.hasStatusEffect(SoulmateEffect)
@@ -30,6 +36,8 @@ const SoulmateEffect: StatusEffect<PlayerComponent> = {
 		observer: ObserverComponent,
 	) {
 		const {creator} = effect
+
+		updateDescription(effect)
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
@@ -65,6 +73,10 @@ const SoulmateEffect: StatusEffect<PlayerComponent> = {
 				effect.remove()
 			},
 		)
+
+		observer.subscribe(creator.hooks.onChangeSlot, (_newSlot) => {
+			updateDescription(effect)
+		})
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,

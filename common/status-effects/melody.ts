@@ -7,13 +7,21 @@ import {GameModel} from '../models/game-model'
 import {afterAttack} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
+function updateDescription(
+	melodyEffect: StatusEffectComponent,
+	target: CardComponent,
+) {
+	const {creator} = melodyEffect
+	if (!creator.slot.inRow()) return
+	melodyEffect.description = `This Hermit heals 10hp every turn until ${creator.player.entity === target.player.entity ? '' : "opponent's "}${creator.props.name} (${creator.slot.row.index + 1}) is knocked out.`
+}
+
 const MelodyEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
 	id: 'melody',
 	icon: 'melody',
 	name: "Ollie's Melody",
-	description:
-		'This Hermit heals 10hp every turn until %CREATOR% is knocked out.',
+	description: 'This Hermit heals 10hp every turn until Oli is knocked out.',
 	applyCondition: (_game, card) =>
 		card instanceof CardComponent && !card.getStatusEffect(MelodyEffect),
 	onApply(
@@ -23,6 +31,8 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 		observer: ObserverComponent,
 	) {
 		const {player} = target
+
+		updateDescription(effect, target)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (target.slot.inRow()) {
@@ -34,6 +44,10 @@ const MelodyEffect: StatusEffect<CardComponent> = {
 					}$`,
 				)
 			}
+		})
+
+		observer.subscribe(effect.creator.hooks.onChangeSlot, (_newSlot) => {
+			updateDescription(effect, target)
 		})
 
 		observer.subscribeWithPriority(

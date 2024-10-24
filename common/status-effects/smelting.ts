@@ -23,8 +23,6 @@ const SmeltingEffect: Counter<CardComponent> = {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.counter
-
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (effect.counter === null) return
 			effect.counter -= 1
