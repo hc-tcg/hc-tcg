@@ -30,6 +30,7 @@ export type StatusEffect<
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
 	applyCondition: ComponentQuery<CardComponent | PlayerComponent>
+	counter?: number
 	/**
 	 * Called when this statusEffect has its target set
 	 */
@@ -116,5 +117,5 @@ export const damageEffect = {
 export function isCounter<T extends CardComponent | PlayerComponent>(
 	effect: StatusEffect<T>,
 ): effect is Counter<T> {
-	return 'counter' in effect
+	return effect.counter !== undefined
 }

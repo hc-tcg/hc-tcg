@@ -23,8 +23,6 @@ const WeaknessEffect: Counter<CardComponent> = {
 	) {
 		const {player} = target
 
-		if (!effect.counter) effect.counter = this.counter
-
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!effect.counter) return
 			effect.counter--
