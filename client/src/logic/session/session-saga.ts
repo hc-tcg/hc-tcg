@@ -2,16 +2,10 @@ import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {PlayerInfo} from 'common/types/server-requests'
-import {validateDeck} from 'common/utils/validation'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {
-	getActiveDeckName,
-	getSavedDeck,
-	saveDeck,
-	setActiveDeck,
-} from 'logic/saved-decks/saved-decks'
+import {getActiveDeck, toEditDeck} from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
@@ -67,9 +61,36 @@ const createConnectErrorChannel = (socket: any) =>
 		return () => socket.off('connect_error', connectErrorListener)
 	})
 
+function* setupData(socket: any) {
+	yield* sendMsg({
+		type: clientMessages.GET_DECKS,
+	})
+	const decks = yield* call(receiveMsg(socket, serverMessages.DECKS_RECIEVED))
+	yield* put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'decks',
+			value: decks.decks,
+		},
+	})
+
+	yield* sendMsg({
+		type: clientMessages.GET_STATS,
+	})
+	const stats = yield* call(receiveMsg(socket, serverMessages.STATS_RECIEVED))
+	yield* put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'stats',
+			value: stats.stats,
+		},
+	})
+}
+
 export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
+
 	console.log('session saga: ', session)
 	if (!session) {
 		const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
@@ -84,6 +105,7 @@ export function* loginSaga() {
 	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
 	const connectErrorChan = createConnectErrorChannel(socket)
+
 	const result = yield* race({
 		playerInfo: call(receiveMsg(socket, serverMessages.PLAYER_INFO)),
 		invalidPlayer: call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),
@@ -121,11 +143,11 @@ export function* loginSaga() {
 			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
-		let activeDeck = localStorage.getItem('activeDeck')
+		yield* setupData(socket)
+		let activeDeck = getActiveDeck()
 		if (activeDeck) {
-			let deck = getSavedDeck(activeDeck)
 			console.log('Select previous active deck')
-			if (deck) yield* put<LocalMessage>({type: localMessages.DECK_SET, deck})
+			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
 		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
@@ -165,35 +187,81 @@ export function* loginSaga() {
 			})
 		}
 
-		const activeDeckName = getActiveDeckName()
-		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
-		const activeDeckValid = !!activeDeck && validateDeck(activeDeck.cards).valid
+		// Set active deck
+		const activeDeck = getActiveDeck()
 
-		// if active deck is not valid, generate and save a starter deck
-		if (activeDeckValid) {
-			// set player deck to active deck, and send to server
+		if (activeDeck) {
 			console.log('Selected previous active deck: ' + activeDeck.name)
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: activeDeck})
-		} else {
-			// use and save the generated starter deck
-			saveDeck(result.playerInfo.player.playerDeck)
-			setActiveDeck(result.playerInfo.player.playerDeck.name)
-			console.log('Generated new starter deck')
+			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: toEditDeck(activeDeck),
+			})
 		}
 
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
+
+		const secret = localStorage.getItem('databaseInfo:secret')
+		const userId = localStorage.getItem('databaseInfo:userId')
+
+		// Create new database user to connect
+		if (!secret || !userId) {
+			yield* sendMsg({
+				type: clientMessages.PG_INSERT_USER,
+				username: result.playerInfo.player.playerName,
+				minecraftName: minecraftName,
+			})
+
+			const userInfo = yield* race({
+				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
+				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+			})
+
+			if (userInfo.success?.user) {
+				yield* put<LocalMessage>({
+					type: localMessages.SET_ID_AND_SECRET,
+					userId: userInfo.success.user.uuid,
+					secret: userInfo.success.user.secret,
+				})
+			}
+		} else {
+			yield* sendMsg({
+				type: clientMessages.PG_AUTHENTICATE,
+				userId: userId,
+				secret: secret,
+			})
+
+			const userInfo = yield* race({
+				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
+				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+			})
+
+			if (userInfo.success) yield* setupData(socket)
+		}
 	}
 }
 
 export function* logoutSaga() {
 	const socket = yield* select(getSocket)
 
-	yield* takeEvery<LocalMessageTable[typeof localMessages.DECK_SET]>(
-		localMessages.DECK_SET,
+	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
+		localMessages.INSERT_DECK,
 		function* (action) {
-			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
+			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
+		localMessages.DELETE_DECK,
+		function* (action) {
+			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
+		localMessages.INSERT_DECK,
+		function* () {
+			yield* sendMsg({type: clientMessages.GET_DECKS})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
@@ -217,10 +285,15 @@ export function* logoutSaga() {
 export function* newDeckSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
-		const result = yield* call(receiveMsg(socket, serverMessages.NEW_DECK))
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.DECKS_RECIEVED),
+		)
 		yield put<LocalMessage>({
-			type: localMessages.DECK_NEW,
-			deck: result.deck,
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'decks',
+				value: result.decks,
+			},
 		})
 	}
 }

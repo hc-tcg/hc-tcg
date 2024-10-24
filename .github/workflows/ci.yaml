@@ -135,6 +135,45 @@ jobs:
         path: playwright-report/
         retention-days: 30
 
+  db:
+    name: Databse Tests
+    runs-on: ubuntu-latest
+    container: node:18.20-bookworm-slim
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Test Database
+        run: npm run test:db
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_PORT: 5432
+
+
   build-docker:
     name: Test Can Build Docker Image
     runs-on: ubuntu-latest

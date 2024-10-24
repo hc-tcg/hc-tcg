@@ -4,12 +4,15 @@ import Modal from 'components/modal/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
+import {useSelector} from 'react-redux'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function DataSettings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const [modal, setModal] = useState<any>(null)
 
@@ -102,17 +105,14 @@ function DataSettings({setMenuSection}: Props) {
 				>
 					Reset Chat Window
 				</Button>
-				<Button
-					variant="stone"
-					onClick={handleReset(
-						'Reset Stats',
-						'Are you sure you want to reset your stats?',
-						'Your stats have been reset.',
-						() => dispatch({type: localMessages.FIREBASE_STATS_RESET}),
-					)}
-				>
-					Reset Stats
-				</Button>
+				<div className={css.stats}>
+					<span className={css.stat}>UUID</span>
+					<span className={css.stat}>{databaseInfo.userId}</span>
+				</div>
+				<div className={css.stats}>
+					<span className={css.stat}>Secret</span>
+					<span className={css.stat}>{databaseInfo.secret}</span>
+				</div>
 			</div>
 		</MenuLayout>
 	)

@@ -10,7 +10,7 @@ const config = {
 
 	moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'ts', 'json'],
 
-	roots: ['tests/unit/'],
+	roots: ['tests/unit/', 'tests/db'],
 
 	moduleNameMapper: {
 		'^client/(.*)$': '<rootDir>/client/src/$1',

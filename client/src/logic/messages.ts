@@ -2,7 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
-import {PlayerDeckT} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -23,6 +23,8 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {LocalDatabase} from './game/database/database-reducer'
+import {Deck} from 'common/types/database'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,
@@ -37,8 +39,6 @@ export const localMessages = messages({
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
-	DECK_SET: null,
-	DECK_NEW: null,
 	MINECRAFT_NAME_SET: null,
 	MINECRAFT_NAME_NEW: null,
 	MATCHMAKING_QUEUE_JOIN: null,
@@ -73,9 +73,6 @@ export const localMessages = messages({
 	GAME_ACTIONS_END_TURN: null,
 	GAME_UPDATE: null,
 	GAME_SPECTATOR_LEAVE: null,
-	FIREBASE_AUTHED: null,
-	FIREBASE_STATS_RESET: null,
-	FIREBASE_STATS: null,
 	SETTINGS_SET: null,
 	SETTINGS_RESET: null,
 	ALL_SETTINGS_RESET: null,
@@ -83,6 +80,12 @@ export const localMessages = messages({
 	SOUND_SECTION_CHANGE: null,
 	PLAY_VOICE_TEST: null,
 	QUEUE_VOICE: null,
+	SET_ID_AND_SECRET: null,
+	DATABASE_SET: null,
+	INSERT_DECK: null,
+	DELETE_DECK: null,
+	DECK_SET: null,
+	UPDATE_DECKS: null,
 })
 
 type Messages = [
@@ -112,8 +115,6 @@ type Messages = [
 		image?: string
 	},
 	{type: typeof localMessages.TOAST_CLOSE},
-	{type: typeof localMessages.DECK_SET; deck: PlayerDeckT},
-	{type: typeof localMessages.DECK_NEW; deck: PlayerDeckT},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
@@ -198,16 +199,6 @@ type Messages = [
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
 	{type: typeof localMessages.GAME_UPDATE},
 	{type: typeof localMessages.GAME_SPECTATOR_LEAVE},
-	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
-	{type: typeof localMessages.FIREBASE_STATS_RESET},
-	{
-		type: typeof localMessages.FIREBASE_STATS
-		w: number
-		l: number
-		fw: number
-		fl: number
-		t: number
-	},
 	{type: typeof localMessages.SETTINGS_SET; setting: LocalSetting},
 	{type: typeof localMessages.SETTINGS_RESET; key: keyof LocalSettings},
 	{type: typeof localMessages.ALL_SETTINGS_RESET},
@@ -215,6 +206,16 @@ type Messages = [
 	{type: typeof localMessages.SOUND_SECTION_CHANGE; section: any},
 	{type: typeof localMessages.PLAY_VOICE_TEST},
 	{type: typeof localMessages.QUEUE_VOICE; lines: Array<string>},
+	{
+		type: typeof localMessages.SET_ID_AND_SECRET
+		userId: string
+		secret: string
+	},
+	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
+	{type: typeof localMessages.INSERT_DECK; deck: Deck},
+	{type: typeof localMessages.DELETE_DECK; deck: Deck},
+	{type: typeof localMessages.DECK_SET; deck: Deck},
+	{type: typeof localMessages.UPDATE_DECKS},
 ]
 
 /** A message used locally on the client to update global state */

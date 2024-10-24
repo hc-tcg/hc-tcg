@@ -1,65 +1,17 @@
-import {
-	PlayerDeckT,
-	SavedDeckT,
-	Tag,
-	deckToSavedDeck,
-	loadSavedDeck,
-} from 'common/types/deck'
-import {validateDeck} from 'common/utils/validation'
+import {CARDS} from 'common/cards'
+import {CardEntity} from 'common/entities'
+import {Deck} from 'common/types/database'
+import {EditedDeck as EditedDeck, Tag} from 'common/types/deck'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 
-export const getActiveDeckName = () => {
-	return localStorage.getItem('activeDeck')
+export const getActiveDeck = (): Deck | null => {
+	const deck = localStorage.getItem('activeDeck')
+	if (!deck) return null
+	return JSON.parse(deck) as Deck
 }
 
-export const setActiveDeck = (name: string) => {
-	localStorage.setItem('activeDeck', name)
-}
-
-export const isActiveDeckValid = () => {
-	const activeDeckName = getActiveDeckName()
-	const activeDeck = activeDeckName ? getSavedDeck(activeDeckName)?.cards : null
-	const activeDeckValid = !!activeDeck && validateDeck(activeDeck).valid
-	return activeDeckValid
-}
-
-export const getSavedDeck = (name: string) => {
-	const hash = localStorage.getItem('Deck_' + name)
-
-	let deck: SavedDeckT | null = null
-	if (hash != null) {
-		deck = JSON.parse(hash)
-	}
-
-	return loadSavedDeck(deck)
-}
-
-export const saveDeck = (deck: PlayerDeckT) => {
-	const hash = 'Deck_' + deck.name
-	localStorage.setItem(hash, JSON.stringify(deckToSavedDeck(deck)))
-}
-
-export const deleteDeck = (name: string) => {
-	const hash = 'Deck_' + name
-	localStorage.removeItem(hash)
-}
-
-export const getSavedDecks = () => {
-	let lsKey
-	const decks = []
-
-	for (let i = 0; i < localStorage.length; i++) {
-		lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Deck_')) {
-			const key = localStorage.getItem(lsKey)
-			decks.push(key || '')
-		}
-	}
-	return decks.sort()
-}
-
-export const getSavedDeckNames = () => {
-	return getSavedDecks().map((name) => JSON.parse(name || '')?.name || '')
+export const setActiveDeck = (deck: Deck) => {
+	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
 export const getLegacyDecks = () => {
@@ -138,4 +90,31 @@ export const deleteTag = (tag: Tag) => {
 		savedDeck.tags = savedDeck.tags.filter((deckTag) => deckTag !== tag.key)
 		saveDeck(savedDeck)
 	})
+}
+
+export function toSavedDeck(deck: EditedDeck): Deck {
+	return {
+		name: deck.name,
+		code: Math.random.toString(),
+		icon: deck.icon,
+		tags: deck.tags ? deck.tags : [],
+		cards: deck.cards.map((card) => CARDS[card.props.id]),
+	}
+}
+
+export function toEditDeck(deck: Deck): EditedDeck {
+	return {
+		name: deck.name,
+		icon: deck.icon as EditedDeck['icon'],
+		tags: deck.tags ? deck.tags : [],
+		cards: deck.cards.map((card): LocalCardInstance => {
+			return {
+				props: WithoutFunctions(card),
+				entity: Math.random().toString() as CardEntity,
+				slot: null,
+				attackHint: null,
+				turnedOver: false,
+			}
+		}),
+	}
 }

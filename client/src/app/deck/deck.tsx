@@ -1,14 +1,16 @@
 import classNames from 'classnames'
-import {PlayerDeckT} from 'common/types/deck'
+import {EditedDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
-import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {toEditDeck, toSavedDeck} from 'logic/saved-decks/saved-decks'
+import {Deck} from 'common/types/database'
 
 export const cardGroupHeader = (
 	title: string,
@@ -27,25 +29,30 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-const Deck = ({setMenuSection}: Props) => {
+const DeckComponent = ({setMenuSection}: Props) => {
 	// REDUX
 	const playerDeck = useSelector(getPlayerDeck)
+	const dispatch = useMessageDispatch()
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
-	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
+	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
+	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
 
 	//DECK LOGIC
-	const saveDeckInternal = (deck: PlayerDeckT) => {
-		//Save new deck to Local Storage
-		saveDeck(deck)
+	const saveDeckInternal = (deck: EditedDeck) => {
+		//Save new deck to Database
+		const savedDeck = toSavedDeck(deck)
+		setExtraDecks([...extraDecks, savedDeck])
+		dispatch({
+			type: localMessages.INSERT_DECK,
+			deck: savedDeck,
+		})
 
 		//Load new deck
-		setLoadedDeck({
-			...deck,
-			cards: deck.cards,
-		})
+		setLoadedDeck(savedDeck)
 	}
 
 	// MODE ROUTER
@@ -57,7 +64,7 @@ const Deck = ({setMenuSection}: Props) => {
 						back={() => setMode('select')}
 						title={'Deck Editor'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
-						deck={loadedDeck}
+						deck={toEditDeck(loadedDeck)}
 					/>
 				)
 			case 'create':
@@ -82,6 +89,7 @@ const Deck = ({setMenuSection}: Props) => {
 						setMenuSection={setMenuSection}
 						setMode={setMode}
 						loadedDeck={loadedDeck}
+						extraDecks={extraDecks}
 					/>
 				)
 		}
@@ -90,4 +98,4 @@ const Deck = ({setMenuSection}: Props) => {
 	return router()
 }
 
-export default Deck
+export default DeckComponent
