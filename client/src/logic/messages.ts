@@ -73,9 +73,6 @@ export const localMessages = messages({
 	GAME_ACTIONS_END_TURN: null,
 	GAME_UPDATE: null,
 	GAME_SPECTATOR_LEAVE: null,
-	FIREBASE_AUTHED: null,
-	FIREBASE_STATS_RESET: null,
-	FIREBASE_STATS: null,
 	SETTINGS_SET: null,
 	SETTINGS_RESET: null,
 	ALL_SETTINGS_RESET: null,
@@ -202,16 +199,6 @@ type Messages = [
 	{type: typeof localMessages.GAME_ACTIONS_END_TURN},
 	{type: typeof localMessages.GAME_UPDATE},
 	{type: typeof localMessages.GAME_SPECTATOR_LEAVE},
-	{type: typeof localMessages.FIREBASE_AUTHED; uuid: string},
-	{type: typeof localMessages.FIREBASE_STATS_RESET},
-	{
-		type: typeof localMessages.FIREBASE_STATS
-		w: number
-		l: number
-		fw: number
-		fl: number
-		t: number
-	},
 	{type: typeof localMessages.SETTINGS_SET; setting: LocalSetting},
 	{type: typeof localMessages.SETTINGS_RESET; key: keyof LocalSettings},
 	{type: typeof localMessages.ALL_SETTINGS_RESET},
