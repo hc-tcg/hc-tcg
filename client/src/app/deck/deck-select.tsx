@@ -216,23 +216,24 @@ function SelectDeck({
 
 		saveDeck(toSavedDeck(deck))
 	}
-	const deleteDeckInternal = () => {
-		//@TODO This entire function
-		// dispatchToast(deleteToast)
-		// deleteDeck(loadedDeck.name)
-		// const decks = getSavedDecks()
-		// setSavedDecks(decks)
-		// setSortedDecks(
-		// 	sortDecks(parseDecks(savedDecks)).filter(
-		// 		(deck) => deck.name !== loadedDeck.name,
-		// 	),
-		// )
-		// setFilteredDecks(
-		// 	sortDecks(parseDecks(savedDecks)).filter(
-		// 		(deck) => deck.name !== loadedDeck.name,
-		// 	),
-		// )
-		// loadDeck(JSON.parse(decks[0]).name)
+	const deleteDeck = (deletedDeck: Deck) => {
+		dispatch({
+			type: localMessages.DELETE_DECK,
+			deck: deletedDeck,
+		})
+
+		const newSavedDecks = savedDecks.filter(
+			(deck) => deck.code !== deletedDeck.code,
+		)
+
+		setSavedDecks(newSavedDecks)
+		setSortedDecks(sortDecks(newSavedDecks))
+		setFilteredDecks(sortDecks(newSavedDecks))
+		dispatch({
+			type: localMessages.DECK_SET,
+			deck: newSavedDecks[0],
+		})
+		setActiveDeck(loadedDeck.name)
 	}
 	const canDuplicateDeck = () => {
 		return (
@@ -436,7 +437,7 @@ function SelectDeck({
 			<AlertModal
 				setOpen={showDeleteDeckModal}
 				onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
-				action={() => deleteDeckInternal()}
+				action={() => deleteDeck(loadedDeck)}
 				title="Delete Deck"
 				description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
 				actionText="Delete"

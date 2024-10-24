@@ -86,6 +86,7 @@ export const localMessages = messages({
 	SET_ID_AND_SECRET: null,
 	DATABASE_SET: null,
 	INSERT_DECK: null,
+	DELETE_DECK: null,
 	DECK_SET: null,
 	UPDATE_DECKS: null,
 })
@@ -225,6 +226,7 @@ type Messages = [
 	},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
+	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DECK_SET; deck: Deck},
 	{type: typeof localMessages.UPDATE_DECKS},
 ]

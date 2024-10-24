@@ -94,6 +94,28 @@ export function* insertDeck(
 	// }
 }
 
+export function* deleteDeck(
+	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
+) {
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+		return
+	}
+
+	const result = yield* call(
+		[pgDatabase, pgDatabase.disassociateDeck],
+		action.payload.deck.code,
+		player.uuid,
+	)
+
+	// if (result.type === 'success') {
+	// 	broadcast([player], {type: serverMessages.NEW_DECK, user: result.body})
+	// } else {
+	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+	// }
+}
+
 export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {

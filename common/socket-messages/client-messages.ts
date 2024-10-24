@@ -27,6 +27,7 @@ export const clientMessages = messages({
 	GET_DECKS: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
+	DELETE_DECK: null,
 })
 
 export type ClientMessages = [
@@ -62,6 +63,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.GET_DECKS},
 	{type: typeof clientMessages.GET_STATS},
 	{type: typeof clientMessages.INSERT_DECK; deck: Deck},
+	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 ]
 
 export type ClientMessage = Message<ClientMessages>
