@@ -5,7 +5,7 @@ import type {
 	StatusEffectEntity,
 } from '../entities'
 import {GameModel} from '../models/game-model'
-import {StatusEffect, isCounter} from '../status-effects/status-effect'
+import {StatusEffect} from '../status-effects/status-effect'
 import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
 import {PlayerComponent} from './player-component'
