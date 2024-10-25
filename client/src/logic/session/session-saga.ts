@@ -265,6 +265,12 @@ export function* logoutSaga() {
 			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})
 		},
 	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_TAG]>(
+		localMessages.DELETE_TAG,
+		function* (action) {
+			yield* sendMsg({type: clientMessages.DELETE_TAG, tag: action.tag})
+		},
+	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.INSERT_DECK,
 		function* () {

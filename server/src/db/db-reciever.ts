@@ -115,9 +115,6 @@ export function* insertDeck(
 		[...oldTags, ...returnedTags].map((tag) => tag.key),
 		player.uuid,
 	)
-
-	// @TODO make this not jank
-	yield* getDecks(action as any)
 }
 
 export function* deleteDeck(
@@ -139,9 +136,21 @@ export function* deleteDeck(
 	// } else {
 	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
 	// }
+}
 
-	// @TODO make this not jank
-	yield* getDecks(action as any)
+export function* deleteTag(
+	action: RecievedClientMessage<typeof clientMessages.DELETE_TAG>,
+) {
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[pgDatabase, pgDatabase.deleteTag],
+		player.uuid,
+		action.payload.tag.key,
+	)
 }
 
 export function* getStats(

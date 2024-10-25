@@ -236,6 +236,13 @@ function SelectDeck({
 			type: localMessages.DECK_SET,
 			deck: newSavedDecks[0],
 		})
+		dispatch({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'decks',
+				value: newSavedDecks,
+			},
+		})
 		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
 	}
@@ -424,7 +431,6 @@ function SelectDeck({
 			/>
 			<TagsModal
 				setOpen={showManageTagsModal}
-				tags={databaseInfo.tags}
 				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
 			/>
 			<AlertModal

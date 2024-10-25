@@ -25,6 +25,7 @@ import {
 	addUser,
 	authenticateUser,
 	deleteDeck,
+	deleteTag,
 	getDecks,
 	getStats,
 	insertDeck,
@@ -106,6 +107,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.DELETE_DECK:
 			return yield* deleteDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.DELETE_TAG:
+			return yield* deleteTag(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.GET_STATS:
