@@ -286,6 +286,7 @@ describe('Test Weakness', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
+					expect(game.currentPlayer.activeRow).toBe(null)
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
