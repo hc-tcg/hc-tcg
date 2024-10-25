@@ -1,7 +1,7 @@
 import {CARDS} from 'common/cards'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/database'
-import {EditedDeck as EditedDeck, Tag} from 'common/types/deck'
+import {PlayerDeck as PlayerDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 
 export const getActiveDeck = (): Deck | null => {
@@ -48,7 +48,7 @@ export const convertLegacyDecks = (): number => {
 	return conversionCount
 }
 
-export function toSavedDeck(deck: EditedDeck): Deck {
+export function toSavedDeck(deck: PlayerDeck): Deck {
 	return {
 		name: deck.name,
 		code: Math.random.toString(),
@@ -58,11 +58,12 @@ export function toSavedDeck(deck: EditedDeck): Deck {
 	}
 }
 
-export function toEditDeck(deck: Deck): EditedDeck {
+export function toPlayerDeck(deck: Deck): PlayerDeck {
 	return {
 		name: deck.name,
-		icon: deck.icon as EditedDeck['icon'],
+		icon: deck.icon as PlayerDeck['icon'],
 		tags: deck.tags ? deck.tags : [],
+		code: deck.code,
 		cards: deck.cards.map((card): LocalCardInstance => {
 			return {
 				props: WithoutFunctions(card),

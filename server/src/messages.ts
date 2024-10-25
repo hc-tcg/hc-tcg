@@ -1,7 +1,7 @@
 import {PlayerEntity} from 'common/entities'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
-import {EditedDeck, PlayerDeck} from 'common/types/deck'
+import {PlayerDeck} from 'common/types/deck'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 
 export const localMessages = messages({

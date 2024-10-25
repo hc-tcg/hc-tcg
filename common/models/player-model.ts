@@ -1,5 +1,5 @@
 import {Socket} from 'socket.io'
-import {EditedDeck, PlayerDeck} from '../../common/types/deck'
+import {PlayerDeck} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 

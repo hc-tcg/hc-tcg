@@ -6,13 +6,6 @@ export type Tag = {
 	key: string
 }
 
-export type EditedDeck = {
-	name: string
-	icon: string
-	cards: Array<LocalCardInstance>
-	tags: Array<Tag>
-}
-
 export type PlayerDeck = {
 	name: string
 	icon: string

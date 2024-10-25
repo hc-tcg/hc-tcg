@@ -75,8 +75,8 @@ export class Database {
 			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (tag_color ~* '^#[a-f0-9]{6}$');
 			CREATE TABLE IF NOT EXISTS deck_tags(
 				deck_code varchar(7) REFERENCES decks(deck_code),
-				tag_id varchar(7) REFERENCES user_tags(tag_id),
-				FOREIGN KEY (tag_id) REFERENCES users(tag_id) ON DELETE CASCADE
+				tag_id varchar(7),
+				FOREIGN KEY (tag_id) REFERENCES user_tags(tag_id) ON DELETE CASCADE
 			);
 			CREATE TABLE IF NOT EXISTS titles(
 				title_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -160,12 +160,13 @@ export class Database {
 		icon: string,
 		cards: Array<number>,
 		tagIds: Array<string>,
+		code: string,
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
 		try {
 			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon) values ($1,$2,$3) RETURNING (deck_code)',
-				[user_id, name, icon],
+				'INSERT INTO decks (user_id, name, icon, deck_code) values ($1,$2,$3,$4) RETURNING (deck_code)',
+				[user_id, name, icon, code],
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
@@ -342,11 +343,12 @@ export class Database {
 		uuid: string,
 		tagName: string,
 		tagColor: string,
+		tagId: string,
 	): Promise<DatabaseResult<Tag>> {
 		try {
 			const tag = await this.pool.query(
-				'INSERT INTO user_tags (user_id, tag_name, tag_color) values ($1,$2,$3) RETURNING tag_id,tag_name,tag_color',
-				[uuid, tagName, tagColor],
+				'INSERT INTO user_tags (user_id, tag_name, tag_color, tag_id) values ($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING tag_id,tag_name,tag_color',
+				[uuid, tagName, tagColor, tagId],
 			)
 
 			return {

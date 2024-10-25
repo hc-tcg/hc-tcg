@@ -2,7 +2,7 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck} from '../types/database'
-import {EditedDeck, PlayerDeck, Tag} from '../types/deck'
+import {PlayerDeck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages({

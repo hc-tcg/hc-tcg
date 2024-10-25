@@ -3,7 +3,7 @@ import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/base/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {EditedDeck, Tag} from 'common/types/deck'
+import {PlayerDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -25,7 +25,8 @@ import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {Deck} from 'common/types/database'
-import {toEditDeck} from 'logic/saved-decks/saved-decks'
+import {toPlayerDeck} from 'logic/saved-decks/saved-decks'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -72,7 +73,7 @@ const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
 }))
 
 type DeckNameT = {
-	loadedDeck: EditedDeck
+	loadedDeck: PlayerDeck
 	setDeckName: (name: string) => void
 	isValid: (valid: boolean) => void
 }
@@ -140,7 +141,7 @@ const addCreatedTag = (
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: EditedDeck) => void
+	saveDeck: (loadedDeck: PlayerDeck) => void
 	deleteDeck: (initialDeck: Deck) => void
 	deck: Deck | null
 }
@@ -222,13 +223,14 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<EditedDeck>(
+	const [loadedDeck, setLoadedDeck] = useState<PlayerDeck>(
 		deck
-			? toEditDeck(deck)
+			? toPlayerDeck(deck)
 			: {
 					name: '',
 					icon: 'any',
 					cards: [],
+					code: generateDatabaseCode(),
 					tags: [],
 				},
 	)
@@ -237,9 +239,7 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
-	const [nextKey, setNextKey] = useState<string>(
-		'NEW' + Math.random().toString(),
-	)
+	const [nextKey, setNextKey] = useState<string>(generateDatabaseCode())
 	const [tags, setTags] = useState<Array<Tag>>(loadedDeck.tags)
 	const tagNameRef = useRef<HTMLInputElement>(null)
 
@@ -353,7 +353,7 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 		}))
 	}
 	const handleBack = () => {
-		if (initialDeckState && toEditDeck(initialDeckState) == loadedDeck) {
+		if (initialDeckState && toPlayerDeck(initialDeckState) == loadedDeck) {
 			back()
 		} else {
 			setShowUnsavedModal(true)
@@ -389,7 +389,7 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: EditedDeck) => {
+	const saveAndReturn = (deck: PlayerDeck) => {
 		saveDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,
@@ -671,7 +671,7 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 									className={css.deckTagsForm}
 									onSubmit={(e) => {
 										addTag(tags, setTags, color, nextKey, setColor, e)
-										setNextKey('NEW' + Math.random().toString())
+										setNextKey(generateDatabaseCode())
 									}}
 								>
 									<Dropdown

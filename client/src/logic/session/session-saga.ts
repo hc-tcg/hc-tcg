@@ -5,7 +5,7 @@ import {PlayerInfo} from 'common/types/server-requests'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {getActiveDeck, toEditDeck} from 'logic/saved-decks/saved-decks'
+import {getActiveDeck, toPlayerDeck} from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
@@ -208,7 +208,7 @@ export function* loginSaga() {
 			})
 			yield* sendMsg({
 				type: clientMessages.UPDATE_DECK,
-				deck: {...toEditDeck(activeDeck), code: activeDeck.code},
+				deck: {...toPlayerDeck(activeDeck), code: activeDeck.code},
 			})
 		}
 

@@ -1,6 +1,6 @@
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck, Stats, User} from '../types/database'
-import {EditedDeck, Tag} from '../types/deck'
+import {PlayerDeck, Tag} from '../types/deck'
 import {
 	GameEndOutcomeT,
 	GameEndReasonT,
@@ -56,7 +56,7 @@ export type ServerMessages = [
 		/** The game is the player is currently in a game */
 		game?: LocalGameState
 	},
-	{type: typeof serverMessages.NEW_DECK; deck: EditedDeck},
+	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeck},
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES

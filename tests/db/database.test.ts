@@ -3,6 +3,7 @@ import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 
 describe('Test Database', () => {
 	let database: Database
@@ -32,7 +33,7 @@ describe('Test Database', () => {
 			BF_DEPTH,
 		)
 		await database.pool.query(
-			'BEGIN; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
+			'BEGIN TRANSACTION; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
 		)
 		return await database.new()
 	})
@@ -82,7 +83,12 @@ describe('Test Database', () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
-		const tag = await database.insertTag(user.body.uuid, 'Test Tag', '#FF0000')
+		const tag = await database.insertTag(
+			user.body.uuid,
+			'Test Tag',
+			'#FF0000',
+			generateDatabaseCode(),
+		)
 		assert(tag.type === 'success', 'The tag should be created successfully')
 
 		const code = await database.insertDeck(
@@ -90,6 +96,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			[tag.body.key],
+			generateDatabaseCode(),
 			user.body.uuid,
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
@@ -137,6 +144,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			playerDeck.tags,
+			generateDatabaseCode(),
 			winner.body.uuid,
 		)
 
@@ -145,6 +153,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			playerDeck.tags,
+			generateDatabaseCode(),
 			loser.body.uuid,
 		)
 
@@ -267,16 +276,19 @@ describe('Test Database', () => {
 			user.body.uuid,
 			'Test Tag 1',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 		const tag2 = await database.insertTag(
 			user.body.uuid,
 			'Test Tag 2',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 		const tag3 = await database.insertTag(
 			user.body.uuid,
 			'Test Tag 3',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 
 		assert(tag1.type === 'success', 'Tag 1 was created successfully')
@@ -300,16 +312,19 @@ describe('Test Database', () => {
 			user.body.uuid,
 			'Test Tag 1',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 		const tag2 = await database.insertTag(
 			user.body.uuid,
 			'Test Tag 2',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 		const tag3 = await database.insertTag(
 			user.body.uuid,
 			'Test Tag 3',
 			'#FF0000',
+			generateDatabaseCode(),
 		)
 
 		assert(tag1.type === 'success', 'Tag 1 was created successfully')
@@ -321,6 +336,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			[1, 2, 2, 3, 4, 4, 4, 5],
 			[tag1.body.key],
+			generateDatabaseCode(),
 			user.body.uuid,
 		)
 
@@ -329,6 +345,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			playerDeck.cards,
 			[tag2.body.key],
+			generateDatabaseCode(),
 			user.body.uuid,
 		)
 
@@ -337,6 +354,7 @@ describe('Test Database', () => {
 			playerDeck.icon,
 			[71, 32, 63, 5],
 			playerDeck.tags,
+			generateDatabaseCode(),
 			user.body.uuid,
 		)
 

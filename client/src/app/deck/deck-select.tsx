@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
-import {EditedDeck, Tag} from 'common/types/deck'
+import {PlayerDeck, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -25,7 +25,7 @@ import {
 	convertLegacyDecks,
 	getLegacyDecks,
 	setActiveDeck,
-	toEditDeck,
+	toPlayerDeck,
 	toSavedDeck,
 } from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
@@ -38,6 +38,7 @@ import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {Deck} from 'common/types/database'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -113,10 +114,11 @@ function SelectDeck({
 	)
 
 	const savedDeckNames = savedDecks.map((deck) => deck.name)
-	const [importedDeck, setImportedDeck] = useState<EditedDeck>({
+	const [importedDeck, setImportedDeck] = useState<PlayerDeck>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
+		code: generateDatabaseCode(),
 		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
@@ -187,7 +189,7 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
-	const handleImportDeck = (deck: EditedDeck) => {
+	const handleImportDeck = (deck: PlayerDeck) => {
 		setImportedDeck(deck)
 		importDeck(deck)
 		setShowImportModal(false)
@@ -201,7 +203,7 @@ function SelectDeck({
 	const loadDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
 	}
-	const importDeck = (deck: EditedDeck) => {
+	const importDeck = (deck: PlayerDeck) => {
 		let deckExists = false
 		savedDeckNames.map((name) => {
 			if (name === deck.name) {
@@ -218,7 +220,7 @@ function SelectDeck({
 	}
 	const deleteDeck = (deletedDeck: Deck) => {
 		const deckToDelete = databaseInfo.decks.find(
-			(deck) => deck.name === deletedDeck.name,
+			(deck) => deck.code === deletedDeck.code,
 		)
 		if (!deckToDelete) return
 		dispatch({
@@ -227,7 +229,7 @@ function SelectDeck({
 		})
 
 		const newSavedDecks = savedDecks.filter(
-			(deck) => deck.name !== deckToDelete.name,
+			(deck) => deck.code !== deckToDelete.code,
 		)
 
 		setSavedDecks(newSavedDecks)
@@ -250,7 +252,7 @@ function SelectDeck({
 			) > -1
 		)
 	}
-	const duplicateDeck = (deck: EditedDeck) => {
+	const duplicateDeck = (deck: PlayerDeck) => {
 		//Save duplicated deck to Local Storage
 		let newName = `${deck.name} Copy`
 		let number = 2
@@ -380,7 +382,7 @@ function SelectDeck({
 		</div>
 	)
 
-	const currentDeck = toEditDeck(loadedDeck)
+	const currentDeck = toPlayerDeck(loadedDeck)
 	const validationResult = validateDeck(currentDeck.cards)
 
 	const selectedCards = {

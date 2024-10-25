@@ -7,7 +7,7 @@ import {broadcast} from 'utils/comm'
 import root from 'serverRoot'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {call} from 'typed-redux-saga'
-import {Tag} from 'common/types/deck'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
@@ -96,18 +96,15 @@ export function* insertDeck(
 	}
 
 	const deckTags = action.payload.deck.tags
-	const createdTags = deckTags.filter((tag) => tag.key.includes('NEW'))
-	const returnedTags: Tag[] = []
-	const oldTags = deckTags.filter((tag) => !tag.key.includes('NEW'))
 
-	for (let i = 0; i < createdTags.length; i++) {
-		const newTag = yield* call(
+	for (let i = 0; i < deckTags.length; i++) {
+		yield* call(
 			[pgDatabase, pgDatabase.insertTag],
 			player.uuid,
-			createdTags[i].name,
-			createdTags[i].color,
+			deckTags[i].name,
+			deckTags[i].color,
+			deckTags[i].key,
 		)
-		if (newTag.type === 'success') returnedTags.push(newTag.body)
 	}
 
 	// Insert deck
@@ -116,7 +113,8 @@ export function* insertDeck(
 		action.payload.deck.name,
 		action.payload.deck.icon,
 		action.payload.deck.cards.map((card) => card.numericId),
-		[...oldTags, ...returnedTags].map((tag) => tag.key),
+		deckTags.map((tag) => tag.key),
+		generateDatabaseCode(),
 		player.uuid,
 	)
 }

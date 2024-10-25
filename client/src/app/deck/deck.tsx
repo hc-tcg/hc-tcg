@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import {EditedDeck} from 'common/types/deck'
+import {PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
@@ -45,7 +45,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
 
 	//DECK LOGIC
-	const saveDeckInternal = (deck: EditedDeck) => {
+	const saveDeckInternal = (deck: PlayerDeck) => {
 		//Save new deck to Database
 		const savedDeck = toSavedDeck(deck)
 		setExtraDecks([...extraDecks, savedDeck])
