@@ -298,7 +298,7 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage)
+					).toBe(SmallishbeansRare.health - SmallishbeansRare.primary.damage)
 
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
@@ -313,7 +313,7 @@ describe('Test Weakness', () => {
 							query.row.index(2),
 						)?.health,
 					).toBe(
-						SmallishbeansRare.health - SmallishbeansRare.primary.damage - 20,
+						ImpulseSVCommon.health - SmallishbeansRare.primary.damage - 20
 					)
 				},
 			},
