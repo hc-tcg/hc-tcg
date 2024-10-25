@@ -23,10 +23,10 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {Deck} from 'common/types/database'
 import {toPlayerDeck} from 'logic/saved-decks/saved-decks'
 import {generateDatabaseCode} from 'common/utils/database-codes'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -143,6 +143,7 @@ type Props = {
 	title: string
 	saveDeck: (loadedDeck: PlayerDeck) => void
 	deleteDeck: (initialDeck: Deck) => void
+	databaseInfo: DatabaseInfo
 	deck: Deck | null
 }
 
@@ -213,10 +214,16 @@ const ALL_CARDS = sortCards(
 	),
 )
 
-function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
+function EditDeck({
+	back,
+	title,
+	saveDeck,
+	deleteDeck,
+	deck,
+	databaseInfo,
+}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	// STATE
 	const [textQuery, setTextQuery] = useState<string>('')

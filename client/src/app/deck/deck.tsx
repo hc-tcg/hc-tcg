@@ -40,10 +40,12 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
+	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
+	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
-	const saveDeckInternal = (deck: PlayerDeck) => {
+	async function saveDeckInternal(deck: PlayerDeck) {
 		//Save new deck to Database
 		const savedDeck = toSavedDeck(deck)
 		dispatch({
@@ -86,6 +88,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}
 						deck={loadedDeck}
+						databaseInfo={databaseInfo}
 					/>
 				)
 			case 'create':
@@ -96,6 +99,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}
 						deck={null}
+						databaseInfo={databaseInfo}
 					/>
 				)
 			case 'select':
