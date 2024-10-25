@@ -13,11 +13,6 @@ type Props = {
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
-	const decks = databaseInfo.decks
-	const currentDeck = decks.find((deck) => deck.name === loadedDeck.name)
-	const code = currentDeck ? currentDeck.code : 'Please Re-open this window...'
-
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
 			<AlertDialog.Portal container={document.getElementById('modal')}>
@@ -43,11 +38,11 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 									friends!
 								</p>
 								<div className={css.exportControls}>
-									<input type="text" readOnly value={code} />
+									<input type="text" readOnly value={loadedDeck.code} />
 									<button
 										className={css.copy}
 										onClick={() => {
-											navigator.clipboard.writeText(code)
+											navigator.clipboard.writeText(loadedDeck.code)
 										}}
 									>
 										{CopyIcon()}

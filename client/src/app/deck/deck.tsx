@@ -60,18 +60,14 @@ const DeckComponent = ({setMenuSection}: Props) => {
 
 	const deleteDeckInternal = (deletedDeck: Deck) => {
 		//Save new deck to Database
-		const deckToDelete = databaseInfo.decks.find(
-			(deck) => deck.name === deletedDeck.name,
-		)
-		if (!deckToDelete) return
 		dispatch({
 			type: localMessages.DELETE_DECK,
-			deck: deckToDelete,
+			deck: deletedDeck,
 		})
-		setRemovedDecks([...removedDecks, deckToDelete])
+		setRemovedDecks([...removedDecks, deletedDeck])
 
 		const deckToload = databaseInfo.decks.find(
-			(deck) => deck.name !== deletedDeck.name,
+			(deck) => deck.code !== deletedDeck.code,
 		)
 
 		if (deckToload) {

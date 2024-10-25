@@ -373,6 +373,9 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 		// Set up tags
 		newDeck.tags = tags
 
+		// New code
+		newDeck.code = generateDatabaseCode()
+
 		// Check to see if there's already a dake with that name.
 		if (
 			databaseInfo.decks.find((deck) => deck.name === newDeck.name) &&

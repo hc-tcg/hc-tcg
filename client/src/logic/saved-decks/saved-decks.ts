@@ -51,7 +51,7 @@ export const convertLegacyDecks = (): number => {
 export function toSavedDeck(deck: PlayerDeck): Deck {
 	return {
 		name: deck.name,
-		code: Math.random.toString(),
+		code: deck.code,
 		icon: deck.icon,
 		tags: deck.tags,
 		cards: deck.cards.map((card) => CARDS[card.props.id]),

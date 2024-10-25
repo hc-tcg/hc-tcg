@@ -289,9 +289,9 @@ function SelectDeck({
 			<li
 				className={classNames(
 					css.myDecksItem,
-					loadedDeck.name === deck.name && css.selectedDeck,
+					loadedDeck.code === deck.code && css.selectedDeck,
 				)}
-				ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
+				ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
 				key={i}
 				onClick={() => {
 					playSwitchDeckSFX()
