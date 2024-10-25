@@ -66,17 +66,17 @@ export class Database {
 				PRIMARY KEY (deck_code,card_id)
 			);
 			CREATE TABLE IF NOT EXISTS user_tags(
-				user_id uuid,
+				user_id uuid REFERENCES users(user_id),
 				tag_id varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
 				tag_name varchar(255) NOT NULL,
-				tag_color varchar(7) NOT NULL,
-				FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+				tag_color varchar(7) NOT NULL
 			);
 			ALTER TABLE user_tags DROP CONSTRAINT IF EXISTS color_hex_constraint;
 			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (tag_color ~* '^#[a-f0-9]{6}$');
 			CREATE TABLE IF NOT EXISTS deck_tags(
 				deck_code varchar(7) REFERENCES decks(deck_code),
-				tag_id varchar(7) REFERENCES user_tags(tag_id)
+				tag_id varchar(7) REFERENCES user_tags(tag_id),
+				FOREIGN KEY (tag_id) REFERENCES users(tag_id) ON DELETE CASCADE
 			);
 			CREATE TABLE IF NOT EXISTS titles(
 				title_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
