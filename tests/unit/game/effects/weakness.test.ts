@@ -43,7 +43,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Damage Same Type Exchange', () => {
+	test('Weakness Works Both Ways', () => {
 		testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
@@ -86,7 +86,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Damage Same Type Switch Exchange', () => {
+	test('Weakness Works Through Switches', () => {
 		testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, VintageBeefCommon],
@@ -148,7 +148,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Damage Wrong Type Exchange', () => {
+	test('Weakness Does Not Work on Wrong Types', () => {
 		testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
@@ -193,7 +193,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Self Redundancy', () => {
+	test('Weakness Does Not Stack Self', () => {
 		testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
@@ -229,7 +229,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Heteroredundancy', () => {
+	test('Weakness Does Not Stack With Type Chart', () => {
 		testGame(
 			{
 				playerOneDeck: [SmallishbeansRare],
@@ -257,7 +257,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Lethality Check', () => {
+	test('Weakness Works Through KOs', () => {
 		testGame(
 			{
 				playerOneDeck: [SmallishbeansRare, ImpulseSVCommon, SmallishbeansRare],
