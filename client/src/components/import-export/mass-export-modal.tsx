@@ -16,7 +16,7 @@ export function MassExportModal({setOpen, onClose}: Props) {
 
 	const getExportDecks = () => {
 		const decks = databaseInfo.decks.map((deck) => {
-			return deck.code + ' '
+			return deck.code + '\n'
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
 
