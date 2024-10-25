@@ -24,6 +24,8 @@ import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {Deck} from 'common/types/database'
+import {toEditDeck} from 'logic/saved-decks/saved-decks'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -138,8 +140,9 @@ const addCreatedTag = (
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: EditedDeck, initialDeck?: EditedDeck) => void
-	deck: EditedDeck
+	saveDeck: (loadedDeck: EditedDeck) => void
+	deleteDeck: (initialDeck: Deck) => void
+	deck: Deck | null
 }
 
 const TYPE_ORDER = {
@@ -209,7 +212,7 @@ const ALL_CARDS = sortCards(
 	),
 )
 
-function EditDeck({back, title, saveDeck, deck}: Props) {
+function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -219,7 +222,16 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<EditedDeck>(deck)
+	const [loadedDeck, setLoadedDeck] = useState<EditedDeck>(
+		deck
+			? toEditDeck(deck)
+			: {
+					name: '',
+					icon: 'any',
+					cards: [],
+					tags: [],
+				},
+	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
@@ -341,7 +353,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		}))
 	}
 	const handleBack = () => {
-		if (initialDeckState == loadedDeck) {
+		if (initialDeckState && toEditDeck(initialDeckState) == loadedDeck) {
 			back()
 		} else {
 			setShowUnsavedModal(true)
@@ -350,35 +362,37 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
 
-		// if the nae has been changed, delete the old one
-		if (initialDeckState.name !== newDeck.name) {
-			// deleteDeck(initialDeckState.name)
+		console.log(newDeck.cards)
+
+		// Delete the old version of the deck
+		if (initialDeckState) {
+			deleteDeck(initialDeckState)
 		}
 
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
 
-		// Check to see if deck name already exists in Local Storage.
-		// if (
-		// 	getSavedDeckNames().find((name) => name === newDeck.name) &&
-		// 	initialDeckState.name !== newDeck.name
-		// ) {
-		// 	return setShowOverwriteModal(true)
-		// }
+		// Check to see if there's already a dake with that name.
+		if (
+			databaseInfo.decks.find((deck) => deck.name === newDeck.name) &&
+			initialDeckState &&
+			initialDeckState.name !== newDeck.name
+		) {
+			return setShowOverwriteModal(true)
+		}
 
 		// Set up tags
 		newDeck.tags = tags
 
 		// Send toast and return to select deck screen
-		saveAndReturn(newDeck, initialDeckState)
+		saveAndReturn(newDeck)
 	}
 	const overwrite = () => {
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: EditedDeck, initialDeck?: EditedDeck) => {
-		saveDeck(deck, initialDeck)
-		dispatch({type: localMessages.UPDATE_DECKS})
+	const saveAndReturn = (deck: EditedDeck) => {
+		saveDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,
 			open: true,

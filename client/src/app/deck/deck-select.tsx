@@ -45,6 +45,7 @@ type Props = {
 	setMode: (mode: 'select' | 'edit' | 'create') => void
 	loadedDeck: Deck
 	extraDecks: Array<Deck>
+	removedDecks: Array<Deck>
 }
 
 function SelectDeck({
@@ -53,6 +54,7 @@ function SelectDeck({
 	setMode,
 	loadedDeck,
 	extraDecks,
+	removedDecks,
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
@@ -71,10 +73,11 @@ function SelectDeck({
 	}
 
 	// STATE
-	const [savedDecks, setSavedDecks] = useState<Array<Deck>>([
-		...databaseInfo.decks,
-		...extraDecks,
-	])
+	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(
+		[...databaseInfo.decks, ...extraDecks].filter(
+			(deck) => !removedDecks.find((subDeck) => subDeck.code === deck.code),
+		),
+	)
 	function sortDecks(decks: Deck[]): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
@@ -213,13 +216,17 @@ function SelectDeck({
 		saveDeck(toSavedDeck(deck))
 	}
 	const deleteDeck = (deletedDeck: Deck) => {
+		const deckToDelete = databaseInfo.decks.find(
+			(deck) => deck.name === deletedDeck.name,
+		)
+		if (!deckToDelete) return
 		dispatch({
 			type: localMessages.DELETE_DECK,
-			deck: deletedDeck,
+			deck: deckToDelete,
 		})
 
 		const newSavedDecks = savedDecks.filter(
-			(deck) => deck.name !== deletedDeck.name,
+			(deck) => deck.name !== deckToDelete.name,
 		)
 
 		setSavedDecks(newSavedDecks)

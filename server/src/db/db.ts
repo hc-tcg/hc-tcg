@@ -276,10 +276,10 @@ export class Database {
 					color: row['tag_color'],
 					key: row['tag_id'],
 				}
-				const cardId: number = row['card_id']
+				const cardId: number | null = row['card_id']
 				const cards: Array<Card> = [
 					...Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id']),
+						this.allCards.find((card) => card.numericId === cardId),
 					),
 				]
 
@@ -290,13 +290,17 @@ export class Database {
 						code,
 						name,
 						icon,
-						tags: tag ? [tag] : [],
-						cards,
+						tags: tag.key !== null ? [tag] : [],
+						cards: cardId !== null ? cards : [],
 					}
 					return [...allDecks, newDeck]
 				}
 
-				if (tag && !foundDeck.tags.find((tag) => tag.key === row['tag_id'])) {
+				if (
+					tag &&
+					!foundDeck.tags.find((searchTag) => searchTag.key === tag.key) &&
+					tag.key !== null
+				) {
 					foundDeck.tags.push(tag)
 				}
 

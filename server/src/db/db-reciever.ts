@@ -116,11 +116,8 @@ export function* insertDeck(
 		player.uuid,
 	)
 
-	// if (result.type === 'success') {
-	// 	broadcast([player], {type: serverMessages.NEW_DECK, user: result.body})
-	// } else {
-	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	// }
+	// @TODO make this not jank
+	yield* getDecks(action as any)
 }
 
 export function* deleteDeck(
@@ -142,6 +139,9 @@ export function* deleteDeck(
 	// } else {
 	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
 	// }
+
+	// @TODO make this not jank
+	yield* getDecks(action as any)
 }
 
 export function* getStats(
