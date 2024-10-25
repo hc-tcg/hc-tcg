@@ -36,8 +36,8 @@ export function TagsModal({setOpen, onClose}: Props) {
 						className={ModalCSS.AlertDialogDescription}
 					>
 						<div>
-							{tagsList.map((tag) => (
-								<div className={css.container}>
+							{tagsList.map((tag, i) => (
+								<div className={css.container} key={i}>
 									<div className={css.component}>
 										<div
 											className={css.fullTagColor}

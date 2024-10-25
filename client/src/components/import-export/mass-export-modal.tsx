@@ -1,5 +1,4 @@
 import * as AlertDialog from '@radix-ui/react-dialog'
-import {getHashFromDeck} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import css from './import-export.module.scss'

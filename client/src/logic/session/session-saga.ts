@@ -256,13 +256,17 @@ export function* loginSaga() {
 	}
 }
 
-export function* logoutSaga() {
-	const socket = yield* select(getSocket)
-
+export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
 		localMessages.INSERT_DECK,
 		function* (action) {
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
+		localMessages.IMPORT_DECK,
+		function* (action) {
+			yield* sendMsg({type: clientMessages.IMPORT_DECK, code: action.code})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
@@ -288,9 +292,14 @@ export function* logoutSaga() {
 	>(localMessages.UPDATE_DECKS_THEN_SELECT, function* (action) {
 		yield* sendMsg({
 			type: clientMessages.GET_DECKS_THEN_SELECT,
-			deck_name: action.deck_name,
+			code: action.code,
 		})
 	})
+}
+
+export function* logoutSaga() {
+	const socket = yield* select(getSocket)
+
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {

@@ -28,6 +28,7 @@ import {
 	deleteTag,
 	getDecks,
 	getStats,
+	importDeck,
 	insertDeck,
 } from '../db/db-reciever'
 
@@ -104,11 +105,14 @@ function* handler(message: RecievedClientMessage) {
 		case clientMessages.GET_DECKS_THEN_SELECT:
 			return yield* getDecks(
 				message as RecievedClientMessage<typeof clientMessages.GET_DECKS>,
-				(message as RecievedClientMessage<typeof message.type>).payload
-					.deck_name,
+				(message as RecievedClientMessage<typeof message.type>).payload.code,
 			)
 		case clientMessages.INSERT_DECK:
 			return yield* insertDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.IMPORT_DECK:
+			return yield* importDeck(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.DELETE_DECK:

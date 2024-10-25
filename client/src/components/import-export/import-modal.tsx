@@ -9,6 +9,8 @@ import Dropdown from 'components/dropdown'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
+import {generateDatabaseCode} from 'common/utils/database-codes'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
 	setOpen: boolean
@@ -25,17 +27,32 @@ export const ImportModal = ({
 }: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
+	const dispatch = useMessageDispatch()
 	const [deckIcon, setDeckIcon] = useState<PlayerDeck['icon']>('any')
 
 	//IMPORT DECK FUNCTION
 	const importFromHash = () => {
 		if (!hashRef.current) return
+
+		const hash = hashRef.current.value
+
+		if (hash.length === 7 && hash.match(/[1234567890abcdefg]+/)) {
+			dispatch({
+				type: localMessages.IMPORT_DECK,
+				code: hash,
+			})
+			onClose(true)
+
+			return
+		}
+
+		// Legacy import
 		let deck: Array<LocalCardInstance> = []
 
 		try {
-			deck = getDeckFromHash(hashRef.current.value)
+			deck = getDeckFromHash(hash)
 		} catch {
-			console.log('Invalid deck to import: ' + hashRef.current.value)
+			console.log('Invalid deck to import: ' + hash)
 		}
 
 		if (deck.length < 1) return null
@@ -46,6 +63,7 @@ export const ImportModal = ({
 			name: nameRef?.current?.value || 'Imported Deck',
 			icon: deckIcon,
 			cards: deck,
+			code: generateDatabaseCode(),
 			tags: [],
 		})
 
@@ -65,6 +83,16 @@ export const ImportModal = ({
 			let importedSomething = false
 
 			newFileContent.split('\n').forEach((line: string) => {
+				const cleanLine = line.replace('\r', '')
+				if (cleanLine.length === 7 && cleanLine.match(/[1234567890abcdefg]+/)) {
+					dispatch({
+						type: localMessages.IMPORT_DECK,
+						code: cleanLine,
+					})
+					return
+				}
+
+				// Legacy import
 				const lineComponents: string[] = line.split(':')
 				if (lineComponents.length !== 3) return
 				const deck = getDeckFromHash(lineComponents[2].replace('\r', ''))
@@ -78,12 +106,13 @@ export const ImportModal = ({
 				}
 
 				importedSomething = true
-				saveDeck({
+				importDeck({
 					name: filteredName,
 					icon: DECK_ICONS.includes(lineComponents[1])
 						? (lineComponents[1] as TypeT)
 						: 'any',
 					cards: deck,
+					code: generateDatabaseCode(),
 					tags: [],
 				})
 			})
@@ -141,7 +170,18 @@ export const ImportModal = ({
 								<div className={css.importControls}>
 									<p className={css.instructions}>
 										{
-											'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
+											'To import a deck, enter the Deck Code, then click Import.'
+										}
+									</p>
+									<input
+										type="text"
+										placeholder="Deck Code..."
+										ref={hashRef}
+										style={{flexGrow: 1}}
+									/>
+									<p className={css.instructions}>
+										{
+											"If you're importing a legacy deck, you must also supply a name and optionally an icon."
 										}
 									</p>
 									<div className={css.name}>
@@ -163,22 +203,10 @@ export const ImportModal = ({
 											style={{flexGrow: 1}}
 										/>
 									</div>
-									<input
-										type="text"
-										placeholder="Deck Hash..."
-										ref={hashRef}
-										style={{flexGrow: 1}}
-									/>
 
 									<p className={css.instructions}>
 										{
 											'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
-										}
-									</p>
-
-									<p className={css.warning}>
-										{
-											'Note that this will overwrite any decks with the same name.'
 										}
 									</p>
 								</div>

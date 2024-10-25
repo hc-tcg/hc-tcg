@@ -51,7 +51,7 @@ export function* authenticateUser(
 
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
-	newActiveDeckName?: string,
+	newActiveDeckCode?: string,
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
@@ -74,8 +74,8 @@ export function* getDecks(
 			type: serverMessages.DECKS_RECIEVED,
 			decks: decksResult.body,
 			tags: tagsResult.body,
-			newActiveDeck: newActiveDeckName
-				? decksResult.body.find((deck) => deck.name === newActiveDeckName)
+			newActiveDeck: newActiveDeckCode
+				? decksResult.body.find((deck) => deck.code === newActiveDeckCode)
 				: undefined,
 		})
 	} else {
@@ -108,12 +108,38 @@ export function* insertDeck(
 	}
 
 	// Insert deck
-	const result = yield* call(
+	yield* call(
 		[pgDatabase, pgDatabase.insertDeck],
 		action.payload.deck.name,
 		action.payload.deck.icon,
 		action.payload.deck.cards.map((card) => card.numericId),
 		deckTags.map((tag) => tag.key),
+		generateDatabaseCode(),
+		player.uuid,
+	)
+}
+
+export function* importDeck(
+	action: RecievedClientMessage<typeof clientMessages.IMPORT_DECK>,
+) {
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const code = action.payload.code
+
+	const importedDeck = yield* call([pgDatabase, pgDatabase.getDeckFromID], code)
+
+	if (importedDeck.type !== 'success') return
+
+	// Insert deck
+	yield* call(
+		[pgDatabase, pgDatabase.insertDeck],
+		importedDeck.body.name,
+		importedDeck.body.icon,
+		importedDeck.body.cards.map((card) => card.numericId),
+		[],
 		generateDatabaseCode(),
 		player.uuid,
 	)
@@ -127,17 +153,11 @@ export function* deleteDeck(
 		return
 	}
 
-	const result = yield* call(
+	yield* call(
 		[pgDatabase, pgDatabase.disassociateDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)
-
-	// if (result.type === 'success') {
-	// 	broadcast([player], {type: serverMessages.NEW_DECK, user: result.body})
-	// } else {
-	// 	broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	// }
 }
 
 export function* deleteTag(
@@ -148,7 +168,7 @@ export function* deleteTag(
 		return
 	}
 
-	const result = yield* call(
+	yield* call(
 		[pgDatabase, pgDatabase.deleteTag],
 		player.uuid,
 		action.payload.tag.key,

@@ -178,7 +178,7 @@ function SelectDeck({
 
 		dispatch({
 			type: localMessages.UPDATE_DECKS_THEN_SELECT,
-			deck_name: loadedDeck.name,
+			code: loadedDeck.code,
 		})
 		setMenuSection('mainmenu')
 	}

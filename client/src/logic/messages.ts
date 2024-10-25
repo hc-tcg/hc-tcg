@@ -88,6 +88,7 @@ export const localMessages = messages({
 	UPDATE_DECKS: null,
 	UPDATE_DECKS_THEN_SELECT: null,
 	SELECT_DECK: null,
+	IMPORT_DECK: null,
 })
 
 type Messages = [
@@ -219,7 +220,8 @@ type Messages = [
 	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
 	{type: typeof localMessages.UPDATE_DECKS},
-	{type: typeof localMessages.UPDATE_DECKS_THEN_SELECT; deck_name: string},
+	{type: typeof localMessages.UPDATE_DECKS_THEN_SELECT; code: string},
+	{type: typeof localMessages.IMPORT_DECK; code: string},
 ]
 
 /** A message used locally on the client to update global state */

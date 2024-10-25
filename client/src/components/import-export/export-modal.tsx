@@ -3,8 +3,6 @@ import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
 import {Deck} from 'common/types/database'
-import {useSelector} from 'react-redux'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setOpen: boolean

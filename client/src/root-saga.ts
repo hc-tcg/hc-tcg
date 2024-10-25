@@ -3,6 +3,7 @@ import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
 import {
+	databaseConnectionSaga,
 	loginSaga,
 	logoutSaga,
 	minecraftNameSaga,
@@ -17,6 +18,7 @@ import {all, call, fork, race, take} from 'redux-saga/effects'
 function* appSaga(): SagaIterator {
 	yield call(loginSaga)
 	yield fork(logoutSaga)
+	yield fork(databaseConnectionSaga)
 	yield fork(newDeckSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)

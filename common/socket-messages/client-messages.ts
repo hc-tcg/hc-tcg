@@ -28,6 +28,7 @@ export const clientMessages = messages({
 	GET_DECKS_THEN_SELECT: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
+	IMPORT_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 })
@@ -63,9 +64,10 @@ export type ClientMessages = [
 		minecraftName: string | null
 	},
 	{type: typeof clientMessages.GET_DECKS},
-	{type: typeof clientMessages.GET_DECKS_THEN_SELECT; deck_name: string},
+	{type: typeof clientMessages.GET_DECKS_THEN_SELECT; code: string},
 	{type: typeof clientMessages.GET_STATS},
 	{type: typeof clientMessages.INSERT_DECK; deck: Deck},
+	{type: typeof clientMessages.IMPORT_DECK; code: string},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 ]
