@@ -7,6 +7,7 @@ import SmallishbeansRare from 'common/cards/season-x/hermits/smallishbeans-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {
+	applyEffect,
 	attack,
 	changeActiveHermit,
 	endTurn,
@@ -53,6 +54,7 @@ describe('Test Weakness', () => {
 
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* attack(game, 'primary')
 					yield* endTurn(game)
 
@@ -102,6 +104,7 @@ describe('Test Weakness', () => {
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -157,6 +160,7 @@ describe('Test Weakness', () => {
 
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -200,11 +204,13 @@ describe('Test Weakness', () => {
 
 					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* attack(game, 'primary')
 					yield* endTurn(game)
 
@@ -234,6 +240,7 @@ describe('Test Weakness', () => {
 
 					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* attack(game, 'primary')
 					yield* endTurn(game)
 
@@ -275,6 +282,7 @@ describe('Test Weakness', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
