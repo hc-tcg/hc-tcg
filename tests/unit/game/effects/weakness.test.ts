@@ -260,7 +260,7 @@ describe('Test Weakness', () => {
 	test('Weakness Lethality Check', () => {
 		testGame(
 			{
-				playerOneDeck: [ImpulseSVCommon, SmallishbeansRare, ImpulseSVCommon],
+				playerOneDeck: [SmallishbeansRare, ImpulseSVCommon, SmallishbeansRare],
 				playerTwoDeck: [
 					SmallishbeansRare,
 					SmallishbeansRare,
@@ -268,9 +268,9 @@ describe('Test Weakness', () => {
 					PotionOfWeakness,
 				],
 				saga: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 1)
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 2)
+					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 1)
+					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 2)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
@@ -298,7 +298,7 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(SmallishbeansRare.health - SmallishbeansRare.primary.damage)
+					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage)
 
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
@@ -312,7 +312,7 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage - 20)
+					).toBe(SmallishbeansRare.health - SmallishbeansRare.primary.damage - 20)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
