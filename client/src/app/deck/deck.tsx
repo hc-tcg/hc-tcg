@@ -40,8 +40,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
-	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
-	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
+	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
@@ -55,7 +54,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 
 		//Load new deck
 		setLoadedDeck(savedDeck)
-		forceUpdate()
+		databaseInfo.decks = [...databaseInfo.decks, savedDeck]
 	}
 
 	const deleteDeckInternal = (deletedDeck: Deck) => {
@@ -74,7 +73,9 @@ const DeckComponent = ({setMenuSection}: Props) => {
 			setLoadedDeck(deckToload)
 			setActiveDeck(deckToload)
 		}
-		forceUpdate()
+		databaseInfo.decks = databaseInfo.decks.filter(
+			(deck) => deck.code !== deletedDeck.code,
+		)
 	}
 
 	// MODE ROUTER
@@ -112,6 +113,8 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						loadedDeck={loadedDeck}
 						databaseInfo={databaseInfo}
 						forceUpdate={forceUpdate}
+						filteredDecks={filteredDecks}
+						setFilteredDecks={setFilteredDecks}
 					/>
 				)
 		}

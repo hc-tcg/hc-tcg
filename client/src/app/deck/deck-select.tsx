@@ -45,6 +45,8 @@ type Props = {
 	loadedDeck: Deck
 	databaseInfo: DatabaseInfo
 	forceUpdate: () => void
+	filteredDecks: Array<Deck>
+	setFilteredDecks: (decks: Array<Deck>) => void
 }
 
 function SelectDeck({
@@ -54,6 +56,8 @@ function SelectDeck({
 	loadedDeck,
 	databaseInfo,
 	forceUpdate,
+	filteredDecks,
+	setFilteredDecks,
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
@@ -65,17 +69,16 @@ function SelectDeck({
 			type: localMessages.INSERT_DECK,
 			deck: deck,
 		})
-		setSavedDecks(databaseInfo.decks)
-		setSortedDecks(sortDecks([...savedDecks, deck]))
-		setFilteredDecks(sortDecks([...savedDecks, deck]))
+		setFilteredDecks(sortDecks([...databaseInfo.decks, deck]))
 	}
 
 	console.log(databaseInfo.decks)
 
 	// STATE
-	const [oldDatabaseInfo, setOldDatabaseInfo] =
-		useState<DatabaseInfo>(databaseInfo)
-	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(databaseInfo.decks)
+	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
+		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
+		return databaseInfo
+	})
 
 	function sortDecks(decks: Deck[]): Array<Deck> {
 		return decks.sort((a, b) => {
@@ -103,21 +106,12 @@ function SelectDeck({
 			deck.tags?.find((tag) => tag.key === settings.lastSelectedTag),
 		)
 	}
-	const [sortedDecks, setSortedDecks] = useState<Array<Deck>>(
-		sortDecks(savedDecks),
-	)
 
-	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>(
-		filterDecks(sortedDecks),
-	)
-
-	if (oldDatabaseInfo.decks.length !== databaseInfo.decks.length) {
+	if (oldDatabaseInfo !== databaseInfo) {
 		setOldDatabaseInfo(databaseInfo)
-		setSavedDecks(databaseInfo.decks)
-		setFilteredDecks(sortDecks(databaseInfo.decks))
+		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
 	}
 
-	const savedDeckNames = savedDecks.map((deck) => deck.name)
 	const [importedDeck, setImportedDeck] = useState<PlayerDeck>({
 		name: 'undefined',
 		icon: 'any',
@@ -199,7 +193,6 @@ function SelectDeck({
 		setShowImportModal(false)
 	}
 	const handleMassImportDecks = () => {
-		// setSavedDecks(getSavedDecks())
 		setShowImportModal(false)
 	}
 
@@ -208,18 +201,6 @@ function SelectDeck({
 		setLoadedDeck(deck)
 	}
 	const importDeck = (deck: PlayerDeck) => {
-		let deckExists = false
-		savedDeckNames.map((name) => {
-			if (name === deck.name) {
-				console.log(`Name: ${name} | Import: ${deck.name}`)
-				deckExists = true
-			}
-		})
-		if (deckExists) {
-			setShowOverwriteModal(true)
-			return
-		}
-
 		saveDeck(toSavedDeck(deck))
 	}
 	const deleteDeck = (deletedDeck: Deck) => {
@@ -232,12 +213,10 @@ function SelectDeck({
 			deck: deckToDelete,
 		})
 
-		const newSavedDecks = savedDecks.filter(
+		const newSavedDecks = databaseInfo.decks.filter(
 			(deck) => deck.code !== deckToDelete.code,
 		)
 
-		setSavedDecks(newSavedDecks)
-		setSortedDecks(sortDecks(newSavedDecks))
 		setFilteredDecks(sortDecks(newSavedDecks))
 		dispatch({
 			type: localMessages.DATABASE_SET,
@@ -274,9 +253,7 @@ function SelectDeck({
 		saveDeck(newDeck)
 
 		//Refresh saved deck list and load new deck
-		setSavedDecks(savedDecks)
-		setSortedDecks(sortDecks([...savedDecks, newDeck]))
-		setFilteredDecks(sortDecks([...savedDecks, newDeck]))
+		setFilteredDecks(sortDecks([...databaseInfo.decks, newDeck]))
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
@@ -342,7 +319,7 @@ function SelectDeck({
 				options={tagsDropdownOptions}
 				action={(option) => {
 					if (option.includes('No Filter')) {
-						setFilteredDecks(sortedDecks)
+						setFilteredDecks(sortDecks(databaseInfo.decks))
 						setTagFilter({
 							name: 'No Filter',
 							color: '#ffffff',
@@ -360,11 +337,13 @@ function SelectDeck({
 					const parsedOption = JSON.parse(option) as Tag
 					console.log(parsedOption)
 					setFilteredDecks(
-						sortedDecks.filter((deck) =>
-							deck.tags.some(
-								(tag) =>
-									tag.name === parsedOption.name &&
-									tag.color === parsedOption.color,
+						sortDecks(
+							databaseInfo.decks.filter((deck) =>
+								deck.tags.some(
+									(tag) =>
+										tag.name === parsedOption.name &&
+										tag.color === parsedOption.color,
+								),
 							),
 						),
 					)
@@ -623,7 +602,7 @@ function SelectDeck({
 								>
 									<span>Copy</span>
 								</Button>
-								{savedDecks.length > 1 && (
+								{databaseInfo.decks.length > 1 && (
 									<Button
 										variant="error"
 										size="small"
@@ -693,7 +672,7 @@ function SelectDeck({
 						>
 							<span>Copy Deck</span>
 						</Button>
-						{savedDecks.length > 1 && (
+						{databaseInfo.decks.length > 1 && (
 							<Button
 								variant="error"
 								size="small"
