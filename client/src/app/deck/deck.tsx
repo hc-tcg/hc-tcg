@@ -3,7 +3,7 @@ import {PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import {useState} from 'react'
+import {useReducer, useState} from 'react'
 import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
@@ -34,21 +34,18 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	// REDUX
 	const playerDeck = useSelector(getPlayerDeck)
 	const dispatch = useMessageDispatch()
-
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
-	const [extraDecks, setExtraDecks] = useState<Array<Deck>>([])
-	const [removedDecks, setRemovedDecks] = useState<Array<Deck>>([])
+	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
 	const saveDeckInternal = (deck: PlayerDeck) => {
 		//Save new deck to Database
 		const savedDeck = toSavedDeck(deck)
-		setExtraDecks([...extraDecks, savedDeck])
 		dispatch({
 			type: localMessages.INSERT_DECK,
 			deck: savedDeck,
@@ -56,6 +53,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 
 		//Load new deck
 		setLoadedDeck(savedDeck)
+		forceUpdate()
 	}
 
 	const deleteDeckInternal = (deletedDeck: Deck) => {
@@ -64,7 +62,6 @@ const DeckComponent = ({setMenuSection}: Props) => {
 			type: localMessages.DELETE_DECK,
 			deck: deletedDeck,
 		})
-		setRemovedDecks([...removedDecks, deletedDeck])
 
 		const deckToload = databaseInfo.decks.find(
 			(deck) => deck.code !== deletedDeck.code,
@@ -75,6 +72,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 			setLoadedDeck(deckToload)
 			setActiveDeck(deckToload)
 		}
+		forceUpdate()
 	}
 
 	// MODE ROUTER
@@ -108,8 +106,8 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						setMenuSection={setMenuSection}
 						setMode={setMode}
 						loadedDeck={loadedDeck}
-						extraDecks={extraDecks}
-						removedDecks={removedDecks}
+						databaseInfo={databaseInfo}
+						forceUpdate={forceUpdate}
 					/>
 				)
 		}

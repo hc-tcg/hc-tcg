@@ -11,12 +11,16 @@ import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 
 type Props = {
 	setOpen: boolean
 	onClose: (isOpen: boolean) => void
 	importDeck: (deck: PlayerDeck, noActiveChange?: boolean) => void
 	handleMassImport: () => void
+	forceUpdate: () => void
 }
 
 export const ImportModal = ({
@@ -24,14 +28,16 @@ export const ImportModal = ({
 	onClose,
 	importDeck,
 	handleMassImport,
+	forceUpdate,
 }: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
 	const [deckIcon, setDeckIcon] = useState<PlayerDeck['icon']>('any')
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	//IMPORT DECK FUNCTION
-	const importFromHash = () => {
+	async function importFromHash() {
 		if (!hashRef.current) return
 
 		const hash = hashRef.current.value
@@ -43,6 +49,9 @@ export const ImportModal = ({
 			})
 			onClose(true)
 
+			// Make sure it appears in case bad wifi
+			await new Promise((e) => setTimeout(e, 2000))
+			forceUpdate()
 			return
 		}
 

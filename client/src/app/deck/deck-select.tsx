@@ -34,17 +34,17 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {Deck} from 'common/types/database'
 import {generateDatabaseCode} from 'common/utils/database-codes'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 
 type Props = {
 	setMenuSection: (section: string) => void
 	setLoadedDeck: (deck: Deck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
 	loadedDeck: Deck
-	extraDecks: Array<Deck>
-	removedDecks: Array<Deck>
+	databaseInfo: DatabaseInfo
+	forceUpdate: () => void
 }
 
 function SelectDeck({
@@ -52,14 +52,13 @@ function SelectDeck({
 	setMenuSection,
 	setMode,
 	loadedDeck,
-	extraDecks,
-	removedDecks,
+	databaseInfo,
+	forceUpdate,
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const saveDeck = (deck: Deck) => {
 		dispatch({
@@ -71,12 +70,13 @@ function SelectDeck({
 		setFilteredDecks(sortDecks([...savedDecks, deck]))
 	}
 
+	console.log(databaseInfo.decks)
+
 	// STATE
-	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(
-		[...databaseInfo.decks, ...extraDecks].filter(
-			(deck) => !removedDecks.find((subDeck) => subDeck.code === deck.code),
-		),
-	)
+	const [oldDatabaseInfo, setOldDatabaseInfo] =
+		useState<DatabaseInfo>(databaseInfo)
+	const [savedDecks, setSavedDecks] = useState<Array<Deck>>(databaseInfo.decks)
+
 	function sortDecks(decks: Deck[]): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
@@ -110,6 +110,12 @@ function SelectDeck({
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>(
 		filterDecks(sortedDecks),
 	)
+
+	if (oldDatabaseInfo.decks.length !== databaseInfo.decks.length) {
+		setOldDatabaseInfo(databaseInfo)
+		setSavedDecks(databaseInfo.decks)
+		setFilteredDecks(sortDecks(databaseInfo.decks))
+	}
 
 	const savedDeckNames = savedDecks.map((deck) => deck.name)
 	const [importedDeck, setImportedDeck] = useState<PlayerDeck>({
@@ -416,6 +422,7 @@ function SelectDeck({
 				onClose={() => setShowImportModal(!showImportModal)}
 				importDeck={(deck) => handleImportDeck(deck)}
 				handleMassImport={handleMassImportDecks}
+				forceUpdate={forceUpdate}
 			/>
 			<ExportModal
 				setOpen={showExportModal}

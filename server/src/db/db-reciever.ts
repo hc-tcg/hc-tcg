@@ -143,6 +143,8 @@ export function* importDeck(
 		generateDatabaseCode(),
 		player.uuid,
 	)
+
+	yield* getDecks(action as any)
 }
 
 export function* deleteDeck(
