@@ -81,6 +81,7 @@ export const localMessages = messages({
 	PLAY_VOICE_TEST: null,
 	QUEUE_VOICE: null,
 	SET_ID_AND_SECRET: null,
+	RESET_ID_AND_SECRET: null,
 	DATABASE_SET: null,
 	INSERT_DECK: null,
 	DELETE_DECK: null,
@@ -214,6 +215,7 @@ type Messages = [
 		userId: string
 		secret: string
 	},
+	{type: typeof localMessages.RESET_ID_AND_SECRET},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
 	{type: typeof localMessages.SELECT_DECK; deck: Deck},

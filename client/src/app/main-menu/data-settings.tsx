@@ -10,6 +10,7 @@ import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
 function DataSettings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -73,6 +74,55 @@ function DataSettings({setMenuSection}: Props) {
 		setModal(null)
 	}
 
+	const setUuidSecretModal = (
+		onConfirm: (id: string, secret: string) => void,
+	) => {
+		return () => {
+			setModal(
+				<Modal title={'Set UUID and Secret'} closeModal={closeModal} centered>
+					<form
+						className={css.something}
+						onSubmit={() => {
+							const userId = (
+								document.getElementById('userIdElement') as HTMLInputElement
+							).value
+							const secret = (
+								document.getElementById('userSecretElement') as HTMLInputElement
+							).value
+							if (!userId || !secret) return
+							onConfirm(userId, secret)
+						}}
+					>
+						<div className={css.customInput}>
+							<input
+								name="id"
+								placeholder="UUID"
+								id="userIdElement"
+								className={css.input}
+							></input>
+						</div>
+						<div className={css.customInput}>
+							<input
+								name="tag"
+								placeholder="Secret"
+								id="userSecretElement"
+								className={css.input}
+							></input>
+						</div>
+						<Button
+							variant="default"
+							size="small"
+							type="submit"
+							className={css.submitButton}
+						>
+							Confirm
+						</Button>
+					</form>
+				</Modal>,
+			)
+		}
+	}
+
 	return (
 		<MenuLayout
 			back={() => setMenuSection('settings')}
@@ -113,6 +163,33 @@ function DataSettings({setMenuSection}: Props) {
 					<span className={css.stat}>Secret</span>
 					<span className={css.stat}>{databaseInfo.secret}</span>
 				</div>
+				<Button
+					variant="stone"
+					onClick={setUuidSecretModal((id, secret) =>
+						dispatch({
+							type: localMessages.SET_ID_AND_SECRET,
+							userId: id,
+							secret: secret,
+						}),
+					)}
+				>
+					Set UUID and Secret
+				</Button>
+				<Button
+					variant="stone"
+					onClick={handleReset(
+						'Reset User Information',
+						'Are you sure you want to reset your user information? It is possible you could lose your information forever if you do not have the same UUID and secret on another device.',
+						'User information has been reset.',
+						() => {
+							dispatch({
+								type: localMessages.RESET_ID_AND_SECRET,
+							})
+						},
+					)}
+				>
+					Reset User Information
+				</Button>
 			</div>
 		</MenuLayout>
 	)
