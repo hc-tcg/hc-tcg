@@ -286,12 +286,7 @@ describe('Test Weakness', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-					yield* pick(
-						game,
-						query.slot.currentPlayer,
-						query.slot.hermit,
-						query.slot.rowIndex(1),
-					)
+					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
 					yield* attack(game, 'primary')
