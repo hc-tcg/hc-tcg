@@ -14,7 +14,7 @@ export type PlayerDeck = {
 	tags: Array<Tag>
 }
 
-export type SavedDeckT = {
+export type LegacyDeck = {
 	name: string
 	icon:
 		| 'any'

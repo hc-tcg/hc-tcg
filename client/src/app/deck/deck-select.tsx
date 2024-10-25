@@ -22,8 +22,6 @@ import {TagsModal} from 'components/tags-modal'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
-	convertLegacyDecks,
-	getLegacyDecks,
 	setActiveDeck,
 	toPlayerDeck,
 	toSavedDeck,
@@ -768,26 +766,6 @@ function SelectDeck({
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
 								{footerTags}
-								{getLegacyDecks() && (
-									<Button
-										onClick={() => {
-											const conversionCount = convertLegacyDecks()
-											setSavedDecks(databaseInfo.decks)
-
-											dispatch({
-												type: localMessages.TOAST_OPEN,
-												open: true,
-												title: 'Convert Legacy Decks',
-												description: conversionCount
-													? `Converted ${conversionCount} decks!`
-													: 'No decks to convert!',
-												image: '/images/card-icon.png',
-											})
-										}}
-									>
-										Import Legacy Decks
-									</Button>
-								)}
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>
