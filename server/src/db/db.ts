@@ -66,10 +66,11 @@ export class Database {
 				PRIMARY KEY (deck_code,card_id)
 			);
 			CREATE TABLE IF NOT EXISTS user_tags(
-				user_id uuid REFERENCES users(user_id),
+				user_id uuid,
 				tag_id varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
 				tag_name varchar(255) NOT NULL,
-				tag_color varchar(7) NOT NULL
+				tag_color varchar(7) NOT NULL,
+				FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 			);
 			ALTER TABLE user_tags DROP CONSTRAINT IF EXISTS color_hex_constraint;
 			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (tag_color ~* '^#[a-f0-9]{6}$');
@@ -365,7 +366,7 @@ export class Database {
 	public async deleteTag(uuid: string, tagId: string): Promise<DatabaseResult> {
 		try {
 			await this.pool.query(
-				'DELETE FROM user_tags USING deck_tags WHERE tag_id = $1 user_id = $2',
+				'DELETE FROM user_tags WHERE user_tags.tag_id = $1 AND user_id = $2',
 				[tagId, uuid],
 			)
 			return {type: 'success', body: undefined}
