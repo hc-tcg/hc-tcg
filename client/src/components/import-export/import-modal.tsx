@@ -11,9 +11,6 @@ import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {DatabaseInfo} from 'logic/game/database/database-reducer'
 
 type Props = {
 	setOpen: boolean
@@ -34,7 +31,6 @@ export const ImportModal = ({
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
 	const [deckIcon, setDeckIcon] = useState<PlayerDeck['icon']>('any')
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	//IMPORT DECK FUNCTION
 	async function importFromHash() {

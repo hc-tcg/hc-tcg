@@ -70,6 +70,7 @@ function SelectDeck({
 			deck: deck,
 		})
 		setFilteredDecks(sortDecks([...databaseInfo.decks, deck]))
+		setLoadedDeck(deck)
 	}
 
 	// STATE
@@ -187,7 +188,7 @@ function SelectDeck({
 	}
 	const handleImportDeck = (deck: PlayerDeck) => {
 		setImportedDeck(deck)
-		importDeck(deck)
+		saveDeck(toSavedDeck(deck))
 		setShowImportModal(false)
 	}
 	const handleMassImportDecks = () => {
@@ -197,9 +198,6 @@ function SelectDeck({
 	//DECK LOGIC
 	const loadDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
-	}
-	const importDeck = (deck: PlayerDeck) => {
-		saveDeck(toSavedDeck(deck))
 	}
 	const deleteDeck = (deletedDeck: Deck) => {
 		const deckToDelete = databaseInfo.decks.find(
