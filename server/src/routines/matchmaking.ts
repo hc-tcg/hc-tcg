@@ -168,10 +168,16 @@ function* gameManager(game: GameModel) {
 			(player) => player.uuid === game.endInfo.winner,
 		)
 
-		if (gamePlayers[0].uuid && gamePlayers[1].uuid && game.endInfo.outcome) {
+		if (
+			gamePlayers[0].uuid &&
+			gamePlayers[1].uuid &&
+			game.endInfo.outcome &&
+			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
+			gamePlayers[0].uuid !== gamePlayers[1].uuid
+		) {
 			pgDatabase.insertGame(
-				gamePlayers[0].deck.code, //@TODO Add p1 deck
-				gamePlayers[1].deck.code, //@TODO Add p2 deck
+				gamePlayers[0].deck.code,
+				gamePlayers[1].deck.code,
 				gamePlayers[0].uuid,
 				gamePlayers[1].uuid,
 				game.endInfo.outcome,
@@ -180,6 +186,8 @@ function* gameManager(game: GameModel) {
 				'', //@TODO Add seed
 				Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
 			)
+
+			//@TODO Make sure stats refresh for both players after game is over
 		}
 
 		delete root.games[game.id]

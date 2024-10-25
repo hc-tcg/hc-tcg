@@ -362,8 +362,6 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
 
-		console.log(newDeck.cards)
-
 		// Delete the old version of the deck
 		if (initialDeckState) {
 			deleteDeck(initialDeckState)
@@ -371,6 +369,9 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
+
+		// Set up tags
+		newDeck.tags = tags
 
 		// Check to see if there's already a dake with that name.
 		if (
@@ -380,9 +381,6 @@ function EditDeck({back, title, saveDeck, deleteDeck, deck}: Props) {
 		) {
 			return setShowOverwriteModal(true)
 		}
-
-		// Set up tags
-		newDeck.tags = tags
 
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck)
