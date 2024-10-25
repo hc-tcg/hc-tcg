@@ -17,6 +17,8 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 	icon: 'trap-hole',
 	description:
 		'When you use a single use effect card, flip a coin. If heads, your opponent steals said effect card.',
+	applyCondition: (_game, value) =>
+		value instanceof PlayerComponent && !value.hasStatusEffect(TrapHoleEffect),
 	onApply(
 		game: GameModel,
 		effect: StatusEffectComponent,
@@ -46,7 +48,7 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 			} else {
 				game.battleLog.addEntry(
 					player.entity,
-					`$o${effect.creator.props.name}$ flipped $btails$b`,
+					`$o${effect.creator.props.name}$ flipped $btails$`,
 				)
 			}
 		})

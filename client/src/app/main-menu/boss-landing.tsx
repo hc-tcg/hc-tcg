@@ -1,3 +1,6 @@
+import BerryBush from 'common/cards/advent-of-tcg/effects/berry-bush'
+import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
+import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
 import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
 import Anvil from 'common/cards/alter-egos/single-use/anvil'
@@ -63,9 +66,9 @@ function BossLanding({setMenuSection}: Props) {
 		PotionOfSlowness,
 		TargetBlock,
 
-		// Dropper,
-		// Glowstone,
-		// BerryBush,
+		Dropper,
+		Glowstone,
+		BerryBush,
 	]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)

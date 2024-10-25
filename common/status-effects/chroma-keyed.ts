@@ -3,6 +3,7 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {afterAttack, onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
@@ -22,8 +23,6 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 		target: CardComponent,
 		observer: ObserverComponent,
 	): void {
-		if (!effect.counter) effect.counter = this.counter
-
 		let jopacityUsedThisTurn = false
 		let previousUses = 0
 
@@ -33,8 +32,19 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 			(attack) => {
 				if (attack.player.entity !== target.player.entity) return
 				if (effect.counter === null) return
-				if (previousUses < effect.counter) jopacityUsedThisTurn = true
-				else if (attack.isAttacker(target.entity)) effect.remove()
+				if (previousUses < effect.counter) {
+					jopacityUsedThisTurn = true
+					previousUses = effect.counter
+				} else if (
+					(attack.isAttacker(target.entity) &&
+						attack.type !== 'weakness' &&
+						!query.some(...attack.shouldIgnoreCards)(game, target)) ||
+					(!jopacityUsedThisTurn &&
+						attack.attacker instanceof CardComponent &&
+						attack.attacker.isSingleUse() &&
+						attack.attacker.props.hasAttack)
+				)
+					effect.remove()
 			},
 		)
 
@@ -44,7 +54,6 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 			() => {
 				if (!jopacityUsedThisTurn) effect.remove()
 				jopacityUsedThisTurn = false
-				if (effect.counter !== null) previousUses = effect.counter
 			},
 		)
 	},

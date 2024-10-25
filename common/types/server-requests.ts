@@ -55,6 +55,7 @@ export type LocalStatusEffectInstance<
 				player: PlayerEntity
 		  }
 	readonly counter: number | null
+	readonly description: string
 }
 
 export type SlotInfo = {
@@ -91,7 +92,7 @@ export namespace LocalSelectCards {
 		name: string
 		description: string
 		cards: Array<LocalCardInstance>
-		selectionSize: number
+		selectionSize: number | [min_inclusive: number, max_inclusive: number]
 		primaryButton?: {
 			text: string
 			variant?: ButtonVariant

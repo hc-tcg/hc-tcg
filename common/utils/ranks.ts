@@ -5,6 +5,7 @@ export function getCardVisualTokenCost(
 	tokens: TokenCostT,
 ): 0 | 1 | 2 | 3 | 4 | 5 {
 	if (tokens === 'wild') return 1
+	if (tokens === -1) return 0
 	return tokens
 }
 

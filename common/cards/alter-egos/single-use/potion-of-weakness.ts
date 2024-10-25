@@ -18,7 +18,7 @@ const PotionOfWeakness: SingleUse = {
 	rarity: 'common',
 	tokens: 2,
 	description:
-		"Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
+		"Your opponent's active Hermit's type becomes weak to your active Hermit's type for 3 turns.",
 	sidebarDescriptions: [
 		{
 			type: 'glossary',
@@ -29,6 +29,11 @@ const PotionOfWeakness: SingleUse = {
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		query.slot.opponentHasActiveHermit,
+		(game, _pos) => {
+			const a = game.opponentPlayer.getActiveHermit()?.isHermit()
+			if (!a) return false
+			return a
+		},
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -41,7 +46,7 @@ const PotionOfWeakness: SingleUse = {
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
 				.new(StatusEffectComponent, WeaknessEffect, component.entity)
-				.apply(opponentPlayer.getActiveHermit()?.entity)
+				.apply(opponentPlayer.entity)
 		})
 	},
 }

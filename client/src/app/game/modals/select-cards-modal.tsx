@@ -21,13 +21,18 @@ function SelectCardsModal({closeModal}: Props) {
 	if (!modalData || modalData.type !== 'selectCards') return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
 	const cards: Array<LocalCardInstance> = modalData.cards
-	const selectionSize = modalData.selectionSize
+	const maxSelectionSize = Array.isArray(modalData.selectionSize)
+		? modalData.selectionSize[1]
+		: modalData.selectionSize
+	const minSelectionSize = Array.isArray(modalData.selectionSize)
+		? modalData.selectionSize[0]
+		: modalData.selectionSize
 	const primaryButton = modalData.primaryButton
 	const secondaryButton = modalData.secondaryButton
 	const cancelable = modalData.cancelable
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
-		if (selectionSize === 0) return
+		if (maxSelectionSize === 0) return
 
 		setSelected((current) => {
 			const newSelection = [...current]
@@ -36,7 +41,7 @@ function SelectCardsModal({closeModal}: Props) {
 				return newSelection.filter((card) => card.entity !== newSelected.entity)
 			}
 			// If a new card is selected then remove the first one
-			if (newSelection.length >= selectionSize) {
+			if (newSelection.length >= maxSelectionSize) {
 				newSelection.shift()
 			}
 			newSelection.push(newSelected)
@@ -46,7 +51,7 @@ function SelectCardsModal({closeModal}: Props) {
 	}
 
 	const handlePrimary = () => {
-		if (selectionSize === 0) {
+		if (maxSelectionSize === 0) {
 			dispatch({
 				type: localMessages.GAME_TURN_ACTION,
 				action: {
@@ -58,7 +63,7 @@ function SelectCardsModal({closeModal}: Props) {
 			return
 		}
 
-		if (selected.length <= selectionSize) {
+		if (selected.length <= maxSelectionSize) {
 			dispatch({
 				type: localMessages.GAME_TURN_ACTION,
 				action: {
@@ -123,7 +128,7 @@ function SelectCardsModal({closeModal}: Props) {
 						variant={primaryButton.variant}
 						size="medium"
 						onClick={handlePrimary}
-						disabled={selected.length < selectionSize}
+						disabled={selected.length < minSelectionSize}
 					>
 						{primaryButton.text}
 					</Button>

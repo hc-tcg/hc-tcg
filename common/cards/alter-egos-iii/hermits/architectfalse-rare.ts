@@ -57,27 +57,29 @@ const ArchitectFalseRare: Hermit = {
 					return
 
 				const lastAttack = player.opponentPlayer.lastHermitAttackInfo
-				if (!lastAttack || lastAttack.turn !== game.state.turn.turnNumber - 1)
-					return
-				if (!lastAttack.attacker.isAlive()) return
+				if (!lastAttack) return
+				lastAttack.forEach((prevAttack) => {
+					if (prevAttack.turn !== game.state.turn.turnNumber - 1) return
+					if (!prevAttack.attacker.isAlive()) return
 
-				if (lastAttack.attackType === 'primary') {
-					game.components
-						.new(
-							StatusEffectComponent,
-							PrimaryAttackDisabledEffect,
-							component.entity,
-						)
-						.apply(lastAttack.attacker.entity)
-				} else if (lastAttack.attackType === 'secondary') {
-					game.components
-						.new(
-							StatusEffectComponent,
-							SecondaryAttackDisabledEffect,
-							component.entity,
-						)
-						.apply(lastAttack.attacker.entity)
-				}
+					if (prevAttack.attackType === 'primary') {
+						game.components
+							.new(
+								StatusEffectComponent,
+								PrimaryAttackDisabledEffect,
+								component.entity,
+							)
+							.apply(prevAttack.attacker.entity)
+					} else if (prevAttack.attackType === 'secondary') {
+						game.components
+							.new(
+								StatusEffectComponent,
+								SecondaryAttackDisabledEffect,
+								component.entity,
+							)
+							.apply(prevAttack.attacker.entity)
+					}
+				})
 			},
 		)
 	},
