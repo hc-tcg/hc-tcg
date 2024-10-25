@@ -3,6 +3,8 @@ import {getHashFromDeck} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import css from './import-export.module.scss'
+import {useSelector} from 'react-redux'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setOpen: boolean
@@ -10,15 +12,11 @@ type Props = {
 }
 
 export function MassExportModal({setOpen, onClose}: Props) {
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+
 	const getExportDecks = () => {
-		const decks: string[] = []
-		getSavedDecks().forEach((deck) => {
-			let savedDeck = loadSavedDeck(JSON.parse(deck))
-			if (savedDeck) {
-				decks.push(
-					`${savedDeck.name}:${savedDeck.icon}:${getHashFromDeck(savedDeck.cards)}\n`,
-				)
-			}
+		const decks = databaseInfo.decks.map((deck) => {
+			return deck.code + ' '
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
 
