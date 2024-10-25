@@ -1,11 +1,32 @@
-import {CardComponent, ObserverComponent} from '../../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
+import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
+import {
+	GasLightEffect,
+	GasLightTriggeredEffect,
+} from '../../../status-effects/gas-light'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import LightningRod from '../../alter-egos/effects/lightning-rod'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
+
+function isFromGasLightEffect(game: GameModel, attack: AttackModel): boolean {
+	const damageSource = attack.getHistory('add_damage').at(0)?.source
+	if (damageSource === undefined) return false
+	const component: CardComponent | StatusEffectComponent | null =
+		game.components.get((damageSource as any) || null)
+	if (!component || component instanceof CardComponent) return false
+	return query.effect.is(GasLightTriggeredEffect, GasLightEffect)(
+		game,
+		component,
+	)
+}
 
 const Trapdoor: Attach = {
 	...attach,
@@ -50,6 +71,8 @@ const Trapdoor: Attach = {
 				if (!targetHermit) return
 				// Target Block cannot be ignored so don't try intercepting damage for log clarity
 				if (targetHermit.getStatusEffect(TargetBlockEffect)) return
+
+				if (isFromGasLightEffect(game, attack)) return
 
 				if (totalReduction < 40) {
 					const damageReduction = Math.min(

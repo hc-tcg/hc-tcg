@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import Trapdoor from 'common/cards/advent-of-tcg/effects/trapdoor'
 import SplashPotionOfHarming from 'common/cards/advent-of-tcg/single-use/splash-potion-of-harming'
+import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
 import PrincessGemRare from 'common/cards/alter-egos-iii/hermits/princessgem-rare'
 import SpookyStressRare from 'common/cards/alter-egos-iii/hermits/spookystress-rare'
 import LightningRod from 'common/cards/alter-egos/effects/lightning-rod'
@@ -17,13 +18,16 @@ import Wolf from 'common/cards/default/effects/wolf'
 import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
 import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
 import VintageBeefCommon from 'common/cards/default/hermits/vintagebeef-common'
+import LavaBucket from 'common/cards/default/single-use/lava-bucket'
 import NetheriteSword from 'common/cards/default/single-use/netherite-sword'
+import SkizzlemanRare from 'common/cards/season-x/hermits/skizzleman-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import {
 	applyEffect,
 	attack,
+	changeActiveHermit,
 	endTurn,
 	pick,
 	playCardFromHand,
@@ -647,6 +651,152 @@ describe('Test Trapdoor', () => {
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Trapdoor only redirects 40hp of Poe Poe Skizz "Jumpscare"', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+					Trapdoor,
+				],
+				playerTwoDeck: [PoePoeSkizzRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							(PoePoeSkizzRare.secondary.damage - 40) /** Trapdoor */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - 40)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(2),
+						)?.health,
+					).toBe(EthosLabCommon.health - 20 /** Jumpscare extra damage */)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', () => {
+		testGame(
+			{
+				playerOneDeck: [...Array(5).fill(EthosLabCommon), Trapdoor, Trapdoor],
+				playerTwoDeck: [SkizzlemanRare, LavaBucket, Anvil],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 2)
+					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 2)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							40 /** 2x Burn */ -
+							20 /** Gaslight extra damage */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							40 /** Trapdoor */ -
+							20 /** Gaslight extra damage */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(2),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							(SkizzlemanRare.secondary.damage +
+								30 /** Anvil */ -
+								40 /** Trapdoor (1) */ -
+								40) /** Trapdoor (3) */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(3),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							40 /** Trapdoor */ -
+							10 /** Anvil */ -
+							20 /** Gaslight extra damage */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(4),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health -
+							10 /** Anvil */ -
+							20 /** Gaslight extra damage */,
 					)
 				},
 			},

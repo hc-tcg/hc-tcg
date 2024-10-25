@@ -376,6 +376,12 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(2),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -383,12 +389,6 @@ describe('Test Pixl World Build', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(GrianchRare.health - PoePoeSkizzRare.secondary.damage)
-					yield* pick(
-						game,
-						query.slot.currentPlayer,
-						query.slot.hermit,
-						query.slot.rowIndex(1),
-					)
 
 					yield* attack(game, 'secondary')
 					yield* pick(
