@@ -72,8 +72,6 @@ function SelectDeck({
 		setFilteredDecks(sortDecks([...databaseInfo.decks, deck]))
 	}
 
-	console.log(databaseInfo.decks)
-
 	// STATE
 	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
 		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
@@ -335,7 +333,6 @@ function SelectDeck({
 						return
 					}
 					const parsedOption = JSON.parse(option) as Tag
-					console.log(parsedOption)
 					setFilteredDecks(
 						sortDecks(
 							databaseInfo.decks.filter((deck) =>

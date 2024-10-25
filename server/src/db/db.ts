@@ -40,7 +40,7 @@ export class Database {
 			);
 			CREATE TABLE IF NOT EXISTS decks(
 				user_id uuid REFERENCES users(user_id),
-				deck_code varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
+				deck_code varchar(7) PRIMARY KEY,
 				previous_code varchar(7) REFERENCES decks(deck_code),
 				name varchar(255) NOT NULL,
 				icon varchar(255) NOT NULL
@@ -67,7 +67,7 @@ export class Database {
 			);
 			CREATE TABLE IF NOT EXISTS user_tags(
 				user_id uuid REFERENCES users(user_id),
-				tag_id varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
+				tag_id varchar(7) PRIMARY KEY,
 				tag_name varchar(255) NOT NULL,
 				tag_color varchar(7) NOT NULL
 			);

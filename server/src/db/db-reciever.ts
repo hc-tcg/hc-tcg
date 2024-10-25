@@ -114,7 +114,7 @@ export function* insertDeck(
 		action.payload.deck.icon,
 		action.payload.deck.cards.map((card) => card.numericId),
 		deckTags.map((tag) => tag.key),
-		generateDatabaseCode(),
+		action.payload.deck.code,
 		player.uuid,
 	)
 }
