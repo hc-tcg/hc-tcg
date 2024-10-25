@@ -313,7 +313,9 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(SmallishbeansRare.health - SmallishbeansRare.primary.damage - 20)
+					).toBe(
+						SmallishbeansRare.health - SmallishbeansRare.primary.damage - 20,
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
