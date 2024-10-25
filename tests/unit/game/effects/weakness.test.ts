@@ -265,7 +265,7 @@ describe('Test Weakness', () => {
 					SmallishbeansRare,
 					SmallishbeansRare,
 					SmallishbeansRare,
-					PotionOfWeakness
+					PotionOfWeakness,
 				],
 				saga: function* (game) {
 					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
@@ -312,9 +312,7 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(
-						ImpulseSVCommon.health - SmallishbeansRare.primary.damage - 20
-					)
+					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage - 20)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
