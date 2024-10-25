@@ -202,7 +202,12 @@ export class BattleLogModel {
 	) {
 		if (!attack.attacker) return
 
-		const attacks = [attack, ...attack.nextAttacks]
+		const getAllSubattacks = (thisAttack: AttackModel): Array<AttackModel> => {
+			if (thisAttack.type !== attack.type) return [thisAttack]
+			return [thisAttack, ...thisAttack.nextAttacks.flatMap(getAllSubattacks)]
+		}
+
+		const attacks = getAllSubattacks(attack)
 
 		let log = attacks.reduce((reducer, subAttack) => {
 			if (subAttack.type !== attack.type) {
@@ -221,7 +226,9 @@ export class BattleLogModel {
 
 			const weaknessAttack = attacks.find((a) => a.isType('weakness'))
 			const weaknessDamage =
-				attack.isType('primary', 'secondary') && weaknessAttack
+				attack.isType('primary', 'secondary') &&
+				attack.createWeakness !== 'never' &&
+				weaknessAttack
 					? weaknessAttack.calculateDamage()
 					: 0
 

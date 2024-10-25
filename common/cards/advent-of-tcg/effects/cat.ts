@@ -1,49 +1,68 @@
-import {CardComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import CardOld from '../../base/card'
+import {SelectCards} from '../../../types/modal-requests'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
 
-class Cat extends CardOld {
-	props: Attach = {
-		...attach,
-		id: 'cat',
-		numericId: 202,
-		name: 'Cat',
-		expansion: 'advent_of_tcg',
-		rarity: 'rare',
-		tokens: 1,
-		description:
-			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
-	}
-
-	override onAttach(
+const Cat: Attach = {
+	...attach,
+	id: 'cat',
+	numericId: 202,
+	name: 'Cat',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
+	tokens: 1,
+	description:
+		'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to place the bottom card of your deck on top to be drawn next.',
+	onAttach(
 		game: GameModel,
 		component: CardComponent,
-		_observer: Observer,
+		observer: ObserverComponent,
 	) {
 		const {player} = component
-		player.hooks.afterAttack.add(component, (attack) => {
-			if (!pos.rowId || !pos.rowId.hermitCard) return
-			if (
-				attack.id !==
-				pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)
-			)
-				return
 
-			if (player.pile.length === 0) return
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.EFFECT_POST_ATTACK_REQUESTS,
+			(attack) => {
+				if (!component.slot.inRow()) return
+				const myHermit = component.slot.row.getHermit()
+				if (!myHermit || !attack.isAttacker(myHermit.entity)) return
+				if (
+					!attack.isType('primary', 'secondary') ||
+					query.some(...attack.shouldIgnoreCards)(game, myHermit)
+				)
+					return
 
-			game.addModalRequest({
-				player: player.entity,
-				modall: {
-					type: 'selectCards',
-					payload: {
-						modalName: 'Cat',
-						modalDescription: 'Draw a card from the bottom of your deck?',
-						cards: [player.pile[0].toLocalCardInstance()],
+				if (
+					!game.components.exists(
+						CardComponent,
+						query.card.slot(query.slot.currentPlayer, query.slot.deck),
+					)
+				)
+					return
+
+				let currentTopCard = player
+					.getDeck()
+					.sort(CardComponent.compareOrder)[0]
+
+				const modal: SelectCards.Request = {
+					player: player.entity,
+					modal: {
+						type: 'selectCards',
+						name: 'Cat - View your top card',
+						description: 'Place a card from the bottom of your deck on top?',
+						cards: [currentTopCard.entity],
 						selectionSize: 0,
+						cancelable: false,
 						primaryButton: {
-							text: 'Draw from Bottom',
+							text: 'Place from Bottom',
 							variant: 'primary',
 						},
 						secondaryButton: {
@@ -51,27 +70,52 @@ class Cat extends CardOld {
 							variant: 'secondary',
 						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult) return 'SUCCESS'
-					if (!modalResult.result) return 'SUCCESS'
+					onResult(modalResult) {
+						newObserver.unsubscribeFromEverything()
+						if (!modalResult) return 'SUCCESS'
+						if (!modalResult.result) return 'SUCCESS'
 
-					player.hooks.onTurnEnd.add(component, (_drawCards) => {
-						player.hooks.onTurnEnd.remove(component)
-						return [player.pile[-1]]
-					})
+						player
+							.getDeck()
+							.sort(CardComponent.compareOrder)
+							.at(-1)
+							?.attach(
+								game.components.new(DeckSlotComponent, player.entity, {
+									position: 'front',
+								}),
+							)
 
-					return 'SUCCESS'
-				},
-				onTimeout() {},
-			})
-		})
-	}
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						newObserver.unsubscribeFromEverything()
+					},
+				}
 
-	override onDetach(_game: GameModel, component: CardComponent) {
-		const {player} = component
-		player.hooks.afterAttack.remove(component)
-	}
+				const newObserver = game.components.new(
+					ObserverComponent,
+					component.entity,
+				)
+				const updateModal = () => {
+					newObserver.unsubscribe(currentTopCard.hooks.onChangeSlot)
+					const topCard = player
+						.getDeck()
+						.sort(CardComponent.compareOrder)
+						.at(0)
+					if (!topCard) {
+						game.removeModalRequest(game.state.modalRequests.indexOf(modal))
+						return
+					}
+					currentTopCard = topCard
+					modal.modal.cards = [topCard.entity]
+					newObserver.subscribe(topCard.hooks.onChangeSlot, updateModal)
+				}
+
+				newObserver.subscribe(currentTopCard.hooks.onChangeSlot, updateModal)
+				game.addModalRequest(modal)
+			},
+		)
+	},
 }
 
 export default Cat

@@ -7,6 +7,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {MockedAttack, setupMockCard} from '../../../utils/attacks'
+import BerryBush from '../../advent-of-tcg/effects/berry-bush'
 import ArmorStand from '../../alter-egos/effects/armor-stand'
 import {InstancedValue} from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -17,7 +18,7 @@ const pickCondition = query.every(
 	query.slot.hermit,
 	query.not(query.slot.empty),
 	query.not(query.slot.active),
-	query.not(query.slot.has(ArmorStand)),
+	query.not(query.slot.has(ArmorStand, BerryBush)),
 )
 
 const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)

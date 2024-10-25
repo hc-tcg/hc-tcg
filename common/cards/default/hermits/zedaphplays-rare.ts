@@ -46,6 +46,7 @@ const ZedaphPlaysRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'primary')
 					return
+				if (opponentPlayer.hasStatusEffect(SheepStareEffect)) return
 
 				const coinFlip = flipCoin(player, component)
 				if (coinFlip[0] !== 'heads') return
