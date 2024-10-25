@@ -223,6 +223,7 @@ function SelectDeck({
 		})
 		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
+		setLoadedDeck(newSavedDecks[0])
 	}
 	const canDuplicateDeck = () => {
 		return (
