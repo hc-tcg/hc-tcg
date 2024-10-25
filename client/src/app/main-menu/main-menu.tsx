@@ -9,6 +9,7 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {validateDeck} from 'common/utils/validation'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -17,8 +18,21 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () =>
-		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+	const handleJoinQueue = () => {
+		const validation = validateDeck(playerDeck.cards)
+
+		if (validation.valid) {
+			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+		} else {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Your deck is not valid!',
+				description: `The deck "${playerDeck.name}" does not meet public game validation requirements.`,
+				image: `/images/types/type-${playerDeck.icon}.png`,
+			})
+		}
+	}
 	const handlePrivateGame = () =>
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 	const handleSoloGame = () => setMenuSection('boss-landing')
