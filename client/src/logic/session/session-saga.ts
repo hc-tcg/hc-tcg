@@ -73,6 +73,13 @@ function* setupData(socket: any) {
 			value: decks.decks,
 		},
 	})
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'tags',
+			value: decks.tags,
+		},
+	})
 
 	yield* sendMsg({
 		type: clientMessages.GET_STATS,
@@ -293,6 +300,13 @@ export function* newDeckSaga() {
 			data: {
 				key: 'decks',
 				value: result.decks,
+			},
+		})
+		yield put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'tags',
+				value: result.tags,
 			},
 		})
 	}

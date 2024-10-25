@@ -23,9 +23,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	convertLegacyDecks,
-	getCreatedTags,
 	getLegacyDecks,
-	keysToTags,
 	setActiveDeck,
 	toEditDeck,
 	toSavedDeck,
@@ -88,8 +86,8 @@ function SelectDeck({
 				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
 				if (!aHasTags && bHasTags) return 1
 				if (aHasTags && !bHasTags) return 0
-				const aFirstTag = a.tags![0]
-				const bFirstTag = b.tags![0]
+				const aFirstTag = a.tags![0].name
+				const bFirstTag = b.tags![0].name
 				return aFirstTag.localeCompare(bFirstTag)
 			}
 			//Default case so something is always returned
@@ -100,7 +98,7 @@ function SelectDeck({
 	function filterDecks(decks: Array<Deck>): Array<Deck> {
 		if (!settings.lastSelectedTag) return decks
 		return decks.filter((deck) =>
-			deck.tags?.includes(settings.lastSelectedTag!),
+			deck.tags?.find((tag) => tag.key === settings.lastSelectedTag),
 		)
 	}
 	const [sortedDecks, setSortedDecks] = useState<Array<Deck>>(
@@ -128,19 +126,21 @@ function SelectDeck({
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
-	const [tagFilter, setTagFilter] = useState<Tag>(
-		settings.lastSelectedTag
-			? keysToTags([settings.lastSelectedTag])[0]
-			: {
-					name: 'No Filter',
-					color: '#ffffff',
-					key: '0',
-				},
-	)
+	const [tagFilter, setTagFilter] = useState<Tag>(() => {
+		const lastSelectedTag = databaseInfo.tags.find(
+			(tag) => tag.key === settings.lastSelectedTag,
+		)
+		if (lastSelectedTag) return lastSelectedTag
+		return {
+			name: 'No Filter',
+			color: '#ffffff',
+			key: '0',
+		}
+	})
 
 	const tagsDropdownOptions = [
 		{name: 'No Filter', color: '#ffffff'},
-		...getCreatedTags(),
+		...databaseInfo.tags,
 	].map((option) => ({
 		name: option.name,
 		key: JSON.stringify(option),
@@ -287,7 +287,7 @@ function SelectDeck({
 			>
 				{deck.tags && deck.tags.length > 0 ? (
 					<div className={css.multiColoredCircle}>
-						{keysToTags(deck.tags).map((tag, i) => (
+						{deck.tags.map((tag, i) => (
 							<div
 								className={css.singleTag}
 								style={{backgroundColor: tag.color}}
@@ -343,14 +343,12 @@ function SelectDeck({
 					const parsedOption = JSON.parse(option) as Tag
 					console.log(parsedOption)
 					setFilteredDecks(
-						sortedDecks.filter(
-							(deck) =>
-								deck.tags &&
-								keysToTags(deck.tags).some(
-									(tag) =>
-										tag.name === parsedOption.name &&
-										tag.color === parsedOption.color,
-								),
+						sortedDecks.filter((deck) =>
+							deck.tags.some(
+								(tag) =>
+									tag.name === parsedOption.name &&
+									tag.color === parsedOption.color,
+							),
 						),
 					)
 					setTagFilter(parsedOption)
@@ -419,7 +417,7 @@ function SelectDeck({
 			/>
 			<TagsModal
 				setOpen={showManageTagsModal}
-				tags={getCreatedTags()}
+				tags={databaseInfo.tags}
 				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
 			/>
 			<AlertModal
@@ -490,7 +488,7 @@ function SelectDeck({
 								</div>
 								<div className={css.deckName}>{loadedDeck.name}</div>
 								{loadedDeck.tags &&
-									keysToTags(loadedDeck.tags).map((tag) => {
+									loadedDeck.tags.map((tag) => {
 										return (
 											<div className={css.fullTagTitle}>
 												<span
@@ -522,7 +520,7 @@ function SelectDeck({
 								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
 									<div className={css.multiColoredCircleBorder}>
 										<div className={css.multiColoredCircle}>
-											{keysToTags(loadedDeck.tags).map((tag) => (
+											{loadedDeck.tags.map((tag) => (
 												<div
 													className={css.singleTag}
 													style={{backgroundColor: tag.color}}

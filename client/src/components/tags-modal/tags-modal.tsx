@@ -3,7 +3,6 @@ import {Tag} from 'common/types/deck'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import css from 'components/tags-modal/tags-modal.module.scss'
-import {deleteTag} from 'logic/saved-decks/saved-decks'
 import {useState} from 'react'
 
 type Props = {

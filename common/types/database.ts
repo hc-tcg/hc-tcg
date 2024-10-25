@@ -1,4 +1,5 @@
 import {Card} from '../cards/base/types'
+import {Tag} from './deck'
 
 export type User = {
 	uuid: string
@@ -17,7 +18,7 @@ export type Deck = {
 	code: string
 	name: string
 	icon: string
-	tags: Array<string>
+	tags: Array<Tag>
 	cards: Array<Card>
 }
 

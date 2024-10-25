@@ -22,7 +22,7 @@ export type EditedDeck = {
 		| 'speedrunner'
 		| 'terraform'
 	cards: Array<LocalCardInstance>
-	tags: Array<string> | null
+	tags: Array<Tag>
 }
 
 export type SavedDeckT = {
@@ -45,31 +45,4 @@ export type SavedDeckT = {
 		cardInstance: string
 	}>
 	tags: Array<string> | null
-}
-
-export function loadSavedDeck(deck: SavedDeckT | null): EditedDeck | null {
-	if (!deck) return null
-
-	let name = deck.name
-	let icon = deck.icon
-
-	let cards = deck.cards
-		.map((card) => {
-			let cardInfo = CARDS[card.cardId]
-			if (!cardInfo) return null
-			return {
-				props: WithoutFunctions(cardInfo),
-				entity: card.cardInstance,
-			}
-		})
-		.filter((card) => card !== null) as Array<LocalCardInstance>
-
-	let tags = deck.tags
-
-	return {
-		name,
-		icon,
-		cards,
-		tags,
-	}
 }

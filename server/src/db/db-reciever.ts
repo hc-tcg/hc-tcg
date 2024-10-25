@@ -7,6 +7,7 @@ import {broadcast} from 'utils/comm'
 import root from 'serverRoot'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {call} from 'typed-redux-saga'
+import {Tag} from 'common/types/deck'
 
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
@@ -53,19 +54,32 @@ export function* getDecks(
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+		broadcast([player], {
+			type: serverMessages.DECKS_RECIEVED,
+			decks: [],
+			tags: [],
+		})
 		return
 	}
 
-	const result = yield* call([pgDatabase, pgDatabase.getDecks], player.uuid)
+	const decksResult = yield* call(
+		[pgDatabase, pgDatabase.getDecks],
+		player.uuid,
+	)
+	const tagsResult = yield* call([pgDatabase, pgDatabase.getTags], player.uuid)
 
-	if (result.type === 'success') {
+	if (decksResult.type === 'success' && tagsResult.type === 'success') {
 		broadcast([player], {
 			type: serverMessages.DECKS_RECIEVED,
-			decks: result.body,
+			decks: decksResult.body,
+			tags: tagsResult.body,
 		})
 	} else {
-		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
+		broadcast([player], {
+			type: serverMessages.DECKS_RECIEVED,
+			decks: [],
+			tags: [],
+		})
 	}
 }
 
@@ -74,16 +88,31 @@ export function* insertDeck(
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
 		return
 	}
 
+	const deckTags = action.payload.deck.tags
+	const createdTags = deckTags.filter((tag) => tag.key.includes('NEW'))
+	const returnedTags: Tag[] = []
+	const oldTags = deckTags.filter((tag) => !tag.key.includes('NEW'))
+
+	for (let i = 0; i < createdTags.length; i++) {
+		const newTag = yield* call(
+			[pgDatabase, pgDatabase.insertTag],
+			player.uuid,
+			createdTags[i].name,
+			createdTags[i].color,
+		)
+		if (newTag.type === 'success') returnedTags.push(newTag.body)
+	}
+
+	// Insert deck
 	const result = yield* call(
 		[pgDatabase, pgDatabase.insertDeck],
 		action.payload.deck.name,
 		action.payload.deck.icon,
 		action.payload.deck.cards.map((card) => card.numericId),
-		action.payload.deck.tags,
+		[...oldTags, ...returnedTags].map((tag) => tag.key),
 		player.uuid,
 	)
 
@@ -99,7 +128,6 @@ export function* deleteDeck(
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {type: serverMessages.DECKS_RECIEVED, decks: []})
 		return
 	}
 

@@ -95,6 +95,7 @@ describe('Test Database', () => {
 		assert(code.type === 'success', 'The deck should be created successfully')
 
 		const returnedDeck = await database.getDeckFromID(code.body)
+
 		assert(
 			returnedDeck.type === 'success',
 			'The deck should be retrieved successfully',
@@ -102,7 +103,7 @@ describe('Test Database', () => {
 
 		expect(returnedDeck.body.name).toBe('Testing deck')
 		expect(returnedDeck.body.icon).toBe('balanced')
-		expect(returnedDeck.body.tags).toStrictEqual([tag.body.key])
+		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
 		expect(
 			returnedDeck.body.cards.filter((card) => card.numericId === 1).length,
@@ -295,11 +296,31 @@ describe('Test Database', () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
+		const tag1 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 1',
+			'#FF0000',
+		)
+		const tag2 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 2',
+			'#FF0000',
+		)
+		const tag3 = await database.insertTag(
+			user.body.uuid,
+			'Test Tag 3',
+			'#FF0000',
+		)
+
+		assert(tag1.type === 'success', 'Tag 1 was created successfully')
+		assert(tag2.type === 'success', 'Tag 2 was created successfully')
+		assert(tag3.type === 'success', 'Tag 3 was created successfully')
+
 		const deck1 = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			[1, 2, 2, 3, 4, 4, 4, 5],
-			playerDeck.tags,
+			[tag1.body.key],
 			user.body.uuid,
 		)
 
@@ -307,7 +328,7 @@ describe('Test Database', () => {
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.cards,
-			playerDeck.tags,
+			[tag2.body.key],
 			user.body.uuid,
 		)
 
@@ -319,19 +340,27 @@ describe('Test Database', () => {
 			user.body.uuid,
 		)
 
-		assert(deck1.type === 'success', 'Deck 1 was created successfu;ly')
-		assert(deck2.type === 'success', 'Deck 2 was created successfu')
-		assert(deck3.type === 'success', 'Deck 3 was created successfu')
+		assert(deck1.type === 'success', 'Deck 1 was created successfully')
+		assert(deck2.type === 'success', 'Deck 2 was created successfully')
+		assert(deck3.type === 'success', 'Deck 3 was created successfully')
 
 		const allDecks = await database.getDecks(user.body.uuid)
+
 		assert(
 			allDecks.type === 'success',
 			'The decks should be retrieved successfully',
 		)
 
-		expect(allDecks.body.find((deck) => deck.code === deck1.body)).toBeTruthy()
-		expect(allDecks.body.find((deck) => deck.code === deck2.body)).toBeTruthy()
-		expect(allDecks.body.find((deck) => deck.code === deck3.body)).toBeTruthy()
+		const returnedDeck1 = allDecks.body.find((deck) => deck.code === deck1.body)
+		const returnedDeck2 = allDecks.body.find((deck) => deck.code === deck2.body)
+		const returnedDeck3 = allDecks.body.find((deck) => deck.code === deck3.body)
+
+		expect(returnedDeck1).toBeTruthy()
+		expect(returnedDeck2).toBeTruthy()
+		expect(returnedDeck3).toBeTruthy()
+
+		expect(returnedDeck1?.tags).toStrictEqual([tag1.body])
+		expect(returnedDeck2?.tags).toStrictEqual([tag2.body])
 
 		const firstDeckNumericIds = allDecks.body
 			.find((deck) => deck.code === deck1.body)

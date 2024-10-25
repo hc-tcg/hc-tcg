@@ -17,17 +17,13 @@ import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {
-	getCreatedTags,
-	keysToTags,
-	saveTag,
-} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -129,21 +125,14 @@ const addTag = (
 	setColor(color)
 }
 
-const selectTag = (
-	option: string,
-	setColor: React.Dispatch<React.SetStateAction<string>>,
-	setKey: React.Dispatch<React.SetStateAction<string>>,
-	ref: React.RefObject<HTMLInputElement>,
+const addCreatedTag = (
+	deckTags: Array<Tag>,
+	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
+	newTag: Tag,
 ) => {
-	const tags = getCreatedTags()
-	const selectedTag = tags.find((tag) => {
-		const parsedTag = JSON.parse(option)
-		return tag.name === parsedTag.name && tag.color === parsedTag.color
-	})
-	if (!selectedTag) return
-	setColor(selectedTag.color)
-	setKey(selectedTag.key)
-	if (ref.current) ref.current.value = selectedTag.name
+	if (deckTags.includes(newTag)) return
+	if (deckTags.length >= 3) return
+	setTags([...deckTags, newTag])
 }
 
 type Props = {
@@ -223,6 +212,7 @@ const ALL_CARDS = sortCards(
 function EditDeck({back, title, saveDeck, deck}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	// STATE
 	const [textQuery, setTextQuery] = useState<string>('')
@@ -235,13 +225,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
-	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
-	const [tags, setTags] = useState<Array<Tag>>(
-		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
+	const [nextKey, setNextKey] = useState<string>(
+		'NEW' + Math.random().toString(),
 	)
+	const [tags, setTags] = useState<Array<Tag>>(loadedDeck.tags)
 	const tagNameRef = useRef<HTMLInputElement>(null)
 
-	const tagsDropdownOptions = getCreatedTags().map((option) => ({
+	const tagsDropdownOptions = databaseInfo.tags.map((option) => ({
 		name: option.name,
 		key: JSON.stringify(option),
 		color: option.color,
@@ -377,12 +367,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		// }
 
 		// Set up tags
-		newDeck.tags = tags.map((tag) => tag.key)
-
-		// Save tags
-		tags.forEach((tag) => {
-			saveTag(tag)
-		})
+		newDeck.tags = tags
 
 		// Send toast and return to select deck screen
 		saveAndReturn(newDeck, initialDeckState)
@@ -674,7 +659,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									className={css.deckTagsForm}
 									onSubmit={(e) => {
 										addTag(tags, setTags, color, nextKey, setColor, e)
-										setNextKey(Math.random().toString())
+										setNextKey('NEW' + Math.random().toString())
 									}}
 								>
 									<Dropdown
@@ -685,9 +670,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										}
 										label="Saved Tags"
 										options={tagsDropdownOptions}
-										action={(option) =>
-											selectTag(option, setColor, setNextKey, tagNameRef)
-										}
+										action={(option) => {
+											const parsedTag = JSON.parse(option) as Tag
+											addCreatedTag(tags, setTags, parsedTag)
+										}}
 									/>
 									<ColorPickerDropdown
 										button={

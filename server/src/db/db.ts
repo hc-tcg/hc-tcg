@@ -68,11 +68,11 @@ export class Database {
 			CREATE TABLE IF NOT EXISTS user_tags(
 				user_id uuid REFERENCES users(user_id),
 				tag_id varchar(7) PRIMARY KEY DEFAULT substr(digest(random()::text, 'sha1')::text, 3, 7),
-				name varchar(255) NOT NULL,
-				color varchar(7) NOT NULL
+				tag_name varchar(255) NOT NULL,
+				tag_color varchar(7) NOT NULL
 			);
 			ALTER TABLE user_tags DROP CONSTRAINT IF EXISTS color_hex_constraint;
-			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (color ~* '^#[a-f0-9]{6}$');
+			ALTER TABLE user_tags ADD CONSTRAINT color_hex_constraint CHECK (tag_color ~* '^#[a-f0-9]{6}$');
 			CREATE TABLE IF NOT EXISTS deck_tags(
 				deck_code varchar(7) REFERENCES decks(deck_code),
 				tag_id varchar(7) REFERENCES user_tags(tag_id)
@@ -215,6 +215,7 @@ export class Database {
 					`SELECT * FROM decks
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
 					LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+					LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
 					WHERE decks.deck_code = $1
 					`,
 					[deckCode],
@@ -232,9 +233,12 @@ export class Database {
 					),
 				]
 			}, [])
-			const tags: Array<string> = deck.reduce((r: Array<string>, row) => {
-				if (r.includes(row['tag_id'])) return r
-				return [...r, row['tag_id']]
+			const tags: Array<Tag> = deck.reduce((r: Array<Tag>, row) => {
+				if (r.find((tag) => tag.key === row['tag_id'])) return r
+				return [
+					...r,
+					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
+				]
 			}, [])
 
 			return {
@@ -251,11 +255,12 @@ export class Database {
 		try {
 			const decksResult = (
 				await this.pool.query(
-					`SELECT 
-						decks.user_id,decks.deck_code,decks.previous_code,decks.name,decks.icon,
-						deck_cards.card_id,deck_cards.copies,deck_tags.tag_id FROM decks
+					`SELECT decks.user_id,decks.deck_code,decks.previous_code,decks.name,decks.icon,
+						deck_cards.card_id,deck_cards.copies,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
 						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
 						WHERE decks.user_id = $1
 						`,
 					[uuid],
@@ -266,7 +271,11 @@ export class Database {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
-				const tag: string | null = row['tag_id']
+				const tag: Tag = {
+					name: row['tag_name'],
+					color: row['tag_color'],
+					key: row['tag_id'],
+				}
 				const cardId: number = row['card_id']
 				const cards: Array<Card> = [
 					...Array(row['copies']).fill(
@@ -287,7 +296,7 @@ export class Database {
 					return [...allDecks, newDeck]
 				}
 
-				if (tag && !foundDeck.tags.includes(tag)) {
+				if (tag && !foundDeck.tags.find((tag) => tag.key === row['tag_id'])) {
 					foundDeck.tags.push(tag)
 				}
 
@@ -331,15 +340,15 @@ export class Database {
 	): Promise<DatabaseResult<Tag>> {
 		try {
 			const tag = await this.pool.query(
-				'INSERT INTO user_tags (user_id, name, color) values ($1,$2,$3) RETURNING tag_id,name,color',
+				'INSERT INTO user_tags (user_id, tag_name, tag_color) values ($1,$2,$3) RETURNING tag_id,tag_name,tag_color',
 				[uuid, tagName, tagColor],
 			)
 
 			return {
 				type: 'success',
 				body: {
-					name: tag.rows[0]['name'],
-					color: tag.rows[0]['color'],
+					name: tag.rows[0]['tag_name'],
+					color: tag.rows[0]['tag_color'],
 					key: tag.rows[0]['tag_id'],
 				},
 			}
@@ -365,15 +374,15 @@ export class Database {
 	public async getTags(uuid: string): Promise<DatabaseResult<Array<Tag>>> {
 		try {
 			const tags = await this.pool.query(
-				'SELECT tag_id,name,color FROM user_tags WHERE user_id = $1',
+				'SELECT tag_id,tag_name,tag_color FROM user_tags WHERE user_id = $1',
 				[uuid],
 			)
 
 			return {
 				type: 'success',
 				body: tags.rows.map((row) => ({
-					name: row['name'],
-					color: row['color'],
+					name: row['tag_name'],
+					color: row['tag_color'],
 					key: row['tag_id'],
 				})),
 			}
