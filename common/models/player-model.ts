@@ -1,16 +1,14 @@
 import {Socket} from 'socket.io'
-import {EditedDeck} from '../../common/types/deck'
-import {getStarterPack} from '../../server/src/utils/state-gen'
+import {EditedDeck, PlayerDeck} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
-import {validateDeck} from '../utils/validation'
 
 export type PlayerId = string & {__player_id: never}
 
 export class PlayerModel {
 	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: EditedDeck
+	private internalDeck: PlayerDeck
 	public name: string
 	public minecraftName: string
 	public censoredName: string
@@ -22,11 +20,11 @@ export class PlayerModel {
 		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
-		// Always generate a starter deck as the default
 		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
-			cards: getStarterPack(),
+			code: '',
+			cards: [],
 			tags: [],
 		}
 
@@ -59,11 +57,12 @@ export class PlayerModel {
 		}
 	}
 
-	setPlayerDeck(newDeck: EditedDeck) {
+	setPlayerDeck(newDeck: PlayerDeck) {
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
 			cards: newDeck.cards,
+			code: newDeck.code,
 			tags: newDeck.tags,
 		}
 	}

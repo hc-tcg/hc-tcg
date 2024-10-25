@@ -51,6 +51,7 @@ export function* authenticateUser(
 
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
+	newActiveDeckName?: string,
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
@@ -73,6 +74,9 @@ export function* getDecks(
 			type: serverMessages.DECKS_RECIEVED,
 			decks: decksResult.body,
 			tags: tagsResult.body,
+			newActiveDeck: newActiveDeckName
+				? decksResult.body.find((deck) => deck.name === newActiveDeckName)
+				: undefined,
 		})
 	} else {
 		broadcast([player], {

@@ -2,7 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
-import {Tag} from 'common/types/deck'
+import {PlayerDeck, Tag} from 'common/types/deck'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -85,8 +85,9 @@ export const localMessages = messages({
 	INSERT_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
-	DECK_SET: null,
 	UPDATE_DECKS: null,
+	UPDATE_DECKS_THEN_SELECT: null,
+	SELECT_DECK: null,
 })
 
 type Messages = [
@@ -214,10 +215,11 @@ type Messages = [
 	},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
+	{type: typeof localMessages.SELECT_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
-	{type: typeof localMessages.DECK_SET; deck: Deck},
 	{type: typeof localMessages.UPDATE_DECKS},
+	{type: typeof localMessages.UPDATE_DECKS_THEN_SELECT; deck_name: string},
 ]
 
 /** A message used locally on the client to update global state */

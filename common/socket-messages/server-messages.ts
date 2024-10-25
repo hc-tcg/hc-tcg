@@ -107,6 +107,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.DECKS_RECIEVED
 		decks: Array<Deck>
 		tags: Array<Tag>
+		newActiveDeck?: Deck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
 ]

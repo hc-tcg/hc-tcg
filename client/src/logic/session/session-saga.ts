@@ -154,7 +154,10 @@ export function* loginSaga() {
 		let activeDeck = getActiveDeck()
 		if (activeDeck) {
 			console.log('Select previous active deck')
-			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
 		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
@@ -199,10 +202,13 @@ export function* loginSaga() {
 
 		if (activeDeck) {
 			console.log('Selected previous active deck: ' + activeDeck.name)
-			yield* put<LocalMessage>({type: localMessages.DECK_SET, deck: activeDeck})
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
 			yield* sendMsg({
 				type: clientMessages.UPDATE_DECK,
-				deck: toEditDeck(activeDeck),
+				deck: {...toEditDeck(activeDeck), code: activeDeck.code},
 			})
 		}
 
@@ -272,11 +278,19 @@ export function* logoutSaga() {
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
-		localMessages.INSERT_DECK,
+		localMessages.UPDATE_DECKS,
 		function* () {
 			yield* sendMsg({type: clientMessages.GET_DECKS})
 		},
 	)
+	yield* takeEvery<
+		LocalMessageTable[typeof localMessages.UPDATE_DECKS_THEN_SELECT]
+	>(localMessages.UPDATE_DECKS_THEN_SELECT, function* (action) {
+		yield* sendMsg({
+			type: clientMessages.GET_DECKS_THEN_SELECT,
+			deck_name: action.deck_name,
+		})
+	})
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {
@@ -315,6 +329,14 @@ export function* newDeckSaga() {
 				value: result.tags,
 			},
 		})
+		if (result.newActiveDeck) {
+			// Select new active deck
+			localStorage.setItem('activeDeck', JSON.stringify(result.newActiveDeck))
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: result.newActiveDeck,
+			})
+		}
 	}
 }
 

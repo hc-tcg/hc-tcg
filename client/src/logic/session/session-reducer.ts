@@ -1,6 +1,6 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
-import {EditedDeck} from 'common/types/deck'
+import {PlayerDeck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {toEditDeck} from 'logic/saved-decks/saved-decks'
 
@@ -9,7 +9,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: EditedDeck
+	playerDeck: PlayerDeck
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -27,7 +27,7 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: [], tags: []},
+	playerDeck: {name: '', icon: 'any', code: '', cards: [], tags: []},
 	connecting: false,
 	connected: false,
 	toast: {open: false, title: '', description: '', image: ''},
@@ -68,10 +68,10 @@ const loginReducer = (
 				...action.updates,
 			}
 		case localMessages.INSERT_DECK:
-		case localMessages.DECK_SET:
+		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: toEditDeck(action.deck),
+				playerDeck: {...toEditDeck(action.deck), code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
 			return {

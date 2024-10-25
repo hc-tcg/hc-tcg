@@ -1,5 +1,4 @@
-import {CARDS} from '../cards'
-import {LocalCardInstance, WithoutFunctions} from './server-requests'
+import {LocalCardInstance} from './server-requests'
 
 export type Tag = {
 	name: string
@@ -9,18 +8,15 @@ export type Tag = {
 
 export type EditedDeck = {
 	name: string
-	icon:
-		| 'any'
-		| 'balanced'
-		| 'builder'
-		| 'explorer'
-		| 'farm'
-		| 'miner'
-		| 'prankster'
-		| 'pvp'
-		| 'redstone'
-		| 'speedrunner'
-		| 'terraform'
+	icon: string
+	cards: Array<LocalCardInstance>
+	tags: Array<Tag>
+}
+
+export type PlayerDeck = {
+	name: string
+	icon: string
+	code: string
 	cards: Array<LocalCardInstance>
 	tags: Array<Tag>
 }

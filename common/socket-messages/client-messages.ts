@@ -2,7 +2,7 @@ import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck} from '../types/database'
-import {EditedDeck, Tag} from '../types/deck'
+import {EditedDeck, PlayerDeck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages({
@@ -25,6 +25,7 @@ export const clientMessages = messages({
 	PG_AUTHENTICATE: null,
 	PG_INSERT_USER: null,
 	GET_DECKS: null,
+	GET_DECKS_THEN_SELECT: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
 	DELETE_DECK: null,
@@ -33,7 +34,7 @@ export const clientMessages = messages({
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.UPDATE_DECK; deck: EditedDeck},
+	{type: typeof clientMessages.UPDATE_DECK; deck: PlayerDeck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{type: typeof clientMessages.CREATE_BOSS_GAME},
 	{type: typeof clientMessages.CANCEL_BOSS_GAME},
@@ -62,6 +63,7 @@ export type ClientMessages = [
 		minecraftName: string | null
 	},
 	{type: typeof clientMessages.GET_DECKS},
+	{type: typeof clientMessages.GET_DECKS_THEN_SELECT; deck_name: string},
 	{type: typeof clientMessages.GET_STATS},
 	{type: typeof clientMessages.INSERT_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},

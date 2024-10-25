@@ -169,10 +169,9 @@ function* gameManager(game: GameModel) {
 		)
 
 		if (gamePlayers[0].uuid && gamePlayers[1].uuid && game.endInfo.outcome) {
-			//@TODO set up decks so this can actually be added properly
 			pgDatabase.insertGame(
-				'', //@TODO Add p1 deck
-				'', //@TODO Add p2 deck
+				gamePlayers[0].deck.code, //@TODO Add p1 deck
+				gamePlayers[1].deck.code, //@TODO Add p2 deck
 				gamePlayers[0].uuid,
 				gamePlayers[1].uuid,
 				game.endInfo.outcome,

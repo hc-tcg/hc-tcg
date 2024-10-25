@@ -174,11 +174,12 @@ function SelectDeck({
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		setActiveDeck(loadedDeck)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
-		dispatch({type: localMessages.UPDATE_DECKS})
+		dispatch({
+			type: localMessages.UPDATE_DECKS_THEN_SELECT,
+			deck_name: loadedDeck.name,
+		})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
@@ -232,10 +233,6 @@ function SelectDeck({
 		setSavedDecks(newSavedDecks)
 		setSortedDecks(sortDecks(newSavedDecks))
 		setFilteredDecks(sortDecks(newSavedDecks))
-		dispatch({
-			type: localMessages.DECK_SET,
-			deck: newSavedDecks[0],
-		})
 		dispatch({
 			type: localMessages.DATABASE_SET,
 			data: {
