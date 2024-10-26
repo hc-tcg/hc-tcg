@@ -205,7 +205,7 @@ function SelectDeck({
 		const deckToDelete = databaseInfo.decks.find(
 			(deck) => deck.code === deletedDeck.code,
 		)
-		if (!deckToDelete) return
+		if (!deckToDelete || databaseInfo.decks.length <= 1) return
 		dispatch({
 			type: localMessages.DELETE_DECK,
 			deck: deckToDelete,

@@ -309,7 +309,10 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
 		localMessages.INSERT_DECK,
 		function* (action) {
-			saveDeckToLocalStorage(toPlayerDeck(action.deck))
+			if (debugConfig.disableDatabase) {
+				saveDeckToLocalStorage(toPlayerDeck(action.deck))
+				return
+			}
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
 		},
 	)
@@ -323,7 +326,10 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
 		localMessages.DELETE_DECK,
 		function* (action) {
-			deleteDeckFromLocalStorage(action.deck.name)
+			if (debugConfig.disableDatabase) {
+				deleteDeckFromLocalStorage(action.deck.name)
+				return
+			}
 			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})
 		},
 	)
