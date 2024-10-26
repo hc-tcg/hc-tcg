@@ -113,6 +113,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					height="68"
 					href={getCardTypeIcon(card.type)}
 					className={css.type}
+					imageRendering="pixelated"
 				/>
 			</g>
 			{displayTokenCost && rank !== null ? (

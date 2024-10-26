@@ -41,6 +41,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 					height="220"
 					x="90"
 					y="132"
+					imageRendering="pixelated"
 				/>
 			</g>
 			<g id="type">
