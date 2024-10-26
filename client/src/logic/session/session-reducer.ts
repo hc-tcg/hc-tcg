@@ -2,7 +2,6 @@ import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {PlayerDeck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
-import {toPlayerDeck} from 'logic/saved-decks/saved-decks'
 
 type SessionState = {
 	playerName: string
@@ -71,7 +70,7 @@ const loginReducer = (
 		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: {...toPlayerDeck(action.deck), code: action.deck.code},
+				playerDeck: {...action.deck, code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
 			return {

@@ -1,9 +1,10 @@
 import {Card} from 'common/cards/base/types'
-import {Tag} from 'common/types/deck'
+import {PlayerDeck, Tag} from 'common/types/deck'
 import {GameEndOutcomeT} from 'common/types/game-state'
+import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {Deck, Stats, User, UserWithoutSecret} from 'common/types/database'
+import {Stats, User, UserWithoutSecret} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -210,7 +211,9 @@ export class Database {
 	}
 
 	/** Return the deck with a specific ID. */
-	public async getDeckFromID(deckCode: string): Promise<DatabaseResult<Deck>> {
+	public async getDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<PlayerDeck>> {
 		try {
 			const deck = (
 				await this.pool.query(
@@ -245,7 +248,13 @@ export class Database {
 
 			return {
 				type: 'success',
-				body: {code, name, icon, cards, tags},
+				body: {
+					code,
+					name,
+					icon,
+					cards: cards.map((card) => toLocalCardInstance(card)),
+					tags,
+				},
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
@@ -253,7 +262,9 @@ export class Database {
 	}
 
 	/** Return the decks associated with a user. */
-	public async getDecks(uuid: string): Promise<DatabaseResult<Array<Deck>>> {
+	public async getDecks(
+		uuid: string,
+	): Promise<DatabaseResult<Array<PlayerDeck>>> {
 		try {
 			const decksResult = (
 				await this.pool.query(
@@ -269,7 +280,7 @@ export class Database {
 				)
 			).rows
 
-			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
+			const decks = decksResult.reduce((allDecks: Array<PlayerDeck>, row) => {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
@@ -288,12 +299,15 @@ export class Database {
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
 				if (!foundDeck) {
-					const newDeck: Deck = {
+					const newDeck: PlayerDeck = {
 						code,
 						name,
 						icon,
 						tags: tag.key !== null ? [tag] : [],
-						cards: cardId !== null ? cards : [],
+						cards:
+							cardId !== null
+								? cards.map((card) => toLocalCardInstance(card))
+								: [],
 					}
 					return [...allDecks, newDeck]
 				}
@@ -306,8 +320,11 @@ export class Database {
 					foundDeck.tags.push(tag)
 				}
 
-				if (foundDeck.cards.find((card) => card.numericId !== cardId)) {
-					foundDeck.cards = [...foundDeck.cards, ...cards]
+				if (foundDeck.cards.find((card) => card.props.numericId !== cardId)) {
+					foundDeck.cards = [
+						...foundDeck.cards,
+						...cards.map((card) => toLocalCardInstance(card)),
+					]
 				}
 
 				return allDecks

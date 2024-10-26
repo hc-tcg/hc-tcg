@@ -1,51 +1,21 @@
 import {CARDS} from 'common/cards'
-import {CardEntity} from 'common/entities'
-import {Deck} from 'common/types/database'
 import {LegacyDeck, PlayerDeck as PlayerDeck} from 'common/types/deck'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 
-export const getActiveDeck = (): Deck | null => {
+export const getActiveDeck = (): PlayerDeck | null => {
 	const deck = localStorage.getItem('activeDeck')
 	if (!deck) return null
-	return JSON.parse(deck) as Deck
+	return JSON.parse(deck) as PlayerDeck
 }
 
-export const setActiveDeck = (deck: Deck) => {
+export const setActiveDeck = (deck: PlayerDeck) => {
 	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export function toSavedDeck(deck: PlayerDeck): Deck {
-	return {
-		name: deck.name,
-		code: deck.code,
-		icon: deck.icon,
-		tags: deck.tags,
-		cards: deck.cards.map((card) => CARDS[card.props.id]),
-	}
-}
-
-export function toPlayerDeck(deck: Deck): PlayerDeck {
-	return {
-		name: deck.name,
-		icon: deck.icon as PlayerDeck['icon'],
-		tags: deck.tags ? deck.tags : [],
-		code: deck.code,
-		cards: deck.cards.map((card): LocalCardInstance => {
-			return {
-				props: WithoutFunctions(card),
-				entity: Math.random().toString() as CardEntity,
-				slot: null,
-				attackHint: null,
-				turnedOver: false,
-			}
-		}),
-	}
-}
-
-export function getLocalStorageDecks(): Array<Deck> {
+export function getLocalStorageDecks(): Array<PlayerDeck> {
 	let lsKey
-	const decks: Array<Deck> = []
+	const decks: Array<PlayerDeck> = []
 
 	for (let i = 0; i < localStorage.length; i++) {
 		lsKey = localStorage.key(i)
@@ -55,12 +25,14 @@ export function getLocalStorageDecks(): Array<Deck> {
 			if (key) {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
-					const newDeck: Deck = {
+					const newDeck: PlayerDeck = {
 						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
 						name: parsedDeck.name,
 						icon: parsedDeck.icon,
 						tags: [],
-						cards: parsedDeck.cards.map((card) => CARDS[card.cardId]),
+						cards: parsedDeck.cards.map((card) =>
+							toLocalCardInstance(CARDS[card.cardId]),
+						),
 					}
 					decks.push(newDeck)
 				} catch {

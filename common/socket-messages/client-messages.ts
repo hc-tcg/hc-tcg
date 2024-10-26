@@ -1,7 +1,6 @@
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {Deck} from '../types/database'
 import {PlayerDeck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
@@ -64,13 +63,17 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
 	{type: typeof clientMessages.GET_STATS},
-	{type: typeof clientMessages.INSERT_DECK; deck: Deck; newActiveDeck?: string},
+	{
+		type: typeof clientMessages.INSERT_DECK
+		deck: PlayerDeck
+		newActiveDeck?: string
+	},
 	{
 		type: typeof clientMessages.IMPORT_DECK
 		code: string
 		newActiveDeck?: string
 	},
-	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
+	{type: typeof clientMessages.DELETE_DECK; deck: PlayerDeck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 ]
 

@@ -1,5 +1,5 @@
 import {Message, MessageTable, messages} from '../redux-messages'
-import {Deck, Stats, User} from '../types/database'
+import {Stats, User} from '../types/database'
 import {PlayerDeck, Tag} from '../types/deck'
 import {
 	GameEndOutcomeT,
@@ -105,9 +105,9 @@ export type ServerMessages = [
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
 	{
 		type: typeof serverMessages.DECKS_RECIEVED
-		decks: Array<Deck>
+		decks: Array<PlayerDeck>
 		tags: Array<Tag>
-		newActiveDeck?: Deck
+		newActiveDeck?: PlayerDeck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
 ]

@@ -11,6 +11,7 @@ import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
+import {toLocalCardInstance} from 'common/utils/cards'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
@@ -125,6 +126,6 @@ export function getCardsInDeck(url: string, hash: string) {
 export function deckCost(body: Object) {
 	let cards = ListOfCards.parse(body)
 	return {
-		cost: getDeckCost(cards.map((card) => CARDS[card])),
+		cost: getDeckCost(cards.map((card) => toLocalCardInstance(CARDS[card]))),
 	}
 }

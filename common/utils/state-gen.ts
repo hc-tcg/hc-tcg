@@ -23,7 +23,9 @@ import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
+import {LocalCardInstance} from '../types/server-requests'
 import {VirtualAI} from '../types/virtual-ai'
+import {toLocalCardInstance} from './cards'
 import {fisherYatesShuffle} from './fisher-yates'
 
 export type PlayerSetupDefs = {
@@ -183,7 +185,7 @@ export function getGameState(
 	return gameState
 }
 
-export function getStarterPack(): Array<Card> {
+export function getStarterPack(): Array<LocalCardInstance> {
 	function randomBetween(min: number, max: number) {
 		return Math.floor(Math.random() * (max - min + 1) + min)
 	}
@@ -295,5 +297,5 @@ export function getStarterPack(): Array<Card> {
 		deck.push(effectCard)
 	}
 
-	return deck
+	return deck.map((card) => toLocalCardInstance(card))
 }

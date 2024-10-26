@@ -4,7 +4,6 @@ import {isHermit, isItem} from 'common/cards/base/types'
 import debugConfig from 'common/config/debug-config'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {Deck} from 'common/types/database'
 import {PlayerDeck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
@@ -21,7 +20,6 @@ import errorIcon from 'components/svgs/errorIcon'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {toPlayerDeck} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -143,9 +141,9 @@ type Props = {
 	back: () => void
 	title: string
 	saveDeck: (loadedDeck: PlayerDeck) => void
-	deleteDeck: (initialDeck: Deck) => void
+	deleteDeck: (initialDeck: PlayerDeck) => void
 	databaseInfo: DatabaseInfo
-	deck: Deck | null
+	deck: PlayerDeck | null
 }
 
 const TYPE_ORDER = {
@@ -233,7 +231,7 @@ function EditDeck({
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeck>(
 		deck
-			? toPlayerDeck(deck)
+			? deck
 			: {
 					name: '',
 					icon: 'any',
@@ -361,7 +359,7 @@ function EditDeck({
 		}))
 	}
 	const handleBack = () => {
-		if (initialDeckState && toPlayerDeck(initialDeckState) == loadedDeck) {
+		if (initialDeckState && initialDeckState == loadedDeck) {
 			back()
 		} else {
 			setShowUnsavedModal(true)
@@ -608,8 +606,7 @@ function EditDeck({
 								<div
 									className={classNames(css.cardCount, css.dark, css.tokens)}
 								>
-									{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
-									{CONFIG.limits.maxDeckCost}{' '}
+									{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
 									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>

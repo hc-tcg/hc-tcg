@@ -14,14 +14,6 @@ export type UserWithoutSecret = {
 	minecraftName: string | null
 }
 
-export type Deck = {
-	code: string
-	name: string
-	icon: string
-	tags: Array<Tag>
-	cards: Array<Card>
-}
-
 export type Stats = {
 	gamesPlayed: number
 	wins: number

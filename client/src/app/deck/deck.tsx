@@ -1,11 +1,10 @@
 import classNames from 'classnames'
-import {Deck} from 'common/types/database'
 import {PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {setActiveDeck, toSavedDeck} from 'logic/saved-decks/saved-decks'
+import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {useReducer, useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -21,7 +20,7 @@ export const cardGroupHeader = (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.props))} tokens
+			{getDeckCost(cards)} tokens
 		</span>
 	</p>
 )
@@ -39,25 +38,24 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
-	const [loadedDeck, setLoadedDeck] = useState<Deck>(toSavedDeck(playerDeck))
-	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
+	const [loadedDeck, setLoadedDeck] = useState<PlayerDeck>(playerDeck)
+	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeck>>([])
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
 	async function saveDeckInternal(deck: PlayerDeck) {
 		//Save new deck to Database
-		const savedDeck = toSavedDeck(deck)
 		dispatch({
 			type: localMessages.INSERT_DECK,
-			deck: savedDeck,
+			deck: deck,
 		})
 
 		//Load new deck
-		setLoadedDeck(savedDeck)
-		databaseInfo.decks = [...databaseInfo.decks, savedDeck]
+		setLoadedDeck(deck)
+		databaseInfo.decks = [...databaseInfo.decks, deck]
 	}
 
-	const deleteDeckInternal = (deletedDeck: Deck) => {
+	const deleteDeckInternal = (deletedDeck: PlayerDeck) => {
 		//Save new deck to Database
 		dispatch({
 			type: localMessages.DELETE_DECK,

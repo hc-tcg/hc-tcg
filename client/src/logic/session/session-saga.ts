@@ -2,7 +2,7 @@ import debugConfig from 'common/config/debug-config'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {Deck} from 'common/types/database'
+import {PlayerDeck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getStarterPack} from 'common/utils/state-gen'
@@ -14,7 +14,6 @@ import {
 	getActiveDeck,
 	getLocalStorageDecks,
 	saveDeckToLocalStorage,
-	toPlayerDeck,
 } from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
@@ -102,7 +101,7 @@ function* insertUser(socket: any) {
 			}
 			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
 		} else {
-			const starterDeck: Deck = {
+			const starterDeck: PlayerDeck = {
 				code: generateDatabaseCode(),
 				name: 'Starter Deck',
 				icon: 'any',
@@ -280,7 +279,7 @@ export function* loginSaga() {
 			})
 			yield* sendMsg({
 				type: clientMessages.UPDATE_DECK,
-				deck: toPlayerDeck(activeDeck),
+				deck: activeDeck,
 			})
 		}
 
@@ -320,7 +319,7 @@ export function* databaseConnectionSaga() {
 		localMessages.INSERT_DECK,
 		function* (action) {
 			if (debugConfig.disableDatabase) {
-				saveDeckToLocalStorage(toPlayerDeck(action.deck))
+				saveDeckToLocalStorage(action.deck)
 				return
 			}
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})

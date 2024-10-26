@@ -2,8 +2,7 @@ import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
-import {Deck} from 'common/types/database'
-import {Tag} from 'common/types/deck'
+import {PlayerDeck, Tag} from 'common/types/deck'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -216,9 +215,9 @@ type Messages = [
 	},
 	{type: typeof localMessages.RESET_ID_AND_SECRET},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
-	{type: typeof localMessages.INSERT_DECK; deck: Deck},
-	{type: typeof localMessages.SELECT_DECK; deck: Deck},
-	{type: typeof localMessages.DELETE_DECK; deck: Deck},
+	{type: typeof localMessages.INSERT_DECK; deck: PlayerDeck},
+	{type: typeof localMessages.SELECT_DECK; deck: PlayerDeck},
+	{type: typeof localMessages.DELETE_DECK; deck: PlayerDeck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
 	{type: typeof localMessages.UPDATE_DECKS; newActiveDeck?: string},
 	{
