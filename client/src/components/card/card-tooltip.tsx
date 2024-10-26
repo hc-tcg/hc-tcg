@@ -34,7 +34,7 @@ const HERMIT_TYPES: Record<string, string> = {
 	historian: 'historian',
 	inventor: 'inventor',
 	looper: 'looper',
-	miner: 'miner,',
+	miner: 'miner',
 	pacifist: 'pacifist',
 	prankster: 'prankster',
 	pvp: 'pvp',
