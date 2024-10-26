@@ -42,6 +42,7 @@ export const ImportModal = ({
 			dispatch({
 				type: localMessages.IMPORT_DECK,
 				code: hash,
+				newActiveDeck: hash,
 			})
 			onClose(true)
 
@@ -86,14 +87,17 @@ export const ImportModal = ({
 
 		fileResult.then((newFileContent: string) => {
 			let importedSomething = false
+			const codes: Array<string> = []
 
-			newFileContent.split('\n').forEach((line: string) => {
+			newFileContent.split('\n').forEach((line: string, i) => {
 				const cleanLine = line.replace('\r', '')
 				if (cleanLine.length === 7 && cleanLine.match(/[1234567890abcdefg]+/)) {
+					codes.push(cleanLine)
 					dispatch({
 						type: localMessages.IMPORT_DECK,
 						code: cleanLine,
 					})
+					importedSomething = true
 					return
 				}
 
@@ -120,6 +124,11 @@ export const ImportModal = ({
 					code: generateDatabaseCode(),
 					tags: [],
 				})
+			})
+
+			dispatch({
+				type: localMessages.UPDATE_DECKS,
+				newActiveDeck: codes[codes.length - 1],
 			})
 
 			if (importedSomething) {

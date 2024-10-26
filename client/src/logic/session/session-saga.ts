@@ -330,7 +330,11 @@ export function* databaseConnectionSaga() {
 		localMessages.IMPORT_DECK,
 		function* (action) {
 			if (debugConfig.disableDatabase) return
-			yield* sendMsg({type: clientMessages.IMPORT_DECK, code: action.code})
+			yield* sendMsg({
+				type: clientMessages.IMPORT_DECK,
+				code: action.code,
+				newActiveDeck: action.newActiveDeck,
+			})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(

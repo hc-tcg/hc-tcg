@@ -221,7 +221,11 @@ type Messages = [
 	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
 	{type: typeof localMessages.UPDATE_DECKS; newActiveDeck?: string},
-	{type: typeof localMessages.IMPORT_DECK; code: string},
+	{
+		type: typeof localMessages.IMPORT_DECK
+		code: string
+		newActiveDeck?: string
+	},
 ]
 
 /** A message used locally on the client to update global state */

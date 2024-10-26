@@ -154,7 +154,7 @@ export function* importDeck(
 		player.uuid,
 	)
 
-	yield* getDecks(action as any)
+	if (action.payload.newActiveDeck) yield* getDecks(action as any)
 }
 
 export function* deleteDeck(
