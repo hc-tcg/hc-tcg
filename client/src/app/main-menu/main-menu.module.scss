@@ -248,6 +248,11 @@ nav {
 	}
 }
 
+.setUuidSecretForm {
+	width: 100%;
+	height: 100%;
+}
+
 .customInput {
 	position: relative;
 	height: 5.5vh;
@@ -372,6 +377,57 @@ nav {
 
 .resetModalButton {
 	width: 50%;
+}
+
+.dbInfo {
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+	display: flex;
+	flex-direction: row;
+}
+
+.dbItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1vh 0;
+	color: var(--text-light);
+	font-size: 2vh;
+	user-select: text;
+
+	&.left {
+		flex-grow: 1;
+	}
+
+	&.right {
+		text-align: right;
+		flex-grow: 1;
+		justify-content: end;
+	}
+}
+
+.copy {
+	display: grid;
+	place-content: center;
+	background: var(--gray-900);
+	color: white;
+	padding: 0.4rem;
+	height: 2rem;
+	min-width: 2rem;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.warning {
+	color: rgb(215, 23, 23);
+	text-align: center;
+	padding: 0.5rem;
+}
+
+.input {
+	width: 50vh;
 }
 
 /* DESKTOP */

@@ -6,6 +6,8 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import classNames from 'classnames'
+import {CopyIcon} from 'components/svgs'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -56,17 +58,17 @@ function DataSettings({setMenuSection}: Props) {
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
-							variant="default"
+							variant="error"
 							onClick={handleYes}
 						>
-							Yes
+							⚠ Go Ahead
 						</Button>
 						<Button
 							className={css.resetModalButton}
 							variant="default"
 							onClick={() => setModal(null)}
 						>
-							No
+							Nevermind
 						</Button>
 					</div>
 				</Modal>,
@@ -83,9 +85,19 @@ function DataSettings({setMenuSection}: Props) {
 	) => {
 		return () => {
 			setModal(
-				<Modal title={'Set UUID and Secret'} closeModal={closeModal} centered>
+				<Modal
+					title={'Sync with another device'}
+					closeModal={closeModal}
+					centered
+				>
+					<div className={css.resetModalDescription}>
+						<p>
+							Sync your devices by entering the UUID and secret of the other
+							device you want to sync with. This process is irreversible.
+						</p>
+					</div>
 					<form
-						className={css.something}
+						className={css.setUuidSecretForm}
 						onSubmit={() => {
 							const userId = (
 								document.getElementById('userIdElement') as HTMLInputElement
@@ -97,30 +109,50 @@ function DataSettings({setMenuSection}: Props) {
 							onConfirm(userId, secret)
 						}}
 					>
-						<div className={css.customInput}>
+						<div className={css.input}>
 							<input
 								name="id"
 								placeholder="UUID"
 								id="userIdElement"
 								className={css.input}
+								maxLength={36}
+								minLength={36}
+								pattern={'^[-0-9a-f]*$'}
 							></input>
 						</div>
-						<div className={css.customInput}>
+						<div className={css.input}>
 							<input
-								name="tag"
+								name="secret"
 								placeholder="Secret"
 								id="userSecretElement"
 								className={css.input}
+								maxLength={36}
+								minLength={36}
+								pattern={'^[-0-9a-f]*$'}
 							></input>
 						</div>
-						<Button
-							variant="default"
-							size="small"
-							type="submit"
-							className={css.submitButton}
-						>
-							Confirm
-						</Button>
+						<p className={css.warning}>
+							<b>
+								⚠ Syncing will remove all your data on this device, including
+								decks.
+							</b>
+						</p>
+						<div className={css.resetModal}>
+							<Button
+								className={css.resetModalButton}
+								variant="default"
+								type="submit"
+							>
+								Confirm
+							</Button>
+							<Button
+								className={css.resetModalButton}
+								variant="default"
+								onClick={() => setModal(null)}
+							>
+								Cancel
+							</Button>
+						</div>
 					</form>
 				</Modal>,
 			)
@@ -159,13 +191,66 @@ function DataSettings({setMenuSection}: Props) {
 				>
 					Reset Chat Window
 				</Button>
-				<div className={css.stats}>
-					<span className={css.stat}>UUID</span>
-					<span className={css.stat}>{databaseInfo.userId}</span>
+				<div className={css.dbInfo}>
+					<div className={css.dbItem}>UUID</div>
+					<div className={classNames(css.dbItem, css.right)}>
+						{databaseInfo.userId}
+					</div>
+					<button
+						className={css.copy}
+						onClick={() => {
+							if (databaseInfo.userId)
+								navigator.clipboard.writeText(databaseInfo.userId)
+						}}
+					>
+						{CopyIcon()}
+					</button>
 				</div>
-				<div className={css.stats}>
-					<span className={css.stat}>Secret</span>
-					<span className={css.stat}>{databaseInfo.secret}</span>
+				<div className={css.dbInfo}>
+					<div className={classNames(css.dbItem, css.left)}>Secret</div>
+					<Button
+						variant="default"
+						size="small"
+						onClick={() =>
+							setModal(
+								<Modal title={'User Secret'} closeModal={closeModal} centered>
+									<p className={css.warning}>
+										<b>⚠ DO NOT share your secret with anyone.</b>
+									</p>
+									<p className={css.warning}>
+										Only view and copy this when you need to sync your account
+										to another device. You do not need to give this data to any
+										external applications.
+									</p>
+									<div className={css.dbInfo}>
+										<div className={classNames(css.dbItem, css.left)}>
+											{databaseInfo.secret}
+										</div>
+										<button
+											className={css.copy}
+											onClick={() => {
+												if (databaseInfo.secret)
+													navigator.clipboard.writeText(databaseInfo.secret)
+											}}
+										>
+											{CopyIcon()}
+										</button>
+									</div>
+									<div className={css.resetModal}>
+										<Button
+											className={css.resetModalButton}
+											variant="default"
+											onClick={closeModal}
+										>
+											Confirm
+										</Button>
+									</div>
+								</Modal>,
+							)
+						}
+					>
+						View Secret
+					</Button>
 				</div>
 				<Button
 					variant="stone"
@@ -177,7 +262,7 @@ function DataSettings({setMenuSection}: Props) {
 						}),
 					)}
 				>
-					Set UUID and Secret
+					Sync Data
 				</Button>
 				<Button
 					variant="stone"
