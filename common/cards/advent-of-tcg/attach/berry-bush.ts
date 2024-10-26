@@ -6,7 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, onTurnEnd} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
+import {attach} from '../../../base/defaults'
 import {Attach, HasHealth} from '../../base/types'
 import {InstantHealthII} from '../../default/single-use/instant-health'
 
