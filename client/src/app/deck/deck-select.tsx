@@ -71,6 +71,14 @@ function SelectDeck({
 			deck: deck,
 		})
 		databaseInfo.decks.push(deck)
+
+		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
+			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			return [...r, tag]
+		}, [])
+
+		databaseInfo.tags.push()
+		databaseInfo.tags.push(...newTags)
 		setFilteredDecks(sortDecks(databaseInfo.decks))
 		setLoadedDeck(deck)
 	}

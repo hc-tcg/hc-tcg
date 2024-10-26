@@ -254,13 +254,17 @@ function DataSettings({setMenuSection}: Props) {
 				</div>
 				<Button
 					variant="stone"
-					onClick={setUuidSecretModal((id, secret) =>
+					onClick={setUuidSecretModal((id, secret) => {
 						dispatch({
 							type: localMessages.SET_ID_AND_SECRET,
 							userId: id,
 							secret: secret,
-						}),
-					)}
+						})
+						setMenuSection('mainmenu')
+						dispatch({
+							type: localMessages.LOGOUT,
+						})
+					})}
 				>
 					Sync Data
 				</Button>
