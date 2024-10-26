@@ -1,4 +1,11 @@
-import {afterAll, beforeAll, describe, expect, test} from '@jest/globals'
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	test,
+} from '@jest/globals'
 import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
 import {config} from 'dotenv'
@@ -32,13 +39,16 @@ describe('Test Database', () => {
 			},
 			BF_DEPTH,
 		)
+	})
+
+	beforeEach(async () => {
 		await database.pool.query(
 			'BEGIN TRANSACTION; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
 		)
 		return await database.new()
 	})
 
-	afterAll(async () => {
+	afterEach(async () => {
 		await database.pool.query('ROLLBACK')
 		await database.close()
 	})
