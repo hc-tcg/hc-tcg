@@ -3,11 +3,11 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../defaults'
-import {Hermit} from '../../types'
 import RendogCommon from '../../hermits/rendog-common'
 import RendogRare from '../../hermits/rendog-rare'
 import XisumavoidCommon from '../../hermits/xisumavoid-common'
 import XisumavoidRare from '../../hermits/xisumavoid-rare'
+import {Hermit} from '../../types'
 
 const PythonGBRare: Hermit = {
 	...hermit,

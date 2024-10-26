@@ -170,6 +170,4 @@ const RendogRare: Hermit = {
 	},
 }
 
-
 export default RendogRare
-

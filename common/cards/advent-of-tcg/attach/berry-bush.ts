@@ -7,8 +7,8 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, onTurnEnd} from '../../../types/priorities'
 import {attach} from '../../defaults'
-import {Attach, HasHealth} from '../../types'
 import {InstantHealthII} from '../../single-use/instant-health'
+import {Attach, HasHealth} from '../../types'
 
 const BerryBush: Attach & HasHealth = {
 	...attach,

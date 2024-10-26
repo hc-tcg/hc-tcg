@@ -2,12 +2,12 @@ import adventOfTcgEffectCards from './advent-of-tcg/attach'
 import adventOfTcgHermitCards from './advent-of-tcg/hermits'
 import adventOfTcgItemCards from './advent-of-tcg/items'
 import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
-import {Card} from './types'
-import bossHermitCards from './boss/hermits'
 import defaultEffectCards from './attach'
+import bossHermitCards from './boss/hermits'
 import defaultHermitCards from './hermits'
 import defaultItemCards from './items'
 import defaultSingleUseCards from './single-use'
+import {Card} from './types'
 
 const attachCardClasses: Array<Card> = [
 	...defaultEffectCards,

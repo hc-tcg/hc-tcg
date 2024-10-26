@@ -2,8 +2,8 @@ import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
-import Egg from '../single-use/egg'
 import {hermit} from '../defaults'
+import Egg from '../single-use/egg'
 import {Hermit} from '../types'
 
 const PoultryManRare: Hermit = {
