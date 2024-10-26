@@ -27,8 +27,10 @@ function DataSettings({setMenuSection}: Props) {
 		prompt: string,
 		whenDonePrompt: string,
 		reset: () => void,
+		afterReset?: () => void,
 	) => {
 		const handleYes = () => {
+			reset()
 			setModal(
 				<Modal title={whenDonePrompt} closeModal={closeModal} centered>
 					<div className={css.resetModal}>
@@ -37,7 +39,7 @@ function DataSettings({setMenuSection}: Props) {
 							variant="default"
 							onClick={() => {
 								closeModal()
-								reset()
+								if (afterReset) afterReset()
 							}}
 						>
 							Ok
@@ -187,10 +189,12 @@ function DataSettings({setMenuSection}: Props) {
 							dispatch({
 								type: localMessages.RESET_ID_AND_SECRET,
 							})
+						},
+						() => {
+							setMenuSection('mainmenu')
 							dispatch({
 								type: localMessages.LOGOUT,
 							})
-							location.reload()
 						},
 					)}
 				>

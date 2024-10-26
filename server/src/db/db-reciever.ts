@@ -125,7 +125,7 @@ export function* insertDeck(
 	)
 
 	if (action.payload.newActiveDeck) {
-		getDecks(action as any)
+		yield* getDecks(action as any)
 	}
 }
 

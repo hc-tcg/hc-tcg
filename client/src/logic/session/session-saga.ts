@@ -82,7 +82,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	console.log(userInfo)
+	const localStorageDecks = getLocalStorageDecks()
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -91,21 +91,32 @@ function* insertUser(socket: any) {
 			secret: userInfo.success.user.secret,
 		})
 
-		const starterDeck: Deck = {
-			code: generateDatabaseCode(),
-			name: 'Starter Deck',
-			icon: 'any',
-			tags: [],
-			cards: [],
+		if (localStorageDecks.length > 0) {
+			for (let i = 0; i < localStorageDecks.length; i++) {
+				yield* sendMsg({
+					type: clientMessages.INSERT_DECK,
+					deck: localStorageDecks[i],
+					newActiveDeck: i === 0 ? localStorageDecks[i].code : undefined,
+				})
+			}
+			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
+		} else {
+			const starterDeck: Deck = {
+				code: generateDatabaseCode(),
+				name: 'Starter Deck',
+				icon: 'any',
+				tags: [],
+				cards: [],
+			}
+
+			yield* sendMsg({
+				type: clientMessages.INSERT_DECK,
+				deck: starterDeck,
+				newActiveDeck: starterDeck.code,
+			})
+
+			localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
 		}
-
-		yield* sendMsg({
-			type: clientMessages.INSERT_DECK,
-			deck: starterDeck,
-			newActiveDeck: starterDeck.code,
-		})
-
-		localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
 	}
 }
 
