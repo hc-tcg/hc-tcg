@@ -1,4 +1,4 @@
-import Totem from '../cards/default/effects/totem'
+import Totem from '../cards/effects/totem'
 import {
 	ObserverComponent,
 	PlayerComponent,

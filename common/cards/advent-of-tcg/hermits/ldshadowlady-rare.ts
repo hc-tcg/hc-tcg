@@ -9,7 +9,7 @@ import {GameModel} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
-import GoldenAxe from '../../default/single-use/golden-axe'
+import GoldenAxe from '../../single-use/golden-axe'
 
 const LDShadowLadyRare: Hermit = {
 	...hermit,
