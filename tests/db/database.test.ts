@@ -1,19 +1,11 @@
-import {
-	afterEach,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	test,
-} from '@jest/globals'
+import {afterEach, beforeEach, describe, expect, test} from '@jest/globals'
 import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
 import {config} from 'dotenv'
-import {Database, setupDatabase} from 'server/db/db'
+import {setupDatabase} from 'server/db/db'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 
-describe('Test Database', () => {
-	let database: Database
+describe('Test Database', async () => {
 	const BF_DEPTH = 4
 	const playerDeck = {
 		name: 'Testing deck',
@@ -21,25 +13,23 @@ describe('Test Database', () => {
 		cards: [1, 2, 2, 3, 4, 4, 5, 4],
 		tags: [],
 	}
+	const env = config()
 
-	beforeAll(async () => {
-		const env = config()
-		database = setupDatabase(
-			CARDS_LIST,
-			{
-				...{
-					POSTGRES_DATABASE: 'hctcg',
-					POSTGRES_USER: 'hctcg',
-					POSTGRES_PASSWORD: 'hctcg',
-					POSTGRES_HOST: 'localhost',
-					POSTGRES_PORT: '5432',
-				},
-				...process.env,
-				...env,
+	const database = await setupDatabase(
+		CARDS_LIST,
+		{
+			...{
+				POSTGRES_DATABASE: 'hctcg',
+				POSTGRES_USER: 'hctcg',
+				POSTGRES_PASSWORD: 'hctcg',
+				POSTGRES_HOST: 'localhost',
+				POSTGRES_PORT: '5432',
 			},
-			BF_DEPTH,
-		)
-	})
+			...process.env,
+			...env,
+		},
+		BF_DEPTH,
+	)
 
 	beforeEach(async () => {
 		await database.pool.query(
