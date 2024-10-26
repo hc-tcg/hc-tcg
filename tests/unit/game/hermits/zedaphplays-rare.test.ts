@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
 import TNT from 'common/cards/single-use/tnt'
 import {RowComponent} from 'common/components'
