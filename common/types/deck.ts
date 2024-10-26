@@ -33,5 +33,6 @@ export type LegacyDeck = {
 		cardId: string
 		cardInstance: string
 	}>
+	code?: string
 	tags: Array<string> | null
 }

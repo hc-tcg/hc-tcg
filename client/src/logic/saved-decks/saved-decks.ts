@@ -56,7 +56,7 @@ export function getLocalStorageDecks(): Array<Deck> {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
 					const newDeck: Deck = {
-						code: generateDatabaseCode(),
+						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
 						name: parsedDeck.name,
 						icon: parsedDeck.icon,
 						tags: [],
@@ -83,6 +83,7 @@ export function saveDeckToLocalStorage(deck: PlayerDeck) {
 			cardInstance: Math.random().toString(),
 		})),
 		icon: deck.icon as LegacyDeck['icon'],
+		code: deck.code,
 		// Without a database, tags are disabled for simplicity
 		tags: [],
 	}

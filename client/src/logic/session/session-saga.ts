@@ -357,7 +357,16 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* (action) {
-			if (debugConfig.disableDatabase) return
+			if (debugConfig.disableDatabase) {
+				yield put<LocalMessage>({
+					type: localMessages.DATABASE_SET,
+					data: {
+						key: 'decks',
+						value: getLocalStorageDecks(),
+					},
+				})
+				return
+			}
 			yield* sendMsg({
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck,
