@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import PixlriffsRare from 'common/cards/advent-of-tcg/hermits/pixlriffs-rare'
-import Thorns from 'common/cards/attach/thorns'
+import {Thorns} from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
