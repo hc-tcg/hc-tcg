@@ -1,4 +1,5 @@
 import {
+    afterAll,
 	afterEach,
 	beforeAll,
 	beforeEach,
@@ -26,7 +27,7 @@ describe('Test Database', () => {
 		const env = config()
 		database = setupDatabase(
 			CARDS_LIST,
-			{
+		{
 				...{
 					POSTGRES_DATABASE: 'hctcg',
 					POSTGRES_USER: 'hctcg',
@@ -41,6 +42,10 @@ describe('Test Database', () => {
 		)
 	})
 
+	afterAll(async () => {
+		await database.close()
+	})
+
 	beforeEach(async () => {
 		await database.pool.query(
 			'BEGIN TRANSACTION; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
@@ -50,7 +55,6 @@ describe('Test Database', () => {
 
 	afterEach(async () => {
 		await database.pool.query('ROLLBACK')
-		await database.close()
 	})
 
 	test('Add User', async () => {
