@@ -2,7 +2,7 @@ import debugConfig from 'common/config/debug-config'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {PlayerDeck} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getStarterPack} from 'common/utils/state-gen'
@@ -101,7 +101,7 @@ function* insertUser(socket: any) {
 			}
 			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
 		} else {
-			const starterDeck: PlayerDeck = {
+			const starterDeck: Deck = {
 				code: generateDatabaseCode(),
 				name: 'Starter Deck',
 				icon: 'any',

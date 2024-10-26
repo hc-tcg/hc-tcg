@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import debugConfig from 'common/config/debug-config'
 import {ToastT} from 'common/types/app'
-import {PlayerDeck, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
@@ -36,13 +36,13 @@ import DeckLayout from './layout'
 
 type Props = {
 	setMenuSection: (section: string) => void
-	setLoadedDeck: (deck: PlayerDeck) => void
+	setLoadedDeck: (deck: Deck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
-	loadedDeck: PlayerDeck
+	loadedDeck: Deck
 	databaseInfo: DatabaseInfo
 	forceUpdate: () => void
-	filteredDecks: Array<PlayerDeck>
-	setFilteredDecks: (decks: Array<PlayerDeck>) => void
+	filteredDecks: Array<Deck>
+	setFilteredDecks: (decks: Array<Deck>) => void
 }
 
 function SelectDeck({
@@ -60,7 +60,7 @@ function SelectDeck({
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 
-	const saveDeck = (deck: PlayerDeck) => {
+	const saveDeck = (deck: Deck) => {
 		dispatch({
 			type: localMessages.INSERT_DECK,
 			deck: deck,
@@ -84,7 +84,7 @@ function SelectDeck({
 		return databaseInfo
 	})
 
-	function sortDecks(decks: Array<PlayerDeck>): Array<PlayerDeck> {
+	function sortDecks(decks: Array<Deck>): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
 				return a.name.localeCompare(b.name)
@@ -104,7 +104,7 @@ function SelectDeck({
 		})
 	}
 
-	function filterDecks(decks: Array<PlayerDeck>): Array<PlayerDeck> {
+	function filterDecks(decks: Array<Deck>): Array<Deck> {
 		if (!settings.lastSelectedTag) return decks
 		return decks.filter((deck) =>
 			deck.tags?.find((tag) => tag.key === settings.lastSelectedTag),
@@ -116,7 +116,7 @@ function SelectDeck({
 		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
 	}
 
-	const [importedDeck, setImportedDeck] = useState<PlayerDeck>({
+	const [importedDeck, setImportedDeck] = useState<Deck>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
@@ -191,7 +191,7 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
-	const handleImportDeck = (deck: PlayerDeck) => {
+	const handleImportDeck = (deck: Deck) => {
 		setImportedDeck(deck)
 		saveDeck(deck)
 		setShowImportModal(false)
@@ -201,10 +201,10 @@ function SelectDeck({
 	}
 
 	//DECK LOGIC
-	const loadDeck = (deck: PlayerDeck) => {
+	const loadDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
 	}
-	const deleteDeck = (deletedDeck: PlayerDeck) => {
+	const deleteDeck = (deletedDeck: Deck) => {
 		const deckToDelete = databaseInfo.decks.find(
 			(deck) => deck.code === deletedDeck.code,
 		)
@@ -230,7 +230,7 @@ function SelectDeck({
 		setActiveDeck(newSavedDecks[0])
 		setLoadedDeck(newSavedDecks[0])
 	}
-	const duplicateDeck = (deck: PlayerDeck) => {
+	const duplicateDeck = (deck: Deck) => {
 		const newDeck = {
 			...deck,
 			name: `${deck.name} Copy`,
@@ -249,49 +249,47 @@ function SelectDeck({
 		})
 	})
 
-	const deckList: ReactNode = filteredDecks.map(
-		(deck: PlayerDeck, i: number) => {
-			return (
-				<li
-					className={classNames(
-						css.myDecksItem,
-						loadedDeck.code === deck.code && css.selectedDeck,
-					)}
-					ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
-					key={i}
-					onClick={() => {
-						playSwitchDeckSFX()
-						loadDeck(deck)
-					}}
-				>
-					{deck.tags && deck.tags.length > 0 ? (
-						<div className={css.multiColoredCircle}>
-							{deck.tags.map((tag, i) => (
-								<div
-									className={css.singleTag}
-									style={{backgroundColor: tag.color}}
-									key={i}
-								></div>
-							))}
-						</div>
-					) : (
-						<div className={css.multiColoredCircle}>
-							<div className={css.singleTag}></div>
-						</div>
-					)}
-					<div
-						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
-					>
-						<img
-							src={'../images/types/type-' + deck.icon + '.png'}
-							alt={'deck-icon'}
-						/>
+	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
+		return (
+			<li
+				className={classNames(
+					css.myDecksItem,
+					loadedDeck.code === deck.code && css.selectedDeck,
+				)}
+				ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck)
+				}}
+			>
+				{deck.tags && deck.tags.length > 0 ? (
+					<div className={css.multiColoredCircle}>
+						{deck.tags.map((tag, i) => (
+							<div
+								className={css.singleTag}
+								style={{backgroundColor: tag.color}}
+								key={i}
+							></div>
+						))}
 					</div>
-					{deck.name}
-				</li>
-			)
-		},
-	)
+				) : (
+					<div className={css.multiColoredCircle}>
+						<div className={css.singleTag}></div>
+					</div>
+				)}
+				<div
+					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+				>
+					<img
+						src={'../images/types/type-' + deck.icon + '.png'}
+						alt={'deck-icon'}
+					/>
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
 	const footerTags = (
 		<div className={css.footerTags}>
 			<Dropdown

@@ -1,5 +1,5 @@
 import {Card} from 'common/cards/base/types'
-import {PlayerDeck, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
@@ -211,9 +211,7 @@ export class Database {
 	}
 
 	/** Return the deck with a specific ID. */
-	public async getDeckFromID(
-		deckCode: string,
-	): Promise<DatabaseResult<PlayerDeck>> {
+	public async getDeckFromID(deckCode: string): Promise<DatabaseResult<Deck>> {
 		try {
 			const deck = (
 				await this.pool.query(
@@ -262,9 +260,7 @@ export class Database {
 	}
 
 	/** Return the decks associated with a user. */
-	public async getDecks(
-		uuid: string,
-	): Promise<DatabaseResult<Array<PlayerDeck>>> {
+	public async getDecks(uuid: string): Promise<DatabaseResult<Array<Deck>>> {
 		try {
 			const decksResult = (
 				await this.pool.query(
@@ -280,7 +276,7 @@ export class Database {
 				)
 			).rows
 
-			const decks = decksResult.reduce((allDecks: Array<PlayerDeck>, row) => {
+			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
@@ -299,7 +295,7 @@ export class Database {
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
 				if (!foundDeck) {
-					const newDeck: PlayerDeck = {
+					const newDeck: Deck = {
 						code,
 						name,
 						icon,

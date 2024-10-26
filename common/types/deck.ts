@@ -6,7 +6,7 @@ export type Tag = {
 	key: string
 }
 
-export type PlayerDeck = {
+export type Deck = {
 	name: string
 	icon: string
 	code: string

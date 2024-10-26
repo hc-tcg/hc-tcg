@@ -1,11 +1,11 @@
 import {Stats} from 'common/types/database'
-import {PlayerDeck, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 
 export type DatabaseInfo = {
 	userId: string | null
 	secret: string | null
-	decks: Array<PlayerDeck>
+	decks: Array<Deck>
 	tags: Array<Tag>
 	stats: Stats
 }

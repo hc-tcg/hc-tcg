@@ -1,6 +1,6 @@
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
-import {PlayerDeck, Tag} from '../types/deck'
+import {Deck, Tag} from '../types/deck'
 import {
 	GameEndOutcomeT,
 	GameEndReasonT,
@@ -56,7 +56,7 @@ export type ServerMessages = [
 		/** The game is the player is currently in a game */
 		game?: LocalGameState
 	},
-	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeck},
+	{type: typeof serverMessages.NEW_DECK; deck: Deck},
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
@@ -105,9 +105,9 @@ export type ServerMessages = [
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
 	{
 		type: typeof serverMessages.DECKS_RECIEVED
-		decks: Array<PlayerDeck>
+		decks: Array<Deck>
 		tags: Array<Tag>
-		newActiveDeck?: PlayerDeck
+		newActiveDeck?: Deck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
 ]

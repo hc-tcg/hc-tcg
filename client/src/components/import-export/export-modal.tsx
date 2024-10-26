@@ -2,12 +2,12 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
-import {PlayerDeck} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 
 type Props = {
 	setOpen: boolean
 	onClose: (isOpen: boolean) => void
-	loadedDeck: PlayerDeck
+	loadedDeck: Deck
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {

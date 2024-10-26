@@ -4,7 +4,7 @@ import {isHermit, isItem} from 'common/cards/base/types'
 import debugConfig from 'common/config/debug-config'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeck, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
@@ -72,7 +72,7 @@ const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
 }))
 
 type DeckNameT = {
-	loadedDeck: PlayerDeck
+	loadedDeck: Deck
 	setDeckName: (name: string) => void
 	isValid: (valid: boolean) => void
 }
@@ -140,10 +140,10 @@ const addCreatedTag = (
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: PlayerDeck) => void
-	deleteDeck: (initialDeck: PlayerDeck) => void
+	saveDeck: (loadedDeck: Deck) => void
+	deleteDeck: (initialDeck: Deck) => void
 	databaseInfo: DatabaseInfo
-	deck: PlayerDeck | null
+	deck: Deck | null
 }
 
 const TYPE_ORDER = {
@@ -229,7 +229,7 @@ function EditDeck({
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<PlayerDeck>(
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(
 		deck
 			? deck
 			: {
@@ -398,7 +398,7 @@ function EditDeck({
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: PlayerDeck) => {
+	const saveAndReturn = (deck: Deck) => {
 		saveDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,

@@ -1,21 +1,21 @@
 import {CARDS} from 'common/cards'
-import {LegacyDeck, PlayerDeck as PlayerDeck} from 'common/types/deck'
+import {LegacyDeck, Deck as Deck} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 
-export const getActiveDeck = (): PlayerDeck | null => {
+export const getActiveDeck = (): Deck | null => {
 	const deck = localStorage.getItem('activeDeck')
 	if (!deck) return null
-	return JSON.parse(deck) as PlayerDeck
+	return JSON.parse(deck) as Deck
 }
 
-export const setActiveDeck = (deck: PlayerDeck) => {
+export const setActiveDeck = (deck: Deck) => {
 	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export function getLocalStorageDecks(): Array<PlayerDeck> {
+export function getLocalStorageDecks(): Array<Deck> {
 	let lsKey
-	const decks: Array<PlayerDeck> = []
+	const decks: Array<Deck> = []
 
 	for (let i = 0; i < localStorage.length; i++) {
 		lsKey = localStorage.key(i)
@@ -25,7 +25,7 @@ export function getLocalStorageDecks(): Array<PlayerDeck> {
 			if (key) {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
-					const newDeck: PlayerDeck = {
+					const newDeck: Deck = {
 						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
 						name: parsedDeck.name,
 						icon: parsedDeck.icon,
@@ -46,7 +46,7 @@ export function getLocalStorageDecks(): Array<PlayerDeck> {
 }
 
 // Both these functions below are only used for testing, so new contributors do NOT need to set up a database.
-export function saveDeckToLocalStorage(deck: PlayerDeck) {
+export function saveDeckToLocalStorage(deck: Deck) {
 	const hash = 'Deck_' + deck.name
 	const legacyDeck: LegacyDeck = {
 		name: deck.name,

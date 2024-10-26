@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import {PlayerDeck} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
@@ -38,12 +38,12 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
-	const [loadedDeck, setLoadedDeck] = useState<PlayerDeck>(playerDeck)
-	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeck>>([])
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(playerDeck)
+	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
-	async function saveDeckInternal(deck: PlayerDeck) {
+	async function saveDeckInternal(deck: Deck) {
 		//Save new deck to Database
 		dispatch({
 			type: localMessages.INSERT_DECK,
@@ -55,7 +55,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 		databaseInfo.decks = [...databaseInfo.decks, deck]
 	}
 
-	const deleteDeckInternal = (deletedDeck: PlayerDeck) => {
+	const deleteDeckInternal = (deletedDeck: Deck) => {
 		//Save new deck to Database
 		dispatch({
 			type: localMessages.DELETE_DECK,

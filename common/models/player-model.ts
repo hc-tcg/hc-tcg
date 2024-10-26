@@ -1,5 +1,5 @@
 import {Socket} from 'socket.io'
-import {PlayerDeck} from '../../common/types/deck'
+import {Deck} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 
@@ -8,7 +8,7 @@ export type PlayerId = string & {__player_id: never}
 export class PlayerModel {
 	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: PlayerDeck
+	private internalDeck: Deck
 	public name: string
 	public minecraftName: string
 	public censoredName: string
@@ -57,7 +57,7 @@ export class PlayerModel {
 		}
 	}
 
-	setPlayerDeck(newDeck: PlayerDeck) {
+	setPlayerDeck(newDeck: Deck) {
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
