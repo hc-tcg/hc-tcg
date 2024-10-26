@@ -8,6 +8,7 @@ import {
 	logoutSaga,
 	minecraftNameSaga,
 	newDeckSaga,
+	recieveStatsSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'
@@ -20,6 +21,7 @@ function* appSaga(): SagaIterator {
 	yield fork(logoutSaga)
 	yield fork(databaseConnectionSaga)
 	yield fork(newDeckSaga)
+	yield fork(recieveStatsSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)

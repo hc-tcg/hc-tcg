@@ -15,7 +15,6 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {OpponentDefs} from 'common/utils/state-gen'
-import {pgDatabase} from 'index'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
@@ -37,6 +36,7 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import {addGame} from 'db/db-reciever'
 
 function setupGame(
 	player1: PlayerModel,
@@ -175,19 +175,15 @@ function* gameManager(game: GameModel) {
 			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
 			gamePlayers[0].uuid !== gamePlayers[1].uuid
 		) {
-			pgDatabase.insertGame(
-				gamePlayers[0].deck.code,
-				gamePlayers[1].deck.code,
-				gamePlayers[0].uuid,
-				gamePlayers[1].uuid,
+			yield* addGame(
+				gamePlayers[0],
+				gamePlayers[1],
 				game.endInfo.outcome,
 				game.createdTime - Date.now(),
 				winner ? winner.uuid : null,
 				'', //@TODO Add seed
-				Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+				Buffer.from([0x00]),
 			)
-
-			//@TODO Make sure stats refresh for both players after game is over
 		}
 
 		delete root.games[game.id]

@@ -412,6 +412,22 @@ export function* newDeckSaga() {
 	}
 }
 
+export function* recieveStatsSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.STATS_RECIEVED),
+		)
+		yield put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'stats',
+				value: result.stats,
+			},
+		})
+	}
+}
+
 export function* minecraftNameSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {

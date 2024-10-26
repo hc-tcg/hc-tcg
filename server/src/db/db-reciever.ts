@@ -1,6 +1,5 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {generateDatabaseCode} from 'common/utils/database-codes'
-import {pgDatabase} from 'index'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
@@ -8,6 +7,12 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
+import {Database, setupDatabase} from './db'
+import {CARDS_LIST} from 'common/cards'
+import {GameEndOutcomeT} from 'common/types/game-state'
+import {PlayerModel} from 'common/models/player-model'
+
+const pgDatabase: Database = setupDatabase(CARDS_LIST, process.env, 8)
 
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
@@ -209,6 +214,48 @@ export function* getStats(
 		broadcast([player], {
 			type: serverMessages.STATS_RECIEVED,
 			stats: defaultStats,
+		})
+	}
+}
+
+export function* addGame(
+	firstPlayerModel: PlayerModel,
+	secondPlayerModel: PlayerModel,
+	outcome: GameEndOutcomeT,
+	gameLength: number,
+	winner: string | null,
+	seed: string,
+	replay: Buffer,
+) {
+	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
+
+	yield* call(
+		[pgDatabase, pgDatabase.insertGame],
+		firstPlayerModel.deck.code,
+		secondPlayerModel.deck.code,
+		firstPlayerModel.uuid,
+		secondPlayerModel.uuid,
+		outcome,
+		gameLength,
+		winner,
+		seed,
+		replay,
+	)
+
+	const players = [firstPlayerModel, secondPlayerModel]
+
+	for (let i = 0; i < players.length; i++) {
+		const player = players[i]
+		if (!player.uuid) continue
+		const stats = yield* call(
+			[pgDatabase, pgDatabase.getUserStats],
+			player.uuid,
+		)
+
+		if (stats.type !== 'success') continue
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: stats.body,
 		})
 	}
 }

@@ -555,7 +555,7 @@ export class Database {
 					losingDeck,
 					outcome,
 					seed,
-					replay,
+					replay.toString('hex'),
 				],
 			)
 			return {type: 'success', body: undefined}
