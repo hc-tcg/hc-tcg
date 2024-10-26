@@ -27,6 +27,7 @@ import {Deck} from 'common/types/database'
 import {toPlayerDeck} from 'logic/saved-decks/saved-decks'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
+import debugConfig from 'common/config/debug-config'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -721,6 +722,7 @@ function EditDeck({
 										size="small"
 										type="submit"
 										className={css.submitButton}
+										disabled={debugConfig.disableDatabase}
 									>
 										+
 									</Button>

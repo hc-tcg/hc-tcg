@@ -72,3 +72,24 @@ export function getLocalStorageDecks(): Array<Deck> {
 
 	return decks.sort()
 }
+
+// Both these functions below are only used for testing, so new contributors do NOT need to set up a database.
+export function saveDeckToLocalStorage(deck: PlayerDeck) {
+	const hash = 'Deck_' + deck.name
+	const legacyDeck: LegacyDeck = {
+		name: deck.name,
+		cards: deck.cards.map((card) => ({
+			cardId: card.props.id,
+			cardInstance: Math.random().toString(),
+		})),
+		icon: deck.icon as LegacyDeck['icon'],
+		// Without a database, tags are disabled for simplicity
+		tags: [],
+	}
+	localStorage.setItem(hash, JSON.stringify(legacyDeck))
+}
+
+export const deleteDeckFromLocalStorage = (name: string) => {
+	const hash = 'Deck_' + name
+	localStorage.removeItem(hash)
+}

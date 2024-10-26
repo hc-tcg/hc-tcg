@@ -1,13 +1,21 @@
+import debugConfig from 'common/config/debug-config'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/database'
 import {PlayerInfo} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
+import {debug} from 'console'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {getActiveDeck, toPlayerDeck} from 'logic/saved-decks/saved-decks'
+import {
+	deleteDeckFromLocalStorage,
+	getActiveDeck,
+	getLocalStorageDecks,
+	saveDeckToLocalStorage,
+	toPlayerDeck,
+} from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
@@ -105,10 +113,22 @@ function* insertUser(socket: any) {
 }
 
 function* setupData(socket: any) {
+	if (debugConfig.disableDatabase) {
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'decks',
+				value: getLocalStorageDecks(),
+			},
+		})
+		return
+	}
+
 	yield* sendMsg({
 		type: clientMessages.GET_DECKS,
 	})
 	const decks = yield* call(receiveMsg(socket, serverMessages.DECKS_RECIEVED))
+
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
 		data: {
@@ -259,6 +279,8 @@ export function* loginSaga() {
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
 
+		if (debugConfig.disableDatabase) return
+
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
 
@@ -288,36 +310,42 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
 		localMessages.INSERT_DECK,
 		function* (action) {
+			saveDeckToLocalStorage(toPlayerDeck(action.deck))
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
 		localMessages.IMPORT_DECK,
 		function* (action) {
+			if (debugConfig.disableDatabase) return
 			yield* sendMsg({type: clientMessages.IMPORT_DECK, code: action.code})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
 		localMessages.DELETE_DECK,
 		function* (action) {
+			deleteDeckFromLocalStorage(action.deck.name)
 			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_TAG]>(
 		localMessages.DELETE_TAG,
 		function* (action) {
+			if (debugConfig.disableDatabase) return
 			yield* sendMsg({type: clientMessages.DELETE_TAG, tag: action.tag})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* () {
+			if (debugConfig.disableDatabase) return
 			yield* sendMsg({type: clientMessages.GET_DECKS})
 		},
 	)
 	yield* takeEvery<
 		LocalMessageTable[typeof localMessages.UPDATE_DECKS_THEN_SELECT]
 	>(localMessages.UPDATE_DECKS_THEN_SELECT, function* (action) {
+		if (debugConfig.disableDatabase) return
 		yield* sendMsg({
 			type: clientMessages.GET_DECKS_THEN_SELECT,
 			code: action.code,
@@ -326,6 +354,7 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
 		localMessages.RESET_ID_AND_SECRET,
 		function* () {
+			if (debugConfig.disableDatabase) return
 			yield* insertUser(socket)
 			location.reload()
 		},

@@ -37,6 +37,7 @@ import DeckLayout from './layout'
 import {Deck} from 'common/types/database'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
+import debugConfig from 'common/config/debug-config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -577,6 +578,7 @@ function SelectDeck({
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 									size="small"
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Manage Tags</span>
 								</Button>
@@ -619,6 +621,7 @@ function SelectDeck({
 									variant="primary"
 									size="small"
 									onClick={() => setShowImportModal(!showImportModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<ExportIcon reversed />
 									Import
@@ -628,6 +631,7 @@ function SelectDeck({
 									size="small"
 									onClick={() => setShowExportModal(!showExportModal)}
 									leftSlot={<ExportIcon />}
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Export</span>
 								</Button>
@@ -635,6 +639,7 @@ function SelectDeck({
 									variant="default"
 									size="small"
 									onClick={() => setShowMassExportModal(!showMassExportModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
@@ -657,6 +662,7 @@ function SelectDeck({
 							size="small"
 							onClick={() => setShowExportModal(!showExportModal)}
 							leftSlot={<ExportIcon />}
+							disabled={debugConfig.disableDatabase}
 						>
 							<span>Export Deck</span>
 						</Button>
@@ -756,6 +762,7 @@ function SelectDeck({
 										variant="primary"
 										onClick={() => setShowImportModal(!showImportModal)}
 										style={{flexGrow: 1}}
+										disabled={debugConfig.disableDatabase}
 									>
 										<ExportIcon reversed />
 										<span>Import</span>
@@ -763,6 +770,7 @@ function SelectDeck({
 									<Button
 										variant="default"
 										onClick={() => setShowMassExportModal(!showMassExportModal)}
+										disabled={debugConfig.disableDatabase}
 									>
 										<ExportIcon />
 										<span>Mass Export</span>
@@ -771,6 +779,7 @@ function SelectDeck({
 								<Button
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Manage Tags</span>
 								</Button>
