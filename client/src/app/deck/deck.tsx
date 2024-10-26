@@ -1,17 +1,17 @@
 import classNames from 'classnames'
+import {Deck} from 'common/types/database'
 import {PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {localMessages, useMessageDispatch} from 'logic/messages'
+import {setActiveDeck, toSavedDeck} from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {useReducer, useState} from 'react'
 import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
-import {localMessages, useMessageDispatch} from 'logic/messages'
-import {setActiveDeck, toSavedDeck} from 'logic/saved-decks/saved-decks'
-import {Deck} from 'common/types/database'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 export const cardGroupHeader = (
 	title: string,

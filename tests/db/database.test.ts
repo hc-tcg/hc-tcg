@@ -1,9 +1,15 @@
-import {afterEach, beforeEach, describe, expect, test} from '@jest/globals'
 import assert from 'assert'
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	test,
+} from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {setupDatabase} from 'server/db/db'
-import {generateDatabaseCode} from 'common/utils/database-codes'
 
 describe('Test Database', async () => {
 	const BF_DEPTH = 4
@@ -392,3 +398,4 @@ describe('Test Database', async () => {
 		expect(thirdDeckNumericIds).toStrictEqual([71, 32, 63, 5])
 	})
 })
+

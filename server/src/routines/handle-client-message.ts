@@ -5,6 +5,16 @@ import {
 import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {
+	addUser,
+	authenticateUser,
+	deleteDeck,
+	deleteTag,
+	getDecks,
+	getStats,
+	importDeck,
+	insertDeck,
+} from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
@@ -21,16 +31,6 @@ import {
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
-import {
-	addUser,
-	authenticateUser,
-	deleteDeck,
-	deleteTag,
-	getDecks,
-	getStats,
-	importDeck,
-	insertDeck,
-} from '../db/db-reciever'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {

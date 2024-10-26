@@ -4,8 +4,8 @@ import root from 'serverRoot'
 import {cards, deckCost, getCardsInDeck} from './cards'
 import {cancelApiGame, createApiGame} from './games'
 import {CancelGameBody} from './schema'
+import {StatsHeader, getStats} from './stats'
 import {requestUrlRoot} from './utils'
-import {getStats, StatsHeader} from './stats'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
