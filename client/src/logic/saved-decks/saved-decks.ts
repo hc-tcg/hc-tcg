@@ -1,7 +1,7 @@
 import {CARDS} from 'common/cards'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/database'
-import {PlayerDeck as PlayerDeck, LegacyDeck} from 'common/types/deck'
+import {LegacyDeck, PlayerDeck as PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 

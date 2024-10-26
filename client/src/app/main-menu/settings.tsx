@@ -1,14 +1,13 @@
+import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
+import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import Slider from 'components/slider'
-import Button from 'components/button'
-import {Stats} from 'common/types/database'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void

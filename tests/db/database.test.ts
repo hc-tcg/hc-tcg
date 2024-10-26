@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {
 	afterEach,
 	beforeAll,
@@ -6,11 +7,10 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
-import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
-import {generateDatabaseCode} from 'common/utils/database-codes'
 
 describe('Test Database', () => {
 	let database: Database

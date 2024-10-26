@@ -1,8 +1,8 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
+import {Deck} from 'common/types/database'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
-import {Deck} from 'common/types/database'
 
 type Props = {
 	setOpen: boolean

@@ -1,9 +1,9 @@
 import * as AlertDialog from '@radix-ui/react-dialog'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
-import css from './import-export.module.scss'
-import {useSelector} from 'react-redux'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {useSelector} from 'react-redux'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean

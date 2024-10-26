@@ -1,6 +1,6 @@
-import {z} from 'zod'
-import {Database} from 'db/db'
 import {Stats} from 'common/types/database'
+import {Database} from 'db/db'
+import {z} from 'zod'
 
 type StatsResult =
 	| {

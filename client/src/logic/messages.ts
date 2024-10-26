@@ -2,7 +2,8 @@ import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
-import {PlayerDeck, Tag} from 'common/types/deck'
+import {Deck} from 'common/types/database'
+import {Tag} from 'common/types/deck'
 import {
 	GameEndReasonT,
 	GamePlayerEndOutcomeT,
@@ -18,13 +19,12 @@ import {
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
+import {LocalDatabase} from './game/database/database-reducer'
 import {MODAL_COMPONENTS} from './game/tasks/action-modals-saga'
 import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
-import {LocalDatabase} from './game/database/database-reducer'
-import {Deck} from 'common/types/database'
 
 export const localMessages = messages({
 	SOCKET_CONNECTING: null,

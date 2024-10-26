@@ -4,14 +4,14 @@ import {CardEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {SlotTypeT} from '../types/cards'
 import {PlayCardAction, TurnAction} from '../types/game-state'
-import {WithoutFunctions, LocalModalResult} from '../types/server-requests'
+import {WithoutFunctions} from '../types/server-requests'
 import {
 	AnyTurnActionData,
-	PlayCardActionData,
-	WaitActionData,
+	ChangeActiveHermitActionData,
 	ModalResult,
 	PickSlotActionData,
-	ChangeActiveHermitActionData,
+	PlayCardActionData,
+	WaitActionData,
 } from '../types/turn-action-data'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16

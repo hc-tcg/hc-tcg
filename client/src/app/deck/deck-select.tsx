@@ -1,6 +1,9 @@
 import classNames from 'classnames'
+import debugConfig from 'common/config/debug-config'
 import {ToastT} from 'common/types/app'
+import {Deck} from 'common/types/database'
 import {PlayerDeck, Tag} from 'common/types/deck'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -19,6 +22,7 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
@@ -34,10 +38,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {Deck} from 'common/types/database'
-import {generateDatabaseCode} from 'common/utils/database-codes'
-import {DatabaseInfo} from 'logic/game/database/database-reducer'
-import debugConfig from 'common/config/debug-config'
 
 type Props = {
 	setMenuSection: (section: string) => void

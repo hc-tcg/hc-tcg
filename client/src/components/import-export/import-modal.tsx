@@ -2,15 +2,15 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {TypeT} from 'common/types/cards'
 import {PlayerDeck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckFromHash} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
-import {generateDatabaseCode} from 'common/utils/database-codes'
-import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
 	setOpen: boolean

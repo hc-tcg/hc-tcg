@@ -1,9 +1,9 @@
-import pg from 'pg'
 import {Card} from 'common/cards/base/types'
-import {GameEndOutcomeT} from 'common/types/game-state'
 import {Tag} from 'common/types/deck'
+import {GameEndOutcomeT} from 'common/types/game-state'
+import pg from 'pg'
 const {Pool} = pg
-import {Deck, User, UserWithoutSecret, Stats} from 'common/types/database'
+import {Deck, Stats, User, UserWithoutSecret} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
