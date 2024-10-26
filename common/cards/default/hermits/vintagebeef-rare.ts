@@ -18,7 +18,7 @@ const VintageBeefRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'builder',
+	type: ['builder'],
 	health: 290,
 	primary: {
 		name: 'Pojk',

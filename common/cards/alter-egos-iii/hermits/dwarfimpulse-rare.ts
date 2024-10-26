@@ -23,7 +23,7 @@ const DwarfImpulseRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'miner',
+	type: ['miner'],
 	health: 260,
 	primary: {
 		name: 'Barrel Roll',

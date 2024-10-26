@@ -16,7 +16,7 @@ const HorseHeadHypnoRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'builder',
+	type: ['builder'],
 	health: 260,
 	primary: {
 		name: 'Nice Guy',

@@ -31,7 +31,7 @@ const RendogRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'builder',
+	type: ['builder'],
 	health: 250,
 	primary: {
 		name: "Comin' At Ya",

@@ -19,7 +19,7 @@ const RenbobRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 300,
 	primary: {
 		name: 'Loose Change',

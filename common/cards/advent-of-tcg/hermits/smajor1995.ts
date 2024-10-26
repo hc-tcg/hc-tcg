@@ -16,7 +16,7 @@ class Smajor1995Rare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 0,
-		type: 'builder',
+		type: ['builder'],
 		health: 270,
 		primary: {
 			name: 'Color Splash',

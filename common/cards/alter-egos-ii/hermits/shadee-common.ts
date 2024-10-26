@@ -11,7 +11,7 @@ const ShadEECommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 280,
 	primary: {
 		name: 'Free Glass',

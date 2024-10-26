@@ -24,7 +24,7 @@ const BoomerBdubsRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 290,
 	primary: {
 		name: 'Boom',

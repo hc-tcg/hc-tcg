@@ -17,7 +17,7 @@ const Cubfan135Rare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 260,
 	primary: {
 		name: 'Dash',

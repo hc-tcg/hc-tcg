@@ -20,7 +20,7 @@ const HumanCleoRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 270,
 	primary: {
 		name: 'Humanity',

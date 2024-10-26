@@ -12,7 +12,7 @@ const ArchitectFalseCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 270,
 	primary: {
 		name: 'Oxidize',

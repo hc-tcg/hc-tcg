@@ -21,7 +21,7 @@ const PrincessGemRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 270,
 	primary: {
 		name: 'Sunny Days',

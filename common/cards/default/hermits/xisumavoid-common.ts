@@ -9,7 +9,7 @@ const XisumavoidCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 300,
 	primary: {
 		name: 'Oh My Days',

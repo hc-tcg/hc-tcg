@@ -11,7 +11,7 @@ const PrincessGemCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 280,
 	primary: {
 		name: 'Monarch',

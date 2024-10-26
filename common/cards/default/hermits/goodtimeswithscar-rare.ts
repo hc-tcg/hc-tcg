@@ -20,7 +20,7 @@ const GoodTimesWithScarRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'builder',
+	type: ['builder'],
 	health: 270,
 	primary: {
 		name: 'Scarred For Life',

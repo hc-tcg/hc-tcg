@@ -12,7 +12,7 @@ const WelsknightRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 280,
 	primary: {
 		name: "Knight's Blade",

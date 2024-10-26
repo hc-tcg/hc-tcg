@@ -9,7 +9,7 @@ const VintageBeefCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 250,
 	primary: {
 		name: 'Hey Guys!',

@@ -30,7 +30,7 @@ const ZombieCleoRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 290,
 	primary: {
 		name: 'Dismissed',

@@ -20,7 +20,7 @@ const GoatfatherRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 270,
 	primary: {
 		name: 'Omerta',

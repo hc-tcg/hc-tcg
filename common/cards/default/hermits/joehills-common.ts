@@ -9,7 +9,7 @@ const JoeHillsCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 270,
 	primary: {
 		name: 'Howdy',

@@ -16,7 +16,7 @@ class LDShadowLadyRare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 1,
-		type: 'terraform',
+		type: ['terraform'],
 		health: 290,
 		primary: {
 			name: 'Fairy Fort',

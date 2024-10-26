@@ -9,7 +9,7 @@ const XBCraftedCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 270,
 	primary: {
 		name: 'Aww Yeah',

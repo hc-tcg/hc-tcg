@@ -18,7 +18,7 @@ const SkizzlemanRare: Hermit = {
 	expansion: 'season_x',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'builder',
+	type: ['builder'],
 	health: 290,
 	primary: {
 		name: 'Hupper Cut ',

@@ -17,7 +17,7 @@ class PharaohRare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 2,
-		type: 'balanced',
+		type: ['balanced'],
 		health: 300,
 		primary: {
 			name: 'Targét',

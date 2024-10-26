@@ -17,7 +17,7 @@ const PearlescentMoonRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 300,
 	primary: {
 		name: 'Cleaning Lady',

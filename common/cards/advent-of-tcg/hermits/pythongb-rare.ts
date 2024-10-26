@@ -15,7 +15,7 @@ class PythonGBRare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 3,
-		type: 'redstone',
+		type: ['redstone'],
 		health: 250,
 		primary: {
 			name: 'Say Whaatt',

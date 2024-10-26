@@ -27,5 +27,6 @@ export const STRENGTHS: StrengthsDict = {
 	scavenger: [],
 	speedrunner: ['bard', 'miner', 'prankster'],
 	terraform: ['anarchist', 'inventor', 'redstone'],
+	everything: [], //These two are rigged in createWeakness() instead.
 	mob: [], // Funtionality to be confirmed.
 }

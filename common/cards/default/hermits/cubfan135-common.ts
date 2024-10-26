@@ -9,7 +9,7 @@ const Cubfan135Common: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 290,
 	primary: {
 		name: 'Heyo',

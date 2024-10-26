@@ -20,7 +20,7 @@ const KingJoelRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'builder',
+	type: ['builder'],
 	health: 280,
 	primary: {
 		name: 'Diss Track',

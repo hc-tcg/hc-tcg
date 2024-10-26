@@ -11,7 +11,7 @@ const RenbobCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 290,
 	primary: {
 		name: 'Gas Money',

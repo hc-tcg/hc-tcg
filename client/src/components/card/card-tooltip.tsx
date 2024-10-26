@@ -21,28 +21,30 @@ import {useSelector} from 'react-redux'
 import css from './card-tooltip.module.scss'
 
 const HERMIT_TYPES: Record<string, string> = {
-	ananrchist: 'anarchist',
-	athlete: 'athlete',
-	balanced: 'balanced',
-	bard: 'bard',
-	builder: 'builder',
-	challenger: 'challenger',
-	collector: 'collector',
-	diplomat: 'diplomat',
-	explorer: 'explorer',
-	farm: 'farm',
-	historian: 'historian',
-	inventor: 'inventor',
-	looper: 'looper',
-	miner: 'miner',
-	pacifist: 'pacifist',
-	prankster: 'prankster',
-	pvp: 'pvp',
-	redstone: 'redstone',
-	scavenger: 'scavenger',
-	speedrunner: 'speedrunner',
-	terraform: 'terraform',
-	mob: 'mob',
+	ananrchist: 'Anarchist',
+	athlete: 'Athlete',
+	balanced: 'Balanced',
+	bard: 'Bard',
+	builder: 'Builder',
+	challenger: 'Challenger',
+	collector: 'Collector',
+	diplomat: 'Diplomat',
+	explorer: 'Explorer',
+	farm: 'Farm',
+	historian: 'Historian',
+	inventor: 'Inventor',
+	looper: 'Looper',
+	miner: 'Miner',
+	pacifist: 'Pacifist',
+	prankster: 'Prankster',
+	pvp: 'PvP',
+	redstone: 'Redstone',
+	scavenger: 'Scavenger',
+	speedrunner: 'Speedrunner',
+	terraform: 'Terraform',
+	mob: 'Mob',
+	everything: 'Everything',
+	null: 'N/A',
 }
 
 type Props = {
@@ -82,10 +84,38 @@ const getStrengthsAndWeaknesses = (
 ): React.ReactNode => {
 	if (!isHermit(card)) return null
 
-	const strengths = STRENGTHS[card.type]
-	const weaknesses = Object.entries(STRENGTHS)
-		.filter(([, value]) => value.includes(card.type))
-		.map(([key]) => key) as Array<TypeT>
+	const strengths: Array<TypeT> = [] // Old = STRENGTHS[card.type]
+	if (card.type) {
+		if (card.type.includes('everything')) {
+			strengths.push('everything')
+			return
+		}
+		let i
+		for (i = 0; i < card.type.length; i++) {
+			let j
+			for (j = 0; j < card.type[i].length; j++) {
+				const type = STRENGTHS[card.type[i]][j]
+				if (strengths.includes(type)) {
+					strengths.push(type)
+				}
+			}
+		}
+	}
+	
+	const weaknesses: Array<TypeT> = []
+	if (card.type) {
+		let i: number
+		for (i = 0; i < card.type.length; i++) {
+			if (card.type) {
+				const chart = Object.entries(STRENGTHS)
+					.filter(([, value]) => value.includes(card.type[i]))
+					.map(([key]) => key) as Array<TypeT>
+			}
+			
+		}
+	}
+
+		
 
 	const result = (
 		<div className={css.strengthsAndWeaknesses}>
@@ -171,7 +201,7 @@ const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 }
 
 const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
-	if (isHermit(card)) {
+	if (isHermit(card) || card.type) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>
 				{HERMIT_TYPES[card.type] || card.type}

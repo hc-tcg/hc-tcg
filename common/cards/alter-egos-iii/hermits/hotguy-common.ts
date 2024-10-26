@@ -11,7 +11,7 @@ const HotguyCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 300,
 	primary: {
 		name: '6-Pack',

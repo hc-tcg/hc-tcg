@@ -11,7 +11,7 @@ const PoePoeSkizzCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 300,
 	primary: {
 		name: 'Citation',

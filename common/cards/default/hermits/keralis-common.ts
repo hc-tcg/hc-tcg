@@ -9,7 +9,7 @@ const KeralisCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 270,
 	primary: {
 		name: 'Looky Looky',

@@ -9,7 +9,7 @@ const BdoubleO100Common: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 260,
 	primary: {
 		name: 'Gradient',

@@ -11,7 +11,7 @@ const HelsknightCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'miner',
+	type: ['miner'],
 	health: 270,
 	primary: {
 		name: 'Slash',

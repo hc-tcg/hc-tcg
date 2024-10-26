@@ -11,7 +11,7 @@ const EvilJevinCommon: Hermit = {
 	background: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'miner',
+	type: ['miner'],
 	health: 260,
 	primary: {
 		name: 'Pickle',

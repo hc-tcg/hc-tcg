@@ -20,7 +20,7 @@ const VintageBeefUltraRare: Hermit = {
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: 2,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 280,
 	primary: {
 		name: 'Back in Action',

@@ -12,7 +12,7 @@ const Iskall85Rare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 290,
 	primary: {
 		name: 'Of Doom',

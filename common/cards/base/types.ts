@@ -94,7 +94,7 @@ export function hasDescription(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: TypeT
+	type: [TypeT] | null
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	getAttack(

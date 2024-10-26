@@ -17,7 +17,7 @@ class BigBSt4tzRare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 2,
-		type: 'speedrunner',
+		type: ['speedrunner'],
 		health: 270,
 		primary: {
 			name: 'Terry',

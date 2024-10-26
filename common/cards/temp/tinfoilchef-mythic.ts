@@ -14,7 +14,7 @@ const TinFoilChefMythic: Hermit = {
 	expansion: 'hc_plus',
 	rarity: 'mythic',
 	tokens: 5,
-	type: 'miner',
+	type: ['miner'],
 	health: 300,
 	primary: {
 		name: 'Very Humble Abode',

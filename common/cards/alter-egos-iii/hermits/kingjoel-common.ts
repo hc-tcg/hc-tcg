@@ -11,7 +11,7 @@ const KingJoelCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 290,
 	primary: {
 		name: 'Clone',

@@ -14,7 +14,7 @@ const WormManRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 260,
 	primary: {
 		name: 'Side Kick',

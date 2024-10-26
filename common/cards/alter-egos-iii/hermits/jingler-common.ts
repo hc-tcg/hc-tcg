@@ -11,7 +11,7 @@ const JinglerCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 300,
 	primary: {
 		name: 'Pranked',

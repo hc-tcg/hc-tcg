@@ -23,7 +23,7 @@ const KeralisRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 250,
 	primary: {
 		name: 'Booshes',

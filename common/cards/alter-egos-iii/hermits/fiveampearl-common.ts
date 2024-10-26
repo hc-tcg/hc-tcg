@@ -11,7 +11,7 @@ const FiveAMPearlCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 280,
 	primary: {
 		name: 'Frozen Tickle',

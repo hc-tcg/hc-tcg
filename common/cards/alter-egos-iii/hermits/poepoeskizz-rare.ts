@@ -20,7 +20,7 @@ const PoePoeSkizzRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 250,
 	primary: {
 		name: 'Teardown',

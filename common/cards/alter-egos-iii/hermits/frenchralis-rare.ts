@@ -14,7 +14,7 @@ const FrenchralisRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 250,
 	primary: {
 		name: 'French.',

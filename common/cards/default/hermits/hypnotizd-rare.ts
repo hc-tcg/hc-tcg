@@ -24,7 +24,7 @@ const HypnotizdRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'miner',
+	type: ['miner'],
 	health: 270,
 	primary: {
 		name: 'MmHmm',

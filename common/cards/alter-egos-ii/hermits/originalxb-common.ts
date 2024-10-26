@@ -11,7 +11,7 @@ const OriginalXbCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'miner',
+	type: ['miner'],
 	health: 280,
 	primary: {
 		name: 'Hellooo?',

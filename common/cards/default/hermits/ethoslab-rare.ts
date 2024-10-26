@@ -19,7 +19,7 @@ const EthosLabRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 280,
 	primary: {
 		name: 'Oh Snappers',

@@ -11,7 +11,7 @@ const PoultrymanCommon: Hermit = {
 	background: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 260,
 	primary: {
 		name: 'Eggscuse Me',

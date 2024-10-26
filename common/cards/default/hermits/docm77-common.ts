@@ -9,7 +9,7 @@ const Docm77Common: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 260,
 	primary: {
 		name: 'Hive Mind',

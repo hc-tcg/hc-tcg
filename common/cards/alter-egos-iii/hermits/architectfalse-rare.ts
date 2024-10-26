@@ -23,7 +23,7 @@ const ArchitectFalseRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 250,
 	primary: {
 		name: 'Seeing Double',

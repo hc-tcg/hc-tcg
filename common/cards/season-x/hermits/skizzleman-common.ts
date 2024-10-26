@@ -9,7 +9,7 @@ const SkizzlemanCommon: Hermit = {
 	expansion: 'season_x',
 	rarity: 'common',
 	tokens: 0,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 280,
 	primary: {
 		name: 'Laugh Attack ',

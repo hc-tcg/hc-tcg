@@ -36,6 +36,7 @@ export type TypeT =
 	| 'scavenger'
 	| 'speedrunner'
 	| 'terraform'
+	| 'everything'
 	| 'mob'
 
 export type CardCategoryT =

@@ -17,7 +17,7 @@ class GrianchRare extends CardOld {
 		background: 'advent_of_tcg',
 		rarity: 'rare',
 		tokens: 3,
-		type: 'builder',
+		type: ['builder'],
 		health: 250,
 		primary: {
 			name: 'Nice',

@@ -9,7 +9,7 @@ const Iskall85Common: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 280,
 	primary: {
 		name: 'Hallo',

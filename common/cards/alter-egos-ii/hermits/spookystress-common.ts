@@ -12,7 +12,7 @@ const SpookyStressCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 260,
 	primary: {
 		name: 'Giggle',

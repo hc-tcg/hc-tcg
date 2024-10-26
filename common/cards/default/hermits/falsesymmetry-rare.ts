@@ -13,7 +13,7 @@ const FalseSymmetryRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'builder',
+	type: ['builder'],
 	health: 250,
 	primary: {
 		name: 'High Noon',

@@ -22,7 +22,7 @@ const SpookyStressRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 260,
 	primary: {
 		name: 'Meh',

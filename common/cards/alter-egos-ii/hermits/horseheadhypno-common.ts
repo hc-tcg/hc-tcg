@@ -12,7 +12,7 @@ const HorseHeadHypnoCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 260,
 	primary: {
 		name: 'I.O.U.',

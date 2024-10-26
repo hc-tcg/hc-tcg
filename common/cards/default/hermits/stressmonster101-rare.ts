@@ -12,7 +12,7 @@ const StressMonster101Rare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 300,
 	primary: {
 		name: 'Plonker',

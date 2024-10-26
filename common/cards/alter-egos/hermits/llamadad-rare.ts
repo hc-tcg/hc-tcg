@@ -15,7 +15,7 @@ const LlamadadRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 290,
 	primary: {
 		name: 'Spitz',

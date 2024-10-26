@@ -15,7 +15,7 @@ const ShadeEERare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 270,
 	primary: {
 		name: 'Corrupt Contr.',

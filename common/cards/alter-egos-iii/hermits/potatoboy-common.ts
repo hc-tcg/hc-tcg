@@ -11,7 +11,7 @@ const PotatoBoyCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 300,
 	primary: {
 		name: 'Fast',

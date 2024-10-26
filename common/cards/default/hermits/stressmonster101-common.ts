@@ -9,7 +9,7 @@ const StressMonster101Common: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 280,
 	primary: {
 		name: "'Ello",

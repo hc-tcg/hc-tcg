@@ -17,7 +17,7 @@ const TangoTekRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 290,
 	primary: {
 		name: 'Skadoodle',

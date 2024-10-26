@@ -16,7 +16,7 @@ const JinglerRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 280,
 	primary: {
 		name: 'Jingled',

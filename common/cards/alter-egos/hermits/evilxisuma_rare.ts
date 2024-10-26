@@ -31,7 +31,7 @@ const EvilXisumaRare: Hermit = {
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	tokens: 3,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 280,
 	primary: {
 		name: 'Evil Inside',

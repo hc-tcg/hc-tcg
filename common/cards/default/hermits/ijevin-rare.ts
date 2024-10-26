@@ -18,7 +18,7 @@ const IJevinRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 300,
 	primary: {
 		name: 'Your Boi',

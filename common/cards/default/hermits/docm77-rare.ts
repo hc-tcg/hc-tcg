@@ -13,7 +13,7 @@ const Docm77Rare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'farm',
+	type: ['farm'],
 	health: 280,
 	primary: {
 		name: 'Shadow Tech',

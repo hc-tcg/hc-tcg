@@ -31,7 +31,7 @@ const BeetlejhostRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 300,
 	primary: {
 		name: 'Abacus',

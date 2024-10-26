@@ -9,7 +9,7 @@ const HypnotizdCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 250,
 	primary: {
 		name: 'What Up',

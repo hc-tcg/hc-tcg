@@ -12,7 +12,7 @@ const BoomerBdubsCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 290,
 	primary: {
 		name: 'Blast Off',

@@ -12,7 +12,7 @@ const DwarfImpulseCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 250,
 	primary: {
 		name: 'Beard Bash',

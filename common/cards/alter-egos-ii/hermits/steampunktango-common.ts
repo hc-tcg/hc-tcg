@@ -12,7 +12,7 @@ const SteampunkTangoCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 250,
 	primary: {
 		name: 'Create',

@@ -18,7 +18,7 @@ const TinFoilChefRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'miner',
+	type: ['miner'],
 	health: 300,
 	primary: {
 		name: 'True Hermit',

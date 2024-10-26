@@ -18,7 +18,7 @@ const XBCraftedRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 270,
 	primary: {
 		name: 'Giggle',

@@ -9,7 +9,7 @@ const ImpulseSVCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 270,
 	primary: {
 		name: 'Shovel Shuffle',

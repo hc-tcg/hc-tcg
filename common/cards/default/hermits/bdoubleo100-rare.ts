@@ -17,7 +17,7 @@ const BdoubleO100Rare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 260,
 	primary: {
 		name: 'Retexture',

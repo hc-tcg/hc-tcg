@@ -11,7 +11,7 @@ const GoatfatherCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 270,
 	primary: {
 		name: 'Pettiness',

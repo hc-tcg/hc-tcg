@@ -9,7 +9,7 @@ const RendogCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 260,
 	primary: {
 		name: 'Professional',

@@ -14,7 +14,7 @@ const GeminiTayRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 270,
 	primary: {
 		name: "It's Fine",

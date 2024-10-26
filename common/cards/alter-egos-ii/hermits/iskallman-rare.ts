@@ -19,7 +19,7 @@ const IskallmanRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 260,
 	primary: {
 		name: 'Iskall...MAAAN',

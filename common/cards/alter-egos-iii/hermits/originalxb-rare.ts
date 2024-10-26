@@ -19,7 +19,7 @@ const OriginalXBRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'miner',
+	type: ['miner'],
 	health: 270,
 	primary: {
 		name: "Slabs 'n Stairs",

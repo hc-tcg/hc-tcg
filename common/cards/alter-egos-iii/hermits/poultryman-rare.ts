@@ -16,7 +16,7 @@ const PoultryManRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'farm',
+	type: ['farm'],
 	health: 280,
 	primary: {
 		name: "It wasn't me",

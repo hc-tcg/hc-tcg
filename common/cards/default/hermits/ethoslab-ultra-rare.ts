@@ -13,7 +13,7 @@ const EthosLabUltraRare: Hermit = {
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: 3,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 250,
 	primary: {
 		name: 'Ladders',

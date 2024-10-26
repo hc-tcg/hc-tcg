@@ -9,7 +9,7 @@ const TangoTekCommon: Hermit = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 300,
 	primary: {
 		name: 'Thing-ificator',

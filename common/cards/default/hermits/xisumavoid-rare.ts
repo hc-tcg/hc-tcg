@@ -18,7 +18,7 @@ const XisumavoidRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 280,
 	primary: {
 		name: 'Goodness Me',

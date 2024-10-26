@@ -14,7 +14,7 @@ const OverseerRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'miner',
+	type: ['miner'],
 	health: 250,
 	primary: {
 		name: 'Testing',

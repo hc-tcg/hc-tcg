@@ -21,7 +21,7 @@ const JoeHillsRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'farm',
+	type: ['farm'],
 	health: 270,
 	primary: {
 		name: 'Grow Hills',

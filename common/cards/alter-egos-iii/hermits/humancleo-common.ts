@@ -11,7 +11,7 @@ const HumanCleoCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 250,
 	primary: {
 		name: 'Heartbeat',

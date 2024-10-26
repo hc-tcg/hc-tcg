@@ -16,7 +16,7 @@ const SteampunkTangoRare: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 270,
 	primary: {
 		name: 'Porkchop Power',

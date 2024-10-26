@@ -11,7 +11,7 @@ const FrenchKeralisCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 290,
 	primary: {
 		name: 'Bonjour',

@@ -18,7 +18,7 @@ const GrianRare: Hermit = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 300,
 	primary: {
 		name: 'Borrow',

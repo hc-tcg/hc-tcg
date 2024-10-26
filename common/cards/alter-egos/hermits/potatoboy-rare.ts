@@ -19,7 +19,7 @@ const PotatoBoyRare: Hermit = {
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 270,
 	primary: {
 		name: 'Peace & Love',

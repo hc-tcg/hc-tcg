@@ -11,7 +11,7 @@ const EvilXisumaCommon: Hermit = {
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 290,
 	primary: {
 		name: 'Minion',
