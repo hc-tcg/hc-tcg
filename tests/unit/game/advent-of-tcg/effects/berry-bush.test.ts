@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import BerryBush from 'common/cards/advent-of-tcg/effects/berry-bush'
+import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import WormManRare from 'common/cards/hermits/wormman-rare'
 import Bow from 'common/cards/single-use/bow'

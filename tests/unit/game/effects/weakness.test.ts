@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import ImpulseSVCommon from 'common/cards/hermits/impulsesv-common'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
-import SmallishbeansRare from 'common/cards/season-x/hermits/smallishbeans-rare'
+import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {RowComponent} from 'common/components'

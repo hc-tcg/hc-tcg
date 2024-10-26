@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import Cat from 'common/cards/advent-of-tcg/effects/cat'
-import Thorns from 'common/cards/effects/thorns'
+import Cat from 'common/cards/advent-of-tcg/attach/cat'
+import Thorns from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GrianRare from 'common/cards/hermits/grian-rare'
 import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
