@@ -5,7 +5,7 @@ const BalancedDoubleItem: Item = {
 	...item,
 	id: 'item_balanced_rare',
 	numericId: 50,
-	name: 'Balanced Item ×2',
+	name: 'Balanced Item x2',
 	shortName: 'Balanced',
 	description: 'Counts as 2 Balanced Item cards.',
 	expansion: 'default',

@@ -10,7 +10,7 @@ const HistorianDoubleItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_rare',
 	numericId: 49,
-	name: capitalize(convenience) + ' Item ×2',
+	name: capitalize(convenience) + ' Item x2',
 	shortName: capitalize(convenience),
 	description: 'Counts as 2 ' + capitalize(convenience) + ' Item cards.',
 	expansion: 'default',
