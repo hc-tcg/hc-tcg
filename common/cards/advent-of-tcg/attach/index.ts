@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../../types'
 import BerryBush from './berry-bush'
 import BrewingStand from './brewing-stand'
 import Cat from './cat'

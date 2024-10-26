@@ -13,8 +13,8 @@ import {
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import LightningRod from '../../alter-egos/effects/lightning-rod'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../../defaults'
+import {Attach} from '../../types'
 
 function isFromGasLightEffect(game: GameModel, attack: AttackModel): boolean {
 	const damageSource = attack.getHistory('add_damage').at(0)?.source

@@ -2,8 +2,8 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {IgnoreAttachSlotEffect} from '../../../status-effects/ignore-attach'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../../defaults'
+import {Attach} from '../../types'
 
 const Slimeball: Attach = {
 	...attach,

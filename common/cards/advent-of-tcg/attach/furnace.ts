@@ -6,8 +6,8 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import SmeltingEffect from '../../../status-effects/smelting'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../../defaults'
+import {Attach} from '../../types'
 
 const Furnace: Attach = {
 	...attach,

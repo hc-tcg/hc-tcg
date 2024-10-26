@@ -8,8 +8,8 @@ import SoulmateEffect, {
 	soulmateEffectDamage,
 } from '../../../status-effects/soulmate'
 import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const BigBSt4tzRare: Hermit = {
 	...hermit,

@@ -7,8 +7,8 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {SelectCards} from '../../../types/modal-requests'
 import {afterAttack} from '../../../types/priorities'
-import {attach} from '../../base/defaults'
-import {Attach} from '../../base/types'
+import {attach} from '../../defaults'
+import {Attach} from '../../types'
 
 const Cat: Attach = {
 	...attach,
