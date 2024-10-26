@@ -14,6 +14,7 @@ import defaultHermitCards from './default/hermits'
 import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import seasonXHermitCards from './season-x/hermits'
+import tempHermits from './temp'
 
 const effectCardClasses: Array<Card> = [
 	...defaultEffectCards,
@@ -29,6 +30,7 @@ const hermitCardClasses: Array<Card> = [
 	...alterEgosIIHermitCards,
 	...seasonXHermitCards,
 	...alterEgosIIIHermitCards,
+	...tempHermits,
 ]
 
 const itemCardClasses: Array<Card> = [

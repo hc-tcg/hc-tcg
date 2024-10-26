@@ -21,14 +21,16 @@ const TinFoilChefMythic: Hermit = {
 	type: 'miner',
 	health: 300,
 	primary: {
-		name: 'Very Humble Abodde',
+		name: 'Very Humble Abode',
+		shortName: 'V. Humble Abode',
 		cost: ['any'],
-		damage: 60,
+		damage: 40,
 		power: 
 			'Flip 3 coins.\nDeal +40 damage per head.',
 	},
 	secondary: {
 		name: "I'm Outta here",
+		shortName: 'Outta Here',
 		cost: ['miner', 'miner', 'miner'],
 		damage: 100,
 		power: 
@@ -63,9 +65,9 @@ const TinFoilChefMythic: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
+				// Calculate average health.
 				let total = 0
 				let count = 0
-
 				game.components
 					.filter(
 						RowComponent,
@@ -73,15 +75,16 @@ const TinFoilChefMythic: Hermit = {
 						query.row.hasHermit,
 					)
 					.forEach((row) => {
-						total += row.health ?
+						if (!row.health) return
+						total += row.health
 						count += 1
 					})
 
+				// Heal
 				game.components
 					.filter(
 						RowComponent,
 						query.row.currentPlayer,
-						query.row.adjacent(query.row.active),
 						query.row.hasHermit,
 					)
 					.forEach((row) => {
@@ -96,6 +99,28 @@ const TinFoilChefMythic: Hermit = {
 							}$`,
 						)
 					})
+
+				// Check full health
+				let allFullHealth = true
+				game.components
+					.filter(
+						RowComponent,
+						query.row.currentPlayer,
+						query.row.hasHermit,
+					)
+					.forEach((row) => {
+						let hermit = row.getHermit()
+						if (!hermit) return
+						if (!hermit.isHealth()) return
+
+						if (row.health !== hermit.props.health) {
+							allFullHealth = false
+						}
+					})
+
+				if (allFullHealth) {
+					player.lives -= 1
+				}
 			},
 		)
 	},

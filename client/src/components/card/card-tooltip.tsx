@@ -52,10 +52,14 @@ type Props = {
 const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 	let text: FormattedTextNode = EmptyNode()
 	if (isHermit(card)) {
+		let interim = ''
+		if (card.primary.power && card.secondary.power) {
+			interim = '\n'
+		}
 		text = formatText(
 			(card.primary.power
 				? `**${card.primary.name}**\n*${card.primary.power}*`
-				: '') +
+				: '') + interim +
 				(card.secondary.power
 					? `**${card.secondary.name}**\n*${card.secondary.power}*`
 					: ''),
