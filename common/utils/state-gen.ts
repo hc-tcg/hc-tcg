@@ -201,10 +201,10 @@ export function getStarterPack(): Array<Card> {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!isHermit(cardInfo) ||
-			!isItem(cardInfo) ||
-			(types.includes(cardInfo.type) &&
-				EXPANSIONS[cardInfo.expansion].disabled === false),
+			(!isHermit(cardInfo) ||
+				!isItem(cardInfo) ||
+				types.includes(cardInfo.type)) &&
+			EXPANSIONS[cardInfo.expansion].disabled === false,
 	)
 
 	const effectCards = cards.filter(
