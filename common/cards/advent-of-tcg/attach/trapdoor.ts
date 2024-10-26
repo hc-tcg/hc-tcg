@@ -12,7 +12,7 @@ import {
 } from '../../../status-effects/gas-light'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
-import LightningRod from '../../alter-egos/effects/lightning-rod'
+import LightningRod from '../../attach/lightning-rod'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
 

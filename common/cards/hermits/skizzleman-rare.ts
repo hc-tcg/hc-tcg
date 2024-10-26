@@ -3,16 +3,16 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
-import {GameModel} from '../../../models/game-model'
+} from '../../components'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import {
 	GasLightEffect,
 	GasLightPotentialEffect,
-} from '../../../status-effects/gas-light'
-import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+} from '../../status-effects/gas-light'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const SkizzlemanRare: Hermit = {
 	...hermit,

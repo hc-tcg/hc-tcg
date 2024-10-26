@@ -3,16 +3,16 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from '../../../components'
-import query from '../../../components/query'
-import {GameModel} from '../../../models/game-model'
-import FortuneEffect from '../../../status-effects/fortune'
-import SpentFortuneEffect from '../../../status-effects/spent-fortune'
-import {SelectCards} from '../../../types/modal-requests'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
-import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+} from '../../components'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
+import FortuneEffect from '../../status-effects/fortune'
+import SpentFortuneEffect from '../../status-effects/spent-fortune'
+import {SelectCards} from '../../types/modal-requests'
+import {afterAttack, beforeAttack} from '../../types/priorities'
+import {flipCoin} from '../../utils/coinFlips'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const BoomerBdubsRare: Hermit = {
 	...hermit,
