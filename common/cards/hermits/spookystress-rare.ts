@@ -65,6 +65,7 @@ const SpookyStressRare: Hermit = {
 						query.not(query.row.active),
 						query.row.hermitSlotOccupied,
 					)
+					.sort((a, b) => a.index - b.index)
 					.forEach((row) => {
 						const newAttack = game.newAttack({
 							attacker: component.entity,

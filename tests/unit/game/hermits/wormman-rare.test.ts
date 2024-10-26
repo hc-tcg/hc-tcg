@@ -1,14 +1,16 @@
 import {describe, expect, test} from '@jest/globals'
-import ArmorStand from 'common/cards/attach/armor-stand'
-import {ThornsIII} from 'common/cards/attach/thorns'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import PoultrymanCommon from 'common/cards/hermits/poultryman-common'
-import WormManRare from 'common/cards/hermits/wormman-rare'
-import Anvil from 'common/cards/single-use/anvil'
-import Bow from 'common/cards/single-use/bow'
-import TargetBlock from 'common/cards/single-use/target-block'
-import {CardComponent} from 'common/components'
+import WormManRare from 'common/cards/alter-egos-iii/hermits/wormman-rare'
+import ArmorStand from 'common/cards/alter-egos/effects/armor-stand'
+import ThornsIII from 'common/cards/alter-egos/effects/thorns_iii'
+import HumanCleoRare from 'common/cards/alter-egos/hermits/humancleo-rare'
+import PoultrymanCommon from 'common/cards/alter-egos/hermits/poultryman-common'
+import Anvil from 'common/cards/alter-egos/single-use/anvil'
+import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import Bow from 'common/cards/default/single-use/bow'
+import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
+import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import {TurnAction} from 'common/types/game-state'
 import {
 	attack,
@@ -215,6 +217,73 @@ describe('Test Rare Worm Man', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Total Anonymity interactions with Betrayed effect', () => {
+		testGame(
+			{
+				playerOneDeck: [WormManRare, EthosLabCommon],
+				playerTwoDeck: [HumanCleoRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						HumanCleoRare.health -
+							WormManRare.secondary.damage -
+							WEAKNESS_DAMAGE /** Prankster -> PvP */,
+					)
+					expect(game.state.turn.availableActions).toContain('END_TURN')
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.currentPlayer,
+							query.card.slot(query.slot.rowIndex(1)),
+						)?.turnedOver,
+					).toBe(true)
+					expect(game.state.turn.availableActions).toContain('END_TURN')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.currentPlayer,
+							query.card.slot(query.slot.rowIndex(1)),
+						)?.turnedOver,
+					).toBe(false)
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						HumanCleoRare.health -
+							WormManRare.secondary.damage -
+							WEAKNESS_DAMAGE /** Prankster -> PvP */,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.currentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - WormManRare.secondary.damage)
+					yield* endTurn(game)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

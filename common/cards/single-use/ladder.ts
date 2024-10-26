@@ -9,6 +9,7 @@ const pickCondition = query.every(
 	query.slot.currentPlayer,
 	query.slot.hermit,
 	query.not(query.slot.empty),
+	query.not(query.slot.frozen),
 	query.slot.adjacent(query.slot.active),
 )
 
@@ -24,6 +25,13 @@ const Ladder: SingleUse = {
 		'Before your attack, swap your active Hermit card with one of your adjacent AFK Hermit cards.\nAll cards attached to both Hermits, including health, remain in place. Your active Hermit remains active after swapping.',
 	attachCondition: query.every(
 		singleUse.attachCondition,
+		query.exists(
+			SlotComponent,
+			query.slot.currentPlayer,
+			query.slot.active,
+			query.slot.hermit,
+			query.not(query.slot.frozen),
+		),
 		query.exists(SlotComponent, pickCondition),
 	),
 	log: (values) => values.defaultLog,

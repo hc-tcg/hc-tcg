@@ -7,11 +7,6 @@ import {PickRequest} from '../../types/server-requests'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
-/*
-- Has to support having two different afk targets (one for hypno, one for su effect like bow)
-- If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
-- TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
-*/
 const HypnotizdRare: Hermit = {
 	...hermit,
 	id: 'hypnotizd_rare',
@@ -42,6 +37,7 @@ const HypnotizdRare: Hermit = {
 	): void {
 		const {player, opponentPlayer} = component
 		let target: SlotComponent | null = null
+		let item: CardComponent | null = null
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
@@ -49,15 +45,18 @@ const HypnotizdRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				if (!target?.inRow()) return
+				if (!target?.inRow() || !item) return
 				attack.setTarget(component.entity, target.row.entity)
+				item.discard()
 				target = null
+				item = null
 			},
 		)
 
 		observer.subscribe(
 			player.hooks.getAttackRequests,
 			(activeInstance, hermitAttackType) => {
+				item = null
 				if (
 					activeInstance.entity !== component.entity ||
 					hermitAttackType !== 'secondary'
@@ -69,6 +68,7 @@ const HypnotizdRare: Hermit = {
 					query.slot.active,
 					query.slot.item,
 					query.not(query.slot.empty),
+					query.not(query.slot.frozen),
 				)
 
 				// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
@@ -92,13 +92,12 @@ const HypnotizdRare: Hermit = {
 					message: 'Choose an item to discard from your active Hermit.',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						pickedSlot.getCard()?.discard()
+						item = pickedSlot.getCard()
 					},
 					onTimeout() {
-						game.components
-							.find(SlotComponent, pickCondition)
-							?.getCard()
-							?.discard()
+						item =
+							game.components.find(SlotComponent, pickCondition)?.getCard() ||
+							null
 					},
 				}
 

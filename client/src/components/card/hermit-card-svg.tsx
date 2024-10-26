@@ -64,7 +64,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 				lengthAdjust="spacingAndGlyphs"
 				className={classnames(css.name, css[palette])}
 				dominantBaseline="hanging"
-				key={Math.random()}
+				key={0}
 			>
 				{name}
 			</text>
@@ -74,7 +74,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 				className={css.health}
 				textAnchor="middle"
 				dominantBaseline="hanging"
-				key={Math.random()}
+				key={1}
 			>
 				{card.health}
 			</text>
@@ -147,7 +147,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					className={classnames(css.attackName, css[palette])}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={2}
 				>
 					{card.primary.shortName ? card.primary.shortName : card.primary.name}
 				</text>
@@ -159,7 +159,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={3}
 				>
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
@@ -183,7 +183,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={4}
 				>
 					{card.secondary.shortName
 						? card.secondary.shortName
@@ -197,7 +197,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={5}
 				>
 					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
 				</text>

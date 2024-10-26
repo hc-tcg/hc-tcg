@@ -54,6 +54,7 @@ const GoldenAxe: SingleUse = {
 			(attack) => {
 				if (attack.isAttacker(component.entity)) {
 					applySingleUse(game)
+					observer.unsubscribeFromEverything()
 				}
 			},
 		)

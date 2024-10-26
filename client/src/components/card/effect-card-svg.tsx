@@ -66,7 +66,7 @@ const EffectCardModule = memo(({card, displayTokenCost}: EffectCardProps) => {
 					className={css.type}
 					textAnchor="middle"
 					dominantBaseline="hanging"
-					key={Math.random()}
+					key={0}
 				>
 					EFFECT
 				</text>

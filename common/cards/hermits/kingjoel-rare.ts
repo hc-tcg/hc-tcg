@@ -43,6 +43,7 @@ const KingJoelRare: Hermit = {
 			query.not(query.slot.active),
 			query.slot.item,
 			query.not(query.slot.empty),
+			query.not(query.slot.frozen),
 			query.slot.row((_game, row) => !!row.health),
 		)
 		const secondPickCondition = query.every(

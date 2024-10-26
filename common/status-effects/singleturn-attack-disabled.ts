@@ -34,7 +34,7 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 				game.addBlockedActions(effect.entity, 'PRIMARY_ATTACK')
 			}
 
-			observer.subscribe(
+			observer.subscribeBefore(
 				player.hooks.onActiveRowChange,
 				(_oldHermit, newHermit) => {
 					if (newHermit.entity === target.entity)
@@ -44,7 +44,7 @@ export const PrimaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 			)
 		}
 		if (game.currentPlayer.entity === player.entity) startBlocking()
-		else observer.subscribe(player.hooks.onTurnStart, startBlocking)
+		else observer.subscribeBefore(player.hooks.onTurnStart, startBlocking)
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
@@ -83,7 +83,7 @@ export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 				game.addBlockedActions(effect.entity, 'SECONDARY_ATTACK')
 			}
 
-			observer.subscribe(
+			observer.subscribeBefore(
 				player.hooks.onActiveRowChange,
 				(_oldHermit, newHermit) => {
 					if (newHermit.entity === target.entity)
@@ -93,7 +93,7 @@ export const SecondaryAttackDisabledEffect: StatusEffect<CardComponent> = {
 			)
 		}
 		if (game.currentPlayer.entity === player.entity) startBlocking()
-		else observer.subscribe(player.hooks.onTurnStart, startBlocking)
+		else observer.subscribeBefore(player.hooks.onTurnStart, startBlocking)
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,

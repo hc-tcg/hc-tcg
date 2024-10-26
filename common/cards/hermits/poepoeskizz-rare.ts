@@ -1,10 +1,14 @@
-import {CardComponent, ObserverComponent, RowComponent} from '../../components'
-import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {afterAttack} from '../../types/priorities'
-import {executeExtraAttacks} from '../../utils/attacks'
-import {hermit} from '../defaults'
-import {Hermit} from '../types'
+import {
+	CardComponent,
+	ObserverComponent,
+	RowComponent,
+	SlotComponent,
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 const PoePoeSkizzRare: Hermit = {
 	...hermit,
@@ -29,7 +33,7 @@ const PoePoeSkizzRare: Hermit = {
 		cost: ['pvp', 'pvp', 'any'],
 		damage: 90,
 		power:
-			'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
+			'You can choose to move your active Hermit and any attached cards to any open row on the game board, and do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
 	},
 	onAttach(
 		game: GameModel,
@@ -38,13 +42,26 @@ const PoePoeSkizzRare: Hermit = {
 	) {
 		const {player} = component
 
-		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.HERMIT_ATTACK_REQUESTS,
-			(attack) => {
-				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+		let pickedRow: RowComponent | null = null
+
+		observer.subscribe(
+			player.hooks.getAttackRequests,
+			(instance, attackType) => {
+				if (instance.entity !== component.entity || attackType !== 'secondary')
 					return
-				if (!component.slot.inRow()) return
+				pickedRow = null
+				if (!component.slot.inRow() || query.slot.frozen(game, component.slot))
+					return
+
+				if (
+					!game.components.exists(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.empty,
+					)
+				)
+					return
 
 				game.addPickRequest({
 					player: player.entity,
@@ -62,33 +79,57 @@ const PoePoeSkizzRare: Hermit = {
 						if (!pickedSlot.inRow() || !component.slot.inRow()) return
 						if (pickedSlot.row.entity === component.slot.rowEntity) return
 
-						game.swapRows(pickedSlot.row, component.slot.row)
-
-						const jumpscareTarget = game.components.find(
-							RowComponent,
-							query.row.opponentPlayer,
-							game.components.filter(RowComponent, query.row.opponentPlayer)
-								.length > 1
-								? query.row.index(component.slot.row.index)
-								: query.anything, // Lets Jumpscare always damage opponent, if opponent only has a single row and player can move
-						)
-
-						if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
-
-						const jumpscareAttack = game.newAttack({
-							attacker: component.entity,
-							target: jumpscareTarget.entity,
-							type: 'secondary',
-							log: (values) =>
-								` and dealt ${values.damage} to ${values.target}`,
-						})
-						jumpscareAttack.addDamage(component.entity, 20)
-						jumpscareAttack.shouldIgnoreCards.push(
-							query.card.entity(component.entity),
-						)
-						executeExtraAttacks(game, [jumpscareAttack])
+						pickedRow = pickedSlot.row
 					},
 				})
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.ADD_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
+					return
+				if (!component.slot.inRow()) return
+
+				if (!pickedRow || !component.slot.inRow()) return
+				if (pickedRow.entity === component.slot.rowEntity) return
+
+				game.swapRows(pickedRow, component.slot.row)
+
+				const jumpscareTarget = game.components.find(
+					RowComponent,
+					query.row.opponentPlayer,
+					game.components.filter(RowComponent, query.row.opponentPlayer)
+						.length > 1
+						? query.row.index(component.slot.row.index)
+						: query.anything, // Lets Jumpscare always damage opponent, if opponent only has a single row and player can move
+				)
+
+				if (!jumpscareTarget || !jumpscareTarget.getHermit()) return
+
+				const newRowIndex = pickedRow.index
+				const jumpscareAttack = game.newAttack({
+					attacker: component.entity,
+					target: jumpscareTarget.entity,
+					type: 'secondary',
+					log: (values) =>
+						` and moved to row #${newRowIndex + 1} to deal ${values.damage} to ${values.target}`,
+				})
+				jumpscareAttack.addDamage(component.entity, 20)
+				jumpscareAttack.shouldIgnoreCards.push(
+					query.card.entity(component.entity),
+				)
+				attack.addNewAttack(jumpscareAttack)
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				pickedRow = null
 			},
 		)
 	},

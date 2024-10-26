@@ -45,7 +45,7 @@ export function getCardTypeIcon(type: TypeT) {
 
 export function getCardRankIcon(card: Card) {
 	let rank = getCardRank(card.tokens)
-	if (card.tokens === 0) {
+	if (card.tokens === 0 || card.tokens === -1) {
 		return null
 	}
 	return `/images/ranks/${rank}.png`

@@ -14,6 +14,7 @@ import {GameModel} from '../models/game-model'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
+import {fisherYatesShuffle} from './fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -110,20 +111,16 @@ function setupEcsForPlayer(
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
 	if (options.shuffleDeck) {
-		cards
-			.sort(() => Math.random() - 0.5)
-			.forEach((card, i) => {
-				if (card.slot.inDeck()) card.slot.order = i
-			})
+		fisherYatesShuffle(cards).forEach((card, i) => {
+			if (card.slot.inDeck()) card.slot.order = i
+		})
 
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
-			cards
-				.sort(() => Math.random() - 0.5)
-				.forEach((card, i) => {
-					if (card.slot.inDeck()) card.slot.order = i
-				})
+			fisherYatesShuffle(cards).forEach((card, i) => {
+				if (card.slot.inDeck()) card.slot.order = i
+			})
 		}
 	}
 

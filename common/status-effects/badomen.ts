@@ -23,8 +23,6 @@ const BadOmenEffect: Counter<CardComponent> = {
 	) {
 		const {player, opponentPlayer} = target
 
-		if (!effect.counter) effect.counter = this.counter
-
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
 			effect.counter--

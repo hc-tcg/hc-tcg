@@ -41,12 +41,11 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 	let text: FormattedTextNode = EmptyNode()
 	if (isHermit(card)) {
 		text = formatText(
-			(card.primary.power
-				? `**${card.primary.name}**\n*${card.primary.power}*`
-				: '') +
-				(card.secondary.power
-					? `**${card.secondary.name}**\n*${card.secondary.power}*`
-					: ''),
+			[card.primary, card.secondary]
+				.flatMap((attack) =>
+					attack.power ? [`**${attack.name}**\n*${attack.power}*`] : [],
+				)
+				.join('\n'),
 		)
 	} else if (hasDescription(card)) {
 		text = formatText(`*${card.description}*`)

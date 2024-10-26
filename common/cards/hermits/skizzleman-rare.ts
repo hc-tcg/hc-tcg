@@ -1,14 +1,18 @@
 import {
 	CardComponent,
 	ObserverComponent,
+	PlayerComponent,
 	StatusEffectComponent,
-} from '../../components'
-import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {GasLightEffect} from '../../status-effects/gas-light'
-import {beforeAttack} from '../../types/priorities'
-import {hermit} from '../defaults'
-import {Hermit} from '../types'
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {
+	GasLightEffect,
+	GasLightPotentialEffect,
+} from '../../../status-effects/gas-light'
+import {beforeAttack} from '../../../types/priorities'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 const SkizzlemanRare: Hermit = {
 	...hermit,
@@ -32,6 +36,32 @@ const SkizzlemanRare: Hermit = {
 		damage: 70,
 		power:
 			"After your attack, deal an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
+	},
+	onCreate(game: GameModel, component: CardComponent) {
+		const newObserver = game.components.new(ObserverComponent, component.entity)
+
+		game.components.filter(PlayerComponent).forEach((player) => {
+			newObserver.subscribe(player.hooks.getAttack, () => {
+				game.components
+					.filter(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.afk,
+						query.card.slot(query.slot.hermit),
+					)
+					.forEach((afkHermit) =>
+						game.components
+							.new(
+								StatusEffectComponent,
+								GasLightPotentialEffect,
+								component.entity,
+							)
+							.apply(afkHermit.entity),
+					)
+
+				return null
+			})
+		})
 	},
 	onAttach(
 		game: GameModel,

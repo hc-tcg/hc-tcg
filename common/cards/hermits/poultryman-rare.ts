@@ -1,10 +1,10 @@
-import {CardComponent, ObserverComponent} from '../../components'
-import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import {afterAttack} from '../../types/priorities'
-import {hermit} from '../defaults'
-import Egg from '../single-use/egg'
-import {Hermit} from '../types'
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
+import Egg from '../../alter-egos/single-use/egg'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 const PoultryManRare: Hermit = {
 	...hermit,
@@ -37,20 +37,35 @@ const PoultryManRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
+		const {player} = component
+
 		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.HERMIT_REMOVE_SINGLE_USE,
+			game.hooks.beforeAttack,
+			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const singleUse = game.components.find(
-					CardComponent,
-					query.card.slot(query.slot.singleUse),
-					query.card.is(Egg),
+				if (
+					!game.components.exists(
+						CardComponent,
+						query.card.slot(query.slot.singleUse),
+						query.card.is(Egg),
+					) ||
+					player.singleUseCardUsed
 				)
+					return
 
-				singleUse?.draw()
+				observer.subscribe(player.hooks.afterApply, () => {
+					game.components
+						.find(
+							CardComponent,
+							query.card.slot(query.slot.singleUse),
+							query.card.is(Egg),
+						)
+						?.draw()
+					observer.unsubscribe(player.hooks.afterApply)
+				})
 			},
 		)
 	},

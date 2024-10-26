@@ -1,9 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import PoultryManRare from 'common/cards/hermits/poultryman-rare'
-import BadOmen from 'common/cards/single-use/bad-omen'
-import Egg from 'common/cards/single-use/egg'
-import GoldenAxe from 'common/cards/single-use/golden-axe'
+import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
+import HelsknightRare from 'common/cards/alter-egos/hermits/helsknight-rare'
+import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
+import Egg from 'common/cards/alter-egos/single-use/egg'
+import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
+import GoldenAxe from 'common/cards/default/single-use/golden-axe'
 import query from 'common/components/query'
 import {
 	applyEffect,
@@ -93,6 +94,42 @@ describe('Test Poutry Man Rare', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Poultry Man does not recycle Egg when Trap Hole flips heads', () => {
+		testGame(
+			{
+				playerOneDeck: [PoultryManRare, Egg],
+				playerTwoDeck: [HelsknightRare, EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, PoultryManRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Egg, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					expect(game.opponentPlayer.activeRow?.index).toBe(1)
+
+					// Opponent hand should contain Egg.
+					expect(game.currentPlayer.getHand()).toHaveLength(0)
+					expect(
+						game.opponentPlayer.getHand().map((card) => card.props),
+					).toStrictEqual([Egg])
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

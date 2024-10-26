@@ -24,6 +24,13 @@ const EnderPearl: SingleUse = {
 		'Before your attack, move your active Hermit and any attached cards to any open row on the game board. Your active Hermit also takes 10hp damage.',
 	attachCondition: query.every(
 		singleUse.attachCondition,
+		query.exists(
+			SlotComponent,
+			query.slot.currentPlayer,
+			query.slot.active,
+			query.slot.hermit,
+			query.not(query.slot.frozen),
+		),
 		query.exists(SlotComponent, pickCondition),
 	),
 	log: (values) =>

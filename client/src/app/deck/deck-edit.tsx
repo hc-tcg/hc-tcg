@@ -128,7 +128,7 @@ const addTag = (
 	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
 	setTags([...tags, tag])
-	setColor('ffffff')
+	setColor(color)
 }
 
 const selectTag = (
@@ -634,7 +634,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								<div className={css.editDeckInfoSettings}>
 									<Dropdown
 										button={
-											<button className={css.dropdownButton}>
+											<button
+												className={classNames(
+													css.dropdownButton,
+													css.usesIcon,
+													css[loadedDeck.icon],
+												)}
+											>
 												<img
 													src={`/images/types/type-${loadedDeck.icon}.png`}
 												/>

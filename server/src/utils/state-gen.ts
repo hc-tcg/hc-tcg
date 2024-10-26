@@ -182,6 +182,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 				? {type: 'card', card: effect.target.entity}
 				: {type: 'global', player: effect.target.entity},
 		counter: effect.counter,
+		description: effect.description,
 	}
 }
 

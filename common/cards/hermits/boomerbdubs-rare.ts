@@ -3,15 +3,16 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from '../../components'
-import query from '../../components/query'
-import {GameModel} from '../../models/game-model'
-import FortuneEffect from '../../status-effects/fortune'
-import {SelectCards} from '../../types/modal-requests'
-import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
-import {hermit} from '../defaults'
-import {Hermit} from '../types'
+} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
+import FortuneEffect from '../../../status-effects/fortune'
+import SpentFortuneEffect from '../../../status-effects/spent-fortune'
+import {SelectCards} from '../../../types/modal-requests'
+import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {flipCoin} from '../../../utils/coinFlips'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 const BoomerBdubsRare: Hermit = {
 	...hermit,
@@ -49,10 +50,14 @@ const BoomerBdubsRare: Hermit = {
 		let extraDamage = 0
 		let flippedTails = false
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			extraDamage = 0
-			flippedTails = false
-		})
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			(_attack) => {
+				extraDamage = 0
+				flippedTails = false
+			},
+		)
 
 		observer.subscribe(
 			player.hooks.getAttackRequests,
@@ -66,6 +71,8 @@ const BoomerBdubsRare: Hermit = {
 				const activeHermit = player.getActiveHermit()
 
 				if (!activeHermit) return
+
+				let fortune: StatusEffectComponent | null
 
 				const followUpModal = {
 					player: player.entity,
@@ -86,12 +93,16 @@ const BoomerBdubsRare: Hermit = {
 						},
 					},
 					onResult(modalResult) {
-						if (!modalResult?.result) return
+						if (!modalResult?.result) {
+							fortune?.apply(player.entity)
+							return
+						}
 
 						const flip = flipCoin(player, activeHermit)[0]
 
 						if (flip === 'tails') {
 							flippedTails = true
+							fortune?.apply(player.entity)
 							return 'SUCCESS'
 						}
 
@@ -99,7 +110,9 @@ const BoomerBdubsRare: Hermit = {
 
 						game.addModalRequest(followUpModal)
 					},
-					onTimeout() {},
+					onTimeout() {
+						fortune?.apply(player.entity)
+					},
 				} satisfies SelectCards.Request
 
 				game.addModalRequest({
@@ -126,6 +139,15 @@ const BoomerBdubsRare: Hermit = {
 
 						const flip = flipCoin(player, activeHermit)[0]
 
+						observer.subscribe(
+							player.hooks.blockedActions,
+							(blockedActions) => {
+								if (!blockedActions.includes('REMOVE_EFFECT'))
+									blockedActions.push('REMOVE_EFFECT')
+								return blockedActions
+							},
+						)
+
 						if (flip === 'tails') {
 							flippedTails = true
 							return 'SUCCESS'
@@ -136,16 +158,15 @@ const BoomerBdubsRare: Hermit = {
 						game.addModalRequest(followUpModal)
 
 						// After the first coin flip we remove fortune to prevent infinite coin flips.
-						game.components
-							.find(
-								StatusEffectComponent<PlayerComponent>,
-								query.effect.is(FortuneEffect),
-								query.effect.targetIsPlayerAnd(
-									(_game, targetPlayer: PlayerComponent) =>
-										targetPlayer.entity === player.entity,
-								),
-							)
-							?.remove()
+						fortune = game.components.find(
+							StatusEffectComponent<PlayerComponent>,
+							query.effect.is(FortuneEffect, SpentFortuneEffect),
+							query.effect.targetIsPlayerAnd(
+								(_game, targetPlayer: PlayerComponent) =>
+									targetPlayer.entity === player.entity,
+							),
+						)
+						fortune?.remove()
 
 						return 'SUCCESS'
 					},
@@ -160,6 +181,7 @@ const BoomerBdubsRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+				observer.unsubscribe(player.hooks.blockedActions)
 				if (flippedTails === true) {
 					attack
 						.multiplyDamage(component.entity, 0)
