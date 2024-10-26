@@ -6,7 +6,7 @@ const FrenchKeralisCommon: Hermit = {
 	id: 'frenchkeralis_common',
 	numericId: 231,
 	name: 'Frenchralis',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

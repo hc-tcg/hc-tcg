@@ -6,7 +6,7 @@ const LlamadadCommmon: Hermit = {
 	id: 'llamadad_common',
 	numericId: 176,
 	name: 'Llamadad',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

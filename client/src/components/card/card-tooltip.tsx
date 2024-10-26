@@ -21,16 +21,28 @@ import {useSelector} from 'react-redux'
 import css from './card-tooltip.module.scss'
 
 const HERMIT_TYPES: Record<string, string> = {
-	balanced: 'Balanced',
-	builder: 'Builder',
-	speedrunner: 'Speedrunner',
-	redstone: 'Redstone',
-	farm: 'Farm',
-	pvp: 'PvP',
-	terraform: 'Terraform',
-	prankster: 'Prankster',
-	miner: 'Miner',
-	explorer: 'Explorer',
+	ananrchist: 'anarchist',
+	athlete: 'athlete',
+	balanced: 'balanced',
+	bard: 'bard',
+	builder: 'builder',
+	challenger: 'challenger',
+	collector: 'collector',
+	diplomat: 'diplomat',
+	explorer: 'explorer',
+	farm: 'farm',
+	historian: 'historian',
+	inventor: 'inventor',
+	looper: 'looper',
+	miner: 'miner,',
+	pacifist: 'pacifist',
+	prankster: 'prankster',
+	pvp: 'pvp',
+	redstone: 'redstone',
+	scavenger: 'scavenger',
+	speedrunner: 'speedrunner',
+	terraform: 'terraform',
+	mob: 'mob',
 }
 
 type Props = {
@@ -108,8 +120,10 @@ const getName = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 	common: 'Common',
-	rare: '✦ Rare ✦',
-	ultra_rare: '★ Ultra Rare ★',
+	rare: '• Rare •',
+	ultra_rare: '✦ Ultra Rare ✦',
+	mythic: '★ Mythic ★',
+	NA: 'N/A'
 }
 
 export const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {
@@ -125,9 +139,14 @@ const getExpansion = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (card.expansion !== 'default') {
 		const expansion = card.expansion as
 			| 'default'
+			| 'hermitcraftX'
+			| 'hc_plus'
 			| 'alter_egos'
+			| 'season_x'
 			| 'advent_of_tcg'
-			| 'alter_egos_ii'
+			| 'dream'
+			| 'boss'
+			| 'minecraft'
 		return (
 			<div className={classNames(css.expansion, css[expansion])}>
 				■ {EXPANSIONS[expansion].name} Card ■

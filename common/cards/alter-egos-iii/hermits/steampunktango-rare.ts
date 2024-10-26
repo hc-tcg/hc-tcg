@@ -11,7 +11,7 @@ const SteampunkTangoRare: Hermit = {
 	numericId: 174,
 	name: 'Steampunk Tango',
 	shortName: 'S. Tango',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

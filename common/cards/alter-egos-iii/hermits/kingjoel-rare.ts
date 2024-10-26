@@ -15,7 +15,7 @@ const KingJoelRare: Hermit = {
 	id: 'kingjoel_rare',
 	numericId: 163,
 	name: 'King Joel',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

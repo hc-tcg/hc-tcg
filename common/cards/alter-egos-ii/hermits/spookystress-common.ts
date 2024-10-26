@@ -7,7 +7,7 @@ const SpookyStressCommon: Hermit = {
 	numericId: 238,
 	name: 'Spooky Stress',
 	shortName: 'S. Stress',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

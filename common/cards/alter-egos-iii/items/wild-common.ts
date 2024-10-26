@@ -9,7 +9,7 @@ const WildItem: Item = {
 	description:
 		'Counts as any single Item card.\nThe first 3 wild cards in your deck cost 0 tokens.',
 	shortName: 'Wild',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	rarity: 'common',
 	tokens: 'wild',
 	type: 'any',

@@ -6,7 +6,7 @@ const IskallManCommon: Hermit = {
 	id: 'iskallman_common',
 	numericId: 183,
 	name: 'IskallMAN',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

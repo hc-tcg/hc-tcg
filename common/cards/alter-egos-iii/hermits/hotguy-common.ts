@@ -6,7 +6,7 @@ const HotguyCommon: Hermit = {
 	id: 'hotguy_common',
 	numericId: 159,
 	name: 'Hotguy',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

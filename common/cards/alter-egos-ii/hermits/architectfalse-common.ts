@@ -7,7 +7,7 @@ const ArchitectFalseCommon: Hermit = {
 	numericId: 227,
 	name: 'Grand Architect',
 	shortName: 'G. Architect',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

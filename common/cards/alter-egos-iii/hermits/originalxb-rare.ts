@@ -14,7 +14,7 @@ const OriginalXBRare: Hermit = {
 	id: 'originalxb_rare',
 	numericId: 164,
 	name: 'Original xB',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

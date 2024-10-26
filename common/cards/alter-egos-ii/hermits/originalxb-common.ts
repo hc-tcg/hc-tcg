@@ -6,7 +6,7 @@ const OriginalXbCommon: Hermit = {
 	id: 'originalxb_common',
 	numericId: 234,
 	name: 'Original xB',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

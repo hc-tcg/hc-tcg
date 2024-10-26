@@ -15,7 +15,7 @@ const PoePoeSkizzRare: Hermit = {
 	id: 'poepoeskizz_rare',
 	numericId: 167,
 	name: 'Poe Poe Skizz',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

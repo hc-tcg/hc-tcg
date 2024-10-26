@@ -6,7 +6,7 @@ const KingJoelCommon: Hermit = {
 	id: 'kingjoel_common',
 	numericId: 162,
 	name: 'King Joel',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

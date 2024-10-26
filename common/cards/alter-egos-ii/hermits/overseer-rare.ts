@@ -9,7 +9,7 @@ const OverseerRare: Hermit = {
 	id: 'overseer_rare',
 	numericId: 235,
 	name: 'Overseer',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

@@ -5,25 +5,27 @@ export type ExpansionInfo = {
 
 export type ExpansionT =
 	| 'default'
+	| 'hermitcraftX'
+	| 'hc_plus'
 	| 'alter_egos'
-	| 'alter_egos_ii'
 	| 'season_x'
-	| 'alter_egos_iii'
 	| 'advent_of_tcg'
 	| 'dream'
 	| 'boss'
+	| 'minecraft'
 
 export type ExpansionDict = {
 	readonly [Expansion in ExpansionT]: ExpansionInfo
 }
 
 export const EXPANSIONS: ExpansionDict = {
-	default: {name: 'Base Set', disabled: false},
+	default: { name: 'Hermitcraft', disabled: false },
+	hermitcraftX: { name: 'HermitcraftX', disabled: false },
+	hc_plus: { name: 'HC+', disabled: false },
 	alter_egos: {name: 'Alter Egos', disabled: false},
-	alter_egos_ii: {name: 'Alter Egos Pt. II', disabled: false},
 	season_x: {name: 'HC Season X', disabled: false},
-	alter_egos_iii: {name: 'Alter Egos Pt. III', disabled: false},
-	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
-	dream: {name: 'Dream', disabled: true},
-	boss: {name: 'Boss', disabled: true},
+	advent_of_tcg: {name: 'Advent', disabled: true},
+	dream: {name: 'Dream', disabled: false},
+	boss: { name: 'Boss', disabled: true },
+	minecraft: { name: 'Minecraft', disabled: false },
 }

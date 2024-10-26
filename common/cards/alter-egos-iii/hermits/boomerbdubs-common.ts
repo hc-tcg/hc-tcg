@@ -7,7 +7,7 @@ const BoomerBdubsCommon: Hermit = {
 	numericId: 184,
 	name: 'Boomer Bdubs',
 	shortName: 'Boomer B.',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

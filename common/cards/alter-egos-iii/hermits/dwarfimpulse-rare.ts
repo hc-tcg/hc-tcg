@@ -18,7 +18,7 @@ const DwarfImpulseRare: Hermit = {
 	numericId: 152,
 	name: 'Dwarf Impulse',
 	shortName: 'D. Impulse',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

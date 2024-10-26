@@ -31,19 +31,31 @@ import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 
-const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
+const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond', 'obsidian']
 const DECK_ICONS = [
 	'any',
+	'anarchist',
+	'athlete',
 	'balanced',
+	'bard',
 	'builder',
+	'challenger',
+	'collector',
+	'diplomat',
 	'explorer',
 	'farm',
+	'historian',
+	'inventor',
+	'looper',
 	'miner',
+	'pacifist',
 	'prankster',
 	'pvp',
 	'redstone',
+	'scavenger',
 	'speedrunner',
 	'terraform',
+	'mob',
 ]
 
 const EXPANSION_NAMES = [
@@ -159,6 +171,7 @@ const TYPE_ORDER = {
 	hermit: 0,
 	attach: 1,
 	single_use: 2,
+	useless: 2,
 	item: 3,
 	health: 4,
 }
@@ -168,6 +181,8 @@ const RARITY_ORDER = {
 	common: 0,
 	rare: 1,
 	ultra_rare: 1,
+	mythic: 1,
+	NA: 2,
 }
 
 export function sortCards(

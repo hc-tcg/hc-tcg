@@ -7,7 +7,7 @@ const HorseHeadHypnoCommon: Hermit = {
 	numericId: 232,
 	name: 'Horse Head Hypno',
 	shortName: 'H. H. Hypno',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

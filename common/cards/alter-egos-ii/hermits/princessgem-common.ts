@@ -6,7 +6,7 @@ const PrincessGemCommon: Hermit = {
 	id: 'princessgem_common',
 	numericId: 236,
 	name: 'Princess Gem',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

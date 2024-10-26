@@ -14,7 +14,7 @@ const IskallmanRare: Hermit = {
 	id: 'iskallman_rare',
 	numericId: 233,
 	name: 'IskallMAN',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

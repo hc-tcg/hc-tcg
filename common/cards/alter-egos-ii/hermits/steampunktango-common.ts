@@ -7,7 +7,7 @@ const SteampunkTangoCommon: Hermit = {
 	numericId: 239,
 	name: 'Steampunk Tango',
 	shortName: 'S. Tango',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

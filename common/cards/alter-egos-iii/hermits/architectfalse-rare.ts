@@ -18,7 +18,7 @@ const ArchitectFalseRare: Hermit = {
 	numericId: 156,
 	name: 'Grand Architect',
 	shortName: 'G. Architect',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

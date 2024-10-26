@@ -6,7 +6,7 @@ const RenbobCommon: Hermit = {
 	id: 'renbob_common',
 	numericId: 169,
 	name: 'Renbob',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

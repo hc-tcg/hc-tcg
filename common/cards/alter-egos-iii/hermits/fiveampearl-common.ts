@@ -6,7 +6,7 @@ const FiveAMPearlCommon: Hermit = {
 	id: 'fiveampearl_common',
 	numericId: 182,
 	name: '5AM Pearl',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

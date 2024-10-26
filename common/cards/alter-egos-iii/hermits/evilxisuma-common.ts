@@ -6,7 +6,7 @@ const EvilXisumaCommon: Hermit = {
 	id: 'evilxisuma_common',
 	numericId: 154,
 	name: 'Evil X',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

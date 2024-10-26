@@ -19,7 +19,7 @@ const BoomerBdubsRare: Hermit = {
 	numericId: 228,
 	name: 'Boomer Bdubs',
 	shortName: 'Boomer B.',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

@@ -6,7 +6,7 @@ const PoePoeSkizzCommon: Hermit = {
 	id: 'poepoeskizz_common',
 	numericId: 166,
 	name: 'Poe Poe Skizz',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

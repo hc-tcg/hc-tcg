@@ -11,7 +11,7 @@ const FiveAMPearlRare: Hermit = {
 	id: 'fiveampearl_rare',
 	numericId: 230,
 	name: '5AM Pearl',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

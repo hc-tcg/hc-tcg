@@ -11,7 +11,7 @@ const PoultryManRare: Hermit = {
 	id: 'poultryman_rare',
 	numericId: 178,
 	name: 'Poultry Man',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

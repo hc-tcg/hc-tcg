@@ -6,7 +6,7 @@ const OverseerCommon: Hermit = {
 	id: 'overseer_common',
 	numericId: 165,
 	name: 'Overseer',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

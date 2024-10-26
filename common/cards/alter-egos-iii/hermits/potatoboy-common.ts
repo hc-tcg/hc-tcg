@@ -6,7 +6,7 @@ const PotatoBoyCommon: Hermit = {
 	id: 'potatoboy_common',
 	numericId: 177,
 	name: 'Potatoboy',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

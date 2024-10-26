@@ -11,7 +11,7 @@ const EvilJevinRare: Hermit = {
 	id: 'eviljevin_rare',
 	numericId: 153,
 	name: 'Evil Jevin',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	rarity: 'rare',

@@ -10,7 +10,7 @@ const ShadeEERare: Hermit = {
 	id: 'shadee_rare',
 	numericId: 170,
 	name: 'Shade-E-E',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

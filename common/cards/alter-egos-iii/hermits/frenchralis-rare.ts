@@ -9,7 +9,7 @@ const FrenchralisRare: Hermit = {
 	id: 'frenchkeralis_rare',
 	numericId: 155,
 	name: 'Frenchralis',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

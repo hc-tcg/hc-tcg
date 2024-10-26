@@ -6,7 +6,7 @@ const WormManCommon: Hermit = {
 	id: 'wormman_common',
 	numericId: 240,
 	name: 'Worm Man',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',

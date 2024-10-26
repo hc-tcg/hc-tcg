@@ -9,7 +9,7 @@ const WormManRare: Hermit = {
 	id: 'wormman_rare',
 	numericId: 175,
 	name: 'Worm Man',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

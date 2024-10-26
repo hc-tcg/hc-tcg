@@ -16,7 +16,7 @@ const PrincessGemRare: Hermit = {
 	id: 'princessgem_rare',
 	numericId: 168,
 	name: 'Princess Gem',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
