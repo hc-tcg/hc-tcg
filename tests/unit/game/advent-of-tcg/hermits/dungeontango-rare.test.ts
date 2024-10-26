@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import DungeonTangoRare from 'common/cards/advent-of-tcg/hermits/dungeontango-rare'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import MinerItem from 'common/cards/default/items/miner-common'
-import Crossbow from 'common/cards/default/single-use/crossbow'
-import Efficiency from 'common/cards/default/single-use/efficiency'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import MinerItem from 'common/cards/items/miner-common'
+import Crossbow from 'common/cards/single-use/crossbow'
+import Efficiency from 'common/cards/single-use/efficiency'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {
@@ -17,7 +17,7 @@ import {
 } from '../../utils'
 
 // Circular imports must be included last
-import Piston from 'common/cards/alter-egos/single-use/piston'
+import Piston from 'common/cards/single-use/piston'
 
 describe('Test DM Tango Lackey', () => {
 	test('Lackey functionality', () => {

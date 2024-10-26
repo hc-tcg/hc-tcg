@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import PoultryManRare from 'common/cards/alter-egos-iii/hermits/poultryman-rare'
-import HelsknightRare from 'common/cards/alter-egos/hermits/helsknight-rare'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
-import Egg from 'common/cards/alter-egos/single-use/egg'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import GoldenAxe from 'common/cards/default/single-use/golden-axe'
+import PoultryManRare from 'common/cards/hermits/poultryman-rare'
+import HelsknightRare from 'common/cards/hermits/helsknight-rare'
+import BadOmen from 'common/cards/single-use/bad-omen'
+import Egg from 'common/cards/single-use/egg'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GoldenAxe from 'common/cards/single-use/golden-axe'
 import query from 'common/components/query'
 import {
 	applyEffect,

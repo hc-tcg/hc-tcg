@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import HelsknightRare from 'common/cards/alter-egos/hermits/helsknight-rare'
-import Anvil from 'common/cards/alter-egos/single-use/anvil'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import GeminiTayRare from 'common/cards/default/hermits/geminitay-rare'
-import IronSword from 'common/cards/default/single-use/iron-sword'
-import TNT from 'common/cards/default/single-use/tnt'
+import HelsknightRare from 'common/cards/hermits/helsknight-rare'
+import Anvil from 'common/cards/single-use/anvil'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import IronSword from 'common/cards/single-use/iron-sword'
+import TNT from 'common/cards/single-use/tnt'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
