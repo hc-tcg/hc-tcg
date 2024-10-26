@@ -1,13 +1,13 @@
+import classNames from 'classnames'
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Modal from 'components/modal/modal'
+import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import classNames from 'classnames'
-import {CopyIcon} from 'components/svgs'
 
 type Props = {
 	setMenuSection: (section: string) => void

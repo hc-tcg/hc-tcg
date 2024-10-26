@@ -1,5 +1,6 @@
+import assert from 'assert'
 import {
-    afterAll,
+	afterAll,
 	afterEach,
 	beforeAll,
 	beforeEach,
@@ -7,11 +8,10 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
-import assert from 'assert'
 import {CARDS_LIST} from 'common/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
-import {generateDatabaseCode} from 'common/utils/database-codes'
 
 describe('Test Database', () => {
 	let database: Database
@@ -27,7 +27,7 @@ describe('Test Database', () => {
 		const env = config()
 		database = setupDatabase(
 			CARDS_LIST,
-		{
+			{
 				...{
 					POSTGRES_DATABASE: 'hctcg',
 					POSTGRES_USER: 'hctcg',

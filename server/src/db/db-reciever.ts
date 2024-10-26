@@ -1,4 +1,7 @@
+import {CARDS_LIST} from 'common/cards'
+import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameEndOutcomeT} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
@@ -8,9 +11,6 @@ import {
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
 import {Database, setupDatabase} from './db'
-import {CARDS_LIST} from 'common/cards'
-import {GameEndOutcomeT} from 'common/types/game-state'
-import {PlayerModel} from 'common/models/player-model'
 
 const pgDatabase: Database = setupDatabase(CARDS_LIST, process.env, 8)
 
