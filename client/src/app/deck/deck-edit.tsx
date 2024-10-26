@@ -31,7 +31,15 @@ import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 
-const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond', 'obsidian']
+const RANK_NAMES = [
+	'any',
+	'stone',
+	'iron',
+	'gold',
+	'emerald',
+	'diamond',
+	'obsidian',
+]
 const DECK_ICONS = [
 	'any',
 	'anarchist',

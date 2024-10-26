@@ -1,8 +1,6 @@
-import { Card } from '../base/types'
+import {Card} from '../base/types'
 import TinFoilChefMythic from './tinfoilchef-mythic'
 
-const hermitCardClasses: Array<Card> = [
-	TinFoilChefMythic,
-]
+const hermitCardClasses: Array<Card> = [TinFoilChefMythic]
 
 export default hermitCardClasses

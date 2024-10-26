@@ -1,6 +1,5 @@
-import {item} from '../../base/defaults'
-import {Item} from '../../base/types'
-
+import {item} from '../base/defaults'
+import {Item} from '../base/types'
 const PvPItem: Item = {
 	...item,
 	id: 'item_pvp_common',

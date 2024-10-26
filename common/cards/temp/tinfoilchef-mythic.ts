@@ -1,19 +1,15 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	RowComponent,
-} from '../../components'
+import {CardComponent, ObserverComponent, RowComponent} from '../../components'
 import query from '../../components/query'
-import { GameModel } from '../../models/game-model'
-import { beforeAttack } from '../../types/priorities'
-import { flipCoin } from '../../utils/coinFlips'
-import { hermit } from '../base/defaults'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {flipCoin} from '../../utils/coinFlips'
+import {hermit} from '../base/defaults'
 import {Hermit} from '../base/types'
 
 const TinFoilChefMythic: Hermit = {
 	...hermit,
 	id: 'tinfoilchef_mythic',
-	numericId: 0,
+	numericId: 607,
 	name: 'TinFoilChef',
 	expansion: 'hc_plus',
 	rarity: 'mythic',
@@ -25,23 +21,22 @@ const TinFoilChefMythic: Hermit = {
 		shortName: 'V. Humble Abode',
 		cost: ['any'],
 		damage: 40,
-		power: 
-			'Flip 3 coins.\nDeal +40 damage per head.',
+		power: 'Flip 3 coins.\nDeal +40 damage per head.',
 	},
 	secondary: {
 		name: "I'm Outta here",
 		shortName: 'Outta Here',
 		cost: ['miner', 'miner', 'miner'],
 		damage: 100,
-		power: 
-		'Take the average hp of the hermits on your side of the board and double it. Heal all of your hermits to that value and discard this card.\nThis only removes a life if all of your hermits are at full hp after the healing.',
+		power:
+			'Take the average hp of the hermits on your side of the board and double it. Heal all of your hermits to that value and discard this card.\nThis only removes a life if all of your hermits are at full hp after the healing.',
 	},
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const { player } = component
+		const {player} = component
 
 		// Copied from Etho UR.
 		observer.subscribeWithPriority(
@@ -69,11 +64,7 @@ const TinFoilChefMythic: Hermit = {
 				let total = 0
 				let count = 0
 				game.components
-					.filter(
-						RowComponent,
-						query.row.currentPlayer,
-						query.row.hasHermit,
-					)
+					.filter(RowComponent, query.row.currentPlayer, query.row.hasHermit)
 					.forEach((row) => {
 						if (!row.health) return
 						total += row.health
@@ -82,11 +73,7 @@ const TinFoilChefMythic: Hermit = {
 
 				// Heal
 				game.components
-					.filter(
-						RowComponent,
-						query.row.currentPlayer,
-						query.row.hasHermit,
-					)
+					.filter(RowComponent, query.row.currentPlayer, query.row.hasHermit)
 					.forEach((row) => {
 						let healValue = (total * 2) / count
 						healValue -= healValue % 10
@@ -95,7 +82,8 @@ const TinFoilChefMythic: Hermit = {
 						let hermit = row.getHermit()
 						game.battleLog.addEntry(
 							player.entity,
-							`$p${hermit?.props.name} (${row.index + 1})$ was healed $g${healValue}hp$ by $p${component.props.name
+							`$p${hermit?.props.name} (${row.index + 1})$ was healed $g${healValue}hp$ by $p${
+								component.props.name
 							}$`,
 						)
 					})
@@ -103,11 +91,7 @@ const TinFoilChefMythic: Hermit = {
 				// Check full health
 				let allFullHealth = true
 				game.components
-					.filter(
-						RowComponent,
-						query.row.currentPlayer,
-						query.row.hasHermit,
-					)
+					.filter(RowComponent, query.row.currentPlayer, query.row.hasHermit)
 					.forEach((row) => {
 						let hermit = row.getHermit()
 						if (!hermit) return

@@ -59,7 +59,8 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 		text = formatText(
 			(card.primary.power
 				? `**${card.primary.name}**\n*${card.primary.power}*`
-				: '') + interim +
+				: '') +
+				interim +
 				(card.secondary.power
 					? `**${card.secondary.name}**\n*${card.secondary.power}*`
 					: ''),
@@ -127,7 +128,7 @@ const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 	rare: '• Rare •',
 	ultra_rare: '✦ Ultra Rare ✦',
 	mythic: '★ Mythic ★',
-	NA: 'N/A'
+	NA: 'N/A',
 }
 
 export const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {

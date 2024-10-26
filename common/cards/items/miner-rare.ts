@@ -1,5 +1,5 @@
-import {item} from '../../base/defaults'
-import {Item} from '../../base/types'
+import {item} from '../base/defaults'
+import {Item} from '../base/types'
 
 const MinerDoubleItem: Item = {
 	...item,
