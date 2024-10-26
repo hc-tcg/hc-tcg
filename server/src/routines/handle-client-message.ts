@@ -102,11 +102,6 @@ function* handler(message: RecievedClientMessage) {
 			return yield* getDecks(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.GET_DECKS_THEN_SELECT:
-			return yield* getDecks(
-				message as RecievedClientMessage<typeof clientMessages.GET_DECKS>,
-				(message as RecievedClientMessage<typeof message.type>).payload.code,
-			)
 		case clientMessages.INSERT_DECK:
 			return yield* insertDeck(
 				message as RecievedClientMessage<typeof message.type>,

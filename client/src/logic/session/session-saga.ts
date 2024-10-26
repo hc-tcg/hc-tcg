@@ -99,15 +99,13 @@ function* insertUser(socket: any) {
 			cards: [],
 		}
 
-		yield* sendMsg({type: clientMessages.INSERT_DECK, deck: starterDeck})
-		yield* put<LocalMessage>({
-			type: localMessages.UPDATE_DECKS_THEN_SELECT,
-			code: starterDeck.code,
-		})
 		yield* sendMsg({
-			type: clientMessages.UPDATE_DECK,
-			deck: toPlayerDeck(starterDeck),
+			type: clientMessages.INSERT_DECK,
+			deck: starterDeck,
+			newActiveDeck: starterDeck.code,
 		})
+
+		localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
 	}
 }
 
@@ -352,8 +350,8 @@ export function* databaseConnectionSaga() {
 	>(localMessages.UPDATE_DECKS_THEN_SELECT, function* (action) {
 		if (debugConfig.disableDatabase) return
 		yield* sendMsg({
-			type: clientMessages.GET_DECKS_THEN_SELECT,
-			code: action.code,
+			type: clientMessages.GET_DECKS,
+			newActiveDeck: action.code,
 		})
 	})
 	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
@@ -361,7 +359,6 @@ export function* databaseConnectionSaga() {
 		function* () {
 			if (debugConfig.disableDatabase) return
 			yield* insertUser(socket)
-			location.reload()
 		},
 	)
 }

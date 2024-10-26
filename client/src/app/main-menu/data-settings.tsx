@@ -29,14 +29,16 @@ function DataSettings({setMenuSection}: Props) {
 		reset: () => void,
 	) => {
 		const handleYes = () => {
-			reset()
 			setModal(
 				<Modal title={whenDonePrompt} closeModal={closeModal} centered>
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
 							variant="default"
-							onClick={closeModal}
+							onClick={() => {
+								closeModal()
+								reset()
+							}}
 						>
 							Ok
 						</Button>
@@ -185,6 +187,10 @@ function DataSettings({setMenuSection}: Props) {
 							dispatch({
 								type: localMessages.RESET_ID_AND_SECRET,
 							})
+							dispatch({
+								type: localMessages.LOGOUT,
+							})
+							location.reload()
 						},
 					)}
 				>

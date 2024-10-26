@@ -56,7 +56,6 @@ export function* authenticateUser(
 
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
-	newActiveDeckCode?: string,
 ) {
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
@@ -79,8 +78,10 @@ export function* getDecks(
 			type: serverMessages.DECKS_RECIEVED,
 			decks: decksResult.body,
 			tags: tagsResult.body,
-			newActiveDeck: newActiveDeckCode
-				? decksResult.body.find((deck) => deck.code === newActiveDeckCode)
+			newActiveDeck: action.payload.newActiveDeck
+				? decksResult.body.find(
+						(deck) => deck.code === action.payload.newActiveDeck,
+					)
 				: undefined,
 		})
 	} else {
@@ -122,6 +123,10 @@ export function* insertDeck(
 		action.payload.deck.code,
 		player.uuid,
 	)
+
+	if (action.payload.newActiveDeck) {
+		getDecks(action as any)
+	}
 }
 
 export function* importDeck(

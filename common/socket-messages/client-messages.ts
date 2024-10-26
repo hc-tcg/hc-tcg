@@ -25,7 +25,6 @@ export const clientMessages = messages({
 	PG_AUTHENTICATE: null,
 	PG_INSERT_USER: null,
 	GET_DECKS: null,
-	GET_DECKS_THEN_SELECT: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
 	IMPORT_DECK: null,
@@ -63,10 +62,9 @@ export type ClientMessages = [
 		username: string | null
 		minecraftName: string | null
 	},
-	{type: typeof clientMessages.GET_DECKS},
-	{type: typeof clientMessages.GET_DECKS_THEN_SELECT; code: string},
+	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
 	{type: typeof clientMessages.GET_STATS},
-	{type: typeof clientMessages.INSERT_DECK; deck: Deck},
+	{type: typeof clientMessages.INSERT_DECK; deck: Deck; newActiveDeck?: string},
 	{type: typeof clientMessages.IMPORT_DECK; code: string},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
