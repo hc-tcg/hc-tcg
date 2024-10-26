@@ -352,20 +352,14 @@ export function* databaseConnectionSaga() {
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
-		function* () {
+		function* (action) {
 			if (debugConfig.disableDatabase) return
-			yield* sendMsg({type: clientMessages.GET_DECKS})
+			yield* sendMsg({
+				type: clientMessages.GET_DECKS,
+				newActiveDeck: action.newActiveDeck,
+			})
 		},
 	)
-	yield* takeEvery<
-		LocalMessageTable[typeof localMessages.UPDATE_DECKS_THEN_SELECT]
-	>(localMessages.UPDATE_DECKS_THEN_SELECT, function* (action) {
-		if (debugConfig.disableDatabase) return
-		yield* sendMsg({
-			type: clientMessages.GET_DECKS,
-			newActiveDeck: action.code,
-		})
-	})
 	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
 		localMessages.RESET_ID_AND_SECRET,
 		function* () {

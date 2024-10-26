@@ -178,8 +178,8 @@ function SelectDeck({
 		dispatchToast(selectedDeckToast)
 
 		dispatch({
-			type: localMessages.UPDATE_DECKS_THEN_SELECT,
-			code: loadedDeck.code,
+			type: localMessages.UPDATE_DECKS,
+			newActiveDeck: loadedDeck.code,
 		})
 		setMenuSection('mainmenu')
 	}
