@@ -70,7 +70,8 @@ function SelectDeck({
 			type: localMessages.INSERT_DECK,
 			deck: deck,
 		})
-		setFilteredDecks(sortDecks([...databaseInfo.decks, deck]))
+		databaseInfo.decks.push(deck)
+		setFilteredDecks(sortDecks(databaseInfo.decks))
 		setLoadedDeck(deck)
 	}
 
@@ -226,32 +227,14 @@ function SelectDeck({
 		setActiveDeck(newSavedDecks[0])
 		setLoadedDeck(newSavedDecks[0])
 	}
-	const canDuplicateDeck = () => {
-		return (
-			databaseInfo.decks.findIndex(
-				(deck) => deck.name === `${loadedDeck.name} Copy 9`,
-			) > -1
-		)
-	}
 	const duplicateDeck = (deck: PlayerDeck) => {
-		//Save duplicated deck to Local Storage
-		let newName = `${deck.name} Copy`
-		let number = 2
-
-		while (
-			databaseInfo.decks.findIndex((deck) => deck.name === 'newName') > -1
-		) {
-			if (number > 9) return
-			newName = `${deck.name} Copy ${number}`
-			number++
-		}
-
-		const newDeck = toSavedDeck({...deck, name: newName})
+		const newDeck = toSavedDeck({
+			...deck,
+			name: `${deck.name} Copy`,
+			code: generateDatabaseCode(),
+		})
 
 		saveDeck(newDeck)
-
-		//Refresh saved deck list and load new deck
-		setFilteredDecks(sortDecks([...databaseInfo.decks, newDeck]))
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
@@ -437,12 +420,8 @@ function SelectDeck({
 					duplicateDeck(currentDeck)
 				}}
 				title="Duplicate Deck"
-				description={
-					canDuplicateDeck()
-						? `Are you sure you want to duplicate the "${loadedDeck.name}" deck?`
-						: `You have too many duplicates of the "${loadedDeck.name}" deck.`
-				}
-				actionText={canDuplicateDeck() ? 'Duplicate' : undefined}
+				description={`Are you sure you want to duplicate the "${loadedDeck.name}" deck?`}
+				actionText={'Duplicate'}
 				actionType="primary"
 			/>
 			<AlertModal
