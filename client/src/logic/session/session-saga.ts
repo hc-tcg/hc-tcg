@@ -5,6 +5,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/database'
 import {PlayerInfo} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
+import {getStarterPack} from 'common/utils/state-gen'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -106,7 +107,7 @@ function* insertUser(socket: any) {
 				name: 'Starter Deck',
 				icon: 'any',
 				tags: [],
-				cards: [],
+				cards: getStarterPack(),
 			}
 
 			yield* sendMsg({
