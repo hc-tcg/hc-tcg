@@ -2,9 +2,9 @@ import {describe, expect, test} from '@jest/globals'
 import SmallishbeansAdventRare from 'common/cards/advent-of-tcg/hermits/smallishbeans-rare'
 import String from 'common/cards/attach/string'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
 import PvPDoubleItem from 'common/cards/items/pvp-rare'
 import WildItem from 'common/cards/items/wild-common'
-import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
 import Efficiency from 'common/cards/single-use/efficiency'
 import {
 	applyEffect,

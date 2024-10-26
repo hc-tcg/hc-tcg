@@ -53,11 +53,7 @@ function getThorns(
 					)
 						return
 
-					if (
-						!attack.isType('primary', 'secondary', 'effect') ||
-						attack.isBacklash
-					)
-						return
+					if (attack.isType('status-effect') || attack.isBacklash) return
 					// Only return a backlash attack if the attack did damage
 					if (attack.calculateDamage() <= 0) return
 
@@ -75,7 +71,7 @@ function getThorns(
 							log: (values) =>
 								`${values.target} took ${values.damage} damage from $eThorns$`,
 						})
-						.addDamage(component.entity, amount)
+						.addDamage(component.entity, 20)
 
 					backlashAttack.shouldIgnoreCards.push(
 						query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor),
@@ -112,7 +108,7 @@ export const ThornsII = getThorns(
 	{
 		id: 'thorns_ii',
 		numericId: 123,
-		name: 'Thorns II',
+		name: 'Thorne II',
 		expansion: 'alter_egos',
 		rarity: 'rare',
 		tokens: 3,
