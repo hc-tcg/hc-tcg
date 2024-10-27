@@ -38,11 +38,7 @@ const Thorns: Attach = {
 				if (!attack.isTargeting(component) || attack.player !== opponentPlayer)
 					return
 
-				if (
-					!attack.isType('primary', 'secondary', 'effect') ||
-					attack.isBacklash
-				)
-					return
+				if (attack.isType('status-effect') || attack.isBacklash) return
 				// Only return a backlash attack if the attack did damage
 				if (attack.calculateDamage() <= 0) return
 

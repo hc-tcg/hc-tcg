@@ -67,6 +67,7 @@ const GoatfatherRare: Hermit = {
 							opponentActiveHermit.slot.inRow() &&
 							row.index > opponentActiveHermit.slot.row.index,
 					)
+					.sort((a, b) => a.index - b.index)
 					.forEach((row) => {
 						const newAttack = game.newAttack({
 							attacker: component.entity,

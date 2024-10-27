@@ -125,7 +125,7 @@ const Crossbow: SingleUse = {
 				applySingleUse(game)
 
 				// Do not apply single use more than once
-				observer.unsubscribe(game.hooks.beforeAttack)
+				observer.unsubscribeFromEverything()
 			},
 		)
 	},

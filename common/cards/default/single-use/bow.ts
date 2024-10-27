@@ -76,6 +76,7 @@ const Bow: SingleUse = {
 			(attack) => {
 				if (attack.attacker?.entity !== component.entity) return
 				applySingleUse(game, component.slot)
+				observer.unsubscribeFromEverything()
 			},
 		)
 	},

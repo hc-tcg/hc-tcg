@@ -48,6 +48,7 @@ const HumanCleoRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+				if (opponentPlayer.hasStatusEffect(BetrayedEffect)) return
 
 				const coinFlip = flipCoin(player, component, 2)
 

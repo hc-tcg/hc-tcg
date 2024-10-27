@@ -49,33 +49,30 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 
 			const energy =
 				(activeHermit.slot.inRow() &&
-					activeHermit.slot.row.getItems()?.flatMap((item) => {
-						if (item?.isItem()) return item.props.type
-						return []
-					})) ||
+					player.hooks.availableEnergy.call(
+						activeHermit.slot.row.getItems().flatMap((item) => {
+							if (item.isItem()) return item.props.energy
+							return []
+						}),
+					)) ||
 				[]
 
 			// Return if no energy
+			// Don't prevent change hermit if opponent is blocked from attacking for other reason
+			if (!activeHermit.isHermit()) return
 			if (
-				!activeHermit.isHermit() ||
 				(!hasEnoughEnergy(
 					energy,
 					activeHermit.props.primary.cost,
 					game.settings.noItemRequirements,
-				) &&
-					!hasEnoughEnergy(
-						energy,
-						activeHermit.props.secondary.cost,
-						game.settings.noItemRequirements,
-					))
-			) {
-				return
-			}
-
-			// Don't prevent change hermit if opponent is blocked from attacking for other reason
-			if (
-				game.isActionBlocked('PRIMARY_ATTACK') &&
-				game.isActionBlocked('SECONDARY_ATTACK')
+				) ||
+					game.isActionBlocked('PRIMARY_ATTACK')) &&
+				(!hasEnoughEnergy(
+					energy,
+					activeHermit.props.secondary.cost,
+					game.settings.noItemRequirements,
+				) ||
+					game.isActionBlocked('SECONDARY_ATTACK'))
 			) {
 				return
 			}
@@ -93,6 +90,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		observer.subscribe(player.hooks.onActiveRowChange, () => {
 			if (game.currentPlayerEntity === player.entity) blockActions()
 		})
+		observer.subscribe(player.hooks.afterApply, blockActions)
 		observer.subscribe(player.hooks.onAttach, blockActions)
 		observer.subscribe(player.hooks.onDetach, blockActions)
 
@@ -125,14 +123,13 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.HERMIT_CHANGE_TARGET,
+			beforeAttack.BETRAYED_CHANGE_TARGET,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary')) return
 
-				if (pickedAfkHermit !== null && pickedAfkHermit.inRow()) {
-					attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
-				}
+				if (pickedAfkHermit === null || !pickedAfkHermit.inRow()) return
+				attack.setTarget(effect.entity, pickedAfkHermit.row.entity)
 
 				// They attacked now, they can end turn or change hermits with Chorus Fruit
 				game.removeBlockedActions(
