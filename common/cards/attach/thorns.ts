@@ -6,10 +6,7 @@ import {CardRarityT, TokenCostT} from '../../types/cards'
 import {beforeAttack, onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
-import DiamondArmor from './diamond-armor'
-import GoldArmor from './gold-armor'
-import IronArmor from './iron-armor'
-import NetheriteArmor from './netherite-armor'
+import {DiamondArmor, GoldArmor, IronArmor, NetheriteArmor} from './armor'
 
 function getThorns(
 	props: {
