@@ -589,6 +589,7 @@ export const setupDatabase = (
 		user: env.POSTGRES_USER,
 		password: env.POSTGRES_PASSWORD,
 		database: env.POSTGRES_DATABASE,
+		port: env.POSTGRES_PORT,
 		max: 10,
 		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,

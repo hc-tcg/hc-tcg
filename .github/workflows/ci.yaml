@@ -108,32 +108,32 @@ jobs:
     runs-on: ubuntu-latest
     name: End to End Tests
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-    - name: Create debug config
-      run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
-    - name: Build the server
-      run: npm run build
+      - name: Build the server
+        run: npm run build
 
-    - name: Run Playwright tests
-      run: npm run test:e2e
+      - name: Run Playwright tests
+        run: npm run test:e2e
 
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report-e2e
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-e2e
+          path: playwright-report/
+          retention-days: 30
 
   db:
     name: Databse Tests
@@ -153,7 +153,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - hctcg:5432
 
     steps:
       - name: Check out repository code
@@ -172,7 +172,6 @@ jobs:
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_PORT: 5432
-
 
   build-docker:
     name: Test Can Build Docker Image
