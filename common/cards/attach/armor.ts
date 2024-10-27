@@ -99,3 +99,15 @@ export const DiamondArmor = getArmor(
 	},
 	30,
 )
+
+export const NetheriteArmor = getArmor(
+	{
+		id: 'netherite_armor',
+		numericId: 82,
+		name: 'Netherite Armour',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 4,
+	},
+	40,
+)
