@@ -122,6 +122,7 @@ export const ImportModal = ({
 		'speedrunner',
 		'terraform',
 		'mob',
+		'everything',
 	]
 
 	const iconDropdownOptions = DECK_ICONS.map((option) => ({

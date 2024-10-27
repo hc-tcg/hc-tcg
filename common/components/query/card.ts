@@ -69,8 +69,17 @@ export function player(player: PlayerEntity): ComponentQuery<CardComponent> {
 	}
 }
 
-export function type(type: TypeT): ComponentQuery<CardComponent> {
-	return (_game, card) => card.isHermit() && card.props.type === type
+export function type(type: TypeT | null): ComponentQuery<CardComponent> {
+	if (type === null)
+		return (_game, card) => card.isHermit() && !card.props.type
+	else
+		return (_game, card) => {
+			if (!card.isHermit())
+				return false
+			if (card.props.type)
+				return card.isHermit() && card.props.type.includes(type)
+			return false
+		}
 }
 
 export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>

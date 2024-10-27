@@ -43,7 +43,7 @@ const HERMIT_TYPES: Record<string, string> = {
 	speedrunner: 'Speedrunner',
 	terraform: 'Terraform',
 	mob: 'Mob',
-	everything: 'Everything',
+	everything: 'all',
 	null: 'N/A',
 }
 
@@ -95,7 +95,7 @@ const getStrengthsAndWeaknesses = (
 			let j
 			for (j = 0; j < card.type[i].length; j++) {
 				const type = STRENGTHS[card.type[i]][j]
-				if (strengths.includes(type)) {
+				if (!strengths.includes(type)) {
 					strengths.push(type)
 				}
 			}
@@ -104,14 +104,19 @@ const getStrengthsAndWeaknesses = (
 	
 	const weaknesses: Array<TypeT> = []
 	if (card.type) {
-		let i: number
+		if (card.type.includes('everything') || card.type.includes('mob')) {
+			strengths.push('everything')
+			return
+		}
+		let i
 		for (i = 0; i < card.type.length; i++) {
-			if (card.type) {
-				const chart = Object.entries(STRENGTHS)
-					.filter(([, value]) => value.includes(card.type[i]))
-					.map(([key]) => key) as Array<TypeT>
+			let litmus: TypeT
+			for (litmus in STRENGTHS) {
+				const type = card.type[i]
+				if (litmus.includes(type) && !weaknesses.includes(litmus)) {
+					weaknesses.push(type)
+				}
 			}
-			
 		}
 	}
 
@@ -201,6 +206,7 @@ const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 }
 
 const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
+
 	if (isHermit(card) || card.type) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>

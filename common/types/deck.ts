@@ -33,6 +33,7 @@ export type PlayerDeckT = {
 		| 'speedrunner'
 		| 'terraform'
 		| 'mob'
+		| 'everything'
 	cards: Array<LocalCardInstance>
 	tags: Array<string> | null
 }
@@ -63,6 +64,7 @@ export type SavedDeckT = {
 		| 'speedrunner'
 		| 'terraform'
 		| 'mob'
+		| 'everything'
 	// This type is used to ensure saving and loading compatibility with older versions of hc-tcg
 	cards: Array<{
 		cardId: string

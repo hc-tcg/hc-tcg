@@ -64,6 +64,7 @@ const DECK_ICONS = [
 	'speedrunner',
 	'terraform',
 	'mob',
+	'everything',
 ]
 
 const EXPANSION_NAMES = [
@@ -201,8 +202,10 @@ export function sortCards(
 			[
 				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
 				isHermit(a.props) &&
-					isHermit(b.props) &&
-					a.props.type.localeCompare(b.props.type),
+				isHermit(b.props) &&
+				a.props.type && 
+				b.props.type &&
+					a.props.type[0].localeCompare(b.props.type[0]),
 				isItem(a.props) &&
 					isItem(b.props) &&
 					a.props.name.localeCompare(b.props.name),
@@ -312,7 +315,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				(typeQuery === '' ||
 					!(isHermit(card.props) || isItem(card.props)) ||
 					((isHermit(card.props) || isItem(card.props)) &&
-						card.props.type.includes(typeQuery))) &&
+					card.props.type &&	card.props.type[0].includes(typeQuery))) &&
 				// Card Expansion Filter
 				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
 				// Don't show disabled cards
