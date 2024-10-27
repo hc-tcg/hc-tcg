@@ -1,4 +1,4 @@
-import {Card} from 'common/cards/base/types'
+import {Card} from 'common/cards/types'
 import {Deck, Tag} from 'common/types/deck'
 import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
