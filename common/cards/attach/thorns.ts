@@ -71,7 +71,7 @@ function getThorns(
 							log: (values) =>
 								`${values.target} took ${values.damage} damage from $eThorns$`,
 						})
-						.addDamage(component.entity, 20)
+						.addDamage(component.entity, amount)
 
 					backlashAttack.shouldIgnoreCards.push(
 						query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor),
