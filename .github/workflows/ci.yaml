@@ -142,7 +142,7 @@ jobs:
 
     services:
       postgres:
-        container_name: "pg"
+        container_name: pg
         image: postgres
         env:
           DB_HOST: host.docker.internal
@@ -154,7 +154,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - "5432:5432"
+          - 5432:5432
 
     steps:
       - name: Check out repository code
