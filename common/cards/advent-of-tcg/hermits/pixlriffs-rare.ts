@@ -26,7 +26,7 @@ const PixlriffsRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 290,
 	primary: {
 		name: 'Lore Keeper',

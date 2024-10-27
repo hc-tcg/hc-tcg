@@ -21,7 +21,7 @@ const SolidaritygamingRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 270,
 	primary: {
 		name: 'The Law',

@@ -19,7 +19,7 @@ const ShubbleYTRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 300,
 	primary: {
 		name: 'Good Witch',

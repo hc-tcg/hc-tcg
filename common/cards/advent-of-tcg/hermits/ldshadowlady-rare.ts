@@ -21,7 +21,7 @@ const LDShadowLadyRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 290,
 	primary: {
 		name: 'Fairy Fort',

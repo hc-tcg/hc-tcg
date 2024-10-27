@@ -14,7 +14,7 @@ const SmallishbeansAdventRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 280,
 	primary: {
 		name: '11ft',

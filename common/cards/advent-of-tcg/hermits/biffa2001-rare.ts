@@ -28,7 +28,7 @@ const Biffa2001Rare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'miner',
+	type: ['miner'],
 	health: 290,
 	primary: {
 		name: 'O.H.O',

@@ -21,7 +21,7 @@ const DungeonTangoRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'miner',
+	type: ['miner'],
 	health: 280,
 	primary: {
 		name: 'Lackey',

@@ -20,7 +20,7 @@ const MonkeyfarmRare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 250,
 	primary: {
 		name: 'Skull',

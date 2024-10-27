@@ -26,7 +26,7 @@ const PharaohRare: Hermit = {
 	palette: 'pharaoh',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 300,
 	primary: {
 		name: 'Targét',

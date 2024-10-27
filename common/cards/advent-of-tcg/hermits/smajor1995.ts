@@ -21,7 +21,7 @@ const Smajor1995Rare: Hermit = {
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 270,
 	primary: {
 		name: 'Color Splash',
