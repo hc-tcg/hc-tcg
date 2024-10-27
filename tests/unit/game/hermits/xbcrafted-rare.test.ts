@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import DiamondArmor from 'common/cards/attach/diamond-armor'
+import {DiamondArmor} from 'common/cards/attach/armor'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
