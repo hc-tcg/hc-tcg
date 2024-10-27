@@ -142,18 +142,19 @@ jobs:
 
     services:
       postgres:
+        container_name: "pg"
         image: postgres
         env:
-          POSTGRES_USER: hctcg
-          POSTGRES_PASSWORD: hctcg
-          POSTGRES_DATABASE: hctcg
+          DB_HOST: host.docker.internal
+          DB_USER: hctcg
+          DB_PASS: hctcg
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
         ports:
-          - hctcg:5432
+          - "5432:5432"
 
     steps:
       - name: Check out repository code
