@@ -71,6 +71,9 @@ const createConnectErrorChannel = (socket: any) =>
 	})
 
 function* insertUser(socket: any) {
+	yield put<LocalMessage>({
+		type: localMessages.NEW_PLAYER,
+	})
 	yield* sendMsg({
 		type: clientMessages.PG_INSERT_USER,
 		username: socket.auth.playerName,

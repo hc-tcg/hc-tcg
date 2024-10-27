@@ -17,7 +17,7 @@ type Props = {
 
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const {playerName, playerDeck} = useSelector(getSession)
+	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
 	const handleJoinQueue = () => {
 		const validation = validateDeck(playerDeck.cards)
 
@@ -45,8 +45,7 @@ function MainMenu({setMenuSection}: Props) {
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
-	const welcomeMessage =
-		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
+	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 
 	return (
 		<>

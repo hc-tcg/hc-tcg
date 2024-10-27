@@ -19,6 +19,7 @@ type SessionState = {
 		| string
 	toast: ToastT
 	updates: Record<string, Array<string>>
+	newPlayer: boolean //If the account was created this session
 }
 
 const defaultState: SessionState = {
@@ -31,6 +32,7 @@ const defaultState: SessionState = {
 	connected: false,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
+	newPlayer: false,
 }
 
 const loginReducer = (
@@ -90,6 +92,11 @@ const loginReducer = (
 			return {
 				...state,
 				minecraftName: action.name,
+			}
+		case localMessages.NEW_PLAYER:
+			return {
+				...state,
+				newPlayer: true,
 			}
 		default:
 			return state

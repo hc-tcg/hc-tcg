@@ -88,6 +88,7 @@ export const localMessages = messages({
 	UPDATE_DECKS: null,
 	SELECT_DECK: null,
 	IMPORT_DECK: null,
+	NEW_PLAYER: null,
 })
 
 type Messages = [
@@ -225,6 +226,7 @@ type Messages = [
 		code: string
 		newActiveDeck?: string
 	},
+	{type: typeof localMessages.NEW_PLAYER},
 ]
 
 /** A message used locally on the client to update global state */

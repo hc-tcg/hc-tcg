@@ -35,3 +35,7 @@ export const getToast = (state: RootState) => {
 export const getUpdates = (state: RootState) => {
 	return getSession(state).updates
 }
+
+export const getIsNewPlayer = (state: RootState) => {
+	return getSession(state).newPlayer
+}
