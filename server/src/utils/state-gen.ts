@@ -1,5 +1,5 @@
-import {Card} from 'common/cards/base/types'
-import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
+import JoeHillsRare from 'common/cards/hermits/joehills-rare'
+import {Card} from 'common/cards/types'
 import {
 	CardComponent,
 	PlayerComponent,

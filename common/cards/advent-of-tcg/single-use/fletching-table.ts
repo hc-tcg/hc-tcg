@@ -1,6 +1,6 @@
 import query from '../../../components/query'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../../defaults'
+import {SingleUse} from '../../types'
 
 const FletchingTable: SingleUse = {
 	...singleUse,

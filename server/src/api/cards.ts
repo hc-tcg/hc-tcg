@@ -1,17 +1,11 @@
 import {CARDS, CARDS_LIST} from 'common/cards'
-import {getCardImage, getHermitBackground} from 'common/cards/base/card'
-import {
-	Card,
-	isAttach,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from 'common/cards/base/types'
+import {getCardImage, getHermitBackground} from 'common/cards/card'
+import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
+import {toLocalCardInstance} from 'common/utils/cards'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
-import {toLocalCardInstance} from 'common/utils/cards'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 

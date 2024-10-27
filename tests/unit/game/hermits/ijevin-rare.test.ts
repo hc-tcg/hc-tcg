@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import IJevinRare from 'common/cards/default/hermits/ijevin-rare'
-import Iskall85Common from 'common/cards/default/hermits/iskall85-common'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import IJevinRare from 'common/cards/hermits/ijevin-rare'
+import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import {printBoardState} from 'server/utils'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 

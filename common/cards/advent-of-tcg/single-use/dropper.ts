@@ -4,8 +4,8 @@ import {
 	ObserverComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import {singleUse} from '../../base/defaults'
-import {SingleUse} from '../../base/types'
+import {singleUse} from '../../defaults'
+import {SingleUse} from '../../types'
 import FletchingTable from './fletching-table'
 
 const Dropper: SingleUse = {

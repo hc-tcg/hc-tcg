@@ -1,4 +1,3 @@
-import {Card} from '../cards/base/types'
 import {RankT, TokenCostT} from '../types/cards'
 import {LocalCardInstance} from '../types/server-requests'
 

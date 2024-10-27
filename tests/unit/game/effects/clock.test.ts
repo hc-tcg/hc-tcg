@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import Clock from 'common/cards/default/single-use/clock'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import Clock from 'common/cards/single-use/clock'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'

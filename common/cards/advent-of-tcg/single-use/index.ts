@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../../types'
 import Brush from './brush'
 import Dropper from './dropper'
 import FletchingTable from './fletching-table'

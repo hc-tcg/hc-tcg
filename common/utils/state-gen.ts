@@ -1,11 +1,5 @@
 import {CARDS} from '../cards'
-import {
-	Card,
-	isAttach,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from '../cards/base/types'
+import {Card, isAttach, isHermit, isItem, isSingleUse} from '../cards/types'
 import {
 	BoardSlotComponent,
 	CardComponent,

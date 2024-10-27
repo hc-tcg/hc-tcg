@@ -1,4 +1,4 @@
-import {Card} from '../cards/base/types'
+import {Card} from '../cards/types'
 import {CardEntity} from '../entities'
 import {CardCategoryT} from '../types/cards'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'

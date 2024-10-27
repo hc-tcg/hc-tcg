@@ -1,6 +1,3 @@
-import {Card} from '../cards/base/types'
-import {Tag} from './deck'
-
 export type User = {
 	uuid: string
 	secret: string

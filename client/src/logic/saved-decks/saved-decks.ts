@@ -1,5 +1,5 @@
 import {CARDS} from 'common/cards'
-import {LegacyDeck, Deck as Deck} from 'common/types/deck'
+import {Deck as Deck, LegacyDeck} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 

@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import {getCardImage, getCardRankIcon} from 'common/cards/base/card'
-import {Attach, SingleUse} from 'common/cards/base/types'
+import {getCardImage, getCardRankIcon} from 'common/cards/card'
+import {Attach, SingleUse} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
