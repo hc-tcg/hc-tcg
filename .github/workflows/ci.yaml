@@ -144,9 +144,10 @@ jobs:
       postgres:
         image: postgres
         env:
-          DB_HOST: host.docker.internal
-          DB_USER: hctcg
-          DB_PASS: hctcg
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
+          POSTGRES_HOST: host.docker.internal
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
