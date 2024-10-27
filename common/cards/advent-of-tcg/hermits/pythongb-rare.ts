@@ -2,12 +2,12 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
-import RendogCommon from '../../default/hermits/rendog-common'
-import RendogRare from '../../default/hermits/rendog-rare'
-import XisumavoidCommon from '../../default/hermits/xisumavoid-common'
-import XisumavoidRare from '../../default/hermits/xisumavoid-rare'
+import {hermit} from '../../defaults'
+import RendogCommon from '../../hermits/rendog-common'
+import RendogRare from '../../hermits/rendog-rare'
+import XisumavoidCommon from '../../hermits/xisumavoid-common'
+import XisumavoidRare from '../../hermits/xisumavoid-rare'
+import {Hermit} from '../../types'
 
 const PythonGBRare: Hermit = {
 	...hermit,

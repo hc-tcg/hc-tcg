@@ -18,7 +18,7 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from '../cards/base/types'
+} from '../cards/types'
 import type {
 	CardEntity,
 	ObserverEntity,

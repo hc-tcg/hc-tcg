@@ -7,8 +7,8 @@ import query from '../../../components/query'
 import {CardEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const hermitStartingRow = new GameValue<Record<CardEntity, number | undefined>>(
 	() => {
