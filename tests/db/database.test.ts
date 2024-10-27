@@ -127,19 +127,24 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
 		expect(
-			returnedDeck.body.cards.filter((card) => card.numericId === 1).length,
+			returnedDeck.body.cards.filter((card) => card.props.numericId === 1)
+				.length,
 		).toEqual(1)
 		expect(
-			returnedDeck.body.cards.filter((card) => card.numericId === 2).length,
+			returnedDeck.body.cards.filter((card) => card.props.numericId === 2)
+				.length,
 		).toEqual(2)
 		expect(
-			returnedDeck.body.cards.filter((card) => card.numericId === 3).length,
+			returnedDeck.body.cards.filter((card) => card.props.numericId === 3)
+				.length,
 		).toEqual(1)
 		expect(
-			returnedDeck.body.cards.filter((card) => card.numericId === 4).length,
+			returnedDeck.body.cards.filter((card) => card.props.numericId === 4)
+				.length,
 		).toEqual(3)
 		expect(
-			returnedDeck.body.cards.filter((card) => card.numericId === 5).length,
+			returnedDeck.body.cards.filter((card) => card.props.numericId === 5)
+				.length,
 		).toEqual(1)
 	})
 
@@ -396,11 +401,11 @@ describe('Test Database', () => {
 
 		const firstDeckNumericIds = allDecks.body
 			.find((deck) => deck.code === deck1.body)
-			?.cards.map((card) => card.numericId)
+			?.cards.map((card) => card.props.numericId)
 
 		const thirdDeckNumericIds = allDecks.body
 			.find((deck) => deck.code === deck3.body)
-			?.cards.map((card) => card.numericId)
+			?.cards.map((card) => card.props.numericId)
 
 		expect(firstDeckNumericIds).toStrictEqual([1, 2, 2, 3, 4, 4, 4, 5])
 		expect(thirdDeckNumericIds).toStrictEqual([71, 32, 63, 5])
