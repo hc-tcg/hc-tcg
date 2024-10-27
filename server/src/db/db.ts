@@ -82,6 +82,7 @@ export class Database {
 			CREATE TABLE IF NOT EXISTS titles(
 				title_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 				name varchar(255) NOT NULL,
+				description varchar(65535) NOT NULL,
 				icon varchar(255) NOT NULL
 			);
 			CREATE TABLE IF NOT EXISTS user_titles(
