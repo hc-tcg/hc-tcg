@@ -180,6 +180,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	const starterDecks = [
 		'VVXCrsOww7DCscKxHBzCrkNDQ0NDQ0NDRETCucK5wrlDQ0MHBxgYHwzCixJ3TQ0EKwbClQM=',
 		'a2trdHTCtsOuwqDCoMKnPj4+Pj4+PT09PT09PcK5wrnCuU1NwpAsGBh3GRESDMKPKnl3Kw==',
+		'BwcNDQ0OGhoaKjExMTExMTExMTExMTExMjIySUlkZGRmZsKAwoDChsKGwobClcKXwpc=',
 	].map((deck) => getDeckFromHash(deck))
 
 	const chosenDeck = fisherYatesShuffle(starterDecks)[0]
