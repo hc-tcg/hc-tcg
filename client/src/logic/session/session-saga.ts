@@ -290,7 +290,10 @@ export function* loginSaga() {
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
 
-		if (debugConfig.disableDatabase) return
+		if (debugConfig.disableDatabase) {
+			setupData(socket)
+			return
+		}
 
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
@@ -343,7 +346,7 @@ export function* databaseConnectionSaga() {
 		localMessages.DELETE_DECK,
 		function* (action) {
 			if (debugConfig.disableDatabase) {
-				deleteDeckFromLocalStorage(action.deck.name)
+				deleteDeckFromLocalStorage(action.deck)
 				return
 			}
 			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})

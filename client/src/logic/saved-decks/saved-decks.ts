@@ -47,7 +47,7 @@ export function getLocalStorageDecks(): Array<Deck> {
 
 // Both these functions below are only used for testing, so new contributors do NOT need to set up a database.
 export function saveDeckToLocalStorage(deck: Deck) {
-	const hash = 'Deck_' + deck.name
+	const hash = 'Deck_' + deck.code
 	const legacyDeck: LegacyDeck = {
 		name: deck.name,
 		cards: deck.cards.map((card) => ({
@@ -62,7 +62,14 @@ export function saveDeckToLocalStorage(deck: Deck) {
 	localStorage.setItem(hash, JSON.stringify(legacyDeck))
 }
 
-export const deleteDeckFromLocalStorage = (name: string) => {
-	const hash = 'Deck_' + name
-	localStorage.removeItem(hash)
+export const deleteDeckFromLocalStorage = (deck: Deck) => {
+	// First tries to remove by code. If it can't find code, it assumes the deck is saved by name
+	// This could obviously cause issues but I believe ensuring compatibility with old version is more import
+	const codeHash = 'Deck_' + deck.code
+	const nameHash = 'Deck_' + deck.name
+	if (localStorage.getItem(codeHash)) {
+		localStorage.removeItem(codeHash)
+	} else {
+		localStorage.removeItem(nameHash)
+	}
 }

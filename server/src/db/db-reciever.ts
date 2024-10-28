@@ -6,17 +6,21 @@ import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
+import debugConfig from '../../../common/config/debug-config'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
 import {Database, setupDatabase} from './db'
 
-const pgDatabase: Database = setupDatabase(CARDS_LIST, process.env, 8)
+const pgDatabase: Database | null = debugConfig.disableDatabase
+	? null
+	: setupDatabase(CARDS_LIST, process.env, 8)
 
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
 ) {
+	if (!pgDatabase) return
 	const result = yield* call(
 		[pgDatabase, pgDatabase.insertUser],
 		action.payload.username ? action.payload.username : '',
@@ -37,6 +41,7 @@ export function* addUser(
 export function* authenticateUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
 ) {
+	if (!pgDatabase) return
 	const result = yield* call(
 		[pgDatabase, pgDatabase.authenticateUser],
 		action.payload.userId,
@@ -57,6 +62,7 @@ export function* authenticateUser(
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
 ) {
+	if (!pgDatabase) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		broadcast([player], {
@@ -96,6 +102,7 @@ export function* getDecks(
 export function* insertDeck(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECK>,
 ) {
+	if (!pgDatabase) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -132,6 +139,7 @@ export function* insertDeck(
 export function* importDeck(
 	action: RecievedClientMessage<typeof clientMessages.IMPORT_DECK>,
 ) {
+	if (!pgDatabase) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -160,6 +168,7 @@ export function* importDeck(
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
+	if (!pgDatabase) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -175,6 +184,7 @@ export function* deleteDeck(
 export function* deleteTag(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_TAG>,
 ) {
+	if (!pgDatabase) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -190,6 +200,7 @@ export function* deleteTag(
 export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {
+	if (!pgDatabase) return
 	const defaultStats = {
 		gamesPlayed: 0,
 		wins: 0,
@@ -232,6 +243,7 @@ export function* addGame(
 	seed: string,
 	replay: Buffer,
 ) {
+	if (!pgDatabase) return
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
 
 	yield* call(
