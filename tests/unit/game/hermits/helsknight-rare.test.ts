@@ -3,7 +3,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import HelsknightRare from 'common/cards/hermits/helsknight-rare'
 import Anvil from 'common/cards/single-use/anvil'
-import IronSword from 'common/cards/single-use/iron-sword'
+import {IronSword} from 'common/cards/single-use/sword'
 import TNT from 'common/cards/single-use/tnt'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
