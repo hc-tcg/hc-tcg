@@ -89,7 +89,7 @@ export const ImportModal = ({
 			let importedSomething = false
 			const codes: Array<string> = []
 
-			newFileContent.split('\n').forEach((line: string, i) => {
+			newFileContent.split('\n').forEach((line: string) => {
 				const cleanLine = line.replace('\r', '')
 				if (cleanLine.length === 7 && cleanLine.match(/[1234567890abcdefg]+/)) {
 					codes.push(cleanLine)

@@ -296,12 +296,12 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					const boardSlotPosition = slot.onBoard()
 						? packupBoardSlot(game, slot).readUInt8()
 						: 0
-					const handPosition = slot.inHand()
+					const _handPosition = slot.inHand()
 						? game.currentPlayer
 								.getHand()
 								.findIndex((c) => c.entity === cardComponent.entity)
 						: 0
-					const deckPosition = slot.inHand()
+					const _deckPosition = slot.inHand()
 						? game.currentPlayer
 								.getDeck()
 								.findIndex((c) => c.entity === cardComponent.entity)

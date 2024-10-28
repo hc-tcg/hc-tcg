@@ -8,11 +8,11 @@ import {
 import query from '../../components/query'
 import {PlayerEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'
+import {GameValue} from '../../models/game-value'
 import LooseShellEffect from '../../status-effects/loose-shell'
 import {beforeAttack, onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
-import {GameValue} from '../../models/game-value'
 
 type ActiveInfo = {
 	readonly hermit: CardComponent
