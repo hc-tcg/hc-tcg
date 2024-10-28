@@ -4,6 +4,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {Database, setupDatabase} from 'db/db'
 import dotenv from 'dotenv'
 import {Hook} from '../../common/types/hooks'
+import debugConfig from 'common/config/debug-config'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
@@ -33,15 +34,9 @@ export class RootModel {
 	public updates: Record<string, Array<string>> = {}
 
 	public constructor() {
-		console.log("Constructing")
 		const env = dotenv.config()
-		try {
-			this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
-			this.db.new()
-		} catch (e) {
-			console.info('Running server without database...')
-		}
-		console.info('D')
+		this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
+		this.db.new()
 	}
 
 	public createPrivateGame(playerId: string | null) {
