@@ -112,42 +112,38 @@ function Settings({setMenuSection}: Props) {
 				className={css.settingsMenu}
 			>
 				<h2>Settings</h2>
-				<div className={css.settingsBox}>
-					<div className={css.settings}>
-						<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-							Music Volume: {getPercentDescriptor(settings.musicVolume)}
-						</Slider>
-						<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-							Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
-						</Slider>
-						<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
-							Voice Lines Volume: {getPercentDescriptor(settings.voiceVolume)}
-						</Slider>
-						<Button variant="stone" onClick={handleMuteSound}>
-							Sound: {getBoolDescriptor(!settings.muted)}
-						</Button>
-						<Button variant="stone" onClick={handlePanoramaToggle}>
-							Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-						</Button>
-					</div>
-					<div className={css.settings}>
-						<Button variant="stone" onClick={handleGameSettings}>
-							Game Settings
-						</Button>
-						<Button variant="stone" onClick={handleDataSettings}>
-							Data Management
-						</Button>
-						<Button variant="stone" onClick={handleCredits}>
-							Credits
-						</Button>
-						<Button variant="stone" onClick={handleUpdates}>
-							Updates
-						</Button>
-					</div>
+				<div className={css.settingsMultipleRows}>
+					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+						Music Volume: {getPercentDescriptor(settings.musicVolume)}
+					</Slider>
+					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+						Sound Effect Volume: {getPercentDescriptor(settings.soundVolume)}
+					</Slider>
+					<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
+						Voice Lines Volume: {getPercentDescriptor(settings.voiceVolume)}
+					</Slider>
+					<Button variant="stone" onClick={handleMuteSound}>
+						Sound: {getBoolDescriptor(!settings.muted)}
+					</Button>
+					<Button variant="stone" onClick={handlePanoramaToggle}>
+						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+					</Button>
+					<Button variant="stone" onClick={handleGameSettings}>
+						Game Settings
+					</Button>
+					<Button variant="stone" onClick={handleDataSettings}>
+						Data Management
+					</Button>
+					<Button variant="stone" onClick={handleCredits}>
+						Credits
+					</Button>
+					<Button variant="stone" onClick={handleUpdates}>
+						Updates
+					</Button>
 				</div>
 
 				<h2>Statistics</h2>
-				<div className={css.settings}>
+				<div className={css.settingsBig}>
 					<div className={css.stats}>
 						<div className={css.stat}>
 							<span>Games Played</span>

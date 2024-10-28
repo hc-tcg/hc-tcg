@@ -222,10 +222,14 @@ nav {
 	margin-bottom: 2vh;
 }
 
-.settingsBox {
-	display: flex;
-	flex-direction: row;
+.settingsMultipleRows {
+	display: grid;
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	grid-auto-flow: column;
 	gap: 1vh;
+	width: 100%;
+	margin-bottom: 2vh;
 }
 
 .stats {
