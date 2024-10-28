@@ -4,6 +4,7 @@ import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
 import {
 	databaseConnectionSaga,
+	databaseErrorSaga,
 	loginSaga,
 	logoutSaga,
 	minecraftNameSaga,
@@ -22,6 +23,7 @@ function* appSaga(): SagaIterator {
 	yield fork(databaseConnectionSaga)
 	yield fork(newDeckSaga)
 	yield fork(recieveStatsSaga)
+	yield fork(databaseErrorSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)

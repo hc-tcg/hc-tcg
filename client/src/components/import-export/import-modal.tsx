@@ -17,7 +17,6 @@ type Props = {
 	onClose: (isOpen: boolean) => void
 	importDeck: (deck: Deck, noActiveChange?: boolean) => void
 	handleMassImport: () => void
-	forceUpdate: () => void
 }
 
 export const ImportModal = ({
@@ -25,7 +24,6 @@ export const ImportModal = ({
 	onClose,
 	importDeck,
 	handleMassImport,
-	forceUpdate,
 }: Props) => {
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
@@ -45,10 +43,6 @@ export const ImportModal = ({
 				newActiveDeck: hash,
 			})
 			onClose(true)
-
-			// Make sure it appears in case bad wifi
-			await new Promise((e) => setTimeout(e, 2000))
-			forceUpdate()
 			return
 		}
 
