@@ -79,15 +79,17 @@ export class Database {
 				tag_id varchar(7),
 				FOREIGN KEY (tag_id) REFERENCES user_tags(tag_id) ON DELETE CASCADE
 			);
-			CREATE TABLE IF NOT EXISTS titles(
-				title_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-				name varchar(255) NOT NULL,
+			CREATE TABLE IF NOT EXISTS achievements(
+				achievement_id varchar(7) NOT NULL,
+				achievement_name varchar(255) NOT NULL,
 				description varchar(65535) NOT NULL,
-				icon varchar(255) NOT NULL
+				icon varchar(255) NOT NULL,
+				total
 			);
-			CREATE TABLE IF NOT EXISTS user_titles(
+			CREATE TABLE IF NOT EXISTS user_achievements(
 				user_id uuid REFERENCES users(user_id),
-				title_id uuid REFERENCES titles(title_id)
+				achievement_id varchar(7) REFERENCES achievements(achievement_id),
+				progress
 			);
 			`,
 		)
