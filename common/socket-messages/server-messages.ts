@@ -45,6 +45,7 @@ export const serverMessages = messages({
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
 	STATS_RECIEVED: null,
+	DATABASE_FAILURE: null,
 })
 
 export type ServerMessages = [
@@ -110,6 +111,7 @@ export type ServerMessages = [
 		newActiveDeck?: Deck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 ]
 
 export type ServerMessage = Message<ServerMessages>

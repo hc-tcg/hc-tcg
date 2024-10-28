@@ -455,6 +455,16 @@ export function* recieveStatsSaga() {
 	}
 }
 
+export function* databaseErrorSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.DATABASE_FAILURE),
+		)
+		console.error(result.error)
+	}
+}
+
 export function* minecraftNameSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {

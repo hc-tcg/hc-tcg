@@ -90,11 +90,10 @@ export function* getDecks(
 					)
 				: undefined,
 		})
-	} else {
+	} else if (decksResult.type !== 'success') {
 		broadcast([player], {
-			type: serverMessages.DECKS_RECIEVED,
-			decks: [],
-			tags: [],
+			type: serverMessages.DATABASE_FAILURE,
+			error: decksResult.reason,
 		})
 	}
 }
@@ -121,7 +120,7 @@ export function* insertDeck(
 	}
 
 	// Insert deck
-	yield* call(
+	const result = yield* call(
 		[pgDatabase, pgDatabase.insertDeck],
 		action.payload.deck.name,
 		action.payload.deck.icon,
@@ -130,6 +129,14 @@ export function* insertDeck(
 		action.payload.deck.code,
 		player.uuid,
 	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+		return
+	}
 
 	if (action.payload.newActiveDeck) {
 		yield* getDecks(action as any)
@@ -152,7 +159,7 @@ export function* importDeck(
 	if (importedDeck.type !== 'success') return
 
 	// Insert deck
-	yield* call(
+	const result = yield* call(
 		[pgDatabase, pgDatabase.insertDeck],
 		importedDeck.body.name,
 		importedDeck.body.icon,
@@ -161,6 +168,14 @@ export function* importDeck(
 		generateDatabaseCode(),
 		player.uuid,
 	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+		return
+	}
 
 	if (action.payload.newActiveDeck) yield* getDecks(action as any)
 }
@@ -174,11 +189,18 @@ export function* deleteDeck(
 		return
 	}
 
-	yield* call(
+	const result = yield* call(
 		[pgDatabase, pgDatabase.disassociateDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }
 
 export function* deleteTag(
@@ -190,11 +212,18 @@ export function* deleteTag(
 		return
 	}
 
-	yield* call(
+	const result = yield* call(
 		[pgDatabase, pgDatabase.deleteTag],
 		player.uuid,
 		action.payload.tag.key,
 	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }
 
 export function* getStats(
@@ -227,10 +256,12 @@ export function* getStats(
 			stats: result.body,
 		})
 	} else {
-		broadcast([player], {
-			type: serverMessages.STATS_RECIEVED,
-			stats: defaultStats,
-		})
+		if (result.type === 'failure') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: result.reason,
+			})
+		}
 	}
 }
 
@@ -269,7 +300,13 @@ export function* addGame(
 			player.uuid,
 		)
 
-		if (stats.type !== 'success') continue
+		if (stats.type !== 'success') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: stats.reason,
+			})
+			continue
+		}
 		broadcast([player], {
 			type: serverMessages.STATS_RECIEVED,
 			stats: stats.body,
