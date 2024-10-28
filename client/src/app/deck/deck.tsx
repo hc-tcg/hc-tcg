@@ -40,7 +40,6 @@ const DeckComponent = ({setMenuSection}: Props) => {
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(playerDeck)
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
-	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	//DECK LOGIC
 	async function saveDeckInternal(deck: Deck) {
@@ -110,7 +109,6 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						setMode={setMode}
 						loadedDeck={loadedDeck}
 						databaseInfo={databaseInfo}
-						forceUpdate={forceUpdate}
 						filteredDecks={filteredDecks}
 						setFilteredDecks={setFilteredDecks}
 					/>

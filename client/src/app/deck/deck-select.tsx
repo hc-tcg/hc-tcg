@@ -40,7 +40,6 @@ type Props = {
 	setMode: (mode: 'select' | 'edit' | 'create') => void
 	loadedDeck: Deck
 	databaseInfo: DatabaseInfo
-	forceUpdate: () => void
 	filteredDecks: Array<Deck>
 	setFilteredDecks: (decks: Array<Deck>) => void
 }
@@ -51,7 +50,6 @@ function SelectDeck({
 	setMode,
 	loadedDeck,
 	databaseInfo,
-	forceUpdate,
 	filteredDecks,
 	setFilteredDecks,
 }: Props) {
@@ -381,7 +379,6 @@ function SelectDeck({
 				onClose={() => setShowImportModal(!showImportModal)}
 				importDeck={(deck) => handleImportDeck(deck)}
 				handleMassImport={handleMassImportDecks}
-				forceUpdate={forceUpdate}
 			/>
 			<ExportModal
 				setOpen={showExportModal}
