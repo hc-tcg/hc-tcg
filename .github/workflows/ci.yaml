@@ -168,7 +168,7 @@ jobs:
       - name: Test Database
         run: npm run test:db
         env:
-          POSTGRES_HOST: psql
+          POSTGRES_HOST: db
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_PORT: 5432
