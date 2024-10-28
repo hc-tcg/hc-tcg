@@ -80,7 +80,7 @@ export class Database {
 				FOREIGN KEY (tag_id) REFERENCES user_tags(tag_id) ON DELETE CASCADE
 			);
 			CREATE TABLE IF NOT EXISTS achievements(
-				achievement_id varchar(7) NOT NULL,
+				achievement_id varchar(7) PRIMARY KEY NOT NULL,
 				achievement_name varchar(255) NOT NULL,
 				description varchar(65535) NOT NULL,
 				icon varchar(255) NOT NULL,

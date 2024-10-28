@@ -19,3 +19,11 @@ export type Stats = {
 	forfeitWins: number
 	forfeitLosses: number
 }
+
+export type Achievement = {
+	id: string
+	name: string
+	description: string
+	icon: string
+	total: string
+}
