@@ -142,7 +142,6 @@ jobs:
 
     services:
       postgres:
-        name: psql
         image: postgres
         env:
           POSTGRES_USER: hctcg
@@ -169,7 +168,7 @@ jobs:
       - name: Test Database
         run: npm run test:db
         env:
-          POSTGRES_HOST: psql
+          POSTGRES_HOST: localhost
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_PORT: 5432
