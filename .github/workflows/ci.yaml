@@ -142,7 +142,7 @@ jobs:
 
     services:
       postgres:
-        container_id: psql
+        name: psql
         image: postgres
         env:
           POSTGRES_USER: hctcg
