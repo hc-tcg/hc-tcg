@@ -116,7 +116,7 @@ function SelectDeck({
 
 	const [importedDeck, setImportedDeck] = useState<Deck>({
 		name: 'undefined',
-		icon: 'any',
+		icon: '/images/types/type-any.png',
 		cards: [],
 		code: generateDatabaseCode(),
 		tags: [],

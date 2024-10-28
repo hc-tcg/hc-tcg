@@ -43,7 +43,6 @@ export class Database {
 				CREATE TABLE IF NOT EXISTS decks(
 					user_id uuid REFERENCES users(user_id),
 					deck_code varchar(7) PRIMARY KEY,
-					previous_code varchar(7) REFERENCES decks(deck_code),
 					name varchar(255) NOT NULL,
 					icon varchar(255) NOT NULL
 				);
@@ -223,21 +222,25 @@ export class Database {
 		try {
 			const deck = (
 				await this.pool.query(
-					`SELECT * FROM decks
-					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
-					LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
-					WHERE decks.deck_code = $1
+					`SELECT
+						decks.user_id,decks.deck_code,decks.name,decks.icon,
+						deck_cards.card_id,deck_cards.copies,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
+						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
+						WHERE decks.deck_code = $1
 					`,
 					[deckCode],
 				)
 			).rows
+			console.log(deck)
 			const code = deck[0]['deck_code']
 			const name = deck[0]['name']
 			const icon = deck[0]['icon']
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
-					!row['card_id'] ||
+					row['card_id'] === null ||
 					r.find((card) => card.numericId === row['card_id'])
 				)
 					return r
@@ -277,7 +280,8 @@ export class Database {
 		try {
 			const decksResult = (
 				await this.pool.query(
-					`SELECT decks.user_id,decks.deck_code,decks.previous_code,decks.name,decks.icon,
+					`SELECT 
+						decks.user_id,decks.deck_code,decks.name,decks.icon,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code

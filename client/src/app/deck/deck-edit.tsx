@@ -234,7 +234,7 @@ function EditDeck({
 			? deck
 			: {
 					name: '',
-					icon: 'any',
+					icon: '/images/types/type-any.png',
 					cards: [],
 					code: generateDatabaseCode(),
 					tags: [],

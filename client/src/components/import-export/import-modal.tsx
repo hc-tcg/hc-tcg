@@ -28,7 +28,9 @@ export const ImportModal = ({
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
-	const [deckIcon, setDeckIcon] = useState<Deck['icon']>('any')
+	const [deckIcon, setDeckIcon] = useState<Deck['icon']>(
+		'/images/types/type-any.png',
+	)
 
 	//IMPORT DECK FUNCTION
 	async function importFromHash() {

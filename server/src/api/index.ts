@@ -1,7 +1,7 @@
 import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
-import {cards, deckCost, getCardsInDeck} from './cards'
+import {cards, deckCost, getDeckInformation} from './cards'
 import {cancelApiGame, createApiGame} from './games'
 import {CancelGameBody} from './schema'
 import {StatsHeader, getStats} from './stats'
@@ -12,8 +12,8 @@ export function addApi(app: Express) {
 		res.send(cards(requestUrlRoot(req)))
 	})
 
-	app.get('/api/deck/:deck', (req, res) => {
-		res.send(getCardsInDeck(requestUrlRoot(req), req.params.deck))
+	app.get('/api/deck/:deck', async (req, res) => {
+		res.send(await getDeckInformation(requestUrlRoot(req), req.params.deck))
 	})
 
 	app.post('/api/deck/cost', async (req, res) => {

@@ -111,7 +111,7 @@ export function cards(url: string) {
 	return out
 }
 
-export async function getCardsInDeck(url: string, hash: string) {
+export async function getDeckInformation(url: string, hash: string) {
 	if (hash.length >= 10) {
 		let deck = getDeckFromHash(hash)
 		return {
@@ -129,7 +129,7 @@ export async function getCardsInDeck(url: string, hash: string) {
 		if (deck.type == 'success') {
 			return {
 				type: 'success',
-				cards: deck.body.cards,
+				...deck.body,
 			}
 		} else {
 			return {
