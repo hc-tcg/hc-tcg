@@ -4,7 +4,6 @@ import {PlayerModel} from 'common/models/player-model'
 import {Database, setupDatabase} from 'db/db'
 import dotenv from 'dotenv'
 import {Hook} from '../../common/types/hooks'
-import debugConfig from 'common/config/debug-config'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
