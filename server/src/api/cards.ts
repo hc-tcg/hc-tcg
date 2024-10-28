@@ -6,6 +6,7 @@ import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
+import root from 'serverRoot'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
@@ -110,11 +111,26 @@ export function cards(url: string) {
 	return out
 }
 
-export function getCardsInDeck(url: string, hash: string) {
-	let deck = getDeckFromHash(hash)
-	return deck
-		.map((card) => cardToCardResponse(card.props, url))
-		.filter((x) => x !== null)
+export async function getCardsInDeck(url: string, hash: string) {
+	if (hash.length >= 10) {
+		let deck = getDeckFromHash(hash)
+		return {
+			success: deck
+				.map((card) => cardToCardResponse(card.props, url))
+				.filter((x) => x !== null),
+		}
+	} else {
+		let deck = await root.db.getDeckFromID(hash)
+		if (deck.type == 'success') {
+			return {
+				success: deck.body.cards,
+			}
+		} else {
+			return {
+				error: 'Could not find deck.',
+			}
+		}
+	}
 }
 
 export function deckCost(body: Object) {
