@@ -27,32 +27,28 @@
 	opacity: 0;
 	animation: contentShow 250ms 100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 	pointer-events: all;
-}
 
-.center {
-	top: 50%;
-}
+	.title {
+		margin: 0;
+		color: var(--text-light);
+		font-size: 1.1rem;
+		font-weight: 500;
+		background: var(--gray-500);
+		border: 2px solid var(--gray-400);
+		padding: 0.5rem;
+		text-align: center;
 
-.title {
-	margin: 0;
-	color: var(--text-light);
-	font-size: 1.1rem;
-	font-weight: 500;
-	background: var(--gray-500);
-	border: 2px solid var(--gray-400);
-	padding: 0.5rem;
-	text-align: center;
-}
+		.close {
+			position: absolute;
+			top: 6px;
+			right: 6px;
+			cursor: pointer;
+			padding: 6px 6px 2px;
 
-.close {
-	position: absolute;
-	top: 6px;
-	right: 6px;
-	cursor: pointer;
-	padding: 6px;
-
-	&:hover {
-		background: var(--gray-700);
+			&:hover {
+				background: var(--gray-700);
+			}
+		}
 	}
 }
 
