@@ -229,7 +229,11 @@ export class Database {
 			const name = deck[0]['name']
 			const icon = deck[0]['icon']
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
-				if (r.find((card) => card.numericId === row['card_id'])) return r
+				if (
+					!row['card_id'] ||
+					r.find((card) => card.numericId === row['card_id'])
+				)
+					return r
 				return [
 					...r,
 					...Array(row['copies']).fill(
@@ -238,7 +242,8 @@ export class Database {
 				]
 			}, [])
 			const tags: Array<Tag> = deck.reduce((r: Array<Tag>, row) => {
-				if (r.find((tag) => tag.key === row['tag_id'])) return r
+				if (!row['tag_id'] || r.find((tag) => tag.key === row['tag_id']))
+					return r
 				return [
 					...r,
 					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
