@@ -33,13 +33,15 @@ export class RootModel {
 	public updates: Record<string, Array<string>> = {}
 
 	public constructor() {
+		console.log("Constructing")
 		const env = dotenv.config()
 		try {
 			this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
 			this.db.new()
-		} catch {
-			console.log('Running server without database')
+		} catch (e) {
+			console.info('Running server without database...')
 		}
+		console.info('D')
 	}
 
 	public createPrivateGame(playerId: string | null) {

@@ -1,4 +1,3 @@
-import {CARDS_LIST} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameEndOutcomeT} from 'common/types/game-state'
@@ -6,23 +5,17 @@ import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
-import debugConfig from '../../../common/config/debug-config'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
-import {Database, setupDatabase} from './db'
-
-const pgDatabase: Database | null = debugConfig.disableDatabase
-	? null
-	: setupDatabase(CARDS_LIST, process.env, 8)
 
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const result = yield* call(
-		[pgDatabase, pgDatabase.insertUser],
+		[root.db, root.db.insertUser],
 		action.payload.username ? action.payload.username : '',
 		action.payload.minecraftName,
 	)
@@ -41,9 +34,9 @@ export function* addUser(
 export function* authenticateUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const result = yield* call(
-		[pgDatabase, pgDatabase.authenticateUser],
+		[root.db, root.db.authenticateUser],
 		action.payload.userId,
 		action.payload.secret,
 	)
@@ -62,7 +55,7 @@ export function* authenticateUser(
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		broadcast([player], {
@@ -73,11 +66,8 @@ export function* getDecks(
 		return
 	}
 
-	const decksResult = yield* call(
-		[pgDatabase, pgDatabase.getDecks],
-		player.uuid,
-	)
-	const tagsResult = yield* call([pgDatabase, pgDatabase.getTags], player.uuid)
+	const decksResult = yield* call([root.db, root.db.getDecks], player.uuid)
+	const tagsResult = yield* call([root.db, root.db.getTags], player.uuid)
 
 	if (decksResult.type === 'success' && tagsResult.type === 'success') {
 		broadcast([player], {
@@ -101,7 +91,7 @@ export function* getDecks(
 export function* insertDeck(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECK>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -111,7 +101,7 @@ export function* insertDeck(
 
 	for (let i = 0; i < deckTags.length; i++) {
 		yield* call(
-			[pgDatabase, pgDatabase.insertTag],
+			[root.db, root.db.insertTag],
 			player.uuid,
 			deckTags[i].name,
 			deckTags[i].color,
@@ -121,7 +111,7 @@ export function* insertDeck(
 
 	// Insert deck
 	const result = yield* call(
-		[pgDatabase, pgDatabase.insertDeck],
+		[root.db, root.db.insertDeck],
 		action.payload.deck.name,
 		action.payload.deck.icon,
 		action.payload.deck.cards.map((card) => card.props.numericId),
@@ -146,7 +136,7 @@ export function* insertDeck(
 export function* importDeck(
 	action: RecievedClientMessage<typeof clientMessages.IMPORT_DECK>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -154,13 +144,13 @@ export function* importDeck(
 
 	const code = action.payload.code
 
-	const importedDeck = yield* call([pgDatabase, pgDatabase.getDeckFromID], code)
+	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code)
 
 	if (importedDeck.type !== 'success') return
 
 	// Insert deck
 	const result = yield* call(
-		[pgDatabase, pgDatabase.insertDeck],
+		[root.db, root.db.insertDeck],
 		importedDeck.body.name,
 		importedDeck.body.icon,
 		importedDeck.body.cards.map((card) => card.props.numericId),
@@ -183,14 +173,14 @@ export function* importDeck(
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
 	}
 
 	const result = yield* call(
-		[pgDatabase, pgDatabase.disassociateDeck],
+		[root.db, root.db.disassociateDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)
@@ -206,14 +196,14 @@ export function* deleteDeck(
 export function* deleteTag(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_TAG>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
 	}
 
 	const result = yield* call(
-		[pgDatabase, pgDatabase.deleteTag],
+		[root.db, root.db.deleteTag],
 		player.uuid,
 		action.payload.tag.key,
 	)
@@ -229,7 +219,7 @@ export function* deleteTag(
 export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	const defaultStats = {
 		gamesPlayed: 0,
 		wins: 0,
@@ -248,7 +238,7 @@ export function* getStats(
 		return
 	}
 
-	const result = yield* call([pgDatabase, pgDatabase.getUserStats], player.uuid)
+	const result = yield* call([root.db, root.db.getUserStats], player.uuid)
 
 	if (result.type === 'success') {
 		broadcast([player], {
@@ -274,11 +264,11 @@ export function* addGame(
 	seed: string,
 	replay: Buffer,
 ) {
-	if (!pgDatabase) return
+	if (!root.db) return
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
 
 	yield* call(
-		[pgDatabase, pgDatabase.insertGame],
+		[root.db, root.db.insertGame],
 		firstPlayerModel.deck.code,
 		secondPlayerModel.deck.code,
 		firstPlayerModel.uuid,
@@ -295,10 +285,7 @@ export function* addGame(
 	for (let i = 0; i < players.length; i++) {
 		const player = players[i]
 		if (!player.uuid) continue
-		const stats = yield* call(
-			[pgDatabase, pgDatabase.getUserStats],
-			player.uuid,
-		)
+		const stats = yield* call([root.db, root.db.getUserStats], player.uuid)
 
 		if (stats.type !== 'success') {
 			broadcast([player], {
