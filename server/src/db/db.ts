@@ -84,12 +84,12 @@ export class Database {
 				achievement_name varchar(255) NOT NULL,
 				description varchar(65535) NOT NULL,
 				icon varchar(255) NOT NULL,
-				total
+				total integer NOT NULL 
 			);
 			CREATE TABLE IF NOT EXISTS user_achievements(
 				user_id uuid REFERENCES users(user_id),
 				achievement_id varchar(7) REFERENCES achievements(achievement_id),
-				progress
+				progress integer NOT NULL
 			);
 			`,
 		)
