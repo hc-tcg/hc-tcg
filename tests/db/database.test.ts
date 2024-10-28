@@ -19,7 +19,7 @@ describe('Test Database', () => {
 	const playerDeck = {
 		name: 'Testing deck',
 		icon: 'balanced',
-		cards: [1, 2, 2, 3, 4, 4, 5, 4],
+		cards: [0, 1, 2, 2, 3, 4, 4, 5, 4],
 		tags: [],
 	}
 
