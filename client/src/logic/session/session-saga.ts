@@ -85,7 +85,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	const localStorageDecks = getLocalStorageDecks()
+	const localStorageDecks = getLocalStorageDecks(true)
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -129,7 +129,7 @@ function* setupData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: getLocalStorageDecks(),
+				value: getLocalStorageDecks(false),
 			},
 		})
 		return
@@ -367,7 +367,7 @@ export function* databaseConnectionSaga() {
 					type: localMessages.DATABASE_SET,
 					data: {
 						key: 'decks',
-						value: getLocalStorageDecks(),
+						value: getLocalStorageDecks(false),
 					},
 				})
 				return

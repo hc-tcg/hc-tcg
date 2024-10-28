@@ -161,19 +161,19 @@ function SelectDeck({
 		open: true,
 		title: 'Deck Deleted!',
 		description: `Removed ${loadedDeck.name}`,
-		image: `/images/types/type-${loadedDeck.icon}.png`,
+		image: loadedDeck.icon,
 	}
 	const selectedDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${loadedDeck.name} is now your active deck`,
-		image: `images/types/type-${loadedDeck.icon}.png`,
+		image: loadedDeck.icon,
 	}
 	const lastValidDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${playerDeck.name} is now your active deck`,
-		image: `images/types/type-${playerDeck.icon}.png`,
+		image: loadedDeck.icon,
 	}
 
 	// MENU LOGIC
@@ -281,10 +281,7 @@ function SelectDeck({
 				<div
 					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
 				>
-					<img
-						src={'../images/types/type-' + deck.icon + '.png'}
-						alt={'deck-icon'}
-					/>
+					<img src={deck.icon} alt={'deck-icon'} />
 				</div>
 				{deck.name}
 			</li>
@@ -452,14 +449,7 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
+									<img src={loadedDeck.icon} alt="deck-icon" />
 								</div>
 								<div className={css.deckName}>{loadedDeck.name}</div>
 								{loadedDeck.tags &&
@@ -511,14 +501,7 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
+									<img src={loadedDeck.icon} alt="deck-icon" />
 								</div>
 								<span
 									className={classNames(

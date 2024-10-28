@@ -202,12 +202,14 @@ export const ImportModal = ({
 										<Dropdown
 											button={
 												<button className={DropdownCSS.iconButton}>
-													<img src={`/images/types/type-${deckIcon}.png`} />
+													<img src={deckIcon} />
 												</button>
 											}
 											label="Deck Icon"
 											options={iconDropdownOptions}
-											action={(option: any) => setDeckIcon(option)}
+											action={(option: any) =>
+												setDeckIcon(`/images/types/type-${option}.png`)
+											}
 										/>
 										<input
 											type="text"

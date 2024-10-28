@@ -13,7 +13,7 @@ export const setActiveDeck = (deck: Deck) => {
 	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export function getLocalStorageDecks(): Array<Deck> {
+export function getLocalStorageDecks(convertIcon: boolean): Array<Deck> {
 	let lsKey
 	const decks: Array<Deck> = []
 
@@ -28,7 +28,9 @@ export function getLocalStorageDecks(): Array<Deck> {
 					const newDeck: Deck = {
 						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
 						name: parsedDeck.name,
-						icon: parsedDeck.icon,
+						icon: convertIcon
+							? `/images/types/type-${parsedDeck.icon}.png`
+							: parsedDeck.icon,
 						tags: [],
 						cards: parsedDeck.cards.map((card) =>
 							toLocalCardInstance(CARDS[card.cardId]),

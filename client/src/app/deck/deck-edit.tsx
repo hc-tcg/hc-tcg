@@ -355,7 +355,7 @@ function EditDeck({
 	const handleDeckIcon = (option: any) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			icon: option,
+			icon: `/images/types/type-${option}.png`,
 		}))
 	}
 	const handleBack = () => {
@@ -405,7 +405,7 @@ function EditDeck({
 			open: true,
 			title: 'Deck Saved!',
 			description: `Saved ${deck.name}`,
-			image: `/images/types/type-${deck.icon}.png`,
+			image: deck.icon,
 		})
 		back()
 	}
@@ -645,9 +645,7 @@ function EditDeck({
 													css[loadedDeck.icon],
 												)}
 											>
-												<img
-													src={`/images/types/type-${loadedDeck.icon}.png`}
-												/>
+												<img src={loadedDeck.icon} />
 											</button>
 										}
 										label="Deck Icon"

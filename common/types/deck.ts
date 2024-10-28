@@ -14,21 +14,10 @@ export type Deck = {
 	tags: Array<Tag>
 }
 
+// This type is used to ensure saving and loading compatibility with older versions of hc-tcg
 export type LegacyDeck = {
 	name: string
-	icon:
-		| 'any'
-		| 'balanced'
-		| 'builder'
-		| 'explorer'
-		| 'farm'
-		| 'miner'
-		| 'prankster'
-		| 'pvp'
-		| 'redstone'
-		| 'speedrunner'
-		| 'terraform'
-	// This type is used to ensure saving and loading compatibility with older versions of hc-tcg
+	icon: string
 	cards: Array<{
 		cardId: string
 		cardInstance: string
