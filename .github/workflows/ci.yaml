@@ -142,12 +142,13 @@ jobs:
 
     services:
       postgres:
+        container_name: pg
         image: postgres
         env:
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_DATABASE: hctcg
-          POSTGRES_HOST: host.docker.internal
+          POSTGRES_HOST: pg
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
