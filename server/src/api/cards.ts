@@ -120,14 +120,21 @@ export async function getCardsInDeck(url: string, hash: string) {
 				.filter((x) => x !== null),
 		}
 	} else {
-		let deck = await root.db.getDeckFromID(hash)
+		let deck = await root.db?.getDeckFromID(hash)
+		if (!deck)
+			return {
+				type: 'failure',
+				reason: 'Endpoint is unavailable because database is disabled',
+			}
 		if (deck.type == 'success') {
 			return {
-				success: deck.body.cards,
+				type: 'success',
+				cards: deck.body.cards,
 			}
 		} else {
 			return {
-				error: 'Could not find deck.',
+				type: 'failure',
+				reason: 'Could not find deck.',
 			}
 		}
 	}

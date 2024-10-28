@@ -9,7 +9,7 @@ export class RootModel {
 	public players: Record<string, PlayerModel> = {}
 	public games: Record<string, GameModel> = {}
 	public queue: Array<string> = []
-	public db: Database
+	public db?: Database
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
 		string,
@@ -34,8 +34,12 @@ export class RootModel {
 
 	public constructor() {
 		const env = dotenv.config()
-		this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
-		this.db.new()
+		try {
+			this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
+			this.db.new()
+		} catch {
+			console.log('Running server without database')
+		}
 	}
 
 	public createPrivateGame(playerId: string | null) {

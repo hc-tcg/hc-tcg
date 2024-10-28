@@ -16,8 +16,8 @@ export function addApi(app: Express) {
 		res.send(getCardsInDeck(requestUrlRoot(req), req.params.deck))
 	})
 
-	app.post('/api/deck/cost', (req, res) => {
-		res.send(deckCost(req.body))
+	app.post('/api/deck/cost', async (req, res) => {
+		res.send(await deckCost(req.body))
 	})
 
 	app.get('/api/games/create', (_req, res) => {

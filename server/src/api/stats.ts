@@ -15,9 +15,16 @@ type StatsResult =
 export const StatsHeader = z.object({uuid: z.string()})
 
 export async function getStats(
-	db: Database,
+	db: Database | undefined,
 	header: {uuid: string},
 ): Promise<StatsResult> {
+	if (!db) {
+		return {
+			type: 'failure',
+			reason: 'Endpoint is unavailable because database is disabled',
+		}
+	}
+
 	let stats = await db.getUserStats(header.uuid)
 
 	if (stats.type === 'success') {
