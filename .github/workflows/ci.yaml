@@ -142,13 +142,12 @@ jobs:
 
     services:
       postgres:
-        container_name: pg
+        container_name: "psql"
         image: postgres
         env:
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_DATABASE: hctcg
-          POSTGRES_HOST: pg
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -170,7 +169,7 @@ jobs:
       - name: Test Database
         run: npm run test:db
         env:
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: psql
           POSTGRES_USER: hctcg
           POSTGRES_PASSWORD: hctcg
           POSTGRES_PORT: 5432
