@@ -4,7 +4,6 @@ import {PlayerDeckT, Tag} from 'common/types/deck'
 import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
-import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
@@ -40,6 +39,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {AlertModal, ConfirmModal} from 'components/modal'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -111,7 +111,9 @@ function SelectDeck({
 		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
-	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
+	const [showDuplicateDeckConfirmModal, setShowDuplicateDeckConfirmModal] =
+		useState<boolean>(false)
+	const [showDuplicateDeckAlertModal, setShowDuplicateDeckAlertModal] =
 		useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
@@ -408,66 +410,65 @@ function SelectDeck({
 		<>
 			<ImportModal
 				setOpen={showImportModal}
-				onClose={() => setShowImportModal(!showImportModal)}
+				onClose={() => setShowImportModal(false)}
 				importDeck={(deck) => handleImportDeck(deck)}
 				handleMassImport={handleMassImportDecks}
 			/>
 			<ExportModal
 				setOpen={showExportModal}
-				onClose={() => setShowExportModal(!showExportModal)}
+				onClose={() => setShowExportModal(false)}
 				loadedDeck={loadedDeck}
 			/>
 			<MassExportModal
 				setOpen={showMassExportModal}
-				onClose={() => setShowMassExportModal(!showMassExportModal)}
+				onClose={() => setShowMassExportModal(false)}
 			/>
-			{showManageTagsModal && (
-				<TagsModal
-					tags={getCreatedTags()}
-					onClose={() => setShowManageTagsModal(!showManageTagsModal)}
-				/>
-			)}
-			<AlertModal
+			<TagsModal
+				setOpen={showManageTagsModal}
+				tags={getCreatedTags()}
+				onClose={() => setShowManageTagsModal(false)}
+			/>
+
+			<ConfirmModal // Invalid Deck Modal
 				setOpen={showValidateDeckModal}
-				onClose={() => setShowValidateDeckModal(!showValidateDeckModal)}
-				action={handleInvalidDeck}
 				title="Invalid Deck"
 				description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
                 matches. If you continue, your last valid deck will be used instead.`}
-				actionText="Main Menu"
+				confirmButtonText="Main Menu"
+				onCancel={() => setShowValidateDeckModal(false)}
+				onConfirm={handleInvalidDeck}
 			/>
-			<AlertModal
+			<ConfirmModal // Delete Deck Modal
 				setOpen={showDeleteDeckModal}
-				onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
-				action={() => deleteDeckInternal()}
 				title="Delete Deck"
-				description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
-				actionText="Delete"
+				description={`Are you sure you want to delete the "${loadedDeck.name}" deck?`}
+				confirmButtonText="Delete Deck"
+				onCancel={() => setShowDeleteDeckModal(false)}
+				onConfirm={deleteDeckInternal}
 			/>
-			<AlertModal
-				setOpen={showDuplicateDeckModal}
-				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
-				action={() => {
-					duplicateDeck(loadedDeck)
-				}}
+			<ConfirmModal // Duplicate Deck Confirm Modal
+				setOpen={showDuplicateDeckConfirmModal}
 				title="Duplicate Deck"
-				description={
-					canDuplicateDeck()
-						? `Are you sure you want to duplicate the "${loadedDeck.name}" deck?`
-						: `You have too many duplicates of the "${loadedDeck.name}" deck.`
-				}
-				actionText={canDuplicateDeck() ? 'Duplicate' : undefined}
-				actionType="primary"
+				description={`Are you sure you want to duplicate the "${loadedDeck.name}" deck?`}
+				confirmButtonText="Duplicate"
+				confirmButtonVariant="primary"
+				onCancel={() => setShowDuplicateDeckConfirmModal(false)}
+				onConfirm={() => duplicateDeck(loadedDeck)}
 			/>
-			<AlertModal
+			<AlertModal // Duplicate Deck Alert Modal
+				setOpen={showDuplicateDeckAlertModal}
+				title="Duplicate Deck Error"
+				description={`You have too many duplicates of the "${loadedDeck.name}" deck.`}
+				onClose={() => setShowDuplicateDeckAlertModal(false)}
+			/>
+			<ConfirmModal // Overwrite Deck Modal
 				setOpen={showOverwriteModal}
-				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={() => saveDeckInternal(importedDeck)}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				actionText="Overwrite"
+				confirmButtonText="Overwrite"
+				onCancel={() => setShowOverwriteModal(false)}
+				onConfirm={() => saveDeckInternal(importedDeck)}
 			/>
-
 			<DeckLayout
 				title="Deck Selection"
 				back={backToMenu}
@@ -610,7 +611,11 @@ function SelectDeck({
 								<Button
 									variant="primary"
 									size="small"
-									onClick={() => setShowDuplicateDeckModal(true)}
+									onClick={() =>
+										canDuplicateDeck()
+											? setShowDuplicateDeckConfirmModal(true)
+											: setShowDuplicateDeckAlertModal(true)
+									}
 									leftSlot={CopyIcon()}
 								>
 									<span>Copy</span>
@@ -680,7 +685,11 @@ function SelectDeck({
 						<Button
 							variant="primary"
 							size="small"
-							onClick={() => setShowDuplicateDeckModal(true)}
+							onClick={() =>
+								canDuplicateDeck()
+									? setShowDuplicateDeckConfirmModal(true)
+									: setShowDuplicateDeckAlertModal(true)
+							}
 							leftSlot={CopyIcon()}
 						>
 							<span>Copy Deck</span>
