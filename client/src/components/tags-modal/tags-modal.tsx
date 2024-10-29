@@ -15,28 +15,30 @@ export function TagsModal({onClose, tags}: Props) {
 	return (
 		<Modal title="Manage Tags" onClose={onClose}>
 			<Modal.Description>
-				{tagsList.map((tag) => (
-					<div className={css.container}>
-						<div className={css.component}>
-							<div
-								className={css.fullTagColor}
-								style={{
-									backgroundColor: tag.color,
-								}}
-							></div>
-							<div>{tag.name}</div>
-						</div>
-						<Button
-							variant="default"
-							onClick={() => {
-								setTagsList(tagsList.filter((t) => t.key !== tag.key))
-								deleteTag(tag)
-							}}
-						>
-							Remove
-						</Button>
-					</div>
-				))}
+				{tagsList.length
+					? tagsList.map((tag) => (
+							<div className={css.container}>
+								<div className={css.component}>
+									<div
+										className={css.fullTagColor}
+										style={{
+											backgroundColor: tag.color,
+										}}
+									></div>
+									<div>{tag.name}</div>
+								</div>
+								<Button
+									variant="default"
+									onClick={() => {
+										setTagsList(tagsList.filter((t) => t.key !== tag.key))
+										deleteTag(tag)
+									}}
+								>
+									Remove
+								</Button>
+							</div>
+						))
+					: 'No tags yet! You can create one from the deck edit screen.'}
 			</Modal.Description>
 		</Modal>
 	)
