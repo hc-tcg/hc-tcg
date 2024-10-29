@@ -421,11 +421,12 @@ function SelectDeck({
 				setOpen={showMassExportModal}
 				onClose={() => setShowMassExportModal(!showMassExportModal)}
 			/>
-			<TagsModal
-				setOpen={showManageTagsModal}
-				tags={getCreatedTags()}
-				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
-			/>
+			{showManageTagsModal && (
+				<TagsModal
+					tags={getCreatedTags()}
+					onClose={() => setShowManageTagsModal(!showManageTagsModal)}
+				/>
+			)}
 			<AlertModal
 				setOpen={showValidateDeckModal}
 				onClose={() => setShowValidateDeckModal(!showValidateDeckModal)}
