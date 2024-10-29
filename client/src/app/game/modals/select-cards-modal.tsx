@@ -91,8 +91,9 @@ function SelectCardsModal({closeModal}: Props) {
 
 	return (
 		<Modal
+			setOpen
 			title={modalData.name}
-			closeModal={handleClose}
+			onClose={handleClose}
 			disableUserClose={!cancelable}
 		>
 			<Modal.Description>

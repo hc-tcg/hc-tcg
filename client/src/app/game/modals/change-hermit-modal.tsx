@@ -54,7 +54,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	}
 
 	return (
-		<Modal title="Change active hermit" closeModal={handleNo}>
+		<Modal title="Change active hermit" onClose={handleNo}>
 			<Modal.Description>
 				{lastAction && (
 					<div className={css.turnEndNotification}>

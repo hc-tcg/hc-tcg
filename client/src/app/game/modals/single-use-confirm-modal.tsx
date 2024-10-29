@@ -1,5 +1,6 @@
 import Button from 'components/button'
 import Modal from 'components/modal'
+import {ConfirmModal} from 'components/modal/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -41,19 +42,16 @@ function SingleUseConfirmModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Play Single Use Card" closeModal={handleNo}>
-			<Modal.Description>
-				Are you sure you want to use {getCardName()}?
-			</Modal.Description>
-			<Modal.Options>
-				<Button size="medium" onClick={handleNo}>
-					No
-				</Button>
-				<Button size="medium" onClick={handleYes}>
-					Yes
-				</Button>
-			</Modal.Options>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Play Single Use Card"
+			description={`Are you sure you want to use ${getCardName()}?`}
+			cancelButtonText="No"
+			confirmButtonText="Yes"
+			confirmButtonVariant="default"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 

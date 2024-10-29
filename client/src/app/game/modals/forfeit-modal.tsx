@@ -1,5 +1,6 @@
 import Button from 'components/button/button'
 import Modal from 'components/modal'
+import {ConfirmModal} from 'components/modal/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
@@ -18,17 +19,14 @@ function AttackModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Forfeit Match" closeModal={handleNo}>
-			<Modal.Description>
-				Are you sure you want to forfeit this game?
-			</Modal.Description>
-			<Modal.Options>
-				<Button onClick={handleNo}>Cancel</Button>
-				<Button variant="error" onClick={handleYes}>
-					Forfeit
-				</Button>
-			</Modal.Options>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Forfeit Match"
+			description="Are you sure you want to forfeit this game?"
+			confirmButtonText="Forfeit"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 

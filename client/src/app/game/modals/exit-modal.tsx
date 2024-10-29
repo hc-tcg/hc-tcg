@@ -1,5 +1,4 @@
-import Button from 'components/button/button'
-import Modal from 'components/modal'
+import {ConfirmModal} from 'components/modal/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {
@@ -18,17 +17,14 @@ function ExitModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Exit Game" closeModal={handleNo}>
-			<Modal.Description>
-				Are you sure you want to stop spectating this game?
-			</Modal.Description>
-			<Modal.Options>
-				<Button onClick={handleNo}>Cancel</Button>
-				<Button variant="error" onClick={handleYes}>
-					Exit
-				</Button>
-			</Modal.Options>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Exit Game"
+			description="Are you sure you want to stop spectating this game?"
+			confirmButtonText="Exit"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 

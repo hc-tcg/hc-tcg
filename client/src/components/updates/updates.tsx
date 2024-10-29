@@ -23,7 +23,7 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 	})
 
 	return (
-		<Modal title="Latest Updates" closeModal={onClose} disableCloseButton>
+		<Modal title="Latest Updates" onClose={onClose} disableCloseButton>
 			<Modal.Description>
 				<ul className={css.updatesList}>
 					<li key={20} className={css.updateItem}>

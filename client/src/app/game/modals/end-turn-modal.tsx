@@ -56,7 +56,7 @@ export function EndTurnModalBody({
 	}
 
 	return (
-		<Modal title="End Turn" closeModal={handleCancel || (() => {})}>
+		<Modal setOpen title="End Turn" onClose={handleCancel || (() => {})}>
 			<Modal.Description>
 				<p>
 					Are you sure you want to end your turn? These actions are still

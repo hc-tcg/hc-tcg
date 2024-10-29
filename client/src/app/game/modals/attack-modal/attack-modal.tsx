@@ -105,7 +105,7 @@ function AttackModal({closeModal}: Props) {
 			: 'Attack'
 
 	return (
-		<Modal title={title} closeModal={closeModal}>
+		<Modal title={title} onClose={closeModal}>
 			<Modal.Description>
 				{attacks.length ? (
 					<>

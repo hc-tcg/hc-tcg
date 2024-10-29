@@ -3,6 +3,7 @@ import cn from 'classnames'
 import Button from 'components/button'
 import {ReactNode} from 'react'
 import css from './alert-modal.module.scss'
+import {ButtonVariant} from 'common/types/buttons'
 
 type AlertModal = {
 	setOpen: boolean
@@ -12,7 +13,7 @@ type AlertModal = {
 	description: ReactNode
 	cancelText?: string
 	actionText?: string
-	actionType?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+	actionType?: ButtonVariant
 	buttonDirection?: 'row' | 'column'
 }
 

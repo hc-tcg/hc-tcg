@@ -13,7 +13,7 @@ type Props = {
 export function TagsModal({onClose, tags}: Props) {
 	const [tagsList, setTagsList] = useState<Array<Tag>>(tags)
 	return (
-		<Modal title="Manage Tags" closeModal={onClose}>
+		<Modal title="Manage Tags" onClose={onClose}>
 			<Modal.Description>
 				{tagsList.map((tag) => (
 					<div className={css.container}>

@@ -27,7 +27,7 @@ function DataSettings({setMenuSection}: Props) {
 		const handleYes = () => {
 			reset()
 			setModal(
-				<Modal title={whenDonePrompt} closeModal={closeModal}>
+				<Modal setOpen title={whenDonePrompt} onClose={closeModal}>
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
@@ -43,7 +43,7 @@ function DataSettings({setMenuSection}: Props) {
 
 		return () => {
 			setModal(
-				<Modal title={title} closeModal={closeModal}>
+				<Modal setOpen title={title} onClose={closeModal}>
 					<p className={css.resetModalDescription}>{prompt}</p>
 					<div className={css.resetModal}>
 						<Button

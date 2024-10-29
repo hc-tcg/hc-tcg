@@ -60,7 +60,8 @@ function CopyAttackModal({closeModal}: Props) {
 
 	return (
 		<Modal
-			closeModal={handleClose}
+			setOpen
+			onClose={handleClose}
 			title={modalData.name}
 			disableUserClose={!modalData.cancelable}
 		>
