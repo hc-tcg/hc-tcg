@@ -1,6 +1,6 @@
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import Modal from 'components/modal/modal'
+import {Modal} from 'components/modal/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'

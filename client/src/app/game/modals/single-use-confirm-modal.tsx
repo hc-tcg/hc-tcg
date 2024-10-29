@@ -1,5 +1,3 @@
-import Button from 'components/button'
-import Modal from 'components/modal'
 import {ConfirmModal} from 'components/modal/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'

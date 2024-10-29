@@ -219,6 +219,3 @@ export function ConfirmModal({
 		</Modal>
 	)
 }
-
-// @TODO remove and reconnect
-export default Modal

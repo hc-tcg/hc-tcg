@@ -1,5 +1,3 @@
-import Button from 'components/button/button'
-import Modal from 'components/modal'
 import {ConfirmModal} from 'components/modal/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 
