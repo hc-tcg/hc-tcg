@@ -15,7 +15,6 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	min-width: min(500px, 90vw);
-	min-height: 100px;
 	max-width: 300px;
 	max-height: 90vh;
 	background: var(--gray-700);
@@ -60,20 +59,52 @@
 	border: 1px solid var(--gray-300);
 	padding: 0.5rem;
 	background: var(--gray-900);
+
+	.noticeIcon {
+		display: grid;
+		place-content: center;
+		border: 2px solid var(--gray-50);
+		width: 20px;
+		height: 20px;
+		flex: 0 0 auto;
+		border-radius: 50%;
+		font-size: 1rem;
+		text-align: center;
+		font-family: serif;
+		font-weight: bold;
+	}
 }
 
-.noticeIcon {
-	display: grid;
-	place-content: center;
-	border: 2px solid var(--gray-50);
-	width: 20px;
-	height: 20px;
-	flex: 0 0 auto;
-	border-radius: 50%;
-	font-size: 1rem;
+.description {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	gap: 0.5rem;
+
+	hr {
+		margin: 0.25rem 0;
+	}
+}
+
+.options {
 	text-align: center;
-	font-family: serif;
-	font-weight: bold;
+	padding: 1rem;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	border-top: 2px solid var(--gray-400);
+	background: var(--gray-500);
+	flex-grow: 1;
+
+	>button {
+		flex-grow: 1;
+		max-width: 50%;
+	}
+
+	&.fillSpace>button {
+		max-width: 100%;
+	}
 }
 
 @keyframes overlayShow {
