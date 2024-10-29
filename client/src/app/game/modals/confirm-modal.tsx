@@ -3,7 +3,6 @@ import Modal from 'components/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
-import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
@@ -43,19 +42,17 @@ function ConfirmModal({closeModal}: Props) {
 
 	return (
 		<Modal title="Play Single Use Card" closeModal={handleNo}>
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Are you sure you want to use {getCardName()}?
-				</div>
-				<div className={css.options}>
-					<Button size="medium" onClick={handleNo}>
-						No
-					</Button>
-					<Button size="medium" onClick={handleYes}>
-						Yes
-					</Button>
-				</div>
-			</div>
+			<Modal.Description>
+				Are you sure you want to use {getCardName()}?
+			</Modal.Description>
+			<Modal.Options>
+				<Button size="medium" onClick={handleNo}>
+					No
+				</Button>
+				<Button size="medium" onClick={handleYes}>
+					Yes
+				</Button>
+			</Modal.Options>
 		</Modal>
 	)
 }

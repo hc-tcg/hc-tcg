@@ -57,7 +57,7 @@ export function EndTurnModalBody({
 
 	return (
 		<Modal title="End Turn" closeModal={handleCancel || (() => {})}>
-			<div className={css.description}>
+			<Modal.Description>
 				<p>
 					Are you sure you want to end your turn? These actions are still
 					available:
@@ -74,15 +74,15 @@ export function EndTurnModalBody({
 						)
 					})}
 				</ul>
-			</div>
-			<div className={css.options}>
+			</Modal.Description>
+			<Modal.Options>
 				<Button variant="default" size="medium" onClick={handleCancel}>
 					Cancel
 				</Button>
 				<Button variant="error" size="medium" onClick={handleEndTurn}>
 					End Turn
 				</Button>
-			</div>
+			</Modal.Options>
 		</Modal>
 	)
 }

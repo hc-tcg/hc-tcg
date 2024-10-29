@@ -27,7 +27,7 @@ function DataSettings({setMenuSection}: Props) {
 		const handleYes = () => {
 			reset()
 			setModal(
-				<Modal title={whenDonePrompt} closeModal={closeModal} centered>
+				<Modal title={whenDonePrompt} closeModal={closeModal}>
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
@@ -43,7 +43,7 @@ function DataSettings({setMenuSection}: Props) {
 
 		return () => {
 			setModal(
-				<Modal title={title} closeModal={closeModal} centered>
+				<Modal title={title} closeModal={closeModal}>
 					<p className={css.resetModalDescription}>{prompt}</p>
 					<div className={css.resetModal}>
 						<Button
@@ -108,7 +108,10 @@ function DataSettings({setMenuSection}: Props) {
 						'Reset Stats',
 						'Are you sure you want to reset your stats?',
 						'Your stats have been reset.',
-						() => dispatch({type: localMessages.FIREBASE_STATS_RESET}),
+						() =>
+							dispatch({
+								type: localMessages.FIREBASE_STATS_RESET,
+							}),
 					)}
 				>
 					Reset Stats

@@ -8,7 +8,6 @@ import {
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
-import css from '../game-modals.module.scss'
 import Attack from './attack'
 
 type Props = {
@@ -106,8 +105,8 @@ function AttackModal({closeModal}: Props) {
 			: 'Attack'
 
 	return (
-		<Modal title={title} closeModal={closeModal} centered>
-			<div className={css.description}>
+		<Modal title={title} closeModal={closeModal}>
+			<Modal.Description>
 				{attacks.length ? (
 					<>
 						<Modal.Notice icon={'!'}>
@@ -118,7 +117,7 @@ function AttackModal({closeModal}: Props) {
 				) : (
 					<span>No attacks available.</span>
 				)}
-			</div>
+			</Modal.Description>
 		</Modal>
 	)
 }

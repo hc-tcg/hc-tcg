@@ -55,31 +55,28 @@ function ChangeHermitModal({closeModal, info}: Props) {
 
 	return (
 		<Modal title="Change active hermit" closeModal={handleNo}>
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					{lastAction && (
-						<div className={css.turnEndNotification}>
-							<span className={css.infoIcon}>!</span>
-							{/* Hermit change is the last action of your turn. */}
-							<p>Changing your hermit will end your turn!</p>
-						</div>
-					)}
-					{message}
-				</div>
-
-				<div className={css.options}>
-					{canChange ? (
-						<>
-							<Button onClick={handleNo}>Cancel</Button>
-							<Button onClick={handleYes}>Yes</Button>
-						</>
-					) : (
-						<>
-							<Button onClick={handleNo}>Ok</Button>
-						</>
-					)}
-				</div>
-			</div>
+			<Modal.Description>
+				{lastAction && (
+					<div className={css.turnEndNotification}>
+						<span className={css.infoIcon}>!</span>
+						{/* Hermit change is the last action of your turn. */}
+						<p>Changing your hermit will end your turn!</p>
+					</div>
+				)}
+				{message}
+			</Modal.Description>
+			<Modal.Options>
+				{canChange ? (
+					<>
+						<Button onClick={handleNo}>Cancel</Button>
+						<Button onClick={handleYes}>Yes</Button>
+					</>
+				) : (
+					<>
+						<Button onClick={handleNo}>Ok</Button>
+					</>
+				)}
+			</Modal.Options>
 		</Modal>
 	)
 }

@@ -158,16 +158,10 @@ nav {
 }
 
 .bossRules {
-	display: flex;
 	gap: 1vh;
-	margin: 2vh 0;
-	overflow-y: auto;
-	flex-direction: column;
 
 	color: var(--text-light);
 	max-height: 80vh;
-
-	padding: 1rem 0.5rem;
 
 	ol li {
 		list-style-type: decimal;

@@ -93,9 +93,9 @@ function SelectCardsModal({closeModal}: Props) {
 		<Modal
 			title={modalData.name}
 			closeModal={handleClose}
-			showCloseButton={cancelable}
+			disableUserClose={!cancelable}
 		>
-			<div className={css.description}>
+			<Modal.Description>
 				{modalData.description}
 				{cards.length > 0 && (
 					<div className={css.cards}>
@@ -112,8 +112,8 @@ function SelectCardsModal({closeModal}: Props) {
 						</div>
 					</div>
 				)}
-			</div>
-			<div className={css.options}>
+			</Modal.Description>
+			<Modal.Options>
 				{secondaryButton && (
 					<Button
 						variant={secondaryButton.variant}
@@ -133,7 +133,7 @@ function SelectCardsModal({closeModal}: Props) {
 						{primaryButton.text}
 					</Button>
 				)}
-			</div>
+			</Modal.Options>
 		</Modal>
 	)
 }

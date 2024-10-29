@@ -80,8 +80,8 @@ function BossLanding({setMenuSection}: Props) {
 	return (
 		<>
 			{evilXOpen && (
-				<Modal title={'Rules'} closeModal={() => setEvilXOpen(!evilXOpen)}>
-					<div className={css.bossRules}>
+				<Modal title="Rules" closeModal={() => setEvilXOpen(!evilXOpen)}>
+					<Modal.Description className={css.bossRules}>
 						<p>
 							That's right, the Hermitcraft TCG has its first boss fight! This
 							is no challenge deck, Evil X cares not for the cards. He brings
@@ -154,7 +154,7 @@ function BossLanding({setMenuSection}: Props) {
 								Hermit.
 							</li>
 						</ol>
-					</div>
+					</Modal.Description>
 				</Modal>
 			)}
 			<MenuLayout
