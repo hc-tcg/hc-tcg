@@ -10,6 +10,7 @@ export type ExpansionT =
 	| 'season_x'
 	| 'alter_egos_iii'
 	| 'advent_of_tcg'
+	| 'advent_of_tcg_ii'
 	| 'dream'
 	| 'boss'
 
@@ -24,6 +25,7 @@ export const EXPANSIONS: ExpansionDict = {
 	season_x: {name: 'HC Season X', disabled: false},
 	alter_egos_iii: {name: 'Alter Egos Pt. III', disabled: false},
 	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
+	advent_of_tcg_ii: {name: 'Advent of TCG II', disabled: true},
 	dream: {name: 'Dream', disabled: true},
 	boss: {name: 'Boss', disabled: true},
 }
