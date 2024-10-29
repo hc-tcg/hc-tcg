@@ -10,7 +10,8 @@ const FletchingTable: SingleUse = {
 	expansion: 'advent_of_tcg',
 	rarity: 'common',
 	tokens: -1,
-	description: 'Completely useless! Worth -1 tokens.',
+	description:
+		'Completely useless! At the start of the game, shuffle a feather into your deck. Feather is also completely useless.\nWorth -1 tokens.',
 	attachCondition: query.nothing,
 }
 
