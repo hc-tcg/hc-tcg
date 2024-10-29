@@ -101,7 +101,7 @@ function Modal({
 			<div className={css.modal}>
 				<div className={css.title}>
 					{title && <span>{title}</span>}
-					{/* When tabbing around it is more convient to click the buttons only */}
+					{/* When tabbing around it is more convenient to click the buttons only */}
 					{!disableCloseButton && (
 						<button className={css.close} tabIndex={-1} onClick={closeModal}>
 							<img src="/images/CloseX.svg" alt="close" />
