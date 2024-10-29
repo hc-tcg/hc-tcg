@@ -8,7 +8,6 @@ import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
-import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
@@ -30,6 +29,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {ConfirmModal} from 'components/modal/modal'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -408,21 +408,21 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	return (
 		<>
-			<AlertModal
+			<ConfirmModal
 				setOpen={showOverwriteModal}
-				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={overwrite}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				actionText="Overwrite"
+				confirmButtonText="Overwrite"
+				onCancel={() => setShowOverwriteModal(!showOverwriteModal)}
+				onConfirm={overwrite}
 			/>
-			<AlertModal
+			<ConfirmModal
 				setOpen={showUnsavedModal}
-				onClose={() => setShowUnsavedModal(!showUnsavedModal)}
-				action={back}
 				title="Leave Editor"
 				description="Changes you have made will not be saved. Are you sure you want to leave?"
-				actionText="Discard"
+				confirmButtonText="Discard"
+				onCancel={() => setShowUnsavedModal(!showUnsavedModal)}
+				onConfirm={back}
 			/>
 			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
