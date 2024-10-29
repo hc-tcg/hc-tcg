@@ -219,3 +219,39 @@ export function ConfirmModal({
 		</Modal>
 	)
 }
+
+type AlertModalProps = {
+	/** Controls whether the modal is visible or not */
+	setOpen: boolean
+	/** Sets the modal title */
+	title: string
+	/** Sets the modal description */
+	description: string
+	/** Sets the text for the close button. Default is "Ok" */
+	closeButtonText?: string
+	/** Sets the design variant for the confirm button. Default is "default" */
+	closeButtonVariant?: ButtonVariant
+	/** Called when the close button is pressed */
+	onClose: () => void
+}
+
+/** Simplified Modal component specifically to show an alert message */
+export function AlertModal({
+	setOpen,
+	title,
+	description,
+	closeButtonText = 'Ok',
+	closeButtonVariant = 'default',
+	onClose,
+}: AlertModalProps) {
+	return (
+		<Modal setOpen={setOpen} title={title} onClose={onClose} disableCloseButton>
+			<Modal.Description>{description}</Modal.Description>
+			<Modal.Options fillSpace>
+				<Button variant={closeButtonVariant} onClick={onClose}>
+					{closeButtonText}
+				</Button>
+			</Modal.Options>
+		</Modal>
+	)
+}
