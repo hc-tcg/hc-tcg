@@ -1,6 +1,6 @@
 import {isHermit} from 'common/cards/types'
 import {ModalData} from 'common/types/game-state'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'

@@ -4,7 +4,7 @@ import {useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
 import sanitize from 'sanitize-html'
 import css from './updates.module.scss'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import Button from 'components/button'
 
 type UpdatesModalProps = {
@@ -23,7 +23,7 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 	})
 
 	return (
-		<Modal title="Latest Updates" onClose={onClose} disableCloseButton>
+		<Modal setOpen title="Latest Updates" onClose={onClose} disableCloseButton>
 			<Modal.Description>
 				<ul className={css.updatesList}>
 					<li key={20} className={css.updateItem}>

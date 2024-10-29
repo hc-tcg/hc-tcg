@@ -1,6 +1,6 @@
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'

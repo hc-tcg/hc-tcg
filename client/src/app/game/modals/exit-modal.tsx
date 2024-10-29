@@ -1,4 +1,4 @@
-import {ConfirmModal} from 'components/modal/modal'
+import {ConfirmModal} from 'components/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 
 type Props = {

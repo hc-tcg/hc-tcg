@@ -1,4 +1,4 @@
-import {ConfirmModal} from 'components/modal/modal'
+import {ConfirmModal} from 'components/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'

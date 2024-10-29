@@ -1,5 +1,5 @@
 import {SingleUse, isHermit} from 'common/cards/types'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {
 	getAvailableActions,
 	getPlayerEntity,

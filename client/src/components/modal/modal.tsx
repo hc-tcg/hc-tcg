@@ -6,7 +6,6 @@ import {ButtonVariant} from 'common/types/buttons'
 
 type ModalProps = {
 	children: ReactNode
-
 	/** Controls whether the modal is visible or not */
 	setOpen: boolean
 	/** Called when the modal should close */
@@ -172,8 +171,11 @@ Modal.Options = ({className, children, fillSpace}: OptionsProps) => {
 }
 
 type ConfirmModalProps = {
+	/** Controls whether the modal is visible or not */
 	setOpen: boolean
+	/** Sets the modal title */
 	title: string
+	/** Sets the modal description */
 	description: string
 	/** Sets the text for the cancel button. Default is "Cancel" */
 	cancelButtonText?: string
@@ -188,7 +190,7 @@ type ConfirmModalProps = {
 	/** Called when the confirm button is pressed */
 	onConfirm: () => void
 }
-/** Simplified Modal component specifically for showing a confirm message */
+/** Simplified Modal component specifically for confirming an action */
 export function ConfirmModal({
 	setOpen,
 	title,

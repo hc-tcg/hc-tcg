@@ -1,19 +1,20 @@
 import {Tag} from 'common/types/deck'
 import Button from 'components/button'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import css from 'components/tags-modal/tags-modal.module.scss'
 import {deleteTag} from 'logic/saved-decks/saved-decks'
 import {useState} from 'react'
 
 type Props = {
+	setOpen: boolean
 	tags: Array<Tag>
 	onClose: () => void
 }
 
-export function TagsModal({onClose, tags}: Props) {
+export function TagsModal({setOpen, onClose, tags}: Props) {
 	const [tagsList, setTagsList] = useState<Array<Tag>>(tags)
 	return (
-		<Modal title="Manage Tags" onClose={onClose}>
+		<Modal setOpen={setOpen} title="Manage Tags" onClose={onClose}>
 			<Modal.Description>
 				{tagsList.length
 					? tagsList.map((tag) => (

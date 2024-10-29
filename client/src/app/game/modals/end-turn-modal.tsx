@@ -1,6 +1,6 @@
 import {TurnAction} from 'common/types/game-state'
 import Button from 'components/button'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {getAvailableActions} from 'logic/game/game-selectors'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
