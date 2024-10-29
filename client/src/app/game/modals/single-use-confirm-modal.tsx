@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux'
 type Props = {
 	closeModal: () => void
 }
-function ConfirmModal({closeModal}: Props) {
+function SingleUseConfirmModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
@@ -57,4 +57,4 @@ function ConfirmModal({closeModal}: Props) {
 	)
 }
 
-export default ConfirmModal
+export default SingleUseConfirmModal
