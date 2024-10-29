@@ -457,7 +457,7 @@ function SelectDeck({
 			/>
 			<AlertModal // Duplicate Deck Alert Modal
 				setOpen={showDuplicateDeckAlertModal}
-				title="Duplicate Deck Error"
+				title="Duplicate Deck Failure"
 				description={`You have too many duplicates of the "${loadedDeck.name}" deck.`}
 				onClose={() => setShowDuplicateDeckAlertModal(false)}
 			/>
