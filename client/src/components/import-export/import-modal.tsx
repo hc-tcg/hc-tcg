@@ -1,19 +1,18 @@
-import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {TypeT} from 'common/types/cards'
 import {PlayerDeckT} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckFromHash} from 'common/utils/import-export'
-import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
+import {Modal} from 'components/modal'
 
 type Props = {
 	setOpen: boolean
-	onClose: (isOpen: boolean) => void
+	onClose: () => void
 	importDeck: (deck: PlayerDeckT, noActiveChange?: boolean) => void
 	handleMassImport: () => void
 }
@@ -50,7 +49,7 @@ export const ImportModal = ({
 			tags: [],
 		})
 
-		onClose(true)
+		onClose()
 	}
 	const selectFile = () => {
 		// Select a file by clicking on file input
@@ -118,88 +117,64 @@ export const ImportModal = ({
 		icon: `/images/types/type-${option}.png`,
 	}))
 
-	//JSX
 	return (
-		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
-			<AlertDialog.Portal container={document.getElementById('modal')}>
-				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
-				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
-					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>
-						Import Decks
-						<AlertDialog.Cancel asChild>
-							<button className={ModalCSS.xClose}>
-								<img src="/images/CloseX.svg" alt="close" />
-							</button>
-						</AlertDialog.Cancel>
-					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
-						<div>
-							{/* IMPORT SECTION */}
-							<div>
-								<div className={css.importControls}>
-									<p className={css.instructions}>
-										{
-											'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
-										}
-									</p>
-									<div className={css.name}>
-										<Dropdown
-											button={
-												<button className={DropdownCSS.iconButton}>
-													<img src={`/images/types/type-${deckIcon}.png`} />
-												</button>
-											}
-											label="Deck Icon"
-											options={iconDropdownOptions}
-											action={(option: any) => setDeckIcon(option)}
-										/>
-										<input
-											type="text"
-											maxLength={32}
-											placeholder="Deck Name"
-											ref={nameRef}
-											style={{flexGrow: 1}}
-										/>
-									</div>
-									<input
-										type="text"
-										placeholder="Deck Hash..."
-										ref={hashRef}
-										style={{flexGrow: 1}}
-									/>
-
-									<p className={css.instructions}>
-										{
-											'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
-										}
-									</p>
-
-									<p className={css.warning}>
-										{
-											'Note that this will overwrite any decks with the same name.'
-										}
-									</p>
-								</div>
-							</div>
-						</div>
-					</AlertDialog.Description>
-					<div className={ModalCSS.buttonContainer}>
-						<Button onClick={importFromHash}>Import</Button>
-						<Button onClick={selectFile}>Import from file</Button>
-						<input
-							id="file-input"
-							type="file"
-							onChange={(e) =>
-								importFromFile(e.target.files ? e.target.files[0] : undefined)
+		<Modal title="Import Decks" setOpen={setOpen} onClose={onClose}>
+			<Modal.Description>
+				<div className={css.importControls}>
+					<p className={css.instructions}>
+						{
+							'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
+						}
+					</p>
+					<div className={css.name}>
+						<Dropdown
+							button={
+								<button className={DropdownCSS.iconButton}>
+									<img src={`/images/types/type-${deckIcon}.png`} />
+								</button>
 							}
-							style={{display: 'none'}}
+							label="Deck Icon"
+							options={iconDropdownOptions}
+							action={(option: any) => setDeckIcon(option)}
+						/>
+						<input
+							type="text"
+							maxLength={32}
+							placeholder="Deck Name"
+							ref={nameRef}
+							style={{flexGrow: 1}}
 						/>
 					</div>
-				</AlertDialog.Content>
-			</AlertDialog.Portal>
-		</AlertDialog.Root>
+					<input
+						type="text"
+						placeholder="Deck Hash..."
+						ref={hashRef}
+						style={{flexGrow: 1}}
+					/>
+
+					<p className={css.instructions}>
+						{
+							'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
+						}
+					</p>
+
+					<p className={css.warning}>
+						{'Note that this will overwrite any decks with the same name.'}
+					</p>
+				</div>
+			</Modal.Description>
+			<Modal.Options>
+				<Button onClick={importFromHash}>Import</Button>
+				<Button onClick={selectFile}>Import from file</Button>
+				<input
+					id="file-input"
+					type="file"
+					onChange={(e) =>
+						importFromFile(e.target.files ? e.target.files[0] : undefined)
+					}
+					style={{display: 'none'}}
+				/>
+			</Modal.Options>
+		</Modal>
 	)
 }
