@@ -65,10 +65,14 @@ const loginReducer = (
 		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
-				connecting: false,
-				connected: true,
 				errorType: undefined,
 				...action.player,
+			}
+		case localMessages.CONNECTED:
+			return {
+				...state,
+				connecting: false,
+				connected: true,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {

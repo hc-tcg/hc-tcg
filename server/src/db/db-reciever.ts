@@ -43,7 +43,7 @@ export function* authenticateUser(
 
 	const player = root.players[action.playerId]
 
-	if (result.type === 'success') {
+	if (player && result.type === 'success') {
 		player.uuid = result.body.uuid
 		player.authenticated = true
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})

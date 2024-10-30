@@ -226,6 +226,9 @@ export function* loginSaga() {
 			player: session,
 		})
 		yield* setupData(socket)
+		yield put<LocalMessage>({
+			type: localMessages.CONNECTED,
+		})
 		let activeDeck = getActiveDeck()
 		if (activeDeck) {
 			console.log('Select previous active deck')
@@ -311,6 +314,10 @@ export function* loginSaga() {
 
 			if (userInfo.success) yield* setupData(socket)
 		}
+
+		yield put<LocalMessage>({
+			type: localMessages.CONNECTED,
+		})
 	}
 }
 
