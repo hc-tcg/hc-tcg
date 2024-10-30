@@ -1,4 +1,5 @@
 import {Card} from '../../types'
+import ArrowOfPoison from './arrow-of-poison'
 import Allay from './allay'
 import Brush from './brush'
 import Dropper from './dropper'
@@ -9,6 +10,7 @@ import SplashPotionOfHarming from './splash-potion-of-harming'
 
 const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
+	ArrowOfPoison,
 	Allay,
 	Dropper,
 	FletchingTable,
