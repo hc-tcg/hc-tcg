@@ -5,6 +5,7 @@ import FletchingTable from './fletching-table'
 import Glowstone from './glowstone'
 import Lantern from './lantern'
 import SplashPotionOfHarming from './splash-potion-of-harming'
+import WindBurst from './wind-burst'
 
 const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
@@ -14,6 +15,7 @@ const singleUseCardClasses: Array<Card> = [
 	Glowstone,
 	Lantern,
 	SplashPotionOfHarming,
+	WindBurst,
 ]
 
 export default singleUseCardClasses
