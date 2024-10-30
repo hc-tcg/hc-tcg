@@ -58,13 +58,6 @@ const Allay: SingleUse = {
 			message: 'Pick an effect card in your hand to show your opponent.',
 			canPick: pickCondition,
 			onResult(pickedSlot) {
-				applySingleUse(game, pickedSlot)
-
-				if (component.slot.onBoard()) component.discard()
-				// Remove playing a single use from completed actions so it can be done again
-				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-				player.singleUseCardUsed = false
-
 				const pickedCard = pickedSlot.getCard()
 
 				if (!pickedCard) return
@@ -97,6 +90,13 @@ const Allay: SingleUse = {
 						// Do nothing
 					},
 				})
+
+				applySingleUse(game, pickedSlot)
+
+				if (component.slot.onBoard()) component.discard()
+				// Remove playing a single use from completed actions so it can be done again
+				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+				player.singleUseCardUsed = false
 			},
 		})
 	},
