@@ -12,7 +12,7 @@ type ModalProps = {
 	setOpen: boolean
 	/** Called when the modal should close */
 	onClose: () => void
-	/** Sets the modal title */
+	/** Sets the modal title. If this is undefined the title bar will be hidden. */
 	title?: string
 	/** If true, the modal will not have a close button in the corner that can be clicked. */
 	disableCloseButton?: boolean
@@ -179,7 +179,7 @@ Modal.Options = ({className, children, fillSpace}: OptionsProps) => {
 type ConfirmModalProps = {
 	/** Controls whether the modal is visible or not */
 	setOpen: boolean
-	/** Sets the modal title */
+	/** Sets the modal title. If this is undefined the title bar will be hidden. */
 	title: string
 	/** Sets the modal description */
 	description: string
@@ -231,7 +231,7 @@ export function ConfirmModal({
 type AlertModalProps = {
 	/** Controls whether the modal is visible or not */
 	setOpen: boolean
-	/** Sets the modal title */
+	/** Sets the modal title. If this is undefined the title bar will be hidden. */
 	title: string
 	/** Sets the modal description */
 	description: string
