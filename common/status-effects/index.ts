@@ -40,6 +40,7 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from './singleturn-attack-disabled'
+import SculkCatalystTriggeredEffect from './skulk-catalyst'
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
@@ -103,6 +104,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	NaughtyRegiftEffect,
 	SpentFortuneEffect,
 	PoisonQuiverEffect,
+	SculkCatalystTriggeredEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
