@@ -414,7 +414,7 @@ function EditDeck({
 			open: true,
 			title: 'Deck Saved!',
 			description: `Saved ${deck.name}`,
-			image: deck.icon,
+			image: getIconPath(deck),
 		})
 		back()
 	}
