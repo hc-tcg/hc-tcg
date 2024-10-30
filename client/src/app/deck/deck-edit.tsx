@@ -402,6 +402,12 @@ function EditDeck({
 		saveAndReturn(newDeck)
 	}
 	const saveAndReturn = (deck: Deck) => {
+		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
+			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			return [...r, tag]
+		}, [])
+
+		databaseInfo.tags.push(...newTags)
 		saveDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,

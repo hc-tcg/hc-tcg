@@ -71,7 +71,6 @@ function SelectDeck({
 			return [...r, tag]
 		}, [])
 
-		databaseInfo.tags.push()
 		databaseInfo.tags.push(...newTags)
 		setFilteredDecks(sortDecks(databaseInfo.decks))
 		setLoadedDeck(deck)
@@ -249,6 +248,11 @@ function SelectDeck({
 		})
 	})
 
+	const decksHaveTags =
+		filteredDecks.reduce((tags: Array<Tag>, decks) => {
+			return [...tags, ...decks.tags]
+		}, []).length > 0
+
 	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
 		return (
 			<li
@@ -263,7 +267,7 @@ function SelectDeck({
 					loadDeck(deck)
 				}}
 			>
-				{deck.tags && deck.tags.length > 0 ? (
+				{deck.tags && deck.tags.length > 0 && (
 					<div className={css.multiColoredCircle}>
 						{deck.tags.map((tag, i) => (
 							<div
@@ -273,7 +277,8 @@ function SelectDeck({
 							></div>
 						))}
 					</div>
-				) : (
+				)}
+				{decksHaveTags && deck.tags.length === 0 && (
 					<div className={css.multiColoredCircle}>
 						<div className={css.singleTag}></div>
 					</div>
