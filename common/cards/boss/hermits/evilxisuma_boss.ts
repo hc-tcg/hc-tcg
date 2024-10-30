@@ -14,7 +14,9 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from '../../../status-effects/singleturn-attack-disabled'
+import SculkCatalystTriggeredEffect from '../../../status-effects/skulk-catalyst'
 import SlownessEffect from '../../../status-effects/slowness'
+import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {InstancedValue} from '../../card'
@@ -358,8 +360,9 @@ const EvilXisumaBoss: Hermit = {
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
-			afterAttack.UPDATE_POST_ATTACK_STATE,
-			() => {
+			afterAttack.BOSS_HANDLE_KNOCKOUT,
+			(attack) => {
+				if (!attack.isTargeting(component)) return
 				if (
 					!component.slot.inRow() ||
 					component.slot.row.health === null ||
@@ -376,6 +379,17 @@ const EvilXisumaBoss: Hermit = {
 
 					// Reward card
 					opponentPlayer.draw(1)
+
+					game.components
+						.filter(
+							StatusEffectComponent,
+							query.effect.is(
+								SculkCatalystTriggeredEffect,
+								TFCDiscardedFromEffect,
+							),
+							query.effect.targetEntity(component.entity),
+						)
+						.forEach((effect) => effect.remove())
 				} else {
 					observer.unsubscribe(game.hooks.afterAttack)
 				}
