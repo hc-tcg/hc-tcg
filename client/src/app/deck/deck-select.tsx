@@ -4,6 +4,7 @@ import {ToastT} from 'common/types/app'
 import {Deck, Tag} from 'common/types/deck'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
+import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import AlertModal from 'components/alert-modal'
@@ -33,7 +34,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getIconPath} from 'common/utils/state-gen'
 
 type Props = {
 	setMenuSection: (section: string) => void

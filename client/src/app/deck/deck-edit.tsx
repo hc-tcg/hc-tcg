@@ -8,6 +8,7 @@ import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
+import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import AlertModal from 'components/alert-modal'
@@ -26,7 +27,6 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getIconPath} from 'common/utils/state-gen'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [

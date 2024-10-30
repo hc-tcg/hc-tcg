@@ -1,3 +1,4 @@
+import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
 import Button from 'components/button'
@@ -10,7 +11,6 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {getIconPath} from 'common/utils/state-gen'
 
 type Props = {
 	setMenuSection: (section: string) => void
