@@ -243,6 +243,7 @@ export function* loginSaga() {
 
 		if (result.playerReconnected.game) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
+			console.log(matchmakingStatus)
 
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
