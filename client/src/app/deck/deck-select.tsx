@@ -10,6 +10,7 @@ import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {AlertModal, ConfirmModal} from 'components/modal'
 import {
 	CopyIcon,
 	DeleteIcon,
@@ -39,7 +40,6 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {AlertModal, ConfirmModal} from 'components/modal'
 
 type Props = {
 	setMenuSection: (section: string) => void

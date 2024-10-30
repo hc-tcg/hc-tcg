@@ -1,8 +1,8 @@
 import {PlayerDeckT} from 'common/types/deck'
 import {getHashFromDeck} from 'common/utils/import-export'
+import {Modal} from 'components/modal'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
-import {Modal} from 'components/modal'
 
 type Props = {
 	setOpen: boolean

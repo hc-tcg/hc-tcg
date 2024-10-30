@@ -1,9 +1,9 @@
 import {loadSavedDeck} from 'common/types/deck'
 import {getHashFromDeck} from 'common/utils/import-export'
 import Button from 'components/button'
+import {Modal} from 'components/modal'
 import {getSavedDecks} from 'logic/saved-decks/saved-decks'
 import css from './import-export.module.scss'
-import {Modal} from 'components/modal'
 
 type Props = {
 	setOpen: boolean

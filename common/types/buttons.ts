@@ -1,1 +1,6 @@
-export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+export type ButtonVariant =
+	| 'default'
+	| 'primary'
+	| 'secondary'
+	| 'error'
+	| 'stone'

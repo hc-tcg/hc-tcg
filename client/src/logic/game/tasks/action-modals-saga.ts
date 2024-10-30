@@ -5,12 +5,12 @@ import {fork, put, take} from 'redux-saga/effects'
 import {
 	AttackModal,
 	ChangeHermitModal,
-	SingleUseConfirmModal,
 	CopyAttackModal,
 	EndTurnModal,
 	ExitModal,
 	ForfeitModal,
 	SelectCardsModal,
+	SingleUseConfirmModal,
 } from '../../../app/game/modals'
 
 export const MODAL_COMPONENTS = {

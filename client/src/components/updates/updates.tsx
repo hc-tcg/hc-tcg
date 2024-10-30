@@ -1,11 +1,11 @@
+import Button from 'components/button'
+import {Modal} from 'components/modal'
 import {toHTML} from 'discord-markdown'
 import {getUpdates} from 'logic/session/session-selectors'
 import {useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
 import sanitize from 'sanitize-html'
 import css from './updates.module.scss'
-import {Modal} from 'components/modal'
-import Button from 'components/button'
 
 type UpdatesModalProps = {
 	onClose: () => void

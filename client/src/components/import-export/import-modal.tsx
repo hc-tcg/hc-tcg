@@ -4,11 +4,11 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckFromHash} from 'common/utils/import-export'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
+import {Modal} from 'components/modal'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
-import {Modal} from 'components/modal'
 
 type Props = {
 	setOpen: boolean

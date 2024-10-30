@@ -13,6 +13,7 @@ import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
+import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -29,7 +30,6 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {ConfirmModal} from 'components/modal'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [

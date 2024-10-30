@@ -1,8 +1,8 @@
+import cn from 'classnames'
+import {ButtonVariant} from 'common/types/buttons'
+import Button from 'components/button'
 import {ReactNode, useEffect, useRef} from 'react'
 import css from './modal.module.scss'
-import cn from 'classnames'
-import Button from 'components/button'
-import {ButtonVariant} from 'common/types/buttons'
 
 type ModalProps = {
 	overlayClassName?: string
