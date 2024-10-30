@@ -3,7 +3,11 @@ import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getPlayerName, getToast} from 'logic/session/session-selectors'
+import {
+	getPlayerName,
+	getSession,
+	getToast,
+} from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -24,6 +28,7 @@ function App() {
 	const dispatch = useMessageDispatch()
 	const playerName = useSelector(getPlayerName)
 	const socketStatus = useSelector(getSocketStatus)
+	const connected = useSelector(getSession).connected
 	const toastMessage = useSelector(getToast)
 	const settings = useSelector(getSettings)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
@@ -41,7 +46,7 @@ function App() {
 			return <Game />
 		} else if (section === 'matchmaking') {
 			return <MatchMaking />
-		} else if (playerName) {
+		} else if (connected && playerName) {
 			enableToast = true
 			switch (menuSection) {
 				case 'deck':

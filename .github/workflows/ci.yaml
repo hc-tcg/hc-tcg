@@ -80,6 +80,20 @@ jobs:
   api-tests:
     name: API Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -102,38 +116,100 @@ jobs:
 
       - name: Run tests
         run: npm run test:api
+        env:
+          POSTGRES_HOST: 172.17.0.1
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_PORT: 5432
 
   e2e:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     name: End to End Tests
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-    - name: Create debug config
-      run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
-    - name: Build the server
-      run: npm run build
+      - name: Build the server
+        run: npm run build
 
-    - name: Run Playwright tests
-      run: npm run test:e2e
+      - name: Run Playwright tests
+        run: npm run test:e2e
+        env:
+          POSTGRES_HOST: 172.17.0.1
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_PORT: 5432
 
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report-e2e
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-e2e
+          path: playwright-report/
+          retention-days: 30
+
+  db:
+    name: Databse Tests
+    runs-on: ubuntu-latest
+    container: node:18.20-bookworm-slim
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_DATABASE: hctcg
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Test Database
+        run: npm run test:db
+        env:
+          POSTGRES_HOST: 172.17.0.1
+          POSTGRES_USER: hctcg
+          POSTGRES_PASSWORD: hctcg
+          POSTGRES_PORT: 5432
 
   build-docker:
     name: Test Can Build Docker Image

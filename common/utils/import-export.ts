@@ -1,4 +1,4 @@
-import {decode, encode} from 'js-base64'
+import {decode} from 'js-base64'
 import {CARDS} from '../cards'
 import {CardEntity} from '../entities'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
@@ -26,20 +26,4 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 		})
 	}
 	return deck
-}
-
-export const getHashFromDeck = (
-	pickedCards: Array<LocalCardInstance>,
-): string => {
-	const indicies = []
-	for (let i = 0; i < pickedCards.length; i++) {
-		if (!pickedCards[i].props) {
-			console.error('Error exporting: ' + i)
-			continue
-		}
-		const id = pickedCards[i].props.numericId
-		if (id >= 0) indicies.push(id)
-	}
-	const b64cards = encode(String.fromCharCode.apply(null, indicies))
-	return b64cards
 }

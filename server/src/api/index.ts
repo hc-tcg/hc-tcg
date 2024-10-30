@@ -1,9 +1,10 @@
 import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
-import {cards, deckCost, getCardsInDeck} from './cards'
+import {cards, deckCost, getDeckInformation} from './cards'
 import {cancelApiGame, createApiGame} from './games'
 import {CancelGameBody} from './schema'
+import {StatsHeader, getStats} from './stats'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
@@ -11,12 +12,12 @@ export function addApi(app: Express) {
 		res.send(cards(requestUrlRoot(req)))
 	})
 
-	app.get('/api/deck/:deck', (req, res) => {
-		res.send(getCardsInDeck(requestUrlRoot(req), req.params.deck))
+	app.get('/api/deck/:deck', async (req, res) => {
+		res.send(await getDeckInformation(requestUrlRoot(req), req.params.deck))
 	})
 
-	app.post('/api/deck/cost', (req, res) => {
-		res.send(deckCost(req.body))
+	app.post('/api/deck/cost', async (req, res) => {
+		res.send(await deckCost(req.body))
 	})
 
 	app.get('/api/games/create', (_req, res) => {
@@ -26,6 +27,11 @@ export function addApi(app: Express) {
 	app.delete('/api/games/cancel', (req, res) => {
 		let body = CancelGameBody.parse(req.body)
 		res.send(cancelApiGame(body.code))
+	})
+
+	app.get('/api/stats', async (req, res) => {
+		let header = StatsHeader.parse(req.headers)
+		res.send(await getStats(root.db, header))
 	})
 
 	if (DEBUG) {

@@ -29,10 +29,6 @@
 		<link rel="preload" href="/images/menu-background.png" as="image" />
 		<link rel="preload" href="/images/menu-background-image.png" as="image" />
 		<link rel="preload" href="/images/tcg-logo.png" as="image" />
-
-		<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-		<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Hermitcraft TCG</title>
 		<script>
@@ -44,16 +40,6 @@
 		<script>
 			const global = globalThis
 			global.dbObj = {}
-			const firebaseConfig = {
-				apiKey: 'AIzaSyAaBRgPwoev4rAjkbIbMO8IfLxjDaEw-Tc',
-				authDomain: 'hc-tcg-leaderboard.firebaseapp.com',
-				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
-				projectId: 'hc-tcg-leaderboard',
-				storageBucket: 'hc-tcg-leaderboard.appspot.com',
-				messagingSenderId: '1011825708963',
-				appId: '1:1011825708963:web:02dbb0ce6ca1dfe2bd5416',
-			} //this is normal public connection config for the DB
-			firebase.initializeApp(firebaseConfig)
 		</script>
 	</head>
 

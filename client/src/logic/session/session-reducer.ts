@@ -1,6 +1,6 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 
 type SessionState = {
@@ -8,7 +8,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: PlayerDeckT
+	playerDeck: Deck
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -19,6 +19,7 @@ type SessionState = {
 		| string
 	toast: ToastT
 	updates: Record<string, Array<string>>
+	newPlayer: boolean //If the account was created this session
 }
 
 const defaultState: SessionState = {
@@ -26,11 +27,19 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: [], tags: []},
+	playerDeck: {
+		name: '',
+		iconType: 'item',
+		icon: 'any',
+		code: '',
+		cards: [],
+		tags: [],
+	},
 	connecting: false,
 	connected: false,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
+	newPlayer: false,
 }
 
 const loginReducer = (
@@ -56,21 +65,25 @@ const loginReducer = (
 		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
-				connecting: false,
-				connected: true,
 				errorType: undefined,
 				...action.player,
+			}
+		case localMessages.CONNECTED:
+			return {
+				...state,
+				connecting: false,
+				connected: true,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
 				...action.updates,
 			}
-		case localMessages.DECK_NEW:
-		case localMessages.DECK_SET:
+		case localMessages.INSERT_DECK:
+		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: action.deck,
+				playerDeck: {...action.deck, code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
 			return {
@@ -90,6 +103,11 @@ const loginReducer = (
 			return {
 				...state,
 				minecraftName: action.name,
+			}
+		case localMessages.NEW_PLAYER:
+			return {
+				...state,
+				newPlayer: true,
 			}
 		default:
 			return state
