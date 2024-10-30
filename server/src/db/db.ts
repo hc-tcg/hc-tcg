@@ -559,7 +559,7 @@ export class Database {
 		secondPlayerUuid: string,
 		outcome: GameEndOutcomeT,
 		gameLength: number,
-		winningPlayerUuid: string,
+		winningPlayerUuid: string | null,
 		seed: string,
 		replay: Buffer,
 	): Promise<DatabaseResult> {
@@ -569,7 +569,7 @@ export class Database {
 			let loser
 			let losingDeck
 
-			if (winningPlayerUuid === firstPlayerUuid) {
+			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
 				winner = firstPlayerUuid
 				winningDeck = firstPlayerDeckCode
 				loser = secondPlayerUuid
