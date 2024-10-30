@@ -6,14 +6,25 @@ import {generateDatabaseCode} from 'common/utils/database-codes'
 export const getActiveDeck = (): Deck | null => {
 	const deck = localStorage.getItem('activeDeck')
 	if (!deck) return null
-	return JSON.parse(deck) as Deck
+	try {
+		return JSON.parse(deck) as Deck
+	} catch {
+		return {
+			name: 'ERROR',
+			icon: 'shadee',
+			iconType: 'hermit',
+			code: '',
+			tags: [],
+			cards: [],
+		}
+	}
 }
 
 export const setActiveDeck = (deck: Deck) => {
 	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export function getLocalStorageDecks(convertIcon: boolean): Array<Deck> {
+export function getLocalStorageDecks(): Array<Deck> {
 	let lsKey
 	const decks: Array<Deck> = []
 
@@ -28,9 +39,8 @@ export function getLocalStorageDecks(convertIcon: boolean): Array<Deck> {
 					const newDeck: Deck = {
 						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
 						name: parsedDeck.name,
-						icon: convertIcon
-							? `/images/types/type-${parsedDeck.icon}.png`
-							: parsedDeck.icon,
+						iconType: 'item',
+						icon: parsedDeck.icon,
 						tags: [],
 						cards: parsedDeck.cards.map((card) =>
 							toLocalCardInstance(CARDS[card.cardId]),

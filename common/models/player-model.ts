@@ -22,6 +22,7 @@ export class PlayerModel {
 
 		this.internalDeck = {
 			name: 'Starter Deck',
+			iconType: 'item',
 			icon: 'any',
 			code: '',
 			cards: [],
@@ -58,8 +59,10 @@ export class PlayerModel {
 	}
 
 	setPlayerDeck(newDeck: Deck) {
+		//@ts-ignore
 		this.internalDeck = {
 			name: newDeck.name,
+			iconType: newDeck.iconType,
 			icon: newDeck.icon,
 			cards: newDeck.cards,
 			code: newDeck.code,

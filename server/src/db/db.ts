@@ -44,7 +44,8 @@ export class Database {
 					user_id uuid REFERENCES users(user_id),
 					deck_code varchar(7) PRIMARY KEY,
 					name varchar(255) NOT NULL,
-					icon varchar(255) NOT NULL
+					icon varchar(255) NOT NULL,
+					icon_type varchar(255) NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS games(
 					start_time timestamp NOT NULL,
@@ -166,6 +167,7 @@ export class Database {
 	public async insertDeck(
 		name: string,
 		icon: string,
+		iconType: string,
 		cards: Array<number>,
 		tagIds: Array<string>,
 		code: string,
@@ -173,8 +175,8 @@ export class Database {
 	): Promise<DatabaseResult<string>> {
 		try {
 			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon, deck_code) values ($1,$2,$3,$4) RETURNING (deck_code)',
-				[user_id, name, icon, code],
+				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5) RETURNING (deck_code)',
+				[user_id, name, icon, iconType, code],
 			)
 			const deckCode: string = deckResult.rows[0]['deck_code']
 
@@ -223,7 +225,7 @@ export class Database {
 			const deck = (
 				await this.pool.query(
 					`SELECT
-						decks.user_id,decks.deck_code,decks.name,decks.icon,
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
@@ -234,10 +236,10 @@ export class Database {
 					[deckCode],
 				)
 			).rows
-			console.log(deck)
 			const code = deck[0]['deck_code']
 			const name = deck[0]['name']
 			const icon = deck[0]['icon']
+			const iconType = deck[0]['icon_type']
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
 					row['card_id'] === null ||
@@ -266,6 +268,7 @@ export class Database {
 					code,
 					name,
 					icon,
+					iconType,
 					cards: cards.map((card) => toLocalCardInstance(card)),
 					tags,
 				},
@@ -281,7 +284,7 @@ export class Database {
 			const decksResult = (
 				await this.pool.query(
 					`SELECT 
-						decks.user_id,decks.deck_code,decks.name,decks.icon,
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
@@ -297,6 +300,7 @@ export class Database {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
+				const iconType: string = row['icon_type']
 				const tag: Tag = {
 					name: row['tag_name'],
 					color: row['tag_color'],
@@ -316,6 +320,8 @@ export class Database {
 						code,
 						name,
 						icon,
+						//@ts-ignore
+						iconType,
 						tags: tag.key !== null ? [tag] : [],
 						cards:
 							cardId !== null

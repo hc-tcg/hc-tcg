@@ -19,6 +19,7 @@ describe('Test Database', () => {
 	const playerDeck = {
 		name: 'Testing deck',
 		icon: 'balanced',
+		iconType: 'item',
 		cards: [0, 1, 2, 2, 3, 4, 4, 5, 4],
 		tags: [],
 	}
@@ -108,6 +109,7 @@ describe('Test Database', () => {
 		const code = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			[tag.body.key],
 			generateDatabaseCode(),
@@ -124,6 +126,7 @@ describe('Test Database', () => {
 
 		expect(returnedDeck.body.name).toBe('Testing deck')
 		expect(returnedDeck.body.icon).toBe('balanced')
+		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
 		expect(
@@ -161,6 +164,7 @@ describe('Test Database', () => {
 		const winnerDeckCode = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			playerDeck.tags,
 			generateDatabaseCode(),
@@ -170,6 +174,7 @@ describe('Test Database', () => {
 		const loserDeckCode = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			playerDeck.tags,
 			generateDatabaseCode(),
@@ -338,6 +343,7 @@ describe('Test Database', () => {
 		const code = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			[tag.body.key],
 			generateDatabaseCode(),
@@ -354,6 +360,7 @@ describe('Test Database', () => {
 
 		expect(returnedDeck.body.name).toBe('Testing deck')
 		expect(returnedDeck.body.icon).toBe('balanced')
+		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
 		expect(
@@ -387,6 +394,7 @@ describe('Test Database', () => {
 		const deck1 = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			[],
 			[],
 			code,
@@ -424,6 +432,7 @@ describe('Test Database', () => {
 		const code = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			[],
 			generateDatabaseCode(),
@@ -464,6 +473,7 @@ describe('Test Database', () => {
 		const code = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
+			playerDeck.iconType,
 			playerDeck.cards,
 			[tag.body.key],
 			generateDatabaseCode(),

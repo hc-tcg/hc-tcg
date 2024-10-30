@@ -26,6 +26,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getIconPath} from 'common/utils/state-gen'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -234,7 +235,8 @@ function EditDeck({
 			? deck
 			: {
 					name: '',
-					icon: '/images/types/type-any.png',
+					iconType: 'item',
+					icon: 'any',
 					cards: [],
 					code: generateDatabaseCode(),
 					tags: [],
@@ -355,7 +357,8 @@ function EditDeck({
 	const handleDeckIcon = (option: any) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			icon: `/images/types/type-${option}.png`,
+			iconType: 'item',
+			icon: option,
 		}))
 	}
 	const handleBack = () => {
@@ -645,7 +648,7 @@ function EditDeck({
 													css[loadedDeck.icon],
 												)}
 											>
-												<img src={loadedDeck.icon} />
+												<img src={getIconPath(loadedDeck)} />
 											</button>
 										}
 										label="Deck Icon"

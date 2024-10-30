@@ -28,9 +28,7 @@ export const ImportModal = ({
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
-	const [deckIcon, setDeckIcon] = useState<Deck['icon']>(
-		'/images/types/type-any.png',
-	)
+	const [deckIcon, setDeckIcon] = useState<Deck['icon']>('any')
 
 	//IMPORT DECK FUNCTION
 	async function importFromHash() {
@@ -63,7 +61,8 @@ export const ImportModal = ({
 
 		importDeck({
 			name: nameRef?.current?.value || 'Imported Deck',
-			icon: deckIcon,
+			icon: deckIcon as TypeT,
+			iconType: 'item',
 			cards: deck,
 			code: generateDatabaseCode(),
 			tags: [],
@@ -113,6 +112,7 @@ export const ImportModal = ({
 				importedSomething = true
 				importDeck({
 					name: filteredName,
+					iconType: 'item',
 					icon: DECK_ICONS.includes(lineComponents[1])
 						? (lineComponents[1] as TypeT)
 						: 'any',
@@ -203,9 +203,7 @@ export const ImportModal = ({
 											}
 											label="Deck Icon"
 											options={iconDropdownOptions}
-											action={(option: any) =>
-												setDeckIcon(`/images/types/type-${option}.png`)
-											}
+											action={(option: any) => setDeckIcon(option)}
 										/>
 										<input
 											type="text"

@@ -11,6 +11,7 @@ import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
@@ -186,4 +187,13 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	const chosenDeck = fisherYatesShuffle(starterDecks)[0]
 	if (getDeckCost(chosenDeck) <= 42) return chosenDeck
 	return getStarterPack()
+}
+
+export function getIconPath(deck: Deck): string {
+	switch (deck.iconType) {
+		case 'item':
+			return `/images/types/type-${deck.icon}.png`
+		case 'hermit':
+			return `/images/hermits-emoji/${deck.icon}.png`
+	}
 }

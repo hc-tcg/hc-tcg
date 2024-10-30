@@ -85,7 +85,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	const localStorageDecks = getLocalStorageDecks(true)
+	const localStorageDecks = getLocalStorageDecks()
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -107,6 +107,7 @@ function* insertUser(socket: any) {
 			const starterDeck: Deck = {
 				code: generateDatabaseCode(),
 				name: 'Starter Deck',
+				iconType: 'item',
 				icon: 'any',
 				tags: [],
 				cards: getStarterPack(),
@@ -129,7 +130,7 @@ function* setupData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: getLocalStorageDecks(false),
+				value: getLocalStorageDecks(),
 			},
 		})
 		return
@@ -367,7 +368,7 @@ export function* databaseConnectionSaga() {
 					type: localMessages.DATABASE_SET,
 					data: {
 						key: 'decks',
-						value: getLocalStorageDecks(false),
+						value: getLocalStorageDecks(),
 					},
 				})
 				return

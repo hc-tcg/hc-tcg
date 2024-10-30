@@ -10,6 +10,7 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {getIconPath} from 'common/utils/state-gen'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -67,7 +68,11 @@ function MainMenu({setMenuSection}: Props) {
 						{welcomeMessage}, {playerName}
 					</p>
 					<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
-					<img id={css.infoIcon} src={playerDeck.icon} alt="deck-icon" />
+					<img
+						id={css.infoIcon}
+						src={getIconPath(playerDeck)}
+						alt="deck-icon"
+					/>
 				</div>
 				<div className={css.content}>
 					<div className={css.logo}>

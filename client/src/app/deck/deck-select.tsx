@@ -33,6 +33,7 @@ import {cardGroupHeader} from './deck'
 import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getIconPath} from 'common/utils/state-gen'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -116,7 +117,8 @@ function SelectDeck({
 
 	const [importedDeck, setImportedDeck] = useState<Deck>({
 		name: 'undefined',
-		icon: '/images/types/type-any.png',
+		iconType: 'item',
+		icon: 'any',
 		cards: [],
 		code: generateDatabaseCode(),
 		tags: [],
@@ -159,19 +161,19 @@ function SelectDeck({
 		open: true,
 		title: 'Deck Deleted!',
 		description: `Removed ${loadedDeck.name}`,
-		image: loadedDeck.icon,
+		image: getIconPath(loadedDeck),
 	}
 	const selectedDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${loadedDeck.name} is now your active deck`,
-		image: loadedDeck.icon,
+		image: getIconPath(loadedDeck),
 	}
 	const lastValidDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${playerDeck.name} is now your active deck`,
-		image: loadedDeck.icon,
+		image: getIconPath(loadedDeck),
 	}
 
 	// MENU LOGIC
@@ -279,7 +281,7 @@ function SelectDeck({
 				<div
 					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
 				>
-					<img src={deck.icon} alt={'deck-icon'} />
+					<img src={getIconPath(deck)} alt={'deck-icon'} />
 				</div>
 				{deck.name}
 			</li>
@@ -446,7 +448,7 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img src={loadedDeck.icon} alt="deck-icon" />
+									<img src={getIconPath(loadedDeck)} alt="deck-icon" />
 								</div>
 								<div className={css.deckName}>{loadedDeck.name}</div>
 								{loadedDeck.tags &&
@@ -498,7 +500,7 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img src={loadedDeck.icon} alt="deck-icon" />
+									<img src={getIconPath(loadedDeck)} alt="deck-icon" />
 								</div>
 								<span
 									className={classNames(
