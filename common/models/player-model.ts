@@ -13,7 +13,7 @@ export class PlayerModel {
 	public minecraftName: string
 	public censoredName: string
 	public socket: Socket
-	public uuid: string | null
+	public uuid: string
 	public authenticated: boolean
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {

@@ -119,6 +119,8 @@ function setupEcsForPlayer(
 			if (card.slot.inDeck()) card.slot.order = i
 		})
 
+		if (!cards.some((card) => card.isHermit())) return
+
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
