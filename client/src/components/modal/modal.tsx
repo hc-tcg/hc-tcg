@@ -5,6 +5,8 @@ import Button from 'components/button'
 import {ButtonVariant} from 'common/types/buttons'
 
 type ModalProps = {
+	overlayClassName?: string
+	modalClassName?: string
 	children: ReactNode
 	/** Controls whether the modal is visible or not */
 	setOpen: boolean
@@ -23,6 +25,8 @@ type ModalProps = {
 }
 
 export function Modal({
+	overlayClassName,
+	modalClassName,
 	children,
 	setOpen,
 	onClose,
@@ -104,19 +108,21 @@ export function Modal({
 	return (
 		<>
 			<div
-				className={css.overlay}
+				className={cn(css.overlay, overlayClassName)}
 				onClick={!disableCloseOnOverlayClick ? onClose : undefined}
 			/>
-			<div className={css.modal}>
-				<div className={css.title}>
-					{title && <span>{title}</span>}
-					{/* When tabbing around it is more convenient to click the buttons only */}
-					{!disableCloseButton && (
-						<button className={css.close} tabIndex={-1} onClick={onClose}>
-							<img src="/images/CloseX.svg" alt="close" />
-						</button>
-					)}
-				</div>
+			<div className={cn(css.modal, modalClassName)}>
+				{title && (
+					<div className={css.title}>
+						{title && <span>{title}</span>}
+						{/* When tabbing around it is more convenient to click the buttons only */}
+						{!disableCloseButton && (
+							<button className={css.close} tabIndex={-1} onClick={onClose}>
+								<img src="/images/CloseX.svg" alt="close" />
+							</button>
+						)}
+					</div>
+				)}
 				<div ref={childrenRef}> {children} </div>
 			</div>
 		</>
