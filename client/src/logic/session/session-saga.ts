@@ -243,7 +243,6 @@ export function* loginSaga() {
 
 		if (result.playerReconnected.game) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
-			console.log(matchmakingStatus)
 
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
@@ -291,11 +290,6 @@ export function* loginSaga() {
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
-
-		if (debugConfig.disableDatabase) {
-			setupData(socket)
-			return
-		}
 
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')

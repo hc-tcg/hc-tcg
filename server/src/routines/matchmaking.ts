@@ -179,7 +179,7 @@ function* gameManager(game: GameModel) {
 				gamePlayers[0],
 				gamePlayers[1],
 				game.endInfo.outcome,
-				game.createdTime - Date.now(),
+				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
 				'', //@TODO Add seed
 				Buffer.from([0x00]),

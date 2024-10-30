@@ -564,6 +564,7 @@ export class Database {
 		replay: Buffer,
 	): Promise<DatabaseResult> {
 		try {
+			const replayBytes = replay.reduce((r, c) => (r << 8) & c, 0)
 			let winner
 			let winningDeck
 			let loser
@@ -591,7 +592,7 @@ export class Database {
 					losingDeck,
 					outcome,
 					seed,
-					replay.toString('hex'),
+					replayBytes,
 				],
 			)
 			return {type: 'success', body: undefined}
