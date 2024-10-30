@@ -104,7 +104,8 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
-		} catch {
+		} catch (e) {
+			console.log(e)
 			console.info('Running server without database...')
 		}
 	}
