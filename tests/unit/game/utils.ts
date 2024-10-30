@@ -1,8 +1,8 @@
-import {Card} from 'common/cards/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
+import {Card} from 'common/cards/types'
 import {
 	BoardSlotComponent,
 	CardComponent,

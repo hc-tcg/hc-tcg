@@ -6,8 +6,11 @@ import {IronArmor} from 'common/cards/attach/armor'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import WormManRare from 'common/cards/hermits/wormman-rare'
+import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import MinerDoubleItem from 'common/cards/items/miner-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
+import Chest from 'common/cards/single-use/chest'
 import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import {InstantHealth} from 'common/cards/single-use/instant-health'
 import Knockback from 'common/cards/single-use/knockback'
@@ -27,9 +30,6 @@ import {
 	removeEffect,
 	testGame,
 } from '../../utils'
-import Chest from 'common/cards/single-use/chest'
-import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
-import WormManRare from 'common/cards/hermits/wormman-rare'
 
 describe('Test Biffa Secondary', () => {
 	test("Biffa's Museum functionality", () => {

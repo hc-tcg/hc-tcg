@@ -1,5 +1,5 @@
 import {CardComponent} from '../components'
-import {hiddenStatusEffect, StatusEffect} from './status-effect'
+import {StatusEffect, hiddenStatusEffect} from './status-effect'
 
 const SculkCatalystTriggeredEffect: StatusEffect<CardComponent> = {
 	...hiddenStatusEffect,

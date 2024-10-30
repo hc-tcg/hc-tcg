@@ -7,9 +7,9 @@ import {SingleUse} from '../../types'
 const ArrowOfPoison: SingleUse = {
 	...singleUse,
 	id: 'arrow_of_poison',
-	name: 'Arrow of Poison',
+	name: 'Tipped Arrows of Poison',
 	expansion: 'advent_of_tcg_ii',
-	numericId: 902,
+	numericId: 243,
 	rarity: 'ultra_rare',
 	tokens: 3,
 	description:

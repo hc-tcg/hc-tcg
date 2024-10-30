@@ -12,9 +12,9 @@ import {Attach} from '../../types'
 
 const SculkCatalyst: Attach = {
 	...attach,
-	id: 'sculk-catalyst',
+	id: 'sculk_catalyst',
 	name: 'Sculk Catalyst',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	numericId: 244,
 	rarity: 'rare',
 	tokens: 1,

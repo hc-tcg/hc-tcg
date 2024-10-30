@@ -2,6 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import Trapdoor from 'common/cards/advent-of-tcg/attach/trapdoor'
 import ArrowOfPoison from 'common/cards/advent-of-tcg/single-use/arrow-of-poison'
 import LightningRod from 'common/cards/attach/lightning-rod'
+import MilkBucket from 'common/cards/attach/milk-bucket'
 import WaterBucket from 'common/cards/attach/water-bucket'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
@@ -25,7 +26,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../../utils'
-import MilkBucket from 'common/cards/attach/milk-bucket'
 
 describe('Test Arrow of Poison', () => {
 	test('Anvil Drop triggers Arrow of Poison', () => {

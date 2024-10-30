@@ -16,10 +16,10 @@ const moveRowEntry = (row: RowComponent): string =>
 
 const WindBurst: SingleUse = {
 	...singleUse,
-	id: 'wind-burst',
+	id: 'wind_burst',
 	numericId: 245,
 	name: 'Wind Burst',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 0,
 	description:

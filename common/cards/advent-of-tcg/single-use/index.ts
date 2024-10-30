@@ -1,6 +1,6 @@
 import {Card} from '../../types'
-import ArrowOfPoison from './arrow-of-poison'
 import Allay from './allay'
+import ArrowOfPoison from './arrow-of-poison'
 import Brush from './brush'
 import Dropper from './dropper'
 import FletchingTable from './fletching-table'
