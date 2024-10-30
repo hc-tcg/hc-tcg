@@ -33,7 +33,7 @@ export class PlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 		this.socket = socket
-		this.uuid = null
+		this.uuid = ''
 		this.authenticated = false
 	}
 
