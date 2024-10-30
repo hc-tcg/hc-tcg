@@ -31,17 +31,38 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 
 		if (!playerActive?.isHermit() || !opponentActive?.isHermit()) return
 
-		const weakType = playerActive.props.type
-		const strongType = opponentActive.props.type
+		if (!playerActive.props.type || !opponentActive.props.type) effect.remove()
+		if (!playerActive.props.type || !opponentActive.props.type) return
+
+		const weakTypes = playerActive.props.type
+		const strongTypes = opponentActive.props.type
 		function capitalize(s: string) {
 			return s[0].toUpperCase() + s.slice(1)
 		}
 
+		let weakString = ''
+		let strongString = ''
+
+		let weaktype = ' type is '
+		let strongtype = ' type '
+
+		let i
+		for (i = 0; i < weakTypes.length; i++) {
+			if (i > 0) weakString += ', '
+			if (i = weakTypes.length - 1) weakString += 'and '
+			weakString += capitalize(weakTypes[i])
+		}
+		for (i = 0; i < strongTypes.length; i++) {
+			if (i > 0) strongString += ', '
+			if (i = strongTypes.length - 1) strongString += 'and '
+			strongString += capitalize(strongTypes[i])
+		}
+
+		if (weakTypes.length > 1) weaktype = ' types are '
+		if (strongTypes.length > 1) strongtype = ' types '
+
 		effect.description =
-			capitalize(weakType) +
-			' type is weak to ' +
-			capitalize(strongType) +
-			' type for the duration of this counter.'
+			weakString + weaktype + 'weak to ' + strongString + strongtype + 'for the duration fo this counter.'
 
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
@@ -64,7 +85,7 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 					targetCardInfo.props.type == weakType &&
 					attack.attacker.props.type == strongType
 				) {
-					attack.createWeakness = 'always'
+					attack.createWeakness = 'always' // Still needs editing here.
 				}
 			},
 		)
