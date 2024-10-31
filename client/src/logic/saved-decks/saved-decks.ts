@@ -1,141 +1,87 @@
-import {
-	PlayerDeckT,
-	SavedDeckT,
-	Tag,
-	deckToSavedDeck,
-	loadSavedDeck,
-} from 'common/types/deck'
-import {validateDeck} from 'common/utils/validation'
+import {CARDS} from 'common/cards'
+import {Deck as Deck, LegacyDeck} from 'common/types/deck'
+import {toLocalCardInstance} from 'common/utils/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 
-export const getActiveDeckName = () => {
-	return localStorage.getItem('activeDeck')
-}
-
-export const setActiveDeck = (name: string) => {
-	localStorage.setItem('activeDeck', name)
-}
-
-export const isActiveDeckValid = () => {
-	const activeDeckName = getActiveDeckName()
-	const activeDeck = activeDeckName ? getSavedDeck(activeDeckName)?.cards : null
-	const activeDeckValid = !!activeDeck && validateDeck(activeDeck).valid
-	return activeDeckValid
-}
-
-export const getSavedDeck = (name: string) => {
-	const hash = localStorage.getItem('Deck_' + name)
-
-	let deck: SavedDeckT | null = null
-	if (hash != null) {
-		deck = JSON.parse(hash)
+export const getActiveDeck = (): Deck | null => {
+	const deck = localStorage.getItem('activeDeck')
+	if (!deck) return null
+	try {
+		return JSON.parse(deck) as Deck
+	} catch {
+		return {
+			name: 'ERROR',
+			icon: 'shadee',
+			iconType: 'hermit',
+			code: '',
+			tags: [],
+			cards: [],
+		}
 	}
-
-	return loadSavedDeck(deck)
 }
 
-export const saveDeck = (deck: PlayerDeckT) => {
-	const hash = 'Deck_' + deck.name
-	localStorage.setItem(hash, JSON.stringify(deckToSavedDeck(deck)))
+export const setActiveDeck = (deck: Deck) => {
+	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export const deleteDeck = (name: string) => {
-	const hash = 'Deck_' + name
-	localStorage.removeItem(hash)
-}
-
-export const getSavedDecks = () => {
+export function getLocalStorageDecks(): Array<Deck> {
 	let lsKey
-	const decks = []
+	const decks: Array<Deck> = []
 
 	for (let i = 0; i < localStorage.length; i++) {
 		lsKey = localStorage.key(i)
 
 		if (lsKey?.includes('Deck_')) {
 			const key = localStorage.getItem(lsKey)
-			decks.push(key || '')
+			if (key) {
+				try {
+					const parsedDeck = JSON.parse(key) as LegacyDeck
+					const newDeck: Deck = {
+						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
+						name: parsedDeck.name,
+						iconType: 'item',
+						icon: parsedDeck.icon,
+						tags: [],
+						cards: parsedDeck.cards.map((card) =>
+							toLocalCardInstance(CARDS[card.cardId]),
+						),
+					}
+					decks.push(newDeck)
+				} catch {
+					console.log(`Deck could not be parsed: "${key}"`)
+				}
+			}
 		}
 	}
+
 	return decks.sort()
 }
 
-export const getSavedDeckNames = () => {
-	return getSavedDecks().map((name) => JSON.parse(name || '')?.name || '')
-}
-
-export const getLegacyDecks = () => {
-	for (let i = 0; i < localStorage.length; i++) {
-		const lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Loadout_')) return true
+// Both these functions below are only used for testing, so new contributors do NOT need to set up a database.
+export function saveDeckToLocalStorage(deck: Deck) {
+	const hash = 'Deck_' + deck.code
+	const legacyDeck: LegacyDeck = {
+		name: deck.name,
+		cards: deck.cards.map((card) => ({
+			cardId: card.props.id,
+			cardInstance: Math.random().toString(),
+		})),
+		icon: deck.icon as LegacyDeck['icon'],
+		code: deck.code,
+		// Without a database, tags are disabled for simplicity
+		tags: [],
 	}
-	return false
+	localStorage.setItem(hash, JSON.stringify(legacyDeck))
 }
-export const convertLegacyDecks = (): number => {
-	let conversionCount = 0
-	for (let i = 0; i < localStorage.length; i++) {
-		const lsKey = localStorage.key(i)
 
-		if (lsKey?.includes('Loadout_')) {
-			conversionCount = conversionCount + 1
-			const legacyName = lsKey.replace('Loadout_', '[Legacy] ')
-			const legacyDeck = localStorage.getItem(lsKey)
-
-			const convertedDeck = {
-				name: legacyName,
-				icon: 'any',
-				cards: JSON.parse(legacyDeck || ''),
-			}
-
-			localStorage.setItem(`Deck_${legacyName}`, JSON.stringify(convertedDeck))
-
-			localStorage.removeItem(lsKey)
-			console.log('Converted deck:', lsKey, legacyName)
-		}
+export const deleteDeckFromLocalStorage = (deck: Deck) => {
+	// First tries to remove by code. If it can't find code, it assumes the deck is saved by name
+	// This could obviously cause issues but I believe ensuring compatibility with old version is more import
+	const codeHash = 'Deck_' + deck.code
+	const nameHash = 'Deck_' + deck.name
+	if (localStorage.getItem(codeHash)) {
+		localStorage.removeItem(codeHash)
+	} else {
+		localStorage.removeItem(nameHash)
 	}
-
-	return conversionCount
-}
-
-export const getCreatedTags: () => Array<Tag> = () => {
-	let lsKey
-	const tags = []
-
-	for (let i = 0; i < localStorage.length; i++) {
-		lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Tag_')) {
-			const key = localStorage.getItem(lsKey)
-			if (key) tags.push(JSON.parse(key) || {})
-		}
-	}
-	return tags.sort() as Array<Tag>
-}
-
-export const keysToTags = (tags: Array<string>): Array<Tag> => {
-	const savedTags = getCreatedTags()
-	const fullTags: Array<Tag> = []
-	tags.forEach((key) => {
-		const fullTag = savedTags.find((tag) => tag.key === key)
-		if (fullTag) fullTags.push(fullTag)
-	})
-	return fullTags
-}
-
-export const saveTag = (tag: Tag) => {
-	const createdTags = getCreatedTags()
-	const hash = 'Tag_' + tag.key
-	if (createdTags.find((createdTag) => createdTag.key === tag.key)) return
-	localStorage.setItem(hash, JSON.stringify(tag))
-}
-
-export const deleteTag = (tag: Tag) => {
-	const hash = 'Tag_' + tag.key
-	localStorage.removeItem(hash)
-	getSavedDeckNames().forEach((deck) => {
-		const savedDeck = getSavedDeck(deck)
-		console.log(savedDeck)
-		if (!savedDeck || !savedDeck.tags) return
-		savedDeck.tags = savedDeck.tags.filter((deckTag) => deckTag !== tag.key)
-		saveDeck(savedDeck)
-	})
 }

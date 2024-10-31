@@ -1,3 +1,5 @@
+import {getIconPath} from 'common/utils/state-gen'
+import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
@@ -16,9 +18,22 @@ type Props = {
 
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () =>
-		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
+	const handleJoinQueue = () => {
+		const validation = validateDeck(playerDeck.cards)
+
+		if (validation.valid) {
+			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+		} else {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Your deck is not valid!',
+				description: `The deck "${playerDeck.name}" does not meet public game validation requirements.`,
+				image: `/images/types/type-${playerDeck.icon}.png`,
+			})
+		}
+	}
 	const handlePrivateGame = () =>
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 	const handleSoloGame = () => setMenuSection('boss-landing')
@@ -31,8 +46,7 @@ function MainMenu({setMenuSection}: Props) {
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
-	const welcomeMessage =
-		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
+	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 
 	return (
 		<>
@@ -56,7 +70,7 @@ function MainMenu({setMenuSection}: Props) {
 					<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
 					<img
 						id={css.infoIcon}
-						src={`/images/types/type-${playerDeck.icon}.png`}
+						src={getIconPath(playerDeck)}
 						alt="deck-icon"
 					/>
 				</div>

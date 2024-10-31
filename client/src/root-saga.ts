@@ -1,12 +1,15 @@
-import fbdbSaga from 'logic/fbdb/fbdb-saga'
+import databaseSaga from 'logic/game/database/database-saga'
 import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
 import {
+	databaseConnectionSaga,
+	databaseErrorSaga,
 	loginSaga,
 	logoutSaga,
 	minecraftNameSaga,
 	newDeckSaga,
+	recieveStatsSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'
@@ -17,7 +20,10 @@ import {all, call, fork, race, take} from 'redux-saga/effects'
 function* appSaga(): SagaIterator {
 	yield call(loginSaga)
 	yield fork(logoutSaga)
+	yield fork(databaseConnectionSaga)
 	yield fork(newDeckSaga)
+	yield fork(recieveStatsSaga)
+	yield fork(databaseErrorSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)
@@ -26,8 +32,8 @@ function* appSaga(): SagaIterator {
 function* rootSaga(): SagaIterator {
 	yield all([
 		fork(socketSaga),
-		fork(fbdbSaga),
 		fork(localSettingsSaga),
+		fork(databaseSaga),
 		fork(soundSaga),
 	])
 	while (true) {

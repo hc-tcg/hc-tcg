@@ -15,6 +15,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {OpponentDefs} from 'common/utils/state-gen'
+import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
@@ -161,6 +162,29 @@ function* gameManager(game: GameModel) {
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
+
+		const gamePlayers = game.getPlayers()
+		const winner = gamePlayers.find(
+			(player) => player.uuid === game.endInfo.winner,
+		)
+
+		if (
+			gamePlayers[0].uuid &&
+			gamePlayers[1].uuid &&
+			game.endInfo.outcome &&
+			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
+			gamePlayers[0].uuid !== gamePlayers[1].uuid
+		) {
+			yield* addGame(
+				gamePlayers[0],
+				gamePlayers[1],
+				game.endInfo.outcome,
+				Date.now() - game.createdTime,
+				winner ? winner.uuid : null,
+				'', //@TODO Add seed
+				Buffer.from([0x00]),
+			)
+		}
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)

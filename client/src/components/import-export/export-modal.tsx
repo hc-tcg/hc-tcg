@@ -1,6 +1,5 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
-import {PlayerDeckT} from 'common/types/deck'
-import {getHashFromDeck} from 'common/utils/import-export'
+import {Deck} from 'common/types/deck'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
@@ -8,16 +7,10 @@ import css from './import-export.module.scss'
 type Props = {
 	setOpen: boolean
 	onClose: (isOpen: boolean) => void
-	loadedDeck: PlayerDeckT
+	loadedDeck: Deck
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
-	// EXPORT DECK FUNCTION
-	const handleExportDeck = () => {
-		return getHashFromDeck(loadedDeck.cards)
-	}
-
-	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
 			<AlertDialog.Portal container={document.getElementById('modal')}>
@@ -43,11 +36,11 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 									friends!
 								</p>
 								<div className={css.exportControls}>
-									<input type="text" readOnly value={handleExportDeck()} />
+									<input type="text" readOnly value={loadedDeck.code} />
 									<button
 										className={css.copy}
 										onClick={() => {
-											navigator.clipboard.writeText(handleExportDeck())
+											navigator.clipboard.writeText(loadedDeck.code)
 										}}
 									>
 										{CopyIcon()}
