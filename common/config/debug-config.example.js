@@ -1,5 +1,5 @@
 export default {
-	disableDatabase: true,
+	disableDatabase: false,
 	disableDeckValidation: false,
 	extraStartingCards: [],
 	noItemRequirements: false,
