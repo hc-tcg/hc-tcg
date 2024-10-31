@@ -7,6 +7,7 @@ import {
 	getPlayerName,
 	getSession,
 	getToast,
+	getTooltip,
 } from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
@@ -22,6 +23,7 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import {CurrentTooltip} from 'components/tooltip/tooltip'
 
 function App() {
 	const section = useRouter()
@@ -30,6 +32,7 @@ function App() {
 	const socketStatus = useSelector(getSocketStatus)
 	const connected = useSelector(getSession).connected
 	const toastMessage = useSelector(getToast)
+	const tooltip = useSelector(getTooltip)
 	const settings = useSelector(getSettings)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 	let enableToast = false
@@ -83,6 +86,7 @@ function App() {
 			{background}
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
+			<CurrentTooltip tooltip={tooltip} />
 			{enableToast && (
 				<Toast
 					title={toastMessage.title}

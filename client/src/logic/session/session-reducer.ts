@@ -2,6 +2,7 @@ import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
 import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
+import React from 'react'
 
 type SessionState = {
 	playerName: string
@@ -17,6 +18,7 @@ type SessionState = {
 		| 'session_expired'
 		| 'timeout'
 		| string
+	tooltip: React.ReactElement | null
 	toast: ToastT
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
@@ -37,6 +39,7 @@ const defaultState: SessionState = {
 	},
 	connecting: false,
 	connected: false,
+	tooltip: null,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
 	newPlayer: false,
@@ -97,6 +100,16 @@ const loginReducer = (
 					...state.toast,
 					open: false,
 				},
+			}
+		case localMessages.SHOW_TOOLTIP:
+			return {
+				...state,
+				tooltip: action.tooltip,
+			}
+		case localMessages.HIDE_TOOLTIP:
+			return {
+				...state,
+				tooltip: null,
 			}
 		case localMessages.MINECRAFT_NAME_NEW:
 		case localMessages.MINECRAFT_NAME_SET:
