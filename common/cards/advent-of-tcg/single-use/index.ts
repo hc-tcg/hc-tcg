@@ -1,4 +1,4 @@
-import CardOld from '../../base/card'
+import {Card} from '../../types'
 import Brush from './brush'
 import Dropper from './dropper'
 import FletchingTable from './fletching-table'
@@ -6,7 +6,7 @@ import Glowstone from './glowstone'
 import Lantern from './lantern'
 import SplashPotionOfHarming from './splash-potion-of-harming'
 
-const singleUseCardClasses: Array<new () => CardOld> = [
+const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
 	Dropper,
 	FletchingTable,

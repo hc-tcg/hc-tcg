@@ -1,17 +1,20 @@
-import PoePoeSkizzRare from 'common/cards/alter-egos-iii/hermits/poepoeskizz-rare'
-import RenbobRare from 'common/cards/alter-egos/hermits/renbob-rare'
-import Anvil from 'common/cards/alter-egos/single-use/anvil'
-import Egg from 'common/cards/alter-egos/single-use/egg'
-import PotionOfSlowness from 'common/cards/alter-egos/single-use/potion-of-slowness'
-import TargetBlock from 'common/cards/alter-egos/single-use/target-block'
-import {Card} from 'common/cards/base/types'
-import Bow from 'common/cards/default/single-use/bow'
-import Knockback from 'common/cards/default/single-use/knockback'
-import LavaBucket from 'common/cards/default/single-use/lava-bucket'
-import Lead from 'common/cards/default/single-use/lead'
-import Looting from 'common/cards/default/single-use/looting'
-import SplashPotionOfPoison from 'common/cards/default/single-use/splash-potion-of-poison'
-import Spyglass from 'common/cards/default/single-use/spyglass'
+import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
+import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
+import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
+import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
+import RenbobRare from 'common/cards/hermits/renbob-rare'
+import Anvil from 'common/cards/single-use/anvil'
+import Bow from 'common/cards/single-use/bow'
+import Egg from 'common/cards/single-use/egg'
+import Knockback from 'common/cards/single-use/knockback'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
+import Lead from 'common/cards/single-use/lead'
+import Looting from 'common/cards/single-use/looting'
+import PotionOfSlowness from 'common/cards/single-use/potion-of-slowness'
+import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
+import Spyglass from 'common/cards/single-use/spyglass'
+import TargetBlock from 'common/cards/single-use/target-block'
+import {Card} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
@@ -63,9 +66,9 @@ function BossLanding({setMenuSection}: Props) {
 		PotionOfSlowness,
 		TargetBlock,
 
-		// Dropper,
-		// Glowstone,
-		// BerryBush,
+		Dropper,
+		Glowstone,
+		BerryBush,
 	]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)

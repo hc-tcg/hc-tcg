@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
-import {Hermit, isHermit} from 'common/cards/base/types'
+import {Hermit, isHermit} from 'common/cards/types'
 import {
 	getPlayerEntity,
 	getPlayerStateByEntity,

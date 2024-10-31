@@ -1,7 +1,7 @@
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {PlayerDeckT} from '../types/deck'
+import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages('client', {
@@ -20,12 +20,20 @@ export const clientMessages = messages('client', {
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
-	REQUEST_GAME_RECONNECT_INFORMATION: null,
+	/**Postgres */
+	PG_AUTHENTICATE: null,
+	PG_INSERT_USER: null,
+	GET_DECKS: null,
+	GET_STATS: null,
+	INSERT_DECK: null,
+	IMPORT_DECK: null,
+	DELETE_DECK: null,
+	DELETE_TAG: null,
 })
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.UPDATE_DECK; deck: PlayerDeckT},
+	{type: typeof clientMessages.UPDATE_DECK; deck: Deck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{type: typeof clientMessages.CREATE_BOSS_GAME},
 	{type: typeof clientMessages.CANCEL_BOSS_GAME},
@@ -44,7 +52,30 @@ export type ClientMessages = [
 	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
-	{type: typeof clientMessages.REQUEST_GAME_RECONNECT_INFORMATION},
+	{
+		type: typeof clientMessages.PG_AUTHENTICATE
+		userId: string
+		secret: string
+	},
+	{
+		type: typeof clientMessages.PG_INSERT_USER
+		username: string | null
+		minecraftName: string | null
+	},
+	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
+	{type: typeof clientMessages.GET_STATS},
+	{
+		type: typeof clientMessages.INSERT_DECK
+		deck: Deck
+		newActiveDeck?: string
+	},
+	{
+		type: typeof clientMessages.IMPORT_DECK
+		code: string
+		newActiveDeck?: string
+	},
+	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
+	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 ]
 
 export type ClientMessage = Message<ClientMessages>

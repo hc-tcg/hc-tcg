@@ -1,4 +1,4 @@
-import {SingleUse, isHermit} from 'common/cards/base/types'
+import {SingleUse, isHermit} from 'common/cards/types'
 import Modal from 'components/modal'
 import {
 	getAvailableActions,
@@ -23,7 +23,9 @@ function AttackModal({closeModal}: Props) {
 	const availableActions = useSelector(getAvailableActions)
 	const playerEntity = useSelector(getPlayerEntity)
 	const playerState = useSelector(getPlayerStateByEntity(playerEntity))
-	const singleUseCard = playerState?.board.singleUse.card
+	const singleUseCard = playerState?.board.singleUseCardUsed
+		? null
+		: playerState.board.singleUse.card
 
 	if (!activeRow || !playerState || !activeRow.hermit) return null
 	if (!opponentRow || !opponentRow.hermit) return null

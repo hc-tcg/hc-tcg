@@ -169,6 +169,48 @@
 	}
 }
 
+.usesIcon {
+	&.farm {
+		background-color: rgb(124, 204, 12);
+	}
+
+	&.redstone {
+		background-color: rgb(185, 33, 42);
+	}
+
+	&.prankster {
+		background-color: rgb(116, 55, 168);
+	}
+
+	&.explorer {
+		background-color: rgb(103, 138, 190);
+	}
+
+	&.balanced {
+		background-color: rgb(101, 124, 50);
+	}
+
+	&.builder {
+		background-color: rgb(184, 162, 154);
+	}
+
+	&.pvp {
+		background-color: rgb(85, 202, 194);
+	}
+
+	&.speedrunner {
+		background-color: rgb(223, 226, 36);
+	}
+
+	&.terraform {
+		background-color: rgb(217, 119, 147);
+	}
+
+	&.miner {
+		background-color: rgb(110, 105, 108);
+	}
+}
+
 .dropdownButton {
 	display: grid;
 	place-content: center;
@@ -395,15 +437,16 @@
 .mobileDeckPreview {
 	display: none;
 	visibility: hidden;
-	overflow: scroll;
+	overflow: hidden;
 	width: 45%;
+	background-color: var(--gray-700);
+	height: 100%;
 }
 
 .mobileSelector {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	gap: 1vh;
 }
 
 .mobileDeckStats {
@@ -417,7 +460,8 @@
 }
 
 .mobileDeckName {
-	background-color: #2b2c2c;
+	background-color: var(--gray-600);
+	border-bottom: 2px solid black;
 	padding: 0.5rem;
 	display: flex;
 	align-items: center;
@@ -444,7 +488,7 @@
 }
 
 .mobileDeckStat {
-	background-color: var(--gray-500);
+	background-color: var(--gray-400);
 	border-radius: 6px;
 	width: 100%;
 	text-align: center;
@@ -508,8 +552,8 @@
 }
 
 .fullTagColor {
-	padding-right: 15px;
 	border-radius: 50%;
+	padding-right: 1rem;
 	margin-right: 5px;
 }
 
@@ -519,21 +563,17 @@
 	border-radius: 50%;
 }
 
-.multiColoredCircleBorder {
-	border-radius: 50%;
-	filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 35%));
-}
-
 .multiColoredCircle {
-	width: 1rem;
-	height: 1rem;
+	width: 0.5rem;
+	height: 2rem;
 	display: flex;
 	flex-direction: column;
-	clip-path: circle(0.5rem at center);
+	gap: 4px;
 }
 
 .singleTag {
 	flex-grow: 1;
+	border-radius: 6px;
 }
 
 .submitButton {
@@ -557,6 +597,9 @@
 .mobileTags {
 	display: flex;
 	flex-direction: row;
+	padding: 0.5rem;
+	background-color: var(--gray-500);
+	border-top: solid 2px black;
 }
 
 .removeButton {
@@ -579,7 +622,8 @@
 		width: 100%;
 		min-width: 100%;
 		max-width: 100%;
-		background-color: #2b2c2c;
+		background-color: var(--gray-800);
+		border-left: solid 2px black;
 		height: 100%;
 		overflow: scroll;
 	}
@@ -592,7 +636,6 @@
 	.deckListBox {
 		display: flex;
 		flex-direction: row;
-		gap: 1vh;
 		flex-grow: 1;
 		overflow: hidden;
 	}
@@ -601,6 +644,7 @@
 		justify-content: center;
 		gap: 0rem;
 		margin-bottom: 0px;
+		background: var(--gray-600);
 	}
 
 	.editDeckInfo {

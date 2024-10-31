@@ -1,5 +1,5 @@
 import {CARDS} from 'common/cards'
-import {Card} from 'common/cards/base/types'
+import {Card} from 'common/cards/types'
 import {z} from 'zod'
 
 export const CardId = z.custom<Card['id']>((val) => {

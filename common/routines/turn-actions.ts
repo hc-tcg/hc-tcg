@@ -98,6 +98,9 @@ export function* attackSaga(
 	)
 	game.addBlockedActions(
 		'game',
+		'SINGLE_USE_ATTACK',
+		'PRIMARY_ATTACK',
+		'SECONDARY_ATTACK',
 		'PLAY_HERMIT_CARD',
 		'PLAY_ITEM_CARD',
 		'PLAY_EFFECT_CARD',

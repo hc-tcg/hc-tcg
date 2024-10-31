@@ -1,9 +1,8 @@
 import * as AlertDialog from '@radix-ui/react-dialog'
-import {loadSavedDeck} from 'common/types/deck'
-import {getHashFromDeck} from 'common/utils/import-export'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import Button from 'components/button'
-import {getSavedDecks} from 'logic/saved-decks/saved-decks'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {useSelector} from 'react-redux'
 import css from './import-export.module.scss'
 
 type Props = {
@@ -12,15 +11,11 @@ type Props = {
 }
 
 export function MassExportModal({setOpen, onClose}: Props) {
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+
 	const getExportDecks = () => {
-		const decks: string[] = []
-		getSavedDecks().forEach((deck) => {
-			let savedDeck = loadSavedDeck(JSON.parse(deck))
-			if (savedDeck) {
-				decks.push(
-					`${savedDeck.name}:${savedDeck.icon}:${getHashFromDeck(savedDeck.cards)}\n`,
-				)
-			}
+		const decks = databaseInfo.decks.map((deck) => {
+			return deck.code + '\n'
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
 

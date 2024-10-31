@@ -1,11 +1,15 @@
-import {PlayerComponent} from 'common/components'
-import {GameSettings, gameSettingsFromEnv} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
-import setupGameSaga, {
-	GameMessage,
-	gameMessages,
-	GameMessageTable,
-} from 'common/routines/game'
+import {SingleUse} from 'common/cards/types'
+import {
+	CardComponent,
+	DiscardSlotComponent,
+	HandSlotComponent,
+	PlayerComponent,
+	SlotComponent,
+} from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
+import query from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
 import {AIOpponentDefs} from 'common/utils/setup-game'
@@ -85,19 +89,11 @@ export function* gameManagerSaga({
 			// Player one is added to the ECS first, Player two is added second
 			const players = game.components.filter(PlayerComponent)
 
-			serverSideGame = new GameController({
-				game: game,
-				viewers,
-				playerOne: {
-					playerId: player1.id,
-					entity: players[0].entity,
-				},
-				playerTwo: {
-					playerId: player2 instanceof PlayerModel ? player2.id : null,
-					entity: players[1]?.entity,
-				},
-				props: gameProps,
-			})
+		// Su actions
+		if (su && !suUsed) {
+			actions.push('REMOVE_EFFECT')
+			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
+		}
 
 			viewers.forEach((p, index) => {
 				if (p.type === 'player') {

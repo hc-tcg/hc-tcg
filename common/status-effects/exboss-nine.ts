@@ -1,4 +1,4 @@
-import {InstancedValue} from '../cards/base/card'
+import {InstancedValue} from '../cards/card'
 import {
 	CardComponent,
 	ObserverComponent,

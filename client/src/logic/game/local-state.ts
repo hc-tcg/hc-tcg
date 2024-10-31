@@ -1,37 +1,10 @@
-import {Card} from 'common/cards/base/types'
-import JoeHillsRare from 'common/cards/default/hermits/joehills-rare'
-import {
-	CardComponent,
-	PlayerComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from 'common/components'
-import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
-import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from 'common/status-effects/multiturn-attack-disabled'
-import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from 'common/status-effects/singleturn-attack-disabled'
-import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
-import {
-	CurrentCoinFlip,
-	LocalCurrentCoinFlip,
-	LocalGameState,
-	LocalPlayerState,
-} from 'common/types/game-state'
-import {ModalData} from 'common/types/modal-requests'
-import {
-	LocalCardInstance,
-	LocalModalData,
-	LocalStatusEffectInstance,
-	WithoutFunctions,
-} from 'common/types/server-requests'
+import {HasHealth, isHermit, isItem} from 'common/cards/types'
+import {LocalCardInstance} from 'common/types/server-requests'
+import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
+import {hasEnoughEnergy} from 'common/utils/attacks'
+import {LocalMessageTable, localMessages} from 'logic/messages'
+import {put, select} from 'typed-redux-saga'
+import {getGameState, getPlayerState} from './game-selectors'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

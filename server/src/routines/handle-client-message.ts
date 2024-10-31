@@ -9,7 +9,16 @@ import {getGame} from 'selectors'
 import root from 'serverRoot'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
-import {broadcast} from 'utils/comm'
+import {
+	addUser,
+	authenticateUser,
+	deleteDeck,
+	deleteTag,
+	getDecks,
+	getStats,
+	importDeck,
+	insertDeck,
+} from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
@@ -79,26 +88,45 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GAME_TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
+			console.log(actionMessage.payload.action)
 			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 				time: actionMessage.payload.time,
 			})
-		case clientMessages.REQUEST_GAME_RECONNECT_INFORMATION:
-			let game = yield* select(getGame(message.playerId))
-			assert(
-				game,
-				'The player should be in a game when they send the `REQUEST_GAME_HISTORY` message',
+		case clientMessages.PG_INSERT_USER:
+			return yield* addUser(
+				message as RecievedClientMessage<typeof message.type>,
 			)
-
-			broadcast([root.players[message.playerId]], {
-				type: serverMessages.GAME_RECONNECT_INFORMATION,
-				history: game.history,
-				timer: game.game.state.timer,
-			})
-
-			return
+		case clientMessages.PG_AUTHENTICATE:
+			return yield* authenticateUser(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GET_DECKS:
+			return yield* getDecks(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.INSERT_DECK:
+			return yield* insertDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.IMPORT_DECK:
+			return yield* importDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.DELETE_DECK:
+			return yield* deleteDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.DELETE_TAG:
+			return yield* deleteTag(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GET_STATS:
+			return yield* getStats(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 	}
 }
 

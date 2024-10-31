@@ -1,10 +1,15 @@
 import {PlayerEntity} from '../entities'
 import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {GameMessage, GameStartupInformation} from '../routines/game'
-import {PlayerDeckT} from '../types/deck'
-import {LocalGameState} from '../types/game-state'
-import {ChatMessage as ChatMessage} from '../types/game-state'
+import {Stats, User} from '../types/database'
+import {Deck, Tag} from '../types/deck'
+import {
+	GameEndOutcomeT,
+	GameEndReasonT,
+	GamePlayerEndOutcomeT,
+	LocalGameState,
+} from '../types/game-state'
+import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
@@ -40,6 +45,12 @@ export const serverMessages = messages('server', {
 	GAME_STATE: null,
 	GAME_RECONNECT_INFORMATION: null,
 	CHAT_UPDATE: null,
+	/**Postgres */
+	AUTHENTICATED: null,
+	AUTHENTICATION_FAIL: null,
+	DECKS_RECIEVED: null,
+	STATS_RECIEVED: null,
+	DATABASE_FAILURE: null,
 })
 
 export type ServerMessages = [
@@ -54,7 +65,7 @@ export type ServerMessages = [
 		/** The game is the player is currently in a game */
 		game?: LocalGameState
 	},
-	{type: typeof serverMessages.NEW_DECK; deck: PlayerDeckT},
+	{type: typeof serverMessages.NEW_DECK; deck: Deck},
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
@@ -108,6 +119,16 @@ export type ServerMessages = [
 		}
 	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
+	{type: typeof serverMessages.AUTHENTICATED; user: User},
+	{type: typeof serverMessages.AUTHENTICATION_FAIL},
+	{
+		type: typeof serverMessages.DECKS_RECIEVED
+		decks: Array<Deck>
+		tags: Array<Tag>
+		newActiveDeck?: Deck
+	},
+	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 ]
 
 export type ServerMessage = Message<ServerMessages>

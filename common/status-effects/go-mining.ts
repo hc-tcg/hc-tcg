@@ -23,7 +23,6 @@ const GoMiningEffect: Counter<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	): void {
-		if (!effect.counter) effect.counter = this.counter
 		const predecessor = game.components.find(
 			StatusEffectComponent,
 			query.effect.is(GoMiningEffect),
