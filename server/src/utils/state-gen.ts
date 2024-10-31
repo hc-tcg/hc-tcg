@@ -1,6 +1,5 @@
-import {CARDS} from 'common/cards'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
-import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
+import {Card} from 'common/cards/types'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -10,10 +9,7 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
-import {CONFIG} from 'common/config'
-import {EXPANSIONS} from 'common/const/expansions'
-import {STRENGTHS} from 'common/const/strengths'
-import {CardEntity, PlayerEntity, newEntity} from 'common/entities'
+import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
@@ -46,12 +42,6 @@ import {
 // On 07/17/23, This still has not been sorted out properly. I think I might have
 // even made it worse.
 // Sincerely, Lunarmagpie
-
-// lmao - Rvtar
-
-function randomBetween(min: number, max: number) {
-	return Math.floor(Math.random() * (max - min + 1) + min)
-}
 
 function getLocalStatusEffect(effect: StatusEffectComponent) {
 	if (!effect.target) {

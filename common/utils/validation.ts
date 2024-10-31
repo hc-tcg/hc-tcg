@@ -51,7 +51,7 @@ export function validateDeck(
 		}
 
 	// more than max tokens
-	const deckCost = getDeckCost(deckCards.map((card) => card.props))
+	const deckCost = getDeckCost(deckCards)
 	if (deckCost > limits.maxDeckCost)
 		return {
 			valid: false,

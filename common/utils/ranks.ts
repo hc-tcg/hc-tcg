@@ -1,5 +1,5 @@
-import {Card} from '../cards/types'
 import {RankT, TokenCostT} from '../types/cards'
+import {LocalCardInstance} from '../types/server-requests'
 
 export function getCardVisualTokenCost(
 	tokens: TokenCostT,
@@ -27,15 +27,16 @@ export function getCardRank(tokens: TokenCostT): RankT {
 	return 'stone'
 }
 
-export function getDeckCost(deckCards: Array<Card>) {
+export function getDeckCost(deckCards: Array<LocalCardInstance>) {
 	let wildCards = deckCards.filter(
-		(card) => card.id === 'item_any_common',
+		(card) => card.props.id === 'item_any_common',
 	).length
 	let wildCost = Math.max(wildCards - 3, 0)
 
 	return (
 		deckCards.reduce(
-			(cost, card) => (cost += card.tokens !== 'wild' ? card.tokens : 0),
+			(cost, card) =>
+				(cost += card.props.tokens !== 'wild' ? card.props.tokens : 0),
 			0,
 		) + wildCost
 	)
