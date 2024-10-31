@@ -8,8 +8,8 @@ import {ReadonlyAttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 function getAllSubattacks(
 	attack: ReadonlyAttackModel,

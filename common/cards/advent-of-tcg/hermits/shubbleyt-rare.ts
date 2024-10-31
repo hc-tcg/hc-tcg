@@ -6,8 +6,8 @@ import {
 import {GameModel} from '../../../models/game-model'
 import {SelectCards} from '../../../types/modal-requests'
 import {afterAttack} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const ShubbleYTRare: Hermit = {
 	...hermit,

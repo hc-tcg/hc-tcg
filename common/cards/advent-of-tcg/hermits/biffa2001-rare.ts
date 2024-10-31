@@ -9,8 +9,8 @@ import {PlayerEntity} from '../../../entities'
 import {GameModel, GameValue} from '../../../models/game-model'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
 import {beforeAttack, onTurnEnd} from '../../../types/priorities'
-import {hermit} from '../../base/defaults'
-import {Hermit, SingleUse} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit, SingleUse} from '../../types'
 
 const cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(
 	() => {

@@ -1,4 +1,4 @@
-import type {Card} from '../cards/base/types'
+import type {Card} from '../cards/types'
 import type {
 	CardComponent,
 	SlotComponent,

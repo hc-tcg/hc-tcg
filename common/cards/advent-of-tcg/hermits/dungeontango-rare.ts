@@ -8,8 +8,8 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const DungeonTangoRare: Hermit = {
 	...hermit,

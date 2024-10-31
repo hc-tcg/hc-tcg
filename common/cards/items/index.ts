@@ -1,4 +1,4 @@
-import {Card} from '../base/types'
+import {Card} from '../types'
 import AnarchistItem from './anarchist-common'
 import AnarchistDoubleItem from './anarchist-rare'
 import AthleteItem from './athlete-common'
@@ -41,6 +41,7 @@ import SpeedrunnerItem from './speedrunner-common'
 import SpeedrunnerDoubleItem from './speedrunner-rare'
 import TerraformItem from './terraform-common'
 import TerraformDoubleItem from './terraform-rare'
+import WildItem from './wild-common'
 
 const itemCardClasses: Array<Card> = [
 	BuilderItem,
@@ -85,6 +86,7 @@ const itemCardClasses: Array<Card> = [
 	PacifistDoubleItem,
 	ScavengerItem,
 	ScavengerDoubleItem,
+	WildItem,
 ]
 
 export default itemCardClasses

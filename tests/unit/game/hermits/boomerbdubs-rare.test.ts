@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
-import BoomerBdubsRare from 'common/cards/alter-egos-ii/hermits/boomerbdubs-rare'
-import BadOmen from 'common/cards/alter-egos/single-use/bad-omen'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import Crossbow from 'common/cards/default/single-use/crossbow'
-import Fortune from 'common/cards/default/single-use/fortune'
+import BoomerBdubsRare from 'common/cards/hermits/boomerbdubs-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BadOmen from 'common/cards/single-use/bad-omen'
+import Crossbow from 'common/cards/single-use/crossbow'
+import Fortune from 'common/cards/single-use/fortune'
 import query from 'common/components/query'
 import {
 	applyEffect,

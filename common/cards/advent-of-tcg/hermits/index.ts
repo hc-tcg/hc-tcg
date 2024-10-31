@@ -1,4 +1,4 @@
-import {Card} from '../../base/types'
+import {Card} from '../../types'
 import Biffa2001Rare from './biffa2001-rare'
 import BigBSt4tzRare from './bigbst4tz2-rare'
 import DungeonTangoRare from './dungeontango-rare'

@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import PythonGBRare from 'common/cards/advent-of-tcg/hermits/pythongb-rare'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import RendogCommon from 'common/cards/default/hermits/rendog-common'
-import XisumavoidRare from 'common/cards/default/hermits/xisumavoid-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import RendogCommon from 'common/cards/hermits/rendog-common'
+import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
 import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 

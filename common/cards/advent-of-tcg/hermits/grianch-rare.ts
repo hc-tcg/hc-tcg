@@ -11,8 +11,8 @@ import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
 import SpentFortuneEffect from '../../../status-effects/spent-fortune'
 import {beforeAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
-import {hermit} from '../../base/defaults'
-import {Hermit} from '../../base/types'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const GrianchRare: Hermit = {
 	...hermit,

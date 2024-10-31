@@ -1,11 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 import SmallishbeansAdventRare from 'common/cards/advent-of-tcg/hermits/smallishbeans-rare'
-import WildItem from 'common/cards/alter-egos-iii/items/wild-common'
-import String from 'common/cards/alter-egos/effects/string'
-import EthosLabCommon from 'common/cards/default/hermits/ethoslab-common'
-import PvPDoubleItem from 'common/cards/default/items/pvp-rare'
-import Efficiency from 'common/cards/default/single-use/efficiency'
-import SmallishbeansRare from 'common/cards/season-x/hermits/smallishbeans-rare'
+import String from 'common/cards/attach/string'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
+import PvPDoubleItem from 'common/cards/items/pvp-rare'
+import WildItem from 'common/cards/items/wild-common'
+import Efficiency from 'common/cards/single-use/efficiency'
 import {
 	applyEffect,
 	attack,

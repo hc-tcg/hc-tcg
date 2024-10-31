@@ -1,6 +1,6 @@
 import classnames from 'classnames'
-import {getCardImage, getCardRankIcon} from 'common/cards/base/card'
-import {Item} from 'common/cards/base/types'
+import {getCardImage, getCardRankIcon} from 'common/cards/card'
+import {Item} from 'common/cards/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './item-card-svg.module.scss'
