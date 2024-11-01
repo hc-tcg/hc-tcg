@@ -1,5 +1,8 @@
 import {CARDS} from '../cards'
 import {Card} from '../cards/types'
+import { CardComponent } from '../components'
+import { ObserverEntity } from '../entities'
+import { Hook, PriorityHook } from '../types/hooks'
 
 export function getFormattedName(cardId: string, opponent: boolean) {
 	const cardInfo = CARDS[cardId]

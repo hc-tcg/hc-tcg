@@ -16,7 +16,6 @@ import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
-import {VirtualAI} from '../types/virtual-ai'
 import {fisherYatesShuffle} from './fisher-yates'
 import {getDeckFromHash} from './import-export'
 import {getDeckCost} from './ranks'
@@ -211,7 +210,7 @@ export function getGameState(
 			opponentActionStartTime: null,
 		},
 
-		isBossGame: false
+		isBossGame: false,
 	}
 
 	return gameState
@@ -224,7 +223,12 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		'BwcNDQ0OGhoaKjExMTExMTExMTExMTExMjIySUlkZGRmZsKAwoDChsKGwobClcKXwpc=',
 	].map((deck) => getDeckFromHash(deck))
 
-	const chosenDeck = fisherYatesShuffle(starterDecks)[0]
+	const chosenDeck = fisherYatesShuffle(
+		starterDecks,
+		Array()
+			.fill(0)
+			.map(() => Math.random()),
+	)[0]
 	if (getDeckCost(chosenDeck) <= 42) return chosenDeck
 	return getStarterPack()
 }
