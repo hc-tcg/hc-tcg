@@ -1,6 +1,7 @@
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
+import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
@@ -23,7 +24,6 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
-import {CurrentTooltip} from 'components/tooltip/tooltip'
 
 function App() {
 	const section = useRouter()

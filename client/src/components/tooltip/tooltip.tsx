@@ -1,8 +1,8 @@
 import classNames from 'classnames'
-import React, {memo, useLayoutEffect, useRef, useState} from 'react'
-import css from './tooltip.module.scss'
-import {useDispatch} from 'react-redux'
 import {localMessages} from 'logic/messages'
+import React, {memo, useLayoutEffect, useRef, useState} from 'react'
+import {useDispatch} from 'react-redux'
+import css from './tooltip.module.scss'
 
 type Props = {
 	children: React.ReactElement
