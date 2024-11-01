@@ -143,6 +143,6 @@ export async function getDeckInformation(url: string, hash: string) {
 export function deckCost(body: Object) {
 	let cards = ListOfCards.parse(body)
 	return {
-		cost: getDeckCost(cards.map((card) => toLocalCardInstance(CARDS[card]))),
+		cost: getDeckCost(cards.map((card) => CARDS[card])),
 	}
 }
