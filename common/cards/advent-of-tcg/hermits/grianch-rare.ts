@@ -67,7 +67,7 @@ const GrianchRare: Hermit = {
 				} else if (attack.type === 'secondary') {
 					const spentFortune = player.hasStatusEffect(SpentFortuneEffect)
 					spentFortune?.remove()
-					const coinFlip = flipCoin(player, component)
+					const coinFlip = flipCoin(game, player, component)
 					spentFortune?.apply(player.entity)
 
 					if (coinFlip[0] === 'tails') {
