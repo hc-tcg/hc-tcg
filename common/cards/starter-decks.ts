@@ -45,7 +45,7 @@ import Piston from './single-use/piston'
 import {DiamondSword} from './single-use/sword'
 import TargetBlock from './single-use/target-block'
 import TNT from './single-use/tnt'
-import {Card} from './types'
+// import {Card} from './types'
 
 export const STARTER_DECKS = [
 	[
