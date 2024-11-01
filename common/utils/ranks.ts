@@ -33,7 +33,7 @@ export function getDeckCost(deckCards: Array<Card>) {
 
 	return (
 		deckCards.reduce(
-			(cost, card) => (cost += card.tokens !== 'wild' ? card.props.tokens : 0),
+			(cost, card) => (cost += card.tokens !== 'wild' ? card.tokens : 0),
 			0,
 		) + wildCost
 	)
