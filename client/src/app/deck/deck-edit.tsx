@@ -418,7 +418,9 @@ function EditDeck({
 		})
 		back()
 	}
-	const validationResult = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(
+		loadedDeck.cards.map((card) => card.props),
+	)
 
 	return (
 		<>

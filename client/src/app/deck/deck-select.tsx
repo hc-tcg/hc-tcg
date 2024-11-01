@@ -351,7 +351,9 @@ function SelectDeck({
 	)
 
 	const currentDeck = loadedDeck
-	const validationResult = validateDeck(currentDeck.cards)
+	const validationResult = validateDeck(
+		currentDeck.cards.map((card) => card.props),
+	)
 
 	const selectedCards = {
 		hermits: currentDeck.cards.filter(

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import {STARTER_DECKS} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
+import {STARTER_DECKS} from 'common/cards/starter-decks'
 
 describe('Test starter decks', () => {
 	test('Test starter decks are valid.', () => {
