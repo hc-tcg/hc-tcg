@@ -58,7 +58,7 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 })
 
 export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
-	if (!tooltip) return
+	if (!tooltip || !anchor.current) return
 	const [tooltipRef] = useState<React.RefObject<HTMLDivElement>>(
 		useRef<HTMLDivElement>(null),
 	)
@@ -69,6 +69,9 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 		x: 0,
 		y: 0,
 	})
+	const [prevHash, setPrevHash] = useState<number>(
+		anchor.current.offsetHeight * anchor.current.offsetLeft,
+	)
 	const padding = 10
 
 	type Offsets = {
@@ -123,6 +126,7 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 
 		if (
 			offsets &&
+			anchor.current &&
 			tooltipRef &&
 			tooltipRef.current &&
 			positionerRef &&
@@ -132,8 +136,10 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 				mousePosition.x + 5 < offsets.left ||
 				mousePosition.x - 5 > offsets.right ||
 				mousePosition.y + 5 < offsets.top ||
-				mousePosition.y - 5 > offsets.bottom
+				mousePosition.y - 5 > offsets.bottom ||
+				prevHash !== anchor.current.offsetHeight * anchor.current.offsetLeft
 			) {
+				setPrevHash(anchor.current.offsetHeight * anchor.current.offsetLeft)
 				positionerRef.current.style.top = `${offsets.above}px`
 				positionerRef.current.style.left = `${offsets.middle}px`
 				tooltipRef.current.style.top = '-9999px'
