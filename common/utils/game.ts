@@ -1,5 +1,7 @@
-import {CARDS} from '../cards'
-import {Card} from '../cards/types'
+import type {Card} from '../cards/types'
+
+let CARDS: Record<any, Card>
+import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 export function getFormattedName(cardId: string, opponent: boolean) {
 	const cardInfo = CARDS[cardId]

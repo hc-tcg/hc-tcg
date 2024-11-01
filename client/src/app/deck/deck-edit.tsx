@@ -418,7 +418,9 @@ function EditDeck({
 		})
 		back()
 	}
-	const validationResult = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(
+		loadedDeck.cards.map((card) => card.props),
+	)
 
 	return (
 		<>
@@ -615,7 +617,8 @@ function EditDeck({
 								<div
 									className={classNames(css.cardCount, css.dark, css.tokens)}
 								>
-									{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+									{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+									{CONFIG.limits.maxDeckCost}{' '}
 									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>

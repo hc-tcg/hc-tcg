@@ -351,7 +351,9 @@ function SelectDeck({
 	)
 
 	const currentDeck = loadedDeck
-	const validationResult = validateDeck(currentDeck.cards)
+	const validationResult = validateDeck(
+		currentDeck.cards.map((card) => card.props),
+	)
 
 	const selectedCards = {
 		hermits: currentDeck.cards.filter(
@@ -476,7 +478,8 @@ function SelectDeck({
 								</p>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
-										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
@@ -526,7 +529,8 @@ function SelectDeck({
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									</div>
 									<div className={classNames(css.mobileDeckStat, css.tokens)}>
-										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}
 									</div>
 								</div>
 							</div>

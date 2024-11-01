@@ -20,7 +20,7 @@ function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
 	const handleJoinQueue = () => {
-		const validation = validateDeck(playerDeck.cards)
+		const validation = validateDeck(playerDeck.cards.map((card) => card.props))
 
 		if (validation.valid) {
 			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
