@@ -8,5 +8,5 @@ export const STARTER_DECKS = [
 ].map((deck) => getDeckFromHash(deck).map((card) => card.props))
 
 export function getStarterPack(): Array<Card> {
-	return STARTER_DECKS[Math.random() * STARTER_DECKS.length]
+	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)]
 }
