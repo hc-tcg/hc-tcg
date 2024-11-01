@@ -14,10 +14,8 @@ import {GameModel} from '../models/game-model'
 import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
-import {LocalCardInstance} from '../types/server-requests'
 import {VirtualAI} from '../types/virtual-ai'
 import {fisherYatesShuffle} from './fisher-yates'
-import {getDeckFromHash} from './import-export'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -176,16 +174,6 @@ export function getGameState(
 	}
 
 	return gameState
-}
-
-export const STARTER_DECKS = [
-	'VVXCrsOww7DCscKxHBzCrkNDQ0NDQ0NDRETCucK5wrlDQ0MHBxgYHwzCixJ3TQ0EKwbClQM=',
-	'a2trdHTCtsOuwqDCoMKnPj4+Pj4+PT09PT09PcK5wrnCuU1NwpAsGBh3GRESDMKPKnl3Kw==',
-	'BwcNDQ0OGhoaKjExMTExMTExMTExMTExMjIySUlkZGRmZsKAwoDChsKGwobClcKXwpc=',
-].map((deck) => getDeckFromHash(deck))
-
-export function getStarterPack(): Array<LocalCardInstance> {
-	return fisherYatesShuffle(STARTER_DECKS)[0]
 }
 
 export function getIconPath(deck: Deck): string {
