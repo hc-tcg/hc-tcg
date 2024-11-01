@@ -18,7 +18,6 @@ import {LocalCardInstance} from '../types/server-requests'
 import {VirtualAI} from '../types/virtual-ai'
 import {fisherYatesShuffle} from './fisher-yates'
 import {getDeckFromHash} from './import-export'
-import {getDeckCost} from './ranks'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
