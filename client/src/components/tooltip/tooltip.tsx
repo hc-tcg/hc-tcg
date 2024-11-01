@@ -12,7 +12,7 @@ type Props = {
 
 type CurrentTooltipProps = {
 	tooltip: React.ReactNode
-	showAboveModal?: boolean
+	anchor: React.RefObject<HTMLDivElement>
 }
 
 const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
@@ -21,16 +21,11 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 
 	function toggleShow(newShow: boolean) {
 		if (newShow && childRef.current) {
-			childRef.current.id = 'currentTooltipChild'
 			dispatch({
 				type: localMessages.SHOW_TOOLTIP,
 				tooltip: tooltipDiv,
+				ref: childRef,
 			})
-		} else if (childRef.current) {
-			childRef.current.id = ''
-			// dispatch({
-			// 	type: localMessages.HIDE_TOOLTIP,
-			// })
 		}
 	}
 
@@ -62,31 +57,28 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	return childrenContainer
 })
 
-export const CurrentTooltip = (props: CurrentTooltipProps) => {
-	const child = document.getElementById('currentTooltipChild')
-	const tooltipRef = useRef<HTMLDivElement>(null)
-	const positioner = useRef<HTMLDivElement>(null)
+export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
+	if (!tooltip) return
+	const [tooltipRef] = useState<React.RefObject<HTMLDivElement>>(
+		useRef<HTMLDivElement>(null),
+	)
+	const [positionerRef] = useState<React.RefObject<HTMLDivElement>>(
+		useRef<HTMLDivElement>(null),
+	)
+	const [mousePosition, setMousePosition] = useState<{x: number; y: number}>({
+		x: 0,
+		y: 0,
+	})
 	const padding = 10
 
-	const childRect = child ? child.getBoundingClientRect() : null
-
-	const initialTop = childRect ? childRect.top : -9999
-	const initialBottom = childRect ? childRect.bottom : 0
-	const initialLeft = childRect ? childRect.left : -9999
-	const initialRight = childRect ? childRect.right : 0
-	const childWidth = childRect ? childRect.width : 0
-
-	const [childPosition, setChildPosition] = useState({
-		left: -9999,
-		top: -9999,
-		right: 0,
-		bottom: 0,
-	})
-	const [bottom, setBottom] = useState<number>(initialBottom)
-
 	type Offsets = {
+		above: number
+		below: number
+		middle: number
 		top: number
+		bottom: number
 		left: number
+		right: number
 		showBelow: boolean
 	}
 
@@ -95,68 +87,95 @@ export const CurrentTooltip = (props: CurrentTooltipProps) => {
 			!tooltipRef ||
 			!tooltipRef.current ||
 			!tooltipRef.current.children[0] ||
-			!positioner ||
-			!positioner.current
+			!anchor.current ||
+			!positionerRef ||
+			!positionerRef.current
 		) {
 			return null
 		}
-		const rect = tooltipRef.current.children[0].getBoundingClientRect()
-		const height = rect.height
-		const width = rect.width - childWidth
-		const showBelow = positioner.current.getBoundingClientRect().top < 50
+		const child = anchor.current?.getBoundingClientRect()
+		const box = tooltipRef.current.children[0].getBoundingClientRect()
+		const positioner = positionerRef.current?.getBoundingClientRect()
+		const height = box.height
+		const width = box.width - child.width
+		const showBelow = positioner.top < 50
 		return {
-			top: -1 * height - padding,
-			left: (-1 * width) / 2,
-			showBelow: showBelow,
+			above: child.top - height - padding,
+			below: child.bottom + padding,
+			middle: Math.min(
+				Math.max(child.left - width / 2, padding),
+				window.innerWidth - box.width - padding,
+			),
+			top: child.top,
+			left: child.left,
+			bottom: child.bottom,
+			right: child.right,
+			showBelow,
+		}
+	}
+
+	const onMouseMoveWithPosition = (e: MouseEvent) => {
+		setMousePosition({x: e.x, y: e.y})
+		onMouseMove()
+	}
+	const onMouseMove = () => {
+		const offsets = getOffsets()
+
+		if (
+			offsets &&
+			tooltipRef &&
+			tooltipRef.current &&
+			positionerRef &&
+			positionerRef.current
+		) {
+			if (
+				mousePosition.x + 5 < offsets.left ||
+				mousePosition.x - 5 > offsets.right ||
+				mousePosition.y + 5 < offsets.top ||
+				mousePosition.y - 5 > offsets.bottom
+			) {
+				positionerRef.current.style.top = `${offsets.above}px`
+				positionerRef.current.style.left = `${offsets.middle}px`
+				tooltipRef.current.style.top = '-9999px'
+				tooltipRef.current.style.left = '-9999px'
+				return
+			}
+
+			positionerRef.current.style.top = `${offsets.above}px`
+			positionerRef.current.style.left = `${offsets.middle}px`
+			tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+			tooltipRef.current.style.left = `${offsets.middle}px`
 		}
 	}
 
 	useLayoutEffect(() => {
-		const onMouseMove = () => {
-			if (positioner) {
-				setChildPosition({
-					left: initialLeft,
-					top: initialTop,
-					bottom: initialBottom,
-					right: initialRight,
-				})
-				setBottom(initialBottom)
-			}
-		}
 		window.addEventListener('scroll', onMouseMove, true)
-		window.addEventListener('mousemove', onMouseMove)
+		window.addEventListener('mousemove', onMouseMoveWithPosition)
 		return () => {
 			window.removeEventListener('scroll', onMouseMove)
-			window.removeEventListener('mousemove', onMouseMove)
+			window.removeEventListener('mousemove', onMouseMoveWithPosition)
 		}
 	})
-
-	const offsets = getOffsets()
 
 	return (
 		<div className={css.bigBox}>
 			<div
-				ref={positioner}
 				className={css.tooltipBox}
 				style={{
-					top: offsets ? childPosition.top + offsets.top : -1000,
-					left: offsets ? childPosition.left + offsets.left : -1000,
+					top: -9999,
+					left: -9999,
 				}}
+				ref={positionerRef}
 			></div>
 			<div
 				className={css.tooltipBox}
 				style={{
-					top: offsets
-						? offsets.showBelow
-							? bottom + padding
-							: childPosition.top + offsets.top
-						: -1000,
-					left: offsets ? childPosition.left + offsets.left : -1000,
-					zIndex: 130,
+					top: -9999,
+					left: -9999,
 				}}
 				ref={tooltipRef}
 			>
-				{props.tooltip}
+				{tooltip}
 			</div>
 		</div>
 	)

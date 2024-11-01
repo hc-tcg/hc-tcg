@@ -91,7 +91,6 @@ export const localMessages = messages({
 	IMPORT_DECK: null,
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
-	HIDE_TOOLTIP: null,
 })
 
 type Messages = [
@@ -231,8 +230,11 @@ type Messages = [
 		newActiveDeck?: string
 	},
 	{type: typeof localMessages.NEW_PLAYER},
-	{type: typeof localMessages.SHOW_TOOLTIP; tooltip: React.ReactElement},
-	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.SHOW_TOOLTIP
+		tooltip: React.ReactElement
+		ref: React.RefObject<HTMLDivElement>
+	},
 ]
 
 /** A message used locally on the client to update global state */

@@ -18,7 +18,10 @@ type SessionState = {
 		| 'session_expired'
 		| 'timeout'
 		| string
-	tooltip: React.ReactElement | null
+	tooltip: {
+		tooltp: React.ReactElement
+		ref: React.RefObject<HTMLDivElement>
+	} | null
 	toast: ToastT
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
@@ -104,12 +107,7 @@ const loginReducer = (
 		case localMessages.SHOW_TOOLTIP:
 			return {
 				...state,
-				tooltip: action.tooltip,
-			}
-		case localMessages.HIDE_TOOLTIP:
-			return {
-				...state,
-				tooltip: null,
+				tooltip: {tooltp: action.tooltip, ref: action.ref},
 			}
 		case localMessages.MINECRAFT_NAME_NEW:
 		case localMessages.MINECRAFT_NAME_SET:
