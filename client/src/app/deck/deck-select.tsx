@@ -529,7 +529,8 @@ function SelectDeck({
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									</div>
 									<div className={classNames(css.mobileDeckStat, css.tokens)}>
-										{getDeckCost(loadedDeck.cards.map(card => card.props))}/{CONFIG.limits.maxDeckCost}
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}
 									</div>
 								</div>
 							</div>
