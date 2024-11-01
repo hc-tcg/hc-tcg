@@ -49,8 +49,8 @@ import {
 } from '../../utils'
 
 // Circular imports must be included last
-import FireCharge from 'common/cards/single-use/fire-charge'
-import Piston from 'common/cards/single-use/piston'
+// import FireCharge from 'common/cards/single-use/fire-charge'
+// import Piston from 'common/cards/single-use/piston'
 
 describe('Test Slimeball', () => {
 	test('Slimeball can be placed on and removed from both players', () => {

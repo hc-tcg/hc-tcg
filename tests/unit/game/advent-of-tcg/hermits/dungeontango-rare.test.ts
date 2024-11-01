@@ -17,7 +17,7 @@ import {
 } from '../../utils'
 
 // Circular imports must be included last
-import Piston from 'common/cards/single-use/piston'
+// import Piston from 'common/cards/single-use/piston'
 
 describe('Test DM Tango Lackey', () => {
 	test('Lackey functionality', () => {
