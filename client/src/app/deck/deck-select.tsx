@@ -478,7 +478,8 @@ function SelectDeck({
 								</p>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
-										{getDeckCost(loadedDeck.cards)}/{CONFIG.limits.maxDeckCost}{' '}
+										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+										{CONFIG.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
