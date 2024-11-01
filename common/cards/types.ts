@@ -49,7 +49,7 @@ export type Card = {
 
 export type Item = Card & {
 	item: null
-	type: TypeT
+	type: TypeT[]
 	description?: string
 	energy: Array<TypeT>
 }
@@ -94,7 +94,7 @@ export function hasDescription(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: [TypeT] | null
+	type: TypeT[] | null
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	getAttack(

@@ -15,7 +15,7 @@ const InventorItem: Item = {
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: convenience,
+	type: [convenience],
 	energy: [convenience],
 }
 

@@ -152,7 +152,7 @@ const getStrengthsAndWeaknesses = (
 const getName = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isItem(card)) {
 		return (
-			<div className={classNames(css.name, css[card.type])}>{card.name}</div>
+			<div className={classNames(css.name, css[card.type[0]])}>{card.name}</div>
 		)
 	}
 	return <div className={css.name}>{card.name}</div>

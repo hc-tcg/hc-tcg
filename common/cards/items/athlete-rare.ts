@@ -16,7 +16,7 @@ const AthleteDoubleItem: Item = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: convenience,
+	type: [convenience],
 	energy: [convenience, convenience],
 }
 

@@ -1,6 +1,11 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
+const convenience = 'anarchist'
+function capitalize(s: string) {
+	return s[0].toUpperCase() + s.slice(1)
+}
+
 const BuilderDoubleItem: Item = {
 	...item,
 	id: 'item_builder_rare',
@@ -11,7 +16,7 @@ const BuilderDoubleItem: Item = {
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'builder',
+	type: ['builder'],
 	energy: ['builder', 'builder'],
 }
 

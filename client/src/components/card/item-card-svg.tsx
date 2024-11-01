@@ -17,7 +17,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<rect
 				className={classnames(css.cardBackground, {
-					[css[card.type]]: true,
+					[css[card.type[0]]]: true,
 				})}
 				x="10"
 				y="10"
@@ -35,7 +35,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 					width="390"
 				/>
 				<image
-					className={classnames(css.icon, css[card.type])}
+					className={classnames(css.icon, css[card.type[0]])}
 					href={image}
 					width="220"
 					height="220"

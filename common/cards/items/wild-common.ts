@@ -12,7 +12,7 @@ const WildItem: Item = {
 	expansion: 'alter_egos',
 	rarity: 'common',
 	tokens: 'wild',
-	type: 'any',
+	type: ['any'],
 	energy: ['any'],
 }
 
