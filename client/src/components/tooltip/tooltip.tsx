@@ -72,6 +72,7 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 	const [prevHash, setPrevHash] = useState<number>(
 		anchor.current.offsetHeight * anchor.current.offsetLeft,
 	)
+	const [activeTime, setActiveTime] = useState<number>(0)
 	const padding = 10
 
 	type Offsets = {
@@ -119,39 +120,76 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 
 	const onMouseMoveWithPosition = (e: MouseEvent) => {
 		setMousePosition({x: e.x, y: e.y})
-		onMouseMove()
+		const offsets = getOffsets()
+		setActiveTime(activeTime + 1)
+
+		if (
+			!offsets ||
+			!anchor.current ||
+			!tooltipRef ||
+			!tooltipRef.current ||
+			!positionerRef ||
+			!positionerRef.current
+		)
+			return
+
+		if (
+			mousePosition.x + 15 < offsets.left ||
+			mousePosition.x - 15 > offsets.right ||
+			mousePosition.y + 15 < offsets.top ||
+			mousePosition.y - 15 > offsets.bottom ||
+			prevHash !== anchor.current.offsetHeight * anchor.current.offsetLeft
+		) {
+			setPrevHash(anchor.current.offsetHeight * anchor.current.offsetLeft)
+			setActiveTime(0)
+			positionerRef.current.style.top = `${offsets.above}px`
+			positionerRef.current.style.left = `${offsets.middle}px`
+			tooltipRef.current.style.top = '-9999px'
+			tooltipRef.current.style.left = '-9999px'
+			return
+		}
+
+		if (activeTime < 3) {
+			positionerRef.current.style.top = `${offsets.above}px`
+			positionerRef.current.style.left = `${offsets.middle}px`
+			return
+		}
+
+		positionerRef.current.style.top = `${offsets.above}px`
+		positionerRef.current.style.left = `${offsets.middle}px`
+		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+		tooltipRef.current.style.left = `${offsets.middle}px`
 	}
 	const onMouseMove = () => {
 		const offsets = getOffsets()
 
 		if (
-			offsets &&
-			anchor.current &&
-			tooltipRef &&
-			tooltipRef.current &&
-			positionerRef &&
-			positionerRef.current
-		) {
-			if (
-				mousePosition.x + 5 < offsets.left ||
-				mousePosition.x - 5 > offsets.right ||
-				mousePosition.y + 5 < offsets.top ||
-				mousePosition.y - 5 > offsets.bottom ||
-				prevHash !== anchor.current.offsetHeight * anchor.current.offsetLeft
-			) {
-				setPrevHash(anchor.current.offsetHeight * anchor.current.offsetLeft)
-				positionerRef.current.style.top = `${offsets.above}px`
-				positionerRef.current.style.left = `${offsets.middle}px`
-				tooltipRef.current.style.top = '-9999px'
-				tooltipRef.current.style.left = '-9999px'
-				return
-			}
+			!offsets ||
+			!anchor.current ||
+			!tooltipRef ||
+			!tooltipRef.current ||
+			!positionerRef ||
+			!positionerRef.current
+		)
+			return
 
+		if (
+			mousePosition.x + 5 < offsets.left ||
+			mousePosition.x - 5 > offsets.right ||
+			mousePosition.y + 5 < offsets.top ||
+			mousePosition.y - 5 > offsets.bottom
+		) {
 			positionerRef.current.style.top = `${offsets.above}px`
 			positionerRef.current.style.left = `${offsets.middle}px`
-			tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-			tooltipRef.current.style.left = `${offsets.middle}px`
+			tooltipRef.current.style.top = '-9999px'
+			tooltipRef.current.style.left = '-9999px'
+			return
 		}
+
+		positionerRef.current.style.top = `${offsets.above}px`
+		positionerRef.current.style.left = `${offsets.middle}px`
+		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+		tooltipRef.current.style.left = `${offsets.middle}px`
 	}
 
 	useLayoutEffect(() => {
@@ -164,7 +202,7 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 	})
 
 	return (
-		<div className={css.bigBox}>
+		<div className={css.tooltipContainer}>
 			<div
 				className={css.tooltipBox}
 				style={{
