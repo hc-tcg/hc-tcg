@@ -232,8 +232,10 @@ type Messages = [
 	{type: typeof localMessages.NEW_PLAYER},
 	{
 		type: typeof localMessages.SHOW_TOOLTIP
-		tooltip: React.ReactElement
-		ref: React.RefObject<HTMLDivElement>
+		anchor: React.RefObject<HTMLDivElement>
+		tooltip: React.ReactNode
+		tooltipHeight: number
+		tooltipWidth: number
 	},
 ]
 

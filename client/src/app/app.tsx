@@ -87,7 +87,12 @@ function App() {
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
 			{tooltip && (
-				<CurrentTooltip tooltip={tooltip.tooltp} anchor={tooltip.ref} />
+				<CurrentTooltip
+					tooltip={tooltip.tooltip}
+					anchor={tooltip.anchor}
+					tooltipHeight={tooltip.tooltipHeight}
+					tooltipWidth={tooltip.tooltipWidth}
+				/>
 			)}
 			{enableToast && (
 				<Toast

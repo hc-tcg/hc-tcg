@@ -12,19 +12,27 @@ type Props = {
 
 type CurrentTooltipProps = {
 	tooltip: React.ReactNode
+	tooltipHeight: number
+	tooltipWidth: number
 	anchor: React.RefObject<HTMLDivElement>
 }
 
 const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const dispatch = useDispatch()
 	const childRef = useRef<HTMLDivElement>(null)
+	const tooltipRef = useRef<HTMLDivElement>(null)
+	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
+		null,
+	)
 
 	function toggleShow(newShow: boolean) {
-		if (newShow && childRef.current) {
+		if (newShow && childRef.current && tooltipSize) {
 			dispatch({
 				type: localMessages.SHOW_TOOLTIP,
 				tooltip: tooltipDiv,
-				ref: childRef,
+				anchor: childRef,
+				tooltipHeight: tooltipSize.h,
+				tooltipWidth: tooltipSize.w,
 			})
 		}
 	}
@@ -32,9 +40,7 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const tooltipDiv = (
 		<div
 			className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
-			style={{
-				visibility: 'visible',
-			}}
+			ref={tooltipRef}
 		>
 			{tooltip}
 		</div>
@@ -54,25 +60,35 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 		</div>
 	)
 
+	if (tooltipSize === null) {
+		if (tooltipRef && tooltipRef.current) {
+			const box = tooltipRef.current.getBoundingClientRect()
+			setTooltipSize({h: box.height, w: box.width})
+		}
+		return (
+			<div>
+				{tooltipDiv}
+				{childrenContainer}
+			</div>
+		)
+	}
+
 	return childrenContainer
 })
 
-export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
-	if (!tooltip || !anchor.current) return
+export const CurrentTooltip = ({
+	tooltip,
+	anchor,
+	tooltipHeight,
+	tooltipWidth,
+}: CurrentTooltipProps) => {
 	const [tooltipRef] = useState<React.RefObject<HTMLDivElement>>(
-		useRef<HTMLDivElement>(null),
-	)
-	const [positionerRef] = useState<React.RefObject<HTMLDivElement>>(
 		useRef<HTMLDivElement>(null),
 	)
 	const [mousePosition, setMousePosition] = useState<{x: number; y: number}>({
 		x: 0,
 		y: 0,
 	})
-	const [prevHash, setPrevHash] = useState<number>(
-		anchor.current.offsetHeight * anchor.current.offsetLeft,
-	)
-	const [activeTime, setActiveTime] = useState<number>(0)
 	const padding = 10
 
 	type Offsets = {
@@ -87,28 +103,19 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 	}
 
 	const getOffsets = (): Offsets | null => {
-		if (
-			!tooltipRef ||
-			!tooltipRef.current ||
-			!tooltipRef.current.children[0] ||
-			!anchor.current ||
-			!positionerRef ||
-			!positionerRef.current
-		) {
+		if (!anchor.current) {
 			return null
 		}
 		const child = anchor.current?.getBoundingClientRect()
-		const box = tooltipRef.current.children[0].getBoundingClientRect()
-		const positioner = positionerRef.current?.getBoundingClientRect()
-		const height = box.height
-		const width = box.width - child.width
-		const showBelow = positioner.top < 50
+		const height = tooltipHeight
+		const width = tooltipWidth - child.width
+		const showBelow = child.top - tooltipHeight - padding < 50
 		return {
 			above: child.top - height - padding,
 			below: child.bottom + padding,
 			middle: Math.min(
 				Math.max(child.left - width / 2, padding),
-				window.innerWidth - box.width - padding,
+				window.innerWidth - tooltipWidth - padding,
 			),
 			top: child.top,
 			left: child.left,
@@ -121,56 +128,12 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 	const onMouseMoveWithPosition = (e: MouseEvent) => {
 		setMousePosition({x: e.x, y: e.y})
 		const offsets = getOffsets()
-		setActiveTime(activeTime + 1)
-
-		if (
-			!offsets ||
-			!anchor.current ||
-			!tooltipRef ||
-			!tooltipRef.current ||
-			!positionerRef ||
-			!positionerRef.current
-		)
-			return
-
-		if (
-			mousePosition.x + 15 < offsets.left ||
-			mousePosition.x - 15 > offsets.right ||
-			mousePosition.y + 15 < offsets.top ||
-			mousePosition.y - 15 > offsets.bottom ||
-			prevHash !== anchor.current.offsetHeight * anchor.current.offsetLeft
-		) {
-			setPrevHash(anchor.current.offsetHeight * anchor.current.offsetLeft)
-			setActiveTime(0)
-			positionerRef.current.style.top = `${offsets.above}px`
-			positionerRef.current.style.left = `${offsets.middle}px`
-			tooltipRef.current.style.top = '-9999px'
-			tooltipRef.current.style.left = '-9999px'
-			return
-		}
-
-		if (activeTime < 3) {
-			positionerRef.current.style.top = `${offsets.above}px`
-			positionerRef.current.style.left = `${offsets.middle}px`
-			return
-		}
-
-		positionerRef.current.style.top = `${offsets.above}px`
-		positionerRef.current.style.left = `${offsets.middle}px`
-		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-		tooltipRef.current.style.left = `${offsets.middle}px`
+		onMouseMove(offsets)
 	}
-	const onMouseMove = () => {
-		const offsets = getOffsets()
+	const onMouseMove = (offsets: Offsets | null) => {
+		if (!offsets) offsets = getOffsets()
 
-		if (
-			!offsets ||
-			!anchor.current ||
-			!tooltipRef ||
-			!tooltipRef.current ||
-			!positionerRef ||
-			!positionerRef.current
-		)
+		if (!offsets || !anchor.current || !tooltipRef || !tooltipRef.current)
 			return
 
 		if (
@@ -179,38 +142,26 @@ export const CurrentTooltip = ({tooltip, anchor}: CurrentTooltipProps) => {
 			mousePosition.y + 5 < offsets.top ||
 			mousePosition.y - 5 > offsets.bottom
 		) {
-			positionerRef.current.style.top = `${offsets.above}px`
-			positionerRef.current.style.left = `${offsets.middle}px`
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
 			return
 		}
 
-		positionerRef.current.style.top = `${offsets.above}px`
-		positionerRef.current.style.left = `${offsets.middle}px`
 		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
 		tooltipRef.current.style.left = `${offsets.middle}px`
 	}
 
 	useLayoutEffect(() => {
-		window.addEventListener('scroll', onMouseMove, true)
+		window.addEventListener('scroll', () => onMouseMove(null), true)
 		window.addEventListener('mousemove', onMouseMoveWithPosition)
 		return () => {
-			window.removeEventListener('scroll', onMouseMove)
+			window.removeEventListener('scroll', () => onMouseMove(null))
 			window.removeEventListener('mousemove', onMouseMoveWithPosition)
 		}
 	})
 
 	return (
 		<div className={css.tooltipContainer}>
-			<div
-				className={css.tooltipBox}
-				style={{
-					top: -9999,
-					left: -9999,
-				}}
-				ref={positionerRef}
-			></div>
 			<div
 				className={css.tooltipBox}
 				style={{

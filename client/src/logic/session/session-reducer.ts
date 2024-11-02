@@ -19,8 +19,10 @@ type SessionState = {
 		| 'timeout'
 		| string
 	tooltip: {
-		tooltp: React.ReactElement
-		ref: React.RefObject<HTMLDivElement>
+		anchor: React.RefObject<HTMLDivElement>
+		tooltip: React.ReactNode
+		tooltipHeight: number
+		tooltipWidth: number
 	} | null
 	toast: ToastT
 	updates: Record<string, Array<string>>
@@ -107,7 +109,12 @@ const loginReducer = (
 		case localMessages.SHOW_TOOLTIP:
 			return {
 				...state,
-				tooltip: {tooltp: action.tooltip, ref: action.ref},
+				tooltip: {
+					tooltip: action.tooltip,
+					anchor: action.anchor,
+					tooltipHeight: action.tooltipHeight,
+					tooltipWidth: action.tooltipWidth,
+				},
 			}
 		case localMessages.MINECRAFT_NAME_NEW:
 		case localMessages.MINECRAFT_NAME_SET:
