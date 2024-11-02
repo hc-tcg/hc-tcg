@@ -224,9 +224,11 @@ const EvilXisumaBoss: Hermit = {
 			)
 			.forEach((card) => destroyCard(game, card))
 
-		// Let EX use secondary attack in case opponent blocks primary
+		// Let EX use secondary attack in case opponent blocks primary or uses Mining Fatigue
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
-			return availableEnergy.length ? availableEnergy : ['balanced', 'balanced']
+			return availableEnergy.length
+				? availableEnergy
+				: ['balanced', 'balanced', 'balanced']
 		})
 
 		observer.subscribeWithPriority(

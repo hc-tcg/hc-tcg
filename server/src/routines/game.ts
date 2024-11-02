@@ -18,7 +18,7 @@ import {
 	PickSlotActionData,
 	attackToAttackAction,
 } from 'common/types/turn-action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
+import {getModifiedCost, hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
 import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
@@ -161,7 +161,7 @@ function getAvailableActions(
 				if (
 					hasEnoughEnergy(
 						availableEnergy,
-						hermitCard.props.primary.cost,
+						getModifiedCost(hermitCard, 'primary'),
 						game.settings.noItemRequirements,
 					)
 				) {
@@ -170,7 +170,7 @@ function getAvailableActions(
 				if (
 					hasEnoughEnergy(
 						availableEnergy,
-						hermitCard.props.secondary.cost,
+						getModifiedCost(hermitCard, 'secondary'),
 						game.settings.noItemRequirements,
 					)
 				) {

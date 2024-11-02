@@ -12,7 +12,7 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 	onApply(game, effect, player, observer) {
 		observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {
 			// Unliimited powwa
-			return ['any', 'any', 'any']
+			return ['any', 'any', 'any', 'any']
 		})
 
 		observer.subscribeWithPriority(
