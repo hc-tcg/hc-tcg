@@ -6,6 +6,7 @@ import Dropper from './dropper'
 import FletchingTable from './fletching-table'
 import Glowstone from './glowstone'
 import Lantern from './lantern'
+import PowderSnowBucket from './powder-snow-bucket'
 import SplashPotionOfHarming from './splash-potion-of-harming'
 import WindBurst from './wind-burst'
 
@@ -18,6 +19,7 @@ const singleUseCardClasses: Array<Card> = [
 	Brush,
 	Glowstone,
 	Lantern,
+	PowderSnowBucket,
 	SplashPotionOfHarming,
 	WindBurst,
 ]

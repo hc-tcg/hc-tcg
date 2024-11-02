@@ -130,6 +130,10 @@ function getAvailableActions(
 		query.card.currentPlayer,
 		query.card.slot(query.slot.hermit),
 		query.card.slot(query.not(query.slot.active)),
+		(_game, value) =>
+			currentPlayer.hooks.beforeActiveRowChange
+				.call(currentPlayer.getActiveHermit(), value)
+				.every(Boolean),
 	)
 
 	// Actions that require us to have an active row

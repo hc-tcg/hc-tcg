@@ -12,6 +12,7 @@ import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
+import FrozenEffect from './frozen'
 import {
 	GasLightEffect,
 	GasLightPotentialEffect,
@@ -105,6 +106,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SpentFortuneEffect,
 	PoisonQuiverEffect,
 	SculkCatalystTriggeredEffect,
+	FrozenEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
