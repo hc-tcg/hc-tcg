@@ -1,7 +1,7 @@
 import Button from 'components/button'
+import {Modal} from 'components/modal'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {useSelector} from 'react-redux'
-import {Modal} from 'components/modal'
 import css from './import-export.module.scss'
 
 type Props = {
