@@ -1,6 +1,13 @@
 import classNames from 'classnames'
 import {localMessages} from 'logic/messages'
-import React, {memo, useLayoutEffect, useRef, useState} from 'react'
+import React, {
+	memo,
+	useEffect,
+	useLayoutEffect,
+	useReducer,
+	useRef,
+	useState,
+} from 'react'
 import {useDispatch} from 'react-redux'
 import css from './tooltip.module.scss'
 
@@ -24,6 +31,18 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
 		null,
 	)
+	const [, forceUpdate] = useReducer((x) => x + 1, 0)
+
+	useEffect(() => {
+		if (!tooltipSize) forceUpdate()
+	}, [tooltipRef])
+
+	if (tooltipRef && tooltipRef.current && tooltipSize === null) {
+		setTooltipSize({
+			h: tooltipRef.current.offsetHeight,
+			w: tooltipRef.current.offsetWidth,
+		})
+	}
 
 	function toggleShow(newShow: boolean) {
 		if (newShow && childRef.current && tooltipSize) {
@@ -41,6 +60,9 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 		<div
 			className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
 			ref={tooltipRef}
+			style={{
+				visibility: tooltipSize ? 'visible' : 'hidden',
+			}}
 		>
 			{tooltip}
 		</div>
@@ -60,11 +82,7 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 		</div>
 	)
 
-	if (tooltipSize === null) {
-		if (tooltipRef && tooltipRef.current) {
-			const box = tooltipRef.current.getBoundingClientRect()
-			setTooltipSize({h: box.height, w: box.width})
-		}
+	if (tooltipSize === null || tooltipRef === null) {
 		return (
 			<div>
 				{tooltipDiv}
@@ -82,6 +100,8 @@ export const CurrentTooltip = ({
 	tooltipHeight,
 	tooltipWidth,
 }: CurrentTooltipProps) => {
+	const dispatch = useDispatch()
+
 	const [tooltipRef] = useState<React.RefObject<HTMLDivElement>>(
 		useRef<HTMLDivElement>(null),
 	)
@@ -89,6 +109,14 @@ export const CurrentTooltip = ({
 		x: 0,
 		y: 0,
 	})
+	const [inactiveTime, setInactiveTime] = useState<number>(0)
+
+	if (!anchor.current || inactiveTime > 2) {
+		dispatch({
+			type: localMessages.HIDE_TOOLTIP,
+		})
+	}
+
 	const padding = 10
 
 	type Offsets = {
@@ -144,9 +172,11 @@ export const CurrentTooltip = ({
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
+			setInactiveTime(inactiveTime + 1)
 			return
 		}
 
+		setInactiveTime(0)
 		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
 		tooltipRef.current.style.left = `${offsets.middle}px`
 	}

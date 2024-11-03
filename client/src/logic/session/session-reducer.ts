@@ -116,6 +116,11 @@ const loginReducer = (
 					tooltipWidth: action.tooltipWidth,
 				},
 			}
+		case localMessages.HIDE_TOOLTIP:
+			return {
+				...state,
+				tooltip: null,
+			}
 		case localMessages.MINECRAFT_NAME_NEW:
 		case localMessages.MINECRAFT_NAME_SET:
 			return {
