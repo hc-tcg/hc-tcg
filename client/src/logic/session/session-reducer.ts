@@ -24,7 +24,7 @@ type SessionState = {
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
-	toast: ToastT | null
+	toast: Array<{id: number; toast: ToastT}>
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
 }
@@ -45,7 +45,7 @@ const defaultState: SessionState = {
 	connecting: false,
 	connected: false,
 	tooltip: null,
-	toast: null,
+	toast: [],
 	updates: {},
 	newPlayer: false,
 }
@@ -94,14 +94,16 @@ const loginReducer = (
 				playerDeck: {...action.deck, code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
+			state.toast.push({id: state.toast.length + 1, toast: action})
 			return {
 				...state,
-				toast: action,
+				toast: state.toast,
 			}
 		case localMessages.TOAST_CLOSE:
+			if (action.id < state.toast.length) return state
 			return {
 				...state,
-				toast: null,
+				toast: [],
 			}
 		case localMessages.SHOW_TOOLTIP:
 			return {

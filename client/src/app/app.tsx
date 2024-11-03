@@ -24,6 +24,7 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import {ToastContainer} from 'components/toast/toast'
 
 function App() {
 	const section = useRouter()
@@ -94,12 +95,19 @@ function App() {
 					tooltipWidth={tooltip.tooltipWidth}
 				/>
 			)}
-			{enableToast && toastMessage && (
-				<Toast
-					title={toastMessage.title}
-					description={toastMessage.description}
-					image={toastMessage.image}
-				/>
+			{enableToast && (
+				<ToastContainer>
+					{toastMessage.map((toast) => {
+						return (
+							<Toast
+								title={toast.toast.title}
+								description={toast.toast.description}
+								image={toast.toast.image}
+								id={toast.id}
+							/>
+						)
+					})}
+				</ToastContainer>
 			)}
 		</main>
 	)

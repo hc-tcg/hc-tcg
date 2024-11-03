@@ -6,9 +6,14 @@ type Props = {
 	title: string
 	description: string
 	image?: string
+	id: number
 }
 
-const ToastMessage = ({title, description, image}: Props) => {
+type ContainerProps = {
+	children: Array<React.ReactElement>
+}
+
+const ToastMessage = ({title, description, image, id}: Props) => {
 	const dispatch = useMessageDispatch()
 	const maxLength = 19 // 1 unit = 200ms
 	const toastRef = useRef<HTMLDivElement>(null)
@@ -18,7 +23,7 @@ const ToastMessage = ({title, description, image}: Props) => {
 
 	const slideOut: Keyframe[] = [
 		{
-			transform: 'translateX(calc(100% + 5px))',
+			transform: 'translateX(calc(100% + 10px))',
 		},
 	]
 
@@ -28,7 +33,11 @@ const ToastMessage = ({title, description, image}: Props) => {
 		if (!toastRef || !toastRef.current) return
 		if (!dragging) {
 			const toastBoundingBox = toastRef.current.getBoundingClientRect()
-			if (e.pageX < toastBoundingBox.left || e.pageY > toastBoundingBox.bottom)
+			if (
+				e.pageX < toastBoundingBox.left ||
+				e.pageY < toastBoundingBox.top ||
+				e.pageY > toastBoundingBox.bottom
+			)
 				return
 		}
 		setDragging(true)
@@ -57,7 +66,7 @@ const ToastMessage = ({title, description, image}: Props) => {
 			}
 		}
 		if (aliveTime === maxLength + 1) {
-			dispatch({type: localMessages.TOAST_CLOSE})
+			dispatch({type: localMessages.TOAST_CLOSE, id: id})
 		}
 
 		const interval = setInterval(() => {
@@ -85,20 +94,22 @@ const ToastMessage = ({title, description, image}: Props) => {
 	}, [aliveTime, totalMovement])
 
 	return (
-		<div className={css.toastContainer}>
-			<div
-				className={css.toast}
-				ref={toastRef}
-				onDoubleClick={() => setAliveTime(maxLength)}
-			>
-				{image && <img src={image} alt="icon" />}
-				<div className={css.content}>
-					<div className={css.title}>{title}</div>
-					<div className={css.description}>{description}</div>
-				</div>
+		<div
+			className={css.toast}
+			ref={toastRef}
+			onDoubleClick={() => setAliveTime(maxLength)}
+		>
+			{image && <img src={image} alt="icon" />}
+			<div className={css.content}>
+				<div className={css.title}>{title}</div>
+				<div className={css.description}>{description}</div>
 			</div>
 		</div>
 	)
+}
+
+export const ToastContainer = ({children}: ContainerProps) => {
+	return <div className={css.toastContainer}>{...children}</div>
 }
 
 export default ToastMessage
