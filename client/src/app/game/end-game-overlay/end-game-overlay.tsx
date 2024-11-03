@@ -73,7 +73,7 @@ const EndGameOverlay = ({
 		// 2 Ways to return to the main menu, either press the button, or press ESC
 		<Modal
 			setOpen={!!outcome}
-			onClose={closeModal}
+			onClose={onClose || (() => {})}
 			overlayClassName={cn(css.overlay, winCondition && css.win)}
 			disableCloseOnOverlayClick
 		>

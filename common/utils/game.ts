@@ -1,4 +1,14 @@
 import type {Card} from '../cards/types'
+import {
+	CardComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
+import query from '../components/query'
+import {ObserverEntity} from '../entities'
+import {GameModel} from '../models/game-model'
+import {isCounter} from '../status-effects/status-effect'
+import {Hook, PriorityHook} from '../types/hooks'
 
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))

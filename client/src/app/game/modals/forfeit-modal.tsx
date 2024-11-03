@@ -1,5 +1,7 @@
 import {ConfirmModal} from 'components/modal'
+import {getPlayerEntity} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {useSelector} from 'react-redux'
 
 type Props = {
 	closeModal: () => void
