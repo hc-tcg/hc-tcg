@@ -123,9 +123,7 @@ function SelectDeck({
 		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
-	const [showDuplicateDeckConfirmModal, setShowDuplicateDeckConfirmModal] =
-		useState<boolean>(false)
-	const [showDuplicateDeckAlertModal, setShowDuplicateDeckAlertModal] =
+	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
 		useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
@@ -422,20 +420,14 @@ function SelectDeck({
 				onCancel={() => setShowDeleteDeckModal(false)}
 				onConfirm={() => deleteDeck(loadedDeck)}
 			/>
-			<ConfirmModal // Duplicate Deck Confirm Modal
-				setOpen={showDuplicateDeckConfirmModal}
+			<ConfirmModal // Duplicate Deck Modal
+				setOpen={showDuplicateDeckModal}
 				title="Duplicate Deck"
 				description={`Are you sure you want to duplicate the "${loadedDeck.name}" deck?`}
 				confirmButtonText="Duplicate"
 				confirmButtonVariant="primary"
-				onCancel={() => setShowDuplicateDeckConfirmModal(false)}
+				onCancel={() => setShowDuplicateDeckModal(false)}
 				onConfirm={() => duplicateDeck(currentDeck)}
-			/>
-			<AlertModal // Duplicate Deck Alert Modal
-				setOpen={showDuplicateDeckAlertModal}
-				title="Duplicate Deck Failure"
-				description={`You have too many duplicates of the "${loadedDeck.name}" deck.`}
-				onClose={() => setShowDuplicateDeckAlertModal(false)}
 			/>
 			<ConfirmModal // Overwrite Deck Modal
 				setOpen={showOverwriteModal}
@@ -574,11 +566,7 @@ function SelectDeck({
 								<Button
 									variant="primary"
 									size="small"
-									onClick={() =>
-										canDuplicateDeck()
-											? setShowDuplicateDeckConfirmModal(true)
-											: setShowDuplicateDeckAlertModal(true)
-									}
+									onClick={() => setShowDuplicateDeckModal(true)}
 									leftSlot={CopyIcon()}
 								>
 									<span>Copy</span>
@@ -652,11 +640,7 @@ function SelectDeck({
 						<Button
 							variant="primary"
 							size="small"
-							onClick={() =>
-								canDuplicateDeck()
-									? setShowDuplicateDeckConfirmModal(true)
-									: setShowDuplicateDeckAlertModal(true)
-							}
+							onClick={() => setShowDuplicateDeckModal(true)}
 							leftSlot={CopyIcon()}
 						>
 							<span>Copy Deck</span>
