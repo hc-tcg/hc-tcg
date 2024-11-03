@@ -1,5 +1,5 @@
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useLayoutEffect, useRef, useState} from 'react'
 import css from './toast.module.scss'
 
 type Props = {
@@ -15,7 +15,6 @@ const ToastMessage = ({title, description, image}: Props) => {
 	const [aliveTime, setAliveTime] = useState<number>(0)
 	const [totalMovement, setTotalMovement] = useState<number>(0)
 	const [dragging, setDragging] = useState<boolean>(false)
-	const [closeOnLift, setCloseOnLift] = useState<boolean>(false)
 
 	const slideOut: Keyframe[] = [
 		{
@@ -23,19 +22,9 @@ const ToastMessage = ({title, description, image}: Props) => {
 		},
 	]
 
-	if (aliveTime === 0) {
-		dispatch({
-			type: localMessages.SOUND_PLAY,
-			path: 'sfx/Toast_In.ogg',
-		})
-	}
-
 	const testForSlide = (e: MouseEvent) => {
-		if (!e.buttons) {
-			if (dragging && closeOnLift) setAliveTime(maxLength)
-			setDragging(false)
-			return
-		}
+		if (!e.buttons && dragging) mouseUp()
+		if (!e.buttons) return
 		if (!toastRef || !toastRef.current) return
 		if (!dragging) {
 			const toastBoundingBox = toastRef.current.getBoundingClientRect()
@@ -44,13 +33,15 @@ const ToastMessage = ({title, description, image}: Props) => {
 		}
 		setDragging(true)
 		setAliveTime(1)
-		setTotalMovement(totalMovement + e.movementX)
+		if (e.movementX) setTotalMovement(totalMovement + e.movementX)
 		toastRef.current.style.transform = `translateX(${Math.max(totalMovement + e.movementX, 0)}px)`
-		if (totalMovement + e.movementX > 1) {
-			setCloseOnLift(true)
-		} else {
-			setCloseOnLift(false)
-		}
+	}
+
+	const mouseUp = () => {
+		console.log('iteration')
+		if (dragging && totalMovement > 0) setAliveTime(maxLength)
+		setDragging(false)
+		return
 	}
 
 	useEffect(() => {
@@ -70,13 +61,27 @@ const ToastMessage = ({title, description, image}: Props) => {
 			dispatch({type: localMessages.TOAST_CLOSE})
 		}
 
-		const interval = setInterval(() => setAliveTime(aliveTime + 1), 200)
-		window.addEventListener('mousemove', testForSlide)
-		window.addEventListener('mouseup', testForSlide)
+		const interval = setInterval(() => {
+			if (aliveTime === 0) {
+				dispatch({
+					type: localMessages.SOUND_PLAY,
+					path: 'sfx/Toast_In.ogg',
+				})
+			}
+			setAliveTime(aliveTime + 1)
+		}, 200)
 		return () => {
 			clearInterval(interval)
+		}
+	}, [aliveTime, totalMovement])
+
+	useLayoutEffect(() => {
+		window.addEventListener('mousemove', testForSlide)
+		window.addEventListener('mouseup', mouseUp)
+
+		return () => {
 			window.removeEventListener('mousemove', testForSlide)
-			window.addEventListener('mouseup', testForSlide)
+			window.removeEventListener('mouseup', mouseUp)
 		}
 	}, [aliveTime, totalMovement])
 
