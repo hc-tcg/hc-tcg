@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/experimental-ct-react'
 import {ConfirmModal} from 'client/components/modal/modal'
+import {AlertModal} from 'client/components/modal/modal'
 
 test('Confirm Modal', async ({mount}) => {
 	const component = await mount(
@@ -16,12 +17,11 @@ test('Confirm Modal', async ({mount}) => {
 
 test('Altert Modal', async ({mount}) => {
 	const component = await mount(
-		<ConfirmModal
+		<AlertModal
 			setOpen
 			title="Alert Modal Test"
 			description="This is a test of the alert modal visuals."
-			onCancel={() => {}}
-			onConfirm={() => {}}
+			onClose={() => {}}
 		/>,
 	)
 	await expect(component).toHaveScreenshot()
