@@ -38,7 +38,6 @@ const ToastMessage = ({title, description, image}: Props) => {
 	}
 
 	const mouseUp = () => {
-		console.log('iteration')
 		if (dragging && totalMovement > 0) setAliveTime(maxLength)
 		setDragging(false)
 		return
