@@ -97,13 +97,16 @@ function Settings({setMenuSection}: Props) {
 
 	return (
 		<>
-			{updatesOpen ? (
+			{updatesOpen && (
 				<UpdatesModal
-					updatesOpen={updatesOpen}
-					setUpdatesOpen={setUpdatesOpen}
+					onClose={() => {
+						setUpdatesOpen(!updatesOpen)
+						localStorage.setItem(
+							'latestUpdateView',
+							(new Date().valueOf() / 1000).toFixed(),
+						)
+					}}
 				/>
-			) : (
-				<></>
 			)}
 			<MenuLayout
 				back={() => changeMenuSection('mainmenu')}

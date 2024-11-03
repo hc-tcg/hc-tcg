@@ -7,13 +7,13 @@ import {getDeckCost} from 'common/utils/ranks'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
-import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {ConfirmModal} from 'components/modal'
 import {
 	CopyIcon,
 	DeleteIcon,
@@ -385,60 +385,58 @@ function SelectDeck({
 		<>
 			<ImportModal
 				setOpen={showImportModal}
-				onClose={() => setShowImportModal(!showImportModal)}
+				onClose={() => setShowImportModal(false)}
 				importDeck={(deck) => handleImportDeck(deck)}
 				handleMassImport={handleMassImportDecks}
 			/>
 			<ExportModal
 				setOpen={showExportModal}
-				onClose={() => setShowExportModal(!showExportModal)}
+				onClose={() => setShowExportModal(false)}
 				loadedDeck={loadedDeck}
 			/>
 			<MassExportModal
 				setOpen={showMassExportModal}
-				onClose={() => setShowMassExportModal(!showMassExportModal)}
+				onClose={() => setShowMassExportModal(false)}
 			/>
 			<TagsModal
 				setOpen={showManageTagsModal}
-				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
+				onClose={() => setShowManageTagsModal(false)}
 			/>
-			<AlertModal
+
+			<ConfirmModal // Invalid Deck Modal
 				setOpen={showValidateDeckModal}
-				onClose={() => setShowValidateDeckModal(!showValidateDeckModal)}
-				action={handleInvalidDeck}
 				title="Invalid Deck"
 				description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
                 matches. If you continue, your last valid deck will be used instead.`}
-				actionText="Main Menu"
+				confirmButtonText="Main Menu"
+				onCancel={() => setShowValidateDeckModal(false)}
+				onConfirm={handleInvalidDeck}
 			/>
-			<AlertModal
+			<ConfirmModal // Delete Deck Modal
 				setOpen={showDeleteDeckModal}
-				onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
-				action={() => deleteDeck(loadedDeck)}
 				title="Delete Deck"
-				description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
-				actionText="Delete"
+				description={`Are you sure you want to delete the "${loadedDeck.name}" deck?`}
+				confirmButtonText="Delete Deck"
+				onCancel={() => setShowDeleteDeckModal(false)}
+				onConfirm={() => deleteDeck(loadedDeck)}
 			/>
-			<AlertModal
+			<ConfirmModal // Duplicate Deck Modal
 				setOpen={showDuplicateDeckModal}
-				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
-				action={() => {
-					duplicateDeck(currentDeck)
-				}}
 				title="Duplicate Deck"
 				description={`Are you sure you want to duplicate the "${loadedDeck.name}" deck?`}
-				actionText={'Duplicate'}
-				actionType="primary"
+				confirmButtonText="Duplicate"
+				confirmButtonVariant="primary"
+				onCancel={() => setShowDuplicateDeckModal(false)}
+				onConfirm={() => duplicateDeck(currentDeck)}
 			/>
-			<AlertModal
+			<ConfirmModal // Overwrite Deck Modal
 				setOpen={showOverwriteModal}
-				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={() => saveDeck(importedDeck)}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				actionText="Overwrite"
+				confirmButtonText="Overwrite"
+				onCancel={() => setShowOverwriteModal(false)}
+				onConfirm={() => saveDeck(importedDeck)}
 			/>
-
 			<DeckLayout
 				title="Deck Selection"
 				back={backToMenu}

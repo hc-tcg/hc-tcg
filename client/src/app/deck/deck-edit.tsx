@@ -11,12 +11,12 @@ import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
-import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
+import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -424,21 +424,21 @@ function EditDeck({
 
 	return (
 		<>
-			<AlertModal
+			<ConfirmModal
 				setOpen={showOverwriteModal}
-				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={overwrite}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				actionText="Overwrite"
+				confirmButtonText="Overwrite"
+				onCancel={() => setShowOverwriteModal(!showOverwriteModal)}
+				onConfirm={overwrite}
 			/>
-			<AlertModal
+			<ConfirmModal
 				setOpen={showUnsavedModal}
-				onClose={() => setShowUnsavedModal(!showUnsavedModal)}
-				action={back}
 				title="Leave Editor"
 				description="Changes you have made will not be saved. Are you sure you want to leave?"
-				actionText="Discard"
+				confirmButtonText="Discard"
+				onCancel={() => setShowUnsavedModal(!showUnsavedModal)}
+				onConfirm={back}
 			/>
 			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main

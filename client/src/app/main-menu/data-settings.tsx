@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
-import Modal from 'components/modal/modal'
+import {Modal} from 'components/modal'
 import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -34,7 +34,7 @@ function DataSettings({setMenuSection}: Props) {
 		const handleYes = () => {
 			reset()
 			setModal(
-				<Modal title={whenDonePrompt} closeModal={closeModal} centered>
+				<Modal setOpen title={whenDonePrompt} onClose={closeModal}>
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
@@ -53,7 +53,7 @@ function DataSettings({setMenuSection}: Props) {
 
 		return () => {
 			setModal(
-				<Modal title={title} closeModal={closeModal} centered>
+				<Modal setOpen title={title} onClose={closeModal}>
 					<p className={css.resetModalDescription}>{prompt}</p>
 					<div className={css.resetModal}>
 						<Button
@@ -85,11 +85,7 @@ function DataSettings({setMenuSection}: Props) {
 	) => {
 		return () => {
 			setModal(
-				<Modal
-					title={'Sync with another device'}
-					closeModal={closeModal}
-					centered
-				>
+				<Modal setOpen title={'Sync with another device'} onClose={closeModal}>
 					<div className={css.resetModalDescription}>
 						<p>
 							Sync your devices by entering the UUID and secret of the other
@@ -213,7 +209,7 @@ function DataSettings({setMenuSection}: Props) {
 						size="small"
 						onClick={() =>
 							setModal(
-								<Modal title={'User Secret'} closeModal={closeModal} centered>
+								<Modal setOpen title={'User Secret'} onClose={closeModal}>
 									<p className={css.warning}>
 										<b>⚠ DO NOT share your secret with anyone.</b>
 									</p>
