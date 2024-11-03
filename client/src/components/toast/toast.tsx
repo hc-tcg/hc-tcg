@@ -23,6 +23,13 @@ const ToastMessage = ({title, description, image}: Props) => {
 		},
 	]
 
+	if (aliveTime === 0) {
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: 'sfx/Toast_In.ogg',
+		})
+	}
+
 	const testForSlide = (e: MouseEvent) => {
 		if (!e.buttons) {
 			if (dragging && closeOnLift) setAliveTime(maxLength)
@@ -63,15 +70,7 @@ const ToastMessage = ({title, description, image}: Props) => {
 			dispatch({type: localMessages.TOAST_CLOSE})
 		}
 
-		const interval = setInterval(() => {
-			if (aliveTime === 0) {
-				dispatch({
-					type: localMessages.SOUND_PLAY,
-					path: 'sfx/Toast_In.ogg',
-				})
-			}
-			setAliveTime(aliveTime + 1)
-		}, 200)
+		const interval = setInterval(() => setAliveTime(aliveTime + 1), 200)
 		window.addEventListener('mousemove', testForSlide)
 		window.addEventListener('mouseup', testForSlide)
 		return () => {
