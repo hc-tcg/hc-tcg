@@ -1,5 +1,4 @@
-import {PlayerDeckT} from 'common/types/deck'
-import {getHashFromDeck} from 'common/utils/import-export'
+import {Deck} from 'common/types/deck'
 import {Modal} from 'components/modal'
 import {CopyIcon} from 'components/svgs'
 import css from './import-export.module.scss'
@@ -7,15 +6,10 @@ import css from './import-export.module.scss'
 type Props = {
 	setOpen: boolean
 	onClose: () => void
-	loadedDeck: PlayerDeckT
+	loadedDeck: Deck
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
-	// EXPORT DECK FUNCTION
-	const handleExportDeck = () => {
-		return getHashFromDeck(loadedDeck.cards)
-	}
-
 	return (
 		<Modal title="Export Deck" setOpen={setOpen} onClose={onClose}>
 			<Modal.Description>
@@ -23,11 +17,11 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 					Export the "{loadedDeck.name}" deck to share with your friends!
 				</p>
 				<div className={css.exportControls}>
-					<input type="text" readOnly value={handleExportDeck()} />
+					<input type="text" readOnly value={loadedDeck.code} />
 					<button
 						className={css.copy}
 						onClick={() => {
-							navigator.clipboard.writeText(handleExportDeck())
+							navigator.clipboard.writeText(loadedDeck.code)
 						}}
 					>
 						{CopyIcon()}

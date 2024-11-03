@@ -1,11 +1,14 @@
 import classNames from 'classnames'
 import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/types'
+import debugConfig from 'common/config/debug-config'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
-import {PlayerDeckT, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
+import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import Button from 'components/button'
@@ -15,15 +18,9 @@ import Dropdown from 'components/dropdown'
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {
-	deleteDeck,
-	getCreatedTags,
-	getSavedDeckNames,
-	keysToTags,
-	saveTag,
-} from 'logic/saved-decks/saved-decks'
 import {useDeferredValue, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -76,7 +73,7 @@ const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
 }))
 
 type DeckNameT = {
-	loadedDeck: PlayerDeckT
+	loadedDeck: Deck
 	setDeckName: (name: string) => void
 	isValid: (valid: boolean) => void
 }
@@ -131,28 +128,23 @@ const addTag = (
 	setColor(color)
 }
 
-const selectTag = (
-	option: string,
-	setColor: React.Dispatch<React.SetStateAction<string>>,
-	setKey: React.Dispatch<React.SetStateAction<string>>,
-	ref: React.RefObject<HTMLInputElement>,
+const addCreatedTag = (
+	deckTags: Array<Tag>,
+	setTags: React.Dispatch<React.SetStateAction<Tag[]>>,
+	newTag: Tag,
 ) => {
-	const tags = getCreatedTags()
-	const selectedTag = tags.find((tag) => {
-		const parsedTag = JSON.parse(option)
-		return tag.name === parsedTag.name && tag.color === parsedTag.color
-	})
-	if (!selectedTag) return
-	setColor(selectedTag.color)
-	setKey(selectedTag.key)
-	if (ref.current) ref.current.value = selectedTag.name
+	if (deckTags.includes(newTag)) return
+	if (deckTags.length >= 3) return
+	setTags([...deckTags, newTag])
 }
 
 type Props = {
 	back: () => void
 	title: string
-	saveDeck: (loadedDeck: PlayerDeckT, initialDeck?: PlayerDeckT) => void
-	deck: PlayerDeckT
+	saveDeck: (loadedDeck: Deck) => void
+	deleteDeck: (initialDeck: Deck) => void
+	databaseInfo: DatabaseInfo
+	deck: Deck | null
 }
 
 const TYPE_ORDER = {
@@ -222,7 +214,14 @@ const ALL_CARDS = sortCards(
 	),
 )
 
-function EditDeck({back, title, saveDeck, deck}: Props) {
+function EditDeck({
+	back,
+	title,
+	saveDeck,
+	deleteDeck,
+	deck,
+	databaseInfo,
+}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 
@@ -231,19 +230,28 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
 	const [expansionQuery, setExpansionQuery] = useState<string>('')
-	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>(deck)
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(
+		deck
+			? deck
+			: {
+					name: '',
+					iconType: 'item',
+					icon: 'any',
+					cards: [],
+					code: generateDatabaseCode(),
+					tags: [],
+				},
+	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
-	const [nextKey, setNextKey] = useState<string>(Math.random().toString())
-	const [tags, setTags] = useState<Array<Tag>>(
-		loadedDeck.tags ? keysToTags(loadedDeck.tags) : [],
-	)
+	const [nextKey, setNextKey] = useState<string>(generateDatabaseCode())
+	const [tags, setTags] = useState<Array<Tag>>(loadedDeck.tags)
 	const tagNameRef = useRef<HTMLInputElement>(null)
 
-	const tagsDropdownOptions = getCreatedTags().map((option) => ({
+	const tagsDropdownOptions = databaseInfo.tags.map((option) => ({
 		name: option.name,
 		key: JSON.stringify(option),
 		color: option.color,
@@ -349,11 +357,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const handleDeckIcon = (option: any) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
+			iconType: 'item',
 			icon: option,
 		}))
 	}
 	const handleBack = () => {
-		if (initialDeckState == loadedDeck) {
+		if (initialDeckState && initialDeckState == loadedDeck) {
 			back()
 		} else {
 			setShowUnsavedModal(true)
@@ -362,49 +371,56 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
 
-		// if the nae has been changed, delete the old one
-		if (initialDeckState.name !== newDeck.name) {
-			deleteDeck(initialDeckState.name)
+		// Delete the old version of the deck
+		if (initialDeckState) {
+			deleteDeck(initialDeckState)
 		}
 
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
 
-		// Check to see if deck name already exists in Local Storage.
+		// Set up tags
+		newDeck.tags = tags
+
+		// New code
+		newDeck.code = generateDatabaseCode()
+
+		// Check to see if there's already a dake with that name.
 		if (
-			getSavedDeckNames().find((name) => name === newDeck.name) &&
+			databaseInfo.decks.find((deck) => deck.name === newDeck.name) &&
+			initialDeckState &&
 			initialDeckState.name !== newDeck.name
 		) {
 			return setShowOverwriteModal(true)
 		}
 
-		// Set up tags
-		newDeck.tags = tags.map((tag) => tag.key)
-
-		// Save tags
-		tags.forEach((tag) => {
-			saveTag(tag)
-		})
-
 		// Send toast and return to select deck screen
-		saveAndReturn(newDeck, initialDeckState)
+		saveAndReturn(newDeck)
 	}
 	const overwrite = () => {
 		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
-	const saveAndReturn = (deck: PlayerDeckT, initialDeck?: PlayerDeckT) => {
-		saveDeck(deck, initialDeck)
+	const saveAndReturn = (deck: Deck) => {
+		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
+			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			return [...r, tag]
+		}, [])
+
+		databaseInfo.tags.push(...newTags)
+		saveDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,
 			open: true,
 			title: 'Deck Saved!',
 			description: `Saved ${deck.name}`,
-			image: `/images/types/type-${deck.icon}.png`,
+			image: getIconPath(deck),
 		})
 		back()
 	}
-	const validationResult = validateDeck(loadedDeck.cards)
+	const validationResult = validateDeck(
+		loadedDeck.cards.map((card) => card.props),
+	)
 
 	return (
 		<>
@@ -641,9 +657,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 													css[loadedDeck.icon],
 												)}
 											>
-												<img
-													src={`/images/types/type-${loadedDeck.icon}.png`}
-												/>
+												<img src={getIconPath(loadedDeck)} />
 											</button>
 										}
 										label="Deck Icon"
@@ -675,7 +689,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									className={css.deckTagsForm}
 									onSubmit={(e) => {
 										addTag(tags, setTags, color, nextKey, setColor, e)
-										setNextKey(Math.random().toString())
+										setNextKey(generateDatabaseCode())
 									}}
 								>
 									<Dropdown
@@ -686,9 +700,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										}
 										label="Saved Tags"
 										options={tagsDropdownOptions}
-										action={(option) =>
-											selectTag(option, setColor, setNextKey, tagNameRef)
-										}
+										action={(option) => {
+											const parsedTag = JSON.parse(option) as Tag
+											addCreatedTag(tags, setTags, parsedTag)
+										}}
 									/>
 									<ColorPickerDropdown
 										button={
@@ -714,6 +729,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										size="small"
 										type="submit"
 										className={css.submitButton}
+										disabled={debugConfig.disableDatabase}
 									>
 										+
 									</Button>

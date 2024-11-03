@@ -1,11 +1,15 @@
+import {CARDS_LIST} from 'common/cards'
+import {GameModel} from 'common/models/game-model'
+import {PlayerModel} from 'common/models/player-model'
+import {Database, setupDatabase} from 'db/db'
+import dotenv from 'dotenv'
 import {Hook} from '../../common/types/hooks'
-import {GameModel} from './game-model'
-import {PlayerModel} from './player-model'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
 	public games: Record<string, GameModel> = {}
 	public queue: Array<string> = []
+	public db?: Database
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
 		string,
@@ -27,6 +31,12 @@ export class RootModel {
 		privateCancelled: new Hook<string, (code: string) => void>(),
 	}
 	public updates: Record<string, Array<string>> = {}
+
+	public constructor() {
+		const env = dotenv.config()
+		this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
+		this.db.new()
+	}
 
 	public createPrivateGame(playerId: string | null) {
 		const gameCode = (Math.random() + 1).toString(16).substring(2, 8)

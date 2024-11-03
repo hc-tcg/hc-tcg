@@ -1,14 +1,15 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
+import React from 'react'
 
 type SessionState = {
 	playerName: string
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: PlayerDeckT
+	playerDeck: Deck
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -17,8 +18,15 @@ type SessionState = {
 		| 'session_expired'
 		| 'timeout'
 		| string
+	tooltip: {
+		anchor: React.RefObject<HTMLDivElement>
+		tooltip: React.ReactNode
+		tooltipHeight: number
+		tooltipWidth: number
+	} | null
 	toast: ToastT
 	updates: Record<string, Array<string>>
+	newPlayer: boolean //If the account was created this session
 }
 
 const defaultState: SessionState = {
@@ -26,11 +34,20 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: [], tags: []},
+	playerDeck: {
+		name: '',
+		iconType: 'item',
+		icon: 'any',
+		code: '',
+		cards: [],
+		tags: [],
+	},
 	connecting: false,
 	connected: false,
+	tooltip: null,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
+	newPlayer: false,
 }
 
 const loginReducer = (
@@ -56,21 +73,25 @@ const loginReducer = (
 		case localMessages.PLAYER_SESSION_SET:
 			return {
 				...state,
-				connecting: false,
-				connected: true,
 				errorType: undefined,
 				...action.player,
+			}
+		case localMessages.CONNECTED:
+			return {
+				...state,
+				connecting: false,
+				connected: true,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
 				...action.updates,
 			}
-		case localMessages.DECK_NEW:
-		case localMessages.DECK_SET:
+		case localMessages.INSERT_DECK:
+		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: action.deck,
+				playerDeck: {...action.deck, code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
 			return {
@@ -85,11 +106,31 @@ const loginReducer = (
 					open: false,
 				},
 			}
+		case localMessages.SHOW_TOOLTIP:
+			return {
+				...state,
+				tooltip: {
+					tooltip: action.tooltip,
+					anchor: action.anchor,
+					tooltipHeight: action.tooltipHeight,
+					tooltipWidth: action.tooltipWidth,
+				},
+			}
+		case localMessages.HIDE_TOOLTIP:
+			return {
+				...state,
+				tooltip: null,
+			}
 		case localMessages.MINECRAFT_NAME_NEW:
 		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,
 				minecraftName: action.name,
+			}
+		case localMessages.NEW_PLAYER:
+			return {
+				...state,
+				newPlayer: true,
 			}
 		default:
 			return state

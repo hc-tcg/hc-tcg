@@ -11,6 +11,7 @@ import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
@@ -115,6 +116,8 @@ function setupEcsForPlayer(
 			if (card.slot.inDeck()) card.slot.order = i
 		})
 
+		if (!cards.some((card) => card.isHermit())) return
+
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
@@ -171,4 +174,13 @@ export function getGameState(
 	}
 
 	return gameState
+}
+
+export function getIconPath(deck: Deck): string {
+	switch (deck.iconType) {
+		case 'item':
+			return `/images/types/type-${deck.icon}.png`
+		case 'hermit':
+			return `/images/hermits-emoji/${deck.icon}.png`
+	}
 }

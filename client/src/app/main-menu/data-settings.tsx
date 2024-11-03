@@ -1,15 +1,21 @@
+import classNames from 'classnames'
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
+import {CopyIcon} from 'components/svgs'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {Modal} from 'components/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
 function DataSettings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const [modal, setModal] = useState<any>(null)
 
@@ -23,6 +29,7 @@ function DataSettings({setMenuSection}: Props) {
 		prompt: string,
 		whenDonePrompt: string,
 		reset: () => void,
+		afterReset?: () => void,
 	) => {
 		const handleYes = () => {
 			reset()
@@ -32,7 +39,10 @@ function DataSettings({setMenuSection}: Props) {
 						<Button
 							className={css.resetModalButton}
 							variant="default"
-							onClick={closeModal}
+							onClick={() => {
+								closeModal()
+								if (afterReset) afterReset()
+							}}
 						>
 							Ok
 						</Button>
@@ -48,17 +58,17 @@ function DataSettings({setMenuSection}: Props) {
 					<div className={css.resetModal}>
 						<Button
 							className={css.resetModalButton}
-							variant="default"
+							variant="error"
 							onClick={handleYes}
 						>
-							Yes
+							⚠ Go Ahead
 						</Button>
 						<Button
 							className={css.resetModalButton}
 							variant="default"
 							onClick={() => setModal(null)}
 						>
-							No
+							Nevermind
 						</Button>
 					</div>
 				</Modal>,
@@ -68,6 +78,81 @@ function DataSettings({setMenuSection}: Props) {
 
 	const closeModal = () => {
 		setModal(null)
+	}
+
+	const setUuidSecretModal = (
+		onConfirm: (id: string, secret: string) => void,
+	) => {
+		return () => {
+			setModal(
+				<Modal setOpen title={'Sync with another device'} onClose={closeModal}>
+					<div className={css.resetModalDescription}>
+						<p>
+							Sync your devices by entering the UUID and secret of the other
+							device you want to sync with. This process is irreversible.
+						</p>
+					</div>
+					<form
+						className={css.setUuidSecretForm}
+						onSubmit={() => {
+							const userId = (
+								document.getElementById('userIdElement') as HTMLInputElement
+							).value
+							const secret = (
+								document.getElementById('userSecretElement') as HTMLInputElement
+							).value
+							if (!userId || !secret) return
+							onConfirm(userId, secret)
+						}}
+					>
+						<div className={css.input}>
+							<input
+								name="id"
+								placeholder="UUID"
+								id="userIdElement"
+								className={css.input}
+								maxLength={36}
+								minLength={36}
+								pattern={'^[-0-9a-f]*$'}
+							></input>
+						</div>
+						<div className={css.input}>
+							<input
+								name="secret"
+								placeholder="Secret"
+								id="userSecretElement"
+								className={css.input}
+								maxLength={36}
+								minLength={36}
+								pattern={'^[-0-9a-f]*$'}
+							></input>
+						</div>
+						<p className={css.warning}>
+							<b>
+								⚠ Syncing will remove all your data on this device, including
+								decks.
+							</b>
+						</p>
+						<div className={css.resetModal}>
+							<Button
+								className={css.resetModalButton}
+								variant="default"
+								type="submit"
+							>
+								Confirm
+							</Button>
+							<Button
+								className={css.resetModalButton}
+								variant="default"
+								onClick={() => setModal(null)}
+							>
+								Cancel
+							</Button>
+						</div>
+					</form>
+				</Modal>,
+			)
+		}
 	}
 
 	return (
@@ -102,19 +187,103 @@ function DataSettings({setMenuSection}: Props) {
 				>
 					Reset Chat Window
 				</Button>
+				<div className={css.dbInfo}>
+					<div className={css.dbItem}>UUID</div>
+					<div className={classNames(css.dbItem, css.right)}>
+						{databaseInfo.userId}
+					</div>
+					<button
+						className={css.copy}
+						onClick={() => {
+							if (databaseInfo.userId)
+								navigator.clipboard.writeText(databaseInfo.userId)
+						}}
+					>
+						{CopyIcon()}
+					</button>
+				</div>
+				<div className={css.dbInfo}>
+					<div className={classNames(css.dbItem, css.left)}>Secret</div>
+					<Button
+						variant="default"
+						size="small"
+						onClick={() =>
+							setModal(
+								<Modal setOpen title={'User Secret'} onClose={closeModal}>
+									<p className={css.warning}>
+										<b>⚠ DO NOT share your secret with anyone.</b>
+									</p>
+									<p className={css.warning}>
+										Only view and copy this when you need to sync your account
+										to another device. You do not need to give this data to any
+										external applications.
+									</p>
+									<div className={css.dbInfo}>
+										<div className={classNames(css.dbItem, css.left)}>
+											{databaseInfo.secret}
+										</div>
+										<button
+											className={css.copy}
+											onClick={() => {
+												if (databaseInfo.secret)
+													navigator.clipboard.writeText(databaseInfo.secret)
+											}}
+										>
+											{CopyIcon()}
+										</button>
+									</div>
+									<div className={css.resetModal}>
+										<Button
+											className={css.resetModalButton}
+											variant="default"
+											onClick={closeModal}
+										>
+											Confirm
+										</Button>
+									</div>
+								</Modal>,
+							)
+						}
+					>
+						View Secret
+					</Button>
+				</div>
+				<Button
+					variant="stone"
+					onClick={setUuidSecretModal((id, secret) => {
+						dispatch({
+							type: localMessages.SET_ID_AND_SECRET,
+							userId: id,
+							secret: secret,
+						})
+						setMenuSection('mainmenu')
+						dispatch({
+							type: localMessages.LOGOUT,
+						})
+					})}
+				>
+					Sync Data
+				</Button>
 				<Button
 					variant="stone"
 					onClick={handleReset(
-						'Reset Stats',
-						'Are you sure you want to reset your stats?',
-						'Your stats have been reset.',
-						() =>
+						'Reset User Information',
+						'Are you sure you want to reset your user information? It is possible you could lose your information forever if you do not have the same UUID and secret on another device.',
+						'User information has been reset.',
+						() => {
 							dispatch({
-								type: localMessages.FIREBASE_STATS_RESET,
-							}),
+								type: localMessages.RESET_ID_AND_SECRET,
+							})
+						},
+						() => {
+							setMenuSection('mainmenu')
+							dispatch({
+								type: localMessages.LOGOUT,
+							})
+						},
 					)}
 				>
-					Reset Stats
+					Reset User Information
 				</Button>
 			</div>
 		</MenuLayout>
