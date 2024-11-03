@@ -15,7 +15,7 @@ type ContainerProps = {
 
 const ToastMessage = ({title, description, image, id}: Props) => {
 	const dispatch = useMessageDispatch()
-	const maxLength = 19 // 1 unit = 200ms
+	const maxOpenFor = 19 // 1 unit = 200ms
 	const toastRef = useRef<HTMLDivElement>(null)
 	const [aliveTime, setAliveTime] = useState<number>(0)
 	const [totalMovement, setTotalMovement] = useState<number>(0)
@@ -47,13 +47,13 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 	}
 
 	const mouseUp = () => {
-		if (dragging && totalMovement > 0) setAliveTime(maxLength)
+		if (dragging && totalMovement > 0) setAliveTime(maxOpenFor)
 		setDragging(false)
 		return
 	}
 
 	useEffect(() => {
-		if (aliveTime === maxLength) {
+		if (aliveTime === maxOpenFor) {
 			dispatch({
 				type: localMessages.SOUND_PLAY,
 				path: 'sfx/Toast_Out.ogg',
@@ -65,7 +65,7 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 				})
 			}
 		}
-		if (aliveTime === maxLength + 1) {
+		if (aliveTime === maxOpenFor + 1) {
 			dispatch({type: localMessages.TOAST_CLOSE, id: id})
 		}
 
@@ -97,7 +97,7 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 		<div
 			className={css.toast}
 			ref={toastRef}
-			onDoubleClick={() => setAliveTime(maxLength)}
+			onDoubleClick={() => setAliveTime(maxOpenFor)}
 		>
 			{image && <img src={image} alt="icon" />}
 			<div className={css.content}>
