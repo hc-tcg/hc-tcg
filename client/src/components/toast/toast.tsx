@@ -39,7 +39,7 @@ const ToastMessage = ({title, description, image}: Props) => {
 		setAliveTime(1)
 		setTotalMovement(Math.max(totalMovement + e.movementX, 0))
 		toastRef.current.style.transform = `translateX(${Math.max(totalMovement + e.movementX, 0)}px)`
-		if (totalMovement + e.movementX > 0) {
+		if (totalMovement + e.movementX > 1) {
 			setCloseOnLift(true)
 		} else {
 			setCloseOnLift(false)
