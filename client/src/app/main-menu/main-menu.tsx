@@ -1,4 +1,4 @@
-import {getIconPath} from 'common/utils/state-gen'
+import {getIconPath} from 'common/utils/setup-game'
 import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
 import Button from 'components/button'

@@ -1,10 +1,37 @@
-import {HasHealth, isHermit, isItem} from 'common/cards/types'
-import {LocalCardInstance} from 'common/types/server-requests'
-import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
-import {LocalMessageTable, localMessages} from 'logic/messages'
-import {put, select} from 'typed-redux-saga'
-import {getGameState, getPlayerState} from './game-selectors'
+import JoeHillsRare from 'common/cards/hermits/joehills-rare'
+import {Card} from 'common/cards/types'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from 'common/components'
+import query from 'common/components/query'
+import {PlayerEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from 'common/status-effects/multiturn-attack-disabled'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from 'common/status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
+import {
+	CurrentCoinFlip,
+	LocalCurrentCoinFlip,
+	LocalGameState,
+	LocalPlayerState,
+} from 'common/types/game-state'
+import {ModalData} from 'common/types/modal-requests'
+import {
+	LocalCardInstance,
+	LocalModalData,
+	LocalStatusEffectInstance,
+	WithoutFunctions,
+} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -16,13 +43,16 @@ import {getGameState, getPlayerState} from './game-selectors'
 // Sincerely, Lunarmagpie
 // 10/09/24, Oh man, Im sorry but I think this is becomming even worse. - Luanrmagpie
 
-function getLocalStatusEffect(effect: StatusEffectComponent) {
+function getLocalStatusEffect(
+	effect: StatusEffectComponent,
+): LocalStatusEffectInstance | null {
 	if (!effect.target) {
 		return null
 	}
 	return {
 		props: WithoutFunctions(effect.props),
 		instance: effect.entity,
+		description: effect.description,
 		target:
 			effect.target instanceof CardComponent
 				? {type: 'card', card: effect.target.entity}
@@ -56,8 +86,8 @@ export function getLocalModalData(
 	if (modal.type == 'selectCards') {
 		return {
 			...modal,
-			cards: modal.cards.map((entity) =>
-				getLocalCard(game, game.components.get(entity)!),
+			cards: modal.cards.map((card) =>
+				getLocalCard(game, game.components.get(card)!),
 			),
 		}
 	} else if (modal.type === 'copyAttack') {

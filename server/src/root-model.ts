@@ -1,5 +1,4 @@
 import {CARDS_LIST} from 'common/cards'
-import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {Database, setupDatabase} from 'db/db'
 import dotenv from 'dotenv'

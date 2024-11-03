@@ -107,7 +107,7 @@ const DungeonTangoRare: Hermit = {
 						assert(card.slot.inDeck())
 						return card.slot.order
 					}),
-					Array(deckCards.length).fill(0).map(game.randomNumber)
+					Array(deckCards.length).fill(0).map(game.randomNumber),
 				)
 				deckCards.forEach((card, i) => {
 					assert(card.slot.inDeck())

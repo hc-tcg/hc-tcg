@@ -1,15 +1,4 @@
-import {SingleUse} from 'common/cards/types'
-import {
-	CardComponent,
-	DiscardSlotComponent,
-	HandSlotComponent,
-	PlayerComponent,
-	SlotComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
+import {PlayerComponent} from 'common/components'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
 import {AIOpponentDefs} from 'common/utils/setup-game'
@@ -89,11 +78,11 @@ export function* gameManagerSaga({
 			// Player one is added to the ECS first, Player two is added second
 			const players = game.components.filter(PlayerComponent)
 
-		// Su actions
-		if (su && !suUsed) {
-			actions.push('REMOVE_EFFECT')
-			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
-		}
+			// Su actions
+			if (su && !suUsed) {
+				actions.push('REMOVE_EFFECT')
+				if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
+			}
 
 			viewers.forEach((p, index) => {
 				if (p.type === 'player') {

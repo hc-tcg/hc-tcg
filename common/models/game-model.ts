@@ -11,8 +11,6 @@ import {PlayerEntity, SlotEntity} from '../entities'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	GameEndOutcomeT,
-	GameEndReasonT,
 	GameState,
 	GameVictoryReason,
 	TurnAction,

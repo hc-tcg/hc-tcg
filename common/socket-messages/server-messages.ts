@@ -3,12 +3,7 @@ import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
 import {Deck, Tag} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
+import {LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'

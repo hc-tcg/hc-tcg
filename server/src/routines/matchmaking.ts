@@ -1,12 +1,10 @@
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
-import ExBossAI from 'common/routines/virtual/exboss-ai'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {OpponentDefs} from 'common/utils/state-gen'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
 import {

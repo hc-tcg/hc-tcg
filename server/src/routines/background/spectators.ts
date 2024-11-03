@@ -10,7 +10,7 @@ function* spectatorLeaveSaga(
 ) {
 	let game = yield* select(getGame(action.playerId))
 	if (!game) return
-	game.viewers = game.viewers.filter(id => id.id != action.playerId)
+	game.viewers = game.viewers.filter((id) => id.id != action.playerId)
 }
 
 export default spectatorLeaveSaga
