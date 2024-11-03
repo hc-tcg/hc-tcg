@@ -29,6 +29,7 @@ import {AnyTurnActionData, PickSlotActionData} from '../types/turn-action-data'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
 
+import {SingleUse} from '../cards/types'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {assert} from '../utils/assert'
 import {
@@ -42,7 +43,6 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import { SingleUse } from '../cards/types'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,

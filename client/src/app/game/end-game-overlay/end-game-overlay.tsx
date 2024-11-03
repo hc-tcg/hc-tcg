@@ -1,11 +1,7 @@
 import cn from 'classnames'
 import {PlayerEntity} from 'common/entities'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
-import Button from 'components/button'
 import {Modal} from 'components/modal'
-import {getOpponentName} from 'logic/game/game-selectors'
-import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 
 type Props = {
@@ -74,28 +70,29 @@ const EndGameOverlay = ({
 		<Modal
 			setOpen={!!outcome}
 			onClose={onClose || (() => {})}
-			overlayClassName={cn(css.overlay, winCondition && css.win)}
 			disableCloseOnOverlayClick
 		>
 			<img
 				src={animation}
-				alt={outcome ? outcome : 'end_game_message'}
+				alt={outcome ? outcome.toString() : 'end_game_message'}
 				draggable={false}
 				className={css.animation}
 			/>
 			<Modal.Description
-				className={cn(css.description, winCondition && css.win)}
+				className={cn(css.description, {
+					[css.win]: myOutcome === 'win',
+				})}
 			>
-				{reason && (
+				{outcome !== 'tie' && (
 					<span>
-						{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
+						{viewer.type === 'spectator' && nameOfLoser}
+						{viewer.type === 'player' &&
+							(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
+						{REASON_MSG[outcome.victoryReason]}
 					</span>
 				)}
 
-				{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
-					? outcome && OUTCOME_MSG[outcome]
-					: null}
-				<Button onClick={closeModal}>Return to Main Menu</Button>
+				{OUTCOME_MSG[myOutcome]}
 			</Modal.Description>
 		</Modal>
 	)
