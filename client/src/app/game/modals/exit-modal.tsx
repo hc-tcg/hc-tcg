@@ -1,7 +1,5 @@
-import Button from 'components/button/button'
-import Modal from 'components/modal'
+import {ConfirmModal} from 'components/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
@@ -19,19 +17,14 @@ function ExitModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Exit Game" closeModal={handleNo}>
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Are you sure you want to stop spectating this game?
-				</div>
-				<div className={css.options}>
-					<Button onClick={handleNo}>Cancel</Button>
-					<Button variant="error" onClick={handleYes}>
-						Exit
-					</Button>
-				</div>
-			</div>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Exit Game"
+			description="Are you sure you want to stop spectating this game?"
+			confirmButtonText="Exit"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 

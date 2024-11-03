@@ -3,7 +3,7 @@ const copyIcon = () => (
 		width="14"
 		height="16"
 		viewBox="0 0 14 16"
-		fill="currentColor"
+		fill="#ffffff"
 		xmlns="http://www.w3.org/2000/svg"
 	>
 		<path d="M5 1V10H6V11H13V10H14V1H13V0H6V1H5Z" />

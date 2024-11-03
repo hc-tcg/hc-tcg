@@ -1,6 +1,6 @@
 import {TurnAction} from 'common/types/game-state'
 import Button from 'components/button'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {getAvailableActions} from 'logic/game/game-selectors'
 import {ActionMap} from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -59,8 +59,8 @@ export function EndTurnModalBody({
 	}
 
 	return (
-		<Modal title="End Turn" closeModal={handleCancel || (() => {})}>
-			<div className={css.description}>
+		<Modal setOpen title="End Turn" onClose={handleCancel || (() => {})}>
+			<Modal.Description>
 				<p>
 					Are you sure you want to end your turn? These actions are still
 					available:
@@ -77,15 +77,15 @@ export function EndTurnModalBody({
 						)
 					})}
 				</ul>
-			</div>
-			<div className={css.options}>
+			</Modal.Description>
+			<Modal.Options>
 				<Button variant="default" size="medium" onClick={handleCancel}>
 					Cancel
 				</Button>
 				<Button variant="error" size="medium" onClick={handleEndTurn}>
 					End Turn
 				</Button>
-			</div>
+			</Modal.Options>
 		</Modal>
 	)
 }

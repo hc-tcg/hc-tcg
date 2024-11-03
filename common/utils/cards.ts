@@ -1,7 +1,10 @@
-import {Card} from '../cards/types'
-import {CardEntity} from '../entities'
-import {CardCategoryT} from '../types/cards'
-import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
+import type {Card} from '../cards/types'
+import type {CardEntity} from '../entities'
+import type {CardCategoryT} from '../types/cards'
+import type {
+	LocalCardInstance,
+	WithoutFunctions,
+} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal
@@ -27,7 +30,7 @@ export function isCardInstanceType(
 /**Converts a Card to a local card instance */
 export function toLocalCardInstance(card: Card): LocalCardInstance {
 	return {
-		props: WithoutFunctions(card),
+		props: card as WithoutFunctions<Card>,
 		entity: Math.random().toString() as CardEntity,
 		slot: null,
 		attackHint: null,

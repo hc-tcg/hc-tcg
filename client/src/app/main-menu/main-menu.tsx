@@ -20,7 +20,7 @@ function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
 	const handleJoinQueue = () => {
-		const validation = validateDeck(playerDeck.cards)
+		const validation = validateDeck(playerDeck.cards.map((card) => card.props))
 
 		if (validation.valid) {
 			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
@@ -53,12 +53,8 @@ function MainMenu({setMenuSection}: Props) {
 			{!latestUpdateView ||
 			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
 				parseInt(latestUpdateView) ? (
-				debugOptions.showUpdatesModal && (
-					<UpdatesModal
-						updatesOpen={updatesOpen}
-						setUpdatesOpen={setUpdatesOpen}
-					/>
-				)
+				debugOptions.showUpdatesModal &&
+				updatesOpen && <UpdatesModal onClose={() => setUpdatesOpen(false)} />
 			) : (
 				<></>
 			)}

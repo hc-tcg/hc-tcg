@@ -1,14 +1,10 @@
-import Button from 'components/button/button'
-import Modal from 'components/modal'
-import {getPlayerEntity} from 'logic/game/game-selectors'
+import {ConfirmModal} from 'components/modal'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useSelector} from 'react-redux'
-import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
 }
-function AttackModal({closeModal}: Props) {
+function ForfeitModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 	const player = useSelector(getPlayerEntity)
 
@@ -28,20 +24,15 @@ function AttackModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Forfeit Match" closeModal={handleNo}>
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Are you sure you want to forfeit this game?
-				</div>
-				<div className={css.options}>
-					<Button onClick={handleNo}>Cancel</Button>
-					<Button variant="error" onClick={handleYes}>
-						Forfeit
-					</Button>
-				</div>
-			</div>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Forfeit Match"
+			description="Are you sure you want to forfeit this game?"
+			confirmButtonText="Forfeit"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 
-export default AttackModal
+export default ForfeitModal

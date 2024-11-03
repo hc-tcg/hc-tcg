@@ -1,11 +1,12 @@
+import {getStarterPack} from 'common/cards/starter-decks'
 import debugConfig from 'common/config/debug-config'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
+import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
-import {getStarterPack} from 'common/utils/setup-game'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -110,7 +111,7 @@ function* insertUser(socket: any) {
 				iconType: 'item',
 				icon: 'any',
 				tags: [],
-				cards: getStarterPack(),
+				cards: getStarterPack().map((card) => toLocalCardInstance(card)),
 			}
 
 			yield* sendMsg({

@@ -1,8 +1,9 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
+import {getStarterPack} from '../cards/starter-decks'
 import {PlayerInfo} from '../types/server-requests'
+import {toLocalCardInstance} from '../utils/cards'
 import {censorString} from '../utils/formatting'
-import {getStarterPack} from '../utils/setup-game'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -26,7 +27,7 @@ export class PlayerModel {
 			iconType: 'item',
 			icon: 'any',
 			code: '',
-			cards: getStarterPack(),
+			cards: getStarterPack().map((card) => toLocalCardInstance(card)),
 			tags: [],
 		}
 
