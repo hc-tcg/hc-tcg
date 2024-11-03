@@ -1,5 +1,5 @@
 import {PlayerId} from 'common/models/player-model'
-import {ToastT} from 'common/types/app'
+import {ToastData, ToastT} from 'common/types/app'
 import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
@@ -24,7 +24,7 @@ type SessionState = {
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
-	toast: Array<{id: number; toast: ToastT}>
+	toast: Array<ToastData>
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
 }
@@ -94,13 +94,19 @@ const loginReducer = (
 				playerDeck: {...action.deck, code: action.deck.code},
 			}
 		case localMessages.TOAST_OPEN:
-			state.toast.push({id: state.toast.length + 1, toast: action})
+			state.toast.push({
+				id: state.toast.length + 1,
+				toast: action,
+				closed: false,
+			})
 			return {
 				...state,
 				toast: state.toast,
 			}
 		case localMessages.TOAST_CLOSE:
-			if (action.id < state.toast.length) return state
+			const thisToast = state.toast.find((toast) => toast.id === action.id)
+			if (thisToast) thisToast.closed = true
+			if (state.toast.some((toast) => !toast.closed)) return state
 			return {
 				...state,
 				toast: [],
