@@ -24,7 +24,7 @@ type SessionState = {
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
-	toast: ToastT
+	toast: ToastT | null
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
 }
@@ -45,7 +45,7 @@ const defaultState: SessionState = {
 	connecting: false,
 	connected: false,
 	tooltip: null,
-	toast: {open: false, title: '', description: '', image: ''},
+	toast: null,
 	updates: {},
 	newPlayer: false,
 }
@@ -101,10 +101,7 @@ const loginReducer = (
 		case localMessages.TOAST_CLOSE:
 			return {
 				...state,
-				toast: {
-					...state.toast,
-					open: false,
-				},
+				toast: null,
 			}
 		case localMessages.SHOW_TOOLTIP:
 			return {

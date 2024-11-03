@@ -94,12 +94,11 @@ function App() {
 					tooltipWidth={tooltip.tooltipWidth}
 				/>
 			)}
-			{enableToast && (
+			{enableToast && toastMessage && (
 				<Toast
 					title={toastMessage.title}
 					description={toastMessage.description}
 					image={toastMessage.image}
-					setOpen={toastMessage.open}
 				/>
 			)}
 		</main>
