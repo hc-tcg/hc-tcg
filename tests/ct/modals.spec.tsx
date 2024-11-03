@@ -13,3 +13,16 @@ test('Confirm Modal', async ({mount}) => {
 	)
 	await expect(component).toHaveScreenshot()
 })
+
+test('Altert Modal', async ({mount}) => {
+	const component = await mount(
+		<ConfirmModal
+			setOpen
+			title="Alert Modal Test"
+			description="This is a test of the alert modal visuals."
+			onCancel={() => {}}
+			onConfirm={() => {}}
+		/>,
+	)
+	await expect(component).toHaveScreenshot()
+})
