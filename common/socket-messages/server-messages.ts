@@ -1,10 +1,10 @@
 import {PlayerEntity} from '../entities'
 import {GameProps} from '../models/game-model'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {GameMessage, GameStartupInformation} from '../routines/game'
 import {Stats, User} from '../types/database'
 import {Deck, Tag} from '../types/deck'
-import {LocalGameState} from '../types/game-state'
-import {Message as ChatMessage} from '../types/game-state'
+import {ChatMessage, LocalGameState} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 import {AnyTurnActionData} from '../types/turn-action-data'
 

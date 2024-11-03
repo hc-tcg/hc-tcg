@@ -7,7 +7,6 @@ import {
 	race,
 	take,
 } from 'typed-redux-saga'
-import {SingleUse} from '../cards/base/types'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -43,6 +42,7 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import { SingleUse } from '../cards/types'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,

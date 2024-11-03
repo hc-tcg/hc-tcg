@@ -2,6 +2,7 @@ import {CARDS} from '../cards'
 import {Card} from '../cards/types'
 import {CardComponent} from '../components'
 import {ObserverEntity} from '../entities'
+import {GameModel} from '../models/game-model'
 import {Hook, PriorityHook} from '../types/hooks'
 
 export function getFormattedName(cardId: string, opponent: boolean) {

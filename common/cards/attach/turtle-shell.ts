@@ -10,6 +10,7 @@ import {GameModel} from '../../models/game-model'
 import {GameValue} from '../../models/game-value'
 import LooseShellEffect from '../../status-effects/loose-shell'
 import {beforeAttack, onTurnEnd} from '../../types/priorities'
+import {assert} from '../../utils/assert'
 import {attach} from '../defaults'
 import {Attach} from '../types'
 

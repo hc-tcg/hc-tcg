@@ -39,6 +39,7 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 					return
 
 				const coinFlip = flipCoin(
+					game,
 					player.opponentPlayer,
 					effect.creator,
 					1,

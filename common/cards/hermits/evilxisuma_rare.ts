@@ -10,6 +10,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../types/priorities'
+import { assert } from '../../utils/assert'
 import {flipCoin} from '../../utils/coinFlips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'

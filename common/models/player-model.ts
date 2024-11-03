@@ -2,7 +2,7 @@ import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
-import {getStarterPack} from '../utils/state-gen'
+import {getStarterPack} from '../utils/setup-game'
 
 export type PlayerId = string & {__player_id: never}
 
