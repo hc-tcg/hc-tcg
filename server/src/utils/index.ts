@@ -4,18 +4,10 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {isCounter} from 'common/status-effects/status-effect'
 import {Hook, PriorityHook} from 'common/types/hooks'
-
-export const getOpponentId = (game: GameModel, playerId: string) => {
-	const players = game.components
-		.filter(ViewerComponent, (_game, viewer) => !viewer.spectator)
-		.map((viewer) => viewer.player)
-	return players.filter((p) => p.id !== playerId)[0]?.id || null
-}
 
 export function printHooksState(game: GameModel) {
 	const {currentPlayer, opponentPlayer} = game
