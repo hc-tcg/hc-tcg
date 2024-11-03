@@ -1,6 +1,6 @@
 export {default as AttackModal} from './attack-modal'
 export {default as ChangeHermitModal} from './change-hermit-modal'
-export {default as ConfirmModal} from './confirm-modal'
+export {default as SingleUseConfirmModal} from './single-use-confirm-modal'
 export {default as EndTurnModal} from './end-turn-modal'
 export {default as ForfeitModal} from './forfeit-modal'
 export {default as ExitModal} from './exit-modal'

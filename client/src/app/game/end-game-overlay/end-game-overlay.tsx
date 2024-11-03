@@ -1,7 +1,7 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import cn from 'classnames'
 import {GameEndReasonT, GamePlayerEndOutcomeT} from 'common/types/game-state'
 import Button from 'components/button'
+import {Modal} from 'components/modal'
 import {getOpponentName} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -60,51 +60,35 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 			animation = '/images/animations/draw.gif'
 	}
 
-	function pointerDownHandler(event: any) {
-		event.preventDefault()
-	}
-
 	return (
-		<Dialog.Root open={!!outcome} onOpenChange={closeModal}>
-			<Dialog.Portal container={document.getElementById('modal')}>
-				<Dialog.Overlay
-					className={cn(css.overlay, {
-						[css.win]: winCondition,
-					})}
-				/>
-				<Dialog.Content
-					className={css.content}
-					onPointerDownOutside={pointerDownHandler}
-				>
-					<Dialog.Title className={css.title}>
-						<img
-							src={animation}
-							alt="defeat"
-							draggable={false}
-							className={css.animation}
-						/>
-					</Dialog.Title>
-					<Dialog.Description
-						className={cn(css.description, {
-							[css.win]: winCondition,
-						})}
-					>
-						{reason && (
-							<span>
-								{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
-							</span>
-						)}
+		// 2 Ways to return to the main menu, either press the button, or press ESC
+		<Modal
+			setOpen={!!outcome}
+			onClose={closeModal}
+			overlayClassName={cn(css.overlay, winCondition && css.win)}
+			disableCloseOnOverlayClick
+		>
+			<img
+				src={animation}
+				alt={outcome ? outcome : 'end_game_message'}
+				draggable={false}
+				className={css.animation}
+			/>
+			<Modal.Description
+				className={cn(css.description, winCondition && css.win)}
+			>
+				{reason && (
+					<span>
+						{winCondition ? opponent : 'You'} {REASON_MSG[reason]}
+					</span>
+				)}
 
-						{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
-							? outcome && OUTCOME_MSG[outcome]
-							: null}
-						<Dialog.Close asChild>
-							<Button>Return to Main Menu</Button>
-						</Dialog.Close>
-					</Dialog.Description>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+				{!reason || (outcome && !['you_won', 'you_lost'].includes(outcome))
+					? outcome && OUTCOME_MSG[outcome]
+					: null}
+				<Button onClick={closeModal}>Return to Main Menu</Button>
+			</Modal.Description>
+		</Modal>
 	)
 }
 
