@@ -4,7 +4,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 type Props = {
 	closeModal: () => void
 }
-function AttackModal({closeModal}: Props) {
+function ForfeitModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
@@ -28,4 +28,4 @@ function AttackModal({closeModal}: Props) {
 	)
 }
 
-export default AttackModal
+export default ForfeitModal

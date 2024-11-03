@@ -196,6 +196,7 @@ type ConfirmModalProps = {
 	/** Called when the confirm button is pressed */
 	onConfirm: () => void
 }
+
 /** Simplified Modal component specifically for confirming an action */
 export function ConfirmModal({
 	setOpen,

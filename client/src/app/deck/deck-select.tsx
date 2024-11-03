@@ -13,7 +13,7 @@ import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
-import {AlertModal, ConfirmModal} from 'components/modal'
+import {ConfirmModal} from 'components/modal'
 import {
 	CopyIcon,
 	DeleteIcon,
