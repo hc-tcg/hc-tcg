@@ -136,6 +136,16 @@ export function* gameManagerSaga({
 				}),
 				call(function* () {
 					while (true) {
+						let action = (yield* take(
+							localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
+						)) as LocalMessageTable[typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION]
+
+						if (game.state.order.includes(action.playerEntity)) {
+						}
+					}
+				}),
+				call(function* () {
+					while (true) {
 						let playerRemoved = yield* take<
 							LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
 						>(

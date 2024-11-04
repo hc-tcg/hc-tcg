@@ -20,6 +20,7 @@ export const clientMessages = messages('client', {
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
+	REQUEST_GAME_RECONNECT_INFORMATION: null,
 	/**Postgres */
 	PG_AUTHENTICATE: null,
 	PG_INSERT_USER: null,
@@ -52,6 +53,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
+	{type: typeof clientMessages.REQUEST_GAME_RECONNECT_INFORMATION},
 	{
 		type: typeof clientMessages.PG_AUTHENTICATE
 		userId: string

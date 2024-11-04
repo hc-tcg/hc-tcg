@@ -12,6 +12,7 @@ export const localMessages = messages('server-local', {
 	PLAYER_RECONNECTED: null,
 	PLAYER_REMOVED: null,
 	GAME_TURN_ACTION: null,
+	REQUEST_GAME_RECONNECT_INFORMATION: null,
 })
 
 type Messages = [
@@ -35,6 +36,7 @@ type Messages = [
 		playerEntity: PlayerEntity
 		time: number
 	},
+	{type: typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION; player: PlayerModel},
 ]
 
 export type LocalMessage = Message<Messages>

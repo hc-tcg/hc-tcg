@@ -84,7 +84,13 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GAME_TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
-			console.log(actionMessage.payload.action)
+			return yield* put<LocalMessage>({
+				type: localMessages.GAME_TURN_ACTION,
+				action: actionMessage.payload.action,
+				playerEntity: actionMessage.payload.playerEntity,
+				time: actionMessage.payload.time,
+			})
+		case clientMessages.REQUEST_GAME_RECONNECT_INFORMATION:
 			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
