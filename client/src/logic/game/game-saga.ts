@@ -421,7 +421,7 @@ function* runGamesUntilCompletion(
 			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
 		} else if (result.spectatorLeave) {
-			// @todo
+			yield* cancel()
 			break
 		}
 	}
