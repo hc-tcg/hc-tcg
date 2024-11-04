@@ -123,6 +123,11 @@ export function* gameManagerSaga({
 							localMessages.GAME_TURN_ACTION,
 						)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 
+						assert(
+							action.time > game.lastTurnActionTime,
+							'Server should not recieve actions from the past',
+						)
+
 						if (game.state.order.includes(action.playerEntity)) {
 							yield* put<GameMessage>({
 								type: gameMessages.TURN_ACTION,

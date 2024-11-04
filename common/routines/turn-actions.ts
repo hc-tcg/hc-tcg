@@ -311,7 +311,7 @@ export function* modalRequestSaga(
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
 
-		// @todo
+		// @todo Properly check if this action is blocked
 		// assert(
 		// 	!modal.pick ||
 		// 		!(

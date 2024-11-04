@@ -393,7 +393,12 @@ function* runGamesUntilCompletion(
 	},
 ) {
 	while (true) {
-		yield* fork(runGame, props, playerEntity, reconnectInformation)
+		let gameTask = yield* fork(
+			runGame,
+			props,
+			playerEntity,
+			reconnectInformation,
+		)
 
 		let result = yield* race({
 			gameEnd: take<GameMessageTable[typeof gameSagaMessages.GAME_END]>(
@@ -412,6 +417,7 @@ function* runGamesUntilCompletion(
 			break
 		} else if (result.gameStateDesync) {
 			console.error('Client and server desync detected. Attempting to fix...')
+			yield* cancel(gameTask)
 			reconnectInformation = yield* requestGameReconnectInformation()
 			continue
 		} else if (result.spectatorLeave) {
