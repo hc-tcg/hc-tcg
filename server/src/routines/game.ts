@@ -10,10 +10,12 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {assert} from 'common/utils/assert'
 import {AIOpponentDefs} from 'common/utils/setup-game'
 import {GameController, GameViewer} from 'game-controller'
-import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
+import {all, call, cancel, delay, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {virtualPlayerActionSaga} from 'common/routines/virtual'
+import {AIComponent} from 'common/components/ai-component'
 
 type Props = {
 	player1: PlayerModel
