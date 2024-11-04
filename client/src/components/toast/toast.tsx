@@ -32,7 +32,6 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 			title={title}
 			description={description}
 			image={image}
-			id={id}
 			playSound={playSound}
 			close={close}
 		/>
@@ -43,7 +42,6 @@ type InnerProps = {
 	title: string
 	description: string
 	image?: string
-	id: number
 	playSound: (sound: string) => void
 	close: () => void
 }
@@ -52,7 +50,6 @@ const ToastInner = ({
 	title,
 	description,
 	image,
-	id,
 	playSound,
 	close,
 }: InnerProps) => {
