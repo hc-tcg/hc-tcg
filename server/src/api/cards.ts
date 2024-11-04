@@ -1,5 +1,10 @@
 import {CARDS, CARDS_LIST} from 'common/cards'
-import {getCardImage, getHermitBackground} from 'common/cards/card'
+import {
+	getCardImage,
+	getCardTypeIcon,
+	getHermitBackground,
+	getRankIcon,
+} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
@@ -18,6 +23,7 @@ type HermitResponse = {
 	rarity: string
 	tokens: number
 	type: string
+	health: number
 	primary: {
 		cost: Array<string>
 		damage: number
@@ -67,6 +73,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			type: card.type,
+			health: card.health,
 			primary: card.primary,
 			secondary: card.secondary,
 			image: joinUrl(url, getCardImage(card)),
@@ -143,5 +150,67 @@ export function deckCost(body: Object) {
 	let cards = ListOfCards.parse(body)
 	return {
 		cost: getDeckCost(cards.map((card) => CARDS[card])),
+	}
+}
+export function types(url: string) {
+	return {
+		balanced: {
+			icon: joinUrl(url, getCardTypeIcon('balanced')),
+		},
+		builder: {
+			icon: joinUrl(url, getCardTypeIcon('builder')),
+		},
+		speedrunner: {
+			icon: joinUrl(url, getCardTypeIcon('speedrunner')),
+		},
+		redstone: {
+			icon: joinUrl(url, getCardTypeIcon('redstone')),
+		},
+		farm: {
+			icon: joinUrl(url, getCardTypeIcon('farm')),
+		},
+		pvp: {
+			icon: joinUrl(url, getCardTypeIcon('pvp')),
+		},
+		terraform: {
+			icon: joinUrl(url, getCardTypeIcon('terraform')),
+		},
+		prankster: {
+			icon: joinUrl(url, getCardTypeIcon('prankster')),
+		},
+		miner: {
+			icon: joinUrl(url, getCardTypeIcon('miner')),
+		},
+		explorer: {
+			icon: joinUrl(url, getCardTypeIcon('explorer')),
+		},
+		any: {
+			icon: joinUrl(url, getCardTypeIcon('any')),
+		},
+	}
+}
+
+export function ranks(url: string) {
+	return {
+		stone: {
+			icon: joinUrl(url, getRankIcon('stone')),
+			cost: 0,
+		},
+		iron: {
+			icon: joinUrl(url, getRankIcon('iron')),
+			cost: 1,
+		},
+		gold: {
+			icon: joinUrl(url, getRankIcon('gold')),
+			cost: 2,
+		},
+		emerald: {
+			icon: joinUrl(url, getRankIcon('emerald')),
+			cost: 3,
+		},
+		diamond: {
+			icon: joinUrl(url, getRankIcon('diamond')),
+			cost: 4,
+		},
 	}
 }
