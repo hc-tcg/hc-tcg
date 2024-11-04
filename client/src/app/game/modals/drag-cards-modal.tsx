@@ -1,3 +1,4 @@
+import {CardEntity} from 'common/entities'
 import {ModalData} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
@@ -16,20 +17,21 @@ type Props = {
 type CardInfo = {
 	cardRef: null | React.RefObject<HTMLDivElement>
 	totalMovement: number
+	entity: string
 }
 
 type DraggableCardProps = {
 	children: React.ReactElement
-	index: number
-	draggedCard: number | null
-	setDraggedCard: (arg: number | null) => void
+	entity: string
+	draggedCard: string | null
+	setDraggedCard: (arg: string | null) => void
 	cardInfo: Array<CardInfo>
 	setCardInfo: (arg: Array<CardInfo>) => void
 }
 
 const DraggableCard = ({
 	children,
-	index,
+	entity,
 	draggedCard,
 	setDraggedCard,
 	cardInfo,
@@ -37,7 +39,9 @@ const DraggableCard = ({
 }: DraggableCardProps) => {
 	const [dragging, setDragging] = useState<boolean>(false)
 	const cardRef = useRef<HTMLDivElement>(null)
-	cardInfo[index].cardRef = cardRef
+	const thisInfo = cardInfo.find((c) => c.entity === entity)
+	if (!thisInfo) return
+	thisInfo.cardRef = cardRef
 
 	const testForSlide = (e: MouseEvent) => {
 		if (!dragging) return
@@ -46,9 +50,9 @@ const DraggableCard = ({
 			setDragging(false)
 			return
 		}
-		if (e.movementX) cardInfo[index].totalMovement += e.movementX
+		if (e.movementX) thisInfo.totalMovement += e.movementX
 		setCardInfo(cardInfo)
-		cardRef.current.style.transform = `translateX(${cardInfo[index].totalMovement}px)`
+		cardRef.current.style.transform = `translateX(${thisInfo.totalMovement}px)`
 	}
 
 	useLayoutEffect(() => {
@@ -62,22 +66,21 @@ const DraggableCard = ({
 	return (
 		<div
 			className={css.draggableCard}
-			ref={cardInfo[index].cardRef}
+			ref={thisInfo.cardRef}
 			onMouseDown={() => {
-				if (draggedCard !== null && draggedCard !== index) return
-				setDraggedCard(index)
+				if (draggedCard !== null && draggedCard !== entity) return
+				setDraggedCard(entity)
 				setDragging(true)
 			}}
 			onMouseMove={(e) => {
-				if (draggedCard !== null && draggedCard !== index) return
+				if (draggedCard !== null && draggedCard !== entity) return
 				if (e.buttons === 0) return
-				setDraggedCard(index)
+				setDraggedCard(entity)
 				setDragging(true)
 			}}
 			style={{
-				zIndex: dragging
-					? 500
-					: Math.floor(100 + cardInfo[index].totalMovement / 100),
+				zIndex: dragging ? 500 : Math.floor(200 + thisInfo.totalMovement / 10),
+				transform: `translateX(${thisInfo.totalMovement})`,
 			}}
 		>
 			{children}
@@ -102,23 +105,24 @@ function DragCardsModal({closeModal}: Props) {
 				type: 'MODAL_REQUEST',
 				modalResult: {
 					result: true,
-					bottomCards: bottomCards.map((card) => cards[card].entity),
-					topCards: bottomCards.map((card) => cards[card].entity),
+					bottomCards: bottomCards,
+					topCards: topCards,
 				},
 			},
 		})
 		closeModal()
 	}
 
-	const [draggedCard, setDraggedCard] = useState<number | null>(null)
+	const [draggedCard, setDraggedCard] = useState<string | null>(null)
 	const [cardInfo, setCardInfo] = useState<Array<CardInfo>>(
-		cards.map(() => ({
+		cards.map((card, i) => ({
 			cardRef: null,
-			totalMovement: 0,
+			totalMovement: 100 + i,
+			entity: card.entity,
 		})),
 	)
-	const [topCards, setTopCards] = useState<Array<number>>([])
-	const [bottomCards, setBottomCards] = useState<Array<number>>([])
+	const [topCards, setTopCards] = useState<Array<CardEntity>>([])
+	const [bottomCards, setBottomCards] = useState<Array<CardEntity>>([])
 
 	const squish = 0.6
 
@@ -129,6 +133,7 @@ function DragCardsModal({closeModal}: Props) {
 		area: DOMRect,
 		direction: 'less' | 'greater',
 		squish: number,
+		animate: boolean,
 	) => {
 		if (!card.cardRef?.current) return
 		if (
@@ -162,31 +167,64 @@ function DragCardsModal({closeModal}: Props) {
 			area.width * ((1 - squish) / 2)
 		card.totalMovement +=
 			centerpoint - (cardPosition.left + cardPosition.right) / 2
-		card.cardRef.current.animate(
-			[
+		if (animate) {
+			card.cardRef.current.animate(
+				[
+					{
+						transform: `translateX(${card.totalMovement}px)`,
+					},
+				],
 				{
-					transform: `translateX(${card.totalMovement}px)`,
+					fill: 'forwards',
+					duration: 100,
 				},
-			],
-			{
-				fill: 'forwards',
-				duration: 100,
-			},
-		)
-		setTimeout(() => {
-			if (!card.cardRef?.current) return
-			card.cardRef.current.getAnimations()[0].cancel()
+			)
+			setTimeout(() => {
+				if (!card.cardRef?.current) return
+				card.cardRef.current.getAnimations()[0].cancel()
+				card.cardRef.current.style.transform = `translateX(${card.totalMovement}px)`
+			}, 100)
+		} else {
 			card.cardRef.current.style.transform = `translateX(${card.totalMovement}px)`
-		}, 100)
+		}
 	}
 
-	const onMouseUp = () => {
+	const getCardsOverArea = (
+		cardPositions: Array<{
+			card: DOMRect | null
+			entity: CardEntity
+		}>,
+		area: DOMRect,
+		direction: 'less' | 'greater',
+	) => {
+		cardPositions.sort((a, b) => {
+			if (!a.card || !b.card) return 0
+			if (a.card.left > b.card.left) return 1
+			return -1
+		})
+		return cardPositions.reduce((r: Array<CardEntity>, card) => {
+			if (direction === 'greater') {
+				if (card.card && card.card.right > area.left) r.push(card.entity)
+				return r
+			} else if (direction === 'less') {
+				if (card.card && card.card.left < area.right) r.push(card.entity)
+				return r
+			}
+			return r
+		}, [])
+	}
+
+	const onCardPositionUpdate = (showAnimation: boolean) => {
 		if (!topDeckRef?.current || !bottomDeckRef?.current) return
 		const topArea = topDeckRef.current.getBoundingClientRect()
 		const bottomArea = bottomDeckRef.current.getBoundingClientRect()
 		const cardPositions = cardInfo.map((card) => {
-			if (!card.cardRef?.current) return null
-			return card.cardRef.current.getBoundingClientRect()
+			if (!card.cardRef?.current)
+				return {card: null, entity: card.entity as CardEntity}
+			return {
+				card: card.cardRef.current.getBoundingClientRect(),
+				entity: card.entity as CardEntity,
+			}
 		})
 		cardInfo.forEach((card) => {
 			setDraggedCard(null)
@@ -195,50 +233,34 @@ function DragCardsModal({closeModal}: Props) {
 
 			translateCards(
 				cardPosition,
-				cardPositions,
+				cardPositions.map((card) => (card ? card.card : null)),
 				card,
 				topArea,
 				'greater',
 				squish,
+				showAnimation,
 			)
 			translateCards(
 				cardPosition,
-				cardPositions,
+				cardPositions.map((card) => (card ? card.card : null)),
 				card,
 				bottomArea,
 				'less',
 				squish,
+				showAnimation,
 			)
 		})
 
-		const getCardsOverArea = (
-			cardPositions: (DOMRect | null)[],
-			area: DOMRect,
-			direction: 'less' | 'greater',
-		) => {
-			const positionsWithIndex = cardPositions.map((card, i) => ({
-				card: card,
-				index: i,
-			}))
-			positionsWithIndex.sort((a, b) => {
-				if (!a.card || !b.card) return 0
-				if (a.card.left > b.card.left) return 1
-				return -1
-			})
-			return positionsWithIndex.reduce((r: Array<number>, card) => {
-				if (direction === 'greater') {
-					if (card.card && card.card.right > area.left) r.push(card.index)
-					return r
-				} else if (direction === 'less') {
-					if (card.card && card.card.left < area.right) r.push(card.index)
-					return r
-				}
-				return r
-			}, [])
-		}
-
 		setTopCards(getCardsOverArea(cardPositions, topArea, 'greater'))
 		setBottomCards(getCardsOverArea(cardPositions, bottomArea, 'less'))
+	}
+
+	useLayoutEffect(() => {
+		onCardPositionUpdate(false)
+	}, [])
+
+	const onMouseUp = () => {
+		onCardPositionUpdate(true)
 	}
 
 	useLayoutEffect(() => {
@@ -269,10 +291,10 @@ function DragCardsModal({closeModal}: Props) {
 						<div className={css.retrievalName}>Top of Deck</div>
 					</div>
 					<div className={css.subContainer}>
-						{cards.map((card, i) => {
+						{cards.map((card) => {
 							return (
 								<DraggableCard
-									index={i}
+									entity={card.entity}
 									draggedCard={draggedCard}
 									setDraggedCard={setDraggedCard}
 									cardInfo={cardInfo}
@@ -280,7 +302,7 @@ function DragCardsModal({closeModal}: Props) {
 								>
 									<Card
 										card={card.props}
-										selected={draggedCard === i}
+										selected={draggedCard === card.entity}
 										displayTokenCost={false}
 										tooltipAboveModal={true}
 									></Card>
