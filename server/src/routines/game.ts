@@ -140,7 +140,12 @@ export function* gameManagerSaga({
 							localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
 						)) as LocalMessageTable[typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION]
 
-						if (game.state.order.includes(action.playerEntity)) {
+						if (serverSideGame.viewers.find(({id}) => id == action.playerId)) {
+							broadcast([root.players[action.playerId]], {
+								type: serverMessages.GAME_RECONNECT_INFORMATION,
+								history: serverSideGame.history,
+								timer: serverSideGame.game.state.timer,
+							})
 						}
 					}
 				}),

@@ -567,7 +567,6 @@ function* turnActionsSaga(
 			}
 
 			const playerAI = getPlayerAI(game)
-			console.log(playerAI)
 			if (playerAI)
 				yield* fork(virtualPlayerActionSaga, game, playerAI, delaySaga)
 

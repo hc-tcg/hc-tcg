@@ -36,7 +36,10 @@ type Messages = [
 		playerEntity: PlayerEntity
 		time: number
 	},
-	{type: typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION; player: PlayerModel},
+	{
+		type: typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION
+		playerId: PlayerId
+	},
 ]
 
 export type LocalMessage = Message<Messages>

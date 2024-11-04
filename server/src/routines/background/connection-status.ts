@@ -13,7 +13,6 @@ export function* statusChangedSaga(
 
 	const connectionStatus = action.player.socket.connected
 
-	// @todo Make broadcasting easier
 	game.broadcastToViewers({
 		type: serverMessages.OPPONENT_CONNECTION,
 		isConnected: connectionStatus,

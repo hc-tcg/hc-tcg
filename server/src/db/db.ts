@@ -1,10 +1,10 @@
 import {Card} from 'common/cards/types'
 import {Deck, Tag} from 'common/types/deck'
-import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import {Stats, User, UserWithoutSecret} from 'common/types/database'
+import {GameOutcome} from 'common/types/game-state'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -558,7 +558,7 @@ export class Database {
 		secondPlayerDeckCode: string,
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
-		outcome: GameEndOutcomeT,
+		outcome: GameOutcome,
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
@@ -591,6 +591,7 @@ export class Database {
 					loser,
 					winningDeck,
 					losingDeck,
+					// @todo FIGURE THIS OUT
 					outcome,
 					seed,
 					replayBytes,

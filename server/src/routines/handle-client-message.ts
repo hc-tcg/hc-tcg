@@ -92,10 +92,8 @@ function* handler(message: RecievedClientMessage) {
 			})
 		case clientMessages.REQUEST_GAME_RECONNECT_INFORMATION:
 			return yield* put<LocalMessage>({
-				type: localMessages.GAME_TURN_ACTION,
-				action: actionMessage.payload.action,
-				playerEntity: actionMessage.payload.playerEntity,
-				time: actionMessage.payload.time,
+				type: localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
+				playerId: message.playerId,
 			})
 		case clientMessages.PG_INSERT_USER:
 			return yield* addUser(
