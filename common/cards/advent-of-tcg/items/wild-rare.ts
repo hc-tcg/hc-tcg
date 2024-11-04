@@ -11,7 +11,7 @@ const WildDoubleItem: Item = {
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 4,
-	type: 'any',
+	type: ['any'],
 	energy: ['any', 'any'],
 }
 

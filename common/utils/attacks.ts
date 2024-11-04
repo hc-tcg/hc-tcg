@@ -171,6 +171,8 @@ function createWeaknessAttack(
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 
+	let count = 0
+
 	const strength = STRENGTHS[attacker.props.type]
 	if (
 		attack.createWeakness !== 'always' &&

@@ -18,7 +18,7 @@ const PotionOfWeakness: SingleUse = {
 	rarity: 'common',
 	tokens: 2,
 	description:
-		"Your opponent's active Hermit's type becomes weak to your active Hermit's type for 3 turns.",
+		"Your opponent's active Hermit's type(s) becomes weak to your active Hermit's type(s) for 3 turns.",
 	sidebarDescriptions: [
 		{
 			type: 'glossary',

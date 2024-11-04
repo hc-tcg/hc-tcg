@@ -56,6 +56,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 				: {type: 'global', player: effect.target.entity},
 		counter: effect.counter,
 		description: effect.description,
+		extraInfo: effect.extraInfo,
 	}
 }
 
