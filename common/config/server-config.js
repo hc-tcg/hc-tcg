@@ -17,6 +17,7 @@ export default {
 		maxCards: 42,
 		maxDuplicates: 3,
 		maxDeckCost: 42,
+		bannedCards: ['evilxisuma_boss', 'feather'],
 	},
 	logoSubText: 'EX-tra fun!',
 }

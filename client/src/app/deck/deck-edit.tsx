@@ -52,7 +52,8 @@ const EXPANSION_NAMES = [
 		return CARDS_LIST.some(
 			(card) =>
 				card.expansion === expansion &&
-				EXPANSIONS[expansion].disabled === false,
+				EXPANSIONS[expansion].disabled === false &&
+				!CONFIG.limits.bannedCards.includes(card.id),
 		)
 	}),
 ]
@@ -211,7 +212,12 @@ export function sortCards(
 }
 
 const ALL_CARDS = sortCards(
-	CARDS_LIST.map(
+	CARDS_LIST.filter(
+		(card) =>
+			// Don't show disabled cards
+			EXPANSIONS[card.expansion].disabled === false &&
+			!CONFIG.limits.bannedCards.includes(card.id),
+	).map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),
 			entity: newEntity('deck_editor_card'),
@@ -291,9 +297,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					((isHermit(card.props) || isItem(card.props)) &&
 						card.props.type.includes(typeQuery))) &&
 				// Card Expansion Filter
-				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
-				// Don't show disabled cards
-				EXPANSIONS[card.props.expansion].disabled === false,
+				(expansionQuery === '' || card.props.expansion === expansionQuery),
 		),
 	)
 

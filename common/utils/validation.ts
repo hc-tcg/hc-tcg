@@ -23,7 +23,9 @@ export function validateDeck(
 
 	// Contains disabled cards
 	const hasDisabledCards = deckCards.some(
-		(card) => EXPANSIONS[card.props.expansion].disabled === true,
+		(card) =>
+			EXPANSIONS[card.props.expansion].disabled === true ||
+			limits.bannedCards.includes(card.props.id),
 	)
 	if (hasDisabledCards)
 		return {valid: false, reason: 'Deck must not include removed cards.'}
