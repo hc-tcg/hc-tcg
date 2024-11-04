@@ -15,6 +15,47 @@ type ContainerProps = {
 
 const ToastMessage = ({title, description, image, id}: Props) => {
 	const dispatch = useMessageDispatch()
+
+	function playSound(sound: string) {
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: sound,
+		})
+	}
+
+	function close() {
+		dispatch({type: localMessages.TOAST_CLOSE, id: id})
+	}
+
+	return (
+		<ToastInner
+			title={title}
+			description={description}
+			image={image}
+			id={id}
+			playSound={playSound}
+			close={close}
+		/>
+	)
+}
+
+type InnerProps = {
+	title: string
+	description: string
+	image?: string
+	id: number
+	playSound: (sound: string) => void
+	close: () => void
+}
+
+const ToastInner = ({
+	title,
+	description,
+	image,
+	id,
+	playSound,
+	close,
+}: InnerProps) => {
 	const maxOpenFor = 19 // 1 unit = 200ms
 	const toastRef = useRef<HTMLDivElement>(null)
 	const [aliveTime, setAliveTime] = useState<number>(0)
@@ -54,10 +95,7 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 
 	useEffect(() => {
 		if (aliveTime === maxOpenFor) {
-			dispatch({
-				type: localMessages.SOUND_PLAY,
-				path: 'sfx/Toast_Out.ogg',
-			})
+			playSound('sfx/Toast_Out.ogg')
 			if (toastRef.current) {
 				toastRef.current.animate(slideOut, {
 					fill: 'forwards',
@@ -66,15 +104,12 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 			}
 		}
 		if (aliveTime === maxOpenFor + 1) {
-			dispatch({type: localMessages.TOAST_CLOSE, id: id})
+			close()
 		}
 
 		const interval = setInterval(() => {
 			if (aliveTime === 0) {
-				dispatch({
-					type: localMessages.SOUND_PLAY,
-					path: 'sfx/Toast_In.ogg',
-				})
+				playSound('sfx/Toast_In.ogg')
 			}
 			setAliveTime(aliveTime + 1)
 		}, 200)
@@ -92,7 +127,6 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 			window.removeEventListener('mouseup', mouseUp)
 		}
 	}, [aliveTime, totalMovement])
-
 
 	if (aliveTime >= 20) {
 		return null
