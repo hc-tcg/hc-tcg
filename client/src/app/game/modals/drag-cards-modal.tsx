@@ -37,17 +37,15 @@ const DraggableCard = ({
 	cardInfo,
 	setCardInfo,
 }: DraggableCardProps) => {
-	const [dragging, setDragging] = useState<boolean>(false)
 	const cardRef = useRef<HTMLDivElement>(null)
 	const thisInfo = cardInfo.find((c) => c.entity === entity)
 	if (!thisInfo) return
 	thisInfo.cardRef = cardRef
 
 	const testForSlide = (e: MouseEvent) => {
-		if (!dragging) return
 		if (!cardRef || !cardRef.current) return
+		if (draggedCard !== entity) return
 		if (!e.buttons) {
-			setDragging(false)
 			return
 		}
 		if (e.movementX) thisInfo.totalMovement += e.movementX
@@ -56,7 +54,6 @@ const DraggableCard = ({
 	}
 
 	const testForTouch = (e: TouchEvent) => {
-		if (!dragging) return
 		if (draggedCard !== entity) return
 		if (!cardRef || !cardRef.current) return
 		if (e.targetTouches) {
@@ -65,7 +62,6 @@ const DraggableCard = ({
 			const middle = (boundingRect.right + boundingRect.left) / 2
 			thisInfo.totalMovement += result.clientX - middle
 		}
-		setCardInfo(cardInfo)
 		cardRef.current.style.transform = `translateX(${thisInfo.totalMovement}px)`
 	}
 
@@ -75,7 +71,7 @@ const DraggableCard = ({
 
 		return () => {
 			window.removeEventListener('mousemove', testForSlide)
-			window.addEventListener('touchmove', testForTouch)
+			window.removeEventListener('touchmove', testForTouch)
 		}
 	})
 
@@ -86,21 +82,21 @@ const DraggableCard = ({
 			onMouseDown={() => {
 				if (draggedCard !== null && draggedCard !== entity) return
 				setDraggedCard(entity)
-				setDragging(true)
 			}}
 			onMouseMove={(e) => {
 				if (draggedCard !== null && draggedCard !== entity) return
 				if (e.buttons === 0) return
 				setDraggedCard(entity)
-				setDragging(true)
 			}}
-			onTouchMove={(e) => {
+			onTouchStart={() => {
 				if (draggedCard !== null && draggedCard !== entity) return
 				setDraggedCard(entity)
-				setDragging(true)
 			}}
 			style={{
-				zIndex: dragging ? 500 : Math.floor(200 + thisInfo.totalMovement / 10),
+				zIndex:
+					draggedCard === entity
+						? 500
+						: Math.max(100, Math.floor(200 + thisInfo.totalMovement / 10)),
 				transform: `translateX(${thisInfo.totalMovement})`,
 			}}
 		>
@@ -263,8 +259,20 @@ function DragCardsModal({closeModal}: Props) {
 				entity: card.entity as CardEntity,
 			}
 		})
-		cardInfo.forEach((card) => {
-			setDraggedCard(null)
+
+		const tempTopCards = getCardsOverArea(cardPositions, topArea, 'greater')
+		const tempBottomCards = getCardsOverArea(cardPositions, bottomArea, 'less')
+
+		const topCardInfo = cardInfo.filter((card) =>
+			tempTopCards.includes(card.entity as CardEntity),
+		)
+		const bottomCardInfo = cardInfo.filter(
+			(card) =>
+				tempBottomCards.includes(card.entity as CardEntity) &&
+				!tempTopCards.includes(card.entity as CardEntity),
+		)
+
+		topCardInfo.forEach((card) => {
 			if (!card.cardRef?.current) return
 			const cardPosition = card.cardRef.current.getBoundingClientRect()
 
@@ -277,6 +285,12 @@ function DragCardsModal({closeModal}: Props) {
 				squish,
 				showAnimation,
 			)
+		})
+
+		bottomCardInfo.forEach((card) => {
+			if (!card.cardRef?.current) return
+			const cardPosition = card.cardRef.current.getBoundingClientRect()
+
 			translateCards(
 				cardPosition,
 				cardPositions.map((card) => (card ? card.card : null)),
@@ -288,8 +302,8 @@ function DragCardsModal({closeModal}: Props) {
 			)
 		})
 
-		setTopCards(getCardsOverArea(cardPositions, topArea, 'greater'))
-		setBottomCards(getCardsOverArea(cardPositions, bottomArea, 'less'))
+		setTopCards(tempTopCards)
+		setBottomCards(tempBottomCards)
 	}
 
 	useLayoutEffect(() => {
@@ -297,18 +311,25 @@ function DragCardsModal({closeModal}: Props) {
 	}, [])
 
 	const onMouseUp = () => {
+		if (draggedCard) onCardPositionUpdate(true)
+		setDraggedCard(null)
+	}
+
+	const onTouchEnd = (e: TouchEvent) => {
+		e.preventDefault()
 		onCardPositionUpdate(true)
+		setDraggedCard(null)
 	}
 
 	useLayoutEffect(() => {
 		window.addEventListener('mouseup', onMouseUp)
-		window.addEventListener('touchend', () => setDraggedCard(null))
+		window.addEventListener('touchend', onTouchEnd)
 
 		return () => {
 			window.removeEventListener('mouseup', onMouseUp)
-			window.addEventListener('touchend', () => setDraggedCard(null))
+			window.removeEventListener('touchend', onTouchEnd)
 		}
-	})
+	}, [draggedCard])
 
 	return (
 		<Modal
