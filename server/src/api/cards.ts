@@ -153,64 +153,80 @@ export function deckCost(body: Object) {
 	}
 }
 export function types(url: string) {
-	return {
-		balanced: {
+	return [
+		{
+			type: 'balanced',
 			icon: joinUrl(url, getCardTypeIcon('balanced')),
 		},
-		builder: {
+		{
+			type: 'builder',
 			icon: joinUrl(url, getCardTypeIcon('builder')),
 		},
-		speedrunner: {
+		{
+			type: 'speedrunner',
 			icon: joinUrl(url, getCardTypeIcon('speedrunner')),
 		},
-		redstone: {
+		{
+			type: 'redstone',
 			icon: joinUrl(url, getCardTypeIcon('redstone')),
 		},
-		farm: {
+		{
+			type: 'farm',
 			icon: joinUrl(url, getCardTypeIcon('farm')),
 		},
-		pvp: {
+		{
+			type: 'pvp',
 			icon: joinUrl(url, getCardTypeIcon('pvp')),
 		},
-		terraform: {
+		{
+			type: 'terraform',
 			icon: joinUrl(url, getCardTypeIcon('terraform')),
 		},
-		prankster: {
+		{
+			type: 'prankster',
 			icon: joinUrl(url, getCardTypeIcon('prankster')),
 		},
-		miner: {
+		{
+			type: 'miner',
 			icon: joinUrl(url, getCardTypeIcon('miner')),
 		},
-		explorer: {
+		{
+			type: 'explorer',
 			icon: joinUrl(url, getCardTypeIcon('explorer')),
 		},
-		any: {
+		{
+			type: 'any',
 			icon: joinUrl(url, getCardTypeIcon('any')),
 		},
-	}
+	]
 }
 
 export function ranks(url: string) {
-	return {
-		stone: {
+	return [
+		{
+			rank: 'stone',
 			icon: joinUrl(url, getRankIcon('stone')),
 			cost: 0,
 		},
-		iron: {
+		{
+			rank: 'iron',
 			icon: joinUrl(url, getRankIcon('iron')),
 			cost: 1,
 		},
-		gold: {
+		{
+			rank: 'gold',
 			icon: joinUrl(url, getRankIcon('gold')),
 			cost: 2,
 		},
-		emerald: {
+		{
+			rank: 'emerald',
 			icon: joinUrl(url, getRankIcon('emerald')),
 			cost: 3,
 		},
-		diamond: {
+		{
+			rank: 'diamond',
 			icon: joinUrl(url, getRankIcon('diamond')),
 			cost: 4,
 		},
-	}
+	]
 }
