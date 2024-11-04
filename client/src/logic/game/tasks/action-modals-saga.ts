@@ -4,9 +4,9 @@ import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
 import {
 	AttackModal,
-	DragCardsModal,
 	ChangeHermitModal,
 	CopyAttackModal,
+	DragCardsModal,
 	EndTurnModal,
 	ExitModal,
 	ForfeitModal,

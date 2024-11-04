@@ -1,21 +1,19 @@
 import {ModalData} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
-import CardList from 'components/card-list'
+import Card from 'components/card'
 import {Modal} from 'components/modal'
 import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useLayoutEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import Card from 'components/card'
 
 type Props = {
 	closeModal: () => void
 }
 
 type CardInfo = {
-	offset: number
 	cardRef: null | React.RefObject<HTMLDivElement>
 	totalMovement: number
 }
@@ -49,8 +47,6 @@ const DraggableCard = ({
 			return
 		}
 		if (e.movementX) cardInfo[index].totalMovement += e.movementX
-		const boundingRect = cardRef.current.getBoundingClientRect()
-		cardInfo[index].offset = boundingRect.left
 		setCardInfo(cardInfo)
 		cardRef.current.style.transform = `translateX(${cardInfo[index].totalMovement}px)`
 	}
@@ -79,7 +75,9 @@ const DraggableCard = ({
 				setDragging(true)
 			}}
 			style={{
-				zIndex: dragging ? 500 : Math.floor(100 + cardInfo[index].offset / 100),
+				zIndex: dragging
+					? 500
+					: Math.floor(100 + cardInfo[index].totalMovement / 100),
 			}}
 		>
 			{children}
@@ -115,7 +113,6 @@ function DragCardsModal({closeModal}: Props) {
 	const [draggedCard, setDraggedCard] = useState<number | null>(null)
 	const [cardInfo, setCardInfo] = useState<Array<CardInfo>>(
 		cards.map(() => ({
-			offset: 0,
 			cardRef: null,
 			totalMovement: 0,
 		})),
@@ -191,7 +188,7 @@ function DragCardsModal({closeModal}: Props) {
 			if (!card.cardRef?.current) return null
 			return card.cardRef.current.getBoundingClientRect()
 		})
-		cardInfo.forEach((card, i) => {
+		cardInfo.forEach((card) => {
 			setDraggedCard(null)
 			if (!card.cardRef?.current) return
 			const cardPosition = card.cardRef.current.getBoundingClientRect()
@@ -262,31 +259,35 @@ function DragCardsModal({closeModal}: Props) {
 			<Modal.Description>
 				{modalData.description}
 				<div className={css.draggableCardsContainer}>
-					<div className={css.deckBottom} ref={bottomDeckRef}>
-						Deck Bottom
+					<div className={css.retrievalBox}>
+						<div className={css.retrievalArea} ref={bottomDeckRef}></div>
+						<div className={css.retrievalName}>Bottom of Deck</div>
 					</div>
 					<div className={css.deckSpacer}></div>
-					<div className={css.deckTop} ref={topDeckRef}>
-						Deck Top
+					<div className={css.retrievalBox}>
+						<div className={css.retrievalArea} ref={topDeckRef}></div>
+						<div className={css.retrievalName}>Top of Deck</div>
 					</div>
-					{cards.map((card, i) => {
-						return (
-							<DraggableCard
-								index={i}
-								draggedCard={draggedCard}
-								setDraggedCard={setDraggedCard}
-								cardInfo={cardInfo}
-								setCardInfo={setCardInfo}
-							>
-								<Card
-									card={card.props}
-									selected={draggedCard === i}
-									displayTokenCost={false}
-									tooltipAboveModal={true}
-								></Card>
-							</DraggableCard>
-						)
-					})}
+					<div className={css.subContainer}>
+						{cards.map((card, i) => {
+							return (
+								<DraggableCard
+									index={i}
+									draggedCard={draggedCard}
+									setDraggedCard={setDraggedCard}
+									cardInfo={cardInfo}
+									setCardInfo={setCardInfo}
+								>
+									<Card
+										card={card.props}
+										selected={draggedCard === i}
+										displayTokenCost={false}
+										tooltipAboveModal={true}
+									></Card>
+								</DraggableCard>
+							)
+						})}
+					</div>
 				</div>
 			</Modal.Description>
 			<Modal.Options>

@@ -174,23 +174,34 @@
 	left: 200px;
 }
 
-.deckTop {
-	height: 140px;
-	width: 35%;
-	background-color: green;
-}
-
 .deckSpacer {
 	flex-grow: 1;
 }
 
-.deckBottom {
+.retrievalBox {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.retrievalName {
+	text-align: center;
+}
+
+.retrievalArea {
+	background-color: var(--gray-600);
+	border: 4px var(--gray-900) dashed;
 	height: 140px;
-	width: 35%;
-	background-color: red;
+	width: 200px;
 }
 
 .draggableCardsContainer {
 	display: flex;
 	flex-direction: row;
+}
+
+.subContainer {
+	position: absolute;
+	transform: translateY(6px);
 }
