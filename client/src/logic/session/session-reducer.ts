@@ -1,5 +1,5 @@
 import {PlayerId} from 'common/models/player-model'
-import {ToastData, ToastT} from 'common/types/app'
+import {ToastData} from 'common/types/app'
 import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'

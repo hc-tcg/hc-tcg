@@ -93,6 +93,10 @@ const ToastMessage = ({title, description, image, id}: Props) => {
 		}
 	}, [aliveTime, totalMovement])
 
+	if (aliveTime >= 20) {
+		return null
+	}
+
 	return (
 		<div
 			className={css.toast}
