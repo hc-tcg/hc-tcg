@@ -175,14 +175,15 @@ function* handleGameTurnActionSaga(game: GameModel) {
 			})
 		}
 
-		if (game.getStateHash() !== message.gameStateHash) {
-			console.error(
-				'Desync between client and server detected:',
-				game.getStateHash(),
-				message.gameStateHash,
-			)
-			yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
-		}
+		// @todo Properly support desyncs
+		// if (game.getStateHash() !== message.gameStateHash) {
+		// 	console.error(
+		// 		'Desync between client and server detected:',
+		// 		game.getStateHash(),
+		// 		message.gameStateHash,
+		// 	)
+		// 	yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
+		// }
 	}
 }
 
