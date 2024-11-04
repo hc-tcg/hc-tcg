@@ -75,6 +75,8 @@ export const afterAttack = createPriorityDictionary({
 	EFFECT_POST_ATTACK_REQUESTS: null,
 	/** Listeners updating board or private state after attacks executed */
 	UPDATE_POST_ATTACK_STATE: null,
+	/** Evil Xisuma Boss reviving itself after state updates from knockout */
+	BOSS_HANDLE_KNOCKOUT: null,
 	/** When it is safe for Hermit attacks to remove the card in the single use slot */
 	HERMIT_REMOVE_SINGLE_USE: null,
 	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */

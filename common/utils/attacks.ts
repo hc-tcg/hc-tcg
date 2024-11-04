@@ -5,6 +5,7 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
+import MiningFatigueEffect from '../status-effects/mining-fatigue'
 import {TypeT} from '../types/cards'
 import {afterAttack, onTurnEnd} from '../types/priorities'
 
@@ -120,6 +121,16 @@ export function executeExtraAttacks(
 }
 
 // Things not directly related to the attack loop
+
+export function getModifiedCost(
+	hermit: CardComponent<Hermit>,
+	attack: 'primary' | 'secondary',
+) {
+	if (hermit.getStatusEffect(MiningFatigueEffect)) {
+		return [hermit.props.type, ...hermit.props[attack].cost]
+	}
+	return hermit.props[attack].cost
+}
 
 export function hasEnoughEnergy(
 	energy: Array<TypeT>,

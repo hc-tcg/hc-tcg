@@ -12,6 +12,7 @@ import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
+import FrozenEffect from './frozen'
 import {
 	GasLightEffect,
 	GasLightPotentialEffect,
@@ -25,6 +26,7 @@ import {
 } from './invisibility-potion'
 import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
+import MiningFatigueEffect from './mining-fatigue'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
@@ -32,6 +34,7 @@ import {
 import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
 import PoisonEffect from './poison'
+import PoisonQuiverEffect from './poison-quiver'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
 import SheepStareEffect from './sheep-stare'
@@ -39,9 +42,11 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from './singleturn-attack-disabled'
+import SculkCatalystTriggeredEffect from './skulk-catalyst'
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SmithingTableEffect from './smithing-table'
 import SoulmateEffect from './soulmate'
 import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect} from './status-effect'
@@ -101,6 +106,11 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SoulmateEffect,
 	NaughtyRegiftEffect,
 	SpentFortuneEffect,
+	PoisonQuiverEffect,
+	SculkCatalystTriggeredEffect,
+	FrozenEffect,
+	MiningFatigueEffect,
+	SmithingTableEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

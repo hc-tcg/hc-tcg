@@ -1,8 +1,10 @@
+import FrozenEffect from 'common/status-effects/frozen'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {slotToPlayCardAction} from 'common/types/turn-action-data'
 import {
 	getAvailableActions,
 	getCurrentPickMessage,
+	getGameState,
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
@@ -73,6 +75,7 @@ function* pickWithoutSelectedSaga(
 
 	const playerState = yield* select(getPlayerState)
 	const settings = yield* select(getSettings)
+	const localGameState = yield* select(getGameState)
 
 	let hermitRow = playerState?.board.rows.find(
 		(row) => row.hermit.slot == action.slotInfo.slotEntity,
@@ -84,7 +87,14 @@ function* pickWithoutSelectedSaga(
 			type: localMessages.GAME_MODAL_OPENED_SET,
 			id: 'attack',
 		})
-	} else {
+	} else if (
+		!localGameState?.statusEffects.find(
+			(effect) =>
+				effect.target.type === 'card' &&
+				effect.target.card === action.slotInfo.card?.entity &&
+				effect.props.id === FrozenEffect.id,
+		)
+	) {
 		if (settings.confirmationDialogsEnabled) {
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_MODAL_OPENED_SET,
