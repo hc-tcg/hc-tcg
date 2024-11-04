@@ -1,3 +1,4 @@
+import {isFromTrapdoor} from '../cards/advent-of-tcg/attach/trapdoor'
 import {
 	ObserverComponent,
 	PlayerComponent,
@@ -77,6 +78,7 @@ export const InvisibilityPotionTailsEffect: StatusEffect<PlayerComponent> = {
 			(attack) => {
 				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
+				if (isFromTrapdoor(game, attack)) return
 				multipliedDamage = true
 				attack.multiplyDamage(effect.entity, 2)
 			},

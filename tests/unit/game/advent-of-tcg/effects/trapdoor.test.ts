@@ -16,7 +16,9 @@ import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import SpookyStressRare from 'common/cards/hermits/spookystress-rare'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import Anvil from 'common/cards/single-use/anvil'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
+import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {NetheriteSword} from 'common/cards/single-use/sword'
@@ -801,6 +803,54 @@ describe('Test Trapdoor', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Invisibility Tails does not multiply damage intercepted by Trapdoor', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					Trapdoor,
+					InvisibilityPotion,
+				],
+				playerTwoDeck: [EthosLabCommon, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health - (EthosLabCommon.secondary.damage * 2 - 40),
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - 40)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })
