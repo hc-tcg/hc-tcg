@@ -82,8 +82,14 @@ export type PickRequest = {
 	onTimeout?: () => void
 }
 
-export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
-export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
+export type LocalModalData =
+	| LocalSelectCards.Data
+	| LocalCopyAttack.Data
+	| LocalDragCards.Data
+export type LocalModalResult =
+	| LocalSelectCards.Result
+	| LocalCopyAttack.Result
+	| LocalDragCards.Result
 
 export namespace LocalSelectCards {
 	export type Data = {
@@ -133,4 +139,15 @@ export namespace LocalCopyAttack {
 				cancel?: undefined
 				pick: 'primary' | 'secondary'
 		  }
+}
+
+export namespace LocalDragCards {
+	export type Data = {
+		type: 'dragCards'
+		name: string
+		description: string
+		cards: Array<LocalCardInstance>
+	}
+
+	export type Result = null
 }

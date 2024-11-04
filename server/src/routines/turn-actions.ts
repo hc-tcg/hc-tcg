@@ -6,7 +6,11 @@ import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
 import {CopyAttack, SelectCards} from 'common/types/modal-requests'
-import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
+import {
+	LocalCopyAttack,
+	LocalDragCards,
+	LocalSelectCards,
+} from 'common/types/server-requests'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
@@ -289,7 +293,10 @@ export function* changeActiveHermitSaga(
 
 export function* modalRequestSaga(
 	game: GameModel,
-	modalResult: LocalSelectCards.Result | LocalCopyAttack.Result,
+	modalResult:
+		| LocalSelectCards.Result
+		| LocalCopyAttack.Result
+		| LocalDragCards.Result,
 ): Generator<any, void> {
 	const modalRequest = game.state.modalRequests[0]
 

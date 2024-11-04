@@ -4,6 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {fork, put, take} from 'redux-saga/effects'
 import {
 	AttackModal,
+	DragCardsModal,
 	ChangeHermitModal,
 	CopyAttackModal,
 	EndTurnModal,
@@ -24,6 +25,7 @@ export const MODAL_COMPONENTS = {
 	// Custom modals
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
+	dragCards: DragCardsModal,
 }
 
 export type ModalVariant = keyof typeof MODAL_COMPONENTS

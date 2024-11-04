@@ -167,3 +167,29 @@
 	flex-direction: column;
 	margin-left: 1rem;
 }
+
+.draggableCardScale {
+	width: 25%;
+	position: fixed;
+}
+
+.deckTop {
+	height: 140px;
+	width: 40%;
+	background-color: green;
+}
+
+.deckSpacer {
+	flex-grow: 1;
+}
+
+.deckBottom {
+	height: 140px;
+	width: 40%;
+	background-color: red;
+}
+
+.draggableCardsContainer {
+	display: flex;
+	flex-direction: row;
+}
