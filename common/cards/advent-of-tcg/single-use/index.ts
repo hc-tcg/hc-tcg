@@ -8,6 +8,7 @@ import Glowstone from './glowstone'
 import Lantern from './lantern'
 import MiningFatigue from './mining-fatigue'
 import PowderSnowBucket from './powder-snow-bucket'
+import SmithingTable from './smithing-table'
 import SplashPotionOfHarming from './splash-potion-of-harming'
 import WindBurst from './wind-burst'
 
@@ -22,6 +23,7 @@ const singleUseCardClasses: Array<Card> = [
 	Lantern,
 	MiningFatigue,
 	PowderSnowBucket,
+	SmithingTable,
 	SplashPotionOfHarming,
 	WindBurst,
 ]

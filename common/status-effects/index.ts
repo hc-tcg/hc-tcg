@@ -46,6 +46,7 @@ import SculkCatalystTriggeredEffect from './skulk-catalyst'
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
+import SmithingTableEffect from './smithing-table'
 import SoulmateEffect from './soulmate'
 import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect} from './status-effect'
@@ -109,6 +110,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SculkCatalystTriggeredEffect,
 	FrozenEffect,
 	MiningFatigueEffect,
+	SmithingTableEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

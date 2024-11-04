@@ -209,7 +209,7 @@ describe('Test Powder Snow Bucket', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health - 20 /** Burn */ * 2)
+					).toBe(EthosLabCommon.health - 20 /** Poison */ * 2)
 				},
 			},
 			{startWithAllCards: true},
