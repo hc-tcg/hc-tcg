@@ -18,7 +18,7 @@ test.setTimeout(1_000_000)
 test('Hermit card SVG', async ({mount}) => {
 	for (const card of hermitCardClasses) {
 		const component = await mount(
-			<HermitCard card={EthosLabCommon} displayTokenCost={true} />,
+			<HermitCard card={card as any} displayTokenCost={true} />,
 		)
 		await expect(component).toHaveScreenshot(`${card.id}.png`)
 		await component.unmount()
@@ -28,7 +28,7 @@ test('Hermit card SVG', async ({mount}) => {
 test('Item card SVG', async ({mount}) => {
 	for (const card of itemCardClasses) {
 		const component = await mount(
-			<ItemCard card={BuilderDoubleItem} displayTokenCost={true} />,
+			<ItemCard card={card as any} displayTokenCost={true} />,
 		)
 		await expect(component).toHaveScreenshot(`${card.id}.png`)
 		await component.unmount()
@@ -38,7 +38,7 @@ test('Item card SVG', async ({mount}) => {
 test('Effect card SVG', async ({mount}) => {
 	for (const card of [...attachCardClasses, ...singleUseCardClasses]) {
 		const component = await mount(
-			<EffectCard card={GoldenAxe} displayTokenCost={true} />,
+			<EffectCard card={card as any} displayTokenCost={true} />,
 		)
 		await expect(component).toHaveScreenshot(`${card.id}.png`)
 		await component.unmount()
