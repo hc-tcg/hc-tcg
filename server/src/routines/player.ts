@@ -30,7 +30,9 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
-			console.log('Player connecting: ' + game)
+
+			// @todo
+			console.log('Player connecting in game: ' + game)
 
 			if (game) {
 				const entity = game.getEntityById(existingPlayer.id)
@@ -48,6 +50,10 @@ export function* playerConnectedSaga(
 						history: game.history,
 						timer: game.game.state.timer,
 					},
+				})
+			} else {
+				broadcast([existingPlayer], {
+					type: serverMessages.PLAYER_RECONNECTED,
 				})
 			}
 		} else {
