@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import FletchingTable from 'common/cards/advent-of-tcg/single-use/fletching-table'
+import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
@@ -22,11 +22,11 @@ describe('Test Glowstone Single Use', () => {
 				playerOneDeck: [EthosLabCommon, Glowstone],
 				playerTwoDeck: [
 					EthosLabCommon,
-					...Array(6).fill(FletchingTable),
+					...Array(6).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
-					FletchingTable,
+					Feather,
 				],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -49,7 +49,7 @@ describe('Test Glowstone Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([FletchingTable, BalancedItem, MinerItem])
+					).toStrictEqual([Feather, BalancedItem, MinerItem])
 					expect(
 						game.opponentPlayer.getDiscarded().map((card) => card.props),
 					).toStrictEqual([BuilderItem])
