@@ -324,6 +324,7 @@ function Game() {
 							onClick={(card: LocalCardInstance) => selectCard(card)}
 							selected={[selectedCard]}
 							unpickable={unpickableCards}
+							statusEffects={gameState.statusEffects}
 						/>
 					</div>
 				)}

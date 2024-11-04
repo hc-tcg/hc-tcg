@@ -1,22 +1,30 @@
 import {describe, expect, test} from '@jest/globals'
 import Biffa2001Rare from 'common/cards/advent-of-tcg/hermits/biffa2001-rare'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
+import Allay from 'common/cards/advent-of-tcg/single-use/allay'
 import {IronArmor} from 'common/cards/attach/armor'
+import ArmorStand from 'common/cards/attach/armor-stand'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import WormManRare from 'common/cards/hermits/wormman-rare'
+import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import MinerDoubleItem from 'common/cards/items/miner-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
+import Chest from 'common/cards/single-use/chest'
+import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import {InstantHealth} from 'common/cards/single-use/instant-health'
 import Knockback from 'common/cards/single-use/knockback'
 import PotionOfSlowness from 'common/cards/single-use/potion-of-slowness'
 import {IronSword} from 'common/cards/single-use/sword'
-import {RowComponent} from 'common/components'
+import Trident from 'common/cards/single-use/trident'
+import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {
 	applyEffect,
 	attack,
 	changeActiveHermit,
 	endTurn,
+	finishModalRequest,
 	pick,
 	playCardFromHand,
 	removeEffect,
@@ -140,6 +148,116 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
+	test("Biffa's Museum counts playing a card after using Chest", () => {
+		testGame(
+			{
+				playerOneDeck: [Biffa2001Rare, ArmorStand, Chest],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, Biffa2001Rare, 'hermit', 0)
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 0)
+					yield* playCardFromHand(game, Chest, 'single_use')
+					yield* finishModalRequest(game, {
+						result: true,
+						cards: game.components.filterEntities(
+							CardComponent,
+							query.card.is(ArmorStand),
+						),
+					})
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Attach card */,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test("Biffa's Museum counts playing a card after using Flint & Steel", () => {
+		testGame(
+			{
+				playerOneDeck: [
+					Biffa2001Rare,
+					FlintAndSteel,
+					...Array(9).fill(ArmorStand),
+				],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, Biffa2001Rare, 'hermit', 0)
+					game.currentPlayer
+						.getHand()
+						.sort(CardComponent.compareOrder)
+						.slice(2)
+						.forEach((card) => card.discard())
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, FlintAndSteel, 'single_use')
+					yield* applyEffect(game)
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Attach card */,
+					)
+				},
+			},
+			{startWithAllCards: false, noItemRequirements: true},
+		)
+	})
+
+	test("Biffa's Museum counts playing a card after using Allay", () => {
+		testGame(
+			{
+				playerOneDeck: [Biffa2001Rare, ArmorStand, ArmorStand, Allay],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, Biffa2001Rare, 'hermit', 0)
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 0)
+					yield* playCardFromHand(game, Allay, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hand,
+						query.slot.has(ArmorStand),
+					)
+					yield* finishModalRequest(game, {result: false, cards: null})
+					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Attach card */,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
 	// Test interactions with Grianch which allows two attacks in one turn
 	test("Biffa's Museum uses running total against Grianch", () => {
 		testGame(
@@ -174,6 +292,66 @@ describe('Test Biffa Secondary', () => {
 							20 /** Used 1 single use this turn */ -
 							Biffa2001Rare.secondary.damage -
 							20 /** Used 1 single use this turn */,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test("Biffa's Museum counts playing a card face down with Total Anonymity after Trident flips heads", () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare],
+				playerTwoDeck: [
+					ZombieCleoRare,
+					WormManRare,
+					BadOmen,
+					Trident,
+					Biffa2001Rare,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, WormManRare, 'hermit', 1)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Trident, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							WormManRare.secondary.damage -
+							30 /** Trident */,
+					)
+					yield* playCardFromHand(game, Biffa2001Rare, 'hermit', 2)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						GrianchRare.health -
+							WormManRare.secondary.damage -
+							30 /** Trident */ -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Hermit card */,
 					)
 				},
 			},

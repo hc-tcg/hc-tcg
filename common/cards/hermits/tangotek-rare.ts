@@ -47,12 +47,14 @@ const TangoTekRare: Hermit = {
 					query.slot.hermit,
 					query.not(query.slot.active),
 					query.not(query.slot.empty),
+					query.slot.canBecomeActive,
 				)
 				const playerInactiveRowsPickCondition = query.every(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.not(query.slot.active),
 					query.not(query.slot.empty),
+					query.slot.canBecomeActive,
 				)
 
 				// Check if we are blocked from changing by anything other than the game

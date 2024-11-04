@@ -178,3 +178,14 @@ export const adjacent = (
 			})
 	}
 }
+
+/** Returns true if the given slot is in a row not blocked from becoming its player's new active row */
+export const canBecomeActive: ComponentQuery<SlotComponent> = (_game, pos) => {
+	if (!pos.inRow() || pos.rowEntity === pos.player.activeRowEntity) return false
+	const rowHermit = pos.row.getHermit()
+	if (!rowHermit) return false
+	const activeHermit = pos.player.getActiveHermit()
+	return pos.player.hooks.beforeActiveRowChange
+		.call(activeHermit, rowHermit)
+		.every(Boolean)
+}

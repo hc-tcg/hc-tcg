@@ -13,6 +13,7 @@ const pickCondition = query.every(
 	query.slot.hermit,
 	query.not(query.slot.active),
 	query.not(query.slot.empty),
+	query.slot.canBecomeActive,
 )
 
 const Egg: SingleUse = {
