@@ -50,6 +50,7 @@ const BerryBush: Attach & HasHealth = {
 								.entity,
 						)
 					}
+					observer.unsubscribe(game.hooks.afterAttack)
 				}
 			},
 		)

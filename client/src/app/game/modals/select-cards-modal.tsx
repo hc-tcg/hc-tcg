@@ -108,6 +108,7 @@ function SelectCardsModal({closeModal}: Props) {
 								wrap={true}
 								tooltipAboveModal
 								disableAnimations
+								statusEffects={useSelector(getGameState)?.statusEffects}
 							/>
 						</div>
 					</div>
