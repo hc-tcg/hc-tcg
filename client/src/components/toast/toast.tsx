@@ -46,7 +46,7 @@ type InnerProps = {
 	close: () => void
 }
 
-const ToastInner = ({
+export const ToastInner = ({
 	title,
 	description,
 	image,
