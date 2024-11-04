@@ -74,17 +74,22 @@ const ExBossNineEffect: Counter<CardComponent> = {
 							`{$eYour$|$p${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|you} must discard everything from {their|your} active Hermit`,
 						)
 						game.components
+							.find(
+								CardComponent,
+								query.card.active,
+								query.card.opponentPlayer,
+								query.card.slot(
+									query.slot.attach,
+									query.not(query.slot.frozen),
+								),
+							)
+							?.discard()
+						game.components
 							.filter(
 								CardComponent,
 								query.card.active,
 								query.card.opponentPlayer,
-								query.some(
-									query.card.slot(
-										query.slot.attach,
-										query.not(query.slot.frozen),
-									),
-									query.card.slot(query.slot.item),
-								),
+								query.card.slot(query.slot.item, query.not(query.slot.frozen)),
 							)
 							.forEach((card) => card.discard())
 						break

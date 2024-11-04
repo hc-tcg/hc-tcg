@@ -103,7 +103,7 @@ export class PlayerComponent {
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
 		beforeActiveRowChange: GameHook<
 			(
-				oldActiveHermit: CardComponent,
+				oldActiveHermit: CardComponent | null,
 				newActiveHermit: CardComponent,
 			) => boolean
 		>
@@ -235,10 +235,10 @@ export class PlayerComponent {
 		)
 
 		// Call before active row change hooks - if any of the results are false do not change
-		if (currentActiveRow) {
-			let oldHermit = currentActiveRow.getHermit()
+		{
+			let oldHermit = currentActiveRow ? currentActiveRow.getHermit() : null
 			let newHermit = newRow.getHermit()
-			if (!oldHermit || !newHermit)
+			if ((currentActiveRow && !oldHermit) || !newHermit)
 				throw new Error(
 					'Should not be able to change from an active row with no hermits or to an active row with no hermits.',
 				)
@@ -304,8 +304,8 @@ export class PlayerComponent {
 			.map(
 				(card) =>
 					[card, this.game.getPickableSlots(card.props.attachCondition)] as [
-						CardComponent,
-						Array<SlotEntity>,
+						card: CardComponent,
+						slots: Array<SlotEntity>,
 					],
 			)
 	}

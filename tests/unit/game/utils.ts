@@ -1,8 +1,8 @@
-import {Card} from 'common/cards/base/types'
-import EvilXisumaBossHermitCard, {
+import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
+import {Card} from 'common/cards/types'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -299,15 +299,16 @@ export function testGame(
 export function testBossFight(
 	options: {
 		/**
-		 * @example
-		 * {
+		 * ```ts
+		 * saga: function* (game) {
 		 * 	...
 		 * 	yield* endTurn(game)
 		 * 	// Boss' first turn
-		 * 	yield* playCardFromHand(game, EvilXisumaBossHermitCard, 'hermit', 0)
+		 * 	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
 		 * 	yield* bossAttack(game, '50DMG')
 		 * 	...
 		 * }
+		 * ```
 		 */
 		saga: (game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
@@ -326,7 +327,7 @@ export function testBossFight(
 				minecraftName: 'EvilXisuma',
 				disableDeckingOut: true,
 			},
-			deck: [EvilXisumaBossHermitCard],
+			deck: [EvilXisumaBoss],
 		},
 		{...defaultGameSettings, ...settings, disableRewardCards: true},
 		{randomizeOrder: false},
@@ -388,7 +389,7 @@ export function testBossFight(
 export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 	const bossCard = game.components.find(
 		CardComponent,
-		query.card.is(EvilXisumaBossHermitCard),
+		query.card.is(EvilXisumaBoss),
 		query.card.currentPlayer,
 	)
 	const attackType = game.state.turn.availableActions.find(

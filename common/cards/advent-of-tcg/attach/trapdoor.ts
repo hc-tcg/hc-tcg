@@ -1,30 +1,22 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	StatusEffectComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {
-	GasLightEffect,
-	GasLightTriggeredEffect,
-} from '../../../status-effects/gas-light'
+import {isFromGasLightEffect} from '../../../status-effects/gas-light'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import LightningRod from '../../attach/lightning-rod'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
 
-function isFromGasLightEffect(game: GameModel, attack: AttackModel): boolean {
+export function isFromTrapdoor(game: GameModel, attack: AttackModel): boolean {
 	const damageSource = attack.getHistory('add_damage').at(0)?.source
-	if (damageSource === undefined) return false
-	const component: CardComponent | StatusEffectComponent | null =
-		game.components.get((damageSource as any) || null)
-	if (!component || component instanceof CardComponent) return false
-	return query.effect.is(GasLightTriggeredEffect, GasLightEffect)(
-		game,
-		component,
+	if (damageSource === undefined || damageSource === 'debug') return false
+	const component = game.components.get(damageSource)
+	if (!component) return false
+	return (
+		component instanceof CardComponent &&
+		query.card.is(Trapdoor)(game, component)
 	)
 }
 
