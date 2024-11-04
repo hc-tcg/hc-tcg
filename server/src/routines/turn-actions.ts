@@ -5,7 +5,7 @@ import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
-import {CopyAttack, SelectCards} from 'common/types/modal-requests'
+import {CopyAttack, DragCards, SelectCards} from 'common/types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
@@ -315,6 +315,18 @@ export function* modalRequestSaga(
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as SelectCards.Result)
+	} else if (modalRequest.modal.type === 'dragCards') {
+		let modalRequest_ = modalRequest as DragCards.Request
+		let modal = modalResult as LocalDragCards.Result
+		modalRequest_.onResult({
+			...modal,
+			bottomCards: modal.bottomCards
+				? modal.bottomCards.map((entity) => game.components.get(entity)!)
+				: null,
+			topCards: modal.topCards
+				? modal.topCards.map((entity) => game.components.get(entity)!)
+				: null,
+		} as DragCards.Result)
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result

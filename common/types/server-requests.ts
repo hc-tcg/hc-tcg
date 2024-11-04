@@ -149,5 +149,15 @@ export namespace LocalDragCards {
 		cards: Array<LocalCardInstance>
 	}
 
-	export type Result = null
+	export type Result =
+		| {
+				result: true
+				bottomCards: Array<CardEntity>
+				topCards: Array<CardEntity>
+		  }
+		| {
+				result: false
+				bottomCards: null
+				topCards: null
+		  }
 }

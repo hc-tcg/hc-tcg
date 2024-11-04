@@ -47,19 +47,24 @@ const Brush: SingleUse = {
 					cards: topCards.map((card) => card.entity),
 				},
 				onResult(modalResult) {
-					// if (!modalResult) return 'FAILURE_INVALID_DATA'
-					// if (!modalResult.result) return 'SUCCESS'
+					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!modalResult.result) return 'SUCCESS'
 
-					// const cards = modalResult.cards || []
+					modalResult.topCards.forEach((c) => {
+						c.attach(
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'front',
+							}),
+						)
+					})
 
-					// topCards.forEach((c) => {
-					// 	if (cards.some((d) => d.entity === c.entity)) return // Leave selected cards "on top"
-					// 	c.attach(
-					// 		game.components.new(DeckSlotComponent, player.entity, {
-					// 			position: 'back',
-					// 		}),
-					// 	)
-					// })
+					modalResult.bottomCards.forEach((c) => {
+						c.attach(
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'back',
+							}),
+						)
+					})
 
 					return 'SUCCESS'
 				},

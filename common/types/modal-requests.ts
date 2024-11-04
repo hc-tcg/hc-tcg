@@ -76,7 +76,17 @@ export namespace DragCards {
 		cards: Array<CardEntity>
 	}
 
-	export type Result = null
+	export type Result =
+		| {
+				result: true
+				bottomCards: Array<CardComponent>
+				topCards: Array<CardComponent>
+		  }
+		| {
+				result: false
+				bottomCards: null
+				topCards: null
+		  }
 }
 
 export namespace CopyAttack {

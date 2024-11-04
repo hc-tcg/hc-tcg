@@ -168,14 +168,15 @@
 	margin-left: 1rem;
 }
 
-.draggableCardScale {
-	width: 25%;
-	position: fixed;
+.draggableCard {
+	width: 130px;
+	position: absolute;
+	left: 200px;
 }
 
 .deckTop {
 	height: 140px;
-	width: 40%;
+	width: 35%;
 	background-color: green;
 }
 
@@ -185,7 +186,7 @@
 
 .deckBottom {
 	height: 140px;
-	width: 40%;
+	width: 35%;
 	background-color: red;
 }
 
