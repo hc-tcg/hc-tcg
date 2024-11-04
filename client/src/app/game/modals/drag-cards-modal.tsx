@@ -55,11 +55,27 @@ const DraggableCard = ({
 		cardRef.current.style.transform = `translateX(${thisInfo.totalMovement}px)`
 	}
 
+	const testForTouch = (e: TouchEvent) => {
+		if (!dragging) return
+		if (draggedCard !== entity) return
+		if (!cardRef || !cardRef.current) return
+		if (e.targetTouches) {
+			const result = e.targetTouches[0]
+			const boundingRect = cardRef.current.getBoundingClientRect()
+			const middle = (boundingRect.right + boundingRect.left) / 2
+			thisInfo.totalMovement += result.clientX - middle
+		}
+		setCardInfo(cardInfo)
+		cardRef.current.style.transform = `translateX(${thisInfo.totalMovement}px)`
+	}
+
 	useLayoutEffect(() => {
 		window.addEventListener('mousemove', testForSlide)
+		window.addEventListener('touchmove', testForTouch)
 
 		return () => {
 			window.removeEventListener('mousemove', testForSlide)
+			window.addEventListener('touchmove', testForTouch)
 		}
 	})
 
@@ -75,6 +91,11 @@ const DraggableCard = ({
 			onMouseMove={(e) => {
 				if (draggedCard !== null && draggedCard !== entity) return
 				if (e.buttons === 0) return
+				setDraggedCard(entity)
+				setDragging(true)
+			}}
+			onTouchMove={(e) => {
+				if (draggedCard !== null && draggedCard !== entity) return
 				setDraggedCard(entity)
 				setDragging(true)
 			}}
@@ -107,6 +128,21 @@ function DragCardsModal({closeModal}: Props) {
 					result: true,
 					bottomCards: bottomCards,
 					topCards: topCards,
+				},
+			},
+		})
+		closeModal()
+	}
+
+	const handleClose = () => {
+		dispatch({
+			type: localMessages.GAME_TURN_ACTION,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult: {
+					result: false,
+					bottomCards: null,
+					topCards: null,
 				},
 			},
 		})
@@ -181,7 +217,8 @@ function DragCardsModal({closeModal}: Props) {
 			)
 			setTimeout(() => {
 				if (!card.cardRef?.current) return
-				card.cardRef.current.getAnimations()[0].cancel()
+				const animation = card.cardRef.current.getAnimations()[0]
+				if (animation) animation.cancel()
 				card.cardRef.current.style.transform = `translateX(${card.totalMovement}px)`
 			}, 100)
 		} else {
@@ -265,9 +302,11 @@ function DragCardsModal({closeModal}: Props) {
 
 	useLayoutEffect(() => {
 		window.addEventListener('mouseup', onMouseUp)
+		window.addEventListener('touchend', () => setDraggedCard(null))
 
 		return () => {
 			window.removeEventListener('mouseup', onMouseUp)
+			window.addEventListener('touchend', () => setDraggedCard(null))
 		}
 	})
 
@@ -275,7 +314,7 @@ function DragCardsModal({closeModal}: Props) {
 		<Modal
 			setOpen
 			title={modalData.name}
-			onClose={() => null}
+			onClose={handleClose}
 			disableUserClose={true}
 		>
 			<Modal.Description>
@@ -291,7 +330,7 @@ function DragCardsModal({closeModal}: Props) {
 						<div className={css.retrievalName}>Top of Deck</div>
 					</div>
 					<div className={css.subContainer}>
-						{cards.map((card) => {
+						{cards.map((card, i) => {
 							return (
 								<DraggableCard
 									entity={card.entity}
@@ -299,6 +338,7 @@ function DragCardsModal({closeModal}: Props) {
 									setDraggedCard={setDraggedCard}
 									cardInfo={cardInfo}
 									setCardInfo={setCardInfo}
+									key={i}
 								>
 									<Card
 										card={card.props}

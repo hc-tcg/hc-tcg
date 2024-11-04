@@ -183,6 +183,8 @@
 	flex-direction: column;
 	justify-content: center;
 	gap: 1rem;
+	width: 200px;
+	max-width: 50%;
 }
 
 .retrievalName {
@@ -193,12 +195,12 @@
 	background-color: var(--gray-600);
 	border: 4px var(--gray-900) dashed;
 	height: 140px;
-	width: 200px;
 }
 
 .draggableCardsContainer {
 	display: flex;
 	flex-direction: row;
+	overflow: hidden;
 }
 
 .subContainer {
