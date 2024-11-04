@@ -3,6 +3,7 @@ import {getCardImage, getHermitBackground} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
+import root from 'serverRoot'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
 
@@ -109,11 +110,33 @@ export function cards(url: string) {
 	return out
 }
 
-export function getCardsInDeck(url: string, hash: string) {
-	let deck = getDeckFromHash(hash)
-	return deck
-		.map((card) => cardToCardResponse(card.props, url))
-		.filter((x) => x !== null)
+export async function getDeckInformation(url: string, hash: string) {
+	if (hash.length >= 10) {
+		let deck = getDeckFromHash(hash)
+		return {
+			success: deck
+				.map((card) => cardToCardResponse(card.props, url))
+				.filter((x) => x !== null),
+		}
+	} else {
+		let deck = await root.db?.getDeckFromID(hash)
+		if (!deck)
+			return {
+				type: 'failure',
+				reason: 'Endpoint is unavailable because database is disabled',
+			}
+		if (deck.type == 'success') {
+			return {
+				type: 'success',
+				...deck.body,
+			}
+		} else {
+			return {
+				type: 'failure',
+				reason: 'Could not find deck.',
+			}
+		}
+	}
 }
 
 export function deckCost(body: Object) {

@@ -5,6 +5,16 @@ import {
 import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {
+	addUser,
+	authenticateUser,
+	deleteDeck,
+	deleteTag,
+	getDecks,
+	getStats,
+	importDeck,
+	insertDeck,
+} from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
@@ -74,11 +84,44 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
-			yield* put<LocalMessage>({
+			console.log(actionMessage.payload.action)
+			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 			})
+		case clientMessages.PG_INSERT_USER:
+			return yield* addUser(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.PG_AUTHENTICATE:
+			return yield* authenticateUser(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GET_DECKS:
+			return yield* getDecks(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.INSERT_DECK:
+			return yield* insertDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.IMPORT_DECK:
+			return yield* importDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.DELETE_DECK:
+			return yield* deleteDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.DELETE_TAG:
+			return yield* deleteTag(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GET_STATS:
+			return yield* getStats(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 	}
 }
 

@@ -1,16 +1,19 @@
 import classNames from 'classnames'
+import debugConfig from 'common/config/debug-config'
 import {ToastT} from 'common/types/app'
-import {PlayerDeckT, Tag} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
+import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
-import AlertModal from 'components/alert-modal'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import {ExportModal, ImportModal} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {ConfirmModal} from 'components/modal'
 import {
 	CopyIcon,
 	DeleteIcon,
@@ -19,19 +22,10 @@ import {
 	ExportIcon,
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
+import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {
-	convertLegacyDecks,
-	deleteDeck,
-	getCreatedTags,
-	getLegacyDecks,
-	getSavedDeck,
-	getSavedDecks,
-	keysToTags,
-	saveDeck,
-	setActiveDeck,
-} from 'logic/saved-decks/saved-decks'
+import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -43,9 +37,12 @@ import DeckLayout from './layout'
 
 type Props = {
 	setMenuSection: (section: string) => void
-	setLoadedDeck: (deck: PlayerDeckT) => void
+	setLoadedDeck: (deck: Deck) => void
 	setMode: (mode: 'select' | 'edit' | 'create') => void
-	loadedDeck: PlayerDeckT
+	loadedDeck: Deck
+	databaseInfo: DatabaseInfo
+	filteredDecks: Array<Deck>
+	setFilteredDecks: (decks: Array<Deck>) => void
 }
 
 function SelectDeck({
@@ -53,21 +50,39 @@ function SelectDeck({
 	setMenuSection,
 	setMode,
 	loadedDeck,
+	databaseInfo,
+	filteredDecks,
+	setFilteredDecks,
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 
-	// STATE
-	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
-	function parseDecks(decks: string[]): Array<PlayerDeckT> {
-		return decks.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
+	const saveDeck = (deck: Deck) => {
+		dispatch({
+			type: localMessages.INSERT_DECK,
+			deck: deck,
 		})
+		databaseInfo.decks.push(deck)
+
+		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
+			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			return [...r, tag]
+		}, [])
+
+		databaseInfo.tags.push(...newTags)
+		setFilteredDecks(sortDecks(databaseInfo.decks))
+		setLoadedDeck(deck)
 	}
-	function sortDecks(decks: PlayerDeckT[]): Array<PlayerDeckT> {
+
+	// STATE
+	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
+		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
+		return databaseInfo
+	})
+
+	function sortDecks(decks: Array<Deck>): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
 				return a.name.localeCompare(b.name)
@@ -78,8 +93,8 @@ function SelectDeck({
 				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
 				if (!aHasTags && bHasTags) return 1
 				if (aHasTags && !bHasTags) return 0
-				const aFirstTag = a.tags![0]
-				const bFirstTag = b.tags![0]
+				const aFirstTag = a.tags![0].name
+				const bFirstTag = b.tags![0].name
 				return aFirstTag.localeCompare(bFirstTag)
 			}
 			//Default case so something is always returned
@@ -87,27 +102,24 @@ function SelectDeck({
 		})
 	}
 
-	function filterDecks(decks: Array<PlayerDeckT>): Array<PlayerDeckT> {
+	function filterDecks(decks: Array<Deck>): Array<Deck> {
 		if (!settings.lastSelectedTag) return decks
 		return decks.filter((deck) =>
-			deck.tags?.includes(settings.lastSelectedTag!),
+			deck.tags?.find((tag) => tag.key === settings.lastSelectedTag),
 		)
 	}
-	const [sortedDecks, setSortedDecks] = useState<Array<PlayerDeckT>>(
-		sortDecks(parseDecks(savedDecks)),
-	)
 
-	const [filteredDecks, setFilteredDecks] = useState<Array<PlayerDeckT>>(
-		filterDecks(sortedDecks),
-	)
+	if (oldDatabaseInfo !== databaseInfo) {
+		setOldDatabaseInfo(databaseInfo)
+		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
+	}
 
-	const savedDeckNames = savedDecks.map((deck) =>
-		deck ? getSavedDeck(deck)?.name : null,
-	)
-	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
+	const [importedDeck, setImportedDeck] = useState<Deck>({
 		name: 'undefined',
+		iconType: 'item',
 		icon: 'any',
 		cards: [],
+		code: generateDatabaseCode(),
 		tags: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
@@ -120,19 +132,21 @@ function SelectDeck({
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
-	const [tagFilter, setTagFilter] = useState<Tag>(
-		settings.lastSelectedTag
-			? keysToTags([settings.lastSelectedTag])[0]
-			: {
-					name: 'No Filter',
-					color: '#ffffff',
-					key: '0',
-				},
-	)
+	const [tagFilter, setTagFilter] = useState<Tag>(() => {
+		const lastSelectedTag = databaseInfo.tags.find(
+			(tag) => tag.key === settings.lastSelectedTag,
+		)
+		if (lastSelectedTag) return lastSelectedTag
+		return {
+			name: 'No Filter',
+			color: '#ffffff',
+			key: '0',
+		}
+	})
 
 	const tagsDropdownOptions = [
 		{name: 'No Filter', color: '#ffffff'},
-		...getCreatedTags(),
+		...databaseInfo.tags,
 	].map((option) => ({
 		name: option.name,
 		key: JSON.stringify(option),
@@ -146,31 +160,29 @@ function SelectDeck({
 		open: true,
 		title: 'Deck Deleted!',
 		description: `Removed ${loadedDeck.name}`,
-		image: `/images/types/type-${loadedDeck.icon}.png`,
+		image: getIconPath(loadedDeck),
 	}
 	const selectedDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${loadedDeck.name} is now your active deck`,
-		image: `images/types/type-${loadedDeck.icon}.png`,
+		image: getIconPath(loadedDeck),
 	}
 	const lastValidDeckToast: ToastT = {
 		open: true,
 		title: 'Deck Selected!',
 		description: `${playerDeck.name} is now your active deck`,
-		image: `images/types/type-${playerDeck.icon}.png`,
+		image: getIconPath(loadedDeck),
 	}
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (!validateDeck(loadedDeck.cards).valid) {
-			return setShowValidateDeckModal(true)
-		}
-
-		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
-		dispatch({type: localMessages.DECK_SET, deck: loadedDeck})
+		dispatch({
+			type: localMessages.UPDATE_DECKS,
+			newActiveDeck: loadedDeck.code,
+		})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
@@ -178,94 +190,53 @@ function SelectDeck({
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
-	const handleImportDeck = (deck: PlayerDeckT) => {
+	const handleImportDeck = (deck: Deck) => {
 		setImportedDeck(deck)
-		importDeck(deck)
+		saveDeck(deck)
 		setShowImportModal(false)
 	}
 	const handleMassImportDecks = () => {
-		setSavedDecks(getSavedDecks())
 		setShowImportModal(false)
 	}
 
 	//DECK LOGIC
-	const loadDeck = (deckName: string) => {
-		if (!deckName)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-		const deck = getSavedDeck(deckName)
-		if (!deck)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-
-		setLoadedDeck({
-			...deck,
-			cards: deck.cards,
+	const loadDeck = (deck: Deck) => {
+		setLoadedDeck(deck)
+	}
+	const deleteDeck = (deletedDeck: Deck) => {
+		const deckToDelete = databaseInfo.decks.find(
+			(deck) => deck.code === deletedDeck.code,
+		)
+		if (!deckToDelete || databaseInfo.decks.length <= 1) return
+		dispatch({
+			type: localMessages.DELETE_DECK,
+			deck: deckToDelete,
 		})
-	}
-	const importDeck = (deck: PlayerDeckT) => {
-		let deckExists = false
-		savedDeckNames.map((name) => {
-			if (name === deck.name) {
-				console.log(`Name: ${name} | Import: ${deck.name}`)
-				deckExists = true
-			}
+
+		const newSavedDecks = databaseInfo.decks.filter(
+			(deck) => deck.code !== deckToDelete.code,
+		)
+
+		setFilteredDecks(sortDecks(newSavedDecks))
+		dispatch({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'decks',
+				value: newSavedDecks,
+			},
 		})
-		if (deckExists) {
-			setShowOverwriteModal(true)
-			return
-		}
-
-		saveDeckInternal(deck)
-		setSavedDecks(getSavedDecks())
-		setSortedDecks(sortDecks([...parseDecks(savedDecks), deck]))
-		setFilteredDecks(sortDecks([...parseDecks(savedDecks), deck]))
-	}
-	const saveDeckInternal = (deck: PlayerDeckT) => {
-		//Save new deck to Local Storage
-		saveDeck(deck)
-
-		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
-		loadDeck(deck.name)
-	}
-	const deleteDeckInternal = () => {
 		dispatchToast(deleteToast)
-		deleteDeck(loadedDeck.name)
-		const decks = getSavedDecks()
-		setSavedDecks(decks)
-		setSortedDecks(
-			sortDecks(parseDecks(savedDecks)).filter(
-				(deck) => deck.name !== loadedDeck.name,
-			),
-		)
-		setFilteredDecks(
-			sortDecks(parseDecks(savedDecks)).filter(
-				(deck) => deck.name !== loadedDeck.name,
-			),
-		)
-		loadDeck(JSON.parse(decks[0]).name)
+		setActiveDeck(newSavedDecks[0])
+		setLoadedDeck(newSavedDecks[0])
 	}
-	const canDuplicateDeck = () => {
-		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
-	}
-	const duplicateDeck = (deck: PlayerDeckT) => {
-		//Save duplicated deck to Local Storage
-		let newName = `${deck.name} Copy`
-		let number = 2
-
-		while (getSavedDeck(newName)) {
-			if (number > 9) return
-			newName = `${deck.name} Copy ${number}`
-			number++
+	const duplicateDeck = (deck: Deck) => {
+		const newDeck = {
+			...deck,
+			name: `${deck.name} Copy`,
+			code: generateDatabaseCode(),
 		}
-
-		const newDeck = {...deck, name: newName}
 
 		saveDeck(newDeck)
-
-		//Refresh saved deck list and load new deck
-		setSavedDecks(savedDecks)
-		setSortedDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
-		setFilteredDecks(sortDecks([...parseDecks(savedDecks), newDeck]))
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
@@ -277,48 +248,50 @@ function SelectDeck({
 		})
 	})
 
-	const deckList: ReactNode = filteredDecks.map(
-		(deck: PlayerDeckT, i: number) => {
-			return (
-				<li
-					className={classNames(
-						css.myDecksItem,
-						loadedDeck.name === deck.name && css.selectedDeck,
-					)}
-					ref={loadedDeck.name === deck.name ? selectedDeckRef : undefined}
-					key={i}
-					onClick={() => {
-						playSwitchDeckSFX()
-						loadDeck(deck.name)
-					}}
-				>
-					{deck.tags && deck.tags.length > 0 ? (
-						<div className={css.multiColoredCircle}>
-							{keysToTags(deck.tags).map((tag) => (
-								<div
-									className={css.singleTag}
-									style={{backgroundColor: tag.color}}
-								></div>
-							))}
-						</div>
-					) : (
-						<div className={css.multiColoredCircle}>
-							<div className={css.singleTag}></div>
-						</div>
-					)}
-					<div
-						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
-					>
-						<img
-							src={'../images/types/type-' + deck.icon + '.png'}
-							alt={'deck-icon'}
-						/>
+	const decksHaveTags =
+		filteredDecks.reduce((tags: Array<Tag>, decks) => {
+			return [...tags, ...decks.tags]
+		}, []).length > 0
+
+	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
+		return (
+			<li
+				className={classNames(
+					css.myDecksItem,
+					loadedDeck.code === deck.code && css.selectedDeck,
+				)}
+				ref={loadedDeck.code === deck.code ? selectedDeckRef : undefined}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck)
+				}}
+			>
+				{deck.tags && deck.tags.length > 0 && (
+					<div className={css.multiColoredCircle}>
+						{deck.tags.map((tag, i) => (
+							<div
+								className={css.singleTag}
+								style={{backgroundColor: tag.color}}
+								key={i}
+							></div>
+						))}
 					</div>
-					{deck.name}
-				</li>
-			)
-		},
-	)
+				)}
+				{decksHaveTags && deck.tags.length === 0 && (
+					<div className={css.multiColoredCircle}>
+						<div className={css.singleTag}></div>
+					</div>
+				)}
+				<div
+					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+				>
+					<img src={getIconPath(deck)} alt={'deck-icon'} />
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
 	const footerTags = (
 		<div className={css.footerTags}>
 			<Dropdown
@@ -332,7 +305,7 @@ function SelectDeck({
 				options={tagsDropdownOptions}
 				action={(option) => {
 					if (option.includes('No Filter')) {
-						setFilteredDecks(sortedDecks)
+						setFilteredDecks(sortDecks(databaseInfo.decks))
 						setTagFilter({
 							name: 'No Filter',
 							color: '#ffffff',
@@ -348,16 +321,15 @@ function SelectDeck({
 						return
 					}
 					const parsedOption = JSON.parse(option) as Tag
-					console.log(parsedOption)
 					setFilteredDecks(
-						sortedDecks.filter(
-							(deck) =>
-								deck.tags &&
-								keysToTags(deck.tags).some(
+						sortDecks(
+							databaseInfo.decks.filter((deck) =>
+								deck.tags.some(
 									(tag) =>
 										tag.name === parsedOption.name &&
 										tag.color === parsedOption.color,
 								),
+							),
 						),
 					)
 					setTagFilter(parsedOption)
@@ -377,16 +349,21 @@ function SelectDeck({
 			{tagFilter.name}
 		</div>
 	)
-	const validationResult = validateDeck(loadedDeck.cards)
+
+	const currentDeck = loadedDeck
+	const validationResult = validateDeck(
+		currentDeck.cards.map((card) => card.props),
+	)
+
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter(
+		hermits: currentDeck.cards.filter(
 			(card) => card.props.category === 'hermit',
 		),
-		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
-		attachableEffects: loadedDeck.cards.filter(
+		items: currentDeck.cards.filter((card) => card.props.category === 'item'),
+		attachableEffects: currentDeck.cards.filter(
 			(card) => card.props.category === 'attach',
 		),
-		singleUseEffects: loadedDeck.cards.filter(
+		singleUseEffects: currentDeck.cards.filter(
 			(card) => card.props.category === 'single_use',
 		),
 	}
@@ -408,65 +385,58 @@ function SelectDeck({
 		<>
 			<ImportModal
 				setOpen={showImportModal}
-				onClose={() => setShowImportModal(!showImportModal)}
+				onClose={() => setShowImportModal(false)}
 				importDeck={(deck) => handleImportDeck(deck)}
 				handleMassImport={handleMassImportDecks}
 			/>
 			<ExportModal
 				setOpen={showExportModal}
-				onClose={() => setShowExportModal(!showExportModal)}
+				onClose={() => setShowExportModal(false)}
 				loadedDeck={loadedDeck}
 			/>
 			<MassExportModal
 				setOpen={showMassExportModal}
-				onClose={() => setShowMassExportModal(!showMassExportModal)}
+				onClose={() => setShowMassExportModal(false)}
 			/>
 			<TagsModal
 				setOpen={showManageTagsModal}
-				tags={getCreatedTags()}
-				onClose={() => setShowManageTagsModal(!showManageTagsModal)}
+				onClose={() => setShowManageTagsModal(false)}
 			/>
-			<AlertModal
+
+			<ConfirmModal // Invalid Deck Modal
 				setOpen={showValidateDeckModal}
-				onClose={() => setShowValidateDeckModal(!showValidateDeckModal)}
-				action={handleInvalidDeck}
 				title="Invalid Deck"
 				description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
                 matches. If you continue, your last valid deck will be used instead.`}
-				actionText="Main Menu"
+				confirmButtonText="Main Menu"
+				onCancel={() => setShowValidateDeckModal(false)}
+				onConfirm={handleInvalidDeck}
 			/>
-			<AlertModal
+			<ConfirmModal // Delete Deck Modal
 				setOpen={showDeleteDeckModal}
-				onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
-				action={() => deleteDeckInternal()}
 				title="Delete Deck"
-				description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
-				actionText="Delete"
+				description={`Are you sure you want to delete the "${loadedDeck.name}" deck?`}
+				confirmButtonText="Delete Deck"
+				onCancel={() => setShowDeleteDeckModal(false)}
+				onConfirm={() => deleteDeck(loadedDeck)}
 			/>
-			<AlertModal
+			<ConfirmModal // Duplicate Deck Modal
 				setOpen={showDuplicateDeckModal}
-				onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
-				action={() => {
-					duplicateDeck(loadedDeck)
-				}}
 				title="Duplicate Deck"
-				description={
-					canDuplicateDeck()
-						? `Are you sure you want to duplicate the "${loadedDeck.name}" deck?`
-						: `You have too many duplicates of the "${loadedDeck.name}" deck.`
-				}
-				actionText={canDuplicateDeck() ? 'Duplicate' : undefined}
-				actionType="primary"
+				description={`Are you sure you want to duplicate the "${loadedDeck.name}" deck?`}
+				confirmButtonText="Duplicate"
+				confirmButtonVariant="primary"
+				onCancel={() => setShowDuplicateDeckModal(false)}
+				onConfirm={() => duplicateDeck(currentDeck)}
 			/>
-			<AlertModal
+			<ConfirmModal // Overwrite Deck Modal
 				setOpen={showOverwriteModal}
-				onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-				action={() => saveDeckInternal(importedDeck)}
 				title="Overwrite Deck"
 				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				actionText="Overwrite"
+				confirmButtonText="Overwrite"
+				onCancel={() => setShowOverwriteModal(false)}
+				onConfirm={() => saveDeck(importedDeck)}
 			/>
-
 			<DeckLayout
 				title="Deck Selection"
 				back={backToMenu}
@@ -483,18 +453,11 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
+									<img src={getIconPath(loadedDeck)} alt="deck-icon" />
 								</div>
 								<div className={css.deckName}>{loadedDeck.name}</div>
 								{loadedDeck.tags &&
-									keysToTags(loadedDeck.tags).map((tag) => {
+									loadedDeck.tags.map((tag) => {
 										return (
 											<div className={css.fullTagTitle}>
 												<span
@@ -527,7 +490,7 @@ function SelectDeck({
 								{loadedDeck.tags && loadedDeck.tags.length > 0 && (
 									<div className={css.multiColoredCircleBorder}>
 										<div className={css.multiColoredCircle}>
-											{keysToTags(loadedDeck.tags).map((tag) => (
+											{loadedDeck.tags.map((tag) => (
 												<div
 													className={css.singleTag}
 													style={{backgroundColor: tag.color}}
@@ -543,14 +506,7 @@ function SelectDeck({
 										css[loadedDeck.icon],
 									)}
 								>
-									<img
-										src={
-											'../images/types/type-' +
-											(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
-											'.png'
-										}
-										alt="deck-icon"
-									/>
+									<img src={getIconPath(loadedDeck)} alt="deck-icon" />
 								</div>
 								<span
 									className={classNames(
@@ -579,7 +535,7 @@ function SelectDeck({
 							<div className={css.deckListBox}>
 								<div className={css.mobileDeckPreview}>
 									<MobileCardList
-										cards={sortCards(loadedDeck.cards)}
+										cards={sortCards(currentDeck.cards)}
 										small={true}
 									/>
 								</div>
@@ -593,6 +549,7 @@ function SelectDeck({
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 									size="small"
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Manage Tags</span>
 								</Button>
@@ -614,7 +571,7 @@ function SelectDeck({
 								>
 									<span>Copy</span>
 								</Button>
-								{savedDecks.length > 1 && (
+								{databaseInfo.decks.length > 1 && (
 									<Button
 										variant="error"
 										size="small"
@@ -635,6 +592,7 @@ function SelectDeck({
 									variant="primary"
 									size="small"
 									onClick={() => setShowImportModal(!showImportModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<ExportIcon reversed />
 									Import
@@ -644,6 +602,7 @@ function SelectDeck({
 									size="small"
 									onClick={() => setShowExportModal(!showExportModal)}
 									leftSlot={<ExportIcon />}
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Export</span>
 								</Button>
@@ -651,6 +610,7 @@ function SelectDeck({
 									variant="default"
 									size="small"
 									onClick={() => setShowMassExportModal(!showMassExportModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
@@ -673,6 +633,7 @@ function SelectDeck({
 							size="small"
 							onClick={() => setShowExportModal(!showExportModal)}
 							leftSlot={<ExportIcon />}
+							disabled={debugConfig.disableDatabase}
 						>
 							<span>Export Deck</span>
 						</Button>
@@ -684,7 +645,7 @@ function SelectDeck({
 						>
 							<span>Copy Deck</span>
 						</Button>
-						{savedDecks.length > 1 && (
+						{databaseInfo.decks.length > 1 && (
 							<Button
 								variant="error"
 								size="small"
@@ -764,26 +725,6 @@ function SelectDeck({
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
 								{footerTags}
-								{getLegacyDecks() && (
-									<Button
-										onClick={() => {
-											const conversionCount = convertLegacyDecks()
-											setSavedDecks(getSavedDecks())
-
-											dispatch({
-												type: localMessages.TOAST_OPEN,
-												open: true,
-												title: 'Convert Legacy Decks',
-												description: conversionCount
-													? `Converted ${conversionCount} decks!`
-													: 'No decks to convert!',
-												image: '/images/card-icon.png',
-											})
-										}}
-									>
-										Import Legacy Decks
-									</Button>
-								)}
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>
@@ -792,6 +733,7 @@ function SelectDeck({
 										variant="primary"
 										onClick={() => setShowImportModal(!showImportModal)}
 										style={{flexGrow: 1}}
+										disabled={debugConfig.disableDatabase}
 									>
 										<ExportIcon reversed />
 										<span>Import</span>
@@ -799,6 +741,7 @@ function SelectDeck({
 									<Button
 										variant="default"
 										onClick={() => setShowMassExportModal(!showMassExportModal)}
+										disabled={debugConfig.disableDatabase}
 									>
 										<ExportIcon />
 										<span>Mass Export</span>
@@ -807,6 +750,7 @@ function SelectDeck({
 								<Button
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									disabled={debugConfig.disableDatabase}
 								>
 									<span>Manage Tags</span>
 								</Button>

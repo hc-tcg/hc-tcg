@@ -2,7 +2,7 @@ import {ModalData} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
 import CardList from 'components/card-list'
-import Modal from 'components/modal'
+import {Modal} from 'components/modal'
 import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
@@ -91,11 +91,12 @@ function SelectCardsModal({closeModal}: Props) {
 
 	return (
 		<Modal
+			setOpen
 			title={modalData.name}
-			closeModal={handleClose}
-			showCloseButton={cancelable}
+			onClose={handleClose}
+			disableUserClose={!cancelable}
 		>
-			<div className={css.description}>
+			<Modal.Description>
 				{modalData.description}
 				{cards.length > 0 && (
 					<div className={css.cards}>
@@ -113,8 +114,8 @@ function SelectCardsModal({closeModal}: Props) {
 						</div>
 					</div>
 				)}
-			</div>
-			<div className={css.options}>
+			</Modal.Description>
+			<Modal.Options>
 				{secondaryButton && (
 					<Button
 						variant={secondaryButton.variant}
@@ -134,7 +135,7 @@ function SelectCardsModal({closeModal}: Props) {
 						{primaryButton.text}
 					</Button>
 				)}
-			</div>
+			</Modal.Options>
 		</Modal>
 	)
 }
