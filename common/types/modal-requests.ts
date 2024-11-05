@@ -73,19 +73,30 @@ export namespace DragCards {
 		name: string
 		/** The description of the modal */
 		description: string
-		cards: Array<CardEntity>
+		/** The cards viewable in the modal, that start on the left */
+		leftCards: Array<CardEntity>
+		/** The cards viewable in the modal, that start on the right */
+		rightCards: Array<CardEntity>
+		/**The name of the left area */
+		leftAreaName: string
+		/**The name of the right area */
+		rightAreaName: string
+		/**The maximum amount of cards in the left area */
+		leftAreaMax: number | null
+		/**The maximum amount of cards in the right area */
+		rightAreaMax: number | null
 	}
 
 	export type Result =
 		| {
 				result: true
-				bottomCards: Array<CardComponent>
-				topCards: Array<CardComponent>
+				leftCards: Array<CardComponent>
+				rightCards: Array<CardComponent>
 		  }
 		| {
 				result: false
-				bottomCards: null
-				topCards: null
+				leftCards: null
+				rightCards: null
 		  }
 }
 

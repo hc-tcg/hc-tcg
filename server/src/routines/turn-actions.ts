@@ -320,11 +320,11 @@ export function* modalRequestSaga(
 		let modal = modalResult as LocalDragCards.Result
 		modalRequest_.onResult({
 			...modal,
-			bottomCards: modal.bottomCards
-				? modal.bottomCards.map((entity) => game.components.get(entity)!)
+			leftCards: modal.leftCards
+				? modal.leftCards.map((entity) => game.components.get(entity)!)
 				: null,
-			topCards: modal.topCards
-				? modal.topCards.map((entity) => game.components.get(entity)!)
+			rightCards: modal.rightCards
+				? modal.rightCards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as DragCards.Result)
 	} else if (modalRequest.modal.type === 'copyAttack') {

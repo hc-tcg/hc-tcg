@@ -146,18 +146,23 @@ export namespace LocalDragCards {
 		type: 'dragCards'
 		name: string
 		description: string
-		cards: Array<LocalCardInstance>
+		leftCards: Array<LocalCardInstance>
+		rightCards: Array<LocalCardInstance>
+		leftAreaName: string
+		rightAreaName: string
+		leftAreaMax: number | null
+		rightAreaMax: number | null
 	}
 
 	export type Result =
 		| {
 				result: true
-				bottomCards: Array<CardEntity>
-				topCards: Array<CardEntity>
+				leftCards: Array<CardEntity>
+				rightCards: Array<CardEntity>
 		  }
 		| {
 				result: false
-				bottomCards: null
-				topCards: null
+				leftCards: null
+				rightCards: null
 		  }
 }

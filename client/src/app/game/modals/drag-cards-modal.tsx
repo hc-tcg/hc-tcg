@@ -26,7 +26,6 @@ type DraggableCardProps = {
 	draggedCard: string | null
 	setDraggedCard: (arg: string | null) => void
 	cardInfo: Array<CardInfo>
-	setCardInfo: (arg: Array<CardInfo>) => void
 }
 
 const DraggableCard = ({
@@ -35,7 +34,6 @@ const DraggableCard = ({
 	draggedCard,
 	setDraggedCard,
 	cardInfo,
-	setCardInfo,
 }: DraggableCardProps) => {
 	const cardRef = useRef<HTMLDivElement>(null)
 	const thisInfo = cardInfo.find((c) => c.entity === entity)
@@ -49,7 +47,6 @@ const DraggableCard = ({
 			return
 		}
 		if (e.movementX) thisInfo.totalMovement += e.movementX
-		setCardInfo(cardInfo)
 		cardRef.current.style.transform = `translateX(${thisInfo.totalMovement}px)`
 	}
 
@@ -111,9 +108,10 @@ function DragCardsModal({closeModal}: Props) {
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
 	if (!modalData || modalData.type !== 'dragCards') return null
-	const cards: Array<LocalCardInstance> = modalData.cards
-	const topDeckRef = useRef<HTMLDivElement>(null)
-	const bottomDeckRef = useRef<HTMLDivElement>(null)
+	const startingLeftCards: Array<LocalCardInstance> = modalData.leftCards
+	const startingRightCards: Array<LocalCardInstance> = modalData.rightCards
+	const rightAreaRef = useRef<HTMLDivElement>(null)
+	const leftAreaRef = useRef<HTMLDivElement>(null)
 
 	const handlePrimary = () => {
 		dispatch({
@@ -122,8 +120,8 @@ function DragCardsModal({closeModal}: Props) {
 				type: 'MODAL_REQUEST',
 				modalResult: {
 					result: true,
-					bottomCards: bottomCards,
-					topCards: topCards,
+					leftCards: leftCards,
+					rightCards: rightCards,
 				},
 			},
 		})
@@ -137,8 +135,8 @@ function DragCardsModal({closeModal}: Props) {
 				type: 'MODAL_REQUEST',
 				modalResult: {
 					result: false,
-					bottomCards: null,
-					topCards: null,
+					leftCards: null,
+					rightCards: null,
 				},
 			},
 		})
@@ -146,15 +144,22 @@ function DragCardsModal({closeModal}: Props) {
 	}
 
 	const [draggedCard, setDraggedCard] = useState<string | null>(null)
-	const [cardInfo, setCardInfo] = useState<Array<CardInfo>>(
-		cards.map((card, i) => ({
+	const [cardInfo, _setCardInfo] = useState<Array<CardInfo>>([
+		...startingLeftCards.map((card, i) => ({
+			cardRef: null,
+			totalMovement: -50 - i,
+			entity: card.entity,
+			foundHome: false,
+		})),
+		...startingRightCards.map((card, i) => ({
 			cardRef: null,
 			totalMovement: 100 + i,
 			entity: card.entity,
+			foundHome: false,
 		})),
-	)
-	const [topCards, setTopCards] = useState<Array<CardEntity>>([])
-	const [bottomCards, setBottomCards] = useState<Array<CardEntity>>([])
+	])
+	const [rightCards, setRightCards] = useState<Array<CardEntity>>([])
+	const [leftCards, setLeftCards] = useState<Array<CardEntity>>([])
 
 	const squish = 0.6
 
@@ -163,25 +168,25 @@ function DragCardsModal({closeModal}: Props) {
 		cardPositions: (DOMRect | null)[],
 		card: CardInfo,
 		area: DOMRect,
-		direction: 'less' | 'greater',
+		direction: 'left' | 'right',
 		squish: number,
 		animate: boolean,
 	) => {
 		if (!card.cardRef?.current) return
 		if (
-			(direction === 'greater' && cardPosition.right < area.left) ||
-			(direction === 'less' && cardPosition.left > area.right)
+			(direction === 'right' && cardPosition.right < area.left) ||
+			(direction === 'left' && cardPosition.left > area.right)
 		) {
 			return
 		}
 		const others = cardPositions.reduce(
 			(r, card) => {
-				if (direction === 'greater') {
+				if (direction === 'right') {
 					if (card && card.right > area.left) r.amount += 1
 					if (card && card.right > area.left && card.left < cardPosition.left)
 						r.myPosition += 1
 					return r
-				} else if (direction === 'less') {
+				} else if (direction === 'left') {
 					if (card && card.left < area.right) r.amount += 1
 					if (card && card.left < area.right && card.left < cardPosition.left)
 						r.myPosition += 1
@@ -191,7 +196,6 @@ function DragCardsModal({closeModal}: Props) {
 			},
 			{amount: 0, myPosition: 0},
 		)
-
 		const centerpoint =
 			((area.width * squish) / (2 * others.amount)) *
 				(others.myPosition * 2 + 1) +
@@ -228,7 +232,7 @@ function DragCardsModal({closeModal}: Props) {
 			entity: CardEntity
 		}>,
 		area: DOMRect,
-		direction: 'less' | 'greater',
+		direction: 'left' | 'right',
 	) => {
 		cardPositions.sort((a, b) => {
 			if (!a.card || !b.card) return 0
@@ -236,10 +240,10 @@ function DragCardsModal({closeModal}: Props) {
 			return -1
 		})
 		return cardPositions.reduce((r: Array<CardEntity>, card) => {
-			if (direction === 'greater') {
+			if (direction === 'right') {
 				if (card.card && card.card.right > area.left) r.push(card.entity)
 				return r
-			} else if (direction === 'less') {
+			} else if (direction === 'left') {
 				if (card.card && card.card.left < area.right) r.push(card.entity)
 				return r
 			}
@@ -247,11 +251,8 @@ function DragCardsModal({closeModal}: Props) {
 		}, [])
 	}
 
-	const onCardPositionUpdate = (showAnimation: boolean) => {
-		if (!topDeckRef?.current || !bottomDeckRef?.current) return
-		const topArea = topDeckRef.current.getBoundingClientRect()
-		const bottomArea = bottomDeckRef.current.getBoundingClientRect()
-		const cardPositions = cardInfo.map((card) => {
+	const getCardPositions = () => {
+		return cardInfo.map((card) => {
 			if (!card.cardRef?.current)
 				return {card: null, entity: card.entity as CardEntity}
 			return {
@@ -259,20 +260,27 @@ function DragCardsModal({closeModal}: Props) {
 				entity: card.entity as CardEntity,
 			}
 		})
+	}
 
-		const tempTopCards = getCardsOverArea(cardPositions, topArea, 'greater')
-		const tempBottomCards = getCardsOverArea(cardPositions, bottomArea, 'less')
+	const onCardPositionUpdate = (showAnimation: boolean) => {
+		if (!rightAreaRef?.current || !leftAreaRef?.current) return
+		const rightArea = rightAreaRef.current.getBoundingClientRect()
+		const leftArea = leftAreaRef.current.getBoundingClientRect()
+		const cardPositions = getCardPositions()
 
-		const topCardInfo = cardInfo.filter((card) =>
-			tempTopCards.includes(card.entity as CardEntity),
+		const tempRightArea = getCardsOverArea(cardPositions, rightArea, 'right')
+		const tempLeftArea = getCardsOverArea(cardPositions, leftArea, 'left')
+
+		const rightAreaCardsInfo = cardInfo.filter((card) =>
+			tempRightArea.includes(card.entity as CardEntity),
 		)
-		const bottomCardInfo = cardInfo.filter(
+		const leftAreaCardsInfo = cardInfo.filter(
 			(card) =>
-				tempBottomCards.includes(card.entity as CardEntity) &&
-				!tempTopCards.includes(card.entity as CardEntity),
+				tempLeftArea.includes(card.entity as CardEntity) &&
+				!tempRightArea.includes(card.entity as CardEntity),
 		)
 
-		topCardInfo.forEach((card) => {
+		rightAreaCardsInfo.forEach((card) => {
 			if (!card.cardRef?.current) return
 			const cardPosition = card.cardRef.current.getBoundingClientRect()
 
@@ -280,14 +288,14 @@ function DragCardsModal({closeModal}: Props) {
 				cardPosition,
 				cardPositions.map((card) => (card ? card.card : null)),
 				card,
-				topArea,
-				'greater',
+				rightArea,
+				'right',
 				squish,
 				showAnimation,
 			)
 		})
 
-		bottomCardInfo.forEach((card) => {
+		leftAreaCardsInfo.forEach((card) => {
 			if (!card.cardRef?.current) return
 			const cardPosition = card.cardRef.current.getBoundingClientRect()
 
@@ -295,15 +303,26 @@ function DragCardsModal({closeModal}: Props) {
 				cardPosition,
 				cardPositions.map((card) => (card ? card.card : null)),
 				card,
-				bottomArea,
-				'less',
+				leftArea,
+				'left',
 				squish,
 				showAnimation,
 			)
 		})
 
-		setTopCards(tempTopCards)
-		setBottomCards(tempBottomCards)
+		setTimeout(() => {
+			const newCardPositions = getCardPositions()
+
+			const finalRightArea = getCardsOverArea(
+				newCardPositions,
+				rightArea,
+				'right',
+			)
+			const finalLeftArea = getCardsOverArea(newCardPositions, leftArea, 'left')
+
+			setRightCards(finalRightArea)
+			setLeftCards(finalLeftArea)
+		}, 100)
 	}
 
 	useLayoutEffect(() => {
@@ -342,23 +361,38 @@ function DragCardsModal({closeModal}: Props) {
 				{modalData.description}
 				<div className={css.draggableCardsContainer}>
 					<div className={css.retrievalBox}>
-						<div className={css.retrievalArea} ref={bottomDeckRef}></div>
-						<div className={css.retrievalName}>Bottom of Deck</div>
+						<div className={css.retrievalArea} ref={leftAreaRef}></div>
+						<div className={css.retrievalName}>
+							{modalData.leftAreaName}
+							{modalData.leftAreaMax && (
+								<span>
+									{' '}
+									({leftCards.length}/{modalData.leftAreaMax})
+								</span>
+							)}
+						</div>
 					</div>
 					<div className={css.deckSpacer}></div>
 					<div className={css.retrievalBox}>
-						<div className={css.retrievalArea} ref={topDeckRef}></div>
-						<div className={css.retrievalName}>Top of Deck</div>
+						<div className={css.retrievalArea} ref={rightAreaRef}></div>
+						<div className={css.retrievalName}>
+							{modalData.rightAreaName}{' '}
+							{modalData.rightAreaMax && (
+								<span>
+									{' '}
+									({rightCards.length}/{modalData.rightAreaMax})
+								</span>
+							)}
+						</div>
 					</div>
 					<div className={css.subContainer}>
-						{cards.map((card, i) => {
+						{[...startingLeftCards, ...startingRightCards].map((card, i) => {
 							return (
 								<DraggableCard
 									entity={card.entity}
 									draggedCard={draggedCard}
 									setDraggedCard={setDraggedCard}
 									cardInfo={cardInfo}
-									setCardInfo={setCardInfo}
 									key={i}
 								>
 									<Card
@@ -378,7 +412,14 @@ function DragCardsModal({closeModal}: Props) {
 					variant="default"
 					size="medium"
 					onClick={handlePrimary}
-					disabled={topCards.length + bottomCards.length !== cards.length}
+					disabled={
+						rightCards.length + leftCards.length !==
+							startingLeftCards.length + startingRightCards.length ||
+						(modalData.rightAreaMax !== null &&
+							modalData.rightAreaMax > rightCards.length) ||
+						(modalData.leftAreaMax !== null &&
+							modalData.leftAreaMax > leftCards.length)
+					}
 				>
 					Confirm
 				</Button>

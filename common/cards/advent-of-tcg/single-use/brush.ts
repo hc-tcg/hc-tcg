@@ -44,13 +44,18 @@ const Brush: SingleUse = {
 					name: 'Brush',
 					description:
 						'Drag cards to put them on the top or bottom of your deck. Cards closer to the right will be drawn first.',
-					cards: topCards.map((card) => card.entity),
+					leftCards: topCards.map((card) => card.entity),
+					rightCards: [],
+					leftAreaName: 'Bottom of Deck',
+					leftAreaMax: null,
+					rightAreaName: 'Top of Deck',
+					rightAreaMax: null,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 					if (!modalResult.result) return 'SUCCESS'
 
-					modalResult.topCards.forEach((c) => {
+					modalResult.rightCards.forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'front',
@@ -58,7 +63,7 @@ const Brush: SingleUse = {
 						)
 					})
 
-					modalResult.bottomCards.forEach((c) => {
+					modalResult.leftCards.forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'back',

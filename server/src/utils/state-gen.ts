@@ -91,7 +91,10 @@ export function getLocalModalData(
 	} else if (modal.type == 'dragCards') {
 		return {
 			...modal,
-			cards: modal.cards.map((entity) =>
+			leftCards: modal.leftCards.map((entity) =>
+				getLocalCard(game, game.components.get(entity)!),
+			),
+			rightCards: modal.rightCards.map((entity) =>
 				getLocalCard(game, game.components.get(entity)!),
 			),
 		}
