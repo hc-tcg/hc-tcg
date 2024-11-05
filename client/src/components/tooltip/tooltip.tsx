@@ -158,13 +158,17 @@ export const CurrentTooltip = ({
 		}
 	}
 
-	const onMouseMoveWithPosition = (e: MouseEvent) => {
+	const onMouseMove = (e: MouseEvent) => {
 		setMousePosition({x: e.x, y: e.y})
 		const offsets = getOffsets()
-		onMouseMove(offsets)
+		onMouseAction(offsets)
 	}
-	const onMouseMove = (offsets: Offsets | null) => {
-		if (!offsets) offsets = getOffsets()
+	const onMouseScroll = () => {
+		const offsets = getOffsets()
+		onMouseAction(offsets)
+	}
+	const onMouseAction = (offsets: Offsets | null) => {
+		if (shownByTouch) return
 
 		if (!offsets || !anchor.current || !tooltipRef || !tooltipRef.current)
 			return
@@ -201,41 +205,56 @@ export const CurrentTooltip = ({
 		)
 			return
 
+		tooltipRef.current.style.top = '-9999px'
+		tooltipRef.current.style.left = '-9999px'
+
 		if (
 			result.clientX < offsets.left ||
 			result.clientX > offsets.right ||
 			result.clientY < offsets.top ||
 			result.clientY > offsets.bottom
 		) {
-			tooltipRef.current.style.top = '-9999px'
-			tooltipRef.current.style.left = '-9999px'
 			dispatch({
 				type: localMessages.HIDE_TOOLTIP,
 			})
 		}
 	}
 
+	const onTouchEnd = () => {
+		if (touchTime <= 5) {
+			dispatch({
+				type: localMessages.HIDE_TOOLTIP,
+			})
+		}
+		setTouchTime(0)
+	}
+
 	useLayoutEffect(() => {
-		window.addEventListener('scroll', () => onMouseMove(null), true)
-		window.addEventListener('mousemove', onMouseMoveWithPosition)
+		window.addEventListener('scroll', onMouseScroll, true)
+		window.addEventListener('mousemove', onMouseMove)
 		window.addEventListener('touchstart', onTouchStart)
-		window.addEventListener('touchend', onTouchStart)
+		window.addEventListener('touchend', onTouchEnd)
 		return () => {
-			window.removeEventListener('scroll', () => onMouseMove(null))
-			window.removeEventListener('mousemove', onMouseMoveWithPosition)
-			window.removeEventListener('touchend', onTouchStart)
+			window.removeEventListener('scroll', onMouseScroll, true)
+			window.removeEventListener('mousemove', onMouseMove)
+			window.removeEventListener('touchstart', onTouchStart)
+			window.removeEventListener('touchend', onTouchEnd)
 		}
 	})
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			if (!shownByTouch || touchTime > 10) return
+			if (!shownByTouch || touchTime > 5) {
+				const offsets = getOffsets()
+				if (!offsets || !tooltipRef?.current) return
+				tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+				tooltipRef.current.style.left = `${offsets.middle}px`
+				return
+			}
 			setTouchTime(touchTime + 1)
 		}, 50)
 
-		if (touchTime > 10) {
-			onMouseMove(null)
-		}
+		if (!shownByTouch) clearInterval(interval)
 
 		return () => {
 			clearInterval(interval)
