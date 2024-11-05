@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {SingleTurnMiningFatigueEffect} from 'common/status-effects/mining-fatigue'
+import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 
 describe('Test Elder Guardian', () => {
 	test('Test mining fatigue is applied', () => {
