@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const PacifistDoubleItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_rare',
-	numericId: 49,
+	numericId: 0.029,
 	name: capitalize(convenience) + ' Item x2',
 	shortName: capitalize(convenience),
 	description: 'Counts as 2 ' + capitalize(convenience) + ' Item cards.',

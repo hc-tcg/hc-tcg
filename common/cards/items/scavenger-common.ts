@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const ScavengerItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_common',
-	numericId: 49,
+	numericId: 0.036,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
 	expansion: 'default',

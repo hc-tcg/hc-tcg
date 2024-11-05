@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const FarmDoubleItem: Item = {
 	...item,
 	id: 'item_farm_rare',
-	numericId: 56,
+	numericId: 0.019,
 	name: 'Farm Item x2',
 	shortName: 'Farm',
 	description: 'Counts as 2 Farm Item cards.',

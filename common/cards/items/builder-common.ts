@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const BuilderItem: Item = {
 	...item,
 	id: 'item_builder_common',
-	numericId: 51,
+	numericId: 0.008,
 	name: 'Builder Item',
 	shortName: 'Builder',
 	expansion: 'default',

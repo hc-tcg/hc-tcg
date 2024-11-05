@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const SpeedrunnerItem: Item = {
 	...item,
 	id: 'item_speedrunner_common',
-	numericId: 65,
+	numericId: 0.038,
 	name: 'Speedrunner Item',
 	shortName: 'Speedrunner',
 	expansion: 'default',

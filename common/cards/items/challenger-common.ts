@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const ChallengerItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_common',
-	numericId: 49,
+	numericId: 0.010,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
 	expansion: 'default',

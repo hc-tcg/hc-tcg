@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const ExplorerItem: Item = {
 	...item,
 	id: 'item_explorer_common',
-	numericId: 53,
+	numericId: 0.016,
 	name: 'Explorer Item',
 	shortName: 'Explorer',
 	expansion: 'default',

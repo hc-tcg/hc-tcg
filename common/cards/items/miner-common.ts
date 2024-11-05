@@ -8,7 +8,7 @@ function capitalize(s: string) {
 const MinerItem: Item = {
 	...item,
 	id: 'item_miner_common',
-	numericId: 57,
+	numericId: 0.026,
 	name: 'Miner Item',
 	shortName: 'Miner',
 	expansion: 'default',

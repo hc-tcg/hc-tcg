@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const RedstoneDoubleItem: Item = {
 	...item,
 	id: 'item_redstone_rare',
-	numericId: 64,
+	numericId: 0.035,
 	name: 'Redstone Item x2',
 	shortName: 'Redstone',
 	description: 'Counts as 2 Redstone Item cards.',

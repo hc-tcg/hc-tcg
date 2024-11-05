@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const SpeedrunnerDoubleItem: Item = {
 	...item,
 	id: 'item_speedrunner_rare',
-	numericId: 66,
+	numericId: 0.039,
 	name: 'Speedrunner Item x2',
 	shortName: 'Speedrunner',
 	description: 'Counts as 2 Speedrunner Item cards.',

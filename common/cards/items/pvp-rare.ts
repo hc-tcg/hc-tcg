@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const PvPDoubleItem: Item = {
 	...item,
 	id: 'item_pvp_rare',
-	numericId: 62,
+	numericId: 0.033,
 	name: 'PvP Item x2',
 	shortName: 'PvP',
 	description: 'Counts as 2 PvP Item cards.',

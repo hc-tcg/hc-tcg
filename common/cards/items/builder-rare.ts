@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const BuilderDoubleItem: Item = {
 	...item,
 	id: 'item_builder_rare',
-	numericId: 52,
+	numericId: 0.009,
 	name: 'Builder Item x2',
 	shortName: 'Builder',
 	description: 'Counts as 2 Builder Item cards.',
