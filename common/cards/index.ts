@@ -5,6 +5,7 @@ import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import defaultAttachCards from './attach'
 import bossHermitCards from './boss/hermits'
 import defaultHermitCards from './hermits'
+import tempHermits from './temp'
 import defaultItemCards from './items'
 import defaultSingleUseCards from './single-use'
 import {Card} from './types'
@@ -18,6 +19,7 @@ const hermitCardClasses: Array<Card> = [
 	...defaultHermitCards,
 	...adventOfTcgHermitCards,
 	...bossHermitCards,
+	...tempHermits,
 ]
 
 const itemCardClasses: Array<Card> = [

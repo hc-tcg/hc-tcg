@@ -87,7 +87,7 @@ const getStrengthsAndWeaknesses = (
 	const strengths: Array<TypeT> = [] // Old = STRENGTHS[card.type]
 	if (card.type) {
 		if (card.type.includes('everything')) {
-			strengths.push('everything', 'mob')
+			strengths.push('everything')
 			return
 		}
 		let i
@@ -105,16 +105,16 @@ const getStrengthsAndWeaknesses = (
 	const weaknesses: Array<TypeT> = []
 	if (card.type) {
 		if (card.type.includes('everything') || card.type.includes('mob')) {
-			strengths.push('everything')
+			weaknesses.push('everything')
 			return
 		}
 		let i
 		for (i = 0; i < card.type.length; i++) {
+			const type = card.type[i]
 			let litmus: TypeT
 			for (litmus in STRENGTHS) {
-				const type = card.type[i]
-				if (litmus.includes(type) && !weaknesses.includes(litmus)) {
-					weaknesses.push(type)
+				if (STRENGTHS[litmus].includes(type) && !weaknesses.includes(litmus)) {
+					weaknesses.push(litmus)
 				}
 			}
 		}
@@ -215,11 +215,11 @@ const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 		const types = card.type
 
-		return (
+		return ( // Idk why colors break for multiple types
 			<div className={css.strengths}>
 				{joinJsx(
 					types.map((type) => (
-						<span key={type} className={css[type]}>
+						<span key={type} className={classNames(css.type, css[card.type])}>
 							{HERMIT_TYPES[type]}
 						</span>
 					)),

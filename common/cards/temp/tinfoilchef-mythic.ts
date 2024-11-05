@@ -3,8 +3,8 @@ import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../utils/coinFlips'
-import {hermit} from '../base/defaults'
-import {Hermit} from '../base/types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const TinFoilChefMythic: Hermit = {
 	...hermit,
