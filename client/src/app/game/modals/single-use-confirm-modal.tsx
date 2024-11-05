@@ -1,14 +1,12 @@
-import Button from 'components/button'
-import Modal from 'components/modal'
+import {ConfirmModal} from 'components/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
-import css from './game-modals.module.scss'
 
 type Props = {
 	closeModal: () => void
 }
-function ConfirmModal({closeModal}: Props) {
+function SingleUseConfirmModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 
 	const handleYes = () => {
@@ -42,22 +40,17 @@ function ConfirmModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Play Single Use Card" closeModal={handleNo}>
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Are you sure you want to use {getCardName()}?
-				</div>
-				<div className={css.options}>
-					<Button size="medium" onClick={handleNo}>
-						No
-					</Button>
-					<Button size="medium" onClick={handleYes}>
-						Yes
-					</Button>
-				</div>
-			</div>
-		</Modal>
+		<ConfirmModal
+			setOpen
+			title="Play Single Use Card"
+			description={`Are you sure you want to use ${getCardName()}?`}
+			cancelButtonText="No"
+			confirmButtonText="Yes"
+			confirmButtonVariant="default"
+			onCancel={handleNo}
+			onConfirm={handleYes}
+		/>
 	)
 }
 
-export default ConfirmModal
+export default SingleUseConfirmModal

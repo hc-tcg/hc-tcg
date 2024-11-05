@@ -1,5 +1,6 @@
 .instructions {
 	padding: 0.5rem 0;
+	text-align: center;
 }
 
 .warning {
@@ -9,11 +10,11 @@
 .copy {
 	display: grid;
 	place-content: center;
-	background: var(--gray-900);
+	background: var(--gray-800);
 	padding: 0.4rem;
-	height: 1.5rem;
-	min-width: 1.5rem;
-	border-radius: 6px;
+	height: 2rem;
+	width: 2rem;
+	border-radius: 3px;
 	cursor: pointer;
 
 	&:hover,
