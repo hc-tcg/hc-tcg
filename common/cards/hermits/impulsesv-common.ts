@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const ImpulseSVCommon: Hermit = {
 	...hermit,
 	id: 'impulsesv_common',
-	numericId: 40,
+	numericId: 23,
 	name: 'Impulse',
 	expansion: 'default',
 	rarity: 'common',

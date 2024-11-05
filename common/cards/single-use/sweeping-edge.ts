@@ -18,7 +18,7 @@ const discardCondition = query.every(
 const SweepingEdge: SingleUse = {
 	...singleUse,
 	id: 'sweeping_edge',
-	numericId: 148,
+	numericId: 125,
 	name: 'Sweeping Edge',
 	expansion: 'alter_egos',
 	rarity: 'ultra_rare',

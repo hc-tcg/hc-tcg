@@ -15,7 +15,7 @@ import {SingleUse} from '../types'
 const InvisibilityPotion: SingleUse = {
 	...singleUse,
 	id: 'invisibility_potion',
-	numericId: 44,
+	numericId: 77,
 	name: 'Invisibility Potion',
 	expansion: 'default',
 	rarity: 'rare',

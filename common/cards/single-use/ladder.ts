@@ -16,7 +16,7 @@ const pickCondition = query.every(
 const Ladder: SingleUse = {
 	...singleUse,
 	id: 'ladder',
-	numericId: 143,
+	numericId: 118,
 	name: 'Ladder',
 	expansion: 'alter_egos',
 	rarity: 'ultra_rare',

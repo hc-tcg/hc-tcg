@@ -12,7 +12,7 @@ import {Hermit} from '../types'
 const BdoubleO100Rare: Hermit = {
 	...hermit,
 	id: 'bdoubleo100_rare',
-	numericId: 1,
+	numericId: 2,
 	name: 'Bdubs',
 	expansion: 'default',
 	rarity: 'rare',

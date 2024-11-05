@@ -8,7 +8,7 @@ import {Hermit} from '../types'
 const EthosLabUltraRare: Hermit = {
 	...hermit,
 	id: 'ethoslab_ultra_rare',
-	numericId: 21,
+	numericId: 14,
 	name: 'Etho',
 	expansion: 'default',
 	rarity: 'ultra_rare',

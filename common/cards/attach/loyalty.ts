@@ -8,7 +8,7 @@ import {Attach} from '../types'
 const Loyalty: Attach = {
 	...attach,
 	id: 'loyalty',
-	numericId: 77,
+	numericId: 84,
 	name: 'Loyalty',
 	expansion: 'default',
 	rarity: 'rare',

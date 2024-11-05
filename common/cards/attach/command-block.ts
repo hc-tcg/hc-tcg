@@ -7,7 +7,7 @@ import {Attach} from '../types'
 const CommandBlock: Attach = {
 	...attach,
 	id: 'command_block',
-	numericId: 120,
+	numericId: 114,
 	name: 'Command Block',
 	expansion: 'alter_egos',
 	rarity: 'rare',

@@ -13,7 +13,7 @@ import {Hermit} from '../types'
 const HumanCleoRare: Hermit = {
 	...hermit,
 	id: 'humancleo_rare',
-	numericId: 132,
+	numericId: 104,
 	name: 'Human Cleo',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',

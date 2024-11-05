@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const FalseSymmetryCommon: Hermit = {
 	...hermit,
 	id: 'falsesymmetry_common',
-	numericId: 22,
+	numericId: 15,
 	name: 'False',
 	expansion: 'default',
 	rarity: 'common',

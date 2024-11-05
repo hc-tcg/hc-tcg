@@ -67,7 +67,7 @@ function getArmor(
 export const GoldArmor = getArmor(
 	{
 		id: 'gold_armor',
-		numericId: 29,
+		numericId: 72,
 		name: 'Gold Armour',
 		expansion: 'default',
 		rarity: 'common',
@@ -79,7 +79,7 @@ export const GoldArmor = getArmor(
 export const IronArmor = getArmor(
 	{
 		id: 'iron_armor',
-		numericId: 45,
+		numericId: 78,
 		name: 'Iron Armour',
 		expansion: 'default',
 		rarity: 'common',
@@ -91,7 +91,7 @@ export const IronArmor = getArmor(
 export const DiamondArmor = getArmor(
 	{
 		id: 'diamond_armor',
-		numericId: 13,
+		numericId: 65,
 		name: 'Diamond Armour',
 		expansion: 'default',
 		rarity: 'rare',
@@ -103,7 +103,7 @@ export const DiamondArmor = getArmor(
 export const NetheriteArmor = getArmor(
 	{
 		id: 'netherite_armor',
-		numericId: 82,
+		numericId: 87,
 		name: 'Netherite Armour',
 		expansion: 'default',
 		rarity: 'ultra_rare',

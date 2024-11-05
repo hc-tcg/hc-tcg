@@ -14,7 +14,7 @@ const pickCondition = query.every(
 const KeralisRare: Hermit = {
 	...hermit,
 	id: 'keralis_rare',
-	numericId: 72,
+	numericId: 32,
 	name: 'Keralis',
 	expansion: 'default',
 	rarity: 'rare',

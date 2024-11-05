@@ -37,7 +37,7 @@ const endProtectionEntry = (hermit: CardComponent, rowIndex: number) =>
 const TurtleShell: Attach = {
 	...attach,
 	id: 'turtle_shell',
-	numericId: 125,
+	numericId: 130,
 	name: 'Turtle Shell',
 	expansion: 'alter_egos',
 	rarity: 'rare',

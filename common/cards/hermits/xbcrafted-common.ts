@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const XBCraftedCommon: Hermit = {
 	...hermit,
 	id: 'xbcrafted_common',
-	numericId: 109,
+	numericId: 50,
 	name: 'xB',
 	expansion: 'default',
 	rarity: 'common',

@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const TinFoilChefCommon: Hermit = {
 	...hermit,
 	id: 'tinfoilchef_common',
-	numericId: 97,
+	numericId: 45,
 	name: 'TFC',
 	rarity: 'common',
 	tokens: 0,

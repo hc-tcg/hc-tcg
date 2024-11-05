@@ -8,7 +8,7 @@ import {Hermit} from '../types'
 const FalseSymmetryRare: Hermit = {
 	...hermit,
 	id: 'falsesymmetry_rare',
-	numericId: 23,
+	numericId: 16,
 	name: 'False',
 	expansion: 'default',
 	rarity: 'rare',

@@ -12,7 +12,7 @@ import {SingleUse} from '../types'
 const LavaBucket: SingleUse = {
 	...singleUse,
 	id: 'lava_bucket',
-	numericId: 74,
+	numericId: 81,
 	name: 'Lava Bucket',
 	expansion: 'default',
 	rarity: 'rare',

@@ -12,7 +12,7 @@ import {Hermit} from '../types'
 const HelsknightRare: Hermit = {
 	...hermit,
 	id: 'helsknight_rare',
-	numericId: 130,
+	numericId: 102,
 	name: 'Helsknight',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',

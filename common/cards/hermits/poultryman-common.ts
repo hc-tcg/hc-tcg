@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const PoultrymanCommon: Hermit = {
 	...hermit,
 	id: 'poultryman_common',
-	numericId: 136,
+	numericId: 108,
 	name: 'Poultry Man',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',

@@ -27,7 +27,7 @@ const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 const RendogRare: Hermit = {
 	...hermit,
 	id: 'rendog_rare',
-	numericId: 87,
+	numericId: 38,
 	name: 'Rendog',
 	expansion: 'default',
 	rarity: 'rare',

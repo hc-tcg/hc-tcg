@@ -10,7 +10,7 @@ import {SingleUse} from '../types'
 const Trident: SingleUse = {
 	...singleUse,
 	id: 'trident',
-	numericId: 150,
+	numericId: 129,
 	name: 'Trident',
 	expansion: 'alter_egos',
 	rarity: 'rare',

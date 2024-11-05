@@ -13,7 +13,7 @@ import {Hermit} from '../types'
 const XisumavoidRare: Hermit = {
 	...hermit,
 	id: 'xisumavoid_rare',
-	numericId: 112,
+	numericId: 53,
 	name: 'Xisuma',
 	expansion: 'default',
 	rarity: 'rare',

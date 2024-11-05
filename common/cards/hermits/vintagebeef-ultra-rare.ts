@@ -15,7 +15,7 @@ import EthosLabUltraRare from './ethoslab-ultra-rare'
 const VintageBeefUltraRare: Hermit = {
 	...hermit,
 	id: 'vintagebeef_ultra_rare',
-	numericId: 104,
+	numericId: 5,
 	name: 'Beef',
 	expansion: 'default',
 	rarity: 'ultra_rare',

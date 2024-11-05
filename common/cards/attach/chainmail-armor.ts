@@ -7,7 +7,7 @@ import {Attach} from '../types'
 const ChainmailArmor: Attach = {
 	...attach,
 	id: 'chainmail_armor',
-	numericId: 119,
+	numericId: 113,
 	name: 'Chainmail Armour',
 	expansion: 'alter_egos',
 	rarity: 'common',

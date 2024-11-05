@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const BeetlejhostCommon: Hermit = {
 	...hermit,
 	id: 'beetlejhost_common',
-	numericId: 126,
+	numericId: 98,
 	name: 'Beetlejhost',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',

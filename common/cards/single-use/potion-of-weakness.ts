@@ -12,7 +12,7 @@ import {SingleUse} from '../types'
 const PotionOfWeakness: SingleUse = {
 	...singleUse,
 	id: 'potion_of_weakness',
-	numericId: 146,
+	numericId: 123,
 	name: 'Potion of Weakness',
 	expansion: 'alter_egos',
 	rarity: 'common',

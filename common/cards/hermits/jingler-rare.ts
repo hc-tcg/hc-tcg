@@ -9,7 +9,7 @@ import {Hermit} from '../types'
 const JinglerRare: Hermit = {
 	...hermit,
 	id: 'jingler_rare',
-	numericId: 133,
+	numericId: 105,
 	name: 'Jingler',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',

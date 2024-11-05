@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const TangoTekCommon: Hermit = {
 	...hermit,
 	id: 'tangotek_common',
-	numericId: 94,
+	numericId: 43,
 	name: 'Tango',
 	expansion: 'default',
 	rarity: 'common',

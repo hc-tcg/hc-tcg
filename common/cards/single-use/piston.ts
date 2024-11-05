@@ -27,7 +27,7 @@ const firstPickCondition = query.every(
 const Piston: SingleUse = {
 	...singleUse,
 	id: 'piston',
-	numericId: 144,
+	numericId: 120,
 	name: 'Piston',
 	expansion: 'alter_egos',
 	rarity: 'common',

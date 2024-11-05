@@ -14,7 +14,7 @@ import {Hermit} from '../types'
 const EthosLabRare: Hermit = {
 	...hermit,
 	id: 'ethoslab_rare',
-	numericId: 20,
+	numericId: 13,
 	name: 'Etho',
 	expansion: 'default',
 	rarity: 'rare',
