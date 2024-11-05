@@ -215,7 +215,8 @@ const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 		const types = card.type
 
-		return ( // Idk why colors break for multiple types
+		return (
+			// Idk why colors break for multiple types
 			<div className={css.strengths}>
 				{joinJsx(
 					types.map((type) => (

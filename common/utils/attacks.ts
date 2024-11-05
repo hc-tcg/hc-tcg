@@ -193,23 +193,20 @@ function createWeaknessAttack(
 			const strongInfo: TypeT[] = effect.extraInfo['strong']
 
 			// Why tf do I have to redo the checks???
-			if (attacker && targetCardInfo) {
-				if (attacker instanceof CardComponent) {
-					if (attacker.isHermit() && targetCardInfo.isHermit()) {
-						if (attacker.props.type && targetCardInfo.props.type) {
-							for (let i = 0; i < weakInfo.length; i++) {
-								for (let j = 0; j < strongInfo.length; j++) {
-									const pair: [TypeT, TypeT] = [weakInfo[i], strongInfo[j]]
-									if (
-										!weakList.includes(pair) &&
-										attacker.props.type.includes(pair[1]) &&
-										targetCardInfo.props.type.includes(pair[0])
-									) {
-										weakList.push(pair)
-									}
-								}
-							}
-						}
+			if (!attacker || !targetCardInfo) return
+			if (!(attacker instanceof CardComponent)) return
+			if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return
+			if (!attacker.props.type || !targetCardInfo.props.type) return
+
+			for (let i = 0; i < weakInfo.length; i++) {
+				for (let j = 0; j < strongInfo.length; j++) {
+					const pair: [TypeT, TypeT] = [weakInfo[i], strongInfo[j]]
+					if (
+						!weakList.includes(pair) &&
+						attacker.props.type.includes(pair[1]) &&
+						targetCardInfo.props.type.includes(pair[0])
+					) {
+						weakList.push(pair)
 					}
 				}
 			}
