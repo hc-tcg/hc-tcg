@@ -6,7 +6,7 @@ const DreamRare: Hermit = {
 	id: 'dream_rare',
 	numericId: 117,
 	name: 'Dream',
-	expansion: 'dream',
+	expansion: 'hc_plus',
 	rarity: 'rare',
 	tokens: 0,
 	type: ['speedrunner'],
