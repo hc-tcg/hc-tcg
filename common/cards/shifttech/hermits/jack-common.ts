@@ -8,7 +8,7 @@ const JackCommon: Hermit = {
 	name: 'Jack',
 	expansion: 'shifttech',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 0,
 	type: ['pacifist'],
 	health: 270,
 	primary: {
