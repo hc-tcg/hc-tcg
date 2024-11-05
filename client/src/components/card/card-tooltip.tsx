@@ -87,7 +87,7 @@ const getStrengthsAndWeaknesses = (
 	const strengths: Array<TypeT> = [] // Old = STRENGTHS[card.type]
 	if (card.type) {
 		if (card.type.includes('everything')) {
-			strengths.push('everything')
+			strengths.push('everything', 'mob')
 			return
 		}
 		let i
@@ -101,7 +101,7 @@ const getStrengthsAndWeaknesses = (
 			}
 		}
 	}
-	
+
 	const weaknesses: Array<TypeT> = []
 	if (card.type) {
 		if (card.type.includes('everything') || card.type.includes('mob')) {
@@ -119,8 +119,6 @@ const getStrengthsAndWeaknesses = (
 			}
 		}
 	}
-
-		
 
 	const result = (
 		<div className={css.strengthsAndWeaknesses}>
@@ -206,11 +204,26 @@ const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 }
 
 const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
+	if (isHermit(card) || isItem(card)) {
+		if (!card.type) {
+			return (
+				<div className={classNames(css.type, css['null'])}>
+					{HERMIT_TYPES['null']}
+				</div>
+			)
+		}
 
-	if (isHermit(card) || card.type) {
+		const types = card.type
+
 		return (
-			<div className={classNames(css.type, css[card.type])}>
-				{HERMIT_TYPES[card.type] || card.type}
+			<div className={css.strengths}>
+				{joinJsx(
+					types.map((type) => (
+						<span key={type} className={css[type]}>
+							{HERMIT_TYPES[type]}
+						</span>
+					)),
+				)}
 			</div>
 		)
 	}

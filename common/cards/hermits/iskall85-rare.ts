@@ -39,7 +39,11 @@ const Iskall85Rare: Hermit = {
 					return
 
 				const targetHermit = attack.target?.getHermit()
-				if (targetHermit?.isHermit() && targetHermit.props.type && targetHermit.props.type.includes('builder'))
+				if (
+					targetHermit?.isHermit() &&
+					targetHermit.props.type &&
+					targetHermit.props.type.includes('builder')
+				)
 					attack.multiplyDamage(component.entity, 2)
 			},
 		)

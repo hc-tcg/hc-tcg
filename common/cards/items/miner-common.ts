@@ -4,7 +4,6 @@ import {Item} from '../types'
 const convenience = 'anarchist'
 function capitalize(s: string) {
 	return s[0].toUpperCase() + s.slice(1)
-
 }
 const MinerItem: Item = {
 	...item,

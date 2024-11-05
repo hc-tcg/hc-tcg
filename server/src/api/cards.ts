@@ -18,7 +18,7 @@ type HermitResponse = {
 	expansion: string
 	rarity: string
 	tokens: number
-	type: string
+	type: string[] | null
 	primary: {
 		cost: Array<string>
 		damage: number

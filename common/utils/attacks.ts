@@ -1,13 +1,17 @@
 import {Hermit} from '../cards/types'
-import {CardComponent, ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../components'
 import query from '../components/query'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {TypeT} from '../types/cards'
-import { afterAttack, onTurnEnd } from '../types/priorities'
 import WeaknessEffect from '../status-effects/weakness'
+import {TypeT} from '../types/cards'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -178,12 +182,13 @@ function createWeaknessAttack(
 
 	let weakList: Array<[TypeT, TypeT]> = []
 
-	game.components.filter(
-		StatusEffectComponent,
-		query.effect.is(WeaknessEffect),
-		query.not(query.effect.targetEntity(null)),
-	).forEach(
-		(effect: StatusEffectComponent) => {
+	game.components
+		.filter(
+			StatusEffectComponent,
+			query.effect.is(WeaknessEffect),
+			query.not(query.effect.targetEntity(null)),
+		)
+		.forEach((effect: StatusEffectComponent) => {
 			const weakInfo: TypeT[] = effect.extraInfo['weak']
 			const strongInfo: TypeT[] = effect.extraInfo['strong']
 
@@ -195,7 +200,11 @@ function createWeaknessAttack(
 							for (let i = 0; i < weakInfo.length; i++) {
 								for (let j = 0; j < strongInfo.length; j++) {
 									const pair: [TypeT, TypeT] = [weakInfo[i], strongInfo[j]]
-									if (!weakList.includes(pair) && attacker.props.type.includes(pair[1]) && targetCardInfo.props.type.includes(pair[0])) {
+									if (
+										!weakList.includes(pair) &&
+										attacker.props.type.includes(pair[1]) &&
+										targetCardInfo.props.type.includes(pair[0])
+									) {
 										weakList.push(pair)
 									}
 								}
@@ -203,15 +212,19 @@ function createWeaknessAttack(
 						}
 					}
 				}
-			}	
-		}
-	)
+			}
+		})
 
 	for (let i = 0; i < attackerTypes.length; i) {
 		const offType = attackerTypes[i]
 		for (let j = 0; j < targetTypes.length; j++) {
 			const defType = attackerTypes[j]
-			if (STRENGTHS[offType].includes(defType) || offType === 'everything' || defType === 'everything' || defType === 'mob') {
+			if (
+				STRENGTHS[offType].includes(defType) ||
+				offType === 'everything' ||
+				defType === 'everything' ||
+				defType === 'mob'
+			) {
 				const pair: [TypeT, TypeT] = [defType, offType]
 				if (!weakList.includes(pair)) {
 					weakList.push(pair)

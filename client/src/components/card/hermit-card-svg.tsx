@@ -111,7 +111,9 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 					y="12"
 					width="68"
 					height="68"
-					href={!card.type ? 'images/types/1x1/png': getCardTypeIcon(card.type[0])}
+					href={
+						!card.type ? 'images/types/1x1/png' : getCardTypeIcon(card.type[0])
+					}
 					className={css.type}
 					imageRendering="pixelated"
 				/>

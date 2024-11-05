@@ -1,13 +1,10 @@
 import {
-	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {beforeAttack} from '../types/priorities'
-import { Counter, statusEffect } from './status-effect'
-import {TypeT} from '../types/cards'
+import {Counter, statusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<PlayerComponent> = {
 	...statusEffect,
@@ -42,7 +39,7 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 
 		effect.extraInfo = {
 			weak: weakTypes,
-			strong: strongTypes
+			strong: strongTypes,
 		}
 		function capitalize(s: string) {
 			return s[0].toUpperCase() + s.slice(1)
@@ -57,12 +54,12 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 		let i
 		for (i = 0; i < weakTypes.length; i++) {
 			if (i > 0) weakString += ', '
-			if (i = weakTypes.length - 1) weakString += 'and '
+			if ((i = weakTypes.length - 1)) weakString += 'and '
 			weakString += capitalize(weakTypes[i])
 		}
 		for (i = 0; i < strongTypes.length; i++) {
 			if (i > 0) strongString += ', '
-			if (i = strongTypes.length - 1) strongString += 'and '
+			if ((i = strongTypes.length - 1)) strongString += 'and '
 			strongString += capitalize(strongTypes[i])
 		}
 
@@ -70,7 +67,12 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 		if (strongTypes.length > 1) strongtype = ' types '
 
 		effect.description =
-			weakString + weaktype + 'weak to ' + strongString + strongtype + 'for the duration fo this counter.'
+			weakString +
+			weaktype +
+			'weak to ' +
+			strongString +
+			strongtype +
+			'for the duration fo this counter.'
 
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
