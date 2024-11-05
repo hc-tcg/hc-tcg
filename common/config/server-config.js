@@ -11,8 +11,8 @@ export default {
 	],
 	world: 'LTF42',
 	limits: {
-		maxTurnTime: 1000,
-		extraActionTime: 1000,
+		maxTurnTime: 90,
+		extraActionTime: 30,
 		minCards: 42,
 		maxCards: 42,
 		maxDuplicates: 3,
