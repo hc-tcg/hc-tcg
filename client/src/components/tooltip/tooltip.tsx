@@ -77,6 +77,9 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 			onPointerOut={() => {
 				toggleShow(false)
 			}}
+			onTouchStart={() => {
+				toggleShow(true)
+			}}
 		>
 			{children}
 		</div>
@@ -110,6 +113,8 @@ export const CurrentTooltip = ({
 		y: 0,
 	})
 	const [inactiveTime, setInactiveTime] = useState<number>(0)
+	const [shownByTouch, setShownByTouch] = useState<boolean>(false)
+	const [touchTime, setTouchTime] = useState<number>(0)
 
 	if (!anchor.current || inactiveTime > 2) {
 		dispatch({
@@ -181,12 +186,59 @@ export const CurrentTooltip = ({
 		tooltipRef.current.style.left = `${offsets.middle}px`
 	}
 
+	const onTouchStart = (e: TouchEvent) => {
+		setShownByTouch(true)
+		setTouchTime(0)
+		const offsets = getOffsets()
+		const result = e.touches[0]
+
+		if (
+			!offsets ||
+			!anchor.current ||
+			!tooltipRef ||
+			!tooltipRef.current ||
+			!result
+		)
+			return
+
+		if (
+			result.clientX < offsets.left ||
+			result.clientX > offsets.right ||
+			result.clientY < offsets.top ||
+			result.clientY > offsets.bottom
+		) {
+			tooltipRef.current.style.top = '-9999px'
+			tooltipRef.current.style.left = '-9999px'
+			dispatch({
+				type: localMessages.HIDE_TOOLTIP,
+			})
+		}
+	}
+
 	useLayoutEffect(() => {
 		window.addEventListener('scroll', () => onMouseMove(null), true)
 		window.addEventListener('mousemove', onMouseMoveWithPosition)
+		window.addEventListener('touchstart', onTouchStart)
+		window.addEventListener('touchend', onTouchStart)
 		return () => {
 			window.removeEventListener('scroll', () => onMouseMove(null))
 			window.removeEventListener('mousemove', onMouseMoveWithPosition)
+			window.removeEventListener('touchend', onTouchStart)
+		}
+	})
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (!shownByTouch || touchTime > 10) return
+			setTouchTime(touchTime + 1)
+		}, 50)
+
+		if (touchTime > 10) {
+			onMouseMove(null)
+		}
+
+		return () => {
+			clearInterval(interval)
 		}
 	})
 
