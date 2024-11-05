@@ -6,7 +6,8 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {beforeAttack} from '../types/priorities'
-import {Counter, statusEffect} from './status-effect'
+import { Counter, statusEffect } from './status-effect'
+import {TypeT} from '../types/cards'
 
 const WeaknessEffect: Counter<PlayerComponent> = {
 	...statusEffect,
@@ -31,11 +32,18 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 
 		if (!playerActive?.isHermit() || !opponentActive?.isHermit()) return
 
-		if (!playerActive.props.type || !opponentActive.props.type) effect.remove()
-		if (!playerActive.props.type || !opponentActive.props.type) return
+		if (!playerActive.props.type || !opponentActive.props.type) {
+			effect.remove()
+			return
+		}
 
 		const weakTypes = playerActive.props.type
 		const strongTypes = opponentActive.props.type
+
+		effect.extraInfo = {
+			weak: weakTypes,
+			strong: strongTypes
+		}
 		function capitalize(s: string) {
 			return s[0].toUpperCase() + s.slice(1)
 		}
@@ -70,25 +78,6 @@ const WeaknessEffect: Counter<PlayerComponent> = {
 
 			if (effect.counter === 0) effect.remove()
 		})
-
-		observer.subscribeWithPriority(
-			game.hooks.beforeAttack,
-			beforeAttack.FORCE_WEAKNESS_ATTACK,
-			(attack) => {
-				const targetCardInfo = attack.target?.getHermit()
-				if (!(attack.attacker instanceof CardComponent)) return
-				if (!attack.attacker.isHermit() || !targetCardInfo?.isHermit()) return
-
-				if (attack.createWeakness === 'never') return
-
-				if (
-					targetCardInfo.props.type == weakType &&
-					attack.attacker.props.type == strongType
-				) {
-					attack.createWeakness = 'always' // Still needs editing here.
-				}
-			},
-		)
 	},
 }
 

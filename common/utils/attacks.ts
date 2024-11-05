@@ -1,12 +1,13 @@
 import {Hermit} from '../cards/types'
-import {CardComponent, ObserverComponent} from '../components'
+import {CardComponent, ObserverComponent, PlayerComponent, StatusEffectComponent} from '../components'
 import query from '../components/query'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {afterAttack, onTurnEnd} from '../types/priorities'
+import { afterAttack, onTurnEnd } from '../types/priorities'
+import WeaknessEffect from '../status-effects/weakness'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -170,15 +171,53 @@ function createWeaknessAttack(
 	)
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
+	if (!attacker.props.type || !targetCardInfo.props.type) return null
 
-	let count = 0
+	const attackerTypes = attacker.props.type
+	const targetTypes = targetCardInfo.props.type
 
-	const strength = STRENGTHS[attacker.props.type]
-	if (
-		attack.createWeakness !== 'always' &&
-		!strength.includes(targetCardInfo.props.type)
-	) {
-		return null
+	let weakList: Array<[TypeT, TypeT]> = []
+
+	game.components.filter(
+		StatusEffectComponent,
+		query.effect.is(WeaknessEffect),
+		query.not(query.effect.targetEntity(null)),
+	).forEach(
+		(effect: StatusEffectComponent) => {
+			const weakInfo: TypeT[] = effect.extraInfo['weak']
+			const strongInfo: TypeT[] = effect.extraInfo['strong']
+
+			// Why tf do I have to redo the checks???
+			if (attacker && targetCardInfo) {
+				if (attacker instanceof CardComponent) {
+					if (attacker.isHermit() && targetCardInfo.isHermit()) {
+						if (attacker.props.type && targetCardInfo.props.type) {
+							for (let i = 0; i < weakInfo.length; i++) {
+								for (let j = 0; j < strongInfo.length; j++) {
+									const pair: [TypeT, TypeT] = [weakInfo[i], strongInfo[j]]
+									if (!weakList.includes(pair) && attacker.props.type.includes(pair[1]) && targetCardInfo.props.type.includes(pair[0])) {
+										weakList.push(pair)
+									}
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
+	)
+
+	for (let i = 0; i < attackerTypes.length; i) {
+		const offType = attackerTypes[i]
+		for (let j = 0; j < targetTypes.length; j++) {
+			const defType = attackerTypes[j]
+			if (STRENGTHS[offType].includes(defType) || offType === 'everything' || defType === 'everything' || defType === 'mob') {
+				const pair: [TypeT, TypeT] = [defType, offType]
+				if (!weakList.includes(pair)) {
+					weakList.push(pair)
+				}
+			}
+		}
 	}
 
 	const weaknessAttack = game.newAttack({
@@ -188,7 +227,7 @@ function createWeaknessAttack(
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE * weakList.length) // VGC Cartridge shall be revisited.
 
 	return weaknessAttack
 }
