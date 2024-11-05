@@ -14,7 +14,7 @@ import {Hermit} from '../types'
 const SpookyStressRare: Hermit = {
 	...hermit,
 	id: 'spookystress_rare',
-	numericId: 173,
+	numericId: 1245,
 	name: 'Spooky Stress',
 	shortName: 'S. Stress',
 	expansion: 'alter_egos',

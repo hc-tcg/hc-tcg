@@ -14,7 +14,7 @@ import {Hermit} from '../../types'
 const OrionSoundRare: Hermit = {
 	...hermit,
 	id: 'orionsound_rare',
-	numericId: 213,
+	numericId: 464,
 	name: 'Oli',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

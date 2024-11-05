@@ -8,7 +8,7 @@ import {Attach} from '../../types'
 const BrewingStand: Attach = {
 	...attach,
 	id: 'brewing_stand',
-	numericId: 201,
+	numericId: 503,
 	name: 'Brewing stand',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',

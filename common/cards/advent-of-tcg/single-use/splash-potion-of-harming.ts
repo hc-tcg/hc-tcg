@@ -28,7 +28,7 @@ function getTargetHermits(game: GameModel) {
 const SplashPotionOfHarming: SingleUse = {
 	...singleUse,
 	id: 'splash_potion_of_harming',
-	numericId: 226,
+	numericId: 512,
 	name: 'Splash potion of harming',
 	expansion: 'advent_of_tcg',
 	rarity: 'common',

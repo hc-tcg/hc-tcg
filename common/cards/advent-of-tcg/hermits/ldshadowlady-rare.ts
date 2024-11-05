@@ -14,7 +14,7 @@ import {Hermit} from '../../types'
 const LDShadowLadyRare: Hermit = {
 	...hermit,
 	id: 'ldshadowlady_rare',
-	numericId: 211,
+	numericId: 324,
 	name: 'Lizzie',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const PoePoeSkizzCommon: Hermit = {
 	...hermit,
 	id: 'poepoeskizz_common',
-	numericId: 166,
+	numericId: 1220,
 	name: 'Poe Poe Skizz',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

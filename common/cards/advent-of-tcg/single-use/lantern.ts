@@ -7,7 +7,7 @@ import {SingleUse} from '../../types'
 const Lantern: SingleUse = {
 	...singleUse,
 	id: 'lantern',
-	numericId: 225,
+	numericId: 510,
 	name: 'Lantern',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',

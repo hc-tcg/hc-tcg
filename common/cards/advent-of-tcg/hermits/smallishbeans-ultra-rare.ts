@@ -4,10 +4,10 @@ import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
-const SmallishbeansAdventRare: Hermit = {
+const SmallishbeansAdventUltraRare: Hermit = {
 	...hermit,
-	id: 'smallishbeansadvent_rare',
-	numericId: 219,
+	id: 'smallishbeansadvent_ultra_rare',
+	numericId: 454,
 	name: 'Stratos Joel',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
@@ -54,4 +54,4 @@ const SmallishbeansAdventRare: Hermit = {
 	},
 }
 
-export default SmallishbeansAdventRare
+export default SmallishbeansAdventUltraRare

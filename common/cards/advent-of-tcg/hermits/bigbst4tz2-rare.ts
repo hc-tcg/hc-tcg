@@ -14,7 +14,7 @@ import {Hermit} from '../../types'
 const BigBSt4tzRare: Hermit = {
 	...hermit,
 	id: 'bigbst4tz2_rare',
-	numericId: 207,
+	numericId: 272,
 	name: 'BigB',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

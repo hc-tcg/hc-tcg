@@ -12,7 +12,7 @@ import {Hermit} from '../types'
 const OriginalXBRare: Hermit = {
 	...hermit,
 	id: 'originalxb_rare',
-	numericId: 164,
+	numericId: 1188,
 	name: 'Original xB',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

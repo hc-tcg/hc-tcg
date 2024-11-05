@@ -22,7 +22,7 @@ const cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(
 const Biffa2001Rare: Hermit = {
 	...hermit,
 	id: 'biffa2001_rare',
-	numericId: 206,
+	numericId: 444,
 	name: 'Biffa',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

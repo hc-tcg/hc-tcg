@@ -5,7 +5,7 @@ import {SingleUse} from '../../types'
 const FletchingTable: SingleUse = {
 	...singleUse,
 	id: 'fletching_table',
-	numericId: 223,
+	numericId: 507,
 	name: 'Fletching table',
 	expansion: 'advent_of_tcg',
 	rarity: 'common',

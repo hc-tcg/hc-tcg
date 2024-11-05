@@ -11,7 +11,7 @@ import FletchingTable from './fletching-table'
 const Dropper: SingleUse = {
 	...singleUse,
 	id: 'dropper',
-	numericId: 222,
+	numericId: 506,
 	name: 'Dropper',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',

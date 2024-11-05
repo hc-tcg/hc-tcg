@@ -12,7 +12,7 @@ import {Hermit} from '../../types'
 const PythonGBRare: Hermit = {
 	...hermit,
 	id: 'pythongb_rare',
-	numericId: 216,
+	numericId: 452,
 	name: 'Python',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

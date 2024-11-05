@@ -13,7 +13,7 @@ import {Hermit} from '../../types'
 const MonkeyfarmRare: Hermit = {
 	...hermit,
 	id: 'monkeyfarm_rare',
-	numericId: 212,
+	numericId: 450,
 	name: 'Monkeyfarm',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

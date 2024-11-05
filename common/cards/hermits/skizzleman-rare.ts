@@ -17,7 +17,7 @@ import {Hermit} from '../types'
 const SkizzlemanRare: Hermit = {
 	...hermit,
 	id: 'skizzleman_rare',
-	numericId: 172,
+	numericId: 1216,
 	name: 'Skizz',
 	expansion: 'season_x',
 	rarity: 'rare',

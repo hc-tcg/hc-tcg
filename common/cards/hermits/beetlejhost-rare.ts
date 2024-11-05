@@ -24,7 +24,7 @@ function findChromaKeyed(
 const BeetlejhostRare: Hermit = {
 	...hermit,
 	id: 'beetlejhost_rare',
-	numericId: 151,
+	numericId: 1167,
 	name: 'Beetlejhost',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

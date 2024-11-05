@@ -7,7 +7,7 @@ import {Hermit} from '../types'
 const OverseerRare: Hermit = {
 	...hermit,
 	id: 'overseer_rare',
-	numericId: 235,
+	numericId: 807,
 	name: 'Overseer',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

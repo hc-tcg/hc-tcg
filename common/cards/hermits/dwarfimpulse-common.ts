@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const DwarfImpulseCommon: Hermit = {
 	...hermit,
 	id: 'dwarfimpulse_common',
-	numericId: 229,
+	numericId: 800,
 	name: 'Dwarf Impulse',
 	shortName: 'D. Impulse',
 	expansion: 'alter_egos',

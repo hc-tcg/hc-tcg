@@ -12,7 +12,7 @@ import {Hermit} from '../../types'
 const ShubbleYTRare: Hermit = {
 	...hermit,
 	id: 'shubbleyt_rare',
-	numericId: 217,
+	numericId: 465,
 	name: 'Shelby',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

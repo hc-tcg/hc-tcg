@@ -11,7 +11,7 @@ import {SingleUse} from '../../types'
 const Brush: SingleUse = {
 	...singleUse,
 	id: 'brush',
-	numericId: 221,
+	numericId: 504,
 	name: 'Brush',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',

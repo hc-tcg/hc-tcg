@@ -8,7 +8,7 @@ import {Hermit} from '../types'
 const HorseHeadHypnoRare: Hermit = {
 	...hermit,
 	id: 'horseheadhypno_rare',
-	numericId: 158,
+	numericId: 1235,
 	name: 'Horse Head Hypno',
 	shortName: 'H. H. Hypno',
 	expansion: 'alter_egos',

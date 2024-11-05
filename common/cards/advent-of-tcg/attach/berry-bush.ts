@@ -13,7 +13,7 @@ import {Attach, HasHealth} from '../../types'
 const BerryBush: Attach & HasHealth = {
 	...attach,
 	id: 'berry_bush',
-	numericId: 200,
+	numericId: 334,
 	name: 'Sweet Berry Bush',
 	expansion: 'advent_of_tcg',
 	rarity: 'ultra_rare',

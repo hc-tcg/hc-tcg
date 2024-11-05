@@ -9,7 +9,7 @@ import {Hermit} from '../types'
 const FiveAMPearlRare: Hermit = {
 	...hermit,
 	id: 'fiveampearl_rare',
-	numericId: 230,
+	numericId: 796,
 	name: '5AM Pearl',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

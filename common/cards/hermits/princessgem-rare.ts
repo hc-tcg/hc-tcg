@@ -14,7 +14,7 @@ import {Hermit} from '../types'
 const PrincessGemRare: Hermit = {
 	...hermit,
 	id: 'princessgem_rare',
-	numericId: 168,
+	numericId: 1243,
 	name: 'Princess Gem',
 	expansion: 'alter_egos',
 	background: 'alter_egos',

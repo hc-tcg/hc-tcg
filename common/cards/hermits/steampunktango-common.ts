@@ -4,7 +4,7 @@ import {Hermit} from '../types'
 const SteampunkTangoCommon: Hermit = {
 	...hermit,
 	id: 'steampunktango_common',
-	numericId: 239,
+	numericId: 812,
 	name: 'Steampunk Tango',
 	shortName: 'S. Tango',
 	expansion: 'alter_egos',

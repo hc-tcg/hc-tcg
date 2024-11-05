@@ -14,7 +14,7 @@ import {Hermit} from '../../types'
 const DungeonTangoRare: Hermit = {
 	...hermit,
 	id: 'dungeontango_rare',
-	numericId: 208,
+	numericId: 445,
 	name: 'DM tango',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',

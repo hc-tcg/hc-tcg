@@ -13,7 +13,7 @@ import {Hermit} from '../types'
 const PoePoeSkizzRare: Hermit = {
 	...hermit,
 	id: 'poepoeskizz_rare',
-	numericId: 167,
+	numericId: 1224,
 	name: 'Poe Poe Skizz',
 	expansion: 'alter_egos',
 	background: 'alter_egos',
