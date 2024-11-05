@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import {GameModel} from '../../../models/game-model'
-import MiningFatigueEffect from '../../../status-effects/mining-fatigue'
+import {SingleTurnMiningFatigueEffect} from '../../../status-effects/mining-fatigue'
 import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
@@ -36,7 +36,11 @@ const ElderGuardian: Attach = {
 				if (!opponentActiveHermit) return
 
 				game.components
-					.new(StatusEffectComponent, MiningFatigueEffect, component.entity)
+					.new(
+						StatusEffectComponent,
+						SingleTurnMiningFatigueEffect,
+						component.entity,
+					)
 					.apply(opponentActiveHermit.entity)
 					.setCounter(2)
 			},

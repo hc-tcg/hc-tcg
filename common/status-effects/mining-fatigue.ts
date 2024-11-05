@@ -1,7 +1,7 @@
 import {CardComponent} from '../components'
-import {Counter, statusEffect} from './status-effect'
+import {Counter, StatusEffect, statusEffect} from './status-effect'
 
-const MiningFatigueEffect: Counter<CardComponent> = {
+export const MiningFatigueEffect: Counter<CardComponent> = {
 	...statusEffect,
 	id: 'mining-fatigue',
 	icon: 'mining-fatigue',
@@ -25,4 +25,24 @@ const MiningFatigueEffect: Counter<CardComponent> = {
 	},
 }
 
-export default MiningFatigueEffect
+export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
+	...statusEffect,
+	id: 'mining-fatigue',
+	icon: 'mining-fatigue',
+	name: 'Mining Fatigue',
+	description:
+		"This Hermit's attacks cost an additional item card of their type.",
+	onApply(_game, effect, target, observer) {
+		let counter = 2
+
+		const {player} = target
+
+		if (target.isHermit())
+			effect.description = `This Hermit's attacks cost an additional ${target.props.type} item to use.`
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			counter--
+			if (counter === 0) effect.remove()
+		})
+	},
+}

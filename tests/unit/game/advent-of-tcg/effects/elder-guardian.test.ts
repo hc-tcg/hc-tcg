@@ -4,7 +4,7 @@ import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
-import MiningFatigueEffect from 'common/status-effects/mining-fatigue'
+import {SingleTurnMiningFatigueEffect} from 'common/status-effects/mining-fatigue'
 
 describe('Test Elder Guardian', () => {
 	test('Test mining fatigue is applied', () => {
@@ -26,7 +26,7 @@ describe('Test Elder Guardian', () => {
 					expect(
 						game.components.find(
 							StatusEffectComponent,
-							query.effect.is(MiningFatigueEffect),
+							query.effect.is(SingleTurnMiningFatigueEffect),
 							query.not(query.effect.targetEntity(null)),
 						),
 					)
@@ -37,7 +37,7 @@ describe('Test Elder Guardian', () => {
 					expect(
 						game.components.find(
 							StatusEffectComponent,
-							query.effect.is(MiningFatigueEffect),
+							query.effect.is(SingleTurnMiningFatigueEffect),
 							query.effect.targetEntity(null),
 						),
 					)
