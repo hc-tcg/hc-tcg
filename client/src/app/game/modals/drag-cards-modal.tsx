@@ -108,8 +108,11 @@ function DragCardsModal({closeModal}: Props) {
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
 	if (!modalData || modalData.type !== 'dragCards') return null
-	const startingLeftCards: Array<LocalCardInstance> = modalData.leftCards
-	const startingRightCards: Array<LocalCardInstance> = modalData.rightCards
+	// Need to be reversed because the modal shows cards earlier in the array closer to the right, instead of left
+	const startingLeftCards: Array<LocalCardInstance> =
+		modalData.leftCards.reverse()
+	const startingRightCards: Array<LocalCardInstance> =
+		modalData.rightCards.reverse()
 	const rightAreaRef = useRef<HTMLDivElement>(null)
 	const leftAreaRef = useRef<HTMLDivElement>(null)
 

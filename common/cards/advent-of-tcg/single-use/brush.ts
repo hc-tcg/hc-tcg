@@ -44,8 +44,8 @@ const Brush: SingleUse = {
 					name: 'Brush',
 					description:
 						'Drag cards to put them on the top or bottom of your deck. Cards closer to the right will be drawn first.',
-					leftCards: topCards.map((card) => card.entity),
-					rightCards: [],
+					leftCards: [],
+					rightCards: topCards.map((card) => card.entity),
 					leftAreaName: 'Bottom of Deck',
 					leftAreaMax: null,
 					rightAreaName: 'Top of Deck',
@@ -63,7 +63,7 @@ const Brush: SingleUse = {
 						)
 					})
 
-					modalResult.leftCards.forEach((c) => {
+					modalResult.leftCards.reverse().forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'back',

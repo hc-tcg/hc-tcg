@@ -41,23 +41,24 @@ const Glowstone: SingleUse = {
 			game.addModalRequest({
 				player: player.entity,
 				modal: {
-					type: 'dragCards',
-					name: 'Glowstone',
+					type: 'selectCards',
+					name: 'Glowstone: Choose the card for your opponent to discard.',
 					description:
-						"Drag cards to put on the bottom of the opponent's deck or to discard.",
-					leftCards: topCards.splice(1).map((card) => card.entity),
-					rightCards: [topCards[0].entity],
-					leftAreaName: 'Bottom of Deck',
-					leftAreaMax: 2,
-					rightAreaName: 'Discard',
-					rightAreaMax: 1,
+						'The other two cards will be placed on the bottom of their deck.',
+					cards: topCards.map((card) => card.entity),
+					selectionSize: 1,
+					primaryButton: {
+						text: 'Confirm Selection',
+						variant: 'default',
+					},
+					cancelable: false,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return
-					if (!modalResult.rightCards) return
-					if (modalResult.rightCards.length !== 1) return
+					if (!modalResult.cards) return
+					if (modalResult.cards.length !== 1) return
 
-					const drawCard = modalResult.rightCards[0]
+					const drawCard = modalResult.cards[0]
 
 					topCards.forEach((card) => {
 						if (drawCard.entity === card.entity) card.discard()
