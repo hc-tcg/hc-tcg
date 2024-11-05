@@ -65,6 +65,26 @@ export const ToastInner = ({
 		},
 	]
 
+	const testForTouch = (e: TouchEvent) => {
+		if (!toastRef || !toastRef.current) return
+		if (!e.targetTouches) return
+		const result = e.targetTouches[0]
+		const toastBoundingBox = toastRef.current.getBoundingClientRect()
+		if (!dragging) {
+			if (
+				result.pageX < toastBoundingBox.left ||
+				result.pageY < toastBoundingBox.top ||
+				result.pageY > toastBoundingBox.bottom
+			)
+				return
+			setTotalMovement(result.screenX)
+		}
+		setDragging(true)
+		setAliveTime(1)
+		if (totalMovement)
+			toastRef.current.style.transform = `translateX(${Math.max(result.screenX - totalMovement, 0)}px)`
+	}
+
 	const testForSlide = (e: MouseEvent) => {
 		if (!e.buttons && dragging) mouseUp()
 		if (!e.buttons) return
@@ -118,10 +138,14 @@ export const ToastInner = ({
 	useLayoutEffect(() => {
 		window.addEventListener('mousemove', testForSlide)
 		window.addEventListener('mouseup', mouseUp)
+		window.addEventListener('touchmove', testForTouch)
+		window.addEventListener('touchend', mouseUp)
 
 		return () => {
 			window.removeEventListener('mousemove', testForSlide)
 			window.removeEventListener('mouseup', mouseUp)
+			window.removeEventListener('touchmove', testForTouch)
+			window.removeEventListener('touchend', mouseUp)
 		}
 	}, [aliveTime, totalMovement])
 
