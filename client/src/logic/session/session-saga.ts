@@ -104,6 +104,15 @@ function* insertUser(socket: any) {
 				})
 			}
 			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
+
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: localStorageDecks[0],
+			})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: localStorageDecks[0],
+			})
 		} else {
 			const starterDeck: Deck = {
 				code: generateDatabaseCode(),
@@ -121,6 +130,15 @@ function* insertUser(socket: any) {
 			})
 
 			localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
+
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: starterDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: starterDeck,
+			})
 		}
 	}
 }
@@ -380,13 +398,6 @@ export function* databaseConnectionSaga() {
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck,
 			})
-		},
-	)
-	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
-		localMessages.RESET_ID_AND_SECRET,
-		function* () {
-			if (debugConfig.disableDatabase) return
-			yield* insertUser(socket)
 		},
 	)
 }
