@@ -121,7 +121,7 @@ type Messages = [
 		description: string
 		image?: string
 	},
-	{type: typeof localMessages.TOAST_CLOSE},
+	{type: typeof localMessages.TOAST_CLOSE; id: number},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
