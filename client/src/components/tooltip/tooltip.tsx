@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
 import React, {
 	memo,
@@ -10,7 +11,6 @@ import React, {
 } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './tooltip.module.scss'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	children: React.ReactElement
