@@ -8,8 +8,9 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './tooltip.module.scss'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	children: React.ReactElement
@@ -31,11 +32,18 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
 		null,
 	)
+
+	const showAdvancedTooltips = useSelector(getSettings).showAdvancedTooltips
+
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	useEffect(() => {
+		setTooltipSize(null)
+	}, [showAdvancedTooltips])
+
+	useEffect(() => {
 		if (!tooltipSize) forceUpdate()
-	}, [tooltipRef])
+	}, [tooltipRef, tooltipSize])
 
 	if (tooltipRef && tooltipRef.current && tooltipSize === null) {
 		setTooltipSize({
