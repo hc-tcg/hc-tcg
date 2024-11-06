@@ -161,6 +161,7 @@ function createWeaknessAttack(
 	attack: AttackModel,
 ): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
+
 	// Only hermit attacks have extra weakness damage.
 	if (!['primary', 'secondary'].includes(attack.type)) return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
@@ -210,9 +211,10 @@ function createWeaknessAttack(
 					}
 				}
 			}
-		})
+		}
+	)
 
-	for (let i = 0; i < attackerTypes.length; i) {
+	for (let i = 0; i < attackerTypes.length; i++) {
 		const offType = attackerTypes[i]
 		for (let j = 0; j < targetTypes.length; j++) {
 			const defType = attackerTypes[j]

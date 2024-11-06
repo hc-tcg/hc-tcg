@@ -242,7 +242,7 @@ const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 			<div className={css.strengths}>
 				{joinJsx(
 					types.map((type) => (
-						<span key={type} className={classNames(css.type, css[card.type])}>
+						<span key={type} className={classNames(css.type, css[type])}>
 							{HERMIT_TYPES[type]}
 						</span>
 					)),
