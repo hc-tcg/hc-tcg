@@ -217,7 +217,7 @@ function createWeaknessAttack(
 	for (let i = 0; i < attackerTypes.length; i++) {
 		const offType = attackerTypes[i]
 		for (let j = 0; j < targetTypes.length; j++) {
-			const defType = attackerTypes[j]
+			const defType = targetTypes[j]
 			if (
 				STRENGTHS[offType].includes(defType) ||
 				offType === 'everything' ||
