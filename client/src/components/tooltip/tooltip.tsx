@@ -167,25 +167,27 @@ export const CurrentTooltip = ({
 	}
 
 	const onMouseMove = (e: MouseEvent) => {
+		if (shownByTouch) setShownByTouch(false)
 		setMousePosition({x: e.x, y: e.y})
 		const offsets = getOffsets()
+		if (!offsets) return
 		onMouseAction(offsets)
 	}
 	const onMouseScroll = () => {
+		if (shownByTouch) return
 		const offsets = getOffsets()
+		if (!offsets) return
 		onMouseAction(offsets)
 	}
-	const onMouseAction = (offsets: Offsets | null) => {
-		if (shownByTouch) return
-
-		if (!offsets || !anchor.current || !tooltipRef || !tooltipRef.current)
-			return
+	const onMouseAction = (offsets: Offsets) => {
+		if (!anchor.current || !tooltipRef || !tooltipRef.current) return
 
 		if (
-			mousePosition.x + 5 < offsets.left ||
-			mousePosition.x - 5 > offsets.right ||
-			mousePosition.y + 5 < offsets.top ||
-			mousePosition.y - 5 > offsets.bottom
+			!shownByTouch &&
+			(mousePosition.x + 5 < offsets.left ||
+				mousePosition.x - 5 > offsets.right ||
+				mousePosition.y + 5 < offsets.top ||
+				mousePosition.y - 5 > offsets.bottom)
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
@@ -237,20 +239,17 @@ export const CurrentTooltip = ({
 		setTouchTime(0)
 	}
 
-	useLayoutEffect(() => {
-		window.addEventListener('scroll', onMouseScroll, true)
-		window.addEventListener('mousemove', onMouseMove)
-		window.addEventListener('touchstart', onTouchStart)
-		window.addEventListener('touchend', onTouchEnd)
-		return () => {
-			window.removeEventListener('scroll', onMouseScroll, true)
-			window.removeEventListener('mousemove', onMouseMove)
-			window.removeEventListener('touchstart', onTouchStart)
-			window.removeEventListener('touchend', onTouchEnd)
+	const onTouchMove = () => {
+		if (touchTime <= 5) {
+			setTouchTime(0)
+			return
 		}
-	})
+		const offsets = getOffsets()
+		if (!offsets) return
+		onMouseAction(offsets)
+	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const interval = setInterval(() => {
 			if (!shownByTouch || touchTime > 5) {
 				const offsets = getOffsets()
@@ -264,7 +263,18 @@ export const CurrentTooltip = ({
 
 		if (!shownByTouch) clearInterval(interval)
 
+		window.addEventListener('scroll', onMouseScroll, true)
+		window.addEventListener('mousemove', onMouseMove)
+		window.addEventListener('touchstart', onTouchStart)
+		window.addEventListener('touchmove', onTouchMove)
+		window.addEventListener('touchend', onTouchEnd)
+
 		return () => {
+			window.removeEventListener('scroll', onMouseScroll, true)
+			window.removeEventListener('mousemove', onMouseMove)
+			window.removeEventListener('touchstart', onTouchStart)
+			window.removeEventListener('touchmove', onTouchMove)
+			window.removeEventListener('touchend', onTouchEnd)
 			clearInterval(interval)
 		}
 	})
