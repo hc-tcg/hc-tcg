@@ -314,7 +314,7 @@ function DragCardsModal({closeModal}: Props) {
 
 	useLayoutEffect(() => {
 		onCardPositionUpdate(false)
-	}, [])
+	}, [rightAreaRef.current, leftAreaRef.current])
 
 	const onMouseUp = () => {
 		if (draggedCard) onCardPositionUpdate(true)
