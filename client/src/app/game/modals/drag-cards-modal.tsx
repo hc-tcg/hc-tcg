@@ -59,7 +59,6 @@ const DraggableCard = ({
 					draggedCard === entity
 						? 500
 						: Math.max(100, Math.floor(200 + thisInfo.totalMovement / 10)),
-				// transform: `translateX(${thisInfo.totalMovement})`,
 			}}
 		>
 			{children}
@@ -295,9 +294,7 @@ function DragCardsModal({closeModal}: Props) {
 		const cardInfo = cardsInfo.find((card) => card.entity === draggedCard)
 		if (!cardInfo || !cardInfo.cardRef || !cardInfo.cardRef.current) return
 		if (draggedCard !== cardInfo.entity) return
-		if (!e.buttons) {
-			return
-		}
+		if (!e.buttons) return
 		if (e.movementX) cardInfo.totalMovement += e.movementX
 		cardInfo.cardRef.current.style.transform = `translateX(${cardInfo.totalMovement}px)`
 	}
@@ -380,14 +377,14 @@ function DragCardsModal({closeModal}: Props) {
 						</div>
 					</div>
 					<div className={css.subContainer}>
-						{[...startingLeftCards, ...startingRightCards].map((card, i) => {
+						{[...startingLeftCards, ...startingRightCards].map((card) => {
 							return (
 								<DraggableCard
 									entity={card.entity}
 									draggedCard={draggedCard}
 									setDraggedCard={setDraggedCard}
 									cardInfo={cardsInfo}
-									key={i}
+									key={card.entity}
 								>
 									<Card
 										card={card.props}
@@ -406,6 +403,7 @@ function DragCardsModal({closeModal}: Props) {
 					variant="default"
 					size="medium"
 					onClick={handlePrimary}
+					onTouchEnd={handlePrimary}
 					disabled={
 						rightCards.length + leftCards.length !==
 							startingLeftCards.length + startingRightCards.length ||
