@@ -8,6 +8,8 @@ ENV APP_VERSION $APP_VERSION
 RUN mkdir /app
 WORKDIR /app
 
+RUN apt-get install libpng-dev && libjpeg-dev && imagemagick
+
 COPY . .
 
 COPY common/config/debug-config.example.js common/config/debug-config.js

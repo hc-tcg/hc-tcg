@@ -8,5 +8,5 @@
 npx playwright test -c playwright-render.config.ts -u
 
 # Make the json files!
-find render/ -type f -print0 | xargs '-I{}' -n1 -0 sh -c 'magick {} ../client/public/images/cards/$(basename --suffix=.png {}).jpg'
+find card-prerender/render/ -type f -print0 | xargs '-I{}' -n1 -0 sh -c 'magick {} client/public/images/cards/$(basename --suffix=.png {}).jpg'
 
