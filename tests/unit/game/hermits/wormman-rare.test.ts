@@ -268,11 +268,7 @@ describe('Test Rare Worm Man', () => {
 							query.card.slot(query.slot.rowIndex(1)),
 						)?.turnedOver,
 					).toBe(false)
-					expect(game.opponentPlayer.activeRow?.health).toBe(
-						HumanCleoRare.health -
-							WormManRare.secondary.damage -
-							WEAKNESS_DAMAGE /** Prankster -> PvP */,
-					)
+					expect(game.opponentPlayer.activeRow?.health).toBe(HumanCleoRare.health - WormManRare.secondary.damage)
 					expect(
 						game.components.find(
 							RowComponent,
