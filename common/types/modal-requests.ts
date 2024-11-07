@@ -1,9 +1,15 @@
 import {CardComponent} from '../components'
 import {CardEntity, PlayerEntity} from '../entities'
 
-export type ModalRequest = SelectCards.Request | CopyAttack.Request
-export type ModalData = SelectCards.Data | CopyAttack.Data
-export type ModalResult = SelectCards.Result | CopyAttack.Result
+export type ModalRequest =
+	| SelectCards.Request
+	| CopyAttack.Request
+	| DragCards.Request
+export type ModalData = SelectCards.Data | CopyAttack.Data | DragCards.Data
+export type ModalResult =
+	| SelectCards.Result
+	| CopyAttack.Result
+	| DragCards.Request
 
 export namespace SelectCards {
 	export type Request = {
@@ -47,6 +53,50 @@ export namespace SelectCards {
 		| {
 				result: false
 				cards: null
+		  }
+}
+
+export namespace DragCards {
+	export type Request = {
+		/** The id of the player to request the pick from */
+		player: PlayerEntity
+		modal: Data
+		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
+		onResult: (modalResult: Result) => void
+		/** Called when the modal request times out before being resolved successfully */
+		onTimeout: () => void
+	}
+
+	export type Data = {
+		type: 'dragCards'
+		/** The name of the modal */
+		name: string
+		/** The description of the modal */
+		description: string
+		/** The cards viewable in the modal, that start on the left */
+		leftCards: Array<CardEntity>
+		/** The cards viewable in the modal, that start on the right */
+		rightCards: Array<CardEntity>
+		/**The name of the left area */
+		leftAreaName: string
+		/**The name of the right area */
+		rightAreaName: string
+		/**The maximum amount of cards in the left area */
+		leftAreaMax: number | null
+		/**The maximum amount of cards in the right area */
+		rightAreaMax: number | null
+	}
+
+	export type Result =
+		| {
+				result: true
+				leftCards: Array<CardComponent>
+				rightCards: Array<CardComponent>
+		  }
+		| {
+				result: false
+				leftCards: null
+				rightCards: null
 		  }
 }
 
