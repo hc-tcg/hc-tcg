@@ -4,3 +4,9 @@ export type ToastT = {
 	description: string
 	image?: string
 }
+
+export type ToastData = {
+	id: number
+	toast: ToastT
+	closed: boolean
+}

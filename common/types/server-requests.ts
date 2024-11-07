@@ -8,6 +8,7 @@ import type {ComponentQuery} from '../components/query'
 import {CardEntity, Entity, PlayerEntity, SlotEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {StatusEffect} from '../status-effects/status-effect'
+import {ButtonVariant} from './buttons'
 import {SlotTypeT} from './cards'
 import {Deck} from './deck'
 import {TurnActions} from './game-state'
@@ -86,8 +87,6 @@ export type LocalModalData = LocalSelectCards.Data | LocalCopyAttack.Data
 export type LocalModalResult = LocalSelectCards.Result | LocalCopyAttack.Result
 
 export namespace LocalSelectCards {
-	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
-
 	export type Data = {
 		type: 'selectCards'
 		name: string
