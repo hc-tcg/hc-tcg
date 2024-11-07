@@ -7,6 +7,7 @@ import css from './card.module.scss'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
+import {DEBUG} from 'common/config'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -32,28 +33,39 @@ const Card = (props: CardReactProps) => {
 		displayTokenCost,
 		...otherProps
 	} = props
-	// if (category === 'hermit')
-	// 	card = (
-	// 		<HermitCardModule
-	// 			{...(otherProps as HermitCardProps)}
-	// 			displayTokenCost={displayTokenCost}
-	// 		/>
-	// 	)
-	// else if (category === 'item')
-	// 	card = (
-	// 		<ItemCardModule
-	// 			{...(otherProps as ItemCardProps)}
-	// 			displayTokenCost={displayTokenCost}
-	// 		/>
-	// 	)
-	// else if (['attach', 'single_use'].includes(category))
-	// 	card = (
-	// 		<EffectCardModule
-	// 			{...(otherProps as EffectCardProps)}
-	// 			displayTokenCost={displayTokenCost}
-	// 		/>
-	// 	)
-	// else throw new Error('Unsupported card category: ' + category)
+	let card = null
+
+	// We only use the prerendered cards in production
+	if (DEBUG) {
+		card = (
+			<img
+				src={`/images/cards/${props.card.id.replaceAll('_', '-')}.jpg`}
+				width="100%"
+				height="100%"
+			/>
+		)
+	} else if (category === 'hermit')
+		card = (
+			<HermitCardModule
+				{...(otherProps as HermitCardProps)}
+				displayTokenCost={displayTokenCost}
+			/>
+		)
+	else if (category === 'item')
+		card = (
+			<ItemCardModule
+				{...(otherProps as ItemCardProps)}
+				displayTokenCost={displayTokenCost}
+			/>
+		)
+	else if (['attach', 'single_use'].includes(category))
+		card = (
+			<EffectCardModule
+				{...(otherProps as EffectCardProps)}
+				displayTokenCost={displayTokenCost}
+			/>
+		)
+	else throw new Error('Unsupported card category: ' + category)
 
 	return (
 		<Tooltip
@@ -68,11 +80,7 @@ const Card = (props: CardReactProps) => {
 				})}
 				onClick={unpickable ? () => {} : onClick}
 			>
-				<img
-					src={`/cards/${props.card.id.replace('_', '-')}.png`}
-					width="100%"
-					height="100%"
-				/>
+				{card}
 			</button>
 		</Tooltip>
 	)
