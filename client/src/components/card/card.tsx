@@ -36,14 +36,12 @@ const Card = (props: CardReactProps) => {
 	let card = null
 
 	// We only use the prerendered cards in production
-	if (DEBUG) {
-		card = (
-			<img
-				src={`/images/cards/${props.card.id.replaceAll('_', '-')}.jpg`}
-				width="100%"
-				height="100%"
-			/>
-		)
+	if (!DEBUG) {
+		let id = props.card.id.replaceAll('_', '-')
+		if (displayTokenCost) {
+			id += '-with-tokens'
+		}
+		card = <img src={`/images/cards/${id}.jpg`} width="100%" height="100%" />
 	} else if (category === 'hermit')
 		card = (
 			<HermitCardModule
