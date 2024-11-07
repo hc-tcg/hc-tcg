@@ -26,7 +26,7 @@ const MobileCardComponent = (props: CardReactProps) => {
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
-				<button onClick={onClick} className={css.mainButton}>
+				<button onTouchStart={onClick} className={css.mainButton}>
 					<div
 						className={classNames(css.MobileCardComponent, small && css.small)}
 					>
