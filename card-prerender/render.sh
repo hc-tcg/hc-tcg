@@ -7,7 +7,7 @@
 # First Render the cards
 npx playwright test -c playwright-render.config.ts -u
 
-echo "Copying JSON files in `client/public/images/cards/`..."
+echo 'Copying JSON files in `client/public/images/cards/`...'
 find card-prerender/render/ -type f -print0 | xargs '-I{}' -n1 -0 sh -c 'magick {} client/public/images/cards/$(basename --suffix=.png {}).jpg'
 
 echo "DONE!"
