@@ -64,16 +64,6 @@ const GeminiTayRare: Hermit = {
 				player.singleUseCardUsed = false
 			},
 		)
-
-		observer.subscribeWithPriority(
-			game.hooks.beforeAttack,
-			beforeAttack.IGNORE_CARDS,
-			(attack) => {
-				game.components
-					.new(StatusEffectComponent, WeaknessEffect, component.entity)
-					.apply(opponentPlayer.entity)
-			}
-		)
 	}
 }
 
