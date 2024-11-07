@@ -4,7 +4,7 @@ import {beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
-const SmallishbeansAdventUltraRare: Hermit = {
+const SmallishbeansUltraRare: Hermit = {
 	...hermit,
 	id: 'smallishbeansadvent_ultra_rare',
 	numericId: 454,
@@ -54,4 +54,4 @@ const SmallishbeansAdventUltraRare: Hermit = {
 	},
 }
 
-export default SmallishbeansAdventUltraRare
+export default SmallishbeansUltraRare
