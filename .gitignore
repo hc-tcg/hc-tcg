@@ -42,3 +42,6 @@ node_modules/
 /playwright/.cache/
 /tests/ct/template/.cache/
 tsconfig.buildinfo
+
+card-prerender/render
+
