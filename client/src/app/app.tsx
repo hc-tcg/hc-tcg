@@ -1,6 +1,7 @@
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
+import {ToastContainer} from 'components/toast/toast'
 import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -95,12 +96,18 @@ function App() {
 				/>
 			)}
 			{enableToast && (
-				<Toast
-					title={toastMessage.title}
-					description={toastMessage.description}
-					image={toastMessage.image}
-					setOpen={toastMessage.open}
-				/>
+				<ToastContainer>
+					{toastMessage.map((toast) => {
+						return (
+							<Toast
+								title={toast.toast.title}
+								description={toast.toast.description}
+								image={toast.toast.image}
+								id={toast.id}
+							/>
+						)
+					})}
+				</ToastContainer>
 			)}
 		</main>
 	)
