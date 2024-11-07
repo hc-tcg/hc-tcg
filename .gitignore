@@ -44,4 +44,5 @@ node_modules/
 tsconfig.buildinfo
 
 card-prerender/render
+client/public/images/cards/*
 

@@ -7,7 +7,7 @@ const __dirname = execSync('git rev-parse --show-toplevel').toString().trim()
 export default defineConfig({
 	testDir: './card-prerender/',
 	snapshotDir: './card-prerender/render',
-	snapshotPathTemplate: '{testDir}/{snapshotDir}/{arg}{ext}',
+	snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
 	timeout: 0,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
