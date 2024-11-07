@@ -17,7 +17,7 @@ const Brush: SingleUse = {
 	rarity: 'rare',
 	tokens: 0,
 	description:
-		'View the top 2 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+		'View the top 2 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom of your deck.',
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
