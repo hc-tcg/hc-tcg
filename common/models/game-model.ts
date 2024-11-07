@@ -22,7 +22,12 @@ import {
 	TurnActions,
 } from '../types/game-state'
 import {GameHook, Hook, PriorityHook} from '../types/hooks'
-import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {
+	CopyAttack,
+	DragCards,
+	ModalRequest,
+	SelectCards,
+} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
@@ -386,6 +391,7 @@ export class GameModel {
 		newRequest: SelectCards.Request,
 		before?: boolean,
 	): void
+	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
