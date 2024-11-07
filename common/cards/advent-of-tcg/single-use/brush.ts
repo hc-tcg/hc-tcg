@@ -17,7 +17,7 @@ const Brush: SingleUse = {
 	rarity: 'common',
 	tokens: 0,
 	description:
-		'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+		'View the top 2 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom of your deck.',
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
@@ -35,31 +35,35 @@ const Brush: SingleUse = {
 			const topCards = player
 				.getDeck()
 				.sort(CardComponent.compareOrder)
-				.slice(0, 3)
+				.slice(0, 2)
 
 			game.addModalRequest({
 				player: player.entity,
 				modal: {
-					type: 'selectCards',
+					type: 'dragCards',
 					name: 'Brush',
 					description:
-						'Choose cards to place on the top of your deck. Select cards you would like to draw sooner first.',
-					cards: topCards.map((card) => card.entity),
-					selectionSize: [0, 3],
-					cancelable: false,
-					primaryButton: {
-						text: 'Confirm Selection',
-						variant: 'default',
-					},
+						'Drag cards to put them on the top or bottom of your deck. Cards closer to the right will be drawn first.',
+					leftCards: [],
+					rightCards: topCards.map((card) => card.entity),
+					leftAreaName: 'Bottom of Deck',
+					leftAreaMax: null,
+					rightAreaName: 'Top of Deck',
+					rightAreaMax: null,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 					if (!modalResult.result) return 'SUCCESS'
 
-					const cards = modalResult.cards || []
+					modalResult.rightCards.reverse().forEach((c) => {
+						c.attach(
+							game.components.new(DeckSlotComponent, player.entity, {
+								position: 'front',
+							}),
+						)
+					})
 
-					topCards.forEach((c) => {
-						if (cards.some((d) => d.entity === c.entity)) return // Leave selected cards "on top"
+					modalResult.leftCards.forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'back',
