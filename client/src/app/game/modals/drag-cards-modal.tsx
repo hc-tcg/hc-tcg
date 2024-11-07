@@ -87,8 +87,8 @@ function DragCardsModal({closeModal}: Props) {
 				type: 'MODAL_REQUEST',
 				modalResult: {
 					result: true,
-					leftCards: leftCards,
-					rightCards: rightCards,
+					leftCards: leftCards.reverse(),
+					rightCards: rightCards.reverse(),
 				},
 			},
 		})

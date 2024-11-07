@@ -55,7 +55,7 @@ const Brush: SingleUse = {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 					if (!modalResult.result) return 'SUCCESS'
 
-					modalResult.rightCards.forEach((c) => {
+					modalResult.rightCards.reverse().forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'front',
@@ -63,7 +63,7 @@ const Brush: SingleUse = {
 						)
 					})
 
-					modalResult.leftCards.reverse().forEach((c) => {
+					modalResult.leftCards.forEach((c) => {
 						c.attach(
 							game.components.new(DeckSlotComponent, player.entity, {
 								position: 'back',

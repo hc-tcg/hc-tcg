@@ -49,7 +49,7 @@ describe('Test Brush Single Use', () => {
 					yield* finishModalRequest(game, {
 						result: true,
 						leftCards: [],
-						rightCards: [cardEntities[1], cardEntities[0]],
+						rightCards: [cardEntities[0], cardEntities[1]],
 					})
 					expect(
 						game.currentPlayer
@@ -104,7 +104,7 @@ describe('Test Brush Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([MinerItem, Feather, BuilderItem, BalancedItem])
+					).toStrictEqual([MinerItem, Feather, BalancedItem, BuilderItem])
 					yield* endTurn(game)
 				},
 			},
