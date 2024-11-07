@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
 import React, {
 	memo,
@@ -8,7 +9,7 @@ import React, {
 	useRef,
 	useState,
 } from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './tooltip.module.scss'
 
 type Props = {
@@ -31,11 +32,18 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
 		null,
 	)
+
+	const showAdvancedTooltips = useSelector(getSettings).showAdvancedTooltips
+
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
 	useEffect(() => {
+		setTooltipSize(null)
+	}, [showAdvancedTooltips, window.innerWidth])
+
+	useEffect(() => {
 		if (!tooltipSize) forceUpdate()
-	}, [tooltipRef])
+	}, [tooltipRef, tooltipSize])
 
 	if (tooltipRef && tooltipRef.current && tooltipSize === null) {
 		setTooltipSize({
@@ -77,6 +85,9 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 			onPointerOut={() => {
 				toggleShow(false)
 			}}
+			onTouchStart={() => {
+				toggleShow(true)
+			}}
 		>
 			{children}
 		</div>
@@ -110,6 +121,8 @@ export const CurrentTooltip = ({
 		y: 0,
 	})
 	const [inactiveTime, setInactiveTime] = useState<number>(0)
+	const [shownByTouch, setShownByTouch] = useState<boolean>(false)
+	const [touchTime, setTouchTime] = useState<number>(0)
 
 	if (!anchor.current || inactiveTime > 2) {
 		dispatch({
@@ -153,22 +166,28 @@ export const CurrentTooltip = ({
 		}
 	}
 
-	const onMouseMoveWithPosition = (e: MouseEvent) => {
+	const onMouseMove = (e: MouseEvent) => {
+		if (shownByTouch) setShownByTouch(false)
 		setMousePosition({x: e.x, y: e.y})
 		const offsets = getOffsets()
-		onMouseMove(offsets)
+		if (!offsets) return
+		onMouseAction(offsets)
 	}
-	const onMouseMove = (offsets: Offsets | null) => {
-		if (!offsets) offsets = getOffsets()
-
-		if (!offsets || !anchor.current || !tooltipRef || !tooltipRef.current)
-			return
+	const onMouseScroll = () => {
+		if (shownByTouch) return
+		const offsets = getOffsets()
+		if (!offsets) return
+		onMouseAction(offsets)
+	}
+	const onMouseAction = (offsets: Offsets) => {
+		if (!anchor.current || !tooltipRef || !tooltipRef.current) return
 
 		if (
-			mousePosition.x + 5 < offsets.left ||
-			mousePosition.x - 5 > offsets.right ||
-			mousePosition.y + 5 < offsets.top ||
-			mousePosition.y - 5 > offsets.bottom
+			!shownByTouch &&
+			(mousePosition.x + 5 < offsets.left ||
+				mousePosition.x - 5 > offsets.right ||
+				mousePosition.y + 5 < offsets.top ||
+				mousePosition.y - 5 > offsets.bottom)
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
@@ -181,12 +200,82 @@ export const CurrentTooltip = ({
 		tooltipRef.current.style.left = `${offsets.middle}px`
 	}
 
+	const onTouchStart = (e: TouchEvent) => {
+		setShownByTouch(true)
+		setTouchTime(0)
+		const offsets = getOffsets()
+		const result = e.touches[0]
+
+		if (
+			!offsets ||
+			!anchor.current ||
+			!tooltipRef ||
+			!tooltipRef.current ||
+			!result
+		)
+			return
+
+		tooltipRef.current.style.top = '-9999px'
+		tooltipRef.current.style.left = '-9999px'
+
+		if (
+			result.clientX < offsets.left ||
+			result.clientX > offsets.right ||
+			result.clientY < offsets.top ||
+			result.clientY > offsets.bottom
+		) {
+			dispatch({
+				type: localMessages.HIDE_TOOLTIP,
+			})
+		}
+	}
+
+	const onTouchEnd = () => {
+		if (touchTime <= 5) {
+			dispatch({
+				type: localMessages.HIDE_TOOLTIP,
+			})
+		}
+		setTouchTime(0)
+	}
+
+	const onTouchMove = () => {
+		if (touchTime <= 5) {
+			setTouchTime(0)
+			return
+		}
+		const offsets = getOffsets()
+		if (!offsets) return
+		onMouseAction(offsets)
+	}
+
 	useLayoutEffect(() => {
-		window.addEventListener('scroll', () => onMouseMove(null), true)
-		window.addEventListener('mousemove', onMouseMoveWithPosition)
+		const interval = setInterval(() => {
+			if (!shownByTouch || touchTime > 5) {
+				const offsets = getOffsets()
+				if (!offsets || !tooltipRef?.current) return
+				tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+				tooltipRef.current.style.left = `${offsets.middle}px`
+				return
+			}
+			setTouchTime(touchTime + 1)
+		}, 50)
+
+		if (!shownByTouch) clearInterval(interval)
+
+		window.addEventListener('scroll', onMouseScroll, true)
+		window.addEventListener('mousemove', onMouseMove)
+		window.addEventListener('touchstart', onTouchStart)
+		window.addEventListener('touchmove', onTouchMove)
+		window.addEventListener('touchend', onTouchEnd)
+
 		return () => {
-			window.removeEventListener('scroll', () => onMouseMove(null))
-			window.removeEventListener('mousemove', onMouseMoveWithPosition)
+			window.removeEventListener('scroll', onMouseScroll, true)
+			window.removeEventListener('mousemove', onMouseMove)
+			window.removeEventListener('touchstart', onTouchStart)
+			window.removeEventListener('touchmove', onTouchMove)
+			window.removeEventListener('touchend', onTouchEnd)
+			clearInterval(interval)
 		}
 	})
 
