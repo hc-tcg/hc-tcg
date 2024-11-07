@@ -43,6 +43,6 @@ node_modules/
 /tests/ct/template/.cache/
 tsconfig.buildinfo
 
-card-prerender/render
-client/public/images/cards/*
+/card-prerender/render/
+/client/public/images/cards/
 
