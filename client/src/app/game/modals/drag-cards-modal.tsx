@@ -146,14 +146,16 @@ function DragCardsModal({closeModal}: Props) {
 		}
 		const others = cardPositions.reduce(
 			(r, card) => {
+				if (!card) return r
+				const centerpoint = (card.left + card.right) / 2
 				if (direction === 'right') {
-					if (card && card.right > area.left) r.amount += 1
-					if (card && card.right > area.left && card.left < cardPosition.left)
+					if (centerpoint > area.left) r.amount += 1
+					if (centerpoint > area.left && card.left < cardPosition.left)
 						r.myPosition += 1
 					return r
 				} else if (direction === 'left') {
-					if (card && card.left < area.right) r.amount += 1
-					if (card && card.left < area.right && card.left < cardPosition.left)
+					if (centerpoint < area.right) r.amount += 1
+					if (centerpoint < area.right && card.left < cardPosition.left)
 						r.myPosition += 1
 					return r
 				}
