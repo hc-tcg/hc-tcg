@@ -54,6 +54,8 @@ const databaseReducer = (
 	switch (action.type) {
 		case localMessages.SET_ID_AND_SECRET:
 			return {...state, userId: action.userId, secret: action.secret}
+		case localMessages.RESET_ID_AND_SECRET:
+			return {...state, userId: null, secret: null}
 		case localMessages.DATABASE_SET:
 			return {...state, [action.data.key]: action.data.value}
 		default:
