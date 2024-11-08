@@ -8,7 +8,7 @@ ENV APP_VERSION $APP_VERSION
 RUN mkdir /app
 WORKDIR /app
 
-RUN apt-get install imagemagick firefox
+RUN apt-get install imagemagick
 
 COPY . .
 
