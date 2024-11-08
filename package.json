@@ -40,6 +40,7 @@
 		"@biomejs/biome": "1.8.3",
 		"@playwright/experimental-ct-react": "^1.47.2",
 		"@playwright/test": "^1.47.2",
+		"@types/express": "^5.0.0",
 		"@types/node": "^16.18.11",
 		"@types/pg": "^8.11.10",
 		"@types/react": "^18.0.26",
@@ -92,7 +93,11 @@
 		"format": "biome format --write ."
 	},
 	"browserslist": {
-		"production": [">0.2%", "not dead", "not op_mini all"],
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
 		"development": [
 			"last 1 chrome version",
 			"last 1 firefox version",
