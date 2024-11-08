@@ -40,9 +40,9 @@ export function getCardImage(card: Card) {
 }
 
 export function getRenderedCardImage(card: Card, displayTokenCost: boolean) {
-	let id = card.id.replaceAll('_', '-')
+	let id = card.id
 	if (displayTokenCost) {
-		id += '-with-tokens'
+		id += '_with_tokens'
 	}
 	return `/images/cards/${id}.webp`
 }

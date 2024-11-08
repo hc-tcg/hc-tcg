@@ -58,7 +58,7 @@ test('Render Cards To PNG', async ({page, mount}) => {
 			})(),
 			(async () => {
 				await page.locator(`id=${card.id}-with-tokens`).screenshot({
-					path: `card-prerender/render/${card.id}-with-tokens.png`,
+					path: `card-prerender/render/${card.id}_with_tokens.png`,
 				})
 				console.log(`screenshotted \`${card.id}\` with tokens`)
 			})(),
