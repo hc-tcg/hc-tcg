@@ -4,7 +4,7 @@ import HermitCard from 'client/components/card/hermit-card-svg'
 import ItemCard from 'client/components/card/item-card-svg'
 import {CARDS_LIST} from 'common/cards'
 
-const SECTION_SIZE = 50
+const SECTION_SIZE = 80
 const MAX = Math.floor(CARDS_LIST.length / SECTION_SIZE)
 
 for (let i = 1; i <= MAX + 1; i++) {
