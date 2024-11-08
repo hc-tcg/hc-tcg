@@ -5,6 +5,7 @@
 #
 
 # First Render the cards
+echo "Running Playwright..."
 npx playwright test -c playwright-render.config.ts -u
 
 echo 'Writing JSON files to `client/public/images/cards/`...'
