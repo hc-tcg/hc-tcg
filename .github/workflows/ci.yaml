@@ -112,7 +112,9 @@ jobs:
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Build project
-        run: npm run build
+        run: |
+            npm run build
+            npm run client:build-cards
 
       - name: Run tests
         run: npm run test:api
@@ -156,7 +158,9 @@ jobs:
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Build the server
-        run: npm run build
+        run: |
+            npm run build
+            npm run client:build-cards
 
       - name: Run Playwright tests
         run: npm run test:e2e

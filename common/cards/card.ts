@@ -44,7 +44,7 @@ export function getRenderedCardImage(card: Card, displayTokenCost: boolean) {
 	if (displayTokenCost) {
 		id += '-with-tokens'
 	}
-	return `/images/cards/${id}.jpg`
+	return `/images/cards/${id}.webp`
 }
 
 export function getCardTypeIcon(type: TypeT) {
