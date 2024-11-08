@@ -1,7 +1,7 @@
 import path from 'path'
 import {defineConfig, devices} from '@playwright/experimental-ct-react'
 
-const __dirname = "./"
+const __dirname = './'
 
 export default defineConfig({
 	testDir: './card-prerender/',
