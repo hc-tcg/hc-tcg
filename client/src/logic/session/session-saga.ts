@@ -341,8 +341,6 @@ export function* loginSaga() {
 }
 
 export function* databaseConnectionSaga() {
-	const socket = yield* select(getSocket)
-
 	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
 		localMessages.INSERT_DECK,
 		function* (action) {
