@@ -34,39 +34,13 @@ const Card = (props: CardReactProps) => {
 		displayTokenCost,
 		...otherProps
 	} = props
-	let card = null
-
-	// We only use the prerendered cards in production
-	if (!DEBUG) {
-		card = (
-			<img
-				src={getRenderedCardImage(props.card, displayTokenCost)}
-				width="100%"
-				height="100%"
-			/>
-		)
-	} else if (category === 'hermit')
-		card = (
-			<HermitCardModule
-				{...(otherProps as HermitCardProps)}
-				displayTokenCost={displayTokenCost}
-			/>
-		)
-	else if (category === 'item')
-		card = (
-			<ItemCardModule
-				{...(otherProps as ItemCardProps)}
-				displayTokenCost={displayTokenCost}
-			/>
-		)
-	else if (['attach', 'single_use'].includes(category))
-		card = (
-			<EffectCardModule
-				{...(otherProps as EffectCardProps)}
-				displayTokenCost={displayTokenCost}
-			/>
-		)
-	else throw new Error('Unsupported card category: ' + category)
+	let card = (
+		<img
+			src={getRenderedCardImage(props.card, displayTokenCost)}
+			width="100%"
+			height="100%"
+		/>
+	)
 
 	return (
 		<Tooltip
