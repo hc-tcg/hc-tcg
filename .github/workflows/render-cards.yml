@@ -35,4 +35,4 @@ jobs:
         with:
           committer_name: GitHub Actions
           committer_email: actions@github.com
-
+          pull: '--rebase'
