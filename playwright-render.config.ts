@@ -8,8 +8,8 @@ export default defineConfig({
 	timeout: 0,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? 2 : 0,
-	workers: process.env.CI ? 1 : undefined,
+	retries: 0,
+	workers: process.env.CI ? 4 : undefined,
 	reporter: 'html',
 	use: {
 		trace: process.env.CI ? 'on-first-retry' : 'on',
