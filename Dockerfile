@@ -15,9 +15,10 @@ COPY . .
 
 COPY common/config/debug-config.example.js common/config/debug-config.js
 
+RUN npm ci
 RUN npx playwright install --with-deps
+RUN npm run build
 
-RUN npm ci && npm run build
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
 ENV NODE_ENV production
 RUN npm install
