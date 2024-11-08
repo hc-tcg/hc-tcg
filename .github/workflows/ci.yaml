@@ -159,7 +159,7 @@ jobs:
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Build the server
-        run:             npm run build-prod
+        run: npm run build-dev
 
       - name: Run Playwright tests
         run: npm run test:e2e
