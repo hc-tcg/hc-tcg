@@ -2,7 +2,7 @@ import {execSync} from 'child_process'
 import path from 'path'
 import {defineConfig, devices} from '@playwright/experimental-ct-react'
 
-const __dirname = execSync('git rev-parse --show-toplevel || echo "/"')
+const __dirname = execSync('git rev-parse --show-toplevel || echo "/app/"')
 	.toString()
 	.trim()
 
