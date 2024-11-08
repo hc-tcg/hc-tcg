@@ -90,6 +90,8 @@ export const localMessages = messages({
 	SELECT_DECK: null,
 	IMPORT_DECK: null,
 	NEW_PLAYER: null,
+	SHOW_TOOLTIP: null,
+	HIDE_TOOLTIP: null,
 })
 
 type Messages = [
@@ -119,7 +121,7 @@ type Messages = [
 		description: string
 		image?: string
 	},
-	{type: typeof localMessages.TOAST_CLOSE},
+	{type: typeof localMessages.TOAST_CLOSE; id: number},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
@@ -229,6 +231,14 @@ type Messages = [
 		newActiveDeck?: string
 	},
 	{type: typeof localMessages.NEW_PLAYER},
+	{
+		type: typeof localMessages.SHOW_TOOLTIP
+		anchor: React.RefObject<HTMLDivElement>
+		tooltip: React.ReactNode
+		tooltipHeight: number
+		tooltipWidth: number
+	},
+	{type: typeof localMessages.HIDE_TOOLTIP},
 ]
 
 /** A message used locally on the client to update global state */

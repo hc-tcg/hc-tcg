@@ -1,13 +1,13 @@
-import debugConfig from 'common/config/debug-config'
+import {getStarterPack} from 'common/cards/starter-decks'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
+import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
-import {getStarterPack} from 'common/utils/state-gen'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
@@ -104,6 +104,15 @@ function* insertUser(socket: any) {
 				})
 			}
 			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
+
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: localStorageDecks[0],
+			})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: localStorageDecks[0],
+			})
 		} else {
 			const starterDeck: Deck = {
 				code: generateDatabaseCode(),
@@ -111,7 +120,7 @@ function* insertUser(socket: any) {
 				iconType: 'item',
 				icon: 'any',
 				tags: [],
-				cards: getStarterPack(),
+				cards: getStarterPack().map((card) => toLocalCardInstance(card)),
 			}
 
 			yield* sendMsg({
@@ -121,6 +130,15 @@ function* insertUser(socket: any) {
 			})
 
 			localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
+
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: starterDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.UPDATE_DECK,
+				deck: starterDeck,
+			})
 		}
 	}
 }
@@ -409,13 +427,6 @@ export function* databaseConnectionSaga() {
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck,
 			})
-		},
-	)
-	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
-		localMessages.RESET_ID_AND_SECRET,
-		function* () {
-			if (noConnection) return
-			yield* insertUser(socket)
 		},
 	)
 }

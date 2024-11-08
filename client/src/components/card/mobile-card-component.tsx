@@ -26,7 +26,7 @@ const MobileCardComponent = (props: CardReactProps) => {
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
-				<button onClick={onClick} className={css.mainButton}>
+				<button onTouchStart={onClick} className={css.mainButton}>
 					<div
 						className={classNames(css.MobileCardComponent, small && css.small)}
 					>
@@ -80,7 +80,11 @@ const MobileCardComponent = (props: CardReactProps) => {
 						)}
 
 						<div className={css.amount}>x{cards.length}</div>
-						{!small && <div className={css.tokens}>{getDeckCost(cards)}</div>}
+						{!small && (
+							<div className={css.tokens}>
+								{getDeckCost(cards.map((card) => card.props))}
+							</div>
+						)}
 					</div>
 				</button>
 				{!small && (

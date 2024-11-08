@@ -1,12 +1,15 @@
 import Background from 'components/background'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
+import {ToastContainer} from 'components/toast/toast'
+import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	getPlayerName,
 	getSession,
 	getToast,
+	getTooltip,
 } from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
@@ -30,6 +33,7 @@ function App() {
 	const socketStatus = useSelector(getSocketStatus)
 	const connected = useSelector(getSession).connected
 	const toastMessage = useSelector(getToast)
+	const tooltip = useSelector(getTooltip)
 	const settings = useSelector(getSettings)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 	let enableToast = false
@@ -83,13 +87,27 @@ function App() {
 			{background}
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
-			{enableToast && (
-				<Toast
-					title={toastMessage.title}
-					description={toastMessage.description}
-					image={toastMessage.image}
-					setOpen={toastMessage.open}
+			{tooltip && (
+				<CurrentTooltip
+					tooltip={tooltip.tooltip}
+					anchor={tooltip.anchor}
+					tooltipHeight={tooltip.tooltipHeight}
+					tooltipWidth={tooltip.tooltipWidth}
 				/>
+			)}
+			{enableToast && (
+				<ToastContainer>
+					{toastMessage.map((toast) => {
+						return (
+							<Toast
+								title={toast.toast.title}
+								description={toast.toast.description}
+								image={toast.toast.image}
+								id={toast.id}
+							/>
+						)
+					})}
+				</ToastContainer>
 			)}
 		</main>
 	)

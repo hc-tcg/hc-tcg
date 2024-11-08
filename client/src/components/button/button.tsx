@@ -1,11 +1,12 @@
 import classNames from 'classnames'
+import {ButtonVariant} from 'common/types/buttons'
 import {ReactNode, forwardRef} from 'react'
 import React from 'react'
 import css from './button.module.scss'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	ref?: any
-	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+	variant?: ButtonVariant
 	size?: 'small' | 'medium' | 'large'
 	emphasis?: boolean
 	leftSlot?: ReactNode
