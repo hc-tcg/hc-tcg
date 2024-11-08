@@ -9,6 +9,7 @@ RUN mkdir /app
 WORKDIR /app
 
 RUN apt-get install imagemagick
+RUN npx playwright install --with-deps
 
 COPY . .
 
