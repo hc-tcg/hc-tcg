@@ -1,7 +1,6 @@
 import classNames from 'classnames'
 import {CARDS_LIST} from 'common/cards'
 import {isHermit, isItem} from 'common/cards/types'
-import debugConfig from 'common/config/debug-config'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
 import {Deck, Tag} from 'common/types/deck'

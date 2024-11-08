@@ -123,7 +123,6 @@ export const ImportModal = ({
 
 			dispatch({
 				type: localMessages.UPDATE_DECKS,
-				newActiveDeck: codes[codes.length - 1],
 			})
 
 			if (importedSomething) {

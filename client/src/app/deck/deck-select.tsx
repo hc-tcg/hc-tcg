@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import debugConfig from 'common/config/debug-config'
 import {ToastT} from 'common/types/app'
 import {Deck, Tag} from 'common/types/deck'
 import {generateDatabaseCode} from 'common/utils/database-codes'
@@ -181,7 +180,7 @@ function SelectDeck({
 
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
-			newActiveDeck: loadedDeck.code,
+			newActiveDeck: loadedDeck,
 		})
 		setMenuSection('mainmenu')
 	}

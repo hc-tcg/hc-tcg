@@ -153,11 +153,12 @@ function* setupData(socket: any) {
 	})
 
 	if (result.failure) {
+		const localStorageDecks = getLocalStorageDecks()
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: getLocalStorageDecks(),
+				value: localStorageDecks,
 			},
 		})
 		yield* put<LocalMessage>({
@@ -348,16 +349,7 @@ export function* loginSaga() {
 				),
 			})
 
-			if (userInfo.success) yield* setupData(socket)
-			if (userInfo.noConnection) {
-				yield* put<LocalMessage>({
-					type: localMessages.DATABASE_SET,
-					data: {
-						key: 'noConnection',
-						value: true,
-					},
-				})
-			}
+			if (userInfo.success || userInfo.noConnection) yield* setupData(socket)
 		}
 
 		yield put<LocalMessage>({
@@ -413,19 +405,20 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* (action) {
-			if (noConnection) {
-				yield put<LocalMessage>({
-					type: localMessages.DATABASE_SET,
-					data: {
-						key: 'decks',
-						value: getLocalStorageDecks(),
-					},
+			if (noConnection && action.newActiveDeck) {
+				yield* put<LocalMessage>({
+					type: localMessages.SELECT_DECK,
+					deck: action.newActiveDeck,
+				})
+				yield* sendMsg({
+					type: clientMessages.UPDATE_DECK,
+					deck: action.newActiveDeck,
 				})
 				return
 			}
 			yield* sendMsg({
 				type: clientMessages.GET_DECKS,
-				newActiveDeck: action.newActiveDeck,
+				newActiveDeck: action.newActiveDeck?.code,
 			})
 		},
 	)
