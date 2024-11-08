@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {beforeAttack, onTurnEnd} from '../types/priorities'
+import {beforeAttack, afterAttack, onTurnEnd} from '../types/priorities'
 import {flipCoin} from '../utils/coinFlips'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -46,6 +46,14 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 				if (result === 'heads') {
 					attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)
 				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
+			() => {
+				result = null
 			},
 		)
 
