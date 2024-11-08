@@ -228,7 +228,7 @@ jobs:
     name: Build Card Images
     runs-on: ubuntu-latest
     permissions:
-        contents: write
+      contents: write
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -251,6 +251,4 @@ jobs:
         with:
           committer_name: GitHub Actions
           committer_email: actions@github.com
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
