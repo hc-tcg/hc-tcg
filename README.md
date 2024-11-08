@@ -101,12 +101,15 @@ npm run test:e2e        # run end-to-end tests with Playwright.
 
 # Building & Self Hosting
 
-To build for production you must run these commands:
+To build you must run these commands:
 ```
-npm run build-prod
+npm run build
 ```
 
 To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
+```
+npm run client:render-cards
+``
 
 Alternitively, you can use our [Docker](https://docs.docker.com/) image, which will have all the project dependencies set up for you.
 To build a docker image, cd to the root of the project then run the command:

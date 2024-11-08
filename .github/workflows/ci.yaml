@@ -150,7 +150,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
@@ -237,7 +237,7 @@ jobs:
       - name: Install Playwright Browsers
         run: |
           npm install
-          npx playwright install --with-deps
+          npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
@@ -247,5 +247,8 @@ jobs:
 
       - uses: EndBug/add-and-commit@v9
         with:
-          author_name: HC-TCG Bot
-          author_email: bot@noreply.hc-tcg.online
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+
