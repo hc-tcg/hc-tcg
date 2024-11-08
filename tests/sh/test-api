@@ -13,7 +13,7 @@ HOST="http://localhost:$PORT"
 
 test_card_images_exist() {
   test_hermit=$(curl $HOST/api/cards | jq '.[] | select(.id == "ethoslab_common")')
-  image=$(echo $test_hermit | jq -r .image)
+  image=$(echo $test_hermit | jq -r .images.default)
   background=$(echo $test_hermit | jq -r .background)
   hermit_image_output=$(mktemp)
   hermit_background_output=$(mktemp)
@@ -23,13 +23,13 @@ test_card_images_exist() {
   test -s $hermit_background_output
 
   test_item=$(curl $HOST/api/cards | jq '.[] | select(.id == "item_builder_common")')
-  image=$(echo $test_item | jq -r .image)
+  image=$(echo $test_item | jq -r .images.default)
   item_image_output=$(mktemp)
   curl -f $image -o $item_image_output
   test -s "$item_image_output"
 
   test_effect=$(curl $HOST/api/cards | jq '.[] | select(.id == "bed")')
-  image=$(echo $test_effect | jq -r .image)
+  image=$(echo $test_effect | jq -r .images.default)
   effect_image_output=$(mktemp)
   curl -f $image -o $effect_image_output
   test -s "$effect_image_output"
