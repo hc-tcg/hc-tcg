@@ -247,3 +247,4 @@ jobs:
       - uses: EndBug/add-and-commit@v9
         with:
           author_name: HC-TCG Bot
+          author_email: bot@noreply.hc-tcg.online
