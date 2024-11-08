@@ -5,8 +5,6 @@ const __dirname = './'
 
 export default defineConfig({
 	testDir: './card-prerender/',
-	snapshotDir: './card-prerender/render',
-	snapshotPathTemplate: '{snapshotDir}/{arg}{ext}',
 	timeout: 0,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
