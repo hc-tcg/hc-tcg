@@ -16,9 +16,11 @@ COPY . .
 COPY common/config/debug-config.example.js common/config/debug-config.js
 
 RUN npm ci
+
+ENV PROD true
+
 RUN npx playwright install --with-deps
-RUN npm run client:build-cards
-RUN npm run build
+RUN npm run build-prod
 
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
 ENV NODE_ENV production

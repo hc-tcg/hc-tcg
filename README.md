@@ -8,11 +8,11 @@ Use Node.js 16-18 (19+ is not supported).
 
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
-## How to host Hermitcraft TCG
+## How to run Hermitcraft TCG
 
 ```sh
 npm ci          # install packages
-npm run build   # build the client
+npm run build   # build a developement build of the client
 npm run server  # start the sever
 ```
 
@@ -100,7 +100,16 @@ npm run test:e2e        # run end-to-end tests with Playwright.
 
 # Building & Self Hosting
 
-[Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
+To build for production you must run these commands:
+```
+npm run client:build-cards
+NODE_ENV="production" npm run build
+```
+
+To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
+
+Alternitively, you can use our [Docker](https://docs.docker.com/) image, which will have all the project dependencies set up for you.
+To build a docker image, cd to the root of the project then run the command:
 
 ```sh
 docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
