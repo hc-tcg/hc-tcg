@@ -2,7 +2,9 @@ import {execSync} from 'child_process'
 import path from 'path'
 import {defineConfig, devices} from '@playwright/experimental-ct-react'
 
-const __dirname = execSync('git rev-parse --show-toplevel').toString().trim()
+const __dirname = execSync('git rev-parse --show-toplevel || echo "/"')
+	.toString()
+	.trim()
 
 export default defineConfig({
 	testDir: './card-prerender/',
