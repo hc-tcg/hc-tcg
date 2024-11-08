@@ -235,20 +235,28 @@ jobs:
         with:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Playwright Browsers
-        run: |
-          npm install
-          npx playwright install --with-deps firefox
-
-      - name: Create debug config
-        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
-
-      - name: Build Cards
-        run: npm run client:render-cards
+      - run: touch test-file
 
       - uses: EndBug/add-and-commit@v9
         with:
           committer_name: GitHub Actions
           committer_email: actions@github.com
+
+      # - name: Install Playwright Browsers
+      #   run: |
+      #     npm install
+      #     npx playwright install --with-deps firefox
+
+      # - name: Create debug config
+      #   run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      # - name: Build Cards
+      #   run: npm run client:render-cards
+
+      # - uses: EndBug/add-and-commit@v9
+      #   with:
+      #     committer_name: GitHub Actions
+      #     committer_email: actions@github.com
 
