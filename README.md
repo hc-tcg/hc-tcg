@@ -113,6 +113,7 @@ To build a docker image, cd to the root of the project then run the command:
 
 ```sh
 docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
+docker run -p 9000:9000 <Image Id>
 ```
 
 To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:
