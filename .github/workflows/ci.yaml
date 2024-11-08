@@ -250,5 +250,5 @@ jobs:
           committer_name: GitHub Actions
           committer_email: actions@github.com
         env:
-          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
