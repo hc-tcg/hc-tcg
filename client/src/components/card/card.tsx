@@ -8,6 +8,7 @@ import css from './card.module.scss'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
+import {getRenderedCardImage} from 'common/cards/card'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -37,11 +38,13 @@ const Card = (props: CardReactProps) => {
 
 	// We only use the prerendered cards in production
 	if (!DEBUG) {
-		let id = props.card.id.replaceAll('_', '-')
-		if (displayTokenCost) {
-			id += '-with-tokens'
-		}
-		card = <img src={`/images/cards/${id}.jpg`} width="100%" height="100%" />
+		card = (
+			<img
+				src={getRenderedCardImage(props.card, displayTokenCost)}
+				width="100%"
+				height="100%"
+			/>
+		)
 	} else if (category === 'hermit')
 		card = (
 			<HermitCardModule
