@@ -10,10 +10,18 @@ import {
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
 
+function* noDatabaseConnection(playerId: string) {
+	const player = root.players[playerId]
+	broadcast([player], {type: serverMessages.NO_DATABASE_CONNECTION})
+}
+
 export function* addUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const result = yield* call(
 		[root.db, root.db.insertUser],
 		action.payload.username ? action.payload.username : '',
@@ -34,7 +42,10 @@ export function* addUser(
 export function* authenticateUser(
 	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const result = yield* call(
 		[root.db, root.db.authenticateUser],
 		action.payload.userId,
@@ -55,7 +66,10 @@ export function* authenticateUser(
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		broadcast([player], {
@@ -91,7 +105,10 @@ export function* getDecks(
 export function* insertDeck(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECK>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -137,7 +154,10 @@ export function* insertDeck(
 export function* importDeck(
 	action: RecievedClientMessage<typeof clientMessages.IMPORT_DECK>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -175,7 +195,10 @@ export function* importDeck(
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -198,7 +221,10 @@ export function* deleteDeck(
 export function* deleteTag(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_TAG>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
 		return
@@ -221,7 +247,7 @@ export function* deleteTag(
 export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) return
 	const defaultStats = {
 		gamesPlayed: 0,
 		wins: 0,
@@ -266,7 +292,7 @@ export function* addGame(
 	seed: string,
 	replay: Buffer,
 ) {
-	if (!root.db) return
+	if (!root.db?.connected) return
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
 
 	yield* call(
