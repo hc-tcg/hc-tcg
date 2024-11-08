@@ -8,6 +8,7 @@ export type DatabaseInfo = {
 	decks: Array<Deck>
 	tags: Array<Tag>
 	stats: Stats
+	noConnection: boolean
 }
 
 export type LocalDatabase = {
@@ -15,6 +16,7 @@ export type LocalDatabase = {
 }[keyof DatabaseInfo]
 
 const defaultInfo: DatabaseInfo = {
+	noConnection: false,
 	userId: null,
 	secret: null,
 	decks: [],

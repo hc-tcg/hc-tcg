@@ -726,7 +726,7 @@ function EditDeck({
 										size="small"
 										type="submit"
 										className={css.submitButton}
-										disabled={debugConfig.disableDatabase}
+										disabled={databaseInfo.noConnection}
 									>
 										+
 									</Button>

@@ -19,12 +19,14 @@ export type DatabaseResult<T = undefined> =
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	public connected: boolean
 	private bfDepth: number
 
 	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
 		this.pool = pool
 		this.allCards = allCards
 		this.bfDepth = bfDepth
+		this.connected = false
 	}
 
 	public async new() {
@@ -104,6 +106,7 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
+			this.connected = true
 		} catch (e) {
 			console.log(e)
 			console.info('Running server without database...')
@@ -611,7 +614,7 @@ export const setupDatabase = (
 	const pool = new Pool({
 		host: env.POSTGRES_HOST,
 		user: env.POSTGRES_USER,
-		password: env.POSTGRES_PASSWORD,
+		password: env.POSTGRES_PASSWORD + 'aaaa',
 		database: env.POSTGRES_DATABASE,
 		port: env.POSTGRES_PORT,
 		max: 10,

@@ -6,6 +6,7 @@ import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getStarterPack} from 'common/utils/state-gen'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -125,7 +126,15 @@ function* insertUser(socket: any) {
 }
 
 function* setupData(socket: any) {
-	if (debugConfig.disableDatabase) {
+	yield* sendMsg({
+		type: clientMessages.GET_DECKS,
+	})
+	const result = yield* race({
+		decks: call(receiveMsg(socket, serverMessages.DECKS_RECIEVED)),
+		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
+	})
+
+	if (result.failure) {
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
 			data: {
@@ -133,13 +142,19 @@ function* setupData(socket: any) {
 				value: getLocalStorageDecks(),
 			},
 		})
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
 		return
 	}
 
-	yield* sendMsg({
-		type: clientMessages.GET_DECKS,
-	})
-	const decks = yield* call(receiveMsg(socket, serverMessages.DECKS_RECIEVED))
+	const decks = result.decks
+
+	if (!decks) return
 
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
@@ -310,9 +325,21 @@ export function* loginSaga() {
 			const userInfo = yield* race({
 				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
 				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+				noConnection: call(
+					receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION),
+				),
 			})
 
 			if (userInfo.success) yield* setupData(socket)
+			if (userInfo.noConnection) {
+				yield* put<LocalMessage>({
+					type: localMessages.DATABASE_SET,
+					data: {
+						key: 'noConnection',
+						value: true,
+					},
+				})
+			}
 		}
 
 		yield put<LocalMessage>({
@@ -323,11 +350,14 @@ export function* loginSaga() {
 
 export function* databaseConnectionSaga() {
 	const socket = yield* select(getSocket)
+	const noConnection = (yield* select(getLocalDatabaseInfo) as any)[
+		'noConnection'
+	]
 
 	yield* takeEvery<LocalMessageTable[typeof localMessages.INSERT_DECK]>(
 		localMessages.INSERT_DECK,
 		function* (action) {
-			if (debugConfig.disableDatabase) {
+			if (noConnection) {
 				saveDeckToLocalStorage(action.deck)
 				return
 			}
@@ -337,7 +367,7 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
 		localMessages.IMPORT_DECK,
 		function* (action) {
-			if (debugConfig.disableDatabase) return
+			if (socket) return
 			yield* sendMsg({
 				type: clientMessages.IMPORT_DECK,
 				code: action.code,
@@ -348,7 +378,7 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
 		localMessages.DELETE_DECK,
 		function* (action) {
-			if (debugConfig.disableDatabase) {
+			if (noConnection) {
 				deleteDeckFromLocalStorage(action.deck)
 				return
 			}
@@ -358,14 +388,14 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_TAG]>(
 		localMessages.DELETE_TAG,
 		function* (action) {
-			if (debugConfig.disableDatabase) return
+			if (noConnection) return
 			yield* sendMsg({type: clientMessages.DELETE_TAG, tag: action.tag})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* (action) {
-			if (debugConfig.disableDatabase) {
+			if (noConnection) {
 				yield put<LocalMessage>({
 					type: localMessages.DATABASE_SET,
 					data: {
@@ -384,7 +414,7 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.RESET_ID_AND_SECRET]>(
 		localMessages.RESET_ID_AND_SECRET,
 		function* () {
-			if (debugConfig.disableDatabase) return
+			if (noConnection) return
 			yield* insertUser(socket)
 		},
 	)
