@@ -111,6 +111,11 @@ const loginReducer = (
 				...state,
 				toast: [],
 			}
+		case localMessages.EVERY_TOAST_CLOSE:
+			return {
+				...state,
+				toast: [],
+			}
 		case localMessages.SHOW_TOOLTIP:
 			return {
 				...state,
