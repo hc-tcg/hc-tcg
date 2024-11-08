@@ -17,8 +17,6 @@ COPY common/config/debug-config.example.js common/config/debug-config.js
 
 RUN npm ci
 
-ENV PROD true
-
 RUN npx playwright install --with-deps
 RUN npm run build-prod
 

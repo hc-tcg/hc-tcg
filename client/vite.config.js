@@ -8,7 +8,7 @@ import {ViteImageOptimizer} from 'vite-plugin-image-optimizer'
 
 let plugins = [react()]
 
-if (process.env.PROD == 'true') {
+if (process.env.NODE_ENV === 'production') {
 	plugins.push(ViteImageOptimizer())
 }
 
@@ -16,7 +16,7 @@ export default defineConfig({
 	plugins: plugins,
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
-		__DEBUG_BUILD__: JSON.stringify(process.env.PROD != 'true'),
+		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV === 'production'),
 		__PORT__: JSON.stringify(CONFIG.port),
 		__LIMITS__: JSON.stringify(CONFIG.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
@@ -40,7 +40,7 @@ export default defineConfig({
 		},
 	},
 	build:
-		process.env.PROD == 'true'
+		process.env.NODE_ENV === 'production'
 			? {
 					minify: 'terser',
 				}
