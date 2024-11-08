@@ -4,6 +4,15 @@ Dockerfile
 node_modules/**
 .git/**
 client/dist/**
+server/dist/**
 card-prerender/render/**
 client/public/images/cards/**
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests/ct/template/.cache/
+tsconfig.buildinfo
+.env
+
 
