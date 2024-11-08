@@ -1,9 +1,9 @@
 fly.toml
 Dockerfile
 .dockerignore
-node_modules
-.git
-client/dist
-card-prerender/render/
-client/public/images/cards/
+node_modules/**
+.git/**
+client/dist/**
+card-prerender/render/**
+client/public/images/cards/**
 
