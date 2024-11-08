@@ -46,22 +46,24 @@ test('Render Cards To PNG', async ({page, mount}) => {
 		}
 	}
 
+	console.log('Mounting cards...')
 	await mount(<div>{components}</div>)
 
-	await Promise.all(
-		CARDS_LIST.flatMap((card) => [
-			(async () => {
-				await page
-					.locator(`id=${card.id}`)
-					.screenshot({path: `card-prerender/render/${card.id}.png`})
-				console.log(`screenshotted \`${card.id}\``)
-			})(),
-			(async () => {
-				await page.locator(`id=${card.id}-with-tokens`).screenshot({
-					path: `card-prerender/render/${card.id}_with_tokens.png`,
-				})
-				console.log(`screenshotted \`${card.id}\` with tokens`)
-			})(),
-		]),
-	)
+	const total = CARDS_LIST.length * 2
+	let completed = 0
+
+	for (const card of CARDS_LIST) {
+		await page
+			.locator(`id=${card.id}`)
+			.screenshot({path: `card-prerender/render/${card.id}.png`})
+		completed += 1
+		console.log(`[${completed}/${total}] Screenshotted \`${card.id}\``)
+		await page.locator(`id=${card.id}-with-tokens`).screenshot({
+			path: `card-prerender/render/${card.id}_with_tokens.png`,
+		})
+		completed += 1
+		console.log(
+			`[${completed}/${total}] Screenshotted \`${card.id}\` with tokens`,
+		)
+	}
 })
