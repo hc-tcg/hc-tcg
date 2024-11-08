@@ -227,6 +227,8 @@ jobs:
   build-cards:
     name: Build Card Images
     runs-on: ubuntu-latest
+    permissions:
+        contents: write
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
