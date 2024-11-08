@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const TerraformItem: Item = {
 	...item,
 	id: 'item_terraform_common',
-	numericId: 0.040,
+	numericId: 0.04,
 	name: 'Terraform Item',
 	shortName: 'Terraform',
 	expansion: 'default',

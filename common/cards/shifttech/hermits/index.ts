@@ -7,7 +7,7 @@ const hermitCardClasses: Array<Card> = [
 	JackRare,
 	JackUltraRare,
 	AintCommon,
-	AintRare
+	AintRare,
 ]
 
 export default hermitCardClasses

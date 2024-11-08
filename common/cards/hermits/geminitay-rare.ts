@@ -1,14 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {beforeAttack, afterAttack} from '../../types/priorities'
+import {afterAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
-import { Hermit } from '../types'
-
-import {
-	StatusEffectComponent,
-} from '../../components'
-import WeaknessEffect from '../../status-effects/weakness'
+import {Hermit} from '../types'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 const GeminiTayRare: Hermit = {
@@ -39,7 +34,7 @@ const GeminiTayRare: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {opponentPlayer, player } = component
+		const {opponentPlayer, player} = component
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -64,7 +59,7 @@ const GeminiTayRare: Hermit = {
 				player.singleUseCardUsed = false
 			},
 		)
-	}
+	},
 }
 
 export default GeminiTayRare

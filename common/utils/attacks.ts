@@ -160,16 +160,15 @@ function createWeaknessAttack(
 	game: GameModel,
 	attack: AttackModel,
 ): AttackModel | null {
-	
 	if (attack.createWeakness === 'never') return null
-	
+
 	// Only hermit attacks have extra weakness damage.
 	if (!['primary', 'secondary'].includes(attack.type)) return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
-	
+
 	let attacker = attack.attacker
 	if (!(attacker instanceof CardComponent)) return null
-	
+
 	const targetCardInfo = game.components.find(
 		CardComponent,
 		query.card.rowEntity(attack.targetEntity),
@@ -178,7 +177,7 @@ function createWeaknessAttack(
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 	if (!attacker.props.type || !targetCardInfo.props.type) return null
-	
+
 	const attackerTypes = attacker.props.type
 	const targetTypes = targetCardInfo.props.type
 
@@ -205,7 +204,10 @@ function createWeaknessAttack(
 				for (let j = 0; j < strongInfo.length; j++) {
 					const pair: [TypeT, TypeT] = [weakInfo[i], strongInfo[j]]
 					if (
-						!weakList.find((pairInList) => pairInList[0] === pair[0] && pairInList[1] === pair[1]) &&
+						!weakList.find(
+							(pairInList) =>
+								pairInList[0] === pair[0] && pairInList[1] === pair[1],
+						) &&
 						attacker.props.type.includes(pair[1]) &&
 						targetCardInfo.props.type.includes(pair[0])
 					) {
@@ -213,9 +215,8 @@ function createWeaknessAttack(
 					}
 				}
 			}
-		}
-	)
-	
+		})
+
 	for (let i = 0; i < attackerTypes.length; i++) {
 		const offType = attackerTypes[i]
 		for (let j = 0; j < targetTypes.length; j++) {
@@ -227,13 +228,18 @@ function createWeaknessAttack(
 				defType === 'mob'
 			) {
 				const pair: [TypeT, TypeT] = [defType, offType]
-				if (!weakList.find((pairInList) => pairInList[0] === pair[0] && pairInList[1] === pair[1])) {
+				if (
+					!weakList.find(
+						(pairInList) =>
+							pairInList[0] === pair[0] && pairInList[1] === pair[1],
+					)
+				) {
 					weakList.push(pair)
 				}
 			}
 		}
 	}
-	
+
 	const weaknessAttack = game.newAttack({
 		attacker: attacker.entity,
 		target: attack.targetEntity,

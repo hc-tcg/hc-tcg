@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const AnarchistItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_common',
-	numericId: 0.000,
+	numericId: 0.0,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
 	expansion: 'default',

@@ -9,7 +9,7 @@ function capitalize(s: string) {
 const HistorianItem: Item = {
 	...item,
 	id: 'item_' + convenience + '_common',
-	numericId: 0.020,
+	numericId: 0.02,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
 	expansion: 'default',

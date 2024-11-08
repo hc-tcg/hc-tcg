@@ -1,9 +1,9 @@
-import {hermit} from '../../defaults'
-import {Hermit} from '../../types'
-import {afterAttack} from '../../../types/priorities'
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
+import {afterAttack} from '../../../types/priorities'
 import {flipCoin} from '../../../utils/coinFlips'
+import {hermit} from '../../defaults'
+import {Hermit} from '../../types'
 
 const JackCommon: Hermit = {
 	...hermit,
@@ -24,7 +24,7 @@ const JackCommon: Hermit = {
 	secondary: {
 		name: 'Rebuild',
 		cost: ['builder', 'builder', 'any'],
-		damage:90,
+		damage: 90,
 		power: 'Flip a coin.\nIf heads, draw an extra item card from your deck.',
 	},
 	onAttach(
@@ -32,7 +32,7 @@ const JackCommon: Hermit = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const { player } = component
+		const {player} = component
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -45,7 +45,6 @@ const JackCommon: Hermit = {
 				const coinFlip = flipCoin(player, attack.attacker)
 
 				if (coinFlip[0] === 'heads') {
-					
 				}
 			},
 		)

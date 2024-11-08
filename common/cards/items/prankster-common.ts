@@ -8,7 +8,7 @@ function capitalize(s: string) {
 const PranksterItem: Item = {
 	...item,
 	id: 'item_prankster_common',
-	numericId: 0.030,
+	numericId: 0.03,
 	name: 'Prankster Item',
 	shortName: 'Prankster',
 	expansion: 'default',

@@ -66,7 +66,7 @@ export const EXPANSIONS: ExpansionDict = {
 	artifake: {name: 'Artifake', disabled: false},
 	create: {name: 'Create', disabled: false},
 	his_fig: {name: 'Historical Figures', disabled: false},
-	modesto: {name: 'Modesto', disabled: false },
+	modesto: {name: 'Modesto', disabled: false},
 	vg_legends: {name: 'Video Game Legends', disabled: false},
 	touhou: {name: 'Touhou Project', disabled: false},
 	villager_news: {name: 'Villager News', disabled: false},
