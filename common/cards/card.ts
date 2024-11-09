@@ -1,5 +1,5 @@
 import {CardComponent} from '../components'
-import {TypeT} from '../types/cards'
+import {RankT, TypeT} from '../types/cards'
 import {DefaultDictionary} from '../types/game-state'
 import {getCardRank} from '../utils/ranks'
 import {Card, Hermit, isItem} from './types'
@@ -56,6 +56,10 @@ export function getCardRankIcon(card: Card) {
 	if (card.tokens === 0 || card.tokens === -1) {
 		return null
 	}
+	return getRankIcon(rank)
+}
+
+export function getRankIcon(rank: RankT) {
 	return `/images/ranks/${rank}.png`
 }
 
