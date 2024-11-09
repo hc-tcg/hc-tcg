@@ -9,7 +9,8 @@ permissions:
 jobs:
   render-cards:
     name: Build Card Images
-    image: mcr.microsoft.com/playwright:v1.48.1-noble
+    container:
+        image: mcr.microsoft.com/playwright:v1.48.1-noble
     permissions:
       contents: write
     steps:
