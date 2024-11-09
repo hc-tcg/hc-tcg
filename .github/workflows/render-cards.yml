@@ -9,7 +9,7 @@ permissions:
 jobs:
   render-cards:
     name: Build Card Images
-    runs-on: ubuntu-latest
+    image: mcr.microsoft.com/playwright:v1.48.1-noble
     permissions:
       contents: write
     steps:
@@ -18,12 +18,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: touch test-file
-
-      - name: Install Playwright Browsers
+      - name: Install Deps
         run: |
           npm install
-          npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
