@@ -9,8 +9,8 @@ permissions:
 jobs:
   render-cards:
     name: Build Card Images
-    container:
-        image: mcr.microsoft.com/playwright:v1.48.1-noble
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.48.1-noble
     permissions:
       contents: write
     steps:
