@@ -26,7 +26,6 @@ describe('Test Database', () => {
 
 	beforeAll(async () => {
 		const env = config()
-		console.log(process.env.DATABASE_URL)
 		database = setupDatabase(
 			CARDS_LIST,
 			{

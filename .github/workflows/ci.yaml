@@ -161,7 +161,7 @@ jobs:
       - name: Run Playwright tests
         run: npm run test:e2e
         env:
-          DATABASE_URL: postgresql://hc-tcg:hc-tcg@172.17.0.1:5432/hctcg
+          DATABASE_URL: postgres://hctcg:hctcg@172.17.0.1:5432/hctcg
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
