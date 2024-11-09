@@ -28,6 +28,8 @@ jobs:
 
       - name: Build Cards
         run: npm run client:render-cards
+        env:
+            HOME: "/root"
 
       - uses: EndBug/add-and-commit@v9
         with:
