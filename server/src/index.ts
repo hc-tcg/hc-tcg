@@ -7,7 +7,6 @@ import cors from 'cors'
 import express from 'express'
 import {addApi} from './api'
 import startSocketIO from './sockets'
-import {getDeckFromHash} from 'common/utils/import-export'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
