@@ -105,7 +105,7 @@ export const ThornsII = getThorns(
 	{
 		id: 'thorns_ii',
 		numericId: 123,
-		name: 'Thorne II',
+		name: 'Thorns II',
 		expansion: 'alter_egos',
 		rarity: 'rare',
 		tokens: 3,
