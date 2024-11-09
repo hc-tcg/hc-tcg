@@ -20,22 +20,16 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 2
 
-      - name: Install Deps
+      - name: Install Playwright Browsers
         run: |
-          apt-get update -y
-          apt-get install -y imagemagick git
           npm install
+          npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Build Cards
         run: npm run client:render-cards
-        env:
-            HOME: "/root"
-
-      - run: |
-         git config --global --add safe.directory /__w/hc-tcg/hc-tcg
 
       - uses: EndBug/add-and-commit@v9
         with:
