@@ -29,7 +29,7 @@ const Card = (props: CardReactProps) => {
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<button
-				className={cn(props.className, css.card, {
+				className={cn(props.className, css.cardImage, {
 					[css.selected]: selected,
 					[css.picked]: picked,
 					[css.unpickable]: unpickable,
@@ -37,7 +37,7 @@ const Card = (props: CardReactProps) => {
 				onClick={unpickable ? () => {} : onClick}
 			>
 				<img
-					className={css.cardImage}
+					unselectable="on"
 					src={getRenderedCardImage(props.card, displayTokenCost)}
 					width="100%"
 					height="100%"
