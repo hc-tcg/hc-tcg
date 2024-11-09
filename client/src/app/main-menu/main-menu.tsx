@@ -24,6 +24,7 @@ function MainMenu({setMenuSection}: Props) {
 
 		if (validation.valid) {
 			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+			dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 		} else {
 			dispatch({
 				type: localMessages.TOAST_OPEN,
@@ -34,11 +35,16 @@ function MainMenu({setMenuSection}: Props) {
 			})
 		}
 	}
-	const handlePrivateGame = () =>
+	const handlePrivateGame = () => {
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+	}
 	const handleSoloGame = () => setMenuSection('boss-landing')
 
-	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
+	const handleLogOut = () => {
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+		dispatch({type: localMessages.LOGOUT})
+	}
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 

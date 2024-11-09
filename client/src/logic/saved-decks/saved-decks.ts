@@ -42,9 +42,12 @@ export function getLocalStorageDecks(): Array<Deck> {
 						iconType: 'item',
 						icon: parsedDeck.icon,
 						tags: [],
-						cards: parsedDeck.cards.map((card) =>
-							toLocalCardInstance(CARDS[card.cardId]),
-						),
+						cards: parsedDeck.cards.map((card) => {
+							if (card.cardId === 'flint_&_steel') {
+								toLocalCardInstance(CARDS['flint_and_steel'])
+							}
+							return toLocalCardInstance(CARDS[card.cardId])
+						}),
 					}
 					decks.push(newDeck)
 				} catch {

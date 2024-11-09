@@ -2,10 +2,17 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
+import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import TNT from 'common/cards/single-use/tnt'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	playCardFromHand,
+	testGame,
+} from '../utils'
 
 describe('Test Zedaph Sheep Stare', () => {
 	test('Sheep Stare functionality', () => {
@@ -75,6 +82,31 @@ describe('Test Zedaph Sheep Stare', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 10 /** AFK Anvil Drop heads */)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Sheep Stare does not flip for weakness', () => {
+		testGame(
+			{
+				playerOneDeck: [ZedaphPlaysRare],
+				playerTwoDeck: [ZedaphPlaysRare, PotionOfWeakness],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
+					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'primary')
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(
+						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
+					).toHaveLength(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

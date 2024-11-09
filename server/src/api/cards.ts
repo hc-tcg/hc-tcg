@@ -1,10 +1,6 @@
 import {CARDS, CARDS_LIST} from 'common/cards'
-import {
-	getCardImage,
-	getCardTypeIcon,
-	getHermitBackground,
-	getRankIcon,
-} from 'common/cards/card'
+import {getCardTypeIcon, getRankIcon} from 'common/cards/card'
+import {getRenderedCardImage} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
@@ -35,9 +31,10 @@ type HermitResponse = {
 		damage: number
 		power: string | null
 	}
-	image: string
-	background: string
-	palette?: string
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 type EffectResponse = {
@@ -48,7 +45,10 @@ type EffectResponse = {
 	rarity: string
 	tokens: number
 	description: string
-	image: string
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 type ItemResponse = {
@@ -59,7 +59,10 @@ type ItemResponse = {
 	rarity: string
 	tokens: number
 	energy: Array<string>
-	image: string
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 function cardToCardResponse(card: Card, url: string): CardResponse | null {
@@ -76,9 +79,10 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			health: card.health,
 			primary: card.primary,
 			secondary: card.secondary,
-			image: joinUrl(url, getCardImage(card)),
-			background: joinUrl(url, getHermitBackground(card)),
-			palette: card.palette,
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false)),
+				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+			},
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
 		return {
@@ -89,7 +93,10 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
-			image: joinUrl(url, getCardImage(card)),
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false)),
+				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+			},
 		}
 	} else if (isItem(card)) {
 		return {
@@ -100,7 +107,10 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
-			image: joinUrl(url, getCardImage(card)),
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false)),
+				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+			},
 		}
 	}
 	return null
