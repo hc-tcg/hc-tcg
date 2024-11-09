@@ -87,6 +87,7 @@ function* insertUser(socket: any) {
 	})
 
 	const localStorageDecks = getLocalStorageDecks()
+	localStorage.removeItem('settings:lastSelectedTag')
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -103,7 +104,13 @@ function* insertUser(socket: any) {
 					newActiveDeck: i === 0 ? localStorageDecks[i].code : undefined,
 				})
 			}
+
 			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
+
+			yield* put({
+				type: clientMessages.GET_DECKS,
+				newActiveDeck: localStorageDecks[0],
+			})
 
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
