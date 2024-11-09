@@ -612,11 +612,7 @@ export const setupDatabase = (
 	bfDepth: number,
 ) => {
 	const pool = new Pool({
-		host: env.POSTGRES_HOST,
-		user: env.POSTGRES_USER,
-		password: env.POSTGRES_PASSWORD,
-		database: env.POSTGRES_DATABASE,
-		port: env.POSTGRES_PORT,
+		connectionString: env.DATABASE_URL,
 		max: 10,
 		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,
