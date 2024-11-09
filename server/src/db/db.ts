@@ -611,24 +611,8 @@ export const setupDatabase = (
 	env: any,
 	bfDepth: number,
 ) => {
-	let connectionInfo = {}
-
-	if (env.DATABASE_URL !== undefined) {
-		connectionInfo = {
-			connectionString: env.DATABASE_URL,
-		}
-	} else {
-		connectionInfo = {
-			host: env.POSTGRES_HOST,
-			user: env.POSTGRES_USER,
-			password: env.POSTGRES_PASSWORD,
-			database: env.POSTGRES_DATABASE,
-			port: env.POSTGRES_PORT,
-		}
-	}
-
 	const pool = new Pool({
-		...connectionInfo,
+		connectionString: env.DATABASE_URL,
 		max: 10,
 		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,
