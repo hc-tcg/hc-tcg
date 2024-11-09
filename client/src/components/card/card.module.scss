@@ -12,6 +12,25 @@
 		filter: brightness(0.5);
 		cursor: not-allowed;
 	}
+}
+
+.cardImage {
+    image-rendering: auto;
+	height: 100%;
+	width: 100%;
+	aspect-ratio: 1;
+	overflow: show;
+	font-family: BangersBold, Helvetica, serif;
+	user-select: none;
+	border: 2px solid transparent;
+	cursor: pointer;
+	background-color: gray;
+	background-clip: content-box;
+
+	&:disabled {
+		filter: brightness(0.5);
+		cursor: not-allowed;
+	}
 
 	&:focus-visible {
 		outline: 4px solid white;
