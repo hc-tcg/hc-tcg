@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Deps
         run: |
-          apt-get install imagemagick
+          apt-get install imagemagick git
           npm install
 
       - name: Create debug config
@@ -31,6 +31,9 @@ jobs:
         run: npm run client:render-cards
         env:
             HOME: "/root"
+
+	  - run: |
+         git config --global --add safe.directory /__w/hc-tcg/hc-tcg
 
       - uses: EndBug/add-and-commit@v9
         with:
