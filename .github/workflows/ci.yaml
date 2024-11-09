@@ -150,7 +150,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
