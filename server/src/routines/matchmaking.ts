@@ -169,6 +169,7 @@ function* gameManager(game: GameModel) {
 		)
 
 		if (
+			gamePlayers.length >= 2 &&
 			gamePlayers[0].uuid &&
 			gamePlayers[1].uuid &&
 			game.endInfo.outcome &&
