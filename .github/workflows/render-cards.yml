@@ -21,8 +21,8 @@ jobs:
 
       - name: Install Deps
         run: |
-          apt-get update
-          apt-get install imagemagick git
+          apt-get update -y
+          apt-get install -y imagemagick git
           npm install
 
       - name: Create debug config
