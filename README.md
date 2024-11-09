@@ -87,8 +87,8 @@ npm run fix       # fix any autofixable linting errors
 ```
 
 ### Adding New Cards
-After adding your card, you will need to wait for the image to render.
-There is a github action that will automatically do this. After pushing your new card to your branch on github,
+After adding your card, you will need to render the card.
+After pushing your code to your branch on github,
 wait a few minutes and there should be a commit with the card image!
 
 ### Testing
