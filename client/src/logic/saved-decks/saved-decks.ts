@@ -72,7 +72,15 @@ export function getLocalStorageDecks(): Array<Deck> {
 						icon: parsedDeck.icon,
 						tags: parsedDeck.tags
 							? parsedDeck.tags
-									.map((tag) => tags.find((search) => search.key === tag))
+									.map((tag) => {
+										const foundTag = tags.find((search) => search.key === tag)
+										if (foundTag) {
+											foundTag.key = generateDatabaseCode()
+											return foundTag
+										} else {
+											return undefined
+										}
+									})
 									.filter((tag) => tag !== undefined)
 							: [],
 						cards: parsedDeck.cards.map((card) => {
