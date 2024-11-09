@@ -203,7 +203,7 @@ jobs:
       - name: Test Database
         run: npm run test:db
         env:
-          DATABASE_URL: postgresql://hc-tcg:hc-tcg@172.17.0.1:5432/hctcg
+          DATABASE_URL: 'postgresql://hc-tcg:hc-tcg@localhost:5432/hctcg'
 
   build-docker:
     name: Test Can Build Docker Image
