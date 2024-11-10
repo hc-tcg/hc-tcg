@@ -190,7 +190,7 @@ export const ImportModal = ({
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>
-						To import a deck, enter the Deck Hash, then click Import.
+						To import a deck, enter the deck hash, then click "Import".
 					</p>
 					{askForDeckName && (
 						<div className={css.name}>
