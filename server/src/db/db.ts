@@ -345,7 +345,7 @@ export class Database {
 				}
 
 				if (
-					cardId &&
+					cardId !== null &&
 					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
 					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
 				) {

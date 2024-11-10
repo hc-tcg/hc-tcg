@@ -9,6 +9,11 @@ import {
 	test,
 } from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
+import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BalancedItem from 'common/cards/items/balanced-common'
+import BuilderDoubleItem from 'common/cards/items/builder-rare'
+import Fortune from 'common/cards/single-use/fortune'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
@@ -20,7 +25,14 @@ describe('Test Database', () => {
 		name: 'Testing deck',
 		icon: 'balanced',
 		iconType: 'item',
-		cards: [0, 1, 2, 2, 3, 4, 4, 5, 4],
+		cards: [
+			BdoubleO100Common.numericId,
+			EthosLabCommon.numericId,
+			BalancedItem.numericId,
+			BuilderDoubleItem.numericId,
+			BuilderDoubleItem.numericId,
+			Fortune.numericId,
+		],
 		tags: [],
 	}
 
@@ -122,26 +134,9 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 1)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 2)
-				.length,
-		).toEqual(2)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 3)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 4)
-				.length,
-		).toEqual(3)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 5)
-				.length,
-		).toEqual(1)
+		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
@@ -356,26 +351,9 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 1)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 2)
-				.length,
-		).toEqual(2)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 3)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 4)
-				.length,
-		).toEqual(3)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 5)
-				.length,
-		).toEqual(1)
+		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
 	})
 
 	test('Returning decks with no tags or cards', async () => {
