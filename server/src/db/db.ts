@@ -310,11 +310,13 @@ export class Database {
 					key: row['tag_id'],
 				}
 				const cardId: number | null = row['card_id']
-				const cards: Array<Card> = [
-					...Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === cardId),
-					),
-				]
+				const cards: Array<Card> = cardId
+					? [
+							...Array(row['copies']).fill(
+								this.allCards.find((card) => card.numericId === cardId),
+							),
+						]
+					: []
 
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
