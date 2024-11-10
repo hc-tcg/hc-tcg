@@ -1,5 +1,5 @@
 .card {
-    image-rendering: auto;
+	image-rendering: auto;
 	height: 100%;
 	aspect-ratio: 1;
 	overflow: hidden;
@@ -15,7 +15,7 @@
 }
 
 .cardImage {
-    image-rendering: auto;
+	image-rendering: auto;
 	height: 100%;
 	width: 100%;
 	aspect-ratio: 1;
@@ -79,16 +79,18 @@
 	margin-top: -0.4rem;
 }
 
+.renderedCardImage {
+	pointer-events: none;
+	user-select: none;
+}
+
 .MobileCardComponentContainer {
 	display: flex;
-
-	.mainButton {
-		flex-grow: 1;
-	}
 }
 
 .MobileCardComponent {
 	display: flex;
+	flex-grow: 1;
 	flex-direction: row;
 	gap: 0.5rem;
 	padding: 0.5rem;
@@ -140,8 +142,7 @@
 	font-size: 1rem;
 	font-family: Unifont;
 	transform: translate(0.2rem, -0.8rem);
-	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
-		drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
 
 	&.rare::before {
 		color: rgb(241, 172, 33);
@@ -155,4 +156,3 @@
 		content: "★";
 	}
 }
-

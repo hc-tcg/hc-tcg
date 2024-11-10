@@ -791,8 +791,8 @@ function EditDeck({
 							Cards
 							<MobileCardList
 								cards={sortCards(loadedDeck.cards)}
-								onClick={removeCard}
 								small={false}
+								onSubtractionClick={removeCard}
 								onAdditionClick={addCard}
 							/>
 						</div>
