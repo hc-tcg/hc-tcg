@@ -47,11 +47,11 @@ function setupGame(
 	let game = new GameModel(
 		{
 			model: player1,
-			deck: player1.deck.cards.map((card) => card.props.numericId),
+			deck: player1.deck!.cards.map((card) => card.props.numericId),
 		},
 		{
 			model: player2,
-			deck: player2.deck.cards.map((card) => card.props.numericId),
+			deck: player2.deck!.cards.map((card) => card.props.numericId),
 		},
 		gameSettingsFromEnv(),
 		{gameCode: code, spectatorCode},
@@ -225,7 +225,7 @@ function* randomMatchmakingSaga() {
 			const player1 = root.players[player1Id]
 			const player2 = root.players[player2Id]
 
-			if (player1 && player2) {
+			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
 				const newGame = setupGame(player1, player2)
 				root.addGame(newGame)
@@ -274,6 +274,14 @@ export function* joinQueue(
 		return
 	}
 
+	if (!player.deck) {
+		console.log(
+			'[Join queue] Player tried to join queue without valid deck:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
+	}
+
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log('[Join queue] Player is already in game or queue:', player.name)
 		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
@@ -319,7 +327,7 @@ function setupSolitareGame(
 	const game = new GameModel(
 		{
 			model: player,
-			deck: player.deck.cards.map((card) => card.props.numericId),
+			deck: player.deck!.cards.map((card) => card.props.numericId),
 		},
 		{
 			model: opponent,
@@ -457,6 +465,14 @@ export function* joinPrivateGame(
 	const player = root.players[playerId]
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
+		return
+	}
+
+	if (!player.deck) {
+		console.log(
+			'[Join private game] Player tried to join private game without valid deck: ',
+			playerId,
+		)
 		return
 	}
 
