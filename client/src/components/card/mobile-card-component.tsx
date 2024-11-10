@@ -4,6 +4,8 @@ import {getDeckCost} from 'common/utils/ranks'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip, {getRarity} from './card-tooltip'
 import css from './card.module.scss'
+import {getCardTypeIcon} from 'common/cards/card'
+import {isItem} from 'common/cards/types'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -52,11 +54,11 @@ const MobileCardComponent = (props: CardReactProps) => {
 							src={`/images/effects/${cards[0].props.id}.png`}
 						/>
 					)}
-					{cards[0].props.category === 'item' && (
+					{cards[0].props.category === 'item' && isItem(cards[0].props) && (
 						<div>
 							<img
 								className={css.headInList}
-								src={`/images/types/type-${cards[0].props.id.split('_')[1]}.png`}
+								src={getCardTypeIcon(cards[0].props.type)}
 							/>
 							{small && (
 								<div
