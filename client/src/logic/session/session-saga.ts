@@ -359,7 +359,6 @@ export function* loginSaga() {
 }
 
 export function* databaseConnectionSaga() {
-	const socket = yield* select(getSocket)
 	const noConnection = (yield* select(getLocalDatabaseInfo) as any)[
 		'noConnection'
 	]
@@ -377,7 +376,6 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
 		localMessages.IMPORT_DECK,
 		function* (action) {
-			if (socket) return
 			yield* sendMsg({
 				type: clientMessages.IMPORT_DECK,
 				code: action.code,

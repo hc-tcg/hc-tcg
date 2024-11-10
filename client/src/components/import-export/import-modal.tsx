@@ -19,7 +19,7 @@ type Props = {
 }
 
 function isDatabaseDeckCode(hash: string) {
-	return hash.length === 7 && hash.match(/[1234567890abcdefg]+/)
+	return hash.length === 7 && hash.match(/[1234567890abcdef]+/)
 }
 
 export const ImportModal = ({
