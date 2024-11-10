@@ -91,7 +91,7 @@ const loginReducer = (
 		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: {...action.deck, code: action.deck.code},
+				playerDeck: action.deck,
 			}
 		case localMessages.TOAST_OPEN:
 			state.toast.push({

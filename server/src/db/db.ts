@@ -178,11 +178,10 @@ export class Database {
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
 		try {
-			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5) RETURNING (deck_code)',
+			await this.pool.query(
+				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5)',
 				[user_id, name, icon, iconType, code],
 			)
-			const deckCode: string = deckResult.rows[0]['deck_code']
 
 			const reformattedCards = cards.reduce(
 				(r: Array<{id: number; copies: number}>, card) => {
@@ -201,7 +200,7 @@ export class Database {
 					INSERT INTO deck_cards (deck_code,card_id,copies) SELECT * FROM UNNEST ($1::text[],$2::int[],$3::int[]) 
 					ON CONFLICT DO NOTHING`,
 				[
-					Array(reformattedCards.length).fill(deckCode),
+					Array(reformattedCards.length).fill(code),
 					reformattedCards.map((card) => card.id),
 					reformattedCards.map((card) => card.copies),
 				],
@@ -210,13 +209,13 @@ export class Database {
 			if (tagIds.length > 0) {
 				await this.pool.query(
 					'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[])',
-					[Array(tagIds.length).fill(deckCode), tagIds],
+					[Array(tagIds.length).fill(code), tagIds],
 				)
 			}
 
 			return {
 				type: 'success',
-				body: deckCode,
+				body: code,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
@@ -343,7 +342,11 @@ export class Database {
 					foundDeck.tags.push(tag)
 				}
 
-				if (foundDeck.cards.find((card) => card.props.numericId !== cardId)) {
+				if (
+					cardId &&
+					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
+					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
+				) {
 					foundDeck.cards = [
 						...foundDeck.cards,
 						...cards.map((card) => toLocalCardInstance(card)),

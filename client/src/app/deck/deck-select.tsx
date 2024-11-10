@@ -84,6 +84,9 @@ function SelectDeck({
 	function sortDecks(decks: Array<Deck>): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
+				if (a.name === b.name) {
+					return a.code.localeCompare(b.code)
+				}
 				return a.name.localeCompare(b.name)
 			}
 			if (settings.deckSortingMethod === 'First Tag') {

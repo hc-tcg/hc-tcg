@@ -52,7 +52,7 @@ function getLocalStorageTags(): Array<Tag> {
 	return tags
 }
 
-export function getLocalStorageDecks(): Array<Deck> {
+export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 	let lsKey
 	const decks: Array<Deck> = []
 	const tags = getLocalStorageTags()
@@ -66,7 +66,10 @@ export function getLocalStorageDecks(): Array<Deck> {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
 					const newDeck: Deck = {
-						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
+						code:
+							parsedDeck.code && devMode
+								? parsedDeck.code
+								: generateDatabaseCode(),
 						name: parsedDeck.name,
 						iconType: 'item',
 						icon: parsedDeck.icon,
@@ -75,7 +78,10 @@ export function getLocalStorageDecks(): Array<Deck> {
 									.map((tag) => {
 										const foundTag = tags.find((search) => search.key === tag)
 										if (foundTag) {
-											foundTag.key = generateDatabaseCode()
+											// Turn old key into database readable format
+											foundTag.key = (Number(foundTag.key) * 9999999)
+												.toString(16)
+												.slice(0, 7)
 											return foundTag
 										} else {
 											return undefined
