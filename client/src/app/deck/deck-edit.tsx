@@ -242,7 +242,6 @@ function EditDeck({
 				},
 	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
-	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
@@ -384,20 +383,7 @@ function EditDeck({
 		// New code
 		newDeck.code = generateDatabaseCode()
 
-		// Check to see if there's already a dake with that name.
-		if (
-			databaseInfo.decks.find((deck) => deck.name === newDeck.name) &&
-			initialDeckState &&
-			initialDeckState.name !== newDeck.name
-		) {
-			return setShowOverwriteModal(true)
-		}
-
 		// Send toast and return to select deck screen
-		saveAndReturn(newDeck)
-	}
-	const overwrite = () => {
-		const newDeck = {...loadedDeck}
 		saveAndReturn(newDeck)
 	}
 	const saveAndReturn = (deck: Deck) => {
@@ -423,14 +409,6 @@ function EditDeck({
 
 	return (
 		<>
-			<ConfirmModal
-				setOpen={showOverwriteModal}
-				title="Overwrite Deck"
-				description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
-				confirmButtonText="Overwrite"
-				onCancel={() => setShowOverwriteModal(!showOverwriteModal)}
-				onConfirm={overwrite}
-			/>
 			<ConfirmModal
 				setOpen={showUnsavedModal}
 				title="Leave Editor"

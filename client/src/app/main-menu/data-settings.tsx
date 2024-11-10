@@ -274,6 +274,13 @@ function DataSettings({setMenuSection}: Props) {
 							dispatch({
 								type: localMessages.RESET_ID_AND_SECRET,
 							})
+							dispatch({
+								type: localMessages.SETTINGS_SET,
+								setting: {
+									key: 'lastSelectedTag',
+									value: null,
+								},
+							})
 						},
 						() => {
 							setMenuSection('mainmenu')

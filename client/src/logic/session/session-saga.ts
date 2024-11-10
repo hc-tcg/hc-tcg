@@ -86,7 +86,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	const localStorageDecks = getLocalStorageDecks()
+	const localStorageDecks = getLocalStorageDecks(false)
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -96,22 +96,10 @@ function* insertUser(socket: any) {
 		})
 
 		if (localStorageDecks.length > 0) {
-			for (let i = 0; i < localStorageDecks.length; i++) {
-				yield* sendMsg({
-					type: clientMessages.INSERT_DECK,
-					deck: localStorageDecks[i],
-					newActiveDeck: i === 0 ? localStorageDecks[i].code : undefined,
-				})
-			}
-			localStorage.setItem('activeDeck', JSON.stringify(localStorageDecks[0]))
-
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: localStorageDecks[0],
-			})
 			yield* sendMsg({
-				type: clientMessages.UPDATE_DECK,
-				deck: localStorageDecks[0],
+				type: clientMessages.INSERT_DECKS,
+				decks: localStorageDecks,
+				newActiveDeck: localStorageDecks[0].code,
 			})
 		} else {
 			const starterDeck: Deck = {
@@ -135,10 +123,6 @@ function* insertUser(socket: any) {
 				type: localMessages.SELECT_DECK,
 				deck: starterDeck,
 			})
-			yield* sendMsg({
-				type: clientMessages.UPDATE_DECK,
-				deck: starterDeck,
-			})
 		}
 	}
 }
@@ -153,7 +137,7 @@ function* setupData(socket: any) {
 	})
 
 	if (result.failure) {
-		const localStorageDecks = getLocalStorageDecks()
+		const localStorageDecks = getLocalStorageDecks(true)
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
 			data: {
@@ -318,10 +302,6 @@ export function* loginSaga() {
 				type: localMessages.SELECT_DECK,
 				deck: activeDeck,
 			})
-			yield* sendMsg({
-				type: clientMessages.UPDATE_DECK,
-				deck: activeDeck,
-			})
 		}
 
 		// set user info for reconnects
@@ -410,15 +390,20 @@ export function* databaseConnectionSaga() {
 					type: localMessages.SELECT_DECK,
 					deck: action.newActiveDeck,
 				})
-				yield* sendMsg({
-					type: clientMessages.UPDATE_DECK,
-					deck: action.newActiveDeck,
-				})
 				return
 			}
 			yield* sendMsg({
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck?.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.SELECT_DECK]>(
+		localMessages.SELECT_DECK,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
+				deck: action.deck,
 			})
 		},
 	)
