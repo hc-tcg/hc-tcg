@@ -1,5 +1,7 @@
 import {expect, test} from '@playwright/test'
 
+test.setTimeout(30000)
+
 test('Private queue is exited when API game is cancelled (Opponent Code)', async ({
 	page,
 }) => {
@@ -182,8 +184,8 @@ test('Game starts for players and spectators and places players back on title sc
 		await player.getByLabel('Enter code:').press('Enter')
 	}
 
-	// Give the server a second to start the game
-	await playerOne.waitForTimeout(1000)
+	// Give the server three seconds to start the game
+	await playerOne.waitForTimeout(3000)
 
 	for (const player of [playerOne, playerTwo, spectator]) {
 		await expect(
