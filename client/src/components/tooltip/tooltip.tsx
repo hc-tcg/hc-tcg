@@ -240,7 +240,7 @@ export const CurrentTooltip = ({
 	}
 
 	const onTouchMove = () => {
-		if (touchTime <= 5) {
+		if (touchTime > 0) {
 			setTouchTime(0)
 			return
 		}
@@ -251,7 +251,7 @@ export const CurrentTooltip = ({
 
 	useLayoutEffect(() => {
 		const interval = setInterval(() => {
-			if (!shownByTouch || touchTime > 5) {
+			if (!shownByTouch || touchTime > 0) {
 				const offsets = getOffsets()
 				if (!offsets || !tooltipRef?.current) return
 				tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
