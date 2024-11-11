@@ -15,7 +15,7 @@ const MinecartWithTNT: SingleUse = {
 	rarity: 'rare',
 	tokens: 2,
 	description:
-		"Flip a coin.\nIf heads, do 80hp damage to your opponent's active Hermit.\nIf tails, your active Hermit takes 40hp damage.",
+		"Flip a coin.\nIf heads, do 100hp damage to your opponent's active Hermit.\nIf tails, your active Hermit takes 40hp damage.",
 	hasAttack: true,
 	onAttach(
 		game: GameModel,
@@ -37,7 +37,7 @@ const MinecartWithTNT: SingleUse = {
 						log: (values) =>
 							`${values.defaultLog}, and ${values.coinFlip} to attack ${values.target} for ${values.damage} damage `,
 					})
-					.addDamage(component.entity, 80)
+					.addDamage(component.entity, 100)
 			} else {
 				return game
 					.newAttack({

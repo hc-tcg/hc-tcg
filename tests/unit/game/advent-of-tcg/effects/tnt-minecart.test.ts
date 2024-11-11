@@ -11,7 +11,7 @@ import {
 } from '../../utils'
 
 describe('Test TNT Minecart', () => {
-	test('TNT Minecart heads deals 80hp to opponent', () => {
+	test('TNT Minecart heads deals 100hp to opponent', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -27,7 +27,7 @@ describe('Test TNT Minecart', () => {
 						EthosLabCommon.health,
 					)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						EthosLabCommon.health - 80,
+						EthosLabCommon.health - 100,
 					)
 					yield* endTurn(game)
 				},
