@@ -39,6 +39,7 @@ export const localMessages = messages({
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
+	EVERY_TOAST_CLOSE: null,
 	MINECRAFT_NAME_SET: null,
 	MINECRAFT_NAME_NEW: null,
 	MATCHMAKING_QUEUE_JOIN: null,
@@ -122,6 +123,7 @@ type Messages = [
 		image?: string
 	},
 	{type: typeof localMessages.TOAST_CLOSE; id: number},
+	{type: typeof localMessages.EVERY_TOAST_CLOSE},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
@@ -224,7 +226,7 @@ type Messages = [
 	{type: typeof localMessages.SELECT_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
-	{type: typeof localMessages.UPDATE_DECKS; newActiveDeck?: string},
+	{type: typeof localMessages.UPDATE_DECKS; newActiveDeck?: Deck},
 	{
 		type: typeof localMessages.IMPORT_DECK
 		code: string
