@@ -345,6 +345,7 @@ export function* addGame(
 ) {
 	if (!root.db?.connected) return
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
+	if (!firstPlayerModel.deck || !secondPlayerModel.deck) return
 
 	yield* call(
 		[root.db, root.db.insertGame],

@@ -9,7 +9,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: Deck
+	playerDeck: Deck | null
 	connecting: boolean
 	connected: boolean
 	errorType?:
