@@ -259,7 +259,7 @@ export const CurrentTooltip = ({
 				return
 			}
 			setTouchTime(touchTime + 1)
-		}, 50)
+		}, 10)
 
 		if (!shownByTouch) clearInterval(interval)
 
