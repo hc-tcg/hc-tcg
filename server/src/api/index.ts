@@ -2,7 +2,7 @@ import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
-import {cancelApiGame, createApiGame} from './games'
+import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
 import {StatsHeader, getStats} from './stats'
 import {requestUrlRoot} from './utils'
@@ -28,6 +28,10 @@ export function addApi(app: Express) {
 		res.send(await deckCost(req.body))
 	})
 
+	app.get('/api/games/count', (_req, res) => {
+		res.send(getGameCount())
+	})
+
 	app.get('/api/games/create', (_req, res) => {
 		res.send(createApiGame())
 	})
@@ -35,6 +39,10 @@ export function addApi(app: Express) {
 	app.delete('/api/games/cancel', (req, res) => {
 		let body = CancelGameBody.parse(req.body)
 		res.send(cancelApiGame(body.code))
+	})
+
+	app.get('/api/games/:secret', (req, res) => {
+		res.send(getGameInfo(req.params.secret))
 	})
 
 	app.get('/api/stats', async (req, res) => {

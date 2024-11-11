@@ -47,6 +47,7 @@ function setupGame(
 	player2Deck: Deck,
 	code?: string,
 	spectatorCode?: string,
+	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
 		{
@@ -58,7 +59,7 @@ function setupGame(
 			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
 		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode},
+		{gameCode: code, spectatorCode, apiSecret},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -602,6 +603,7 @@ export function* joinPrivateGame(
 			existingPlayer.deck,
 			root.privateQueue[code].gameCode,
 			root.privateQueue[code].spectatorCode,
+			root.privateQueue[code].apiSecret,
 		)
 		root.addGame(newGame)
 
