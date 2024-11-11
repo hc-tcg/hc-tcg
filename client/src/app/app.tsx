@@ -97,13 +97,14 @@ function App() {
 			)}
 			{enableToast && (
 				<ToastContainer>
-					{toastMessage.map((toast) => {
+					{toastMessage.map((toast, i) => {
 						return (
 							<Toast
 								title={toast.toast.title}
 								description={toast.toast.description}
 								image={toast.toast.image}
 								id={toast.id}
+								key={i}
 							/>
 						)
 					})}
