@@ -165,8 +165,15 @@ function* gameManager(game: GameModel) {
 
 		const gamePlayers = game.getPlayers()
 		const winner = gamePlayers.find(
-			(player) => player.uuid === game.endInfo.winner,
+			(player) => player.id === game.endInfo.winner,
 		)
+
+		if (winner === null && game.endInfo.winner) {
+			console.error(
+				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+			)
+			return
+		}
 
 		if (
 			gamePlayers.length >= 2 &&
