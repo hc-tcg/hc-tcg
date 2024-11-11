@@ -86,6 +86,7 @@ export class GameModel {
 	private internalId: string
 	private internalGameCode: string | null
 	private internalSpectatorCode: string | null
+	private internalApiSecret: string | null
 
 	public readonly settings: GameSettings
 
@@ -138,6 +139,7 @@ export class GameModel {
 		settings: GameSettings,
 		options?: {
 			gameCode?: string
+			apiSecret?: string
 			spectatorCode?: string
 			randomizeOrder?: false
 		},
@@ -150,6 +152,7 @@ export class GameModel {
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalGameCode = options.gameCode || null
 		this.internalSpectatorCode = options.spectatorCode || null
+		this.internalApiSecret = options.apiSecret || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -233,6 +236,10 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
+	}
+
+	public get apiSecret() {
+		return this.internalApiSecret
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {
