@@ -280,7 +280,7 @@ export function* joinQueue(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props))
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
 		console.log(
 			'[Join queue] Player tried to join queue with an invalid deck:',
@@ -369,7 +369,7 @@ export function* createBossGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props))
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
 		console.log(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -489,7 +489,7 @@ export function* joinPrivateGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props))
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
 		console.log(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
