@@ -375,6 +375,7 @@ export function* createBossGame(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
+		broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_FAILURE})
 		return
 	}
 
@@ -495,6 +496,7 @@ export function* joinPrivateGame(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
 		return
 	}
 
