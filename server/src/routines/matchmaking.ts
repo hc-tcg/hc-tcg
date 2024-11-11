@@ -14,6 +14,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {Deck} from 'common/types/deck'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
@@ -37,7 +38,6 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
-import {Deck} from 'common/types/deck'
 
 function setupGame(
 	player1: PlayerModel,
