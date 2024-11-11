@@ -123,7 +123,7 @@ export function* updateDeckSaga(
 	const player = root.players[playerId]
 	if (!player) return
 	player.setPlayerDeck(playerDeck)
-
+	if (!player.deck) return
 	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 
