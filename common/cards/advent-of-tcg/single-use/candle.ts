@@ -15,7 +15,7 @@ const Candle: SingleUse = {
 	rarity: 'common',
 	tokens: 2,
 	description:
-		'Search your deck for a card you have at least 2 copies of. Draw one copy, discard the other, then shuffle.',
+		'Search your deck for a pair of cards. For one pair you find, draw one copy, discard the other, then shuffle.',
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
