@@ -79,10 +79,14 @@ export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 										const foundTag = tags.find((search) => search.key === tag)
 										if (foundTag) {
 											// Turn old key into database readable format
-											foundTag.key = (Number(foundTag.key) * 9999999)
+											const newTag = (Number(foundTag.key) * 9999999)
 												.toString(16)
 												.slice(0, 7)
-											return foundTag
+											return {
+												key: newTag,
+												color: foundTag.color,
+												name: foundTag.name,
+											}
 										} else {
 											return undefined
 										}
