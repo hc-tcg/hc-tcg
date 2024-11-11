@@ -1,5 +1,5 @@
 import {PlayerId} from 'common/models/player-model'
-import {ToastT} from 'common/types/app'
+import {ToastData} from 'common/types/app'
 import {Deck} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
@@ -9,7 +9,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: Deck
+	playerDeck: Deck | null
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -24,7 +24,7 @@ type SessionState = {
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
-	toast: ToastT
+	toast: Array<ToastData>
 	updates: Record<string, Array<string>>
 	newPlayer: boolean //If the account was created this session
 }
@@ -45,7 +45,7 @@ const defaultState: SessionState = {
 	connecting: false,
 	connected: false,
 	tooltip: null,
-	toast: {open: false, title: '', description: '', image: ''},
+	toast: [],
 	updates: {},
 	newPlayer: false,
 }
@@ -91,20 +91,30 @@ const loginReducer = (
 		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: {...action.deck, code: action.deck.code},
+				playerDeck: action.deck,
 			}
 		case localMessages.TOAST_OPEN:
+			state.toast.push({
+				id: state.toast.length + 1,
+				toast: action,
+				closed: false,
+			})
 			return {
 				...state,
-				toast: action,
+				toast: state.toast,
 			}
 		case localMessages.TOAST_CLOSE:
+			const thisToast = state.toast.find((toast) => toast.id === action.id)
+			if (thisToast) thisToast.closed = true
+			if (state.toast.some((toast) => !toast.closed)) return state
 			return {
 				...state,
-				toast: {
-					...state.toast,
-					open: false,
-				},
+				toast: [],
+			}
+		case localMessages.EVERY_TOAST_CLOSE:
+			return {
+				...state,
+				toast: [],
 			}
 		case localMessages.SHOW_TOOLTIP:
 			return {

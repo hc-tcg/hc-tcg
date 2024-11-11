@@ -8,12 +8,12 @@ Use Node.js 16-18 (19+ is not supported).
 
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
-## How to host Hermitcraft TCG
+## How to run Hermitcraft TCG
 
 ```sh
-npm ci          # install packages
-npm run build   # build the client
-npm run server  # start the sever
+npm ci           # install packages
+npm run build    # build the server
+npm run server   # start the sever
 ```
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
@@ -85,6 +85,11 @@ npm run format    # format your code
 npm run fix       # fix any autofixable linting errors
 ```
 
+### Adding New Cards
+After adding your card, you will need to render the card.
+After pushing your code to your branch on github,
+wait a few minutes and there should be a commit with the card image!
+
 ### Testing
 
 This project contains a few tests that are run against every PR.
@@ -100,10 +105,22 @@ npm run test:e2e        # run end-to-end tests with Playwright.
 
 # Building & Self Hosting
 
-[Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
+To build you must run these commands:
+```
+npm run build
+```
+
+To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
+```
+npm run client:render-cards
+```
+
+Alternitively, you can use our [Docker](https://docs.docker.com/) image, which will have all the project dependencies set up for you.
+To build a docker image, cd to the root of the project then run the command:
 
 ```sh
 docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
+docker run -p 9000:9000 <Image Id>
 ```
 
 To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:

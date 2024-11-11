@@ -1,3 +1,4 @@
+import {getCardTypeIcon} from 'common/cards/card'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
@@ -19,26 +20,43 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
-	const handleJoinQueue = () => {
+
+	const checkForValidation = (): boolean => {
+		if (!playerDeck) return false
 		const validation = validateDeck(playerDeck.cards.map((card) => card.props))
-
-		if (validation.valid) {
-			dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-		} else {
-			dispatch({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Your deck is not valid!',
-				description: `The deck "${playerDeck.name}" does not meet public game validation requirements.`,
-				image: `/images/types/type-${playerDeck.icon}.png`,
-			})
-		}
+		if (validation.valid) return true
+		dispatch({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Your deck is not valid!',
+			description: `The deck "${playerDeck.name}" does not meet validation requirements.`,
+			image: `/images/types/type-${playerDeck.icon}.png`,
+		})
+		return false
 	}
-	const handlePrivateGame = () =>
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-	const handleSoloGame = () => setMenuSection('boss-landing')
 
-	const handleLogOut = () => dispatch({type: localMessages.LOGOUT})
+	const handleJoinQueue = () => {
+		const valid = checkForValidation()
+		if (!valid) return
+		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+	}
+	const handlePrivateGame = () => {
+		const valid = checkForValidation()
+		if (!valid) return
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+	}
+	const handleSoloGame = () => {
+		const valid = checkForValidation()
+		if (!valid) return
+		setMenuSection('boss-landing')
+	}
+
+	const handleLogOut = () => {
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+		dispatch({type: localMessages.LOGOUT})
+	}
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 
@@ -63,10 +81,12 @@ function MainMenu({setMenuSection}: Props) {
 					<p id={css.infoName}>
 						{welcomeMessage}, {playerName}
 					</p>
-					<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
+					<p id={css.infoDeck}>
+						{'Active Deck - ' + `${playerDeck ? playerDeck.name : 'None'}`}
+					</p>
 					<img
 						id={css.infoIcon}
-						src={getIconPath(playerDeck)}
+						src={playerDeck ? getIconPath(playerDeck) : getCardTypeIcon('any')}
 						alt="deck-icon"
 					/>
 				</div>

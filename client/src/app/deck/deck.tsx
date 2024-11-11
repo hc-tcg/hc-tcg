@@ -38,7 +38,18 @@ const DeckComponent = ({setMenuSection}: Props) => {
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
-	const [loadedDeck, setLoadedDeck] = useState<Deck>(playerDeck)
+	const [loadedDeck, setLoadedDeck] = useState<Deck>(
+		playerDeck
+			? playerDeck
+			: {
+					name: '',
+					code: '',
+					cards: [],
+					tags: [],
+					iconType: 'item',
+					icon: 'any',
+				},
+	)
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
 
 	//DECK LOGIC

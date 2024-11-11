@@ -1,12 +1,10 @@
-.viewport {
-	--viewport-padding: 5px;
-
+.toastContainer {
 	position: fixed;
 	top: 0;
 	right: 0;
 	display: flex;
 	flex-direction: column;
-	padding: var(--viewport-padding);
+	padding: 5px;
 	gap: 10px;
 	width: 390px;
 	max-width: 100vw;
@@ -22,29 +20,13 @@
 	min-height: 2rem;
 	background: var(--gray-700);
 	padding: 0.5rem;
-	z-index: 99999;
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
 	border: 3px solid var(--gray-500);
 	outline: 2px solid black;
 	border-radius: 6px;
-
-	&[data-state='open'] {
-		animation: slideIn var(--speed) cubic-bezier(0.16, 1, 0.3, 1);
-	}
-
-	&[data-state='closed'] {
-		animation: slideOut var(--speed) ease-in;
-	}
-
-	&[data-swipe='move'] {
-		transform: translateX(var(--radix-toast-swipe-move-x));
-	}
-
-	&[data-swipe='end'] {
-		animation: slideOut calc(var(--speed) * 1.3) ease-out;
-	}
+	animation: slideIn var(--speed) cubic-bezier(0.16, 1, 0.3, 1);
 
 	img {
 		height: 2rem;
@@ -63,20 +45,10 @@
 // Keyframes
 @keyframes slideIn {
 	from {
-		transform: translateX(calc(100% + var(--viewport-padding)));
+		transform: translateX(calc(100% + 5px));
 	}
 
 	to {
 		transform: translateX(0);
-	}
-}
-
-@keyframes slideOut {
-	from {
-		transform: translateX(var(--radix-toast-swipe-end-x));
-	}
-
-	to {
-		transform: translateX(calc(100% + var(--viewport-padding)));
 	}
 }
