@@ -91,7 +91,7 @@ export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 							: [],
 						cards: parsedDeck.cards.map((card) => {
 							if (card.cardId === 'flint_&_steel') {
-								toLocalCardInstance(CARDS['flint_and_steel'])
+								return toLocalCardInstance(CARDS['flint_and_steel'])
 							}
 							return toLocalCardInstance(CARDS[card.cardId])
 						}),
