@@ -12,8 +12,8 @@ try {
 	appVersion = 'unknown'
 }
 // __DEBUG_BUILD__ is defined in vite.config.js and esbuild.js
-declare const __DEBUG_BUILD__: string
-let debug
+declare const __DEBUG_BUILD__: boolean
+let debug = false
 try {
 	debug = __DEBUG_BUILD__
 } catch {
