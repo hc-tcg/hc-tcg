@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import debugConfig from 'common/config/debug-config'
 import {ToastT} from 'common/types/app'
 import {Deck, Tag} from 'common/types/deck'
 import {generateDatabaseCode} from 'common/utils/database-codes'
@@ -85,6 +84,9 @@ function SelectDeck({
 	function sortDecks(decks: Array<Deck>): Array<Deck> {
 		return decks.sort((a, b) => {
 			if (settings.deckSortingMethod === 'Alphabetical') {
+				if (a.name === b.name) {
+					return a.code.localeCompare(b.code)
+				}
 				return a.name.localeCompare(b.name)
 			}
 			if (settings.deckSortingMethod === 'First Tag') {
@@ -181,7 +183,7 @@ function SelectDeck({
 
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
-			newActiveDeck: loadedDeck.code,
+			newActiveDeck: loadedDeck,
 		})
 		setMenuSection('mainmenu')
 	}
@@ -549,7 +551,7 @@ function SelectDeck({
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
 									size="small"
-									disabled={debugConfig.disableDatabase}
+									disabled={databaseInfo.noConnection}
 								>
 									<span>Manage Tags</span>
 								</Button>
@@ -592,7 +594,7 @@ function SelectDeck({
 									variant="primary"
 									size="small"
 									onClick={() => setShowImportModal(!showImportModal)}
-									disabled={debugConfig.disableDatabase}
+									disabled={databaseInfo.noConnection}
 								>
 									<ExportIcon reversed />
 									Import
@@ -602,7 +604,7 @@ function SelectDeck({
 									size="small"
 									onClick={() => setShowExportModal(!showExportModal)}
 									leftSlot={<ExportIcon />}
-									disabled={debugConfig.disableDatabase}
+									disabled={databaseInfo.noConnection}
 								>
 									<span>Export</span>
 								</Button>
@@ -610,7 +612,7 @@ function SelectDeck({
 									variant="default"
 									size="small"
 									onClick={() => setShowMassExportModal(!showMassExportModal)}
-									disabled={debugConfig.disableDatabase}
+									disabled={databaseInfo.noConnection}
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
@@ -633,7 +635,7 @@ function SelectDeck({
 							size="small"
 							onClick={() => setShowExportModal(!showExportModal)}
 							leftSlot={<ExportIcon />}
-							disabled={debugConfig.disableDatabase}
+							disabled={databaseInfo.noConnection}
 						>
 							<span>Export Deck</span>
 						</Button>
@@ -733,7 +735,7 @@ function SelectDeck({
 										variant="primary"
 										onClick={() => setShowImportModal(!showImportModal)}
 										style={{flexGrow: 1}}
-										disabled={debugConfig.disableDatabase}
+										disabled={databaseInfo.noConnection}
 									>
 										<ExportIcon reversed />
 										<span>Import</span>
@@ -741,7 +743,7 @@ function SelectDeck({
 									<Button
 										variant="default"
 										onClick={() => setShowMassExportModal(!showMassExportModal)}
-										disabled={debugConfig.disableDatabase}
+										disabled={databaseInfo.noConnection}
 									>
 										<ExportIcon />
 										<span>Mass Export</span>
@@ -750,7 +752,7 @@ function SelectDeck({
 								<Button
 									variant="default"
 									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
-									disabled={debugConfig.disableDatabase}
+									disabled={databaseInfo.noConnection}
 								>
 									<span>Manage Tags</span>
 								</Button>

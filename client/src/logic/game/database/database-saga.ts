@@ -9,9 +9,7 @@ function* setDatabaseKeysSaga(
 	localStorage.setItem('databaseInfo:secret', action.secret)
 }
 
-function* resetDatabaseKeysSaga(
-	action: LocalMessageTable[typeof localMessages.SET_ID_AND_SECRET],
-): SagaIterator {
+function* resetDatabaseKeysSaga(): SagaIterator {
 	localStorage.removeItem('databaseInfo:userId')
 	localStorage.removeItem('databaseInfo:secret')
 }
