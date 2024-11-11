@@ -249,7 +249,7 @@ export function* loginSaga() {
 		})
 		let activeDeck = getActiveDeck()
 		if (activeDeck) {
-			console.log('Select previous active deck')
+			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
 				deck: activeDeck,
@@ -297,7 +297,7 @@ export function* loginSaga() {
 		const activeDeck = getActiveDeck()
 
 		if (activeDeck) {
-			console.log('Selected previous active deck: ' + activeDeck.name)
+			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
 				deck: activeDeck,
