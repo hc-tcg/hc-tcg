@@ -121,7 +121,7 @@ describe('Test Candle Single Use', () => {
 		)
 	})
 
-	test('Can only shuffle if deck has only unique cards', () => {
+	test('If deck has only unique cards, only shuffle', () => {
 		testGame(
 			{
 				playerOneDeck: [
@@ -138,10 +138,12 @@ describe('Test Candle Single Use', () => {
 					yield* applyEffect(game)
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',
-						cards: [],
 						selectionSize: 0,
 						primaryButton: null,
 					})
+					expect(
+						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
+					).toStrictEqual([])
 					yield* finishModalRequest(game, {result: false, cards: null})
 					expect(
 						game.currentPlayer.getHand().map((card) => card.props),
