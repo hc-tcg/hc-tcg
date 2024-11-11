@@ -74,8 +74,8 @@ const getStrengthsAndWeaknesses = (
 			<div className={css.strengths}>
 				<span className={css.swTitle}>Strengths: </span>
 				{joinJsx(
-					strengths.map((type) => (
-						<span key={type} className={css[type]}>
+					strengths.map((type, i) => (
+						<span key={i} className={css[type]}>
 							{HERMIT_TYPES[type]}
 						</span>
 					)),
@@ -84,8 +84,8 @@ const getStrengthsAndWeaknesses = (
 			<div className={css.weaknesses}>
 				<span className={css.swTitle}>Weaknesses: </span>
 				{joinJsx(
-					weaknesses.map((type) => (
-						<span key={type} className={css[type]}>
+					weaknesses.map((type, i) => (
+						<span key={i} className={css[type]}>
 							{HERMIT_TYPES[type]}
 						</span>
 					)),
