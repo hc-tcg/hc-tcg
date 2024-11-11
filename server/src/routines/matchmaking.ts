@@ -16,6 +16,7 @@ import {
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {OpponentDefs} from 'common/utils/state-gen'
+import {validateDeck} from 'common/utils/validation'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -277,9 +278,12 @@ export function* joinQueue(
 		return
 	}
 
-	if (!player.deck) {
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props))
+	) {
 		console.log(
-			'[Join queue] Player tried to join queue without a deck:',
+			'[Join queue] Player tried to join queue with an invalid deck:',
 			player.name,
 		)
 		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
@@ -363,9 +367,12 @@ export function* createBossGame(
 		return
 	}
 
-	if (!player.deck) {
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props))
+	) {
 		console.log(
-			'[Join private game] Player tried to join private game without a deck: ',
+			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
 		return
@@ -480,9 +487,12 @@ export function* joinPrivateGame(
 		return
 	}
 
-	if (!player.deck) {
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props))
+	) {
 		console.log(
-			'[Join private game] Player tried to join private game without a deck: ',
+			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
 		return
