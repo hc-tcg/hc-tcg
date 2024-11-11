@@ -195,6 +195,30 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
+			'player_won',
+			35000000,
+			winner.body.uuid,
+			'123456789ABCDEF',
+			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+		)
+
+		await database.insertGame(
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
+			'player_won',
+			35000000,
+			loser.body.uuid,
+			'123456789ABCDEF',
+			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+		)
+
+		await database.insertGame(
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
 			'forfeit',
 			35000000,
 			loser.body.uuid,
@@ -219,48 +243,48 @@ describe('Test Database', () => {
 			winningPlayerStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(winningPlayerStats.body.wins).toBe(1)
-		expect(winningPlayerStats.body.losses).toBe(0)
+		expect(winningPlayerStats.body.wins).toBe(2)
+		expect(winningPlayerStats.body.losses).toBe(1)
 		expect(winningPlayerStats.body.forfeitWins).toBe(0)
 		expect(winningPlayerStats.body.forfeitLosses).toBe(1)
 		expect(winningPlayerStats.body.ties).toBe(1)
-		expect(winningPlayerStats.body.gamesPlayed).toBe(3)
+		expect(winningPlayerStats.body.gamesPlayed).toBe(5)
 
 		const losingPlayerStats = await database.getUserStats(loser.body.uuid)
 		assert(
 			losingPlayerStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(losingPlayerStats.body.wins).toBe(0)
-		expect(losingPlayerStats.body.losses).toBe(1)
+		expect(losingPlayerStats.body.wins).toBe(1)
+		expect(losingPlayerStats.body.losses).toBe(2)
 		expect(losingPlayerStats.body.forfeitWins).toBe(1)
 		expect(losingPlayerStats.body.forfeitLosses).toBe(0)
 		expect(losingPlayerStats.body.ties).toBe(1)
-		expect(losingPlayerStats.body.gamesPlayed).toBe(3)
+		expect(losingPlayerStats.body.gamesPlayed).toBe(5)
 
 		const winningDeckStats = await database.getDeckStats(winnerDeckCode.body)
 		assert(
 			winningDeckStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(winningDeckStats.body.wins).toBe(1)
-		expect(winningDeckStats.body.losses).toBe(0)
+		expect(winningDeckStats.body.wins).toBe(2)
+		expect(winningDeckStats.body.losses).toBe(1)
 		expect(winningDeckStats.body.forfeitWins).toBe(0)
 		expect(winningDeckStats.body.forfeitLosses).toBe(1)
 		expect(winningDeckStats.body.ties).toBe(1)
-		expect(winningDeckStats.body.gamesPlayed).toBe(3)
+		expect(winningDeckStats.body.gamesPlayed).toBe(5)
 
 		const losingDeckStats = await database.getDeckStats(loserDeckCode.body)
 		assert(
 			losingDeckStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(losingDeckStats.body.wins).toBe(0)
-		expect(losingDeckStats.body.losses).toBe(1)
+		expect(losingDeckStats.body.wins).toBe(1)
+		expect(losingDeckStats.body.losses).toBe(2)
 		expect(losingDeckStats.body.forfeitWins).toBe(1)
 		expect(losingDeckStats.body.forfeitLosses).toBe(0)
 		expect(losingDeckStats.body.ties).toBe(1)
-		expect(losingDeckStats.body.gamesPlayed).toBe(3)
+		expect(losingDeckStats.body.gamesPlayed).toBe(5)
 	})
 
 	test('Update Username and Minecraft Name', async () => {
