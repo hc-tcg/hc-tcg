@@ -11,6 +11,7 @@ import MiningFatigue from './mining-fatigue'
 import PowderSnowBucket from './powder-snow-bucket'
 import SmithingTable from './smithing-table'
 import SplashPotionOfHarming from './splash-potion-of-harming'
+import MinecartWithTNT from './tnt-minecart'
 import WindBurst from './wind-burst'
 
 const singleUseCardClasses: Array<Card> = [
@@ -24,6 +25,7 @@ const singleUseCardClasses: Array<Card> = [
 	Glowstone,
 	Lantern,
 	MiningFatigue,
+	MinecartWithTNT,
 	PowderSnowBucket,
 	SmithingTable,
 	SplashPotionOfHarming,
