@@ -178,6 +178,8 @@ describe('Test Database', () => {
 			'The deck should be created successfully',
 		)
 
+		// The buffer can be ignored for now. It will store replays in the future, but the data doesn't matter
+		// right now as replays aren't implemented yet
 		await database.insertGame(
 			winnerDeckCode.body,
 			loserDeckCode.body,
