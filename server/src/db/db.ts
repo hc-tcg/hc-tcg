@@ -177,7 +177,6 @@ export class Database {
 		code: string,
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
-		console.log(cards)
 		try {
 			await this.pool.query(
 				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5)',
