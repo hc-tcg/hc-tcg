@@ -1,0 +1,38 @@
+name: Render Cards
+
+on: push
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  render-cards:
+    name: Build Card Images
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Install Playwright Browsers
+        run: |
+          npm install
+          npx playwright install --with-deps firefox
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Build Cards
+        run: npm run client:render-cards
+
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: client/public/images/
+          committer_name: GitHub Actions
+          committer_email: actions@github.com
+          pull: '--rebase --autostash'

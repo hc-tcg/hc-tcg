@@ -1,8 +1,6 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
-import {getStarterPack} from '../cards/starter-decks'
 import {PlayerInfo} from '../types/server-requests'
-import {toLocalCardInstance} from '../utils/cards'
 import {censorString} from '../utils/formatting'
 
 export type PlayerId = string & {__player_id: never}
@@ -10,7 +8,7 @@ export type PlayerId = string & {__player_id: never}
 export class PlayerModel {
 	private internalId: PlayerId
 	private internalSecret: string
-	private internalDeck: Deck
+	private internalDeck: Deck | null
 	public name: string
 	public minecraftName: string
 	public censoredName: string
@@ -22,14 +20,7 @@ export class PlayerModel {
 		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
-		this.internalDeck = {
-			name: 'Starter Deck',
-			iconType: 'item',
-			icon: 'any',
-			code: '',
-			cards: getStarterPack().map((card) => toLocalCardInstance(card)),
-			tags: [],
-		}
+		this.internalDeck = null
 
 		this.name = playerName
 		this.minecraftName = minecraftName
@@ -61,9 +52,9 @@ export class PlayerModel {
 	}
 
 	setPlayerDeck(newDeck: Deck) {
-		//@ts-ignore
 		this.internalDeck = {
 			name: newDeck.name,
+			//@ts-ignore
 			iconType: newDeck.iconType,
 			icon: newDeck.icon,
 			cards: newDeck.cards,

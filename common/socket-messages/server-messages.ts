@@ -41,6 +41,7 @@ export const serverMessages = messages('server', {
 	GAME_RECONNECT_INFORMATION: null,
 	CHAT_UPDATE: null,
 	/**Postgres */
+	NO_DATABASE_CONNECTION: null,
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
@@ -114,6 +115,7 @@ export type ServerMessages = [
 		}
 	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
+	{type: typeof serverMessages.NO_DATABASE_CONNECTION},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
 	{

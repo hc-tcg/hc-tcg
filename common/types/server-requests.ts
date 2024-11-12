@@ -19,7 +19,7 @@ export type PlayerInfo = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: Deck
+	playerDeck: Deck | null
 }
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */

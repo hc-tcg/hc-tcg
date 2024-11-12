@@ -8,6 +8,7 @@ export type DatabaseInfo = {
 	decks: Array<Deck>
 	tags: Array<Tag>
 	stats: Stats
+	noConnection: boolean
 }
 
 export type LocalDatabase = {
@@ -15,6 +16,7 @@ export type LocalDatabase = {
 }[keyof DatabaseInfo]
 
 const defaultInfo: DatabaseInfo = {
+	noConnection: false,
 	userId: null,
 	secret: null,
 	decks: [],
@@ -54,6 +56,8 @@ const databaseReducer = (
 	switch (action.type) {
 		case localMessages.SET_ID_AND_SECRET:
 			return {...state, userId: action.userId, secret: action.secret}
+		case localMessages.RESET_ID_AND_SECRET:
+			return {...state, userId: null, secret: null}
 		case localMessages.DATABASE_SET:
 			return {...state, [action.data.key]: action.data.value}
 		default:

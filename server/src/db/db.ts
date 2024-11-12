@@ -19,12 +19,14 @@ export type DatabaseResult<T = undefined> =
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	public connected: boolean
 	private bfDepth: number
 
 	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
 		this.pool = pool
 		this.allCards = allCards
 		this.bfDepth = bfDepth
+		this.connected = false
 	}
 
 	public async new() {
@@ -104,6 +106,7 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
+			this.connected = true
 		} catch (e) {
 			console.log(e)
 			console.info('Running server without database...')
@@ -175,11 +178,10 @@ export class Database {
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
 		try {
-			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5) RETURNING (deck_code)',
+			await this.pool.query(
+				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5)',
 				[user_id, name, icon, iconType, code],
 			)
-			const deckCode: string = deckResult.rows[0]['deck_code']
 
 			const reformattedCards = cards.reduce(
 				(r: Array<{id: number; copies: number}>, card) => {
@@ -198,7 +200,7 @@ export class Database {
 					INSERT INTO deck_cards (deck_code,card_id,copies) SELECT * FROM UNNEST ($1::text[],$2::int[],$3::int[]) 
 					ON CONFLICT DO NOTHING`,
 				[
-					Array(reformattedCards.length).fill(deckCode),
+					Array(reformattedCards.length).fill(code),
 					reformattedCards.map((card) => card.id),
 					reformattedCards.map((card) => card.copies),
 				],
@@ -207,13 +209,13 @@ export class Database {
 			if (tagIds.length > 0) {
 				await this.pool.query(
 					'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[])',
-					[Array(tagIds.length).fill(deckCode), tagIds],
+					[Array(tagIds.length).fill(code), tagIds],
 				)
 			}
 
 			return {
 				type: 'success',
-				body: deckCode,
+				body: code,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
@@ -308,11 +310,13 @@ export class Database {
 					key: row['tag_id'],
 				}
 				const cardId: number | null = row['card_id']
-				const cards: Array<Card> = [
-					...Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === cardId),
-					),
-				]
+				const cards: Array<Card> = cardId
+					? [
+							...Array(row['copies']).fill(
+								this.allCards.find((card) => card.numericId === cardId),
+							),
+						]
+					: []
 
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
@@ -340,7 +344,11 @@ export class Database {
 					foundDeck.tags.push(tag)
 				}
 
-				if (foundDeck.cards.find((card) => card.props.numericId !== cardId)) {
+				if (
+					cardId !== null &&
+					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
+					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
+				) {
 					foundDeck.cards = [
 						...foundDeck.cards,
 						...cards.map((card) => toLocalCardInstance(card)),
@@ -610,11 +618,7 @@ export const setupDatabase = (
 	bfDepth: number,
 ) => {
 	const pool = new Pool({
-		host: env.POSTGRES_HOST,
-		user: env.POSTGRES_USER,
-		password: env.POSTGRES_PASSWORD,
-		database: env.POSTGRES_DATABASE,
-		port: env.POSTGRES_PORT,
+		connectionString: env.DATABASE_URL,
 		max: 10,
 		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,
