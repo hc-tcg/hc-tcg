@@ -14,6 +14,7 @@ import SmithingTable from './smithing-table'
 import SplashPotionOfHarming from './splash-potion-of-harming'
 import MinecartWithTNT from './tnt-minecart'
 import WindBurst from './wind-burst'
+import RedstoneTorch from './redstone-torch'
 
 const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
@@ -32,6 +33,7 @@ const singleUseCardClasses: Array<Card> = [
 	SmithingTable,
 	SplashPotionOfHarming,
 	WindBurst,
+	RedstoneTorch,
 ]
 
 export default singleUseCardClasses
