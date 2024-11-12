@@ -20,7 +20,7 @@ export class RootModel {
 			spectatorCode: string | undefined
 			spectatorsWaiting: Array<string>
 			/** Code used by API consumers to cancel a game. */
-			apiSecret?: string | null
+			apiSecret?: string
 		}
 	> = {}
 	public hooks = {
