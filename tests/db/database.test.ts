@@ -376,8 +376,16 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.icon).toBe('balanced')
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
-
 		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
+
+		const allDecks = await database.getDecks(user.body.uuid)
+		assert(
+			allDecks.type === 'success',
+			'The deck should be retrieved successfully',
+		)
+		expect(allDecks.body[0].cards.map((c) => c.props.numericId)).toStrictEqual(
 			playerDeck.cards,
 		)
 	})
