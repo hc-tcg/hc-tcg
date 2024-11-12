@@ -359,7 +359,6 @@ export class Database {
 
 				return allDecks
 			}, [])
-			console.log(decks)
 
 			return {
 				type: 'success',
