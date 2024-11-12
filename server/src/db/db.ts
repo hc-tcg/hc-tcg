@@ -177,6 +177,7 @@ export class Database {
 		code: string,
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
+		console.log(cards)
 		try {
 			await this.pool.query(
 				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5)',
@@ -310,13 +311,14 @@ export class Database {
 					key: row['tag_id'],
 				}
 				const cardId: number | null = row['card_id']
-				const cards: Array<Card> = cardId
-					? [
-							...Array(row['copies']).fill(
-								this.allCards.find((card) => card.numericId === cardId),
-							),
-						]
-					: []
+				const cards: Array<Card> =
+					cardId !== null
+						? [
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
+						: []
 
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
@@ -357,6 +359,7 @@ export class Database {
 
 				return allDecks
 			}, [])
+			console.log(decks)
 
 			return {
 				type: 'success',
