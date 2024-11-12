@@ -64,7 +64,8 @@ const DwarfImpulseRare: Hermit = {
 						query.card.opponentPlayer,
 						query.card.slot(query.slot.hermit),
 						query.not(query.card.active),
-					)
+					) ||
+					player.singleUseCardUsed
 				)
 					return
 
