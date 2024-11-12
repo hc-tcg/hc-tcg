@@ -9,7 +9,7 @@ export class RootModel {
 	public players: Record<string, PlayerModel> = {}
 	public games: Record<string, GameModel> = {}
 	public queue: Array<string> = []
-	public db?: Database
+	public db: Database
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
 		string,

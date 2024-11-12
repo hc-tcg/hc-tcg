@@ -6,6 +6,7 @@ import {
 	AttackModal,
 	ChangeHermitModal,
 	CopyAttackModal,
+	DragCardsModal,
 	EndTurnModal,
 	ExitModal,
 	ForfeitModal,
@@ -24,6 +25,7 @@ export const MODAL_COMPONENTS = {
 	// Custom modals
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
+	dragCards: DragCardsModal,
 }
 
 export type ModalVariant = keyof typeof MODAL_COMPONENTS

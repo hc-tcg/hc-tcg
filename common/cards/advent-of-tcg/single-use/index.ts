@@ -2,6 +2,7 @@ import {Card} from '../../types'
 import Allay from './allay'
 import ArrowOfPoison from './arrow-of-poison'
 import Brush from './brush'
+import Candle from './candle'
 import Dropper from './dropper'
 import Feather from './feather'
 import FletchingTable from './fletching-table'
@@ -11,12 +12,14 @@ import MiningFatigue from './mining-fatigue'
 import PowderSnowBucket from './powder-snow-bucket'
 import SmithingTable from './smithing-table'
 import SplashPotionOfHarming from './splash-potion-of-harming'
+import MinecartWithTNT from './tnt-minecart'
 import WindBurst from './wind-burst'
 
 const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
 	ArrowOfPoison,
 	Allay,
+	Candle,
 	Dropper,
 	Feather,
 	FletchingTable,
@@ -24,6 +27,7 @@ const singleUseCardClasses: Array<Card> = [
 	Glowstone,
 	Lantern,
 	MiningFatigue,
+	MinecartWithTNT,
 	PowderSnowBucket,
 	SmithingTable,
 	SplashPotionOfHarming,

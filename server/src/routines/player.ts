@@ -116,7 +116,7 @@ export function* playerDisconnectedSaga(
 }
 
 export function* updateDeckSaga(
-	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
+	action: RecievedClientMessage<typeof clientMessages.SELECT_DECK>,
 ) {
 	const {playerId} = action
 	let playerDeck = action.payload.deck
