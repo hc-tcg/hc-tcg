@@ -12,181 +12,10 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {gameManagerSaga} from './game'
 import {Deck} from 'common/types/deck'
-import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
-import {
-	cancel,
-	join,
-	race,
-	spawn,
-	take,
-} from 'typed-redux-saga'
-
-function setupGame(
-	player1: PlayerModel,
-	player2: PlayerModel,
-	player1Deck: Deck,
-	player2Deck: Deck,
-	code?: string,
-	spectatorCode?: string,
-): GameModel {
-	let game = new GameModel(
-		{
-			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
-		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode},
-	)
-
-	let playerEntities = game.components.filterEntities(PlayerComponent)
-
-	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
-		player: player1,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(ViewerComponent, {
-		player: player2,
-		spectator: false,
-		playerOnLeft: playerEntities[1],
-	})
-
-	return game
-}
-
-function* gameManager(game: GameModel) {
-	// @TODO this one method needs cleanup still
-	try {
-		const viewers = game.viewers
-		const playerIds = viewers.map((viewer) => viewer.player.id)
-
-		const gameType =
-			playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
-
-		console.info(
-			`${game.logHeader}`,
-			`${gameType} game started.`,
-			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-			'Total games:',
-			root.getGameIds().length,
-		)
-
-		game.broadcastToViewers({type: serverMessages.GAME_START})
-		root.hooks.newGame.call(game)
-		game.task = yield* spawn(gameSaga, game)
-
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
-			// kill a game after two hours
-			timeout: delay(1000 * 60 * 60),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take<
-				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-			>(
-				(action: any) =>
-					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(
-						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-							.player.id,
-					),
-			),
-			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-				(action: any) =>
-					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(
-						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-							.playerId,
-					),
-			),
-		})
-
-		for (const viewer of game.viewers) {
-			const gameState = getLocalGameState(game, viewer)
-			if (gameState) {
-				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.reason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
-						.filter(PlayerComponent)
-						.forEach(
-							(player) => (gameState.players[player.entity].coinFlips = []),
-						)
-				}
-			}
-			const outcome = getGamePlayerOutcome(game, result, viewer)
-			// assert(game.endInfo.reason, 'Games can not end without a reason')
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_END,
-				gameState,
-				outcome,
-				reason: game.endInfo.reason || undefined,
-			})
-		}
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	} finally {
-		if (game.task) yield* cancel(game.task)
-		game.hooks.afterGameEnd.call()
-
-		const gameType = game.gameCode ? 'Private' : 'Public'
-		console.log(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1,
-		)
-
-		const gamePlayers = game.getPlayers()
-		const winner = gamePlayers.find(
-			(player) => player.id === game.endInfo.winner,
-		)
-
-		if (winner === null && game.endInfo.winner) {
-			console.error(
-				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
-			)
-			return
-		}
-
-		if (
-			gamePlayers.length >= 2 &&
-			gamePlayers[0].uuid &&
-			gamePlayers[1].uuid &&
-			game.endInfo.outcome &&
-			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
-			gamePlayers[0].uuid !== gamePlayers[1].uuid
-		) {
-			yield* addGame(
-				gamePlayers[0],
-				gamePlayers[1],
-				game.endInfo.outcome,
-				Date.now() - game.createdTime,
-				winner ? winner.uuid : null,
-				'', //@TODO Add seed
-				Buffer.from([0x00]),
-			)
-		}
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
-	}
-}
->>>>>>> upstream/master
+import {cancel, join, race, spawn, take} from 'typed-redux-saga'
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -222,7 +51,7 @@ function* randomMatchmakingSaga() {
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
 				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
-				yield* fork(gameManager, newGame)
+				yield* fork(gameManagerSaga, newGame)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -498,7 +327,7 @@ export function* joinPrivateGame(
 		let viewers: Array<GameViewer> = [
 			{id: existingPlayer.id, type: 'player'},
 			{id: player.id, type: 'player'},
-	]
+		]
 
 		if (!existingPlayer.deck) {
 			console.log(
@@ -519,9 +348,6 @@ export function* joinPrivateGame(
 			root.privateQueue[code].gameCode,
 			root.privateQueue[code].spectatorCode,
 		)
-
-		root.addGame(newGame)
-
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
 			viewers.push({id: playerId, type: 'spectator'})
@@ -627,4 +453,3 @@ function* matchmakingSaga() {
 	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
 
-export default matchmakingSaga

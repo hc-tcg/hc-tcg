@@ -220,6 +220,35 @@ export function* gameManagerSaga({
 
 	yield* cancel(backgroundSagas)
 
+	if (winner === null && game.endInfo.winner) {
+		console.error(
+			`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+		)
+		return
+	}
+
+	if (
+		gamePlayers.length >= 2 &&
+		gamePlayers[0].uuid &&
+		gamePlayers[1].uuid &&
+		game.endInfo.outcome &&
+		// Since you win and lose, this shouldn't count as a game, the count gets very messed up
+		gamePlayers[0].uuid !== gamePlayers[1].uuid
+	) {
+		yield* addGame(
+			gamePlayers[0],
+			gamePlayers[1],
+			game.endInfo.outcome,
+			Date.now() - game.createdTime,
+			winner ? winner.uuid : null,
+			'', //@TODO Add seed
+			Buffer.from([0x00]),
+		)
+	}
+
+	delete root.games[game.id]
+	root.hooks.gameRemoved.call(game)
+
 	// Cleanup! Remove the game when its over.
 	delete root.games[identifierInRootState]
 }
