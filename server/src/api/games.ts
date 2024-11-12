@@ -32,7 +32,6 @@ function getPlayers(game: GameModel) {
 		let player = viewer.playerOnLeft
 		return [
 			{
-				playerId: viewer.playerId,
 				playerName: player.playerName,
 				censoredPlayerName: player.censoredPlayerName,
 				minecraftName: player.minecraftName,
