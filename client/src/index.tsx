@@ -21,7 +21,7 @@ let preloadCards = CARDS_LIST.flatMap((card) => {
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
-		<head>{preloadCards}</head>
+		{preloadCards}
 		<Provider store={store}>
 			<App />
 		</Provider>
