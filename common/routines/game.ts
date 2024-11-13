@@ -43,7 +43,6 @@ import {
 	timeoutSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import {PlayerModel} from '../models/player-model'
 
 export const gameMessages = messages('game', {
 	TURN_ACTION: null,

@@ -1,5 +1,5 @@
-import {getIconPath} from 'common/utils/setup-game'
 import {getCardTypeIcon} from 'common/cards/card'
+import {getIconPath} from 'common/utils/setup-game'
 import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
 import Button from 'components/button'
