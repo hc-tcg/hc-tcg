@@ -48,7 +48,8 @@ const RedstoneTorch: SingleUse = {
 					if (
 						(i < playerDeck.length - 1 &&
 							tntCardEntities.includes(playerDeck[i + 1].entity)) ||
-						(i > 0 && tntCardEntities.includes(playerDeck[i - 1].entity))
+						(i > 0 && tntCardEntities.includes(playerDeck[i - 1].entity)) ||
+						tntCardEntities.includes(card.entity)
 					) {
 						return [...reducer, card]
 					}
@@ -63,10 +64,7 @@ const RedstoneTorch: SingleUse = {
 					type: 'selectCards',
 					name: 'Redstone Torch',
 					description: 'These cards are going to be discarded.',
-					cards: [
-						...tntCardEntities,
-						...tntAdjacentCards.map((card) => card.entity),
-					],
+					cards: tntAdjacentCards.map((card) => card.entity),
 					selectionSize: 0,
 					primaryButton: {
 						text: 'Detonate',
