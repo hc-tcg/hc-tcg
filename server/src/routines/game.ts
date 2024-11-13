@@ -1,5 +1,9 @@
 import {PlayerComponent} from 'common/components'
-import {GameSettings, gameSettingsFromEnv} from 'common/models/game-model'
+import {
+	GameModel,
+	GameSettings,
+	gameSettingsFromEnv,
+} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import setupGameSaga, {
 	GameMessage,
@@ -16,6 +20,7 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {virtualPlayerActionSaga} from 'common/routines/virtual'
 import {AIComponent} from 'common/components/ai-component'
+import {addGame} from 'db/db-reciever'
 
 type Props = {
 	player1: PlayerModel
@@ -89,11 +94,13 @@ export function* gameManagerSaga({
 	}
 
 	let serverSideGame: GameController
+	let gameModel: GameModel | undefined = undefined
 	let backgroundSagas: any = undefined
 
 	yield* setupGameSaga(gameProps, {
 		onGameStart: function* (game) {
 			// Player one is added to the ECS first, Player two is added second
+			gameModel = game
 			const players = game.components.filter(PlayerComponent)
 
 			serverSideGame = new GameController({
@@ -222,6 +229,10 @@ export function* gameManagerSaga({
 		},
 	})
 
+	let gameOutcome = (yield* take<
+		GameMessageTable[typeof gameMessages.GAME_END]
+	>(gameMessages.GAME_END)).outcome
+
 	assert(
 		backgroundSagas,
 		'The sagas running in the background of the game should be set when the game is started',
@@ -229,34 +240,24 @@ export function* gameManagerSaga({
 
 	yield* cancel(backgroundSagas)
 
-	if (winner === null && game.endInfo.winner) {
-		console.error(
-			`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
-		)
-		return
-	}
+	assert(gameModel, 'This is set when the game starts')
 
 	if (
-		gamePlayers.length >= 2 &&
-		gamePlayers[0].uuid &&
-		gamePlayers[1].uuid &&
-		game.endInfo.outcome &&
+		player2 instanceof PlayerModel &&
+		player1.uuid &&
+		player2.uuid &&
 		// Since you win and lose, this shouldn't count as a game, the count gets very messed up
-		gamePlayers[0].uuid !== gamePlayers[1].uuid
+		player1.uuid !== player2.uuid
 	) {
 		yield* addGame(
-			gamePlayers[0],
-			gamePlayers[1],
-			game.endInfo.outcome,
-			Date.now() - game.createdTime,
-			winner ? winner.uuid : null,
+			player1,
+			player2,
+			gameOutcome,
+			Date.now() - (gameModel as GameModel).createdTime,
 			'', //@TODO Add seed
 			Buffer.from([0x00]),
 		)
 	}
-
-	delete root.games[game.id]
-	root.hooks.gameRemoved.call(game)
 
 	// Cleanup! Remove the game when its over.
 	delete root.games[identifierInRootState]

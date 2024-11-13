@@ -334,12 +334,12 @@ export function* getStats(
 	}
 }
 
+// @TODO fix this to use new data type
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
 	outcome: GameOutcome,
 	gameLength: number,
-	winner: string | null,
 	seed: string,
 	replay: Buffer,
 ) {
