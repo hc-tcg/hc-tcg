@@ -334,7 +334,6 @@ export function* getStats(
 	}
 }
 
-// @TODO fix this to use new data type
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
@@ -355,7 +354,6 @@ export function* addGame(
 		secondPlayerModel.uuid,
 		outcome,
 		gameLength,
-		winner,
 		seed,
 		replay,
 	)

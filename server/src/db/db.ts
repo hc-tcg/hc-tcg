@@ -562,6 +562,7 @@ export class Database {
 	}
 
 	/** Insert a game into the database */
+	// @todo fix for new datatype
 	public async insertGame(
 		firstPlayerDeckCode: string,
 		secondPlayerDeckCode: string,
@@ -569,7 +570,6 @@ export class Database {
 		secondPlayerUuid: string,
 		outcome: GameOutcome,
 		gameLength: number,
-		winningPlayerUuid: string | null,
 		seed: string,
 		replay: Buffer,
 	): Promise<DatabaseResult> {
