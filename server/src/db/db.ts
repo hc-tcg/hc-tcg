@@ -4,7 +4,7 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {Stats, User, UserWithoutSecret} from 'common/types/database'
+import {CardStats, Stats, User, UserWithoutSecret} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -106,6 +106,7 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
+
 			this.connected = true
 		} catch (e) {
 			console.log(e)
@@ -606,6 +607,39 @@ export class Database {
 				],
 			)
 			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getCardsStats(): Promise<DatabaseResult<Array<CardStats>>> {
+		try {
+			const stats = await this.pool.query(
+				`
+				SELECT card_id, w, l,cast(w as decimal)  / NULLIF(w + l,0) as winrate FROM (SELECT card_id,count(CASE WHEN wins THEN 1 END) as w,count(CASE WHEN losses THEN 1 END) as l FROM (
+					SELECT cards.card_id,
+					games.winner_deck_code = deck_cards.deck_code as wins,games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+					LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+					LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+				) as result
+				GROUP BY result.card_id)
+					`,
+			)
+
+			console.log(stats)
+
+			return {
+				type: 'success',
+				body: stats.rows.map((row): CardStats => {
+					return {
+						id: Number(row['card_id']),
+						winrate: row['winrate'] ? Number(row['winrate']) : null,
+						losses: Number(row['l']),
+						wins: Number(row['w']),
+					}
+				}),
+			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
 		}

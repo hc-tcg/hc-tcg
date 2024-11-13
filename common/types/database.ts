@@ -20,6 +20,13 @@ export type Stats = {
 	forfeitLosses: number
 }
 
+export type CardStats = {
+	id: number
+	wins: number
+	losses: number
+	winrate: number | null
+}
+
 export type Achievement = {
 	id: string
 	name: string

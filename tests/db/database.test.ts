@@ -17,6 +17,7 @@ import Fortune from 'common/cards/single-use/fortune'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
+import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 
 describe('Test Database', () => {
 	let database: Database
@@ -287,6 +288,26 @@ describe('Test Database', () => {
 		expect(losingDeckStats.body.forfeitLosses).toBe(0)
 		expect(losingDeckStats.body.ties).toBe(1)
 		expect(losingDeckStats.body.gamesPlayed).toBe(5)
+
+		const cardStats = await database.getCardsStats()
+
+		assert(
+			cardStats.type === 'success',
+			'The card stats should be retrieved successfully',
+		)
+
+		expect(
+			cardStats.body.find((card) => card.id === BdoubleO100Common.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === EthosLabCommon.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === GeminiTayRare.numericId)
+				?.winrate,
+		).toEqual(null)
 	})
 
 	test('Update Username and Minecraft Name', async () => {
