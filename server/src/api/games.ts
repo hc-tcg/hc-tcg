@@ -1,3 +1,5 @@
+import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
@@ -22,6 +24,22 @@ function cancelGame(game: {
 	}
 
 	if (game.gameCode) delete root.privateQueue[game.gameCode]
+}
+
+function getPlayers(game: GameModel) {
+	return game.components.filter(ViewerComponent).flatMap((viewer) => {
+		if (viewer.spectator) return []
+		let player = viewer.playerOnLeft
+		return [
+			{
+				playerName: player.playerName,
+				censoredPlayerName: player.censoredPlayerName,
+				minecraftName: player.minecraftName,
+				lives: player.lives,
+				deck: player.getDeck().map((card) => card.props.id),
+			},
+		]
+	})
 }
 
 /** Create a hc-tcg game through the HC-TCG API.
@@ -59,4 +77,28 @@ export function cancelApiGame(code: string) {
 	cancelGame(game)
 
 	return {success: null}
+}
+
+export function getGameInfo(secret: string) {
+	let game = Object.values(root.games).find((game) => game.apiSecret === secret)
+
+	if (!game) {
+		return {
+			error: 'Could not find API code',
+		}
+	}
+
+	return {
+		success: null,
+		id: game.id,
+		createdTime: game.createdTime,
+		spectatorCode: game.spectatorCode,
+		players: getPlayers(game),
+		viewers: game.viewers.length,
+		state: game.state,
+	}
+}
+
+export function getGameCount() {
+	return {games: root.getGameIds().length}
 }

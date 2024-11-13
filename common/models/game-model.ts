@@ -93,6 +93,12 @@ export type GameProps = {
 }
 
 export class GameModel {
+	private internalCreatedTime: number
+	private internalId: string
+	private internalGameCode: string | null
+	private internalSpectatorCode: string | null
+	private internalApiSecret: string | null
+
 	public readonly settings: GameSettings
 
 	public chat: Array<ChatMessage>
@@ -107,9 +113,6 @@ export class GameModel {
 
 	public lastTurnActionTime: number
 	public actionsHandled: number
-
-	public id: string
-
 	/** The objects used in the game. */
 	public components: ComponentTable
 	public hooks: {
@@ -149,6 +152,13 @@ export class GameModel {
 		this.settings = props.settings
 		this.id = props.id
 
+		this.settings = settings
+
+		this.internalCreatedTime = Date.now()
+		this.internalId = 'game_' + Math.random().toString()
+		this.internalGameCode = props.gameCode || null
+		this.internalSpectatorCode = props.spectatorCode || null
+		this.internalApiSecret = props.apiSecret || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -215,7 +225,7 @@ export class GameModel {
 			actionsHandled,
 		})
 
-		this.mostRecentState = ""
+		this.mostRecentState = ''
 	}
 
 	/** Get a string trying to represent the state the game is in. This is used to detect desyncs between the server and clients. */
@@ -237,6 +247,26 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
+	}
+
+	public get createdTime() {
+		return this.internalCreatedTime
+	}
+
+	public get id() {
+		return this.internalId
+	}
+
+	public get gameCode() {
+		return this.internalGameCode
+	}
+
+	public get spectatorCode() {
+		return this.internalSpectatorCode
+	}
+
+	public get apiSecret() {
+		return this.internalApiSecret
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

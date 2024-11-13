@@ -15,7 +15,150 @@ import {Deck} from 'common/types/deck'
 import {validateDeck} from 'common/utils/validation'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
-import {cancel, join, race, spawn, take} from 'typed-redux-saga'
+import {
+	all,
+	cancel,
+	delay,
+	fork,
+	join,
+	race,
+	spawn,
+	take,
+} from 'typed-redux-saga'
+import root from '../serverRoot'
+import {broadcast} from '../utils/comm'
+import {getLocalGameState} from '../utils/state-gen'
+import {
+	getGameOutcome,
+	getGamePlayerOutcome,
+	getWinner,
+} from '../utils/win-conditions'
+import gameSaga, {getTimerForSeconds} from './game'
+import ExBossAI from './virtual/exboss-ai'
+
+function* gameManager(game: GameModel) {
+	// @TODO this one method needs cleanup still
+	try {
+		const viewers = game.viewers
+		const playerIds = viewers.map((viewer) => viewer.player.id)
+
+		const gameType =
+			playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
+
+		console.info(
+			`${game.logHeader}`,
+			`${gameType} game started.`,
+			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+			'Total games:',
+			root.getGameIds().length,
+		)
+
+		game.broadcastToViewers({type: serverMessages.GAME_START})
+		root.hooks.newGame.call(game)
+		game.task = yield* spawn(gameSaga, game)
+
+		// Kill game on timeout or when user leaves for long time + cleanup after game
+		const result = yield* race({
+			// game ended (or crashed -> catch)
+			gameEnd: join(game.task),
+			// kill a game after two hours
+			timeout: delay(1000 * 60 * 60),
+			// kill game when a player is disconnected for too long
+			playerRemoved: take<
+				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+			>(
+				(action: any) =>
+					action.type === localMessages.PLAYER_REMOVED &&
+					playerIds.includes(
+						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+							.player.id,
+					),
+			),
+			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
+				(action: any) =>
+					action.type === clientMessages.FORFEIT &&
+					playerIds.includes(
+						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
+							.playerId,
+					),
+			),
+		})
+
+		for (const viewer of game.viewers) {
+			const gameState = getLocalGameState(game, viewer)
+			if (gameState) {
+				gameState.timer.turnRemaining = 0
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
+				if (!game.endInfo.reason) {
+					// Remove coin flips from state if game was terminated before game end to prevent
+					// clients replaying animations after a forfeit, disconnect, or excessive game duration
+					game.components
+						.filter(PlayerComponent)
+						.forEach(
+							(player) => (gameState.players[player.entity].coinFlips = []),
+						)
+				}
+			}
+			const outcome = getGamePlayerOutcome(game, result, viewer)
+			// assert(game.endInfo.reason, 'Games can not end without a reason')
+			broadcast([viewer.player], {
+				type: serverMessages.GAME_END,
+				gameState,
+				outcome,
+				reason: game.endInfo.reason || undefined,
+			})
+		}
+		game.endInfo.outcome = getGameOutcome(game, result)
+		game.endInfo.winner = getWinner(game, result)
+	} catch (err) {
+		console.log('Error: ', err)
+		game.endInfo.outcome = 'error'
+		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
+	} finally {
+		if (game.task) yield* cancel(game.task)
+		game.hooks.afterGameEnd.call()
+
+		const gameType = game.gameCode ? 'Private' : 'Public'
+		console.log(
+			`${gameType} game ended. Total games:`,
+			root.getGameIds().length - 1,
+		)
+
+		const gamePlayers = game.getPlayers()
+		const winner = gamePlayers.find(
+			(player) => player.id === game.endInfo.winner,
+		)
+
+		if (winner === null && game.endInfo.winner) {
+			console.error(
+				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+			)
+			return
+		}
+
+		if (
+			gamePlayers.length >= 2 &&
+			gamePlayers[0].uuid &&
+			gamePlayers[1].uuid &&
+			game.endInfo.outcome &&
+			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
+			gamePlayers[0].uuid !== gamePlayers[1].uuid
+		) {
+			yield* addGame(
+				gamePlayers[0],
+				gamePlayers[1],
+				game.endInfo.outcome,
+				Date.now() - game.createdTime,
+				winner ? winner.uuid : null,
+				'', //@TODO Add seed
+				Buffer.from([0x00]),
+			)
+		}
+
+		delete root.games[game.id]
+		root.hooks.gameRemoved.call(game)
+	}
+}
 
 export function inGame(playerId: PlayerId) {
 	return root
@@ -347,6 +490,7 @@ export function* joinPrivateGame(
 			existingPlayer.deck,
 			root.privateQueue[code].gameCode,
 			root.privateQueue[code].spectatorCode,
+			root.privateQueue[code].apiSecret,
 		)
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
@@ -452,4 +596,3 @@ function* matchmakingSaga() {
 
 	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
-
