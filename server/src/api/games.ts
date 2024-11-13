@@ -90,12 +90,12 @@ export function getGameInfo(secret: string) {
 
 	return {
 		success: null,
-		id: game.id,
-		createdTime: game.createdTime,
-		spectatorCode: game.spectatorCode,
-		players: getPlayers(game),
+		id: game.game.id,
+		createdTime: game.game.createdTime,
+		spectatorCode: game.game.spectatorCode,
+		players: getPlayers(game.game),
 		viewers: game.viewers.length,
-		state: game.state,
+		state: game.game.state,
 	}
 }
 

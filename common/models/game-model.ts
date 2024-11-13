@@ -97,7 +97,6 @@ export class GameModel {
 	private internalId: string
 	private internalGameCode: string | null
 	private internalSpectatorCode: string | null
-	private internalApiSecret: string | null
 
 	public readonly settings: GameSettings
 
@@ -150,15 +149,14 @@ export class GameModel {
 
 	constructor(props: GameProps) {
 		this.settings = props.settings
-		this.id = props.id
+		this.internalId = props.id
 
-		this.settings = settings
+		this.settings = props.settings
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalGameCode = props.gameCode || null
 		this.internalSpectatorCode = props.spectatorCode || null
-		this.internalApiSecret = props.apiSecret || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -263,10 +261,6 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
-	}
-
-	public get apiSecret() {
-		return this.internalApiSecret
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

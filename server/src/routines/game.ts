@@ -40,7 +40,16 @@ export function* gameManagerSaga({
 
 	let player2Model
 
+	assert(
+		player1.deck,
+		'Player deck should be veritified to be set when they join the queue',
+	)
 	if (player2 instanceof PlayerModel) {
+		assert(
+			player2.deck,
+			'Player deck should be veritified to be set when they join the queue',
+		)
+
 		player2Model = {
 			model: {
 				name: player2.name,

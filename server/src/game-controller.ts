@@ -22,6 +22,7 @@ type Props = {
 		playerId: PlayerId | null
 	}
 	props: GameProps
+	apiSecret?: string
 }
 
 /** A class that maintains all the information needed to send a game to clients */
@@ -38,14 +39,16 @@ export class GameController {
 		playerId: PlayerId | null
 	}
 	props: GameProps
+	apiSecret?: string
 	chat: Array<ChatMessage> = []
 	history: Array<GameMessage> = []
 
-	constructor({game, viewers, playerOne, playerTwo, props}: Props) {
+	constructor({game, viewers, playerOne, playerTwo, props, apiSecret}: Props) {
 		this.game = game
 		this.viewers = viewers
 		this.playerOne = playerOne
 		this.playerTwo = playerTwo
+		this.apiSecret = apiSecret
 		this.props = props
 	}
 
