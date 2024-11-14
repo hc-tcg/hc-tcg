@@ -45,7 +45,7 @@ jobs:
         - name: Post Message to Discord
           shell: bash
           run: |
-            CONTENT="<@1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n$BODY"
+            CONTENT="<@1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n$BODY";
             CONTENT=${CONTENT//$'\n'/\\n};
             CONTENT=${CONTENT//$'"'/\\\"};
             JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": [1076950211831803934]}}";
