@@ -289,7 +289,7 @@ describe('Test Database', () => {
 		expect(losingDeckStats.body.ties).toBe(1)
 		expect(losingDeckStats.body.gamesPlayed).toBe(5)
 
-		const cardStats = await database.getCardsStats()
+		const cardStats = await database.getCardsStats({before: null, after: null})
 
 		assert(
 			cardStats.type === 'success',
@@ -307,7 +307,7 @@ describe('Test Database', () => {
 		expect(
 			cardStats.body.find((card) => card.id === GeminiTayRare.numericId)
 				?.winrate,
-		).toEqual(null)
+		).toEqual(undefined)
 	})
 
 	test('Update Username and Minecraft Name', async () => {
