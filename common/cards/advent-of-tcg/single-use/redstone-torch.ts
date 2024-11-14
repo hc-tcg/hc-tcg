@@ -18,7 +18,7 @@ const RedstoneTorch: SingleUse = {
 	rarity: 'rare',
 	tokens: 2,
 	description:
-		"Detonate all the TNT in your deck. Discard the cards adjacent to each TNT. Deal 60hp damage to your Opponent's Active Hermit for each TNT detonated. Afterwards, shuffle your deck.",
+		"Detonate all the TNT and TNT Minecarts in your deck. Discard the cards adjacent to each TNT. Deal 40hp damage to your Opponent's Active Hermit for each TNT detonated. Afterwards, shuffle your deck.",
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
@@ -84,7 +84,7 @@ const RedstoneTorch: SingleUse = {
 							log: (values) =>
 								`${values.player} detonated their ${tntCardEntities.length} $e${TNT.name}$ with $e${RedstoneTorch.name}$ to attack ${values.target} for ${values.damage} damage `,
 						})
-						.addDamage(component.entity, 60 * tntCardEntities.length)
+						.addDamage(component.entity, 40 * tntCardEntities.length)
 
 					executeExtraAttacks(game, [tntAttack])
 

@@ -55,7 +55,7 @@ describe('Test Redstone Torch', () => {
 					).toStrictEqual([0, 1, 2, 3, 4, 6, 7])
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						EthosLabCommon.health - 60 * 3,
+						EthosLabCommon.health - 40 * 3,
 					)
 					expect(
 						game.currentPlayer
