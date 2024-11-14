@@ -49,7 +49,7 @@ jobs:
             CONTENT=${CONTENT//$'\n'/\\n};
             CONTENT=$(echo $CONTENT|tr -d '\r');
             CONTENT=${CONTENT//$'"'/\\\"};
-            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": [\"1076950211831803934\"]}}";
+            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"roles\": [\"1076950211831803934\"]}}";
             printf '%s' "$JSON";
             curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
           env:
@@ -81,7 +81,7 @@ jobs:
             <:keralis:1075864544410353755>
             <:princessgem:1251820953537609819>""" | shuf -n1);
             CONTENT="The release is now live $HERMIT_EMOJI";
-            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"roles\": [\"1076950211831803934\"]}}";
+            JSON="{\"content\": \"$CONTENT\"}";
             printf '%s' "$JSON";
             curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
 
