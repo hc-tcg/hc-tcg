@@ -4,6 +4,7 @@ import Totem from 'common/cards/attach/totem'
 import ArchitectFalseRare from 'common/cards/hermits/architectfalse-rare'
 import BeetlejhostRare from 'common/cards/hermits/beetlejhost-rare'
 import BoomerBdubsRare from 'common/cards/hermits/boomerbdubs-rare'
+import DwarfImpulseRare from 'common/cards/hermits/dwarfimpulse-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
@@ -24,6 +25,7 @@ import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import Efficiency from 'common/cards/single-use/efficiency'
 import Egg from 'common/cards/single-use/egg'
 import Fortune from 'common/cards/single-use/fortune'
+import GoldenAxe from 'common/cards/single-use/golden-axe'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {
 	CardComponent,
@@ -1543,6 +1545,59 @@ describe('Test The Grianch Naughty', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(1)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Using D. Impulse + Golden Axe twice', () => {
+		testGame(
+			{
+				playerOneDeck: [GrianchRare, EthosLabCommon],
+				playerTwoDeck: [DwarfImpulseRare, BadOmen, GoldenAxe],
+				saga: function* (game) {
+					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* attack(game, 'secondary')
+					expect(game.state.pickRequests).toStrictEqual([])
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						GrianchRare.health -
+							DwarfImpulseRare.secondary.damage -
+							DwarfImpulseRare.secondary.damage,
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - 40 /** Golden Axe */)
+					yield* endTurn(game)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
