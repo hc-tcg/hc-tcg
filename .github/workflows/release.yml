@@ -62,7 +62,7 @@ jobs:
             fetch-depth: 2
 
         - name: Wait
-          run: sleep 10m
+          run: sleep 9m 30s
 
         - uses: superfly/flyctl-actions/setup-flyctl@master
         - run: flyctl deploy --remote-only
