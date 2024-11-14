@@ -240,3 +240,32 @@ export function ranks(url: string) {
 		},
 	]
 }
+
+export async function getCardStats(url: string) {
+	let cards = await root.db.getCardsStats()
+
+	if (cards.type === 'failure') {
+		return {
+			type: 'failure',
+			reason: 'Endpoint is unavailable because database is disabled',
+		}
+	}
+
+	const correctCards = cards.body.map((card) => {
+		return {
+			...card,
+			card: CARDS[card.id.toFixed(0).toString()],
+		}
+	})
+
+	return {
+		success: correctCards.map((card) => ({
+			card: CARDS[card.id] ? cardToCardResponse(card.card, url) : null,
+			statistics: {
+				winrate: card.winrate,
+				rarity: card.rarity,
+				averageCopies: card.averageCopies,
+			},
+		})),
+	}
+}

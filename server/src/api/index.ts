@@ -1,7 +1,14 @@
 import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
-import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
+import {
+	cards,
+	deckCost,
+	getCardStats,
+	getDeckInformation,
+	ranks,
+	types,
+} from './cards'
 import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
 import {StatsHeader, getStats} from './stats'
@@ -48,6 +55,10 @@ export function addApi(app: Express) {
 	app.get('/api/stats', async (req, res) => {
 		let header = StatsHeader.parse(req.headers)
 		res.send(await getStats(root.db, header))
+	})
+
+	app.get('/api/hof/cards', async (req, res) => {
+		res.send(await getCardStats(requestUrlRoot(req)))
 	})
 
 	if (DEBUG) {

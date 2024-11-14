@@ -617,17 +617,26 @@ export class Database {
 		try {
 			const stats = await this.pool.query(
 				`
-				SELECT card_id, w, l,cast(w as decimal)  / NULLIF(w + l,0) as winrate FROM (SELECT card_id,count(CASE WHEN wins THEN 1 END) as w,count(CASE WHEN losses THEN 1 END) as l FROM (
-					SELECT cards.card_id,
-					games.winner_deck_code = deck_cards.deck_code as wins,games.loser_deck_code = deck_cards.deck_code as losses FROM cards
-					LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
-					LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
-				) as result
-				GROUP BY result.card_id)
+				SELECT card_id, 
+				total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
+				cast(included_in_decks as decimal) / total_decks as rarity, 
+				cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
+					SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
+					count(CASE WHEN losses THEN 1 END) as losses, 
+					count(deck_code) as included_in_decks, 
+					sum(copies) as copies FROM (
+						SELECT cards.card_id,
+						deck_cards.deck_code,
+						deck_cards.copies,
+						games.winner_deck_code = deck_cards.deck_code as wins,
+						games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+						WHERE deck_cards.card_id > -1
+					) as result
+				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
 					`,
 			)
-
-			console.log(stats)
 
 			return {
 				type: 'success',
@@ -635,8 +644,10 @@ export class Database {
 					return {
 						id: Number(row['card_id']),
 						winrate: row['winrate'] ? Number(row['winrate']) : null,
-						losses: Number(row['l']),
-						wins: Number(row['w']),
+						rarity: row['rarity'] ? Number(row['rarity']) : 0,
+						averageCopies: row['average_copies']
+							? Number(row['average_copies'])
+							: 0,
 					}
 				}),
 			}
