@@ -7,6 +7,7 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {ViewerComponent} from 'common/components/viewer-component'
+import debugConfig from 'common/config/debug-config'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -39,7 +40,6 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
-import debugConfig from 'common/config/debug-config'
 
 function setupGame(
 	player1: PlayerModel,
