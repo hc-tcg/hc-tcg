@@ -275,17 +275,19 @@ export async function getCardStats(
 }
 
 export async function getDeckStats(
-	url: string,
+	_url: string,
 	before: number | null,
 	after: number | null,
 	offset: number | null,
 	orderBy: 'wins' | 'winrate' | null,
+	minimumWins: number | null,
 ) {
 	let decks = await root.db.getDecksStats({
 		before: before,
 		after: after,
 		offset: offset,
 		orderBy: orderBy,
+		minimumWins: minimumWins,
 	})
 
 	if (decks.type === 'failure') {

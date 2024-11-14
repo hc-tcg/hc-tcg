@@ -14,7 +14,6 @@ import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
 import {StatsHeader, getStats} from './stats'
 import {requestUrlRoot} from './utils'
-import {URLSearchParams} from 'url'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
@@ -74,9 +73,19 @@ export function addApi(app: Express) {
 			req.query.orderBy === 'wins' || req.query.orderBy === 'winrate'
 				? req.query.orderBy
 				: null
+		const minimumWins = req.query.minimumWins
+			? Number(req.query.minimumWins)
+			: null
 
 		res.send(
-			await getDeckStats(requestUrlRoot(req), before, after, offset, orderBy),
+			await getDeckStats(
+				requestUrlRoot(req),
+				before,
+				after,
+				offset,
+				orderBy,
+				minimumWins,
+			),
 		)
 	})
 

@@ -675,11 +675,13 @@ export class Database {
 		after,
 		offset,
 		orderBy,
+		minimumWins,
 	}: {
 		before: number | null
 		after: number | null
 		offset: number | null
 		orderBy: 'wins' | 'winrate' | null
+		minimumWins: number | null
 	}): Promise<DatabaseResult<Array<DeckStats>>> {
 		const limit = 20
 		console.log(orderBy)
@@ -707,7 +709,7 @@ export class Database {
 					GROUP BY result.deck_code) as deck_code_list 
 					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins > 0 OR losses > 0	
+					WHERE wins > $6
 					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
 					`,
 					[
@@ -716,6 +718,7 @@ export class Database {
 						limit,
 						offset ? offset : 0,
 						orderBy ? orderBy : 'winrate',
+						minimumWins ? minimumWins : 0,
 					],
 				)
 			).rows
