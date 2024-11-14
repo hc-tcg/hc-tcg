@@ -56,6 +56,11 @@ jobs:
             TAG_NAME: ${{ github.event.release.tag_name }}
             BODY: ${{ github.event.release.body }}
 
+        - name: Check out repo
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+
         - name: Wait
           run: sleep 10m
 
