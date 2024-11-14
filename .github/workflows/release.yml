@@ -61,13 +61,13 @@ jobs:
           with:
             fetch-depth: 2
 
-        # - name: Wait
-        #   run: sleep 10m
+        - name: Wait
+          run: sleep 10m
 
-        # - uses: superfly/flyctl-actions/setup-flyctl@master
-        # - run: flyctl deploy --remote-only
-        #   env:
-        #     FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        - uses: superfly/flyctl-actions/setup-flyctl@master
+        - run: flyctl deploy --remote-only
+          env:
+            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
         - name: Post Release Up Message to Discord
           shell: bash
