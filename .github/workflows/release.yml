@@ -50,7 +50,7 @@ jobs:
             CONTENT=$(echo $CONTENT|tr -d '\r');
             CONTENT=${CONTENT//$'"'/\\\"};
             JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": [1076950211831803934]}}";
-            echo $JSON;
+            printf '%s' "$JSON";
             curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
           env:
             TAG_NAME: ${{ github.event.release.tag_name }}
