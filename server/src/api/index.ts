@@ -1,18 +1,17 @@
 import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
-import {
-	cards,
-	deckCost,
-	getCardStats,
-	getDeckInformation,
-	getDeckStats,
-	ranks,
-	types,
-} from './cards'
+import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
-import {StatsHeader, getStats} from './stats'
+import {
+	CardStatsQuery,
+	DeckStatParams,
+	StatsHeader,
+	getCardStats,
+	getDeckStats,
+	getStats,
+} from './stats'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
@@ -59,34 +58,13 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/hof/cards', async (req, res) => {
-		const before = req.query.before ? Number(req.query.before) : null
-		const after = req.query.after ? Number(req.query.after) : null
-
-		res.send(await getCardStats(requestUrlRoot(req), before, after))
+		let query = CardStatsQuery.parse(req.params)
+		res.send(await getCardStats(query))
 	})
 
 	app.get('/api/hof/decks', async (req, res) => {
-		const before = req.query.before ? Number(req.query.before) : null
-		const after = req.query.after ? Number(req.query.after) : null
-		const offset = req.query.offset ? Number(req.query.offset) : null
-		const orderBy =
-			req.query.orderBy === 'wins' || req.query.orderBy === 'winrate'
-				? req.query.orderBy
-				: null
-		const minimumWins = req.query.minimumWins
-			? Number(req.query.minimumWins)
-			: null
-
-		res.send(
-			await getDeckStats(
-				requestUrlRoot(req),
-				before,
-				after,
-				offset,
-				orderBy,
-				minimumWins,
-			),
-		)
+		let query = DeckStatParams.parse(req.params)
+		res.send(await getDeckStats(query))
 	})
 
 	if (DEBUG) {
