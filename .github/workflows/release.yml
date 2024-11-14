@@ -43,6 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - name: Post Message to Discord
+          shell: bash
           run: |
             cat >/tmp/message <<THIS_IS_THE_END
             <@1076950211831803934> Release ${{ github.event.release.tag_name }} will be released in 10 minutes. Please finish your games.
