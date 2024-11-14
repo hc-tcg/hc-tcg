@@ -59,12 +59,25 @@ export function addApi(app: Express) {
 
 	app.get('/api/hof/cards', async (req, res) => {
 		let query = CardStatsQuery.parse(req.params)
-		res.send(await getCardStats(query))
+		res.send(
+			await getCardStats({
+				before: query.before || null,
+				after: query.after || null,
+			}),
+		)
 	})
 
 	app.get('/api/hof/decks', async (req, res) => {
 		let query = DeckStatParams.parse(req.params)
-		res.send(await getDeckStats(query))
+		res.send(
+			await getDeckStats({
+				before: query.before || null,
+				after: query.after || null,
+				offset: query.offset || null,
+				orderBy: query.orderBy || null,
+				minimumWins: query.minimumWins || null,
+			}),
+		)
 	})
 
 	if (DEBUG) {

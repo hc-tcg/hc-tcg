@@ -40,9 +40,8 @@ export async function getStats(
 }
 
 export const CardStatsQuery = z.object({
-	url: z.string(),
-	before: z.nullable(z.number()),
-	after: z.nullable(z.number()),
+	before: z.number().nullish(),
+	after: z.number().nullish(),
 })
 
 export async function getCardStats(params: {
@@ -78,11 +77,11 @@ export async function getCardStats(params: {
 }
 
 export const DeckStatParams = z.object({
-	before: z.nullable(z.number()),
-	after: z.nullable(z.number()),
-	offset: z.nullable(z.number()),
-	orderBy: z.nullable(z.enum(['wins', 'winrate'])),
-	minimumWins: z.nullable(z.number()),
+	before: z.number().nullish(),
+	after: z.number().nullish(),
+	offset: z.number().nullish(),
+	orderBy: z.enum(['wins', 'winrate']).nullish(),
+	minimumWins: z.number().nullish(),
 })
 
 export async function getDeckStats(params: {
