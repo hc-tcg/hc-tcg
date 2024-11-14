@@ -1,3 +1,5 @@
+import {Deck} from './deck'
+
 export type User = {
 	uuid: string
 	secret: string
@@ -18,6 +20,20 @@ export type Stats = {
 	ties: number
 	forfeitWins: number
 	forfeitLosses: number
+}
+
+export type CardStats = {
+	id: number
+	winrate: number | null
+	rarity: number
+	averageCopies: number
+}
+
+export type DeckStats = {
+	deck: Deck
+	wins: number
+	lossses: number
+	winrate: number | null
 }
 
 export type Achievement = {
