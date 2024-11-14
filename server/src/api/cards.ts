@@ -269,3 +269,18 @@ export async function getCardStats(url: string) {
 		})),
 	}
 }
+
+export async function getDeckStats(url: string) {
+	let decks = await root.db.getDecksStats()
+
+	if (decks.type === 'failure') {
+		return {
+			type: 'failure',
+			reason: 'Endpoint is unavailable because database is disabled',
+		}
+	}
+
+	return {
+		success: decks,
+	}
+}

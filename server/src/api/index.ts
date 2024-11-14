@@ -6,6 +6,7 @@ import {
 	deckCost,
 	getCardStats,
 	getDeckInformation,
+	getDeckStats,
 	ranks,
 	types,
 } from './cards'
@@ -59,6 +60,10 @@ export function addApi(app: Express) {
 
 	app.get('/api/hof/cards', async (req, res) => {
 		res.send(await getCardStats(requestUrlRoot(req)))
+	})
+
+	app.get('/api/hof/decks', async (req, res) => {
+		res.send(await getDeckStats(requestUrlRoot(req)))
 	})
 
 	if (DEBUG) {

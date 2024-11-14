@@ -4,7 +4,13 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {CardStats, Stats, User, UserWithoutSecret} from 'common/types/database'
+import {
+	CardStats,
+	DeckStats,
+	Stats,
+	User,
+	UserWithoutSecret,
+} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -650,6 +656,101 @@ export class Database {
 							: 0,
 					}
 				}),
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async getDecksStats(): Promise<DatabaseResult<Array<DeckStats>>> {
+		try {
+			const decksResult = (
+				await this.pool.query(
+					`
+					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+					deck_cards.card_id,deck_cards.copies,
+					deck_code_list.deck_code, wins, losses, cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT 
+						deck_code,
+						count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses
+						FROM (
+							SELECT decks.deck_code,
+							games.winner_deck_code = decks.deck_code as wins,
+							games.loser_deck_code = decks.deck_code as losses FROM decks
+							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+						) as result
+					GROUP BY result.deck_code) as deck_code_list 
+					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
+					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					WHERE wins > 50
+					`,
+				)
+			).rows
+
+			const decks = decksResult.reduce((allDecks: Array<DeckStats>, row) => {
+				const code: string = row['deck_code']
+				const name: string = row['name']
+				const icon: string = row['icon']
+				const iconType: string = row['icon_type']
+				const cardId: number | null = row['card_id']
+				const cards: Array<Card> =
+					cardId !== null
+						? [
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
+						: []
+
+				const winrate: string = row['winrate']
+				const wins: string = row['wins']
+				const losses: string = row['losses']
+
+				const foundDeck = allDecks.find((deck) => deck.deck.code === code)
+
+				if (!foundDeck) {
+					const newDeck: DeckStats = {
+						deck: {
+							code,
+							name,
+							icon,
+							//@ts-ignore
+							iconType,
+							tags: [],
+							cards:
+								cardId !== null
+									? cards.map((card) => toLocalCardInstance(card))
+									: [],
+						},
+						winrate: winrate ? Number(winrate) : null,
+						wins: Number(wins),
+						lossses: Number(losses),
+					}
+					return [...allDecks, newDeck]
+				}
+
+				if (
+					cardId !== null &&
+					foundDeck.deck.cards.find(
+						(card) => card.props.numericId !== cardId,
+					) &&
+					!foundDeck.deck.cards
+						.map((card) => card.props.numericId)
+						.includes(cardId)
+				) {
+					foundDeck.deck.cards = [
+						...foundDeck.deck.cards,
+						...cards.map((card) => toLocalCardInstance(card)),
+					]
+				}
+
+				return allDecks
+			}, [])
+
+			return {
+				type: 'success',
+				body: decks,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
