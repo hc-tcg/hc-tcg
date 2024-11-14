@@ -51,6 +51,11 @@ jobs:
             THIS_IS_THE_END
             CONTENT=$(cat /tmp/message);
             CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=${CONTENT//$'\n'/\\n};
             CONTENT=${CONTENT//$'"'/\\\"};
             JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}";
             echo $JSON;
