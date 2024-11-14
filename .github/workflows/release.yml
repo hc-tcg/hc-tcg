@@ -51,7 +51,7 @@ jobs:
             CONTENT=$(cat /tmp/message | sed -z 's/\n/\\n/g' | sed 's/"/\\"/g');
             JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}";
             echo $JSON;
-            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data $JSON
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
 
         - name: Wait
           run: sleep 10m
