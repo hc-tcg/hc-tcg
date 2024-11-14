@@ -39,6 +39,7 @@ import {
 } from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import debugConfig from 'common/config/debug-config'
 
 function setupGame(
 	player1: PlayerModel,
@@ -288,7 +289,8 @@ export function* joinQueue(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		(!debugConfig.disableDeckValidation &&
+			!validateDeck(player.deck.cards.map((card) => card.props)).valid)
 	) {
 		console.log(
 			'[Join queue] Player tried to join queue with an invalid deck:',
@@ -377,7 +379,8 @@ export function* createBossGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		(!debugConfig.disableDeckValidation &&
+			!validateDeck(player.deck.cards.map((card) => card.props)).valid)
 	) {
 		console.log(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -498,7 +501,8 @@ export function* joinPrivateGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		(!debugConfig.disableDeckValidation &&
+			!validateDeck(player.deck.cards.map((card) => card.props)).valid)
 	) {
 		console.log(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
