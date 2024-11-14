@@ -619,7 +619,12 @@ export class Database {
 	}
 
 	/**Get the current stats of */
-	public async getCardsStats(): Promise<DatabaseResult<Array<CardStats>>> {
+	public async getCardsStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<Array<CardStats>>
+	> {
 		try {
 			const stats = await this.pool.query(
 				`
@@ -639,9 +644,12 @@ export class Database {
 						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
 						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
 						WHERE deck_cards.card_id > -1
-					) as result
+						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						) as result
 				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
 					`,
+				[after, before],
 			)
 
 			return {
@@ -662,14 +670,26 @@ export class Database {
 		}
 	}
 
-	public async getDecksStats(): Promise<DatabaseResult<Array<DeckStats>>> {
+	public async getDecksStats({
+		before,
+		after,
+		offset,
+		orderBy,
+	}: {
+		before: number | null
+		after: number | null
+		offset: number | null
+		orderBy: 'wins' | 'winrate' | null
+	}): Promise<DatabaseResult<Array<DeckStats>>> {
+		const limit = 20
+		console.log(orderBy)
 		try {
 			const decksResult = (
 				await this.pool.query(
 					`
 					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
 					deck_cards.card_id,deck_cards.copies,
-					deck_code_list.deck_code, wins, losses, cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
+					deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
 						SELECT 
 						deck_code,
 						count(CASE WHEN wins THEN 1 END) as wins,
@@ -679,12 +699,24 @@ export class Database {
 							games.winner_deck_code = decks.deck_code as wins,
 							games.loser_deck_code = decks.deck_code as losses FROM decks
 							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							LIMIT $3::int
+							OFFSET $3::int * $4::int
 						) as result
 					GROUP BY result.deck_code) as deck_code_list 
 					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins > 50
+					WHERE wins > 0 OR losses > 0	
+					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
 					`,
+					[
+						after,
+						before,
+						limit,
+						offset ? offset : 0,
+						orderBy ? orderBy : 'winrate',
+					],
 				)
 			).rows
 

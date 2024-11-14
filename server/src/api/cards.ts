@@ -241,13 +241,17 @@ export function ranks(url: string) {
 	]
 }
 
-export async function getCardStats(url: string) {
-	let cards = await root.db.getCardsStats()
+export async function getCardStats(
+	url: string,
+	before: number | null,
+	after: number | null,
+) {
+	let cards = await root.db.getCardsStats({before, after})
 
 	if (cards.type === 'failure') {
 		return {
 			type: 'failure',
-			reason: 'Endpoint is unavailable because database is disabled',
+			reason: cards.reason,
 		}
 	}
 
@@ -270,13 +274,24 @@ export async function getCardStats(url: string) {
 	}
 }
 
-export async function getDeckStats(url: string) {
-	let decks = await root.db.getDecksStats()
+export async function getDeckStats(
+	url: string,
+	before: number | null,
+	after: number | null,
+	offset: number | null,
+	orderBy: 'wins' | 'winrate' | null,
+) {
+	let decks = await root.db.getDecksStats({
+		before: before,
+		after: after,
+		offset: offset,
+		orderBy: orderBy,
+	})
 
 	if (decks.type === 'failure') {
 		return {
 			type: 'failure',
-			reason: 'Endpoint is unavailable because database is disabled',
+			reason: decks.reason,
 		}
 	}
 

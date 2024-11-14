@@ -14,6 +14,7 @@ import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
 import {StatsHeader, getStats} from './stats'
 import {requestUrlRoot} from './utils'
+import {URLSearchParams} from 'url'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
@@ -59,11 +60,24 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/hof/cards', async (req, res) => {
-		res.send(await getCardStats(requestUrlRoot(req)))
+		const before = req.query.before ? Number(req.query.before) : null
+		const after = req.query.after ? Number(req.query.after) : null
+
+		res.send(await getCardStats(requestUrlRoot(req), before, after))
 	})
 
 	app.get('/api/hof/decks', async (req, res) => {
-		res.send(await getDeckStats(requestUrlRoot(req)))
+		const before = req.query.before ? Number(req.query.before) : null
+		const after = req.query.after ? Number(req.query.after) : null
+		const offset = req.query.offset ? Number(req.query.offset) : null
+		const orderBy =
+			req.query.orderBy === 'wins' || req.query.orderBy === 'winrate'
+				? req.query.orderBy
+				: null
+
+		res.send(
+			await getDeckStats(requestUrlRoot(req), before, after, offset, orderBy),
+		)
 	})
 
 	if (DEBUG) {
