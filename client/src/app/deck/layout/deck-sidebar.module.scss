@@ -61,7 +61,7 @@
 	display: none;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 720px) {
 	.bodyWrapper {
 		position: absolute;
 		background: #313233fd;
@@ -102,7 +102,7 @@
 }
 
 // MOBILE
-@media (max-width: 800px) {
+@media (max-width: 720px) {
 	.sidebar {
 		border: 0px solid black;
 	}
