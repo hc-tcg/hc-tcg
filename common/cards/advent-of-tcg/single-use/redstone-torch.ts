@@ -16,7 +16,7 @@ const RedstoneTorch: SingleUse = {
 	name: 'Redstone Torch',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	description:
 		"Detonate all the TNT and TNT Minecarts in your deck. Discard the cards adjacent to each TNT. Deal 40hp damage to your Opponent's Active Hermit for each TNT detonated. Afterwards, shuffle your deck.",
 	showConfirmationModal: true,
