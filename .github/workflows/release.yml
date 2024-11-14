@@ -45,7 +45,7 @@ jobs:
         - name: Post Message to Discord
           run: |
             CONTENT='<@1076950211831803934> Release ${{ github.event.release.tag_name }} will be released in 10 minutes. Please finish your games.\n${{ github.event.release.body }}'
-            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data '{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}'
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}"
 
         - name: Wait
           run: sleep 10m
