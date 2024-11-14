@@ -718,7 +718,7 @@ export class Database {
 						limit,
 						offset ? offset : 0,
 						orderBy ? orderBy : 'winrate',
-						minimumWins ? minimumWins : 0,
+						minimumWins ? minimumWins : 50,
 					],
 				)
 			).rows
