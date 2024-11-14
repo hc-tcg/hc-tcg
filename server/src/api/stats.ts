@@ -66,7 +66,7 @@ export async function getCardStats(params: {
 
 	return {
 		success: correctCards.map((card) => ({
-			card: card.id,
+			card: card.card.id,
 			statistics: {
 				winrate: card.winrate,
 				rarity: card.rarity,
