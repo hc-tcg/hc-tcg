@@ -2,18 +2,18 @@ import assert from 'assert'
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {singleUse} from '../../defaults'
 import TNT from '../../single-use/tnt'
 import {SingleUse} from '../../types'
-import {executeExtraAttacks} from '../../../utils/attacks'
 import MinecartWithTNT from './tnt-minecart'
 
 const RedstoneTorch: SingleUse = {
 	...singleUse,
 	id: 'redstone_torch',
-	numericId: 224,
-	name: 'Redsonte Torch',
+	numericId: 252,
+	name: 'Redstone Torch',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
@@ -22,8 +22,8 @@ const RedstoneTorch: SingleUse = {
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, pos) =>
-			!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
+		query.slot.opponentHasActiveHermit,
+		(_game, pos) => pos.player.getDeck().length > 0,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -33,13 +33,11 @@ const RedstoneTorch: SingleUse = {
 	) {
 		const {player, opponentPlayer} = component
 		observer.subscribe(player.hooks.onApply, () => {
-			const tntCards = game.components.filter(
+			const tntCardEntities = game.components.filterEntities(
 				CardComponent,
 				query.card.slot(query.slot.deck, query.slot.currentPlayer),
 				query.card.is(TNT, MinecartWithTNT),
 			)
-
-			const tntCardEntities = tntCards.map((card) => card.entity)
 
 			const playerDeck = player.getDeck().sort(CardComponent.compareOrder)
 
@@ -75,7 +73,7 @@ const RedstoneTorch: SingleUse = {
 				onResult(modalResult) {
 					if (!modalResult) return
 
-					tntCards.forEach((card) => card.discard())
+					tntAdjacentCards.forEach((card) => card.discard())
 
 					const tntAttack = game
 						.newAttack({
@@ -84,9 +82,9 @@ const RedstoneTorch: SingleUse = {
 							target: opponentPlayer.activeRowEntity,
 							type: 'effect',
 							log: (values) =>
-								`${values.player} detonated their ${tntCards.length} $e${TNT.name}$ with $e${RedstoneTorch.name}$ to attack ${values.target} for ${values.damage} damage `,
+								`${values.player} detonated their ${tntCardEntities.length} $e${TNT.name}$ with $e${RedstoneTorch.name}$ to attack ${values.target} for ${values.damage} damage `,
 						})
-						.addDamage(component.entity, 60 * tntCards.length)
+						.addDamage(component.entity, 60 * tntCardEntities.length)
 
 					executeExtraAttacks(game, [tntAttack])
 
