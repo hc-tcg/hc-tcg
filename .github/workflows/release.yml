@@ -37,3 +37,30 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_VERSION=${{ github.ref_name }}
+
+  announce:
+    name: Annouce Release
+    runs-on: ubuntu-latest
+    steps:
+        - name: Post Message to Discord
+          shell: bash
+          run: |
+            CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n\n$BODY";
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=$(echo $CONTENT|tr -d '\r');
+            CONTENT=${CONTENT//$'"'/\\\"};
+            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": [1076950211831803934]}}";
+            printf '%s' "$JSON";
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
+          env:
+            TAG_NAME: ${{ github.event.release.tag_name }}
+            BODY: ${{ github.event.release.body }}
+
+        - name: Wait
+          run: sleep 10m
+
+        - uses: superfly/flyctl-actions/setup-flyctl@master
+        - run: flyctl deploy --remote-only
+          env:
+            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
