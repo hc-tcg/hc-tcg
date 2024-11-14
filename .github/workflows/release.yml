@@ -38,7 +38,7 @@ jobs:
           build-args: |
             APP_VERSION=${{ github.ref_name }}
 
-  annouce:
+  announce:
     name: Annouce Release
     runs-on: ubuntu-latest
     steps:
