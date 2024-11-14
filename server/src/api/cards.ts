@@ -80,8 +80,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			primary: card.primary,
 			secondary: card.secondary,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
@@ -94,8 +97,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	} else if (isItem(card)) {
@@ -108,8 +114,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	}
