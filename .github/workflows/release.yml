@@ -44,7 +44,10 @@ jobs:
     steps:
         - name: Post Message to Discord
           run: |
-            CONTENT='<@1076950211831803934> Release ${{ github.event.release.tag_name }} will be released in 10 minutes. Please finish your games.\n${{ github.event.release.body }}'
+            cat >/tmp/message <<THIS_IS_THE_END <@1076950211831803934> Release ${{ github.event.release.tag_name }} will be released in 10 minutes. Please finish your games.
+            ${{ github.event.release.body }}
+            THIS_IS_THE_END;
+            CONTENT=$(cat /tmp/message | sed -z 's/\n/\\n/g' | sed 's/"/\\"/g');
             curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}"
 
         - name: Wait
