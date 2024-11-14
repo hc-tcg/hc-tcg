@@ -38,17 +38,17 @@ jobs:
           build-args: |
             APP_VERSION=${{ github.ref_name }}
 
-	annouce:
-    	name: Annouce Release
-    	runs-on: ubuntu-latest
-    	steps:
-        	- name: Post Message to Discord
-        	  run: |
-        	  	CONTENT='<@1076950211831803934> Release ${{ github.event.release.tag }} will be released in 10 minutes. Please finish your games.\n{{ github.event.release.body }}'
-        	    curl ${{ secrets.DISCORD_WEBHOOK }} -H "Content-Type: application/json" --data '{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}'
+    annouce:
+        name: Annouce Release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Post Message to Discord
+              run: |
+                CONTENT='<@1076950211831803934> Release ${{ github.event.release.tag }} will be released in 10 minutes. Please finish your games.\n{{ github.event.release.body }}'
+                curl ${{ secrets.DISCORD_WEBHOOK }} -H "Content-Type: application/json" --data '{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"mention_roles\": 1076950211831803934}}'
 
-			- name: Wait
-        	  run: sleep 10m
+            - name: Wait
+              run: sleep 10m
 
             - uses: superfly/flyctl-actions/setup-flyctl@master
             - run: flyctl deploy --remote-only
