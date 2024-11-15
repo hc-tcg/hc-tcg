@@ -136,10 +136,6 @@ function* gameStateSaga(
 			time: action.time,
 		})
 
-		yield* put<GameSagaMessage>({
-			type: gameSagaMessages.LOCAL_STATE_UPDATED,
-		})
-
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: action.localGameState.voiceLineQueue,
@@ -181,17 +177,14 @@ function* handleGameTurnActionSaga(game: GameModel) {
 			})
 		}
 
-		yield* take(gameSagaMessages.LOCAL_STATE_UPDATED)
-		console.log("State updated")
-
-		if (game.getStateHash() !== message.gameStateHash) {
-			console.error(
-				'Desync between client and server detected:',
-				game.getStateHash(),
-				message.gameStateHash,
-			)
-			yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
-		}
+		// if (game.getStateHash() !== message.gameStateHash) {
+		// 	console.error(
+		// 		'Desync between client and server detected:',
+		// 		game.getStateHash(),
+		// 		message.gameStateHash,
+		// 	)
+		// 	yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
+		// }
 	}
 }
 
@@ -339,6 +332,7 @@ function* runGame(
 			})
 		},
 		onTurnAction: function* (action, game) {
+			console.log("reconnect turn action")
 			if (!reconnectInformation || isReadyToDisplay) return
 			let index = reconnectInformation.history.indexOf(action)
 			if (index === reconnectInformation.history.length - 1) {

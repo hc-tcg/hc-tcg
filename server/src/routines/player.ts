@@ -29,12 +29,12 @@ export function* playerConnectedSaga(
 				type: localMessages.PLAYER_RECONNECTED,
 				player: existingPlayer,
 			})
+
 			const game = yield* select(getGame(existingPlayer.id))
 
-			// @todo
-			console.log('Player connecting in game: ' + game)
-
 			if (game) {
+				console.log('Player connecting in game: ' + game?.game.id)
+
 				const entity = game.getEntityById(existingPlayer.id)
 
 				assert(

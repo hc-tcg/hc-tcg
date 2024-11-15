@@ -599,6 +599,7 @@ function* turnActionsSaga(
 
 			game.actionsHandled += 1
 			game.setStateHash()
+
 			yield* call(onTurnActionSaga, turnAction, game)
 
 			if (result === 'END_TURN' || result == 'FORFEIT') {
