@@ -30,9 +30,6 @@ common/config/debug-config.js
 .vscode/*
 !.vscode/extensions.json
 
-# Fly
-fly.toml
-
 # Environment variables
 .env
 node_modules/

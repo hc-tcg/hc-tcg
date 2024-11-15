@@ -11,6 +11,7 @@ import {
 import {CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import Fortune from 'common/cards/single-use/fortune'
@@ -287,6 +288,26 @@ describe('Test Database', () => {
 		expect(losingDeckStats.body.forfeitLosses).toBe(0)
 		expect(losingDeckStats.body.ties).toBe(1)
 		expect(losingDeckStats.body.gamesPlayed).toBe(5)
+
+		const cardStats = await database.getCardsStats({before: null, after: null})
+
+		assert(
+			cardStats.type === 'success',
+			'The card stats should be retrieved successfully',
+		)
+
+		expect(
+			cardStats.body.find((card) => card.id === BdoubleO100Common.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === EthosLabCommon.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === GeminiTayRare.numericId)
+				?.winrate,
+		).toEqual(undefined)
 	})
 
 	test('Update Username and Minecraft Name', async () => {

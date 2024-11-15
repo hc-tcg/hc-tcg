@@ -6,7 +6,7 @@
 		display: flex;
 		flex-direction: column;
 
-		> div > p {
+		>div>p {
 			color: var(--gray-300);
 		}
 	}
@@ -177,7 +177,7 @@
 	}
 }
 
-@media (max-width: 800px) {
+@media (max-width: 720px) {
 	.cardTooltip {
 		max-width: 90vw;
 	}

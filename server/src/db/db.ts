@@ -3,8 +3,14 @@ import {Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {Stats, User, UserWithoutSecret} from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
+import {
+	CardStats,
+	DeckStats,
+	Stats,
+	User,
+	UserWithoutSecret,
+} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -106,6 +112,7 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
+
 			this.connected = true
 		} catch (e) {
 			console.log(e)
@@ -607,6 +614,180 @@ export class Database {
 				],
 			)
 			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getCardsStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<Array<CardStats>>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`
+				SELECT card_id, 
+				total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
+				cast(included_in_decks as decimal) / total_decks as rarity, 
+				cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
+					SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
+					count(CASE WHEN losses THEN 1 END) as losses, 
+					count(deck_code) as included_in_decks, 
+					sum(copies) as copies FROM (
+						SELECT cards.card_id,
+						deck_cards.deck_code,
+						deck_cards.copies,
+						games.winner_deck_code = deck_cards.deck_code as wins,
+						games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+						WHERE deck_cards.card_id > -1
+						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						) as result
+				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
+					`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: stats.rows.map((row): CardStats => {
+					return {
+						id: Number(row['card_id']),
+						winrate: row['winrate'] ? Number(row['winrate']) : null,
+						rarity: row['rarity'] ? Number(row['rarity']) : 0,
+						averageCopies: row['average_copies']
+							? Number(row['average_copies'])
+							: 0,
+					}
+				}),
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async getDecksStats({
+		before,
+		after,
+		offset,
+		orderBy,
+		minimumWins,
+	}: {
+		before: number | null
+		after: number | null
+		offset: number | null
+		orderBy: 'wins' | 'winrate' | null
+		minimumWins: number | null
+	}): Promise<DatabaseResult<Array<DeckStats>>> {
+		const limit = 20
+		console.log(orderBy)
+		try {
+			const decksResult = (
+				await this.pool.query(
+					`
+					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+					deck_cards.card_id,deck_cards.copies,
+					deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT 
+						deck_code,
+						count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses
+						FROM (
+							SELECT decks.deck_code,
+							games.winner_deck_code = decks.deck_code as wins,
+							games.loser_deck_code = decks.deck_code as losses FROM decks
+							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							LIMIT $3::int
+							OFFSET $3::int * $4::int
+						) as result
+					GROUP BY result.deck_code) as deck_code_list 
+					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
+					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					WHERE wins > $6
+					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
+					`,
+					[
+						after,
+						before,
+						limit,
+						offset ? offset : 0,
+						orderBy ? orderBy : 'winrate',
+						minimumWins ? minimumWins : 50,
+					],
+				)
+			).rows
+
+			const decks = decksResult.reduce((allDecks: Array<DeckStats>, row) => {
+				const code: string = row['deck_code']
+				const name: string = row['name']
+				const icon: string = row['icon']
+				const iconType: string = row['icon_type']
+				const cardId: number | null = row['card_id']
+				const cards: Array<Card> =
+					cardId !== null
+						? [
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
+						: []
+
+				const winrate: string = row['winrate']
+				const wins: string = row['wins']
+				const losses: string = row['losses']
+
+				const foundDeck = allDecks.find((deck) => deck.deck.code === code)
+
+				if (!foundDeck) {
+					const newDeck: DeckStats = {
+						deck: {
+							code,
+							name,
+							icon,
+							//@ts-ignore
+							iconType,
+							tags: [],
+							cards:
+								cardId !== null
+									? cards.map((card) => toLocalCardInstance(card))
+									: [],
+						},
+						winrate: winrate ? Number(winrate) : null,
+						wins: Number(wins),
+						lossses: Number(losses),
+					}
+					return [...allDecks, newDeck]
+				}
+
+				if (
+					cardId !== null &&
+					foundDeck.deck.cards.find(
+						(card) => card.props.numericId !== cardId,
+					) &&
+					!foundDeck.deck.cards
+						.map((card) => card.props.numericId)
+						.includes(cardId)
+				) {
+					foundDeck.deck.cards = [
+						...foundDeck.deck.cards,
+						...cards.map((card) => toLocalCardInstance(card)),
+					]
+				}
+
+				return allDecks
+			}, [])
+
+			return {
+				type: 'success',
+				body: decks,
+			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
 		}

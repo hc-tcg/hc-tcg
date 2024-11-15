@@ -4,7 +4,14 @@ import root from 'serverRoot'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
-import {StatsHeader, getStats} from './stats'
+import {
+	CardStatsQuery,
+	DeckStatParams,
+	StatsHeader,
+	getCardStats,
+	getDeckStats,
+	getStats,
+} from './stats'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
@@ -48,6 +55,29 @@ export function addApi(app: Express) {
 	app.get('/api/stats', async (req, res) => {
 		let header = StatsHeader.parse(req.headers)
 		res.send(await getStats(root.db, header))
+	})
+
+	app.get('/api/hof/cards', async (req, res) => {
+		let query = CardStatsQuery.parse(req.params)
+		res.send(
+			await getCardStats({
+				before: query.before || null,
+				after: query.after || null,
+			}),
+		)
+	})
+
+	app.get('/api/hof/decks', async (req, res) => {
+		let query = DeckStatParams.parse(req.params)
+		res.send(
+			await getDeckStats({
+				before: query.before || null,
+				after: query.after || null,
+				offset: query.offset || null,
+				orderBy: query.orderBy || null,
+				minimumWins: query.minimumWins || null,
+			}),
+		)
 	})
 
 	if (DEBUG) {
