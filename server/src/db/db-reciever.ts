@@ -3,12 +3,13 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
-import {call} from 'typed-redux-saga'
+import {call, select} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
+import {getGame} from 'selectors'
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]
@@ -346,12 +347,20 @@ export function* addGame(
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
 	if (!firstPlayerModel.deck || !secondPlayerModel.deck) return
 
+	let game = yield* select(getGame(firstPlayerModel.id))
+
+	let winnerUuid: string | null = null
+	if (outcome !== 'tie') {
+		winnerUuid = game?.getPlayerModelByEntity(outcome.winner)?.uuid ?? null
+	}
+
 	yield* call(
 		[root.db, root.db.insertGame],
 		firstPlayerModel.deck.code,
 		secondPlayerModel.deck.code,
 		firstPlayerModel.uuid,
 		secondPlayerModel.uuid,
+		winnerUuid,
 		outcome,
 		gameLength,
 		seed,

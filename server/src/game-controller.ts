@@ -94,4 +94,14 @@ export class GameController {
 			(_game, component) => component.entity === entity,
 		)
 	}
+
+	public getPlayerModelByEntity(entity: PlayerEntity): PlayerModel | null {
+		if (entity === this.playerOne.entity) {
+			return this.playerModels[this.playerOne.playerId]
+		}
+		if (entity === this.playerTwo.entity && this.playerTwo.playerId) {
+			return this.playerModels[this.playerTwo.playerId]
+		}
+		return null
+	}
 }

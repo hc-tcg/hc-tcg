@@ -575,6 +575,7 @@ export class Database {
 		secondPlayerDeckCode: string,
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
+		winnerUuid: string | null,
 		outcome: GameOutcome,
 		gameLength: number,
 		seed: string,
@@ -587,16 +588,20 @@ export class Database {
 			let loser
 			let losingDeck
 
-			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
-				winner = firstPlayerUuid
-				winningDeck = firstPlayerDeckCode
-				loser = secondPlayerUuid
-				losingDeck = secondPlayerDeckCode
+			// @todo Handle ties
+			if (outcome === 'tie') {
 			} else {
-				winner = secondPlayerUuid
-				winningDeck = secondPlayerDeckCode
-				loser = firstPlayerUuid
-				losingDeck = firstPlayerDeckCode
+				if (winnerUuid === firstPlayerUuid) {
+					winner = firstPlayerUuid
+					winningDeck = firstPlayerDeckCode
+					loser = secondPlayerUuid
+					losingDeck = secondPlayerDeckCode
+				} else {
+					winner = secondPlayerUuid
+					winningDeck = secondPlayerDeckCode
+					loser = firstPlayerUuid
+					losingDeck = firstPlayerDeckCode
+				}
 			}
 
 			await this.pool.query(
