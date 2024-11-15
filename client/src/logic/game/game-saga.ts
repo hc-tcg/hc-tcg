@@ -44,6 +44,7 @@ const gameSagaMessages = messages('client-game-message', {
 	GAME_STATE_DESYNC: null,
 	GAME_ACTION_SAGA_OVER: null,
 	WAITING_FOR_ACTION: null,
+	LOCAL_STATE_UPDATED: null,
 })
 
 type GameSagaMessages = [
@@ -51,6 +52,7 @@ type GameSagaMessages = [
 	{type: typeof gameSagaMessages.GAME_STATE_DESYNC},
 	{type: typeof gameSagaMessages.GAME_ACTION_SAGA_OVER},
 	{type: typeof gameSagaMessages.WAITING_FOR_ACTION},
+	{type: typeof gameSagaMessages.LOCAL_STATE_UPDATED},
 ]
 
 type GameSagaMessage = Message<GameSagaMessages>
@@ -134,6 +136,10 @@ function* gameStateSaga(
 			time: action.time,
 		})
 
+		yield* put<GameSagaMessage>({
+			type: gameSagaMessages.LOCAL_STATE_UPDATED,
+		})
+
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: action.localGameState.voiceLineQueue,
@@ -175,15 +181,17 @@ function* handleGameTurnActionSaga(game: GameModel) {
 			})
 		}
 
-		// @todo Properly support desyncs
-		// if (game.getStateHash() !== message.gameStateHash) {
-		// 	console.error(
-		// 		'Desync between client and server detected:',
-		// 		game.getStateHash(),
-		// 		message.gameStateHash,
-		// 	)
-		// 	yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
-		// }
+		yield* take(gameSagaMessages.LOCAL_STATE_UPDATED)
+		console.log("State updated")
+
+		if (game.getStateHash() !== message.gameStateHash) {
+			console.error(
+				'Desync between client and server detected:',
+				game.getStateHash(),
+				message.gameStateHash,
+			)
+			yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
+		}
 	}
 }
 

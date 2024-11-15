@@ -222,8 +222,6 @@ export class GameModel {
 			sumOfHealth,
 			actionsHandled,
 		})
-
-		this.mostRecentState = ''
 	}
 
 	/** Get a string trying to represent the state the game is in. This is used to detect desyncs between the server and clients. */
