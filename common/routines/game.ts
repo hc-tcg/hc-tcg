@@ -799,9 +799,14 @@ export function* runGameSaga(
 ) {
 	const game = new GameModel(props)
 
+	console.log("This game id:", game.id)
+
 	const turnActionChannel = yield* actionChannel(
-		(action: any) =>
-			action.gameId === game.id && action.type === gameMessages.TURN_ACTION,
+		(action: any) => {
+			if (action.type !== gameMessages.TURN_ACTION) return false
+			console.log(action.gameId)
+			return action.gameId === game.id && action.type === gameMessages.TURN_ACTION
+		}
 	)
 
 	game.state.turn.turnNumber++

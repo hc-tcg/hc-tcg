@@ -154,7 +154,6 @@ export class GameModel {
 		this.settings = props.settings
 
 		this.internalCreatedTime = Date.now()
-		this.internalId = 'game_' + Math.random().toString()
 		this.internalGameCode = props.gameCode || null
 		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []

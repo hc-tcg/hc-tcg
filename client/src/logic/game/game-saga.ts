@@ -332,7 +332,7 @@ function* runGame(
 			})
 		},
 		onTurnAction: function* (action, game) {
-			console.log("reconnect turn action")
+			console.log('reconnect turn action')
 			if (!reconnectInformation || isReadyToDisplay) return
 			let index = reconnectInformation.history.indexOf(action)
 			if (index === reconnectInformation.history.length - 1) {
