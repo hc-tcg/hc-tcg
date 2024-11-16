@@ -130,6 +130,19 @@ export function* gameManagerSaga({
 				}
 			})
 
+			if (!(player2 instanceof PlayerModel)) {
+				yield* put<GameMessage>({
+					type: gameMessages.TURN_ACTION,
+					playerEntity: players[1].entity,
+					time: Date.now(),
+					gameId: game.id,
+					action: {
+						type: 'ADD_AI',
+						ai: player2.virtualAI,
+					},
+				})
+			}
+
 			root.games[identifierInRootState] = serverSideGame
 
 			backgroundSagas = yield* fork(all, [

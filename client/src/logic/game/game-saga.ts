@@ -273,6 +273,9 @@ function* runGame(
 
 	if (!reconnectInformation) isReadyToDisplay = true
 
+	// Don't log the board state to prevent cheating by looking at the logs.
+	props.settings.logBoardState = false
+
 	const gameSaga = runGameSaga(props, {
 		onGameStart: function* (game) {
 			backgroundTasks = yield* fork(() =>
@@ -338,7 +341,6 @@ function* runGame(
 			})
 		},
 		onTurnAction: function* (action, game) {
-			console.log('reconnect turn action')
 			if (!reconnectInformation || isReadyToDisplay) return
 			let index = reconnectInformation.history.indexOf(action)
 			if (index === reconnectInformation.history.length - 1) {
@@ -466,9 +468,6 @@ function* gameSaga(
 	} catch (err) {
 		// @todo Handle client crash
 		console.error('Client error: ', err)
-		// yield put<LocalMessage>({
-		// 	type: localMessages.GAME_END_OVERLAY_SHOW,
-		// })
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
 		if (hasOverlay) yield take(localMessages.GAME_END_OVERLAY_HIDE)

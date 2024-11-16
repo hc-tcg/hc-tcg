@@ -191,11 +191,6 @@ export class GameModel {
 
 		this.state = getGameState(this, props.randomizeOrder)
 
-		for (const ai of this.components.filter(AIComponent)) {
-			ai.ai.setup(this, ai)
-			this.state.isBossGame = true
-		}
-
 		this.voiceLineQueue = []
 	}
 

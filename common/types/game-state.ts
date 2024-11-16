@@ -122,6 +122,7 @@ export type TurnAction =
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
 	| 'DELAY'
+	| 'ADD_AI'
 	| 'SET_TIMER'
 
 export type GameRules = {

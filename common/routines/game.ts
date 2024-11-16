@@ -445,6 +445,15 @@ function* turnActionSaga(
 				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
 				endTurn = true
 				return 'FORFEIT'
+			case 'ADD_AI':
+				let ai = game.components.new(
+					AIComponent,
+					turnAction.playerEntity,
+					turnAction.action.ai,
+				)
+				ai.ai.setup(game, ai)
+				game.state.isBossGame = true
+				break
 			case 'SET_TIMER':
 				// I really apoligize about this one.
 				game.actionsHandled -= 1

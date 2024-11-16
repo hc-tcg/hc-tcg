@@ -178,7 +178,7 @@ const ExBossAI: VirtualAI = {
 		game.components
 			.filter(
 				RowComponent,
-				query.row.opponentPlayer,
+				query.not(query.row.player(component.playerEntity)),
 				(_game, row) => row.index > 2,
 			)
 			.forEach(destroyRow)
@@ -186,7 +186,7 @@ const ExBossAI: VirtualAI = {
 		game.components
 			.filter(
 				RowComponent,
-				query.row.currentPlayer,
+				query.row.player(component.playerEntity),
 				query.not(query.row.index(0)),
 			)
 			.forEach(destroyRow)
@@ -194,7 +194,7 @@ const ExBossAI: VirtualAI = {
 		game.components
 			.filterEntities(
 				BoardSlotComponent,
-				query.slot.currentPlayer,
+				query.slot.player(component.playerEntity),
 				query.slot.item,
 			)
 			.forEach((slotEntity) => game.components.delete(slotEntity))
