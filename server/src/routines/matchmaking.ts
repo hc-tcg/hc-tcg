@@ -543,6 +543,11 @@ export function* joinPrivateGame(
 			createdAt: Date.now(),
 		})
 
+		broadcast(spectatorGame.getPlayers(), {
+			type: serverMessages.CHAT_UPDATE,
+			messages: spectatorGame.chat,
+		})
+
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
 			localGameState: getLocalGameState(spectatorGame, viewer),
