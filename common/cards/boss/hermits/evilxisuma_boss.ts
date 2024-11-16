@@ -328,7 +328,7 @@ const EvilXisumaBoss: Hermit = {
 				.forEach((card) => destroyCard(game, card))
 			removeImmuneEffects(game, component.slot)
 		})
-		let lastAttackDisabledByAmnesia = false
+		let lastAttackDisabledByAmnesia = NaN
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.EFFECT_REMOVE_STATUS,
@@ -345,12 +345,13 @@ const EvilXisumaBoss: Hermit = {
 						SecondaryAttackDisabledEffect,
 					),
 				)
-				if (lastAttackDisabledByAmnesia) {
+				if (lastAttackDisabledByAmnesia === game.state.turn.turnNumber - 2) {
 					if (amnesiaEffect) amnesiaEffect.remove()
-
-					lastAttackDisabledByAmnesia = false
-				} else if (amnesiaEffect) {
-					lastAttackDisabledByAmnesia = true
+				} else if (
+					amnesiaEffect &&
+					game.currentPlayerEntity === opponentPlayer.entity
+				) {
+					lastAttackDisabledByAmnesia = game.state.turn.turnNumber
 				}
 			},
 		)
