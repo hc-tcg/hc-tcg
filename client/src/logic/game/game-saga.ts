@@ -136,6 +136,10 @@ function* gameStateSaga(
 			time: action.time,
 		})
 
+		yield* put<GameSagaMessage>({
+			type: gameSagaMessages.LOCAL_STATE_UPDATED,
+		})
+
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: action.localGameState.voiceLineQueue,
@@ -175,16 +179,18 @@ function* handleGameTurnActionSaga(game: GameModel) {
 				gameId: game.id,
 				time: message.time,
 			})
+
+			yield* take<GameSagaMessage>(gameSagaMessages.LOCAL_STATE_UPDATED)
 		}
 
-		// if (game.getStateHash() !== message.gameStateHash) {
-		// 	console.error(
-		// 		'Desync between client and server detected:',
-		// 		game.getStateHash(),
-		// 		message.gameStateHash,
-		// 	)
-		// 	yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
-		// }
+		if (game.getStateHash() !== message.gameStateHash) {
+			console.error(
+				'Desync between client and server detected:',
+				game.getStateHash(),
+				message.gameStateHash,
+			)
+			yield* put({type: gameSagaMessages.GAME_STATE_DESYNC})
+		}
 	}
 }
 
