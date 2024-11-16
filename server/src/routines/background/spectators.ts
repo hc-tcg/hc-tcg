@@ -3,6 +3,7 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
+import { formatText } from 'common/utils/formatting'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'
 
@@ -16,6 +17,16 @@ function* spectatorLeaveSaga(
 		ViewerComponent,
 		(_game, component) => component.playerId === action.playerId,
 	)
+
+	game.chat.push({
+		sender: {
+			type: 'viewer',
+			id: action.playerId,
+		},
+		message: formatText(`$s${viewer?.player.name}$ stopped spectating.`),
+		createdAt: Date.now(),
+	})
+
 	if (viewer) game.components.delete(viewer.entity)
 }
 
