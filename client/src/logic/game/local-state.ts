@@ -399,5 +399,8 @@ export function getLocalGameState(
 		voiceLineQueue: game.voiceLineQueue,
 	}
 
+	// Dont repeat voice lines that were already played
+	game.voiceLineQueue = []
+
 	return localGameState
 }

@@ -156,6 +156,7 @@ const ExBossAI: VirtualAI = {
 
 	setup(game, component) {
 		game.settings.disableRewardCards = true
+		game.voiceLineQueue.push('voice/EXSTART.ogg')
 
 		let player = game.components.find(
 			PlayerComponent,

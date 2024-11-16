@@ -7,7 +7,7 @@ import {
 	formatNodefromShorthand,
 	formatText,
 } from '../../utils/formatting'
-import {gameMessages} from '../game'
+import {GameMessage, gameMessages} from '../game'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
@@ -24,11 +24,12 @@ export default function* virtualPlayerActionSaga(
 	)
 	try {
 		const action = component.getNextTurnAction()
-		yield* put({
+		yield* put<GameMessage>({
+			gameId: game.id,
 			type: gameMessages.TURN_ACTION,
-			payload: {action, playerEntity: component.playerEntity},
 			action: action,
 			playerEntity: component.playerEntity,
+			time: Date.now(),
 		})
 	} catch (e) {
 		game.chat.push({

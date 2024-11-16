@@ -140,6 +140,7 @@ function* gameStateSaga(
 			type: gameSagaMessages.LOCAL_STATE_UPDATED,
 		})
 
+		console.log(action.localGameState.voiceLineQueue)
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: action.localGameState.voiceLineQueue,

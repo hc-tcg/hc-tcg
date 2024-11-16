@@ -430,9 +430,7 @@ function* turnActionSaga(
 				)
 				break
 			case 'DELAY':
-				console.log('HELLO')
 				yield* call(delaySaga, turnAction.action.delay)
-				console.log('WORLD')
 				break
 			case 'TIMEOUT':
 				yield* call(timeoutSaga, game)
@@ -446,6 +444,7 @@ function* turnActionSaga(
 				endTurn = true
 				return 'FORFEIT'
 			case 'ADD_AI':
+				console.log('setting up AI')
 				let ai = game.components.new(
 					AIComponent,
 					turnAction.playerEntity,
@@ -489,15 +488,9 @@ function* turnActionSaga(
 }
 
 function getPlayerAI(game: GameModel) {
-	const activePlayerEntity = game.state.turn.opponentAvailableActions.includes(
-		'WAIT_FOR_TURN',
-	)
-		? game.currentPlayerEntity
-		: game.opponentPlayerEntity
-
 	return game.components.find(
 		AIComponent,
-		(_game, ai) => ai.playerEntity === activePlayerEntity,
+		(_game, ai) => ai.playerEntity === game.currentPlayerEntity,
 	)
 }
 

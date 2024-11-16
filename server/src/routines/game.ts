@@ -19,6 +19,8 @@ import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {AIComponent} from 'common/components/ai-component'
+import {query} from 'express'
 
 type Props = {
 	player1: PlayerModel
@@ -227,6 +229,17 @@ export function* gameManagerSaga({
 			game,
 		) {
 			serverSideGame.history.push(action)
+
+			// Clients run the AI as well, so they do not need the turn action broadcasted to them.
+			if (
+				action.action.type !== 'ADD_AI' &&
+				game.components.exists(
+					AIComponent,
+					(_game, c) => c.playerEntity === action.playerEntity,
+				)
+			) {
+				return
+			}
 
 			let gameStateHash = game.getStateHash()
 
