@@ -1,10 +1,10 @@
 import {expect, test} from '@playwright/experimental-ct-react'
 import StatusEffectTooltip from 'client/components/status-effects/status-effect-tooltip'
+import {TooltipTestContainer} from 'client/components/tooltip/tooltip'
 import {CardEntity, PlayerEntity} from 'common/entities'
 import {AussiePingEffect} from 'common/status-effects/aussie-ping'
 import SleepingEffect from 'common/status-effects/sleeping'
 import {WithoutFunctions} from 'common/types/server-requests'
-import {TooltipTestContainer} from 'client/components/tooltip/tooltip'
 
 test('Status Effect Tooltip Hermit', async ({mount}) => {
 	const component = await mount(
