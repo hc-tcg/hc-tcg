@@ -15,6 +15,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
+import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import {addGame} from 'db/db-reciever'
@@ -533,6 +534,20 @@ export function* joinPrivateGame(
 			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
 		)
 
+		spectatorGame.chat.push({
+			sender: {
+				type: 'viewer',
+				id: player.id,
+			},
+			message: formatText(`$s${player.name}$ started spectating.`),
+			createdAt: Date.now(),
+		})
+
+		broadcast(spectatorGame.getPlayers(), {
+			type: serverMessages.CHAT_UPDATE,
+			messages: spectatorGame.chat,
+		})
+
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
 			localGameState: getLocalGameState(spectatorGame, viewer),
@@ -606,6 +621,18 @@ export function* joinPrivateGame(
 			root.privateQueue[code].apiSecret,
 		)
 		root.addGame(newGame)
+
+		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			const player = root.players[playerId]
+			newGame.chat.push({
+				sender: {
+					type: 'viewer',
+					id: player.id,
+				},
+				message: formatText(`$s${player.name}$ started spectating.`),
+				createdAt: Date.now(),
+			})
+		}
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
 			const viewer = newGame.components.new(ViewerComponent, {
