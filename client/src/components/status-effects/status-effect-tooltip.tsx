@@ -13,7 +13,7 @@ const StatusEffectTooltip = ({statusEffect, counter}: Props) => {
 		statusEffect.target.type === 'global' ? css.player : css.card
 
 	return (
-		<div className={css.statusEffectTooltip}>
+		<div>
 			<div className={css.topLine}>
 				<div className={css.name}>{statusEffect.props.name} </div>
 				<div className={classnames(css.tooltip, targetClass)}>
