@@ -30,9 +30,6 @@ common/config/debug-config.js
 .vscode/*
 !.vscode/extensions.json
 
-# Fly
-fly.toml
-
 # Environment variables
 .env
 node_modules/
@@ -42,3 +39,6 @@ node_modules/
 /playwright/.cache/
 /tests/ct/template/.cache/
 tsconfig.buildinfo
+
+/card-prerender/render/
+

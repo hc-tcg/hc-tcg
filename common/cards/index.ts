@@ -10,24 +10,24 @@ import defaultSingleUseCards from './single-use'
 import tempHermits from './temp'
 import {Card} from './types'
 
-const attachCardClasses: Array<Card> = [
+export const attachCardClasses: Array<Card> = [
 	...defaultAttachCards,
 	...adventOfTcgAttachCards,
 ]
 
-const hermitCardClasses: Array<Card> = [
+export const hermitCardClasses: Array<Card> = [
 	...defaultHermitCards,
 	...adventOfTcgHermitCards,
 	...bossHermitCards,
 	...tempHermits,
 ]
 
-const itemCardClasses: Array<Card> = [
+export const itemCardClasses: Array<Card> = [
 	...defaultItemCards,
 	...adventOfTcgItemCards,
 ]
 
-const singleUseCardClasses: Array<Card> = [
+export const singleUseCardClasses: Array<Card> = [
 	...defaultSingleUseCards,
 	...adventOfTcgSingleUseCards,
 ]

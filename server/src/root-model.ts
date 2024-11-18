@@ -9,7 +9,7 @@ export class RootModel {
 	public players: Record<string, PlayerModel> = {}
 	public games: Record<string, GameModel> = {}
 	public queue: Array<string> = []
-	public db?: Database
+	public db: Database
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<
 		string,
@@ -20,7 +20,7 @@ export class RootModel {
 			spectatorCode: string | undefined
 			spectatorsWaiting: Array<string>
 			/** Code used by API consumers to cancel a game. */
-			apiSecret?: string | null
+			apiSecret?: string
 		}
 	> = {}
 	public hooks = {

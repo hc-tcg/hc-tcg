@@ -1,5 +1,5 @@
 import {CARDS} from 'common/cards'
-import {Deck as Deck, LegacyDeck} from 'common/types/deck'
+import {Deck, LegacyDeck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 
@@ -24,9 +24,38 @@ export const setActiveDeck = (deck: Deck) => {
 	localStorage.setItem('activeDeck', JSON.stringify(deck))
 }
 
-export function getLocalStorageDecks(): Array<Deck> {
+function getLocalStorageTags(): Array<Tag> {
+	let lsKey
+	const tags: Array<Tag> = []
+
+	for (let i = 0; i < localStorage.length; i++) {
+		lsKey = localStorage.key(i)
+
+		if (lsKey?.includes('Tag_')) {
+			const key = localStorage.getItem(lsKey)
+			if (key) {
+				try {
+					const parsedTag = JSON.parse(key) as Tag
+					const newTag: Tag = {
+						name: parsedTag.name,
+						color: parsedTag.color,
+						key: parsedTag.key,
+					}
+					tags.push(newTag)
+				} catch {
+					console.log(`Tag could not be parsed: "${key}"`)
+				}
+			}
+		}
+	}
+
+	return tags
+}
+
+export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 	let lsKey
 	const decks: Array<Deck> = []
+	const tags = getLocalStorageTags()
 
 	for (let i = 0; i < localStorage.length; i++) {
 		lsKey = localStorage.key(i)
@@ -37,14 +66,39 @@ export function getLocalStorageDecks(): Array<Deck> {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
 					const newDeck: Deck = {
-						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
+						code:
+							parsedDeck.code && devMode
+								? parsedDeck.code
+								: generateDatabaseCode(),
 						name: parsedDeck.name,
 						iconType: 'item',
 						icon: parsedDeck.icon,
-						tags: [],
-						cards: parsedDeck.cards.map((card) =>
-							toLocalCardInstance(CARDS[card.cardId]),
-						),
+						tags: parsedDeck.tags
+							? parsedDeck.tags
+									.map((tag) => {
+										const foundTag = tags.find((search) => search.key === tag)
+										if (foundTag) {
+											// Turn old key into database readable format
+											const newTag = (Number(foundTag.key) * 9999999)
+												.toString(16)
+												.slice(0, 7)
+											return {
+												key: newTag,
+												color: foundTag.color,
+												name: foundTag.name,
+											}
+										} else {
+											return undefined
+										}
+									})
+									.filter((tag) => tag !== undefined)
+							: [],
+						cards: parsedDeck.cards.map((card) => {
+							if (card.cardId === 'flint_&_steel') {
+								return toLocalCardInstance(CARDS['flint_and_steel'])
+							}
+							return toLocalCardInstance(CARDS[card.cardId])
+						}),
 					}
 					decks.push(newDeck)
 				} catch {

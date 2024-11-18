@@ -14,7 +14,10 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {Deck} from 'common/types/deck'
+import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
+import {validateDeck} from 'common/utils/validation'
 import {addGame} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -41,20 +44,23 @@ import ExBossAI from './virtual/exboss-ai'
 function setupGame(
 	player1: PlayerModel,
 	player2: PlayerModel,
+	player1Deck: Deck,
+	player2Deck: Deck,
 	code?: string,
 	spectatorCode?: string,
+	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
 		{
 			model: player1,
-			deck: player1.deck.cards.map((card) => card.props.numericId),
+			deck: player1Deck.cards.map((card) => card.props.numericId),
 		},
 		{
 			model: player2,
-			deck: player2.deck.cards.map((card) => card.props.numericId),
+			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
 		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode},
+		{gameCode: code, spectatorCode, apiSecret},
 	)
 
 	let playerEntities = game.components.filterEntities(PlayerComponent)
@@ -165,10 +171,18 @@ function* gameManager(game: GameModel) {
 
 		const gamePlayers = game.getPlayers()
 		const winner = gamePlayers.find(
-			(player) => player.uuid === game.endInfo.winner,
+			(player) => player.id === game.endInfo.winner,
 		)
 
+		if (winner === null && game.endInfo.winner) {
+			console.error(
+				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+			)
+			return
+		}
+
 		if (
+			gamePlayers.length >= 2 &&
 			gamePlayers[0].uuid &&
 			gamePlayers[1].uuid &&
 			game.endInfo.outcome &&
@@ -224,9 +238,9 @@ function* randomMatchmakingSaga() {
 			const player1 = root.players[player1Id]
 			const player2 = root.players[player2Id]
 
-			if (player1 && player2) {
+			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2)
+				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
 				yield* fork(gameManager, newGame)
 			} else {
@@ -273,6 +287,17 @@ export function* joinQueue(
 		return
 	}
 
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+	) {
+		console.log(
+			'[Join queue] Player tried to join queue with an invalid deck:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
+	}
+
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log('[Join queue] Player is already in game or queue:', player.name)
 		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
@@ -313,12 +338,13 @@ export function* leaveQueue(
 
 function setupSolitareGame(
 	player: PlayerModel,
+	playerDeck: Deck,
 	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
 		{
 			model: player,
-			deck: player.deck.cards.map((card) => card.props.numericId),
+			deck: playerDeck.cards.map((card) => card.props.numericId),
 		},
 		{
 			model: opponent,
@@ -350,6 +376,18 @@ export function* createBossGame(
 		return
 	}
 
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+	) {
+		console.log(
+			'[Join private game] Player tried to join private game with an invalid deck: ',
+			playerId,
+		)
+		broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_FAILURE})
+		return
+	}
+
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log(
 			'[Create Boss game] Player is already in game or queue:',
@@ -361,7 +399,7 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGame = setupSolitareGame(player, {
+	const newBossGame = setupSolitareGame(player, player.deck, {
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
@@ -459,6 +497,18 @@ export function* joinPrivateGame(
 		return
 	}
 
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+	) {
+		console.log(
+			'[Join private game] Player tried to join private game with an invalid deck: ',
+			playerId,
+		)
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		return
+	}
+
 	if (inGame(playerId) || inQueue(playerId)) {
 		console.log(
 			'[Join private game] Player is already in game or queue:',
@@ -483,6 +533,20 @@ export function* joinPrivateGame(
 		console.log(
 			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
 		)
+
+		spectatorGame.chat.push({
+			sender: {
+				type: 'viewer',
+				id: player.id,
+			},
+			message: formatText(`$s${player.name}$ started spectating.`),
+			createdAt: Date.now(),
+		})
+
+		broadcast(spectatorGame.getPlayers(), {
+			type: serverMessages.CHAT_UPDATE,
+			messages: spectatorGame.chat,
+		})
 
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
@@ -536,13 +600,39 @@ export function* joinPrivateGame(
 			return
 		}
 
+		if (!existingPlayer.deck) {
+			console.log(
+				'[Join private game]: Player waiting in queue has no deck! Code: ' +
+					code,
+			)
+			delete root.privateQueue[code]
+
+			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+			return
+		}
+
 		const newGame = setupGame(
 			player,
 			existingPlayer,
+			player.deck,
+			existingPlayer.deck,
 			root.privateQueue[code].gameCode,
 			root.privateQueue[code].spectatorCode,
+			root.privateQueue[code].apiSecret,
 		)
 		root.addGame(newGame)
+
+		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			const player = root.players[playerId]
+			newGame.chat.push({
+				sender: {
+					type: 'viewer',
+					id: player.id,
+				},
+				message: formatText(`$s${player.name}$ started spectating.`),
+				createdAt: Date.now(),
+			})
+		}
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
 			const viewer = newGame.components.new(ViewerComponent, {

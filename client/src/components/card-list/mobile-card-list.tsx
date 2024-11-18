@@ -5,13 +5,14 @@ import css from './card-list.module.scss'
 type CardListProps = {
 	cards: Array<LocalCardInstance>
 	tooltipAboveModal?: boolean
-	onClick?: (card: LocalCardInstance) => void
+	onSubtractionClick?: (card: LocalCardInstance) => void
 	onAdditionClick?: (card: LocalCardInstance) => void
 	small: boolean
 }
 
 const MobileCardList = (props: CardListProps) => {
-	const {onClick, onAdditionClick, cards, tooltipAboveModal, small} = props
+	const {onSubtractionClick, onAdditionClick, cards, tooltipAboveModal, small} =
+		props
 
 	const cardsWithAmounts: Array<Array<LocalCardInstance>> = []
 	cards.forEach((card) => {
@@ -26,7 +27,11 @@ const MobileCardList = (props: CardListProps) => {
 				return (
 					<MobileCardComponent
 						cards={cards}
-						onClick={onClick ? () => onClick(cards[0]) : undefined}
+						onSubtractionClick={
+							onSubtractionClick
+								? () => onSubtractionClick(cards[0])
+								: undefined
+						}
 						onAdditionClick={
 							onAdditionClick ? () => onAdditionClick(cards[0]) : undefined
 						}

@@ -1,5 +1,5 @@
 import {CardComponent} from '../components'
-import {TypeT} from '../types/cards'
+import {RankT, TypeT} from '../types/cards'
 import {DefaultDictionary} from '../types/game-state'
 import {getCardRank} from '../utils/ranks'
 import {Card, Hermit, isItem} from './types'
@@ -39,6 +39,18 @@ export function getCardImage(card: Card) {
 	return `/images/effects/${card.id}.png`
 }
 
+export function getRenderedCardImage(
+	card: Card,
+	displayTokenCost: boolean,
+	ext: 'webp' | 'png' = 'webp',
+) {
+	let id = card.id
+	if (displayTokenCost) {
+		id += '_with_tokens'
+	}
+	return `/images/cards/${id}.${ext}`
+}
+
 export function getCardTypeIcon(type: TypeT) {
 	return `/images/types/type-${type}.png`
 }
@@ -48,6 +60,10 @@ export function getCardRankIcon(card: Card) {
 	if (card.tokens === 0 || card.tokens === -1) {
 		return null
 	}
+	return getRankIcon(rank)
+}
+
+export function getRankIcon(rank: RankT) {
 	return `/images/ranks/${rank}.png`
 }
 

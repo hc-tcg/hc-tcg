@@ -150,7 +150,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps firefox
 
       - name: Create debug config
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
@@ -161,10 +161,7 @@ jobs:
       - name: Run Playwright tests
         run: npm run test:e2e
         env:
-          POSTGRES_HOST: 172.17.0.1
-          POSTGRES_USER: hctcg
-          POSTGRES_PASSWORD: hctcg
-          POSTGRES_PORT: 5432
+          DATABASE_URL: postgres://hctcg:hctcg@172.17.0.1:5432/hctcg
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -206,10 +203,7 @@ jobs:
       - name: Test Database
         run: npm run test:db
         env:
-          POSTGRES_HOST: 172.17.0.1
-          POSTGRES_USER: hctcg
-          POSTGRES_PASSWORD: hctcg
-          POSTGRES_PORT: 5432
+          DATABASE_URL: postgres://hctcg:hctcg@172.17.0.1:5432/hctcg
 
   build-docker:
     name: Test Can Build Docker Image

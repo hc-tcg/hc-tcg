@@ -9,6 +9,12 @@ import {
 	test,
 } from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
+import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
+import BuilderDoubleItem from 'common/cards/items/builder-rare'
+import Fortune from 'common/cards/single-use/fortune'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
@@ -20,7 +26,14 @@ describe('Test Database', () => {
 		name: 'Testing deck',
 		icon: 'balanced',
 		iconType: 'item',
-		cards: [0, 1, 2, 2, 3, 4, 4, 5, 4],
+		cards: [
+			BdoubleO100Common.numericId,
+			EthosLabCommon.numericId,
+			BalancedItem.numericId,
+			BuilderDoubleItem.numericId,
+			BuilderDoubleItem.numericId,
+			Fortune.numericId,
+		],
 		tags: [],
 	}
 
@@ -29,13 +42,6 @@ describe('Test Database', () => {
 		database = setupDatabase(
 			CARDS_LIST,
 			{
-				...{
-					POSTGRES_DATABASE: 'hctcg',
-					POSTGRES_USER: 'hctcg',
-					POSTGRES_PASSWORD: 'hctcg',
-					POSTGRES_HOST: 'localhost',
-					POSTGRES_PORT: '5432',
-				},
 				...process.env,
 				...env,
 			},
@@ -129,26 +135,9 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 1)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 2)
-				.length,
-		).toEqual(2)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 3)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 4)
-				.length,
-		).toEqual(3)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 5)
-				.length,
-		).toEqual(1)
+		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
@@ -190,6 +179,8 @@ describe('Test Database', () => {
 			'The deck should be created successfully',
 		)
 
+		// The buffer can be ignored for now. It will store replays in the future, but the data doesn't matter
+		// right now as replays aren't implemented yet
 		await database.insertGame(
 			winnerDeckCode.body,
 			loserDeckCode.body,
@@ -198,6 +189,30 @@ describe('Test Database', () => {
 			'player_won',
 			35000000,
 			winner.body.uuid,
+			'123456789ABCDEF',
+			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+		)
+
+		await database.insertGame(
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
+			'player_won',
+			35000000,
+			winner.body.uuid,
+			'123456789ABCDEF',
+			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+		)
+
+		await database.insertGame(
+			winnerDeckCode.body,
+			loserDeckCode.body,
+			winner.body.uuid,
+			loser.body.uuid,
+			'player_won',
+			35000000,
+			loser.body.uuid,
 			'123456789ABCDEF',
 			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
 		)
@@ -231,48 +246,68 @@ describe('Test Database', () => {
 			winningPlayerStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(winningPlayerStats.body.wins).toBe(1)
-		expect(winningPlayerStats.body.losses).toBe(0)
+		expect(winningPlayerStats.body.wins).toBe(2)
+		expect(winningPlayerStats.body.losses).toBe(1)
 		expect(winningPlayerStats.body.forfeitWins).toBe(0)
 		expect(winningPlayerStats.body.forfeitLosses).toBe(1)
 		expect(winningPlayerStats.body.ties).toBe(1)
-		expect(winningPlayerStats.body.gamesPlayed).toBe(3)
+		expect(winningPlayerStats.body.gamesPlayed).toBe(5)
 
 		const losingPlayerStats = await database.getUserStats(loser.body.uuid)
 		assert(
 			losingPlayerStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(losingPlayerStats.body.wins).toBe(0)
-		expect(losingPlayerStats.body.losses).toBe(1)
+		expect(losingPlayerStats.body.wins).toBe(1)
+		expect(losingPlayerStats.body.losses).toBe(2)
 		expect(losingPlayerStats.body.forfeitWins).toBe(1)
 		expect(losingPlayerStats.body.forfeitLosses).toBe(0)
 		expect(losingPlayerStats.body.ties).toBe(1)
-		expect(losingPlayerStats.body.gamesPlayed).toBe(3)
+		expect(losingPlayerStats.body.gamesPlayed).toBe(5)
 
 		const winningDeckStats = await database.getDeckStats(winnerDeckCode.body)
 		assert(
 			winningDeckStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(winningDeckStats.body.wins).toBe(1)
-		expect(winningDeckStats.body.losses).toBe(0)
+		expect(winningDeckStats.body.wins).toBe(2)
+		expect(winningDeckStats.body.losses).toBe(1)
 		expect(winningDeckStats.body.forfeitWins).toBe(0)
 		expect(winningDeckStats.body.forfeitLosses).toBe(1)
 		expect(winningDeckStats.body.ties).toBe(1)
-		expect(winningDeckStats.body.gamesPlayed).toBe(3)
+		expect(winningDeckStats.body.gamesPlayed).toBe(5)
 
 		const losingDeckStats = await database.getDeckStats(loserDeckCode.body)
 		assert(
 			losingDeckStats.type === 'success',
 			'The stats should be retrieved successfully',
 		)
-		expect(losingDeckStats.body.wins).toBe(0)
-		expect(losingDeckStats.body.losses).toBe(1)
+		expect(losingDeckStats.body.wins).toBe(1)
+		expect(losingDeckStats.body.losses).toBe(2)
 		expect(losingDeckStats.body.forfeitWins).toBe(1)
 		expect(losingDeckStats.body.forfeitLosses).toBe(0)
 		expect(losingDeckStats.body.ties).toBe(1)
-		expect(losingDeckStats.body.gamesPlayed).toBe(3)
+		expect(losingDeckStats.body.gamesPlayed).toBe(5)
+
+		const cardStats = await database.getCardsStats({before: null, after: null})
+
+		assert(
+			cardStats.type === 'success',
+			'The card stats should be retrieved successfully',
+		)
+
+		expect(
+			cardStats.body.find((card) => card.id === BdoubleO100Common.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === EthosLabCommon.numericId)
+				?.winrate,
+		).toEqual(0.5)
+		expect(
+			cardStats.body.find((card) => card.id === GeminiTayRare.numericId)
+				?.winrate,
+		).toEqual(undefined)
 	})
 
 	test('Update Username and Minecraft Name', async () => {
@@ -362,27 +397,18 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.icon).toBe('balanced')
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
+		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
 
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 1)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 2)
-				.length,
-		).toEqual(2)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 3)
-				.length,
-		).toEqual(1)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 4)
-				.length,
-		).toEqual(3)
-		expect(
-			returnedDeck.body.cards.filter((card) => card.props.numericId === 5)
-				.length,
-		).toEqual(1)
+		const allDecks = await database.getDecks(user.body.uuid)
+		assert(
+			allDecks.type === 'success',
+			'The deck should be retrieved successfully',
+		)
+		expect(allDecks.body[0].cards.map((c) => c.props.numericId)).toStrictEqual(
+			playerDeck.cards,
+		)
 	})
 
 	test('Returning decks with no tags or cards', async () => {

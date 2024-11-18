@@ -4,7 +4,13 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {Stats, User, UserWithoutSecret} from 'common/types/database'
+import {
+	CardStats,
+	DeckStats,
+	Stats,
+	User,
+	UserWithoutSecret,
+} from 'common/types/database'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -19,12 +25,14 @@ export type DatabaseResult<T = undefined> =
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	public connected: boolean
 	private bfDepth: number
 
 	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
 		this.pool = pool
 		this.allCards = allCards
 		this.bfDepth = bfDepth
+		this.connected = false
 	}
 
 	public async new() {
@@ -104,6 +112,8 @@ export class Database {
 				[this.allCards.map((card) => card.numericId)],
 			)
 			console.log('Database populated')
+
+			this.connected = true
 		} catch (e) {
 			console.log(e)
 			console.info('Running server without database...')
@@ -175,11 +185,10 @@ export class Database {
 		user_id: string,
 	): Promise<DatabaseResult<string>> {
 		try {
-			const deckResult = await this.pool.query(
-				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5) RETURNING (deck_code)',
+			await this.pool.query(
+				'INSERT INTO decks (user_id, name, icon, icon_type, deck_code) values ($1,$2,$3,$4,$5)',
 				[user_id, name, icon, iconType, code],
 			)
-			const deckCode: string = deckResult.rows[0]['deck_code']
 
 			const reformattedCards = cards.reduce(
 				(r: Array<{id: number; copies: number}>, card) => {
@@ -198,7 +207,7 @@ export class Database {
 					INSERT INTO deck_cards (deck_code,card_id,copies) SELECT * FROM UNNEST ($1::text[],$2::int[],$3::int[]) 
 					ON CONFLICT DO NOTHING`,
 				[
-					Array(reformattedCards.length).fill(deckCode),
+					Array(reformattedCards.length).fill(code),
 					reformattedCards.map((card) => card.id),
 					reformattedCards.map((card) => card.copies),
 				],
@@ -207,13 +216,13 @@ export class Database {
 			if (tagIds.length > 0) {
 				await this.pool.query(
 					'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[])',
-					[Array(tagIds.length).fill(deckCode), tagIds],
+					[Array(tagIds.length).fill(code), tagIds],
 				)
 			}
 
 			return {
 				type: 'success',
-				body: deckCode,
+				body: code,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
@@ -308,11 +317,14 @@ export class Database {
 					key: row['tag_id'],
 				}
 				const cardId: number | null = row['card_id']
-				const cards: Array<Card> = [
-					...Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === cardId),
-					),
-				]
+				const cards: Array<Card> =
+					cardId !== null
+						? [
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
+						: []
 
 				const foundDeck = allDecks.find((deck) => deck.code === code)
 
@@ -340,7 +352,11 @@ export class Database {
 					foundDeck.tags.push(tag)
 				}
 
-				if (foundDeck.cards.find((card) => card.props.numericId !== cardId)) {
+				if (
+					cardId !== null &&
+					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
+					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
+				) {
 					foundDeck.cards = [
 						...foundDeck.cards,
 						...cards.map((card) => toLocalCardInstance(card)),
@@ -601,6 +617,180 @@ export class Database {
 			return {type: 'failure', reason: `${e}`}
 		}
 	}
+
+	/**Get the current stats of */
+	public async getCardsStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<Array<CardStats>>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`
+				SELECT card_id, 
+				total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
+				cast(included_in_decks as decimal) / total_decks as rarity, 
+				cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
+					SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
+					count(CASE WHEN losses THEN 1 END) as losses, 
+					count(deck_code) as included_in_decks, 
+					sum(copies) as copies FROM (
+						SELECT cards.card_id,
+						deck_cards.deck_code,
+						deck_cards.copies,
+						games.winner_deck_code = deck_cards.deck_code as wins,
+						games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+						WHERE deck_cards.card_id > -1
+						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						) as result
+				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
+					`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: stats.rows.map((row): CardStats => {
+					return {
+						id: Number(row['card_id']),
+						winrate: row['winrate'] ? Number(row['winrate']) : null,
+						rarity: row['rarity'] ? Number(row['rarity']) : 0,
+						averageCopies: row['average_copies']
+							? Number(row['average_copies'])
+							: 0,
+					}
+				}),
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async getDecksStats({
+		before,
+		after,
+		offset,
+		orderBy,
+		minimumWins,
+	}: {
+		before: number | null
+		after: number | null
+		offset: number | null
+		orderBy: 'wins' | 'winrate' | null
+		minimumWins: number | null
+	}): Promise<DatabaseResult<Array<DeckStats>>> {
+		const limit = 20
+		console.log(orderBy)
+		try {
+			const decksResult = (
+				await this.pool.query(
+					`
+					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+					deck_cards.card_id,deck_cards.copies,
+					deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT 
+						deck_code,
+						count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses
+						FROM (
+							SELECT decks.deck_code,
+							games.winner_deck_code = decks.deck_code as wins,
+							games.loser_deck_code = decks.deck_code as losses FROM decks
+							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							LIMIT $3::int
+							OFFSET $3::int * $4::int
+						) as result
+					GROUP BY result.deck_code) as deck_code_list 
+					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
+					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+					WHERE wins > $6
+					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
+					`,
+					[
+						after,
+						before,
+						limit,
+						offset ? offset : 0,
+						orderBy ? orderBy : 'winrate',
+						minimumWins ? minimumWins : 50,
+					],
+				)
+			).rows
+
+			const decks = decksResult.reduce((allDecks: Array<DeckStats>, row) => {
+				const code: string = row['deck_code']
+				const name: string = row['name']
+				const icon: string = row['icon']
+				const iconType: string = row['icon_type']
+				const cardId: number | null = row['card_id']
+				const cards: Array<Card> =
+					cardId !== null
+						? [
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
+						: []
+
+				const winrate: string = row['winrate']
+				const wins: string = row['wins']
+				const losses: string = row['losses']
+
+				const foundDeck = allDecks.find((deck) => deck.deck.code === code)
+
+				if (!foundDeck) {
+					const newDeck: DeckStats = {
+						deck: {
+							code,
+							name,
+							icon,
+							//@ts-ignore
+							iconType,
+							tags: [],
+							cards:
+								cardId !== null
+									? cards.map((card) => toLocalCardInstance(card))
+									: [],
+						},
+						winrate: winrate ? Number(winrate) : null,
+						wins: Number(wins),
+						lossses: Number(losses),
+					}
+					return [...allDecks, newDeck]
+				}
+
+				if (
+					cardId !== null &&
+					foundDeck.deck.cards.find(
+						(card) => card.props.numericId !== cardId,
+					) &&
+					!foundDeck.deck.cards
+						.map((card) => card.props.numericId)
+						.includes(cardId)
+				) {
+					foundDeck.deck.cards = [
+						...foundDeck.deck.cards,
+						...cards.map((card) => toLocalCardInstance(card)),
+					]
+				}
+
+				return allDecks
+			}, [])
+
+			return {
+				type: 'success',
+				body: decks,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
 }
 
 export const setupDatabase = (
@@ -609,11 +799,7 @@ export const setupDatabase = (
 	bfDepth: number,
 ) => {
 	const pool = new Pool({
-		host: env.POSTGRES_HOST,
-		user: env.POSTGRES_USER,
-		password: env.POSTGRES_PASSWORD,
-		database: env.POSTGRES_DATABASE,
-		port: env.POSTGRES_PORT,
+		connectionString: env.DATABASE_URL,
 		max: 10,
 		idleTimeoutMillis: 0,
 		connectionTimeoutMillis: 2000,

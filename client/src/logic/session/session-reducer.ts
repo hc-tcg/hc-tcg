@@ -9,7 +9,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: Deck
+	playerDeck: Deck | null
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -91,7 +91,7 @@ const loginReducer = (
 		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: {...action.deck, code: action.deck.code},
+				playerDeck: action.deck,
 			}
 		case localMessages.TOAST_OPEN:
 			state.toast.push({
@@ -107,6 +107,11 @@ const loginReducer = (
 			const thisToast = state.toast.find((toast) => toast.id === action.id)
 			if (thisToast) thisToast.closed = true
 			if (state.toast.some((toast) => !toast.closed)) return state
+			return {
+				...state,
+				toast: [],
+			}
+		case localMessages.EVERY_TOAST_CLOSE:
 			return {
 				...state,
 				toast: [],

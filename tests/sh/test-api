@@ -13,26 +13,66 @@ HOST="http://localhost:$PORT"
 
 test_card_images_exist() {
   test_hermit=$(curl $HOST/api/cards | jq '.[] | select(.id == "ethoslab_common")')
-  image=$(echo $test_hermit | jq -r .image)
-  background=$(echo $test_hermit | jq -r .background)
+  image=$(echo $test_hermit | jq -r .images.default)
+  image_with_tokens=$(echo $test_hermit | jq -r '.images."with-token-cost"')
   hermit_image_output=$(mktemp)
-  hermit_background_output=$(mktemp)
+  hermit_image_output_with_tokens=$(mktemp)
   curl -f $image -o $hermit_image_output
-  curl -f $background -o $hermit_background_output
-  test -s $hermit_image_output
-  test -s $hermit_background_output
+  curl -f $image_with_tokens -o $hermit_image_output_with_tokens
+  test -s "$hermit_image_output"
+  test -s "$hermit_image_output_with_tokens"
 
   test_item=$(curl $HOST/api/cards | jq '.[] | select(.id == "item_builder_common")')
-  image=$(echo $test_item | jq -r .image)
+  image=$(echo $test_item | jq -r .images.default)
+  image_with_tokens=$(echo $test_hermit | jq -r '.images."with-token-cost"')
+  item_image_output=$(mktemp)
+  item_image_output_with_tokens=$(mktemp)
+  curl -f $image -o $item_image_output
+  curl -f $image_with_tokens -o $item_image_output_with_tokens
+  test -s "$item_image_output"
+  test -s "$item_image_output_with_tokens"
+
+  test_effect=$(curl $HOST/api/cards | jq '.[] | select(.id == "bed")')
+  image=$(echo $test_effect | jq -r .images.default)
+  image_with_tokens=$(echo $test_hermit | jq -r '.images."with-token-cost"')
+  effect_image_output=$(mktemp)
+  effect_image_output_with_tokens=$(mktemp)
+  curl -f $image -o $effect_image_output
+  curl -f $image_with_tokens -o $effect_image_output_with_tokens
+  test -s "$effect_image_output"
+  test -s "$effect_image_output_with_tokens"
+}
+
+test_type_images_exist() {
+  test_item=$(curl $HOST/api/types | jq '.[] | select(.type == "balanced")')
+  image=$(echo $test_item | jq -r .icon)
   item_image_output=$(mktemp)
   curl -f $image -o $item_image_output
   test -s "$item_image_output"
+}
 
-  test_effect=$(curl $HOST/api/cards | jq '.[] | select(.id == "bed")')
-  image=$(echo $test_effect | jq -r .image)
-  effect_image_output=$(mktemp)
-  curl -f $image -o $effect_image_output
-  test -s "$effect_image_output"
+test_type_images_exist() {
+  test_item=$(curl $HOST/api/types | jq '.[] | select(.rank == "stone")')
+  image=$(echo $test_item | jq -r .icon)
+  item_image_output=$(mktemp)
+  curl -f $image -o $item_image_output
+  test -s "$item_image_output"
+}
+
+test_type_images_exist() {
+  test_item=$(curl $HOST/api/types | jq '.[] | select(.type == "balanced")')
+  image=$(echo $test_item | jq -r .icon)
+  item_image_output=$(mktemp)
+  curl -f $image -o $item_image_output
+  test -s "$item_image_output"
+}
+
+test_rank_images_exist() {
+  test_item=$(curl $HOST/api/ranks | jq '.[] | select(.rank == "stone")')
+  image=$(echo $test_item | jq -r .icon)
+  item_image_output=$(mktemp)
+  curl -f $image -o $item_image_output
+  test -s "$item_image_output"
 }
 
 test_card_token_costs() {
@@ -53,3 +93,7 @@ echo 'Running `test_card_images_exist`'
 test_card_images_exist
 echo 'Running `test_card_token_costs`'
 test_card_token_costs
+echo 'Running `test_type_images_exist`'
+test_type_images_exist
+echo 'Running `test_rank_images_exist`'
+test_rank_images_exist

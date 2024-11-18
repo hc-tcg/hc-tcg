@@ -37,3 +37,51 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             APP_VERSION=${{ github.ref_name }}
+
+  announce:
+    name: Annouce Release
+    runs-on: ubuntu-latest
+    steps:
+        - name: Post Message to Discord
+          shell: bash
+          run: |
+            CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n\n$BODY";
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=$(echo $CONTENT|tr -d '\r');
+            CONTENT=${CONTENT//$'"'/\\\"};
+            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"roles\": [\"1076950211831803934\"]}}";
+            printf '%s' "$JSON";
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
+          env:
+            TAG_NAME: ${{ github.event.release.tag_name }}
+            BODY: ${{ github.event.release.body }}
+
+        - name: Check out repo
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 2
+
+        - name: Wait
+          run: sleep 9m 30s
+
+        - uses: superfly/flyctl-actions/setup-flyctl@master
+        - run: flyctl deploy --remote-only
+          env:
+            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+        - name: Post Release Up Message to Discord
+          shell: bash
+          run: |
+            HERMIT_EMOJI=$(echo """<:gem:1075864530770460794>
+            <:tango:1075864904885620836>
+            <:skizz:1252115228724822136>
+            <:doc:1075864526999797900>
+            <:etho:1075861454743404625>
+            <:bdubs:1075864519399706754>
+            <:keralis:1075864544410353755>
+            <:princessgem:1251820953537609819>""" | shuf -n1);
+            CONTENT="The release is now live $HERMIT_EMOJI";
+            JSON="{\"content\": \"$CONTENT\"}";
+            printf '%s' "$JSON";
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
+
