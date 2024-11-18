@@ -1,9 +1,9 @@
 import cn from 'classnames'
 import {PlayerEntity} from 'common/entities'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
+import Button from 'components/button'
 import {Modal} from 'components/modal'
 import css from './end-game-overlay.module.scss'
-import Button from 'components/button'
 
 type Props = {
 	outcome: GameOutcome

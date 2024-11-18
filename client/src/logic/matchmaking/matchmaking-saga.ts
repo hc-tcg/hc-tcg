@@ -44,6 +44,7 @@ function* createBossGameSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
+				console.log('Game end')
 				// Clear state and back to menu
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 				yield* put<LocalMessage>({type: localMessages.GAME_END})
@@ -171,7 +172,7 @@ function* privateLobbySaga() {
 						type: clientMessages.CANCEL_PRIVATE_GAME,
 					})
 				} else if (result.specateGameStart) {
-					// @todo
+					// @todo Figure out spectator games
 				} else if (result.specateWaitSuccess) {
 					yield* put<LocalMessage>({
 						type: localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR,

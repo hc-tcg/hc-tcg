@@ -3,7 +3,6 @@ import {Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {GameOutcome} from 'common/types/game-state'
 import {
 	CardStats,
 	DeckStats,
@@ -11,6 +10,7 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
+import {GameOutcome} from 'common/types/game-state'
 
 export type DatabaseResult<T = undefined> =
 	| {

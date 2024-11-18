@@ -1,4 +1,5 @@
 import {PlayerComponent} from 'common/components'
+import {AIComponent} from 'common/components/ai-component'
 import {
 	GameModel,
 	GameSettings,
@@ -19,8 +20,6 @@ import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {AIComponent} from 'common/components/ai-component'
-import {query} from 'express'
 
 type Props = {
 	player1: PlayerModel
@@ -97,161 +96,165 @@ export function* gameManagerSaga({
 	let gameModel: GameModel | undefined = undefined
 	let backgroundSagas: any = undefined
 
-	yield* setupGameSaga(gameProps, {
-		onGameStart: function* (game) {
-			// Player one is added to the ECS first, Player two is added second
-			gameModel = game
-			const players = game.components.filter(PlayerComponent)
+	let gameSaga = yield* fork(() =>
+		setupGameSaga(gameProps, {
+			onGameStart: function* (game) {
+				// Player one is added to the ECS first, Player two is added second
+				gameModel = game
+				const players = game.components.filter(PlayerComponent)
 
-			serverSideGame = new GameController({
-				game: game,
-				viewers,
-				playerOne: {
-					playerId: player1.id,
-					entity: players[0].entity,
-				},
-				playerTwo: {
-					playerId: player2 instanceof PlayerModel ? player2.id : null,
-					entity: players[1]?.entity,
-				},
-				props: gameProps,
-			})
-
-			viewers.forEach((p, index) => {
-				if (p.type === 'player') {
-					broadcast([root.players[p.id]], {
-						type: serverMessages.GAME_START,
-						props: gameProps,
-						playerEntity: players[index].entity,
-					})
-				} else {
-					broadcast([root.players[p.id]], {
-						type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-						game: serverSideGame.startupInformation(),
-					})
-				}
-			})
-
-			if (!(player2 instanceof PlayerModel)) {
-				yield* put<GameMessage>({
-					type: gameMessages.TURN_ACTION,
-					playerEntity: players[1].entity,
-					time: Date.now(),
-					gameId: game.id,
-					action: {
-						type: 'ADD_AI',
-						ai: player2.virtualAI,
+				serverSideGame = new GameController({
+					game: game,
+					viewers,
+					playerOne: {
+						playerId: player1.id,
+						entity: players[0].entity,
 					},
+					playerTwo: {
+						playerId: player2 instanceof PlayerModel ? player2.id : null,
+						entity: players[1]?.entity,
+					},
+					props: gameProps,
 				})
-			}
 
-			root.games[identifierInRootState] = serverSideGame
-
-			backgroundSagas = yield* fork(all, [
-				call(function* () {
-					while (true) {
-						let action = (yield* take(
-							localMessages.GAME_TURN_ACTION,
-						)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
-
-						assert(
-							action.time > game.lastTurnActionTime,
-							'Server should not recieve actions from the past',
-						)
-
-						if (game.state.order.includes(action.playerEntity)) {
-							yield* put<GameMessage>({
-								type: gameMessages.TURN_ACTION,
-								playerEntity: action.playerEntity,
-								action: action.action,
-								time: action.time,
-								gameId: game.id,
-							})
-						}
-					}
-				}),
-				call(function* () {
-					while (true) {
-						let action = (yield* take(
-							localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
-						)) as LocalMessageTable[typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION]
-
-						if (serverSideGame.viewers.find(({id}) => id == action.playerId)) {
-							broadcast([root.players[action.playerId]], {
-								type: serverMessages.GAME_RECONNECT_INFORMATION,
-								history: serverSideGame.history,
-								timer: serverSideGame.game.state.timer,
-							})
-						}
-					}
-				}),
-				call(function* () {
-					while (true) {
-						let playerRemoved = yield* take<
-							LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-						>(
-							(action: any) =>
-								action.type === localMessages.PLAYER_REMOVED &&
-								[
-									player1.id,
-									player2 instanceof PlayerModel ? player2.id : null,
-								].includes(
-									(
-										action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-									).player.id,
-								),
-						)
-
-						let playerEntity = serverSideGame.getPlayerComponentById(
-							playerRemoved.player.id,
-						)?.entity
-						assert(
-							playerEntity,
-							'Players that are not in the game can not disconect',
-						)
-
-						yield* put<GameMessage>({
-							type: gameMessages.TURN_ACTION,
-							playerEntity,
-							time: Date.now(),
-							gameId: game.id,
-							action: {
-								type: 'FORFEIT',
-								player: playerEntity,
-							},
+				viewers.forEach((p, index) => {
+					if (p.type === 'player') {
+						broadcast([root.players[p.id]], {
+							type: serverMessages.GAME_START,
+							props: gameProps,
+							playerEntity: players[index].entity,
+						})
+					} else {
+						broadcast([root.players[p.id]], {
+							type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+							game: serverSideGame.startupInformation(),
 						})
 					}
-				}),
-			])
-		},
-		onTurnAction: function* (
-			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
-			game,
-		) {
-			serverSideGame.history.push(action)
+				})
 
-			// Clients run the AI as well, so they do not need the turn action broadcasted to them.
-			if (
-				action.action.type !== 'ADD_AI' &&
-				game.components.exists(
-					AIComponent,
-					(_game, c) => c.playerEntity === action.playerEntity,
-				)
+				if (!(player2 instanceof PlayerModel)) {
+					yield* put<GameMessage>({
+						type: gameMessages.TURN_ACTION,
+						playerEntity: players[1].entity,
+						time: Date.now(),
+						gameId: game.id,
+						action: {
+							type: 'ADD_AI',
+							ai: player2.virtualAI,
+						},
+					})
+				}
+
+				root.games[identifierInRootState] = serverSideGame
+
+				backgroundSagas = yield* fork(all, [
+					call(function* () {
+						while (true) {
+							let action = (yield* take(
+								localMessages.GAME_TURN_ACTION,
+							)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+
+							assert(
+								action.time > game.lastTurnActionTime,
+								'Server should not recieve actions from the past',
+							)
+
+							if (game.state.order.includes(action.playerEntity)) {
+								yield* put<GameMessage>({
+									type: gameMessages.TURN_ACTION,
+									playerEntity: action.playerEntity,
+									action: action.action,
+									time: action.time,
+									gameId: game.id,
+								})
+							}
+						}
+					}),
+					call(function* () {
+						while (true) {
+							let action = (yield* take(
+								localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
+							)) as LocalMessageTable[typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION]
+
+							if (
+								serverSideGame.viewers.find(({id}) => id == action.playerId)
+							) {
+								broadcast([root.players[action.playerId]], {
+									type: serverMessages.GAME_RECONNECT_INFORMATION,
+									history: serverSideGame.history,
+									timer: serverSideGame.game.state.timer,
+								})
+							}
+						}
+					}),
+					call(function* () {
+						while (true) {
+							let playerRemoved = yield* take<
+								LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+							>(
+								(action: any) =>
+									action.type === localMessages.PLAYER_REMOVED &&
+									[
+										player1.id,
+										player2 instanceof PlayerModel ? player2.id : null,
+									].includes(
+										(
+											action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+										).player.id,
+									),
+							)
+
+							let playerEntity = serverSideGame.getPlayerComponentById(
+								playerRemoved.player.id,
+							)?.entity
+							assert(
+								playerEntity,
+								'Players that are not in the game can not disconect',
+							)
+
+							yield* put<GameMessage>({
+								type: gameMessages.TURN_ACTION,
+								playerEntity,
+								time: Date.now(),
+								gameId: game.id,
+								action: {
+									type: 'FORFEIT',
+									player: playerEntity,
+								},
+							})
+						}
+					}),
+				])
+			},
+			onTurnAction: function* (
+				action: GameMessageTable[typeof gameMessages.TURN_ACTION],
+				game,
 			) {
-				return
-			}
+				serverSideGame.history.push(action)
 
-			let gameStateHash = game.getStateHash()
+				// Clients run the AI as well, so they do not need the turn action broadcasted to them.
+				if (
+					action.action.type !== 'ADD_AI' &&
+					game.components.exists(
+						AIComponent,
+						(_game, c) => c.playerEntity === action.playerEntity,
+					)
+				) {
+					return
+				}
 
-			serverSideGame.broadcastToViewers({
-				type: serverMessages.GAME_TURN_ACTION,
-				playerEntity: action.playerEntity,
-				action: action.action,
-				time: action.time,
-				gameStateHash,
-			})
-		},
-	})
+				let gameStateHash = game.getStateHash()
+
+				serverSideGame.broadcastToViewers({
+					type: serverMessages.GAME_TURN_ACTION,
+					playerEntity: action.playerEntity,
+					action: action.action,
+					time: action.time,
+					gameStateHash,
+				})
+			},
+		}),
+	)
 
 	let gameOutcome = (yield* take<
 		GameMessageTable[typeof gameMessages.GAME_END]
@@ -262,9 +265,8 @@ export function* gameManagerSaga({
 		'The sagas running in the background of the game should be set when the game is started',
 	)
 
+	yield* cancel(gameSaga)
 	yield* cancel(backgroundSagas)
-
-	assert(gameModel, 'This is set when the game starts')
 
 	if (
 		player2 instanceof PlayerModel &&
@@ -277,7 +279,7 @@ export function* gameManagerSaga({
 			player1,
 			player2,
 			gameOutcome,
-			Date.now() - (gameModel as GameModel).createdTime,
+			Date.now() - (gameModel as unknown as GameModel).createdTime,
 			'', //@TODO Add seed
 			Buffer.from([0x00]),
 		)

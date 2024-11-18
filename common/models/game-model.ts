@@ -4,7 +4,6 @@ import {
 	RowComponent,
 	SlotComponent,
 } from '../components'
-import {AIComponent} from '../components/ai-component'
 import query, {ComponentQuery} from '../components/query'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
