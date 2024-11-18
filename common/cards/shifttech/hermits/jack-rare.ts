@@ -8,7 +8,7 @@ import {Hermit} from '../../types'
 const JackCommon: Hermit = {
 	...hermit,
 	id: 'jack_rare',
-	numericId: 131,
+	numericId: 132,
 	name: 'Jack',
 	expansion: 'shifttech',
 	rarity: 'rare',
@@ -45,6 +45,21 @@ const JackCommon: Hermit = {
 				const coinFlip = flipCoin(player, attack.attacker)
 
 				if (coinFlip[0] === 'heads') {
+					const playerDeck = player.getDeck().sort(CardComponent.compareOrder)
+
+					let item: CardComponent | null = null
+
+					let i = 0
+					while (!playerDeck[i].isItem() && i < playerDeck.length) {
+						i += 1
+					}
+					if (i < playerDeck.length) {
+						item = playerDeck[i]
+					}
+
+					if (item) {
+						item.draw()
+					}
 				}
 			},
 		)
