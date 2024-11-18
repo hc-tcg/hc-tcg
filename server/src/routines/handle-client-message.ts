@@ -10,6 +10,7 @@ import {
 	authenticateUser,
 	deleteDeck,
 	deleteTag,
+	exportDeck,
 	getDecks,
 	getStats,
 	importDeck,
@@ -113,6 +114,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.IMPORT_DECK:
 			return yield* importDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.EXPORT_DECK:
+			return yield* exportDeck(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.DELETE_DECK:

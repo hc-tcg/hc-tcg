@@ -26,6 +26,7 @@ export const clientMessages = messages({
 	GET_DECKS: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
+	EXPORT_DECK: null,
 	INSERT_DECKS: null,
 	IMPORT_DECK: null,
 	DELETE_DECK: null,
@@ -78,6 +79,10 @@ export type ClientMessages = [
 		type: typeof clientMessages.IMPORT_DECK
 		code: string
 		newActiveDeck?: string
+	},
+	{
+		type: typeof clientMessages.EXPORT_DECK
+		code: string
 	},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},

@@ -6,13 +6,13 @@ import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
 import {CancelGameBody} from './schema'
 import {
 	CardStatsQuery,
-	DeckStatParams,
+	DeckStatQuery,
 	StatsHeader,
 	getCardStats,
 	getDeckStats,
 	getStats,
 } from './stats'
-import {requestUrlRoot} from './utils'
+import {NumberOrNull, requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
@@ -58,24 +58,25 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/hof/cards', async (req, res) => {
-		let query = CardStatsQuery.parse(req.params)
+		let query = CardStatsQuery.parse(req.query)
 		res.send(
 			await getCardStats({
-				before: query.before || null,
-				after: query.after || null,
+				before: NumberOrNull(query.before),
+				after: NumberOrNull(query.after),
+				orderBy: query.orderBy || null,
 			}),
 		)
 	})
 
 	app.get('/api/hof/decks', async (req, res) => {
-		let query = DeckStatParams.parse(req.params)
+		let query = DeckStatQuery.parse(req.query)
 		res.send(
 			await getDeckStats({
-				before: query.before || null,
-				after: query.after || null,
-				offset: query.offset || null,
+				before: NumberOrNull(query.before),
+				after: NumberOrNull(query.after),
+				offset: NumberOrNull(query.offset),
 				orderBy: query.orderBy || null,
-				minimumWins: query.minimumWins || null,
+				minimumWins: NumberOrNull(query.minimumWins),
 			}),
 		)
 	})

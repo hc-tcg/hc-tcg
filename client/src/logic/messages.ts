@@ -90,6 +90,7 @@ export const localMessages = messages({
 	UPDATE_DECKS: null,
 	SELECT_DECK: null,
 	IMPORT_DECK: null,
+	EXPORT_DECK: null,
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
@@ -232,6 +233,7 @@ type Messages = [
 		code: string
 		newActiveDeck?: string
 	},
+	{type: typeof localMessages.EXPORT_DECK; code: string},
 	{type: typeof localMessages.NEW_PLAYER},
 	{
 		type: typeof localMessages.SHOW_TOOLTIP

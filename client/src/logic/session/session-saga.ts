@@ -363,6 +363,15 @@ export function* databaseConnectionSaga() {
 			})
 		},
 	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.EXPORT_DECK]>(
+		localMessages.EXPORT_DECK,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.EXPORT_DECK,
+				code: action.code,
+			})
+		},
+	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_DECK]>(
 		localMessages.DELETE_DECK,
 		function* (action) {

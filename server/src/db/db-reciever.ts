@@ -243,6 +243,32 @@ export function* importDeck(
 	if (action.payload.newActiveDeck) yield* getDecks(action as any)
 }
 
+export function* exportDeck(
+	action: RecievedClientMessage<typeof clientMessages.EXPORT_DECK>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setAsExported],
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
+}
+
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
@@ -256,7 +282,7 @@ export function* deleteDeck(
 	}
 
 	const result = yield* call(
-		[root.db, root.db.disassociateDeck],
+		[root.db, root.db.deleteDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)

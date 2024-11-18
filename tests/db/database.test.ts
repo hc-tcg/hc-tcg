@@ -289,7 +289,11 @@ describe('Test Database', () => {
 		expect(losingDeckStats.body.ties).toBe(1)
 		expect(losingDeckStats.body.gamesPlayed).toBe(5)
 
-		const cardStats = await database.getCardsStats({before: null, after: null})
+		const cardStats = await database.getCardsStats({
+			before: null,
+			after: null,
+			orderBy: null,
+		})
 
 		assert(
 			cardStats.type === 'success',
@@ -466,7 +470,7 @@ describe('Test Database', () => {
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
 
-		await database.disassociateDeck(code.body, user.body.uuid)
+		await database.deleteDeck(code.body, user.body.uuid)
 
 		const returnedDeckFromId = await database.getDeckFromID(code.body)
 		const userDecks = await database.getDecks(user.body.uuid)

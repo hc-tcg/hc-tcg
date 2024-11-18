@@ -25,7 +25,8 @@ export type Stats = {
 export type CardStats = {
 	id: number
 	winrate: number | null
-	rarity: number
+	deck_usage: number
+	game_usage: number
 	averageCopies: number
 }
 

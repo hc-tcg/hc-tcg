@@ -215,6 +215,7 @@ function SelectDeck({
 		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
 		setLoadedDeck(newSavedDecks[0])
+		setShowDeleteDeckModal(false)
 	}
 	const duplicateDeck = (deck: Deck) => {
 		const newDeck = {
