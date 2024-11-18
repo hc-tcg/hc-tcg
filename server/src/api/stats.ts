@@ -84,7 +84,6 @@ export async function getDeckStats(params: {
 	orderBy: 'wins' | 'winrate' | null
 	minimumWins: number | null
 }) {
-	console.log(params)
 	let decks = await root.db.getDecksStats(params)
 
 	if (decks.type === 'failure') {

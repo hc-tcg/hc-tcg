@@ -238,7 +238,7 @@ export class Database {
 			const deck = (
 				await this.pool.query(
 					`SELECT
-						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,decks.show_info,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
@@ -249,9 +249,10 @@ export class Database {
 					[deckCode],
 				)
 			).rows
+			const showAllInfo = deck[0]['show_info']
 			const code = deck[0]['deck_code']
-			const name = deck[0]['name']
-			const icon = deck[0]['icon']
+			const name = showAllInfo ? deck[0]['name'] : null
+			const icon = showAllInfo ? deck[0]['icon'] : null
 			const iconType = deck[0]['icon_type']
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
@@ -421,6 +422,22 @@ export class Database {
 			await this.pool.query(
 				'UPDATE decks SET exported = TRUE WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
+			)
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async setShowData(
+		newShowData: boolean,
+		deckCode: string,
+		user_id: string,
+	): Promise<DatabaseResult> {
+		try {
+			await this.pool.query(
+				'UPDATE decks SET set_info = $1 WHERE deck_code = $2 AND user_id = $3',
+				[newShowData, deckCode, user_id],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {

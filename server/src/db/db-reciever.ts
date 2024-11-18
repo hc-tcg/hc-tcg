@@ -216,7 +216,7 @@ export function* importDeck(
 
 	const code = action.payload.code
 
-	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code)
+	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code, true)
 
 	if (importedDeck.type !== 'success') return
 
