@@ -87,8 +87,18 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
-		observer.subscribe(player.hooks.onActiveRowChange, () => {
-			if (game.currentPlayerEntity === player.entity) blockActions()
+		observer.subscribe(player.hooks.onActiveRowChange, (oldHermit) => {
+			if (game.currentPlayerEntity !== player.entity) return
+			if (oldHermit === null) {
+				blockActions()
+			} else {
+				game.removeBlockedActions(
+					this.icon,
+					'CHANGE_ACTIVE_HERMIT',
+					'SINGLE_USE_ATTACK',
+					'END_TURN',
+				)
+			}
 		})
 		observer.subscribe(player.hooks.afterApply, blockActions)
 		observer.subscribe(player.hooks.onAttach, blockActions)
