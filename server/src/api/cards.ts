@@ -146,7 +146,6 @@ export async function getDeckInformation(url: string, hash: string) {
 		}
 	} else {
 		let deck = await root.db?.getDeckFromID(hash)
-		console.log(deck)
 		if (!deck)
 			return {
 				type: 'failure',

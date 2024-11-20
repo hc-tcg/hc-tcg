@@ -97,3 +97,27 @@ export async function getDeckStats(params: {
 		success: decks,
 	}
 }
+
+export const TypeDistributionStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+})
+
+export async function getTypeDistributionStats(params: {
+	before: number | null
+	after: number | null
+}) {
+	let decks = await root.db.getTypeDistribution(params)
+	console.log(decks)
+
+	if (decks.type === 'failure') {
+		return {
+			type: 'failure',
+			reason: decks.reason,
+		}
+	}
+
+	return {
+		success: decks,
+	}
+}

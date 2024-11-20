@@ -8,6 +8,7 @@ import {
 	CardStats,
 	DeckStats,
 	Stats,
+	TypeDistributionStats,
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
@@ -285,6 +286,7 @@ export class Database {
 					iconType,
 					cards: cards.map((card) => toLocalCardInstance(card)),
 					tags,
+					public: showAllInfo,
 				},
 			}
 		} catch (e) {
@@ -312,6 +314,7 @@ export class Database {
 
 			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
 				const code: string = row['deck_code']
+				const showInfo: boolean = row['show_info']
 				const name: string = row['name']
 				const icon: string = row['icon']
 				const iconType: string = row['icon_type']
@@ -337,6 +340,7 @@ export class Database {
 						code,
 						name,
 						icon,
+						public: showInfo,
 						//@ts-ignore
 						iconType,
 						tags: tag.key !== null ? [tag] : [],
@@ -436,7 +440,7 @@ export class Database {
 	): Promise<DatabaseResult> {
 		try {
 			await this.pool.query(
-				'UPDATE decks SET set_info = $1 WHERE deck_code = $2 AND user_id = $3',
+				'UPDATE decks SET show_info = $1 WHERE deck_code = $2 AND user_id = $3',
 				[newShowData, deckCode, user_id],
 			)
 			return {type: 'success', body: undefined}
@@ -672,7 +676,7 @@ export class Database {
 		}
 	}
 
-	/**Get the current stats of */
+	/**Get the current stats of cards*/
 	public async getCardsStats({
 		before,
 		after,
@@ -741,6 +745,7 @@ export class Database {
 		}
 	}
 
+	/**Get the current stats of decks */
 	public async getDecksStats({
 		before,
 		after,
@@ -856,6 +861,148 @@ export class Database {
 			return {
 				type: 'success',
 				body: decks,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the type distribution of decks*/
+	public async getTypeDistribution({
+		before,
+		after,
+	}: {
+		before: number | null
+		after: number | null
+	}): Promise<DatabaseResult<TypeDistributionStats>> {
+		try {
+			const stats = await this.pool.query(
+				`
+				SELECT
+				cast(balanced_a as decimal) / total_amount as balanced_usage,
+				cast(builder_a as decimal) / total_amount as builder_usage,
+				cast(explorer_a as decimal) / total_amount as explorer_usage,
+				cast(farm_a as decimal) / total_amount as farm_usage,
+				cast(miner_a as decimal) / total_amount as miner_usage,
+				cast(prankster_a as decimal) / total_amount as prankster_usage,
+				cast(pvp_a as decimal) / total_amount as pvp_usage,
+				cast(redstone_a as decimal) / total_amount as redstone_usage,
+				cast(speedrunner_a as decimal) / total_amount as speedrunner_usage,
+				cast(terraform_a as decimal) / total_amount as terraform_usage,
+				cast(balanced_w as decimal) / NULLIF(balanced_w + balanced_l,0) as balanced_winrate,
+				cast(builder_w as decimal) / NULLIF(builder_w + builder_l,0) as builder_winrate,
+				cast(explorer_w as decimal) / NULLIF(explorer_w + explorer_l,0) as explorer_winrate,
+				cast(farm_w as decimal) / NULLIF(farm_w + farm_l,0) as farm_winrate,
+				cast(miner_w as decimal) / NULLIF(miner_w + miner_l,0) as miner_winrate,
+				cast(prankster_w as decimal) / NULLIF(prankster_w + prankster_l,0) as prankster_winrate,
+				cast(pvp_w as decimal) / NULLIF(pvp_w + pvp_l,0) as pvp_winrate,
+				cast(redstone_w as decimal) / NULLIF(redstone_w + balanced_l,0) as redstone_winrate,
+				cast(speedrunner_w as decimal) / NULLIF(speedrunner_w + speedrunner_l,0) as speedrunner_winrate,
+				cast(terraform_w as decimal) / NULLIF(terraform_w + terraform_l,0) as terraform_winrate
+				FROM (SELECT 
+						count(CASE WHEN card_id = 49 OR card_id = 50 THEN 1 END) as balanced_a,
+						count(CASE WHEN card_id = 51 OR card_id = 52 THEN 1 END) as builder_a,
+						count(CASE WHEN card_id = 53 OR card_id = 54 THEN 1 END) as explorer_a,
+						count(CASE WHEN card_id = 55 OR card_id = 56 THEN 1 END) as farm_a,
+						count(CASE WHEN card_id = 57 OR card_id = 58 THEN 1 END) as miner_a,
+						count(CASE WHEN card_id = 59 OR card_id = 60 THEN 1 END) as prankster_a,
+						count(CASE WHEN card_id = 61 OR card_id = 62 THEN 1 END) as pvp_a,
+						count(CASE WHEN card_id = 63 OR card_id = 64 THEN 1 END) as redstone_a,
+						count(CASE WHEN card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_a,
+						count(CASE WHEN card_id = 67 OR card_id = 68 THEN 1 END) as terraform_a,
+						count(CASE WHEN win AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_w,
+						count(CASE WHEN win AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_w,
+						count(CASE WHEN win AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_w,
+						count(CASE WHEN win AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_w,
+						count(CASE WHEN win AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_w,
+						count(CASE WHEN win AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_w,
+						count(CASE WHEN win AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_w,
+						count(CASE WHEN win AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_w,
+						count(CASE WHEN win AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_w,
+						count(CASE WHEN win AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_w,
+						count(CASE WHEN loss AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_l,
+						count(CASE WHEN loss AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_l,
+						count(CASE WHEN loss AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_l,
+						count(CASE WHEN loss AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_l,
+						count(CASE WHEN loss AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_l,
+						count(CASE WHEN loss AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_l,
+						count(CASE WHEN loss AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_l,
+						count(CASE WHEN loss AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_l,
+						count(CASE WHEN loss AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_l,
+						count(CASE WHEN loss AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_l,
+						count(card_id) as total_amount
+						FROM (
+							SELECT deck_cards.card_id,
+							games.winner_deck_code = decks.deck_code as win,
+							games.loser_deck_code = decks.deck_code as loss
+							FROM decks
+							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code
+							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							WHERE deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						)
+					)
+						`,
+				[after, before],
+			)
+
+			const info = stats.rows[0]
+
+			return {
+				type: 'success',
+				body: [
+					{
+						type: 'balanced',
+						usage: Number(info['balanced_usage']),
+						winrate: Number(info['balanced_winrate']),
+					},
+					{
+						type: 'builder',
+						usage: Number(info['builder_usage']),
+						winrate: Number(info['builder_winrate']),
+					},
+					{
+						type: 'explorer',
+						usage: Number(info['explorer_usage']),
+						winrate: Number(info['explorer_winrate']),
+					},
+					{
+						type: 'farm',
+						usage: Number(info['farm_usage']),
+						winrate: Number(info['farm_winrate']),
+					},
+					{
+						type: 'miner',
+						usage: Number(info['miner_usage']),
+						winrate: Number(info['miner_winrate']),
+					},
+					{
+						type: 'prankster',
+						usage: Number(info['prankster_usage']),
+						winrate: Number(info['prankster_winrate']),
+					},
+					{
+						type: 'pvp',
+						usage: Number(info['pvp_usage']),
+						winrate: Number(info['pvp_winrate']),
+					},
+					{
+						type: 'redstone',
+						usage: Number(info['redstone_usage']),
+						winrate: Number(info['redstone_winrate']),
+					},
+					{
+						type: 'speedrunner',
+						usage: Number(info['speedrunner_usage']),
+						winrate: Number(info['speedrunner_winrate']),
+					},
+					{
+						type: 'terraform',
+						usage: Number(info['terraform_usage']),
+						winrate: Number(info['terraform_winrate']),
+					},
+				],
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}

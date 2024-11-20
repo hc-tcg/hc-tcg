@@ -121,6 +121,7 @@ function SelectDeck({
 		cards: [],
 		code: generateDatabaseCode(),
 		tags: [],
+		public: false,
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =

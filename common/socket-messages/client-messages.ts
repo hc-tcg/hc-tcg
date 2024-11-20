@@ -27,6 +27,7 @@ export const clientMessages = messages({
 	GET_STATS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
+	MAKE_INFO_PUBLIC: null,
 	INSERT_DECKS: null,
 	IMPORT_DECK: null,
 	DELETE_DECK: null,
@@ -83,6 +84,11 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.EXPORT_DECK
 		code: string
+	},
+	{
+		type: typeof clientMessages.MAKE_INFO_PUBLIC
+		code: string
+		public: boolean
 	},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},

@@ -269,6 +269,33 @@ export function* exportDeck(
 	}
 }
 
+export function* setShowData(
+	action: RecievedClientMessage<typeof clientMessages.MAKE_INFO_PUBLIC>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setShowData],
+		action.payload.public,
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
+}
+
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {

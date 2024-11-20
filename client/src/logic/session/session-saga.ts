@@ -109,6 +109,7 @@ function* insertUser(socket: any) {
 				icon: 'any',
 				tags: [],
 				cards: getStarterPack().map((card) => toLocalCardInstance(card)),
+				public: false,
 			}
 
 			yield* sendMsg({
@@ -142,7 +143,7 @@ function* setupData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: localStorageDecks,
+				value: localStorageDecks.map((deck) => ({...deck, public: false})),
 			},
 		})
 		yield* put<LocalMessage>({
@@ -369,6 +370,16 @@ export function* databaseConnectionSaga() {
 			yield* sendMsg({
 				type: clientMessages.EXPORT_DECK,
 				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.MAKE_INFO_PUBLIC]>(
+		localMessages.MAKE_INFO_PUBLIC,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.MAKE_INFO_PUBLIC,
+				code: action.code,
+				public: action.public,
 			})
 		},
 	)

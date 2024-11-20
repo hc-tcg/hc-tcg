@@ -70,6 +70,7 @@ export const ImportModal = ({
 			cards: deck,
 			code: generateDatabaseCode(),
 			tags: [],
+			public: false,
 		})
 
 		onClose()
@@ -149,6 +150,7 @@ export const ImportModal = ({
 					cards: deck,
 					code: generateDatabaseCode(),
 					tags: [],
+					public: false,
 				})
 			})
 

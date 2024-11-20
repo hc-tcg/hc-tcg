@@ -239,9 +239,11 @@ function EditDeck({
 					cards: [],
 					code: generateDatabaseCode(),
 					tags: [],
+					public: false,
 				},
 	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
+	const [isPublic, setIsPublic] = useState<boolean>(loadedDeck.public)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
@@ -368,6 +370,24 @@ function EditDeck({
 	}
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
+
+		// Check they are different
+		if (
+			newDeck.name === loadedDeck.name &&
+			newDeck.icon === loadedDeck.icon &&
+			newDeck.cards === loadedDeck.cards &&
+			newDeck.tags === loadedDeck.tags
+		) {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Deck Saved!',
+				description: `Saved ${newDeck.name}`,
+				image: getIconPath(newDeck),
+			})
+			back()
+			return
+		}
 
 		// Delete the old version of the deck
 		if (initialDeckState) {
@@ -659,6 +679,25 @@ function EditDeck({
 										className={css.removeButton}
 									>
 										Remove All
+									</Button>
+								</div>
+								<div className={css.editDeckInfoSettings}>
+									Show deck name and icon
+									<div className={css.spacingItem}></div>
+									<Button
+										variant="default"
+										size="small"
+										onClick={() => {
+											dispatch({
+												type: localMessages.MAKE_INFO_PUBLIC,
+												code: loadedDeck.code,
+												public: !isPublic,
+											})
+											setIsPublic(!isPublic)
+										}}
+										className={css.removeButton}
+									>
+										{isPublic ? 'Yes' : 'No'}
 									</Button>
 								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>

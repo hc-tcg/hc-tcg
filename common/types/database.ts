@@ -1,3 +1,4 @@
+import {TypeT} from './cards'
 import {Deck} from './deck'
 
 export type User = {
@@ -36,6 +37,12 @@ export type DeckStats = {
 	lossses: number
 	winrate: number | null
 }
+
+export type TypeDistributionStats = Array<{
+	type: TypeT
+	usage: number
+	winrate: number
+}>
 
 export type Achievement = {
 	id: string

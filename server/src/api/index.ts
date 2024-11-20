@@ -8,9 +8,11 @@ import {
 	CardStatsQuery,
 	DeckStatQuery,
 	StatsHeader,
+	TypeDistributionStatsQuery,
 	getCardStats,
 	getDeckStats,
 	getStats,
+	getTypeDistributionStats,
 } from './stats'
 import {NumberOrNull, requestUrlRoot} from './utils'
 
@@ -57,7 +59,7 @@ export function addApi(app: Express) {
 		res.send(await getStats(root.db, header))
 	})
 
-	app.get('/api/hof/cards', async (req, res) => {
+	app.get('/api/stats/cards', async (req, res) => {
 		let query = CardStatsQuery.parse(req.query)
 		res.send(
 			await getCardStats({
@@ -68,7 +70,7 @@ export function addApi(app: Express) {
 		)
 	})
 
-	app.get('/api/hof/decks', async (req, res) => {
+	app.get('/api/stats/decks', async (req, res) => {
 		let query = DeckStatQuery.parse(req.query)
 		res.send(
 			await getDeckStats({
@@ -77,6 +79,16 @@ export function addApi(app: Express) {
 				offset: NumberOrNull(query.offset),
 				orderBy: query.orderBy || null,
 				minimumWins: NumberOrNull(query.minimumWins),
+			}),
+		)
+	})
+
+	app.get('/api/stats/typeDistribution', async (req, res) => {
+		let query = TypeDistributionStatsQuery.parse(req.query)
+		res.send(
+			await getTypeDistributionStats({
+				before: NumberOrNull(query.before),
+				after: NumberOrNull(query.after),
 			}),
 		)
 	})

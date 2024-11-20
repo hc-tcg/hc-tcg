@@ -91,6 +91,7 @@ export const localMessages = messages({
 	SELECT_DECK: null,
 	IMPORT_DECK: null,
 	EXPORT_DECK: null,
+	MAKE_INFO_PUBLIC: null,
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
@@ -234,6 +235,7 @@ type Messages = [
 		newActiveDeck?: string
 	},
 	{type: typeof localMessages.EXPORT_DECK; code: string},
+	{type: typeof localMessages.MAKE_INFO_PUBLIC; code: string; public: boolean},
 	{type: typeof localMessages.NEW_PLAYER},
 	{
 		type: typeof localMessages.SHOW_TOOLTIP
