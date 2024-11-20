@@ -2,6 +2,7 @@ import assert from 'assert'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
+import {SingleUse} from '../cards/types'
 
 export function applySingleUse(
 	game: GameModel,
@@ -34,4 +35,21 @@ export function applySingleUse(
 	currentPlayer.hooks.afterApply.call()
 
 	return
+}
+
+export function applyCard(card: CardComponent<SingleUse>) {
+	const {player} = card.slot
+
+	player.hooks.beforeApply.callSome(
+		[],
+		(instance) => instance === card.observerEntity,
+	)
+	player.hooks.onApply.callSome(
+		[],
+		(instance) => instance === card.observerEntity,
+	)
+	player.hooks.afterApply.callSome(
+		[],
+		(instance) => instance === card.observerEntity,
+	)
 }

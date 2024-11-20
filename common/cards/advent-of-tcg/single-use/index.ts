@@ -2,10 +2,12 @@ import {Card} from '../../types'
 import Allay from './allay'
 import ArrowOfPoison from './arrow-of-poison'
 import Brush from './brush'
+import Bundle from './bundle'
 import Candle from './candle'
 import Dropper from './dropper'
 import Feather from './feather'
 import FletchingTable from './fletching-table'
+import FullBundle from './full_bundle'
 import Glowstone from './glowstone'
 import Lantern from './lantern'
 import MiningFatigue from './mining-fatigue'
@@ -20,10 +22,12 @@ const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
 	ArrowOfPoison,
 	Allay,
+	Bundle,
 	Candle,
 	Dropper,
 	Feather,
 	FletchingTable,
+	FullBundle,
 	Brush,
 	Glowstone,
 	Lantern,
