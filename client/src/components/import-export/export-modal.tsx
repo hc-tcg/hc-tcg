@@ -1,8 +1,8 @@
 import {Deck} from 'common/types/deck'
 import {Modal} from 'components/modal'
 import {CopyIcon} from 'components/svgs'
-import css from './import-export.module.scss'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean

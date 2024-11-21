@@ -6,12 +6,12 @@ import {getDeckFromHash} from 'common/utils/import-export'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
 import {Modal} from 'components/modal'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useRef, useState} from 'react'
+import {useSelector} from 'react-redux'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
-import {useSelector} from 'react-redux'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setOpen: boolean

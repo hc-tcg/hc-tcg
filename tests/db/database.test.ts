@@ -122,6 +122,12 @@ describe('Test Database', () => {
 			user.body.uuid,
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
+		const showData = await database.setShowData(true, code.body, user.body.uuid)
+
+		assert(
+			showData.type === 'success',
+			'The deck should properly be marked as visible',
+		)
 
 		const returnedDeck = await database.getDeckFromID(code.body)
 
@@ -390,20 +396,34 @@ describe('Test Database', () => {
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
 
-		const returnedDeck = await database.getDeckFromID(code.body)
+		// Before show data is set
+		const returnedDeckWithoutData = await database.getDeckFromID(code.body)
 
 		assert(
-			returnedDeck.type === 'success',
+			returnedDeckWithoutData.type === 'success',
 			'The deck should be retrieved successfully',
 		)
 
-		expect(returnedDeck.body.name).toBe('Testing deck')
-		expect(returnedDeck.body.icon).toBe('balanced')
-		expect(returnedDeck.body.iconType).toBe('item')
-		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
-		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
-			playerDeck.cards,
+		expect(returnedDeckWithoutData.body.name).toBeNull()
+		expect(returnedDeckWithoutData.body.icon).toBeNull()
+		expect(returnedDeckWithoutData.body.iconType).toBeNull()
+
+		// After show data is set
+		await database.setShowData(true, code.body, user.body.uuid)
+		const returnedDeckWithData = await database.getDeckFromID(code.body)
+
+		assert(
+			returnedDeckWithData.type === 'success',
+			'The deck should be retrieved successfully',
 		)
+
+		expect(returnedDeckWithData.body.name).toBe('Testing deck')
+		expect(returnedDeckWithData.body.icon).toBe('balanced')
+		expect(returnedDeckWithData.body.iconType).toBe('item')
+		expect(returnedDeckWithData.body.tags).toStrictEqual([tag.body])
+		expect(
+			returnedDeckWithData.body.cards.map((c) => c.props.numericId),
+		).toStrictEqual(playerDeck.cards)
 
 		const allDecks = await database.getDecks(user.body.uuid)
 		assert(
@@ -459,7 +479,7 @@ describe('Test Database', () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
-		const code = await database.insertDeck(
+		const withoutExportedCode = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.iconType,
@@ -468,23 +488,54 @@ describe('Test Database', () => {
 			generateDatabaseCode(),
 			user.body.uuid,
 		)
-		assert(code.type === 'success', 'The deck should be created successfully')
+		assert(
+			withoutExportedCode.type === 'success',
+			'The deck should be created successfully',
+		)
 
-		await database.deleteDeck(code.body, user.body.uuid)
+		await database.deleteDeck(withoutExportedCode.body, user.body.uuid)
 
-		const returnedDeckFromId = await database.getDeckFromID(code.body)
+		const withoutExportedDeck = await database.getDeckFromID(
+			withoutExportedCode.body,
+		)
+
+		assert(
+			withoutExportedDeck.type === 'failure',
+			'The deck should not be able to be retrieved',
+		)
+
+		//**CASE AFTER EXPORTING */
+		const withExportedCode = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.iconType,
+			playerDeck.cards,
+			[],
+			generateDatabaseCode(),
+			user.body.uuid,
+		)
+		assert(
+			withExportedCode.type === 'success',
+			'The deck should be created successfully',
+		)
+		await database.setAsExported(withExportedCode.body, user.body.uuid)
+
+		await database.deleteDeck(withExportedCode.body, user.body.uuid)
+
+		const withExportedDeck = await database.getDeckFromID(withExportedCode.body)
 		const userDecks = await database.getDecks(user.body.uuid)
 
 		assert(
-			returnedDeckFromId.type === 'success',
+			withExportedDeck.type === 'success',
 			'The deck should be retrieved successfully',
 		)
+		expect(withExportedDeck.body).toBeTruthy()
+
 		assert(
 			userDecks.type === 'success',
 			"The user's decks should be retrieved properly",
 		)
 
-		expect(returnedDeckFromId.body).toBeTruthy()
 		expect(userDecks.body).toStrictEqual([])
 	})
 

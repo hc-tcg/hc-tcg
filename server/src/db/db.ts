@@ -252,11 +252,11 @@ export class Database {
 					[deckCode],
 				)
 			).rows
-			const showAllInfo = deck[0]['show_info']
+			const showAllInfo: boolean = deck[0]['show_info']
 			const code = deck[0]['deck_code']
 			const name = showAllInfo ? deck[0]['name'] : null
 			const icon = showAllInfo ? deck[0]['icon'] : null
-			const iconType = deck[0]['icon_type']
+			const iconType = showAllInfo ? deck[0]['icon_type'] : null
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
 					row['card_id'] === null ||
