@@ -176,10 +176,8 @@ function getAvailableActions(
 				) {
 					actions.push('SECONDARY_ATTACK')
 				}
-				if (su && !suUsed) {
-					if (su && su.props.hasAttack) {
-						actions.push('SINGLE_USE_ATTACK')
-					}
+				if (su && su.hasSingleUseAttack()) {
+					actions.push('SINGLE_USE_ATTACK')
 				}
 			}
 		}

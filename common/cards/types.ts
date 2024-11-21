@@ -136,7 +136,7 @@ export type SingleUse = Card &
 	Description & {
 		singleUse: null
 		showConfirmationModal: boolean
-		hasAttack: boolean
+		hasAttack: boolean | ((game: GameModel) => boolean)
 		attackPreview?: (game: GameModel) => string
 		getFormattedDescription(): FormattedTextNode
 	}

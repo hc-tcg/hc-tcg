@@ -34,6 +34,11 @@ import query from './query'
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
+const isCallback = (
+	maybeFunction: boolean | ((game: GameModel) => boolean),
+): maybeFunction is (game: GameModel) => boolean =>
+	typeof maybeFunction === 'function'
+
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<CardType extends Card = Card> {
 	readonly game: GameModel
@@ -234,5 +239,13 @@ export class CardComponent<CardType extends Card = Card> {
 			return this.hooks.getSecondaryCost.call().flat()
 		}
 		throw new Error("`attack` should be 'primary' or 'secondary'")
+	}
+
+	public hasSingleUseAttack() {
+		if (!this.isSingleUse()) return false
+		const singleUseProps = this.props as SingleUse
+		if (isCallback(singleUseProps.hasAttack))
+			return singleUseProps.hasAttack(this.game)
+		return !!singleUseProps.hasAttack
 	}
 }

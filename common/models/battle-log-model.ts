@@ -253,7 +253,11 @@ export class BattleLogModel {
 				)}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage() + weaknessDamage}hp$`,
-				defaultLog: this.generateEffectEntryHeader(singleUse),
+				defaultLog: this.generateEffectEntryHeader(
+					attack.attacker instanceof CardComponent
+						? attack.attacker
+						: singleUse,
+				),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
 				attack: subAttack,
 			})

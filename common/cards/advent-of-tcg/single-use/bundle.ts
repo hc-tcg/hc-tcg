@@ -73,19 +73,20 @@ const Bundle: SingleUse = {
 				if (!result.cards) return
 				if (result.cards.length !== 2) return
 
-                const handSlot = game.components.new(
-                    HandSlotComponent,
-                    player.entity,
-                )
-                const fullBundle = game.components.new(CardComponent, FullBundle, handSlot.entity)
+				const handSlot = game.components.new(HandSlotComponent, player.entity)
+				const fullBundle = game.components.new(
+					CardComponent,
+					FullBundle,
+					handSlot.entity,
+				)
 
 				result.cards.forEach((card) => {
-                    card.discard()
+					card.discard()
 					game.components
 						.new(StatusEffectComponent, BundledStatusEffect, fullBundle.entity)
 						.apply(card.entity)
 				})
-                applySingleUse(game)
+				applySingleUse(game)
 			},
 			onTimeout: () => {},
 		})

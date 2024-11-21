@@ -64,7 +64,7 @@ export function getLocalCard<CardType extends Card>(
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
 	let attackPreview = null
-	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
+	if (card.isSingleUse() && card.hasSingleUseAttack() && card.props.attackPreview) {
 		attackPreview = card.props.attackPreview(game)
 	}
 

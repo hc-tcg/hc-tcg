@@ -42,7 +42,7 @@ const ChromaKeyedEffect: Counter<CardComponent> = {
 					(!jopacityUsedThisTurn &&
 						attack.attacker instanceof CardComponent &&
 						attack.attacker.isSingleUse() &&
-						attack.attacker.props.hasAttack)
+						attack.attacker.hasSingleUseAttack())
 				)
 					effect.remove()
 			},

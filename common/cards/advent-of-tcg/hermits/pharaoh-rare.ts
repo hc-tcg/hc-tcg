@@ -62,7 +62,7 @@ const PharaohRare: Hermit = {
 					CardComponent,
 					query.card.slot(query.slot.singleUse),
 				)
-				if (!su?.isSingleUse() || !su.props.hasAttack) return
+				if (!su?.isSingleUse() || !su.hasSingleUseAttack()) return
 				activeSingleUse = su
 			},
 		)

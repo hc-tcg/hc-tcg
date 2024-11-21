@@ -1,10 +1,14 @@
-import {CardComponent, ObserverComponent} from '../../../components'
-import query from '../../../components/query'
-import {GameModel} from '../../../models/game-model'
+import {
+	CardComponent,
+	ObserverComponent,
+	SlotComponent,
+} from '../../../components'
+import query, { ComponentQuery } from '../../../components/query'
+import { GameModel } from '../../../models/game-model'
 import BundledStatusEffect from '../../../status-effects/bundled'
-import {applyCard} from '../../../utils/board'
-import {singleUse} from '../../defaults'
-import {SingleUse} from '../../types'
+import { applyCard } from '../../../utils/board'
+import { singleUse } from '../../defaults'
+import { SingleUse } from '../../types'
 
 const FullBundle: SingleUse = {
 	...singleUse,
@@ -14,19 +18,79 @@ const FullBundle: SingleUse = {
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 0,
-	description:
-		'Play this card to play both bundled single use cards.',
+	description: 'Play this card to play both bundled single use cards.',
+	showConfirmationModal: true,
+	attachCondition(game, value) {
+		if (!query.slot.singleUse(game, value)) return false
+
+		const bundledCards = game.components.filter(
+			CardComponent<SingleUse>,
+			(_game, cardValue) =>
+				cardValue.getStatusEffect(BundledStatusEffect)?.creator ===
+				value.getCard(),
+		)
+
+		let canAttach = true
+		bundledCards.forEach((card) => {
+			console.log(card.props.name, card.props.attachCondition(game, value))
+			canAttach &&= card.props.attachCondition(game, value)
+		})
+
+		return canAttach
+	},
+	hasAttack(game: GameModel) {
+		const suCard = game.components.find(
+			CardComponent<SingleUse>,
+			query.card.slot(query.slot.singleUse),
+		)
+		const bundledCards = game.components.filter(
+			CardComponent<SingleUse>,
+			(_game, value) =>
+				value.getStatusEffect(BundledStatusEffect)?.creator === suCard,
+		)
+
+		let hasAttack = false
+
+		bundledCards.forEach((card) => {
+			hasAttack ||= card.hasSingleUseAttack()
+		})
+
+		return hasAttack
+	},
+	attackPreview(game) {
+		const suCard = game.components.find(
+			CardComponent<SingleUse>,
+			query.card.slot(query.slot.singleUse),
+		)
+		const bundledCards = game.components.filter(
+			CardComponent<SingleUse>,
+			(_game, value) =>
+				value.getStatusEffect(BundledStatusEffect)?.creator === suCard,
+		)
+
+		let attackPreview = ''
+
+		bundledCards.forEach((card) => {
+			const prefix = attackPreview ? ' + ' : ''
+			if (card.props.attackPreview)
+				attackPreview += prefix + card.props.attackPreview(game)
+			console.log(attackPreview)
+		})
+
+		return attackPreview
+	},
 	log: (values) => values.defaultLog,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player} = component
+		const { player } = component
 
 		const bundledCards = game.components.filter(
-			CardComponent,
-			query.card.hasStatusEffect(BundledStatusEffect),
+			CardComponent<SingleUse>,
+			(_game, value) =>
+				value.getStatusEffect(BundledStatusEffect)?.creator === component,
 		)
 
 		bundledCards.forEach((card) => {
@@ -40,10 +104,11 @@ const FullBundle: SingleUse = {
 			})
 		})
 	},
-	onDetach(game, _component, _observer) {
+	onDetach(game, component, _observer) {
 		const bundledCards = game.components.filter(
-			CardComponent,
-			query.card.hasStatusEffect(BundledStatusEffect),
+			CardComponent<SingleUse>,
+			(_game, value) =>
+				value.getStatusEffect(BundledStatusEffect)?.creator === component,
 		)
 
 		bundledCards.forEach((card) => {

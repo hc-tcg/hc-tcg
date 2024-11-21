@@ -10,6 +10,8 @@ export function applySingleUse(
 ): void {
 	const {currentPlayer} = game
 
+	if (currentPlayer.singleUseCardUsed) return
+
 	const suCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
@@ -38,7 +40,7 @@ export function applySingleUse(
 }
 
 export function applyCard(card: CardComponent<SingleUse>) {
-	const {player} = card.slot
+	const {player} = card
 
 	player.hooks.beforeApply.callSome(
 		[],
@@ -48,6 +50,7 @@ export function applyCard(card: CardComponent<SingleUse>) {
 		[],
 		(instance) => instance === card.observerEntity,
 	)
+	card.game.battleLog.addPlayCardEntry(card, player.coinFlips, card.slot)
 	player.hooks.afterApply.callSome(
 		[],
 		(instance) => instance === card.observerEntity,
