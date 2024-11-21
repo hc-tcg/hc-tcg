@@ -12,7 +12,7 @@ const Spyglass: SingleUse = {
 	numericId: 91,
 	name: 'Spyglass',
 	expansion: 'default',
-	rarity: 'common',
+	rarity: 'rare',
 	tokens: 1,
 	description:
 		"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
