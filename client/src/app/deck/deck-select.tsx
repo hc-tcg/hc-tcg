@@ -226,6 +226,7 @@ function SelectDeck({
 		}
 
 		saveDeck(newDeck)
+		setShowDuplicateDeckModal(false)
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)

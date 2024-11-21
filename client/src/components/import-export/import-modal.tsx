@@ -10,6 +10,8 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useRef, useState} from 'react'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
+import {useSelector} from 'react-redux'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setOpen: boolean
@@ -31,9 +33,13 @@ export const ImportModal = ({
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
-	const [askForDeckName, setAskForDeckName] = useState(false)
 	const [readyToSubmit, setReadyToSubmit] = useState(false)
 	const [deckIcon, setDeckIcon] = useState<Deck['icon']>('any')
+	const currentImport = useSelector(getLocalDatabaseInfo).currentImport
+	const newName = currentImport?.name ? currentImport.name : 'Imported Deck'
+	const newIcon = currentImport?.icon ? currentImport.icon : 'any'
+	const newIconType = currentImport?.iconType ? currentImport.iconType : 'item'
+	if (deckIcon === 'any' && newIcon !== 'any') setDeckIcon(newIcon)
 
 	async function importFromHash() {
 		if (!hashRef.current) return
@@ -45,6 +51,9 @@ export const ImportModal = ({
 				type: localMessages.IMPORT_DECK,
 				code: hash,
 				newActiveDeck: hash,
+				newName,
+				newIcon,
+				newIconType,
 			})
 			onClose()
 			return
@@ -64,7 +73,7 @@ export const ImportModal = ({
 		if (!deck) return null
 
 		importDeck({
-			name: nameRef?.current?.value || 'Imported Deck',
+			name: nameRef?.current?.value || newName,
 			icon: deckIcon as TypeT,
 			iconType: 'item',
 			cards: deck,
@@ -77,21 +86,23 @@ export const ImportModal = ({
 	}
 
 	function onInputChange() {
-		if (!hashRef.current) {
-			setAskForDeckName(false)
-		} else if (!hashRef.current.value) {
-			setAskForDeckName(false)
-		}
-		// User probably hasn't finishe entering thier code.
-		else if (
-			hashRef.current.value.length <= 7 &&
-			!isDatabaseDeckCode(hashRef.current.value)
+		if (
+			!hashRef.current ||
+			(hashRef.current.value.length <= 7 &&
+				!isDatabaseDeckCode(hashRef.current.value))
 		) {
-			setAskForDeckName(false)
+			dispatch({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'currentImport',
+					value: null,
+				},
+			})
 		} else if (isDatabaseDeckCode(hashRef.current.value)) {
-			setAskForDeckName(false)
-		} else {
-			setAskForDeckName(true)
+			dispatch({
+				type: localMessages.GRAB_CURRENT_IMPORT,
+				code: hashRef.current.value,
+			})
 		}
 
 		if (hashRef.current?.value && hashRef.current.value.length >= 7) {
@@ -122,6 +133,9 @@ export const ImportModal = ({
 					dispatch({
 						type: localMessages.IMPORT_DECK,
 						code: cleanLine,
+						newName: 'Imported Deck',
+						newIcon: 'any',
+						newIconType: 'item',
 					})
 					importedSomething = true
 					return
@@ -192,29 +206,8 @@ export const ImportModal = ({
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>
-						To import a deck, enter the deck hash, then click "Import".
+						To import a deck, enter the deck code, then click "Import".
 					</p>
-					{askForDeckName && (
-						<div className={css.name}>
-							<Dropdown
-								button={
-									<button className={DropdownCSS.iconButton}>
-										<img src={`/images/types/type-${deckIcon}.png`} />
-									</button>
-								}
-								label="Deck Icon"
-								options={iconDropdownOptions}
-								action={(option: any) => setDeckIcon(option)}
-							/>
-							<input
-								type="text"
-								maxLength={32}
-								placeholder="Deck Name"
-								ref={nameRef}
-								style={{flexGrow: 1}}
-							/>
-						</div>
-					)}
 					<input
 						type="text"
 						placeholder="Deck Code..."
@@ -222,6 +215,33 @@ export const ImportModal = ({
 						ref={hashRef}
 						style={{flexGrow: 1}}
 					/>
+					<div className={css.name}>
+						<Dropdown
+							button={
+								<button className={DropdownCSS.iconButton}>
+									<img src={`/images/types/type-${deckIcon}.png`} />
+								</button>
+							}
+							label="Deck Icon"
+							options={iconDropdownOptions}
+							action={(option: any) => setDeckIcon(option)}
+						/>
+						<input
+							type="text"
+							maxLength={32}
+							placeholder={newName}
+							ref={nameRef}
+							style={{flexGrow: 1}}
+						/>
+					</div>
+					{currentImport && currentImport.name === null && (
+						<p className={css.warning}>
+							<b>
+								⚠ Name and icon could not automatically be set because the deck
+								you are importing is private.
+							</b>
+						</p>
+					)}
 					<p className={css.instructions}>
 						{
 							'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'

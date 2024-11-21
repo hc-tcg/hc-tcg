@@ -279,6 +279,38 @@ export function* exportDeck(
 	}
 }
 
+export function* grabCurrentImport(
+	action: RecievedClientMessage<typeof clientMessages.GRAB_CURRENT_IMPORT>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const importedDeck = yield* call(
+		[root.db, root.db.getDeckFromID],
+		action.payload.code,
+		true,
+	)
+
+	if (importedDeck.type !== 'success') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: importedDeck.reason,
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.CURRENT_IMPORT_RECIEVED,
+		deck: importedDeck.body,
+	})
+}
+
 export function* setShowData(
 	action: RecievedClientMessage<typeof clientMessages.MAKE_INFO_PUBLIC>,
 ) {

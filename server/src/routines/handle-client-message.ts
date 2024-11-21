@@ -13,6 +13,7 @@ import {
 	exportDeck,
 	getDecks,
 	getStats,
+	grabCurrentImport,
 	importDeck,
 	insertDeck,
 	insertDecks,
@@ -119,6 +120,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.EXPORT_DECK:
 			return yield* exportDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GRAB_CURRENT_IMPORT:
+			return yield* grabCurrentImport(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.MAKE_INFO_PUBLIC:

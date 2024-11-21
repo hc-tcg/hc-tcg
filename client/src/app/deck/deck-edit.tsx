@@ -373,10 +373,11 @@ function EditDeck({
 
 		// Check they are different
 		if (
-			newDeck.name === loadedDeck.name &&
-			newDeck.icon === loadedDeck.icon &&
-			newDeck.cards === loadedDeck.cards &&
-			newDeck.tags === loadedDeck.tags
+			deck &&
+			deck.name === loadedDeck.name &&
+			deck.icon === loadedDeck.icon &&
+			deck.cards === loadedDeck.cards &&
+			deck.tags === loadedDeck.tags
 		) {
 			dispatch({
 				type: localMessages.TOAST_OPEN,

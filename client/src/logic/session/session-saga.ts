@@ -361,6 +361,9 @@ export function* databaseConnectionSaga() {
 				type: clientMessages.IMPORT_DECK,
 				code: action.code,
 				newActiveDeck: action.newActiveDeck,
+				newName: action.newName,
+				newIcon: action.newIcon,
+				newIconType: action.newIconType,
 			})
 		},
 	)
@@ -369,6 +372,15 @@ export function* databaseConnectionSaga() {
 		function* (action) {
 			yield* sendMsg({
 				type: clientMessages.EXPORT_DECK,
+				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.GRAB_CURRENT_IMPORT]>(
+		localMessages.GRAB_CURRENT_IMPORT,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.GRAB_CURRENT_IMPORT,
 				code: action.code,
 			})
 		},
@@ -480,6 +492,23 @@ export function* newDeckSaga() {
 }
 
 export function* recieveStatsSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.CURRENT_IMPORT_RECIEVED),
+		)
+		console.log('recieved')
+		yield put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'currentImport',
+				value: result.deck,
+			},
+		})
+	}
+}
+
+export function* recieveCurrentImportSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(
