@@ -220,6 +220,16 @@ export function* importDeck(
 
 	if (importedDeck.type !== 'success') return
 
+	if (
+		!importedDeck.body.name ||
+		!importedDeck.body.icon ||
+		!importedDeck.body.iconType
+	) {
+		importedDeck.body.name = 'Imported Deck'
+		importedDeck.body.iconType = 'item'
+		importedDeck.body.icon = 'any'
+	}
+
 	// Insert deck
 	const result = yield* call(
 		[root.db, root.db.insertDeck],
