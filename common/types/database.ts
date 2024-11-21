@@ -1,5 +1,5 @@
 import {TypeT} from './cards'
-import {Deck} from './deck'
+import {ApiDeck} from './deck'
 
 export type User = {
 	uuid: string
@@ -32,7 +32,7 @@ export type CardStats = {
 }
 
 export type DeckStats = {
-	deck: Deck
+	deck: ApiDeck
 	wins: number
 	lossses: number
 	winrate: number | null

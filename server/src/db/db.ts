@@ -1,5 +1,5 @@
 import {Card} from 'common/cards/types'
-import {Deck, Tag} from 'common/types/deck'
+import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
@@ -234,7 +234,9 @@ export class Database {
 	}
 
 	/** Return the deck with a specific ID. */
-	public async getDeckFromID(deckCode: string): Promise<DatabaseResult<Deck>> {
+	public async getDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<ApiDeck>> {
 		try {
 			const deck = (
 				await this.pool.query(
@@ -286,7 +288,6 @@ export class Database {
 					iconType,
 					cards: cards.map((card) => toLocalCardInstance(card)),
 					tags,
-					public: showAllInfo,
 				},
 			}
 		} catch (e) {
@@ -802,6 +803,7 @@ export class Database {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
+				const showInfo: boolean = row['show_info']
 				const iconType: string = row['icon_type']
 				const cardId: number | null = row['card_id']
 				const cards: Array<Card> =
@@ -823,9 +825,8 @@ export class Database {
 					const newDeck: DeckStats = {
 						deck: {
 							code,
-							name,
+							name: showInfo ? name : null,
 							icon,
-							//@ts-ignore
 							iconType,
 							tags: [],
 							cards:
