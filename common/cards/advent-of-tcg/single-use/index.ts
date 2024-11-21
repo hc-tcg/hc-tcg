@@ -10,6 +10,7 @@ import Glowstone from './glowstone'
 import Lantern from './lantern'
 import MiningFatigue from './mining-fatigue'
 import PowderSnowBucket from './powder-snow-bucket'
+import RedstoneTorch from './redstone-torch'
 import SmithingTable from './smithing-table'
 import SplashPotionOfHarming from './splash-potion-of-harming'
 import MinecartWithTNT from './tnt-minecart'
@@ -32,6 +33,7 @@ const singleUseCardClasses: Array<Card> = [
 	SmithingTable,
 	SplashPotionOfHarming,
 	WindBurst,
+	RedstoneTorch,
 ]
 
 export default singleUseCardClasses
