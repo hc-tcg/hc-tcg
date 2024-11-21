@@ -1,8 +1,8 @@
 import assert from 'assert'
+import {SingleUse} from '../cards/types'
 import {CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {SingleUse} from '../cards/types'
 
 export function applySingleUse(
 	game: GameModel,

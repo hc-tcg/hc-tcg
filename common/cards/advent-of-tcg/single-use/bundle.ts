@@ -1,17 +1,14 @@
 import {
 	CardComponent,
-	DeckSlotComponent,
 	HandSlotComponent,
 	ObserverComponent,
-	PlayerComponent,
-	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {PlayerEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import BundledStatusEffect from '../../../status-effects/bundled'
-import {applyCard, applySingleUse} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
 import FullBundle from './full_bundle'
@@ -26,7 +23,7 @@ const singleUseHandQuery = (player: PlayerEntity) =>
 const Bundle: SingleUse = {
 	...singleUse,
 	id: 'bundle',
-	numericId: 225,
+	numericId: 251,
 	name: 'Bundle',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',

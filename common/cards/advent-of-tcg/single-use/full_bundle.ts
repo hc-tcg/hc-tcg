@@ -1,14 +1,10 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-} from '../../../components'
-import query, { ComponentQuery } from '../../../components/query'
-import { GameModel } from '../../../models/game-model'
+import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
+import {GameModel} from '../../../models/game-model'
 import BundledStatusEffect from '../../../status-effects/bundled'
-import { applyCard } from '../../../utils/board'
-import { singleUse } from '../../defaults'
-import { SingleUse } from '../../types'
+import {applyCard} from '../../../utils/board'
+import {singleUse} from '../../defaults'
+import {SingleUse} from '../../types'
 
 const FullBundle: SingleUse = {
 	...singleUse,
@@ -85,7 +81,7 @@ const FullBundle: SingleUse = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const { player } = component
+		const {player} = component
 
 		const bundledCards = game.components.filter(
 			CardComponent<SingleUse>,
