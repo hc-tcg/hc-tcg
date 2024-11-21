@@ -14,7 +14,7 @@ const Brush: SingleUse = {
 	numericId: 221,
 	name: 'Brush',
 	expansion: 'advent_of_tcg',
-	rarity: 'rare',
+	rarity: 'common',
 	tokens: 0,
 	description:
 		'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',

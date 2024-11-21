@@ -14,7 +14,7 @@ const Dropper: SingleUse = {
 	numericId: 222,
 	name: 'Dropper',
 	expansion: 'advent_of_tcg',
-	rarity: 'rare',
+	rarity: 'common',
 	tokens: 0,
 	description: "Place a fletching table on the top of your opponent's deck",
 	showConfirmationModal: true,
