@@ -10,11 +10,14 @@ import {
 	authenticateUser,
 	deleteDeck,
 	deleteTag,
+	exportDeck,
 	getDecks,
 	getStats,
+	grabCurrentImport,
 	importDeck,
 	insertDeck,
 	insertDecks,
+	setShowData,
 } from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
@@ -113,6 +116,18 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.IMPORT_DECK:
 			return yield* importDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.EXPORT_DECK:
+			return yield* exportDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GRAB_CURRENT_IMPORT:
+			return yield* grabCurrentImport(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.MAKE_INFO_PUBLIC:
+			return yield* setShowData(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.DELETE_DECK:

@@ -216,9 +216,19 @@ export function* importDeck(
 
 	const code = action.payload.code
 
-	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code)
+	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code, true)
 
 	if (importedDeck.type !== 'success') return
+
+	if (
+		!importedDeck.body.name ||
+		!importedDeck.body.icon ||
+		!importedDeck.body.iconType
+	) {
+		importedDeck.body.name = 'Imported Deck'
+		importedDeck.body.iconType = 'item'
+		importedDeck.body.icon = 'any'
+	}
 
 	// Insert deck
 	const result = yield* call(
@@ -243,6 +253,91 @@ export function* importDeck(
 	if (action.payload.newActiveDeck) yield* getDecks(action as any)
 }
 
+export function* exportDeck(
+	action: RecievedClientMessage<typeof clientMessages.EXPORT_DECK>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setAsExported],
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
+}
+
+export function* grabCurrentImport(
+	action: RecievedClientMessage<typeof clientMessages.GRAB_CURRENT_IMPORT>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const importedDeck = yield* call(
+		[root.db, root.db.getDeckFromID],
+		action.payload.code,
+		true,
+	)
+
+	if (importedDeck.type !== 'success') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: importedDeck.reason,
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.CURRENT_IMPORT_RECIEVED,
+		deck: importedDeck.body,
+	})
+}
+
+export function* setShowData(
+	action: RecievedClientMessage<typeof clientMessages.MAKE_INFO_PUBLIC>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setShowData],
+		action.payload.public,
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
+}
+
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
@@ -256,7 +351,7 @@ export function* deleteDeck(
 	}
 
 	const result = yield* call(
-		[root.db, root.db.disassociateDeck],
+		[root.db, root.db.deleteDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)

@@ -121,6 +121,7 @@ function SelectDeck({
 		cards: [],
 		code: generateDatabaseCode(),
 		tags: [],
+		public: false,
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -215,6 +216,7 @@ function SelectDeck({
 		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
 		setLoadedDeck(newSavedDecks[0])
+		setShowDeleteDeckModal(false)
 	}
 	const duplicateDeck = (deck: Deck) => {
 		const newDeck = {
@@ -224,6 +226,7 @@ function SelectDeck({
 		}
 
 		saveDeck(newDeck)
+		setShowDuplicateDeckModal(false)
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)

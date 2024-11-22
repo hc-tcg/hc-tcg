@@ -48,6 +48,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 					tags: [],
 					iconType: 'item',
 					icon: 'any',
+					public: false,
 				},
 	)
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])

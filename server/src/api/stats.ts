@@ -40,13 +40,17 @@ export async function getStats(
 }
 
 export const CardStatsQuery = z.object({
-	before: z.number().nullish(),
-	after: z.number().nullish(),
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+	orderBy: z
+		.enum(['winrate', 'deckUsage', 'gameUsage', 'averageCopies'])
+		.nullish(),
 })
 
 export async function getCardStats(params: {
 	before: number | null
 	after: number | null
+	orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
 }) {
 	let cards = await root.db.getCardsStats(params)
 
@@ -57,31 +61,20 @@ export async function getCardStats(params: {
 		}
 	}
 
-	const correctCards = cards.body.map((card) => {
-		return {
-			...card,
-			card: CARDS[card.id.toFixed(0).toString()],
-		}
-	})
-
 	return {
-		success: correctCards.map((card) => ({
-			card: card.card.id,
-			statistics: {
-				winrate: card.winrate,
-				rarity: card.rarity,
-				averageCopies: card.averageCopies,
-			},
+		success: cards.body.map((card) => ({
+			...card,
+			id: CARDS[card.id] ? CARDS[card.id] : null,
 		})),
 	}
 }
 
-export const DeckStatParams = z.object({
-	before: z.number().nullish(),
-	after: z.number().nullish(),
-	offset: z.number().nullish(),
+export const DeckStatQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+	offset: z.string().nullish(),
 	orderBy: z.enum(['wins', 'winrate']).nullish(),
-	minimumWins: z.number().nullish(),
+	minimumWins: z.string().nullish(),
 })
 
 export async function getDeckStats(params: {
@@ -92,6 +85,30 @@ export async function getDeckStats(params: {
 	minimumWins: number | null
 }) {
 	let decks = await root.db.getDecksStats(params)
+
+	if (decks.type === 'failure') {
+		return {
+			type: 'failure',
+			reason: decks.reason,
+		}
+	}
+
+	return {
+		success: decks,
+	}
+}
+
+export const TypeDistributionStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+})
+
+export async function getTypeDistributionStats(params: {
+	before: number | null
+	after: number | null
+}) {
+	let decks = await root.db.getTypeDistribution(params)
+	console.log(decks)
 
 	if (decks.type === 'failure') {
 		return {

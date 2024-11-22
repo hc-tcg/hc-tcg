@@ -1,4 +1,5 @@
-import {Deck} from './deck'
+import {TypeT} from './cards'
+import {ApiDeck} from './deck'
 
 export type User = {
 	uuid: string
@@ -25,16 +26,23 @@ export type Stats = {
 export type CardStats = {
 	id: number
 	winrate: number | null
-	rarity: number
+	deck_usage: number
+	game_usage: number
 	averageCopies: number
 }
 
 export type DeckStats = {
-	deck: Deck
+	deck: ApiDeck
 	wins: number
 	lossses: number
 	winrate: number | null
 }
+
+export type TypeDistributionStats = Array<{
+	type: TypeT
+	usage: number
+	winrate: number
+}>
 
 export type Achievement = {
 	id: string
