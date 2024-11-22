@@ -14,9 +14,10 @@ Returns a list of all card types and resources for them.
 
 - `GET /api/ranks`
 
----
 
 Returns a list of all card ranks and resources for them.
+
+---
 
 - `GET /api/deck/{deckCode}`
 
@@ -57,6 +58,28 @@ Request Body:
 | Field | Type | Description |
 | :----------- | :--------------: | -------------------------: |
 | `code` | string | The API secret returned with the `/api/games/create` request. |
+
+- `GET /api/games/{secret}`
+
+Get information about a game using its api secret.
+
+| Field | Type | Description |
+| :----------- | :--------------: | -------------------------: |
+| `id` | string | Games unique identifier. |
+| `createdTime` | int | Time the game was created. |
+| `spectatorCode` | string | Code to spectate the game with. |
+| `players` | Array&lt;Player&gt; | Array of player objects (see below). |
+| `viewers` | int | The total number of spectators & players. |
+| `state` | string | Code players use to join the game. |
+
+**Player:**
+| Field | Type | Description |
+| :----------- | :--------------: | -------------------------: |
+| `playerName` | string | Players display name |
+| `censoredPlayerName` | string | Censored version of `playerName` |
+| `minecraftName` | string | Name of the displayed minecraft head |
+| `lives` | int | Lives remaining |
+| `deck` | int | Array of card text ids in the players deck |
 
 ### Stats Endpoints
 
