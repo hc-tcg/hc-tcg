@@ -41,6 +41,7 @@ const defaultState: SessionState = {
 		code: '',
 		cards: [],
 		tags: [],
+		public: false,
 	},
 	connecting: false,
 	connected: false,

@@ -22,7 +22,17 @@ export type Deck = {
 	code: string
 	cards: Array<LocalCardInstance>
 	tags: Array<Tag>
+	public: boolean
 } & (DeckIconItem | DeckIconHermit)
+
+export type ApiDeck = {
+	name: string | null
+	icon: string | null
+	iconType: string | null
+	code: string
+	cards: Array<LocalCardInstance>
+	tags: Array<Tag>
+}
 
 // This type is used to ensure saving and loading compatibility with older versions of hc-tcg
 export type LegacyDeck = {

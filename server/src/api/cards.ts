@@ -140,9 +140,16 @@ export async function getDeckInformation(url: string, hash: string) {
 	if (hash.length >= 10) {
 		let deck = getDeckFromHash(hash)
 		return {
-			success: deck
-				.map((card) => cardToCardResponse(card.props, url))
-				.filter((x) => x !== null),
+			success: {
+				name: null,
+				code: hash,
+				tags: [],
+				icon: null,
+				public: false,
+				cards: deck
+					.map((card) => cardToCardResponse(card.props, url))
+					.filter((x) => x !== null),
+			},
 		}
 	} else {
 		let deck = await root.db?.getDeckFromID(hash)

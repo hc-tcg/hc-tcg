@@ -17,3 +17,8 @@ export function joinUrl(a: string, b: string) {
 	}
 	return `${a}/${b}`
 }
+
+export function NumberOrNull(a: any | null) {
+	if (a !== null && a !== undefined) return Number(a)
+	return null
+}

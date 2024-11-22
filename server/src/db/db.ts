@@ -1,5 +1,5 @@
 import {Card} from 'common/cards/types'
-import {Deck, Tag} from 'common/types/deck'
+import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
@@ -8,6 +8,7 @@ import {
 	CardStats,
 	DeckStats,
 	Stats,
+	TypeDistributionStats,
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
@@ -53,7 +54,9 @@ export class Database {
 					deck_code varchar(7) PRIMARY KEY,
 					name varchar(255) NOT NULL,
 					icon varchar(255) NOT NULL,
-					icon_type varchar(255) NOT NULL
+					icon_type varchar(255) NOT NULL,
+					exported boolean DEFAULT false NOT NULL,
+					show_info boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS games(
 					start_time timestamp NOT NULL,
@@ -70,10 +73,11 @@ export class Database {
 					card_id integer PRIMARY KEY NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS deck_cards(
-					deck_code varchar(7) REFERENCES decks(deck_code),
+					deck_code varchar(7),
 					card_id integer REFERENCES cards(card_id),
 					copies integer NOT NULL,
-					PRIMARY KEY (deck_code,card_id)
+					PRIMARY KEY (deck_code,card_id),
+					FOREIGN KEY (deck_code) REFERENCES decks(deck_code) ON DELETE CASCADE
 				);
 				CREATE TABLE IF NOT EXISTS user_tags(
 					user_id uuid REFERENCES users(user_id),
@@ -230,12 +234,14 @@ export class Database {
 	}
 
 	/** Return the deck with a specific ID. */
-	public async getDeckFromID(deckCode: string): Promise<DatabaseResult<Deck>> {
+	public async getDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<ApiDeck>> {
 		try {
 			const deck = (
 				await this.pool.query(
 					`SELECT
-						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,decks.show_info,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
@@ -246,10 +252,11 @@ export class Database {
 					[deckCode],
 				)
 			).rows
+			const showAllInfo: boolean = deck[0]['show_info']
 			const code = deck[0]['deck_code']
-			const name = deck[0]['name']
-			const icon = deck[0]['icon']
-			const iconType = deck[0]['icon_type']
+			const name = showAllInfo ? deck[0]['name'] : null
+			const icon = showAllInfo ? deck[0]['icon'] : null
+			const iconType = showAllInfo ? deck[0]['icon_type'] : null
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
 					row['card_id'] === null ||
@@ -308,6 +315,7 @@ export class Database {
 
 			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
 				const code: string = row['deck_code']
+				const showInfo: boolean = row['show_info']
 				const name: string = row['name']
 				const icon: string = row['icon']
 				const iconType: string = row['icon_type']
@@ -333,6 +341,7 @@ export class Database {
 						code,
 						name,
 						icon,
+						public: showInfo,
 						//@ts-ignore
 						iconType,
 						tags: tag.key !== null ? [tag] : [],
@@ -375,15 +384,65 @@ export class Database {
 		}
 	}
 
-	/** Disassociate a deck from a user. This is used when a deck is deleted or updated.*/
-	public async disassociateDeck(
+	/** Delete or disassociate a deck from a user. This is used when a deck is deleted or updated.*/
+	public async deleteDeck(
+		deckCode: string,
+		user_id: string,
+	): Promise<DatabaseResult> {
+		try {
+			const deleteable = (
+				await this.pool.query(
+					`SELECT exported = 0 AND games_played = 0 as deletable 
+					FROM (SELECT count(CASE WHEN exported THEN 1 END) as exported,count(winner_deck_code) + count(loser_deck_code) as games_played FROM decks
+					LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+					WHERE decks.deck_code = $1 AND decks.user_id = $2)`,
+					[deckCode, user_id],
+				)
+			).rows[0]['deletable']
+
+			if (deleteable) {
+				await this.pool.query(
+					'DELETE FROM decks WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+			} else {
+				await this.pool.query(
+					'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+			}
+
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Set a deck as exported */
+	public async setAsExported(
 		deckCode: string,
 		user_id: string,
 	): Promise<DatabaseResult> {
 		try {
 			await this.pool.query(
-				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
+				'UPDATE decks SET exported = TRUE WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
+			)
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async setShowData(
+		newShowData: boolean,
+		deckCode: string,
+		user_id: string,
+	): Promise<DatabaseResult> {
+		try {
+			await this.pool.query(
+				'UPDATE decks SET show_info = $1 WHERE deck_code = $2 AND user_id = $3',
+				[newShowData, deckCode, user_id],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
@@ -618,38 +677,54 @@ export class Database {
 		}
 	}
 
-	/**Get the current stats of */
+	/**Get the current stats of cards*/
 	public async getCardsStats({
 		before,
 		after,
-	}: {before: number | null; after: number | null}): Promise<
-		DatabaseResult<Array<CardStats>>
-	> {
+		orderBy,
+	}: {
+		before: number | null
+		after: number | null
+		orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
+	}): Promise<DatabaseResult<Array<CardStats>>> {
 		try {
 			const stats = await this.pool.query(
 				`
-				SELECT card_id, 
-				total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
-				cast(included_in_decks as decimal) / total_decks as rarity, 
-				cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
-					SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
-					count(CASE WHEN losses THEN 1 END) as losses, 
-					count(deck_code) as included_in_decks, 
-					sum(copies) as copies FROM (
-						SELECT cards.card_id,
-						deck_cards.deck_code,
-						deck_cards.copies,
-						games.winner_deck_code = deck_cards.deck_code as wins,
-						games.loser_deck_code = deck_cards.deck_code as losses FROM cards
-						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
-						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
-						WHERE deck_cards.card_id > -1
-						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-						) as result
-				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
+				SELECT * FROM
+					(SELECT card_id, 
+					total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
+					cast(included_in_decks as decimal) / total_decks as deck_usage, 
+					(cast(wins as decimal) + losses) / total_games as game_usage,
+					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses, 
+						count(deck_code) as included_in_decks, 
+						sum(copies) as copies FROM (
+							SELECT cards.card_id,
+							deck_cards.deck_code,
+							deck_cards.copies,
+							games.winner_deck_code = deck_cards.deck_code as wins,
+							games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+							LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+							WHERE deck_cards.card_id > -1
+							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							) as result
+					GROUP BY result.card_id)
+					CROSS JOIN (SELECT count(*) as total_decks FROM decks)
+					CROSS JOIN (SELECT count(*) as total_games FROM games)
+					WHERE wins > 0
+					)
+				ORDER BY (
+					CASE WHEN $3 = 'winrate' THEN winrate 
+						WHEN $3 = 'deckUsage' THEN deck_usage 
+						WHEN $3 = 'gameUsage' THEN game_usage 
+						WHEN $3 = 'averageCopies' THEN average_copies 
+					ELSE winrate END) 
+				DESC
 					`,
-				[after, before],
+				[after, before, orderBy],
 			)
 
 			return {
@@ -658,7 +733,8 @@ export class Database {
 					return {
 						id: Number(row['card_id']),
 						winrate: row['winrate'] ? Number(row['winrate']) : null,
-						rarity: row['rarity'] ? Number(row['rarity']) : 0,
+						deck_usage: row['deck_usage'] ? Number(row['deck_usage']) : 0,
+						game_usage: row['game_usage'] ? Number(row['game_usage']) : 0,
 						averageCopies: row['average_copies']
 							? Number(row['average_copies'])
 							: 0,
@@ -670,6 +746,7 @@ export class Database {
 		}
 	}
 
+	/**Get the current stats of decks */
 	public async getDecksStats({
 		before,
 		after,
@@ -684,7 +761,6 @@ export class Database {
 		minimumWins: number | null
 	}): Promise<DatabaseResult<Array<DeckStats>>> {
 		const limit = 20
-		console.log(orderBy)
 		try {
 			const decksResult = (
 				await this.pool.query(
@@ -703,14 +779,14 @@ export class Database {
 							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
 							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-							LIMIT $3::int
-							OFFSET $3::int * $4::int
 						) as result
 					GROUP BY result.deck_code) as deck_code_list 
 					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins > $6
+					WHERE wins >= $6::int
 					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
+					LIMIT $3::int
+					OFFSET $3::int * $4::int
 					`,
 					[
 						after,
@@ -718,7 +794,7 @@ export class Database {
 						limit,
 						offset ? offset : 0,
 						orderBy ? orderBy : 'winrate',
-						minimumWins ? minimumWins : 50,
+						minimumWins !== null ? minimumWins : 50,
 					],
 				)
 			).rows
@@ -727,6 +803,7 @@ export class Database {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
+				const showInfo: boolean = row['show_info']
 				const iconType: string = row['icon_type']
 				const cardId: number | null = row['card_id']
 				const cards: Array<Card> =
@@ -748,9 +825,8 @@ export class Database {
 					const newDeck: DeckStats = {
 						deck: {
 							code,
-							name,
+							name: showInfo ? name : null,
 							icon,
-							//@ts-ignore
 							iconType,
 							tags: [],
 							cards:
@@ -786,6 +862,149 @@ export class Database {
 			return {
 				type: 'success',
 				body: decks,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the type distribution of decks*/
+	public async getTypeDistribution({
+		before,
+		after,
+	}: {
+		before: number | null
+		after: number | null
+	}): Promise<DatabaseResult<TypeDistributionStats>> {
+		try {
+			const stats = await this.pool.query(
+				`
+				SELECT
+				cast(balanced_a as decimal) / total_amount as balanced_usage,
+				cast(builder_a as decimal) / total_amount as builder_usage,
+				cast(explorer_a as decimal) / total_amount as explorer_usage,
+				cast(farm_a as decimal) / total_amount as farm_usage,
+				cast(miner_a as decimal) / total_amount as miner_usage,
+				cast(prankster_a as decimal) / total_amount as prankster_usage,
+				cast(pvp_a as decimal) / total_amount as pvp_usage,
+				cast(redstone_a as decimal) / total_amount as redstone_usage,
+				cast(speedrunner_a as decimal) / total_amount as speedrunner_usage,
+				cast(terraform_a as decimal) / total_amount as terraform_usage,
+				cast(balanced_w as decimal) / NULLIF(balanced_w + balanced_l,0) as balanced_winrate,
+				cast(builder_w as decimal) / NULLIF(builder_w + builder_l,0) as builder_winrate,
+				cast(explorer_w as decimal) / NULLIF(explorer_w + explorer_l,0) as explorer_winrate,
+				cast(farm_w as decimal) / NULLIF(farm_w + farm_l,0) as farm_winrate,
+				cast(miner_w as decimal) / NULLIF(miner_w + miner_l,0) as miner_winrate,
+				cast(prankster_w as decimal) / NULLIF(prankster_w + prankster_l,0) as prankster_winrate,
+				cast(pvp_w as decimal) / NULLIF(pvp_w + pvp_l,0) as pvp_winrate,
+				cast(redstone_w as decimal) / NULLIF(redstone_w + balanced_l,0) as redstone_winrate,
+				cast(speedrunner_w as decimal) / NULLIF(speedrunner_w + speedrunner_l,0) as speedrunner_winrate,
+				cast(terraform_w as decimal) / NULLIF(terraform_w + terraform_l,0) as terraform_winrate
+				FROM (SELECT 
+						count(CASE WHEN card_id = 49 OR card_id = 50 THEN 1 END) as balanced_a,
+						count(CASE WHEN card_id = 51 OR card_id = 52 THEN 1 END) as builder_a,
+						count(CASE WHEN card_id = 53 OR card_id = 54 THEN 1 END) as explorer_a,
+						count(CASE WHEN card_id = 55 OR card_id = 56 THEN 1 END) as farm_a,
+						count(CASE WHEN card_id = 57 OR card_id = 58 THEN 1 END) as miner_a,
+						count(CASE WHEN card_id = 59 OR card_id = 60 THEN 1 END) as prankster_a,
+						count(CASE WHEN card_id = 61 OR card_id = 62 THEN 1 END) as pvp_a,
+						count(CASE WHEN card_id = 63 OR card_id = 64 THEN 1 END) as redstone_a,
+						count(CASE WHEN card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_a,
+						count(CASE WHEN card_id = 67 OR card_id = 68 THEN 1 END) as terraform_a,
+						count(CASE WHEN win AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_w,
+						count(CASE WHEN win AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_w,
+						count(CASE WHEN win AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_w,
+						count(CASE WHEN win AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_w,
+						count(CASE WHEN win AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_w,
+						count(CASE WHEN win AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_w,
+						count(CASE WHEN win AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_w,
+						count(CASE WHEN win AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_w,
+						count(CASE WHEN win AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_w,
+						count(CASE WHEN win AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_w,
+						count(CASE WHEN loss AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_l,
+						count(CASE WHEN loss AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_l,
+						count(CASE WHEN loss AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_l,
+						count(CASE WHEN loss AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_l,
+						count(CASE WHEN loss AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_l,
+						count(CASE WHEN loss AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_l,
+						count(CASE WHEN loss AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_l,
+						count(CASE WHEN loss AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_l,
+						count(CASE WHEN loss AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_l,
+						count(CASE WHEN loss AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_l,
+						count(card_id) as total_amount
+						FROM (
+							SELECT deck_cards.card_id,
+							games.winner_deck_code = decks.deck_code as win,
+							games.loser_deck_code = decks.deck_code as loss
+							FROM decks
+							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code
+							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							WHERE deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+                            AND (games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code)
+							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						)
+					)
+						`,
+				[after, before],
+			)
+
+			const info = stats.rows[0]
+
+			return {
+				type: 'success',
+				body: [
+					{
+						type: 'balanced',
+						usage: Number(info['balanced_usage']),
+						winrate: Number(info['balanced_winrate']),
+					},
+					{
+						type: 'builder',
+						usage: Number(info['builder_usage']),
+						winrate: Number(info['builder_winrate']),
+					},
+					{
+						type: 'explorer',
+						usage: Number(info['explorer_usage']),
+						winrate: Number(info['explorer_winrate']),
+					},
+					{
+						type: 'farm',
+						usage: Number(info['farm_usage']),
+						winrate: Number(info['farm_winrate']),
+					},
+					{
+						type: 'miner',
+						usage: Number(info['miner_usage']),
+						winrate: Number(info['miner_winrate']),
+					},
+					{
+						type: 'prankster',
+						usage: Number(info['prankster_usage']),
+						winrate: Number(info['prankster_winrate']),
+					},
+					{
+						type: 'pvp',
+						usage: Number(info['pvp_usage']),
+						winrate: Number(info['pvp_winrate']),
+					},
+					{
+						type: 'redstone',
+						usage: Number(info['redstone_usage']),
+						winrate: Number(info['redstone_winrate']),
+					},
+					{
+						type: 'speedrunner',
+						usage: Number(info['speedrunner_usage']),
+						winrate: Number(info['speedrunner_winrate']),
+					},
+					{
+						type: 'terraform',
+						usage: Number(info['terraform_usage']),
+						winrate: Number(info['terraform_winrate']),
+					},
+				],
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}

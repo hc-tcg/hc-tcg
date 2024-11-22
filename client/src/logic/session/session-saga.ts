@@ -109,6 +109,7 @@ function* insertUser(socket: any) {
 				icon: 'any',
 				tags: [],
 				cards: getStarterPack().map((card) => toLocalCardInstance(card)),
+				public: false,
 			}
 
 			yield* sendMsg({
@@ -142,7 +143,7 @@ function* setupData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: localStorageDecks,
+				value: localStorageDecks.map((deck) => ({...deck, public: false})),
 			},
 		})
 		yield* put<LocalMessage>({
@@ -360,6 +361,37 @@ export function* databaseConnectionSaga() {
 				type: clientMessages.IMPORT_DECK,
 				code: action.code,
 				newActiveDeck: action.newActiveDeck,
+				newName: action.newName,
+				newIcon: action.newIcon,
+				newIconType: action.newIconType,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.EXPORT_DECK]>(
+		localMessages.EXPORT_DECK,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.EXPORT_DECK,
+				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.GRAB_CURRENT_IMPORT]>(
+		localMessages.GRAB_CURRENT_IMPORT,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.GRAB_CURRENT_IMPORT,
+				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.MAKE_INFO_PUBLIC]>(
+		localMessages.MAKE_INFO_PUBLIC,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.MAKE_INFO_PUBLIC,
+				code: action.code,
+				public: action.public,
 			})
 		},
 	)
@@ -460,6 +492,23 @@ export function* newDeckSaga() {
 }
 
 export function* recieveStatsSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.CURRENT_IMPORT_RECIEVED),
+		)
+		console.log('recieved')
+		yield put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'currentImport',
+				value: result.deck,
+			},
+		})
+	}
+}
+
+export function* recieveCurrentImportSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(
