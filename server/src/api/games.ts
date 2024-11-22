@@ -102,6 +102,10 @@ export function getGameInfo(secret: string) {
 	}
 }
 
-export function getGameCount() {
+export function getPublicGameCount() {
 	return {games: root.getGameIds().length}
+}
+
+export function getPublicQueueLength() {
+	return {queueLength: root.queue.length}
 }

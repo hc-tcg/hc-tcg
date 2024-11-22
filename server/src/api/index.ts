@@ -2,7 +2,13 @@ import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
-import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
+import {
+	cancelApiGame,
+	createApiGame,
+	getGameInfo,
+	getPublicGameCount,
+	getPublicQueueLength,
+} from './games'
 import {CancelGameBody} from './schema'
 import {
 	CardStatsQuery,
@@ -40,11 +46,15 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/games/count', (_req, res) => {
-		res.send(getGameCount())
+		res.send(getPublicGameCount())
 	})
 
 	app.get('/api/games/create', (_req, res) => {
 		res.send(createApiGame())
+	})
+
+	app.get('/api/queue/length', (_req, res) => {
+		res.send(getPublicQueueLength())
 	})
 
 	app.delete('/api/games/cancel', (req, res) => {
