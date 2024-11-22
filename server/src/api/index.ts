@@ -53,7 +53,7 @@ export function addApi(app: Express) {
 		res.send(createApiGame())
 	})
 
-	app.get('/api/queue/length', (_req, res) => {
+	app.get('/api/games/queue/length', (_req, res) => {
 		res.send(getPublicQueueLength())
 	})
 

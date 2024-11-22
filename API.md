@@ -1,27 +1,53 @@
 # Hermitcraft TCG API Documentation
 
-- GET `/api/cards`
+- `GET /api/cards`
+
 
 Returns a list of all cards.
 
-- GET `/api/types`
+---
+
+- `GET /api/types`
+
 
 Returns a list of all card types and resources for them.
 
-- GET `/api/ranks`
+---
+
+- `GET /api/ranks`
+
+---
 
 Returns a list of all card ranks and resources for them.
 
-- GET `/api/deck/{deckCode}`
 
-Convert a deck code to `{success: list of cards}` or `{error: reason}`.
+- `GET /api/deck/{deckCode}`
 
-- POST `/api/deck/cost`
+
+Get the deck for a deck code or hash from previous versions of HC TCG.
+
+
+- `POST /api/deck/cost`
+
 
 Request Body: Array<hermit id as string>
 Returns the cost of a deck containing the listed cards.
 
-- GET `/api/games/create`
+---
+
+- `GET /api/games/count`
+
+
+Get the amount of public games currently active.
+
+
+- `GET /api/games/queue/length`
+
+Get the amount of players waiting in the public queue.
+
+
+- `GET /api/games/create`
+
 
 Creates a new game and returns the codes to join it. The game code will time out after five minutes.
 
@@ -32,7 +58,9 @@ Creates a new game and returns the codes to join it. The game code will time out
 | `apiSecret` | string | Code used to cancel games made with the HC-TCG API |
 | `timeOutAt` | int | Time when the game code will no longer be valid. |
 
-- DELETE `/api/games/cancel`
+
+- `DELETE /api/games/cancel`
+
 
 Cancel a game made with the HC-TCG API.
 
