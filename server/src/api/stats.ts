@@ -98,7 +98,7 @@ export async function getDeckStats(params: {
 	}
 }
 
-export const TypeDistributionStatsQuery = z.object({
+export const BasicStatsQuery = z.object({
 	before: z.string().nullish(),
 	after: z.string().nullish(),
 })
@@ -107,17 +107,34 @@ export async function getTypeDistributionStats(params: {
 	before: number | null
 	after: number | null
 }) {
-	let decks = await root.db.getTypeDistribution(params)
-	console.log(decks)
+	let stats = await root.db.getTypeDistribution(params)
 
-	if (decks.type === 'failure') {
+	if (stats.type === 'failure') {
 		return {
 			type: 'failure',
-			reason: decks.reason,
+			reason: stats.reason,
 		}
 	}
 
 	return {
-		success: decks,
+		success: stats,
+	}
+}
+
+export async function getGamesStats(params: {
+	before: number | null
+	after: number | null
+}) {
+	let stats = await root.db.getGamesStats(params)
+
+	if (stats.type === 'failure') {
+		return {
+			type: 'failure',
+			reason: stats.reason,
+		}
+	}
+
+	return {
+		success: stats,
 	}
 }

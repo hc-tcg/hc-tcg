@@ -7,6 +7,7 @@ const {Pool} = pg
 import {
 	CardStats,
 	DeckStats,
+	GamesStats,
 	Stats,
 	TypeDistributionStats,
 	User,
@@ -1005,6 +1006,33 @@ export class Database {
 						winrate: Number(info['terraform_winrate']),
 					},
 				],
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGamesStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<GamesStats>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`SELECT count(*) as amount,avg(completion_time - start_time) as average_length FROM games
+				WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+				AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: {
+					amount: Number(stats.rows[0]['amount']),
+					averageLength: stats.rows[0]['average_length'],
+				},
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
