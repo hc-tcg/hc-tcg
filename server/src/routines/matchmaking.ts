@@ -107,7 +107,7 @@ function* gameManager(game: GameModel) {
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
 			// kill a game after two hours
-			timeout: delay(1000 * 60 * 60),
+			timeout: delay(1000 * 60 * 60 * 2),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take<
 				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
