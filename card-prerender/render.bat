@@ -1,4 +1,6 @@
 @echo off
+:: Requires ImageMagick
+
 :: Render cards
 echo Running Playwright...
 call npx playwright test -c playwright-render.config.ts -u
