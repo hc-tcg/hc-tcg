@@ -9,6 +9,7 @@ import OrionSoundRare from './orionsound-rare'
 import PharaohRare from './pharaoh-rare'
 import PixlriffsRare from './pixlriffs-rare'
 import PythonGBRare from './pythongb-rare'
+import SantaskallRare from './santaskall-rare'
 import ShubbleYTRare from './shubbleyt-rare'
 import Smajor1995Rare from './smajor1995'
 import SmallishbeansRare from './smallishbeans-rare'
@@ -30,6 +31,7 @@ const hermitCardClasses: Array<Card> = [
 	BigBSt4tzRare,
 	PharaohRare,
 	GrianchRare,
+	SantaskallRare,
 ]
 
 export default hermitCardClasses
