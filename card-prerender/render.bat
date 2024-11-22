@@ -5,7 +5,10 @@ call npx playwright test -c playwright-render.config.ts -u
 
 :: Move to client
 echo Writing JSON files to `client/public/images/cards/`...
-mkdir client/public/images/cards
-FOR /R ./card-prerender/render/ %%G IN (*.png) do cwebp -short %%G -o client/public/images/cards/%%~nG.webp
+IF not exist .\client\public\images\cards\NUL mkdir .\client\public\images\cards
+FOR /R .\card-prerender\render\ %%G IN (*.png) do (
+    magick %%G .\client\public\images\cards\%%~nG.webp
+    copy %%G .\client\public\images\cards\%%~nG.png
+)
 
 echo DONE!
