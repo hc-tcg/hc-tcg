@@ -30,7 +30,8 @@ Get the deck for a deck code or hash from previous versions of HC TCG.
 - `POST /api/deck/cost`
 
 
-Request Body: Array<hermit id as string>
+Request Body: `Array<hermit id as string>`
+
 Returns the cost of a deck containing the listed cards.
 
 ---
