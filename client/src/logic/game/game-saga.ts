@@ -343,6 +343,8 @@ function* runGame(
 		},
 		onTurnAction: function* (action, game) {
 			if (!reconnectInformation || isReadyToDisplay) return
+			// Don't play voice liens from earlier in the game.
+			game.voiceLineQueue = []
 			let index = reconnectInformation.history.indexOf(action)
 			if (index === reconnectInformation.history.length - 1) {
 				isReadyToDisplay = true
