@@ -98,16 +98,16 @@ export async function getTypeDistributionStats(params: {
 	before: number | null
 	after: number | null
 }): Promise<[number, Record<string, any>]> {
-	let decks = await root.db.getTypeDistribution(params)
+	let typeDistribution = await root.db.getTypeDistribution(params)
 
-	if (decks.type === 'failure') {
+	if (typeDistribution.type === 'failure') {
 		return [
 			500,
 			{
-				error: decks.reason,
+				error: typeDistribution.reason,
 			},
 		]
 	}
 
-	return [200, decks]
+	return [200, typeDistribution.body]
 }
