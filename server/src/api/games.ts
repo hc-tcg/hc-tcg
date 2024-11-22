@@ -63,20 +63,23 @@ export function createApiGame() {
 	}
 }
 
-export function cancelApiGame(code: string) {
+export function cancelApiGame(code: string): [number, Record<string, any>] {
 	let game = Object.values(root.privateQueue).find(
 		(game) => game.apiSecret === code,
 	)
 
 	if (!game) {
-		return {
-			error: 'Could not find API code',
-		}
+		return [
+			404,
+			{
+				error: 'Could not find API code',
+			},
+		]
 	}
 
 	cancelGame(game)
 
-	return {success: null}
+	return [200, {}]
 }
 
 export function getGameInfo(secret: string) {

@@ -30,7 +30,9 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/deck/:deck', async (req, res) => {
-		res.send(await getDeckInformation(requestUrlRoot(req), req.params.deck))
+		let ret = await getDeckInformation(requestUrlRoot(req), req.params.deck)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.post('/api/deck/cost', async (req, res) => {
@@ -47,7 +49,9 @@ export function addApi(app: Express) {
 
 	app.delete('/api/games/cancel', (req, res) => {
 		let body = CancelGameBody.parse(req.body)
-		res.send(cancelApiGame(body.code))
+		let ret = cancelApiGame(body.code)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.get('/api/games/:secret', (req, res) => {
@@ -61,26 +65,26 @@ export function addApi(app: Express) {
 
 	app.get('/api/stats/cards', async (req, res) => {
 		let query = CardStatsQuery.parse(req.query)
-		res.send(
-			await getCardStats({
-				before: NumberOrNull(query.before),
-				after: NumberOrNull(query.after),
-				orderBy: query.orderBy || null,
-			}),
-		)
+		let ret = await getCardStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+			orderBy: query.orderBy || null,
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.get('/api/stats/decks', async (req, res) => {
 		let query = DeckStatQuery.parse(req.query)
-		res.send(
-			await getDeckStats({
-				before: NumberOrNull(query.before),
-				after: NumberOrNull(query.after),
-				offset: NumberOrNull(query.offset),
-				orderBy: query.orderBy || null,
-				minimumWins: NumberOrNull(query.minimumWins),
-			}),
-		)
+		let ret = await getDeckStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+			offset: NumberOrNull(query.offset),
+			orderBy: query.orderBy || null,
+			minimumWins: NumberOrNull(query.minimumWins),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.get('/api/stats/typeDistribution', async (req, res) => {

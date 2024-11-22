@@ -1,42 +1,30 @@
 import {CARDS} from 'common/cards'
-import {Stats} from 'common/types/database'
 import {Database} from 'db/db'
 import root from 'serverRoot'
 import {z} from 'zod'
-
-type StatsResult =
-	| {
-			type: 'success'
-			stats: Stats
-	  }
-	| {
-			type: 'failure'
-			reason?: string
-	  }
 
 export const StatsHeader = z.object({uuid: z.string()})
 
 export async function getStats(
 	db: Database | undefined,
 	header: {uuid: string},
-): Promise<StatsResult> {
+): Promise<[number, Record<string, any>]> {
 	if (!db) {
-		return {
-			type: 'failure',
-			reason: 'Endpoint is unavailable because database is disabled',
-		}
+		return [
+			502,
+			{
+				error: 'Endpoint is unavailable because database is disabled',
+			},
+		]
 	}
 
 	let stats = await db.getUserStats(header.uuid)
 
 	if (stats.type === 'success') {
-		return {
-			type: 'success',
-			stats: stats.body,
-		}
+		return [200, stats.body]
 	}
 
-	return {type: 'failure', reason: stats.reason}
+	return [502, {error: stats.reason}]
 }
 
 export const CardStatsQuery = z.object({
@@ -51,22 +39,25 @@ export async function getCardStats(params: {
 	before: number | null
 	after: number | null
 	orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
-}) {
+}): Promise<[number, Record<string, any>]> {
 	let cards = await root.db.getCardsStats(params)
 
 	if (cards.type === 'failure') {
-		return {
-			type: 'failure',
-			reason: cards.reason,
-		}
+		return [
+			500,
+			{
+				error: cards.reason,
+			},
+		]
 	}
 
-	return {
-		success: cards.body.map((card) => ({
+	return [
+		200,
+		cards.body.map((card) => ({
 			...card,
 			id: CARDS[card.id] ? CARDS[card.id] : null,
 		})),
-	}
+	]
 }
 
 export const DeckStatQuery = z.object({
@@ -83,19 +74,19 @@ export async function getDeckStats(params: {
 	offset: number | null
 	orderBy: 'wins' | 'winrate' | null
 	minimumWins: number | null
-}) {
+}): Promise<[number, Record<string, any>]> {
 	let decks = await root.db.getDecksStats(params)
 
 	if (decks.type === 'failure') {
-		return {
-			type: 'failure',
-			reason: decks.reason,
-		}
+		return [
+			500,
+			{
+				error: decks.reason,
+			},
+		]
 	}
 
-	return {
-		success: decks,
-	}
+	return [200, decks]
 }
 
 export const TypeDistributionStatsQuery = z.object({
@@ -106,18 +97,17 @@ export const TypeDistributionStatsQuery = z.object({
 export async function getTypeDistributionStats(params: {
 	before: number | null
 	after: number | null
-}) {
+}): Promise<[number, Record<string, any>]> {
 	let decks = await root.db.getTypeDistribution(params)
-	console.log(decks)
 
 	if (decks.type === 'failure') {
-		return {
-			type: 'failure',
-			reason: decks.reason,
-		}
+		return [
+			500,
+			{
+				error: decks.reason,
+			},
+		]
 	}
 
-	return {
-		success: decks,
-	}
+	return [200, decks]
 }
