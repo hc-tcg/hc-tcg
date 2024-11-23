@@ -42,7 +42,7 @@ export function addApi(app: Express) {
 	})
 
 	app.post('/api/deck/cost', async (req, res) => {
-		res.send(await deckCost(req.body))
+		res.send(deckCost(req.body))
 	})
 
 	app.get('/api/games/count', (_req, res) => {

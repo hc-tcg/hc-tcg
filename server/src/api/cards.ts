@@ -153,6 +153,7 @@ export async function getDeckInformation(
 				cards: deck
 					.map((card) => cardToCardResponse(card.props, url))
 					.filter((x) => x !== null),
+				cost: getDeckCost(deck.map((card) => card.props)),
 			},
 		]
 	} else {
@@ -165,7 +166,13 @@ export async function getDeckInformation(
 				},
 			]
 		if (deck.type == 'success') {
-			return [200, deck.body]
+			return [
+				200,
+				{
+					...deck.body,
+					cost: getDeckCost(deck.body.cards.map((card) => card.props)),
+				},
+			]
 		} else {
 			return [
 				404,
