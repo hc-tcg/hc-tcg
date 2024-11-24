@@ -7,6 +7,7 @@ const {Pool} = pg
 import {
 	CardStats,
 	DeckStats,
+	GamesStats,
 	Stats,
 	TypeDistributionStats,
 	User,
@@ -691,7 +692,8 @@ export class Database {
 			const stats = await this.pool.query(
 				`
 				SELECT * FROM
-					(SELECT card_id, 
+				(
+					SELECT card_id, 
 					total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
 					cast(included_in_decks as decimal) / total_decks as deck_usage, 
 					(cast(wins as decimal) + losses) / total_games as game_usage,
@@ -706,7 +708,7 @@ export class Database {
 							games.winner_deck_code = deck_cards.deck_code as wins,
 							games.loser_deck_code = deck_cards.deck_code as losses FROM cards
 							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
-							LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+							INNER JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
 							WHERE deck_cards.card_id > -1
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
@@ -715,7 +717,7 @@ export class Database {
 					CROSS JOIN (SELECT count(*) as total_decks FROM decks)
 					CROSS JOIN (SELECT count(*) as total_games FROM games)
 					WHERE wins > 0
-					)
+				)
 				ORDER BY (
 					CASE WHEN $3 = 'winrate' THEN winrate 
 						WHEN $3 = 'deckUsage' THEN deck_usage 
@@ -776,7 +778,7 @@ export class Database {
 							SELECT decks.deck_code,
 							games.winner_deck_code = decks.deck_code as wins,
 							games.loser_deck_code = decks.deck_code as losses FROM decks
-							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
 							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 						) as result
@@ -938,7 +940,7 @@ export class Database {
 							games.loser_deck_code = decks.deck_code as loss
 							FROM decks
 							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code
-							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
 							WHERE deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
                             AND (games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code)
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
@@ -1005,6 +1007,33 @@ export class Database {
 						winrate: Number(info['terraform_winrate']),
 					},
 				],
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGamesStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<GamesStats>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`SELECT count(*) as amount,avg(completion_time - start_time) as average_length FROM games
+				WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+				AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: {
+					amount: Number(stats.rows[0]['amount']),
+					averageLength: stats.rows[0]['average_length'],
+				},
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}

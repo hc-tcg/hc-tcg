@@ -111,3 +111,26 @@ export async function getTypeDistributionStats(params: {
 
 	return [200, typeDistribution.body]
 }
+
+export const BasicStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+})
+
+export async function getGamesStats(params: {
+	before: number | null
+	after: number | null
+}): Promise<[number, Record<string, any>]> {
+	let stats = await root.db.getGamesStats(params)
+
+	if (stats.type === 'failure') {
+		return [
+			500,
+			{
+				error: stats.reason,
+			},
+		]
+	}
+
+	return [200, stats.body]
+}
