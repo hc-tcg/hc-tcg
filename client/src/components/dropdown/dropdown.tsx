@@ -1,5 +1,6 @@
 import {ReactNode, useEffect, useRef, useState} from 'react'
 import css from './dropdown.module.scss'
+import classNames from 'classnames'
 
 type DropdownOptions = {
 	name: string
@@ -15,6 +16,8 @@ type Props = {
 	showNames: boolean
 	grid?: boolean
 	maxHeight?: number
+	checkboxes?: boolean
+	checked?: Array<string>
 	action: (option: string) => void
 }
 
@@ -25,19 +28,39 @@ const Dropdown = ({
 	showNames,
 	grid,
 	maxHeight,
+	checkboxes,
+	checked,
 	action,
 }: Props) => {
 	const [showDropdown, setShowDropdown] = useState<boolean>(false)
 	const buttonRef = useRef<HTMLButtonElement>(null)
+	const filterMenuRef = useRef<HTMLDivElement>(null)
 
 	const onMouseUp = (e: MouseEvent) => {
 		const boundingBox = buttonRef.current?.getBoundingClientRect()
+		const menuBoundingBox = filterMenuRef.current?.getBoundingClientRect()
 		if (
+			!checkboxes &&
 			boundingBox &&
 			(e.x > boundingBox.right ||
 				e.x < boundingBox.left ||
 				e.y > boundingBox.bottom ||
 				e.y < boundingBox.top)
+		)
+			setShowDropdown(false)
+
+		if (
+			checkboxes &&
+			menuBoundingBox &&
+			boundingBox &&
+			(e.x > boundingBox.right ||
+				e.x < boundingBox.left ||
+				e.y > boundingBox.bottom ||
+				e.y < boundingBox.top) &&
+			(e.x > menuBoundingBox.right ||
+				e.x < menuBoundingBox.left ||
+				e.y > menuBoundingBox.bottom ||
+				e.y < menuBoundingBox.top)
 		)
 			setShowDropdown(false)
 	}
@@ -61,7 +84,7 @@ const Dropdown = ({
 			</button>
 			<div>
 				{showDropdown && (
-					<div className={css.dropdownMenu}>
+					<div className={css.dropdownMenu} ref={filterMenuRef}>
 						<div className={css.DropdownMenuArrow} />
 						<div>
 							<div className={css.DropdownMenuContent}>
@@ -78,12 +101,36 @@ const Dropdown = ({
 											: {}
 									}
 								>
-									{options.map((option) => (
+									{options.map((option, i) => (
 										<div
 											key={option.key || option.name}
 											onMouseUp={() => action(option.key || option.name)}
 											className={css.DropdownMenuItem}
 										>
+											{checkboxes && (
+												<div>
+													{checked &&
+													option.key &&
+													checked.includes(option.key) ? (
+														<div
+															className={classNames(
+																css.checkbox,
+																css.checked,
+																i === 0 && css.hidden,
+															)}
+														></div>
+													) : (
+														<div
+															className={classNames(
+																css.checkbox,
+																i === 0 && css.hidden,
+															)}
+														>
+															{' '}
+														</div>
+													)}
+												</div>
+											)}
 											{option.icon && (
 												<img
 													src={option.icon}

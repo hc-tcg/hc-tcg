@@ -85,6 +85,31 @@
 	font-size: 0.8rem;
 }
 
+.checkbox {
+	width: 1.5rem;
+	height: 1.5rem;
+	place-content: top;
+	background-color: var(--gray-500);
+	border-radius: 6px;
+
+	&.checked {
+		background-color: var(--gray-300);
+	}
+
+	&.checked::after {
+		content: "✓";
+		color: rgb(37, 37, 37);
+		position: absolute;
+		font-weight: bold;
+		font-size: 20px;
+		transform: translate(0.2rem, 0.1rem);
+	}
+
+	&.hidden {
+		visibility: hidden;
+	}
+}
+
 @keyframes slideDownAndFade {
 	from {
 		opacity: 0;

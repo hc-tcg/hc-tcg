@@ -304,7 +304,7 @@ function EditDeck({
 	const [textQuery, setTextQuery] = useState<string>('')
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
-	const [expansionQuery, setExpansionQuery] = useState<string>('')
+	const [expansionQuery, setExpansionQuery] = useState<Array<string>>([])
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(
 		deck
 			? deck
@@ -375,7 +375,8 @@ function EditDeck({
 					((isHermit(card.props) || isItem(card.props)) &&
 						card.props.type.includes(typeQuery))) &&
 				// Card Expansion Filter
-				(expansionQuery === '' || card.props.expansion === expansionQuery) &&
+				(expansionQuery.length === 0 ||
+					expansionQuery.includes(card.props.expansion)) &&
 				// Don't show disabled cards
 				EXPANSIONS[card.props.expansion].disabled === false,
 		),
@@ -428,7 +429,7 @@ function EditDeck({
 		setTextQuery('')
 		setRankQuery('')
 		setTypeQuery('')
-		setExpansionQuery('')
+		setExpansionQuery([])
 	}
 	const handleDeckIcon = (option: any) => {
 		const getIcon = (): Deck['iconType'] => {
@@ -559,7 +560,7 @@ function EditDeck({
 									<button className={css.dropdownButton}>
 										<img
 											src={`/images/expansion-icons/${
-												expansionQuery === '' ? 'any' : expansionQuery
+												expansionQuery.length === 0 ? 'any' : expansionQuery[0]
 											}.png`}
 										/>
 									</button>
@@ -567,8 +568,16 @@ function EditDeck({
 								label="Expansion Filter"
 								options={expansionDropdownOptions}
 								showNames={true}
+								checkboxes={true}
+								checked={expansionQuery}
 								action={(option) =>
-									setExpansionQuery(option === 'any' ? '' : option)
+									setExpansionQuery(
+										option === 'any'
+											? []
+											: expansionQuery.includes(option)
+												? expansionQuery.filter((a) => a !== option)
+												: [option, ...expansionQuery],
+									)
 								}
 							/>
 							<input
