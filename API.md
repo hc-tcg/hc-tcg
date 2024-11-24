@@ -115,7 +115,7 @@ Returns the 20 top scoring decks that match the specified parameters. Each deck 
 
 **Query Parameters**
 
-- `POST api/stats/typeDistribution`
+- `POST api/stats/type-distribution`
 
 Returns information for each type.
 
