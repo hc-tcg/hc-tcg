@@ -7,7 +7,7 @@ import {eventChannel} from 'redux-saga'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {getSocket} from './socket-selectors'
 
-export function* sendMsg(payload: ClientMessage): any {
+export function* sendMsg(payload: ClientMessage) {
 	const socket = yield* select(getSocket)
 
 	if (socket.connected) {
@@ -19,8 +19,10 @@ export function* sendMsg(payload: ClientMessage): any {
 			playerId,
 			playerSecret,
 		})
+		return 'success'
 	} else {
 		console.error('Can not send message when socket is not connected')
+		return 'failure'
 	}
 }
 
