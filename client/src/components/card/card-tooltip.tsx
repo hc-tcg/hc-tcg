@@ -196,7 +196,8 @@ const CardInstanceTooltip = ({card}: Props) => {
 			<div className={css.cardTooltip}>
 				<div className={css.topLine}>
 					{getName(card)}
-					{isHermit(card) && getRarity(card)}
+					{(isHermit(card) || isAttach(card) || isSingleUse(card)) &&
+						getRarity(card)}
 					{getType(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
