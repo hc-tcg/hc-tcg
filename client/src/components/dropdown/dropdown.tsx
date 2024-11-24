@@ -1,6 +1,6 @@
+import classNames from 'classnames'
 import {ReactNode, useEffect, useRef, useState} from 'react'
 import css from './dropdown.module.scss'
-import classNames from 'classnames'
 
 type DropdownOptions = {
 	name: string
