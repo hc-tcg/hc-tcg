@@ -17,13 +17,18 @@ type DeckIconHermit = {
 	icon: string
 }
 
+type DeckIconEffect = {
+	iconType: 'effect'
+	icon: string
+}
+
 export type Deck = {
 	name: string
 	code: string
 	cards: Array<LocalCardInstance>
 	tags: Array<Tag>
 	public: boolean
-} & (DeckIconItem | DeckIconHermit)
+} & (DeckIconItem | DeckIconHermit | DeckIconEffect)
 
 export type ApiDeck = {
 	name: string | null

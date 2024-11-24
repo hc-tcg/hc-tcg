@@ -224,6 +224,7 @@ export const ImportModal = ({
 							}
 							label="Deck Icon"
 							options={iconDropdownOptions}
+							showNames={true}
 							action={(option: any) => setDeckIcon(option)}
 						/>
 						<input

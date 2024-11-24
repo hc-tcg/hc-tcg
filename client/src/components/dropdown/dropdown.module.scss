@@ -1,3 +1,8 @@
+.dropdownMenu {
+	position: absolute;
+	z-index: 200;
+}
+
 .DropdownMenuContent {
 	min-width: 3rem;
 	color: var(--text-light);
@@ -9,22 +14,7 @@
 	animation-duration: 400ms;
 	animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 	will-change: transform, opacity;
-
-	&[data-side='top'] {
-		animation-name: slideDownAndFade;
-	}
-
-	&[data-side='right'] {
-		animation-name: slideLeftAndFade;
-	}
-
-	&[data-side='bottom'] {
-		animation-name: slideUpAndFade;
-	}
-
-	&[data-side='left'] {
-		animation-name: slideRightAndFade;
-	}
+	animation-name: slideDownAndFade;
 }
 
 .DropdownMenuItem,
@@ -47,12 +37,7 @@
 		text-transform: capitalize;
 	}
 
-	&[data-disabled] {
-		color: var(--gray-600);
-		pointer-events: none;
-	}
-
-	&[data-highlighted] {
+	&:hover {
 		background-color: var(--gray-200);
 		color: var(--text-dark);
 	}
@@ -74,27 +59,18 @@
 }
 
 .DropdownMenuArrow {
-	fill: var(--gray-200);
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-bottom: 4px solid var(--gray-200);
+	transform: translateX(12px);
 }
 
 .color {
 	width: 1rem;
 	height: 1rem;
 	border-radius: 50%;
-}
-
-.RightSlot {
-	margin-left: auto;
-	padding-left: 20px;
-	color: var(--mauve11);
-}
-
-[data-highlighted]>.RightSlot {
-	color: white;
-}
-
-[data-disabled] .RightSlot {
-	color: var(--mauve8);
 }
 
 .input {
@@ -109,27 +85,28 @@
 	font-size: 0.8rem;
 }
 
-@keyframes slideUpAndFade {
-	from {
-		opacity: 0;
-		transform: translateY(2px);
+.checkbox {
+	width: 1.5rem;
+	height: 1.5rem;
+	place-content: top;
+	background-color: var(--gray-500);
+	border-radius: 6px;
+
+	&.checked {
+		background-color: var(--gray-300);
 	}
 
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-@keyframes slideRightAndFade {
-	from {
-		opacity: 0;
-		transform: translateX(-2px);
+	&.checked::after {
+		content: "✓";
+		color: rgb(37, 37, 37);
+		position: absolute;
+		font-weight: bold;
+		font-size: 20px;
+		transform: translate(0.2rem, 0.1rem);
 	}
 
-	to {
-		opacity: 1;
-		transform: translateX(0);
+	&.hidden {
+		visibility: hidden;
 	}
 }
 
@@ -142,17 +119,5 @@
 	to {
 		opacity: 1;
 		transform: translateY(0);
-	}
-}
-
-@keyframes slideLeftAndFade {
-	from {
-		opacity: 0;
-		transform: translateX(2px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateX(0);
 	}
 }

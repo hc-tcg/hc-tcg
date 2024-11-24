@@ -182,5 +182,7 @@ export function getIconPath(deck: Deck): string {
 			return `/images/types/type-${deck.icon}.png`
 		case 'hermit':
 			return `/images/hermits-emoji/${deck.icon}.png`
+		case 'effect':
+			return `/images/effects/${deck.icon}.png`
 	}
 }
