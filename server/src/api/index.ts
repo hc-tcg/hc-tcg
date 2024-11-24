@@ -97,14 +97,14 @@ export function addApi(app: Express) {
 		res.send(ret[1])
 	})
 
-	app.get('/api/stats/typeDistribution', async (req, res) => {
+	app.get('/api/stats/type-distribution', async (req, res) => {
 		let query = TypeDistributionStatsQuery.parse(req.query)
-		res.send(
-			await getTypeDistributionStats({
-				before: NumberOrNull(query.before),
-				after: NumberOrNull(query.after),
-			}),
-		)
+		let ret = await getTypeDistributionStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	if (DEBUG) {

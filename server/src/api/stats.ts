@@ -55,7 +55,7 @@ export async function getCardStats(params: {
 		200,
 		cards.body.map((card) => ({
 			...card,
-			id: CARDS[card.id] ? CARDS[card.id] : null,
+			id: CARDS[card.id] ? CARDS[card.id].id : null,
 		})),
 	]
 }
