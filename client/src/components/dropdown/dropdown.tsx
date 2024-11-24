@@ -1,5 +1,4 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
-import {ReactNode} from 'react'
+import {ReactNode, useEffect, useRef, useState} from 'react'
 import css from './dropdown.module.scss'
 
 type DropdownOptions = {
@@ -13,49 +12,101 @@ type Props = {
 	button: ReactNode
 	label: string
 	options: Array<DropdownOptions>
+	showNames: boolean
+	grid?: boolean
+	maxHeight?: number
 	action: (option: string) => void
 }
 
-const Dropdown = ({button, label, options, action}: Props) => {
+const Dropdown = ({
+	button,
+	label,
+	options,
+	showNames,
+	grid,
+	maxHeight,
+	action,
+}: Props) => {
+	const [showDropdown, setShowDropdown] = useState<boolean>(false)
+	const buttonRef = useRef<HTMLButtonElement>(null)
+
+	const onMouseUp = (e: MouseEvent) => {
+		const boundingBox = buttonRef.current?.getBoundingClientRect()
+		if (
+			boundingBox &&
+			(e.x > boundingBox.right ||
+				e.x < boundingBox.left ||
+				e.y > boundingBox.bottom ||
+				e.y < boundingBox.top)
+		)
+			setShowDropdown(false)
+	}
+
+	useEffect(() => {
+		window.addEventListener('mouseup', onMouseUp, false)
+
+		return () => {
+			window.removeEventListener('mouseup', onMouseUp, false)
+		}
+	})
+
 	return (
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger asChild>{button}</DropdownMenu.Trigger>
-			<DropdownMenu.Portal>
-				<DropdownMenu.Content
-					className={css.DropdownMenuContent}
-					sideOffset={0}
-					align="start"
-				>
-					<DropdownMenu.Arrow className={css.DropdownMenuArrow} />
-					<DropdownMenu.Label className={css.DropdownMenuLabel}>
-						{label}
-					</DropdownMenu.Label>
-					{options.map((option) => (
-						<DropdownMenu.RadioItem
-							value={option.name}
-							key={option.key || option.name}
-							onSelect={() => action(option.key || option.name)}
-							className={css.DropdownMenuItem}
-						>
-							{option.icon && (
-								<img
-									src={option.icon}
-									style={{height: '1.5rem', width: '1.5rem'}}
-									alt={option.icon}
-								/>
-							)}
-							{option.color && (
+		<div>
+			<button
+				ref={buttonRef}
+				onMouseUp={() => setShowDropdown(!showDropdown)}
+				className={css.dropdownButton}
+			>
+				{button}
+			</button>
+			<div>
+				{showDropdown && (
+					<div className={css.dropdownMenu}>
+						<div className={css.DropdownMenuArrow} />
+						<div>
+							<div className={css.DropdownMenuContent}>
+								<div className={css.DropdownMenuLabel}>{label}</div>
 								<div
-									className={css.color}
-									style={{backgroundColor: option.color}}
-								></div>
-							)}
-							<span>{option.name}</span>
-						</DropdownMenu.RadioItem>
-					))}
-				</DropdownMenu.Content>
-			</DropdownMenu.Portal>
-		</DropdownMenu.Root>
+									style={
+										grid && maxHeight
+											? {
+													display: 'grid',
+													gridAutoFlow: 'column',
+													gridTemplateRows: `repeat(${maxHeight}, 2rem)`,
+													gridTemplateColumns: `repeat(${Math.ceil(options.length / maxHeight)}, 2rem)`,
+												}
+											: {}
+									}
+								>
+									{options.map((option) => (
+										<div
+											key={option.key || option.name}
+											onMouseUp={() => action(option.key || option.name)}
+											className={css.DropdownMenuItem}
+										>
+											{option.icon && (
+												<img
+													src={option.icon}
+													style={{height: '1.5rem', width: '1.5rem'}}
+													alt={option.icon}
+												/>
+											)}
+											{option.color && (
+												<div
+													className={css.color}
+													style={{backgroundColor: option.color}}
+												></div>
+											)}
+											{showNames && <span>{option.name}</span>}
+										</div>
+									))}
+								</div>
+							</div>
+						</div>
+					</div>
+				)}
+			</div>
+		</div>
 	)
 }
 

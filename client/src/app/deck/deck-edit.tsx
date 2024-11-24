@@ -28,7 +28,7 @@ import css from './deck.module.scss'
 import DeckLayout from './layout'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
-const DECK_ICONS = [
+const ITEM_DECK_ICONS = [
 	'any',
 	'balanced',
 	'builder',
@@ -42,6 +42,70 @@ const DECK_ICONS = [
 	'terraform',
 ]
 
+const HERMIT_DECK_ICONS = [
+	'bdoubleo100',
+	'beetlejhost',
+	'biffa2001',
+	'boomerbdubs',
+	'cubfan135',
+	'docm77',
+	'dwarfimpulse',
+	'ethoslab',
+	'eviljevin',
+	'evilxisuma',
+	'falsesymmetry',
+	'fiveampearl',
+	'frenchkeralis',
+	'geminitay',
+	'goodtimeswithscar',
+	'architectfalse',
+	'grian',
+	'helsknight',
+	'horseheadhypno',
+	'hotguy',
+	'humancleo',
+	'hypnotizd',
+	'ijevin',
+	'impulsesv',
+	'jingler',
+	'joehills',
+	'keralis',
+	'llamadad',
+	'mumbojumbo',
+	'originalxb',
+	'pearlescentmoon',
+	'potatoboy',
+	'poultryman',
+	'princessgem',
+	'renbob',
+	'rendog',
+	'shadee',
+	'skizzleman',
+	'smallishbeans',
+	'steampunktango',
+	'tangotek',
+	'tinfoilchef',
+	'vintagebeef',
+	'welsknight',
+	'wormman',
+	'xbcrafted',
+	'xisumavoid',
+	'zedaphplays',
+	'zombiecleo',
+]
+
+const EFFECT_DECK_ICONS = [
+	'bed',
+	'clock',
+	'fishing_rod',
+	'diamond_armor',
+	'diamond_sword',
+	'egg',
+	'golden_apple',
+	'fortune',
+	'bad_omen',
+]
+
 const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS).filter((expansion) => {
@@ -53,10 +117,22 @@ const EXPANSION_NAMES = [
 	}),
 ]
 
-const iconDropdownOptions = DECK_ICONS.map((option) => ({
+const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
+}))
+
+const hermitDropdownOptions = HERMIT_DECK_ICONS.map((option) => ({
+	name: option,
+	key: option,
+	icon: `/images/hermits-emoji/${option}.png`,
+}))
+
+const effectDropdownOptions = EFFECT_DECK_ICONS.map((option) => ({
+	name: option,
+	key: option,
+	icon: `/images/effects/${option}.png`,
 }))
 
 const rarityDropdownOptions = RANK_NAMES.map((option) => ({
@@ -355,9 +431,14 @@ function EditDeck({
 		setExpansionQuery('')
 	}
 	const handleDeckIcon = (option: any) => {
+		const getIcon = (): Deck['iconType'] => {
+			if (ITEM_DECK_ICONS.includes(option)) return 'item'
+			if (EFFECT_DECK_ICONS.includes(option)) return 'effect'
+			return 'hermit'
+		}
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			iconType: 'item',
+			iconType: getIcon(),
 			icon: option,
 		}))
 	}
@@ -453,6 +534,7 @@ function EditDeck({
 								}
 								label="Rank Filter"
 								options={rarityDropdownOptions}
+								showNames={true}
 								action={(option) =>
 									setRankQuery(option === 'any' ? '' : option)
 								}
@@ -467,6 +549,7 @@ function EditDeck({
 								}
 								label="Type Filter"
 								options={iconDropdownOptions}
+								showNames={true}
 								action={(option) =>
 									setTypeQuery(option === 'any' ? '' : option)
 								}
@@ -483,6 +566,7 @@ function EditDeck({
 								}
 								label="Expansion Filter"
 								options={expansionDropdownOptions}
+								showNames={true}
 								action={(option) =>
 									setExpansionQuery(option === 'any' ? '' : option)
 								}
@@ -659,7 +743,14 @@ function EditDeck({
 											</button>
 										}
 										label="Deck Icon"
-										options={iconDropdownOptions}
+										options={[
+											...iconDropdownOptions,
+											...hermitDropdownOptions,
+											...effectDropdownOptions,
+										]}
+										showNames={false}
+										grid={true}
+										maxHeight={9}
 										action={(option) => handleDeckIcon(option)}
 									/>
 									<DeckName
@@ -717,6 +808,7 @@ function EditDeck({
 										}
 										label="Saved Tags"
 										options={tagsDropdownOptions}
+										showNames={true}
 										action={(option) => {
 											const parsedTag = JSON.parse(option) as Tag
 											addCreatedTag(tags, setTags, parsedTag)
