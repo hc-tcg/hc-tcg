@@ -29,7 +29,7 @@ export function* sendMsg(payload: ClientMessage) {
 	}
 }
 
-export function sendBlockedMessages(
+export function sendMessagesThatFailedToSend(
 	session: {
 		playerId: string
 		playerSecret: string
@@ -38,7 +38,7 @@ export function sendBlockedMessages(
 ) {
 	return () => {
 		console.log(
-			`Socket connected, attempting to send ${messagesThatHaveNotBeenSent.length} failed messages.`,
+			`Socket connected, attempting to send ${messagesThatHaveNotBeenSent.length} messages that failed to send.`,
 		)
 		let attempts = 0
 		while (messagesThatHaveNotBeenSent.length > 0) {
@@ -51,7 +51,7 @@ export function sendBlockedMessages(
 				playerSecret: session.playerSecret,
 			})
 			if (attempts > 100) {
-				throw new Error('Could not send messages after reconnect')
+				throw new Error('Could not send all messages after reconnect.')
 			}
 			attempts += 1
 		}
@@ -82,7 +82,7 @@ function* socketSaga(): SagaIterator {
 		const connectErrorListener = () => emitter('connect_error')
 
 		socket.on('connect', connectListener)
-		socket.on('connect', sendBlockedMessages(session, socket))
+		socket.on('connect', sendMessagesThatFailedToSend(session, socket))
 		socket.on('disconnect', disconnectListener)
 		socket.on('connect_error', connectErrorListener)
 		return () => {
