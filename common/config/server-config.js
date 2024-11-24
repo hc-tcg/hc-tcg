@@ -18,5 +18,5 @@ export default {
 		maxDuplicates: 3,
 		maxDeckCost: 42,
 	},
-	logoSubText: 'EX-tra fun!',
+	logoSubText: 'Over 3 Games Played!',
 }
