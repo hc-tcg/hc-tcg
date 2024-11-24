@@ -106,7 +106,7 @@ function* gameManager(game: GameModel) {
 		const result = yield* race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
-			// kill a game after two hours
+			// kill a game after one hour
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take<
