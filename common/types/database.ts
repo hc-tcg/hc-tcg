@@ -43,6 +43,10 @@ export type TypeDistributionStats = Array<{
 	usage: number
 	winrate: number
 }>
+export type GamesStats = {
+	amount: number
+	averageLength: number
+}
 
 export type Achievement = {
 	id: string

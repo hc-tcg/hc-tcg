@@ -14,9 +14,10 @@ import {
 	CardStatsQuery,
 	DeckStatQuery,
 	StatsHeader,
-	TypeDistributionStatsQuery,
+	BasicStatsQuery,
 	getCardStats,
 	getDeckStats,
+	getGamesStats,
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
@@ -98,8 +99,18 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats/type-distribution', async (req, res) => {
-		let query = TypeDistributionStatsQuery.parse(req.query)
+		let query = BasicStatsQuery.parse(req.query)
 		let ret = await getTypeDistributionStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/stats/games', async (req, res) => {
+		let query = BasicStatsQuery.parse(req.query)
+		let ret = await getGamesStats({
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
 		})

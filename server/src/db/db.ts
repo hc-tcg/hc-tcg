@@ -7,6 +7,7 @@ const {Pool} = pg
 import {
 	CardStats,
 	DeckStats,
+	GamesStats,
 	Stats,
 	TypeDistributionStats,
 	User,
@@ -781,7 +782,7 @@ export class Database {
 					GROUP BY result.deck_code) as deck_code_list 
 					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
 					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins != NULL AND wins >= $6::int
+					WHERE wins >= $6::int
 					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
 					LIMIT $3::int
 					OFFSET $3::int * $4::int
@@ -1003,6 +1004,33 @@ export class Database {
 						winrate: Number(info['terraform_winrate']),
 					},
 				],
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGamesStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<GamesStats>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`SELECT count(*) as amount,avg(completion_time - start_time) as average_length FROM games
+				WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+				AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: {
+					amount: Number(stats.rows[0]['amount']),
+					averageLength: stats.rows[0]['average_length'],
+				},
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
