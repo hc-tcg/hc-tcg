@@ -255,6 +255,10 @@ export function* loginSaga() {
 				type: localMessages.SELECT_DECK,
 				deck: activeDeck,
 			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
 		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
@@ -262,6 +266,10 @@ export function* loginSaga() {
 				type: localMessages.MINECRAFT_NAME_SET,
 				name: minecraftName,
 			})
+		yield* sendMsg({
+			type: clientMessages.UPDATE_MINECRAFT_NAME,
+			name: minecraftName ? minecraftName : '',
+		})
 
 		if (result.playerReconnected.game) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
@@ -301,6 +309,10 @@ export function* loginSaga() {
 			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
 				deck: activeDeck,
 			})
 		}
@@ -437,11 +449,6 @@ export function* databaseConnectionSaga() {
 			})
 		},
 	)
-}
-
-export function* logoutSaga() {
-	const socket = yield* select(getSocket)
-
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {
@@ -451,6 +458,11 @@ export function* logoutSaga() {
 			})
 		},
 	)
+}
+
+export function* logoutSaga() {
+	const socket = yield* select(getSocket)
+
 	yield* race([
 		take(localMessages.LOGOUT),
 		call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),

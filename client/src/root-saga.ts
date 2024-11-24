@@ -19,8 +19,8 @@ import {SagaIterator} from 'redux-saga'
 import {all, call, fork, race, take} from 'redux-saga/effects'
 
 function* appSaga(): SagaIterator {
-	yield fork(databaseConnectionSaga)
 	yield call(loginSaga)
+	yield fork(databaseConnectionSaga)
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(recieveStatsSaga)
