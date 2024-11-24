@@ -20,7 +20,7 @@ export function* sendMsg(payload: ClientMessage): any {
 			playerSecret,
 		})
 	} else {
-		throw new Error('Can not send message when socket is not connected')
+		console.error('Can not send message when socket is not connected')
 	}
 }
 
