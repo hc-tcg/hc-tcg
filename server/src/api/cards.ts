@@ -136,11 +136,15 @@ export function cards(url: string) {
 	return out
 }
 
-export async function getDeckInformation(url: string, hash: string) {
+export async function getDeckInformation(
+	url: string,
+	hash: string,
+): Promise<[number, Record<string, any>]> {
 	if (hash.length >= 10) {
 		let deck = getDeckFromHash(hash)
-		return {
-			success: {
+		return [
+			200,
+			{
 				name: null,
 				code: hash,
 				tags: [],
@@ -149,25 +153,33 @@ export async function getDeckInformation(url: string, hash: string) {
 				cards: deck
 					.map((card) => cardToCardResponse(card.props, url))
 					.filter((x) => x !== null),
+				cost: getDeckCost(deck.map((card) => card.props)),
 			},
-		}
+		]
 	} else {
 		let deck = await root.db?.getDeckFromID(hash)
 		if (!deck)
-			return {
-				type: 'failure',
-				reason: 'Endpoint is unavailable because database is disabled',
-			}
+			return [
+				501,
+				{
+					reason: 'Endpoint is unavailable because database is disabled',
+				},
+			]
 		if (deck.type == 'success') {
-			return {
-				type: 'success',
-				...deck.body,
-			}
+			return [
+				200,
+				{
+					...deck.body,
+					cost: getDeckCost(deck.body.cards.map((card) => card.props)),
+				},
+			]
 		} else {
-			return {
-				type: 'failure',
-				reason: 'Could not find deck.',
-			}
+			return [
+				404,
+				{
+					reason: 'Could not find deck.',
+				},
+			]
 		}
 	}
 }
