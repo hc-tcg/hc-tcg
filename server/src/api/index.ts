@@ -11,10 +11,10 @@ import {
 } from './games'
 import {CancelGameBody} from './schema'
 import {
+	BasicStatsQuery,
 	CardStatsQuery,
 	DeckStatQuery,
 	StatsHeader,
-	BasicStatsQuery,
 	getCardStats,
 	getDeckStats,
 	getGamesStats,
