@@ -1,29 +1,28 @@
 # Hermitcraft TCG API Documentation
 
-- `GET /api/cards`
+-   `GET /api/cards`
 
 Returns a list of all cards.
 
 ---
 
-- `GET /api/types`
+-   `GET /api/types`
 
 Returns a list of all card types and resources for them.
 
 ---
 
-- `GET /api/ranks`
-
+-   `GET /api/ranks`
 
 Returns a list of all card ranks and resources for them.
 
 ---
 
-- `GET /api/deck/{deckCode}`
+-   `GET /api/deck/{deckCode}`
 
 Get the deck for a deck code or hash from previous versions of HC TCG.
 
-- `POST /api/deck/cost`
+-   `POST /api/deck/cost`
 
 Request Body: `Array<hermit id as string>`
 
@@ -31,15 +30,15 @@ Returns the cost of a deck containing the listed cards.
 
 ---
 
-- `GET /api/games/count`
+-   `GET /api/games/count`
 
 Get the amount of public games currently active.
 
-- `GET /api/games/queue/length`
+-   `GET /api/games/queue/length`
 
 Get the amount of players waiting in the public queue.
 
-- `GET /api/games/create`
+-   `GET /api/games/create`
 
 Creates a new game and returns the codes to join it. The game code will time out after five minutes.
 
@@ -50,7 +49,7 @@ Creates a new game and returns the codes to join it. The game code will time out
 | `apiSecret`     | string | Code used to cancel games made with the HC-TCG API |
 | `timeOutAt`     |  int   |   Time when the game code will no longer be valid. |
 
-- `DELETE /api/games/cancel`
+-   `DELETE /api/games/cancel`
 
 Cancel a game made with the HC-TCG API.
 
@@ -59,18 +58,18 @@ Request Body:
 | :----------- | :--------------: | -------------------------: |
 | `code` | string | The API secret returned with the `/api/games/create` request. |
 
-- `GET /api/games/{secret}`
+-   `GET /api/games/{secret}`
 
 Get information about a game using its api secret.
 
-| Field | Type | Description |
-| :----------- | :--------------: | -------------------------: |
-| `id` | string | Games unique identifier. |
-| `createdTime` | int | Time the game was created. |
-| `spectatorCode` | string | Code to spectate the game with. |
-| `players` | Array&lt;Player&gt; | Array of player objects (see below). |
-| `viewers` | int | The total number of spectators & players. |
-| `state` | string | Code players use to join the game. |
+| Field           |        Type         |                               Description |
+| :-------------- | :-----------------: | ----------------------------------------: |
+| `id`            |       string        |                  Games unique identifier. |
+| `createdTime`   |         int         |                Time the game was created. |
+| `spectatorCode` |       string        |           Code to spectate the game with. |
+| `players`       | Array&lt;Player&gt; |      Array of player objects (see below). |
+| `viewers`       |         int         | The total number of spectators & players. |
+| `state`         |       string        |        Code players use to join the game. |
 
 **Player:**
 | Field | Type | Description |
@@ -83,15 +82,15 @@ Get information about a game using its api secret.
 
 ### Stats Endpoints
 
-- `POST /api/stats/cards`
+-   `POST /api/stats/cards`
 
 Returns an array of all cards with a numeric ID equal to or above 0. Each entry includes:
 
-- `id` The card's ID.
-- `winrate` Winrate.
-- `deckUsage` Percentage of decks it's included in.
-- `gameUsage` Percentage of games it's included in.
-- `averageCopies` Average copies of a card in decks that it's included in.
+-   `id` The card's ID.
+-   `winrate` Winrate.
+-   `deckUsage` Percentage of decks it's included in.
+-   `gameUsage` Percentage of games it's included in.
+-   `averageCopies` Average copies of a card in decks that it's included in.
 
 **Query Parameters**
 | Query | Type | Description |
@@ -100,7 +99,7 @@ Returns an array of all cards with a numeric ID equal to or above 0. Each entry 
 | `after` | unix timestamp | Limits search to all games that happened after this timestamp. |
 | `orderBy` | 'winrate' \| 'deckUsage' \| 'gameUsage' \| 'averageCopies' | How to order the returned data. |
 
-- `POST /api/stats/decks`
+-   `POST /api/stats/decks`
 
 Returns the 20 top scoring decks that match the specified parameters. Each deck is returned with the deck, `wins`, `winrate`, and `losses`.
 
@@ -115,13 +114,26 @@ Returns the 20 top scoring decks that match the specified parameters. Each deck 
 
 **Query Parameters**
 
-- `POST api/stats/type-distribution`
+-   `POST api/stats/type-distribution`
 
 Returns information for each type.
 
-- `type` The name of the type.
-- `usage` The percentage of decks that were played in games that include an item card of this type.
-- `winrate` The average winrate of the aforementioned decks.
+-   `type` The name of the type.
+-   `usage` The percentage of decks that were played in games that include an item card of this type.
+-   `winrate` The average winrate of the aforementioned decks.
+
+**Query Parameters**
+| Query | Type | Description |
+| :------: | :------------: | :-------------------------------------------------------------: |
+| `before` | unix timestamp | Limits search to all games that happened before this timestamp. |
+| `after` | unix timestamp | Limits search to all games that happened after this timestamp. |
+
+-   `POST api/stats/games`
+
+Returns information about the total games played.
+
+-   `amount` The amount of games played.
+-   `averageLength` The average length of games.
 
 **Query Parameters**
 | Query | Type | Description |
