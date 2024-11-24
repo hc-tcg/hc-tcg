@@ -936,7 +936,7 @@ export class Database {
 							games.loser_deck_code = decks.deck_code as loss
 							FROM decks
 							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code
-							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+							INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
 							WHERE deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
                             AND (games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code)
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
