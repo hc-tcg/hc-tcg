@@ -109,7 +109,7 @@ export function* playerDisconnectedSaga(
 		),
 	})
 
-	console.log("Reconnect done")
+	console.log('Reconnect done')
 	console.log(result)
 
 	if (result.timeout) {
