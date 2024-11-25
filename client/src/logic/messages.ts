@@ -25,7 +25,7 @@ import {
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
 
-export const localMessages = messages({
+export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
 	SOCKET_CONNECT: null,
 	SOCKET_DISCONNECT: null,

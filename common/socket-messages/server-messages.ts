@@ -10,7 +10,7 @@ import {
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
-export const serverMessages = messages({
+export const serverMessages = messages("serverMessages", {
 	PLAYER_RECONNECTED: null,
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,

@@ -109,6 +109,9 @@ export function* playerDisconnectedSaga(
 		),
 	})
 
+	console.log("Reconnect done")
+	console.log(result)
+
 	if (result.timeout) {
 		yield* put<LocalMessage>({type: localMessages.PLAYER_REMOVED, player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
