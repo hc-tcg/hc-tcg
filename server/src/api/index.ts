@@ -14,7 +14,7 @@ import {
 	BasicStatsQuery,
 	CardStatsQuery,
 	DeckStatQuery,
-	StatsHeader,
+	StatsQueryParams,
 	getCardStats,
 	getDeckStats,
 	getGamesStats,
@@ -70,8 +70,11 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats', async (req, res) => {
-		let header = StatsHeader.parse(req.headers)
-		res.send(await getStats(root.db, header))
+		let params = StatsQueryParams.parse(req.query)
+		console.log(params)
+		let ret = await getStats(root.db, params.uuid)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.get('/api/stats/cards', async (req, res) => {
