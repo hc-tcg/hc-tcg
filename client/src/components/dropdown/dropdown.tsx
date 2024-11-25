@@ -18,6 +18,8 @@ type Props = {
 	maxHeight?: number
 	checkboxes?: boolean
 	checked?: Array<string>
+	direction?: 'up' | 'down'
+	align?: 'left' | 'right'
 	action: (option: string) => void
 }
 
@@ -30,6 +32,8 @@ const Dropdown = ({
 	maxHeight,
 	checkboxes,
 	checked,
+	direction,
+	align,
 	action,
 }: Props) => {
 	const [showDropdown, setShowDropdown] = useState<boolean>(false)
@@ -75,84 +79,124 @@ const Dropdown = ({
 
 	return (
 		<div>
-			<button
-				ref={buttonRef}
-				onMouseUp={() => setShowDropdown(!showDropdown)}
-				className={css.dropdownButton}
-			>
-				{button}
-			</button>
+			{direction !== 'up' && (
+				<button
+					ref={buttonRef}
+					onMouseUp={() => setShowDropdown(!showDropdown)}
+					className={css.dropdownButton}
+				>
+					{button}
+				</button>
+			)}
 			<div>
 				{showDropdown && (
-					<div className={css.dropdownMenu} ref={filterMenuRef}>
-						<div className={css.DropdownMenuArrow} />
-						<div>
-							<div className={css.DropdownMenuContent}>
-								<div className={css.DropdownMenuLabel}>{label}</div>
+					<div className={css.dropdownContainer}>
+						<div
+							className={classNames(
+								css.dropdownMenu,
+								direction && css[direction],
+								css[align ? align : 'left'],
+							)}
+							ref={filterMenuRef}
+						>
+							{direction !== 'up' && (
 								<div
-									style={
-										grid && maxHeight
-											? {
-													display: 'grid',
-													gridAutoFlow: 'column',
-													gridTemplateRows: `repeat(${maxHeight}, 2rem)`,
-													gridTemplateColumns: `repeat(${Math.ceil(options.length / maxHeight)}, 2rem)`,
-												}
-											: {}
-									}
+									className={classNames(
+										css.DropdownMenuArrow,
+										css[align ? align : 'left'],
+									)}
+								/>
+							)}
+							<div>
+								<div
+									className={classNames(
+										css.dropdownMenuContent,
+										direction && css[direction],
+									)}
 								>
-									{options.map((option, i) => (
-										<div
-											key={option.key || option.name}
-											onMouseUp={() => action(option.key || option.name)}
-											className={css.DropdownMenuItem}
-										>
-											{checkboxes && (
-												<div>
-													{checked &&
-													option.key &&
-													checked.includes(option.key) ? (
-														<div
-															className={classNames(
-																css.checkbox,
-																css.checked,
-																i === 0 && css.hidden,
-															)}
-														></div>
-													) : (
-														<div
-															className={classNames(
-																css.checkbox,
-																i === 0 && css.hidden,
-															)}
-														>
-															{' '}
-														</div>
-													)}
-												</div>
-											)}
-											{option.icon && (
-												<img
-													src={option.icon}
-													style={{height: '1.5rem', width: '1.5rem'}}
-													alt={option.icon}
-												/>
-											)}
-											{option.color && (
-												<div
-													className={css.color}
-													style={{backgroundColor: option.color}}
-												></div>
-											)}
-											{showNames && <span>{option.name}</span>}
-										</div>
-									))}
+									<div className={css.DropdownMenuLabel}>{label}</div>
+									<div
+										style={
+											grid && maxHeight
+												? {
+														display: 'grid',
+														gridAutoFlow: 'column',
+														gridTemplateRows: `repeat(${maxHeight}, 2rem)`,
+														gridTemplateColumns: `repeat(${Math.ceil(options.length / maxHeight)}, 2rem)`,
+													}
+												: {}
+										}
+									>
+										{options.map((option, i) => (
+											<div
+												key={option.key || option.name}
+												onMouseUp={() => action(option.key || option.name)}
+												className={css.DropdownMenuItem}
+											>
+												{checkboxes && (
+													<div>
+														{checked &&
+														option.key &&
+														checked.includes(option.key) ? (
+															<div
+																className={classNames(
+																	css.checkbox,
+																	css.checked,
+																	i === 0 && css.hidden,
+																)}
+															></div>
+														) : (
+															<div
+																className={classNames(
+																	css.checkbox,
+																	i === 0 && css.hidden,
+																)}
+															>
+																{' '}
+															</div>
+														)}
+													</div>
+												)}
+												{option.icon && (
+													<img
+														src={option.icon}
+														style={{height: '1.5rem', width: '1.5rem'}}
+														alt={option.icon}
+													/>
+												)}
+												{option.color && (
+													<div
+														className={css.color}
+														style={{backgroundColor: option.color}}
+													></div>
+												)}
+												{showNames && <span>{option.name}</span>}
+											</div>
+										))}
+									</div>
 								</div>
 							</div>
+							{direction === 'up' && (
+								<div
+									className={classNames(
+										css.DropdownMenuArrowUp,
+										css[align ? align : 'left'],
+									)}
+								/>
+							)}
 						</div>
 					</div>
 				)}
 			</div>
+			{direction === 'up' && (
+				<button
+					ref={buttonRef}
+					onMouseUp={() => setShowDropdown(!showDropdown)}
+					className={css.dropdownButton}
+				>
+					{button}
+				</button>
+			)}
 		</div>
 	)
 }
