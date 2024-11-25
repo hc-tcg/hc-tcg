@@ -17,6 +17,10 @@ export const MiningFatigueEffect: Counter<CardComponent> = {
 		if (target.isHermit())
 			effect.description = `This Hermit's attacks cost an additional ${target.props.type} item to use.`
 
+		observer.subscribe(target.hooks.getPrimaryCost, () => {
+			return ['any']
+		})
+
 		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
 			if (!effect.counter) return
 			effect.counter--
