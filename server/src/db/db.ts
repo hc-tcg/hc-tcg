@@ -803,7 +803,7 @@ export class Database {
 					`
 					SELECT
 					decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-					deck_cards.card_id,deck_cards.copies
+					deck_cards.card_id,deck_cards.copies,wins,losses,winrate
 						FROM (
                         	SELECT deck_code,
     						wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
