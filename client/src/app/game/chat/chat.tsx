@@ -58,7 +58,7 @@ const HERMIT_EMOJIS = [
 	'shadee',
 	'skizzleman',
 	'smallishbeans',
-	'steampunktango',
+	'stressmonster101',
 	'tangotek',
 	'tinfoilchef',
 	'vintagebeef',
