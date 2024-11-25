@@ -3,7 +3,7 @@ import {Database} from 'db/db'
 import root from 'serverRoot'
 import {z} from 'zod'
 
-export const StatsHeader = z.object({uuid: z.string().optional()})
+export const StatsQueryParams = z.object({uuid: z.string().optional()})
 
 export async function getStats(
 	db: Database | undefined,

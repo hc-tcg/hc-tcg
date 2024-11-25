@@ -14,7 +14,7 @@ import {
 	BasicStatsQuery,
 	CardStatsQuery,
 	DeckStatQuery,
-	StatsHeader as StatsQueryParams,
+	StatsQueryParams,
 	getCardStats,
 	getDeckStats,
 	getGamesStats,
