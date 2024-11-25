@@ -82,6 +82,16 @@ Get information about a game using its api secret.
 
 ### Stats Endpoints
 
+
+-   `GET /api/stats?uuid=...`
+
+Get the stats for a specific user's UUID.
+
+**Query Parameters**
+| Query | Type | Description |
+| :----: | :--: | :------------------------------------------: |
+| `uuid` | uuid | The uuid of the user to fetch the stats for. |
+
 -   `POST /api/stats/cards`
 
 Returns an array of all cards with a numeric ID equal to or above 0. Each entry includes:
