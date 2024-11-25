@@ -31,6 +31,7 @@ export const clientMessages = messages({
 	MAKE_INFO_PUBLIC: null,
 	INSERT_DECKS: null,
 	IMPORT_DECK: null,
+	UPDATE_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 })
@@ -69,6 +70,11 @@ export type ClientMessages = [
 	{type: typeof clientMessages.GET_STATS},
 	{
 		type: typeof clientMessages.INSERT_DECK
+		deck: Deck
+		newActiveDeck?: string
+	},
+	{
+		type: typeof clientMessages.UPDATE_DECK
 		deck: Deck
 		newActiveDeck?: string
 	},

@@ -151,6 +151,54 @@ export function* insertDeck(
 	}
 }
 
+export function* updateDeck(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const deckTags = action.payload.deck.tags
+
+	for (let i = 0; i < deckTags.length; i++) {
+		yield* call(
+			[root.db, root.db.insertTag],
+			player.uuid,
+			deckTags[i].name,
+			deckTags[i].color,
+			deckTags[i].key,
+		)
+	}
+
+	// Update deck
+	const result = yield* call(
+		[root.db, root.db.updateDeck],
+		action.payload.deck.name,
+		action.payload.deck.icon,
+		action.payload.deck.iconType,
+		deckTags.map((tag) => tag.key),
+		action.payload.deck.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+		return
+	}
+
+	if (action.payload.newActiveDeck) {
+		yield* getDecks(action as any)
+	}
+}
+
 export function* insertDecks(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECKS>,
 ) {
