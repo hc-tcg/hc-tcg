@@ -2,6 +2,7 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import {FormattedTextNode} from 'common/utils/formatting'
 import Button from 'components/button'
+import Dropdown from 'components/dropdown'
 import {FormattedText} from 'components/formatting/formatting'
 import {
 	getChatMessages,
@@ -16,7 +17,6 @@ import {getPlayerId, getPlayerName} from 'logic/session/session-selectors'
 import {SyntheticEvent, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
-import Dropdown from 'components/dropdown'
 
 const HERMIT_EMOJIS = [
 	'bdoubleo100',
