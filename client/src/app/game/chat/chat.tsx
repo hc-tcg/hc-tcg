@@ -398,9 +398,12 @@ export const ChatContent = ({
 					</form>
 					<Dropdown
 						button={
-							<Button variant="default" size="small">
-								Emoji
-							</Button>
+							<button className={css.dropdownButton}>
+								<img
+									src={'/images/hermits-emoji/bdoubleo100.png'}
+									draggable={false}
+								/>
+							</button>
 						}
 						label="Emojis"
 						options={HERMIT_EMOJIS.map((emoji) => ({

@@ -81,6 +81,28 @@
 	}
 }
 
+.dropdownButton {
+	place-content: center;
+	background-color: var(--gray-200);
+	border: 2px black solid;
+	border-left: 0px black solid;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+	cursor: pointer;
+	box-shadow: inset 0 -4px 0 0 var(--gray-500),
+		inset 1px 1px 0 0 var(--gray-100), inset -1px -5px 0 0 var(--gray-100);
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:active {
+		transform: translateY(1px);
+	}
+}
+
 .messagesWrapper {
 	position: relative;
 	overflow: hidden;
