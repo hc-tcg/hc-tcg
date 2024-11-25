@@ -217,6 +217,7 @@ type Props = {
 	back: () => void
 	title: string
 	saveDeck: (loadedDeck: Deck) => void
+	updateDeck: (loadedDeck: Deck) => void
 	deleteDeck: (initialDeck: Deck) => void
 	databaseInfo: DatabaseInfo
 	deck: Deck | null
@@ -293,6 +294,7 @@ function EditDeck({
 	back,
 	title,
 	saveDeck,
+	updateDeck,
 	deleteDeck,
 	deck,
 	databaseInfo,
@@ -455,11 +457,12 @@ function EditDeck({
 
 		// Check they are different
 		if (
-			deck &&
-			deck.name === loadedDeck.name &&
-			deck.icon === loadedDeck.icon &&
-			deck.cards === loadedDeck.cards &&
-			deck.tags === loadedDeck.tags
+			initialDeckState &&
+			newDeck &&
+			newDeck.name === initialDeckState.name &&
+			newDeck.icon === initialDeckState.icon &&
+			newDeck.cards === initialDeckState.cards &&
+			tags === initialDeckState.tags
 		) {
 			dispatch({
 				type: localMessages.TOAST_OPEN,
@@ -472,11 +475,6 @@ function EditDeck({
 			return
 		}
 
-		// Delete the old version of the deck
-		if (initialDeckState) {
-			deleteDeck(initialDeckState)
-		}
-
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
 
@@ -484,19 +482,26 @@ function EditDeck({
 		newDeck.tags = tags
 
 		// New code
-		newDeck.code = generateDatabaseCode()
+		if (!initialDeckState || newDeck.cards !== initialDeckState.cards) {
+			newDeck.code = generateDatabaseCode()
 
-		// Send toast and return to select deck screen
-		saveAndReturn(newDeck)
+			// Delete the old version of the deck
+			if (initialDeckState) deleteDeck(initialDeckState)
+
+			saveAndReturn(newDeck, 'insert')
+		} else {
+			saveAndReturn(newDeck, 'update')
+		}
 	}
-	const saveAndReturn = (deck: Deck) => {
+	const saveAndReturn = (deck: Deck, type: 'insert' | 'update') => {
 		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
 			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
 			return [...r, tag]
 		}, [])
 
 		databaseInfo.tags.push(...newTags)
-		saveDeck(deck)
+		if (type === 'insert') saveDeck(deck)
+		else if (type === 'update') updateDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,
 			open: true,

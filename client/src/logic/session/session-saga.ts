@@ -366,6 +366,16 @@ export function* databaseConnectionSaga() {
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
 		},
 	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECK]>(
+		localMessages.UPDATE_DECK,
+		function* (action) {
+			if (noConnection) {
+				saveDeckToLocalStorage(action.deck)
+				return
+			}
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
+		},
+	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
 		localMessages.IMPORT_DECK,
 		function* (action) {

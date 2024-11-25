@@ -234,6 +234,40 @@ export class Database {
 		}
 	}
 
+	public async updateDeck(
+		name: string,
+		icon: string,
+		iconType: string,
+		tagIds: Array<string>,
+		code: string,
+		user_id: string,
+	): Promise<DatabaseResult<string>> {
+		try {
+			await this.pool.query(
+				'UPDATE decks SET name = $1, icon = $2, icon_type = $3 WHERE deck_code = $4 AND user_id = $5',
+				[name, icon, iconType, code, user_id],
+			)
+
+			await this.pool.query('DELETE FROM deck_tags WHERE deck_code = $1', [
+				code,
+			])
+
+			if (tagIds.length > 0) {
+				await this.pool.query(
+					'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[]) ON CONFLICT DO NOTHING',
+					[Array(tagIds.length).fill(code), tagIds],
+				)
+			}
+
+			return {
+				type: 'success',
+				body: code,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
 	/** Return the deck with a specific ID. */
 	public async getDeckFromID(
 		deckCode: string,
