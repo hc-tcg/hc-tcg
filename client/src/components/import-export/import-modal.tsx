@@ -18,6 +18,10 @@ type Props = {
 	handleMassImport: () => void
 }
 
+function isDatabaseDeckCode(hash: string) {
+	return hash.length === 7 && hash.match(/[1234567890abcdef]+/)
+}
+
 export const ImportModal = ({
 	setOpen,
 	onClose,
@@ -27,15 +31,16 @@ export const ImportModal = ({
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const dispatch = useMessageDispatch()
+	const [askForDeckName, setAskForDeckName] = useState(false)
+	const [readyToSubmit, setReadyToSubmit] = useState(false)
 	const [deckIcon, setDeckIcon] = useState<Deck['icon']>('any')
 
-	//IMPORT DECK FUNCTION
 	async function importFromHash() {
 		if (!hashRef.current) return
 
 		const hash = hashRef.current.value
 
-		if (hash.length === 7 && hash.match(/[1234567890abcdefg]+/)) {
+		if (isDatabaseDeckCode(hash)) {
 			dispatch({
 				type: localMessages.IMPORT_DECK,
 				code: hash,
@@ -69,6 +74,32 @@ export const ImportModal = ({
 
 		onClose()
 	}
+
+	function onInputChange() {
+		if (!hashRef.current) {
+			setAskForDeckName(false)
+		} else if (!hashRef.current.value) {
+			setAskForDeckName(false)
+		}
+		// User probably hasn't finishe entering thier code.
+		else if (
+			hashRef.current.value.length <= 7 &&
+			!isDatabaseDeckCode(hashRef.current.value)
+		) {
+			setAskForDeckName(false)
+		} else if (isDatabaseDeckCode(hashRef.current.value)) {
+			setAskForDeckName(false)
+		} else {
+			setAskForDeckName(true)
+		}
+
+		if (hashRef.current?.value && hashRef.current.value.length >= 7) {
+			setReadyToSubmit(true)
+		} else {
+			setReadyToSubmit(false)
+		}
+	}
+
 	const selectFile = () => {
 		// Select a file by clicking on file input
 		document.getElementById('file-input')?.click()
@@ -85,7 +116,7 @@ export const ImportModal = ({
 
 			newFileContent.split('\n').forEach((line: string) => {
 				const cleanLine = line.replace('\r', '')
-				if (cleanLine.length === 7 && cleanLine.match(/[1234567890abcdefg]+/)) {
+				if (isDatabaseDeckCode(cleanLine)) {
 					codes.push(cleanLine)
 					dispatch({
 						type: localMessages.IMPORT_DECK,
@@ -123,7 +154,6 @@ export const ImportModal = ({
 
 			dispatch({
 				type: localMessages.UPDATE_DECKS,
-				newActiveDeck: codes[codes.length - 1],
 			})
 
 			if (importedSomething) {
@@ -160,30 +190,36 @@ export const ImportModal = ({
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>
-						{
-							'To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.'
-						}
+						To import a deck, enter the deck hash, then click "Import".
 					</p>
-					<div className={css.name}>
-						<Dropdown
-							button={
-								<button className={DropdownCSS.iconButton}>
-									<img src={`/images/types/type-${deckIcon}.png`} />
-								</button>
-							}
-							label="Deck Icon"
-							options={iconDropdownOptions}
-							action={(option: any) => setDeckIcon(option)}
-						/>
-						<input
-							type="text"
-							maxLength={32}
-							placeholder="Deck Name"
-							ref={nameRef}
-							style={{flexGrow: 1}}
-						/>
-					</div>
-
+					{askForDeckName && (
+						<div className={css.name}>
+							<Dropdown
+								button={
+									<button className={DropdownCSS.iconButton}>
+										<img src={`/images/types/type-${deckIcon}.png`} />
+									</button>
+								}
+								label="Deck Icon"
+								options={iconDropdownOptions}
+								action={(option: any) => setDeckIcon(option)}
+							/>
+							<input
+								type="text"
+								maxLength={32}
+								placeholder="Deck Name"
+								ref={nameRef}
+								style={{flexGrow: 1}}
+							/>
+						</div>
+					)}
+					<input
+						type="text"
+						placeholder="Deck Code..."
+						onChange={onInputChange}
+						ref={hashRef}
+						style={{flexGrow: 1}}
+					/>
 					<p className={css.instructions}>
 						{
 							'Alternatively, choose a file to mass import decks from. Hashes must each occupy one line, with no spaces before or after the hash.'
@@ -192,7 +228,9 @@ export const ImportModal = ({
 				</div>
 			</Modal.Description>
 			<Modal.Options>
-				<Button onClick={importFromHash}>Import</Button>
+				<Button onClick={importFromHash} disabled={!readyToSubmit}>
+					Import
+				</Button>
 				<Button onClick={selectFile}>Import from file</Button>
 				<input
 					id="file-input"

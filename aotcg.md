@@ -22,8 +22,3 @@ Mining Fatigue: This hermit's attacks cost an additional item card of their type
 
 **Smithing Table** _Single Use_
 Choose an Attach card from your Hand. This card cannot be removed from the board by either player after being played.
-
-
-**Elder Guardian** _Attach_
-When this hermit is attacked, the opponent's active hermit recieves mining fatigue for one round.
-

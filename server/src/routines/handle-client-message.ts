@@ -14,6 +14,7 @@ import {
 	getStats,
 	importDeck,
 	insertDeck,
+	insertDecks,
 } from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
@@ -34,7 +35,7 @@ import {
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
-		case clientMessages.UPDATE_DECK:
+		case clientMessages.SELECT_DECK:
 			return yield* updateDeckSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
@@ -104,6 +105,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.INSERT_DECK:
 			return yield* insertDeck(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.INSERT_DECKS:
+			return yield* insertDecks(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.IMPORT_DECK:

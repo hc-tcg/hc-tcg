@@ -7,7 +7,7 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
-import {hasEnoughEnergy} from '../utils/attacks'
+import {getModifiedCost, hasEnoughEnergy} from '../utils/attacks'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const BetrayedEffect: StatusEffect<PlayerComponent> = {
@@ -63,13 +63,13 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			if (
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.getAttackCost('primary'),
+					getModifiedCost(activeHermit, 'primary'),
 					game.settings.noItemRequirements,
 				) ||
 					game.isActionBlocked('PRIMARY_ATTACK')) &&
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.getAttackCost('secondary'),
+					getModifiedCost(activeHermit, 'secondary'),
 					game.settings.noItemRequirements,
 				) ||
 					game.isActionBlocked('SECONDARY_ATTACK'))
