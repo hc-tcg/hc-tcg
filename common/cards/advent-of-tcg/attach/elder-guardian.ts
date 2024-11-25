@@ -42,7 +42,6 @@ const ElderGuardian: Attach = {
 						component.entity,
 					)
 					.apply(opponentActiveHermit.entity)
-					.setCounter(2)
 			},
 		)
 	},
