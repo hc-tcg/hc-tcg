@@ -3,11 +3,11 @@ import {Database} from 'db/db'
 import root from 'serverRoot'
 import {z} from 'zod'
 
-export const StatsHeader = z.object({uuid: z.string()})
+export const StatsHeader = z.object({uuid: z.string().optional()})
 
 export async function getStats(
 	db: Database | undefined,
-	header: {uuid: string},
+	uuid?: string,
 ): Promise<[number, Record<string, any>]> {
 	if (!db) {
 		return [
@@ -18,7 +18,16 @@ export async function getStats(
 		]
 	}
 
-	let stats = await db.getUserStats(header.uuid)
+	if (!uuid) {
+		return [
+			400,
+			{
+				error: '`uuid` query param must be provided for this endpoint',
+			},
+		]
+	}
+
+	let stats = await db.getUserStats(uuid)
 
 	if (stats.type === 'success') {
 		return [200, stats.body]

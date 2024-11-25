@@ -766,30 +766,31 @@ export class Database {
 		try {
 			const decksResult = (
 				await this.pool.query(
-					`
-					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-					deck_cards.card_id,deck_cards.copies,
-					deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
-						SELECT 
-						deck_code,
-						count(CASE WHEN wins THEN 1 END) as wins,
-						count(CASE WHEN losses THEN 1 END) as losses
-						FROM (
-							SELECT decks.deck_code,
-							games.winner_deck_code = decks.deck_code as wins,
-							games.loser_deck_code = decks.deck_code as losses FROM decks
-							INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
-							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-						) as result
-					GROUP BY result.deck_code) as deck_code_list 
-					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
-					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins >= $6::int
-					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
-					LIMIT $3::int
-					OFFSET $3::int * $4::int
-					`,
+					`SELECT * FROM (
+                        SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+                        deck_cards.card_id,deck_cards.copies,
+                        deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+                            SELECT 
+                            deck_code,
+                            count(CASE WHEN wins THEN 1 END) as wins,
+                            count(CASE WHEN losses THEN 1 END) as losses
+                            FROM (
+                                SELECT decks.deck_code,
+                                games.winner_deck_code = decks.deck_code as wins,
+                                games.loser_deck_code = decks.deck_code as losses FROM decks
+                                INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+                                WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+                                AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+                            ) as result
+                        GROUP BY result.deck_code) as deck_code_list 
+                        WHERE wins >= $6::int
+                        LIMIT $3::int
+                        OFFSET $3::int * $4::int
+                    )
+                    LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
+                    LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+                    ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
+                    `,
 					[
 						after,
 						before,
