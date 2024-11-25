@@ -41,29 +41,31 @@ const ColorPickerDropdown = ({button, action}: Props) => {
 			</button>
 			<div>
 				{showDropdown && (
-					<div className={css.dropdownMenu}>
-						<div className={css.DropdownMenuArrow} />
-						<div>
-							<div className={css.DropdownMenuContent}>
-								<div className="colorPicker">
-									<HexColorPicker
-										color={color}
-										onChange={(e) => {
-											setColor(e)
-											setCode(e)
-											action(e)
-										}}
-									/>
-									<input
-										placeholder="Hex Code"
-										className={css.input}
-										value={code}
-										onChange={(e) => {
-											setColor(e.target.value)
-											setCode(e.target.value)
-											action(e.target.value)
-										}}
-									/>
+					<div className={css.dropdownContainer}>
+						<div className={css.dropdownMenu}>
+							<div className={css.DropdownMenuArrow} />
+							<div>
+								<div className={css.DropdownMenuContent}>
+									<div className="colorPicker">
+										<HexColorPicker
+											color={color}
+											onChange={(e) => {
+												setColor(e)
+												setCode(e)
+												action(e)
+											}}
+										/>
+										<input
+											placeholder="Hex Code"
+											className={css.input}
+											value={code}
+											onChange={(e) => {
+												setColor(e.target.value)
+												setCode(e.target.value)
+												action(e.target.value)
+											}}
+										/>
+									</div>
 								</div>
 							</div>
 						</div>
