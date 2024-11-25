@@ -337,7 +337,7 @@ export class Database {
 				await this.pool.query(
 					`SELECT 
 						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-						deck_cards.card_id,deck_cards.copies,
+						deck_cards.card_id,deck_cards.copies,decks.show_info,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
 						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code

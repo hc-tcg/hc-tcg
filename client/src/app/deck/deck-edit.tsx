@@ -15,6 +15,7 @@ import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
+import Checkbox from 'components/checkbox'
 import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
@@ -787,23 +788,26 @@ function EditDeck({
 									</Button>
 								</div>
 								<div className={css.editDeckInfoSettings}>
-									Show deck name and icon
+									<p className={css.privacySettings}>
+										Keep name and icon private
+									</p>
 									<div className={css.spacingItem}></div>
-									<Button
-										variant="default"
-										size="small"
-										onClick={() => {
+									<Checkbox
+										defaultChecked={isPublic}
+										onCheck={(e) => {
 											dispatch({
 												type: localMessages.MAKE_INFO_PUBLIC,
 												code: loadedDeck.code,
-												public: !isPublic,
+												public: !e.currentTarget.checked,
 											})
-											setIsPublic(!isPublic)
+											const currentIndex = databaseInfo.decks.findIndex(
+												(code) => code.code === loadedDeck.code,
+											)
+											databaseInfo.decks[currentIndex].public =
+												e.currentTarget.checked
+											setIsPublic(!e.currentTarget.checked)
 										}}
-										className={css.removeButton}
-									>
-										{isPublic ? 'Yes' : 'No'}
-									</Button>
+									></Checkbox>
 								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>
 								<form
