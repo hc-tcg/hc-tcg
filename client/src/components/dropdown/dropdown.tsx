@@ -120,7 +120,7 @@ const Dropdown = ({
 											grid && maxHeight
 												? {
 														display: 'grid',
-														gridAutoFlow: 'column',
+														gridAutoFlow: 'row',
 														gridTemplateRows: `repeat(${maxHeight}, 2rem)`,
 														gridTemplateColumns: `repeat(${Math.ceil(options.length / maxHeight)}, 2rem)`,
 													}

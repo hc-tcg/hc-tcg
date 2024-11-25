@@ -21,7 +21,6 @@ import css from './chat.module.scss'
 const HERMIT_EMOJIS = [
 	'bdoubleo100',
 	'beetlejhost',
-	'biffa2001',
 	'boomerbdubs',
 	'cubfan135',
 	'docm77',
@@ -48,7 +47,6 @@ const HERMIT_EMOJIS = [
 	'keralis',
 	'llamadad',
 	'mumbojumbo',
-	'originalxb',
 	'pearlescentmoon',
 	'potatoboy',
 	'poultryman',
@@ -59,6 +57,7 @@ const HERMIT_EMOJIS = [
 	'skizzleman',
 	'smallishbeans',
 	'stressmonster101',
+	'spookystress',
 	'tangotek',
 	'tinfoilchef',
 	'vintagebeef',
@@ -413,7 +412,7 @@ export const ChatContent = ({
 						}))}
 						showNames={false}
 						grid={true}
-						maxHeight={7}
+						maxHeight={6}
 						action={(option) => handleEmoji(option)}
 						direction={'up'}
 						align={'right'}
