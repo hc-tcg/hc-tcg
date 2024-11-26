@@ -170,7 +170,7 @@ export async function getDeckInformation(
 				200,
 				{
 					...deck.body,
-					cost: getDeckCost(deck.body.cards.map((card) => card.props)),
+					cost: getDeckCost(deck.body.cards.map((card) => CARDS[card])),
 				},
 			]
 		} else {

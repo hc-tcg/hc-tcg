@@ -40,7 +40,14 @@ export const CardStatsQuery = z.object({
 	before: z.string().nullish(),
 	after: z.string().nullish(),
 	orderBy: z
-		.enum(['winrate', 'deckUsage', 'gameUsage', 'averageCopies'])
+		.enum([
+			'winrate',
+			'deckUsage',
+			'gameUsage',
+			'averageCopies',
+			'averagePlayers',
+			'encounterChance',
+		])
 		.nullish(),
 })
 

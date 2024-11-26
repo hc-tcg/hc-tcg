@@ -28,6 +28,8 @@ export type CardStats = {
 	winrate: number | null
 	deckUsage: number
 	gameUsage: number
+	averagePlayers: number
+	encounterChance: number
 	averageCopies: number
 }
 

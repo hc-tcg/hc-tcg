@@ -4,6 +4,7 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import {CARDS} from 'common/cards'
 import {
 	CardStats,
 	DeckStats,
@@ -321,7 +322,7 @@ export class Database {
 					name,
 					icon,
 					iconType,
-					cards: cards.map((card) => toLocalCardInstance(card)),
+					cards: cards.map((card) => card.id),
 					tags,
 				},
 			}
@@ -730,17 +731,22 @@ export class Database {
 					SELECT card_id, 
 					total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
 					cast(included_in_decks as decimal) / total_decks as deck_usage, 
-					(cast(wins as decimal) + losses) / total_games as game_usage,
+					(cast(wins as decimal) + losses) / total_games as average_players,
+					cast(included_in_games as decimal) / total_games as game_usage,
 					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
-						SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
+						SELECT card_id,
+						count(CASE WHEN wins THEN 1 END) as wins,
 						count(CASE WHEN losses THEN 1 END) as losses, 
 						count(deck_code) as included_in_decks, 
+						count(DISTINCT start_time) as included_in_games,
 						sum(copies) as copies FROM (
 							SELECT cards.card_id,
 							deck_cards.deck_code,
 							deck_cards.copies,
 							games.winner_deck_code = deck_cards.deck_code as wins,
-							games.loser_deck_code = deck_cards.deck_code as losses FROM cards
+							games.loser_deck_code = deck_cards.deck_code as losses,
+							games.start_time
+							FROM cards
 							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
 							INNER JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
 							WHERE deck_cards.card_id > -1
@@ -757,6 +763,8 @@ export class Database {
 						WHEN $3 = 'deckUsage' THEN deck_usage 
 						WHEN $3 = 'gameUsage' THEN game_usage 
 						WHEN $3 = 'averageCopies' THEN average_copies 
+						WHEN $3 = 'averagePlayers' THEN average_players 
+						WHEN $3 = 'encounterChance' THEN average_players 
 					ELSE winrate END) 
 				DESC
 					`,
@@ -771,6 +779,12 @@ export class Database {
 						winrate: row['winrate'] ? Number(row['winrate']) : null,
 						deckUsage: row['deck_usage'] ? Number(row['deck_usage']) : 0,
 						gameUsage: row['game_usage'] ? Number(row['game_usage']) : 0,
+						averagePlayers: row['average_players']
+							? Number(row['average_players'])
+							: 0,
+						encounterChance: row['average_players']
+							? Number(row['average_players'] / 2)
+							: 0,
 						averageCopies: row['average_copies']
 							? Number(row['average_copies'])
 							: 0,
@@ -868,10 +882,7 @@ export class Database {
 							icon,
 							iconType,
 							tags: [],
-							cards:
-								cardId !== null
-									? cards.map((card) => toLocalCardInstance(card))
-									: [],
+							cards: cardId !== null ? cards.map((card) => card.id) : [],
 						},
 						winrate: winrate ? Number(winrate) : null,
 						wins: Number(wins),
@@ -883,15 +894,15 @@ export class Database {
 				if (
 					cardId !== null &&
 					foundDeck.deck.cards.find(
-						(card) => card.props.numericId !== cardId,
+						(card) => CARDS[card].numericId !== cardId,
 					) &&
 					!foundDeck.deck.cards
-						.map((card) => card.props.numericId)
+						.map((card) => CARDS[card].numericId)
 						.includes(cardId)
 				) {
 					foundDeck.deck.cards = [
 						...foundDeck.deck.cards,
-						...cards.map((card) => toLocalCardInstance(card)),
+						...cards.map((card) => card.id),
 					]
 				}
 
@@ -975,10 +986,9 @@ export class Database {
 							SELECT deck_cards.card_id,
 							games.winner_deck_code = decks.deck_code as win,
 							games.loser_deck_code = decks.deck_code as loss
-							FROM decks
-							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code
-							INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
-							WHERE deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+							FROM games
+							INNER JOIN decks ON decks.deck_code = games.winner_deck_code OR decks.deck_code = games.loser_deck_code
+							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
                             AND (games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code)
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))

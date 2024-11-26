@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameEndOutcomeT} from 'common/types/game-state'
@@ -284,7 +285,7 @@ export function* importDeck(
 		importedDeck.body.name,
 		importedDeck.body.icon,
 		importedDeck.body.iconType,
-		importedDeck.body.cards.map((card) => card.props.numericId),
+		importedDeck.body.cards.map((card) => CARDS[card].numericId),
 		[],
 		generateDatabaseCode(),
 		player.uuid,

@@ -35,7 +35,7 @@ export type ApiDeck = {
 	icon: string | null
 	iconType: string | null
 	code: string
-	cards: Array<LocalCardInstance>
+	cards: Array<string>
 	tags: Array<Tag>
 }
 
