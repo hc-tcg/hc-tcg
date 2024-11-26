@@ -51,7 +51,7 @@ function setupGame(
 	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
-		Math.random().toString(16),
+		GameModel.newGameSeed(),
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
@@ -343,7 +343,7 @@ function setupSolitareGame(
 	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
-		Math.random().toString(16),
+		GameModel.newGameSeed(),
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),

@@ -191,6 +191,10 @@ export class GameModel {
 		this.voiceLineQueue = []
 	}
 
+	static newGameSeed(): string {
+		return Math.random().toString(16).slice(0, 15)
+	}
+
 	public get logHeader() {
 		return `Game ${this.id}:`
 	}
