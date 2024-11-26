@@ -178,7 +178,7 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this.components, player1, player2, {
+		setupComponents(this, this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
 			startWithAllCards: settings.startWithAllCards,
 			unlimitedCards: settings.unlimitedCards,
