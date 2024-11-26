@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
@@ -97,6 +98,7 @@ export class GameModel {
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
 	/** Voice lines to play on the next game state update.
 	 * This is used for the Evil X boss fight.
@@ -152,6 +154,7 @@ export class GameModel {
 		options = options ?? {}
 
 		this.settings = settings
+		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
 
