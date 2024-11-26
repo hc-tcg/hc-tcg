@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
@@ -25,6 +26,7 @@ import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
 	getGameState,
@@ -88,12 +90,16 @@ export class GameModel {
 	private internalSpectatorCode: string | null
 	private internalApiSecret: string | null
 
+	public rng: () => number
+
 	public readonly settings: GameSettings
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
+	public readonly rngSeed: string
 	/** Voice lines to play on the next game state update.
 	 * This is used for the Evil X boss fight.
 	 */
@@ -134,6 +140,7 @@ export class GameModel {
 	}
 
 	constructor(
+		rngSeed: string,
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
@@ -147,6 +154,9 @@ export class GameModel {
 		options = options ?? {}
 
 		this.settings = settings
+		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
+		this.rngSeed = rngSeed
+		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
@@ -173,7 +183,7 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this.components, player1, player2, {
+		setupComponents(this, this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
 			startWithAllCards: settings.startWithAllCards,
 			unlimitedCards: settings.unlimitedCards,
@@ -182,6 +192,10 @@ export class GameModel {
 
 		this.state = getGameState(this, options.randomizeOrder)
 		this.voiceLineQueue = []
+	}
+
+	static newGameSeed(): string {
+		return Math.random().toString(16).slice(0, 15)
 	}
 
 	public get logHeader() {

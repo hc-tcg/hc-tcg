@@ -51,6 +51,7 @@ function setupGame(
 	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
+		GameModel.newGameSeed(),
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
@@ -195,7 +196,7 @@ function* gameManager(game: GameModel) {
 				game.endInfo.outcome,
 				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
-				'', //@TODO Add seed
+				game.rngSeed,
 				Buffer.from([0x00]),
 			)
 		}
@@ -342,6 +343,7 @@ function setupSolitareGame(
 	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
+		GameModel.newGameSeed(),
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),

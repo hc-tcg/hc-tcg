@@ -30,7 +30,7 @@ const Spyglass: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const coinFlip = flipCoin(player, component)
+			const coinFlip = flipCoin(game, player, component)
 			const canDiscard =
 				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
 

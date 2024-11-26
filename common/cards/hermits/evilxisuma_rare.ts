@@ -60,7 +60,7 @@ const EvilXisumaRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 
 				if (coinFlip[0] !== 'heads') return
 

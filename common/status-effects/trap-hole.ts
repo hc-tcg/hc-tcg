@@ -33,6 +33,7 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 			if (!singleUseCard) return
 
 			const coinFlip = flipCoin(
+				game,
 				player.opponentPlayer,
 				effect.creator,
 				1,
