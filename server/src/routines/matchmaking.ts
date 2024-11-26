@@ -342,6 +342,7 @@ function setupSolitareGame(
 	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
+		Math.random().toString(16),
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),
