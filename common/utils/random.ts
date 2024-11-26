@@ -14,6 +14,7 @@ function sfc32(a: number, b: number, c: number, d: number) {
 		return (t >>> 0) / 4294967296
 	}
 }
+
 function xmur3(str: string) {
 	for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
 		(h = Math.imul(h ^ str.charCodeAt(i), 3432918353)),
