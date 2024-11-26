@@ -721,7 +721,14 @@ export class Database {
 	}: {
 		before: number | null
 		after: number | null
-		orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
+		orderBy:
+			| 'winrate'
+			| 'deckUsage'
+			| 'gameUsage'
+			| 'averageCopies'
+			| 'averagePlayers'
+			| 'encounterChance'
+			| null
 	}): Promise<DatabaseResult<Array<CardStats>>> {
 		try {
 			const stats = await this.pool.query(

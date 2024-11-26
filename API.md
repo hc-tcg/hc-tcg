@@ -82,7 +82,6 @@ Get information about a game using its api secret.
 
 ### Stats Endpoints
 
-
 -   `GET /api/stats?uuid=...`
 
 Get the stats for a specific user's UUID.
@@ -99,7 +98,9 @@ Returns an array of all cards with a numeric ID equal to or above 0. Each entry 
 -   `id` The card's ID.
 -   `winrate` Winrate.
 -   `deckUsage` Percentage of decks it's included in.
--   `gameUsage` Percentage of games it's included in.
+-   `gameUsage` Percentage of games that either player uses the card.
+-   `averagePlayers` The average number of players that use the card in each game.
+-   `encounterChance` The chance of playing a game where your opponent uses the card.
 -   `averageCopies` Average copies of a card in decks that it's included in.
 
 **Query Parameters**
@@ -107,7 +108,7 @@ Returns an array of all cards with a numeric ID equal to or above 0. Each entry 
 | :-------: | :--------------------------------------------------------: | :-------------------------------------------------------------: |
 | `before` | unix timestamp | Limits search to all games that happened before this timestamp. |
 | `after` | unix timestamp | Limits search to all games that happened after this timestamp. |
-| `orderBy` | 'winrate' \| 'deckUsage' \| 'gameUsage' \| 'averageCopies' | How to order the returned data. |
+| `orderBy` | 'winrate' \| 'deckUsage' \| 'gameUsage' \| 'averageCopies' \| 'averagePlayers' \| 'encounterChance' | How to order the returned data. |
 
 -   `POST /api/stats/decks`
 
