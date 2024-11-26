@@ -54,7 +54,14 @@ export const CardStatsQuery = z.object({
 export async function getCardStats(params: {
 	before: number | null
 	after: number | null
-	orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
+	orderBy:
+		| 'winrate'
+		| 'deckUsage'
+		| 'gameUsage'
+		| 'averageCopies'
+		| 'averagePlayers'
+		| 'encounterChance'
+		| null
 }): Promise<[number, Record<string, any>]> {
 	let cards = await root.db.getCardsStats(params)
 
