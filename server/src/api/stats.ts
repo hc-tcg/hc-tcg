@@ -40,14 +40,28 @@ export const CardStatsQuery = z.object({
 	before: z.string().nullish(),
 	after: z.string().nullish(),
 	orderBy: z
-		.enum(['winrate', 'deckUsage', 'gameUsage', 'averageCopies'])
+		.enum([
+			'winrate',
+			'deckUsage',
+			'gameUsage',
+			'averageCopies',
+			'averagePlayers',
+			'encounterChance',
+		])
 		.nullish(),
 })
 
 export async function getCardStats(params: {
 	before: number | null
 	after: number | null
-	orderBy: 'winrate' | 'deckUsage' | 'gameUsage' | 'averageCopies' | null
+	orderBy:
+		| 'winrate'
+		| 'deckUsage'
+		| 'gameUsage'
+		| 'averageCopies'
+		| 'averagePlayers'
+		| 'encounterChance'
+		| null
 }): Promise<[number, Record<string, any>]> {
 	let cards = await root.db.getCardsStats(params)
 
