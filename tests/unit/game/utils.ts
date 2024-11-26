@@ -317,7 +317,7 @@ export function testBossFight(
 	settings?: Partial<GameSettings>,
 ) {
 	let game = new GameModel(
-		'Test game boss fight seed',
+		'Boss fight seed',
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {
