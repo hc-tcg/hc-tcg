@@ -264,6 +264,7 @@ export function testGame(
 	settings: Partial<GameSettings> = {},
 ) {
 	let game = new GameModel(
+		'Test Game Seed',
 		getTestPlayer('playerOne', options.playerOneDeck),
 		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
@@ -316,6 +317,7 @@ export function testBossFight(
 	settings?: Partial<GameSettings>,
 ) {
 	let game = new GameModel(
+		Math.random().toString(16),
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {

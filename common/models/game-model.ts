@@ -25,6 +25,7 @@ import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
 	getGameState,
@@ -88,6 +89,8 @@ export class GameModel {
 	private internalSpectatorCode: string | null
 	private internalApiSecret: string | null
 
+	public rng: () => number
+
 	public readonly settings: GameSettings
 
 	public chat: Array<Message>
@@ -134,6 +137,7 @@ export class GameModel {
 	}
 
 	constructor(
+		rngSeed: string,
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
@@ -147,6 +151,7 @@ export class GameModel {
 		options = options ?? {}
 
 		this.settings = settings
+		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
