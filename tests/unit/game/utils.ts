@@ -317,7 +317,7 @@ export function testBossFight(
 	settings?: Partial<GameSettings>,
 ) {
 	let game = new GameModel(
-		Math.random().toString(16),
+		'Test game boss fight seed',
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {
