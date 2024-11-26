@@ -195,7 +195,7 @@ function* gameManager(game: GameModel) {
 				game.endInfo.outcome,
 				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
-				'', //@TODO Add seed
+				game.rngSeed,
 				Buffer.from([0x00]),
 			)
 		}

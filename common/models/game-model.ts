@@ -97,6 +97,7 @@ export class GameModel {
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
+	public readonly rngSeed: string
 	/** Voice lines to play on the next game state update.
 	 * This is used for the Evil X boss fight.
 	 */
@@ -151,6 +152,7 @@ export class GameModel {
 		options = options ?? {}
 
 		this.settings = settings
+		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.internalCreatedTime = Date.now()
