@@ -51,6 +51,7 @@ function setupGame(
 	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
+		Math.random().toString(16),
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
