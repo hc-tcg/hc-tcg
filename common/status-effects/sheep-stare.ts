@@ -41,7 +41,13 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 					return
 
 				if (!result) {
-					result = flipCoin(player.opponentPlayer, effect.creator, 1, player)[0]
+					result = flipCoin(
+						game,
+						player.opponentPlayer,
+						effect.creator,
+						1,
+						player,
+					)[0]
 				}
 				if (result === 'heads') {
 					attack.setTarget(effect.entity, attack.attacker.slot.rowEntity)

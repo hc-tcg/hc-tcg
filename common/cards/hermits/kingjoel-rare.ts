@@ -66,7 +66,7 @@ const KingJoelRare: Hermit = {
 				if (!game.components.exists(SlotComponent, firstPickCondition)) return
 				if (!game.components.exists(SlotComponent, secondPickCondition)) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 
 				if (coinFlip[0] === 'tails') return
 

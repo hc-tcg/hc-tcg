@@ -48,7 +48,7 @@ const ZedaphPlaysRare: Hermit = {
 					return
 				if (opponentPlayer.hasStatusEffect(SheepStareEffect)) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] !== 'heads') return
 
 				game.components
