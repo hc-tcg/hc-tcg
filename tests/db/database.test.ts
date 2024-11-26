@@ -8,7 +8,7 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
-import {CARDS_LIST} from 'common/cards'
+import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
@@ -141,9 +141,9 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
-		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
-			playerDeck.cards,
-		)
+		expect(
+			returnedDeck.body.cards.map((c) => CARDS[c].numericId),
+		).toStrictEqual(playerDeck.cards)
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
@@ -422,7 +422,7 @@ describe('Test Database', () => {
 		expect(returnedDeckWithData.body.iconType).toBe('item')
 		expect(returnedDeckWithData.body.tags).toStrictEqual([tag.body])
 		expect(
-			returnedDeckWithData.body.cards.map((c) => c.props.numericId),
+			returnedDeckWithData.body.cards.map((c) => CARDS[c].numericId),
 		).toStrictEqual(playerDeck.cards)
 
 		const allDecks = await database.getDecks(user.body.uuid)
