@@ -113,28 +113,27 @@ export type GameRules = {
 
 export type TurnActions = Array<TurnAction>
 
+export type GameOutcome =
+	| 'tie'
+	| {
+			winner: PlayerEntity
+			victoryReason: GameVictoryReason
+	  }
+
+export type GameVictoryReason =
+	| 'forfeit'
+	| 'no-hermits-on-board'
+	| 'timeout-without-hermits'
+	| 'decked-out'
+	| 'lives'
+
 export type GameEndOutcomeT =
 	| 'timeout'
 	| 'forfeit'
 	| 'tie'
+	| 'tie-with-crash'
 	| 'player_won'
 	| 'error'
-
-export type GamePlayerEndOutcomeT =
-	| 'client_crash'
-	| 'server_crash'
-	| 'timeout'
-	| 'forfeit_win'
-	| 'forfeit_loss'
-	| 'leave_win'
-	| 'leave_loss'
-	| 'tie'
-	| 'unknown'
-	| 'you_won'
-	| 'you_lost'
-	| null
-
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity

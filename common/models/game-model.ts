@@ -17,6 +17,7 @@ import {
 	GameEndOutcomeT,
 	GameEndReasonT,
 	GameState,
+	GameVictoryReason,
 	Message,
 	TurnAction,
 	TurnActions,
@@ -134,9 +135,7 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		victoryReason?: GameVictoryReason
 	}
 
 	constructor(
@@ -170,9 +169,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			victoryReason: null,
 		}
 
 		this.components = new ComponentTable(this)
