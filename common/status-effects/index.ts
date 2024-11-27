@@ -26,7 +26,10 @@ import {
 } from './invisibility-potion'
 import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
-import {MiningFatigueEffect} from './mining-fatigue'
+import {
+	MiningFatigueEffect,
+	SingleTurnMiningFatigueEffect,
+} from './mining-fatigue'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
@@ -110,6 +113,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SculkCatalystTriggeredEffect,
 	FrozenEffect,
 	MiningFatigueEffect,
+	SingleTurnMiningFatigueEffect,
 	SmithingTableEffect,
 ]
 

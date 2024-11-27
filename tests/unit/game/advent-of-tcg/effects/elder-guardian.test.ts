@@ -21,9 +21,6 @@ describe('Test Elder Guardian', () => {
 					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
 					yield* attack(game, 'primary')
 
-					yield* endTurn(game)
-					yield* endTurn(game)
-
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -52,7 +49,7 @@ describe('Test Elder Guardian', () => {
 							query.effect.is(SingleTurnMiningFatigueEffect),
 							query.effect.targetEntity(null),
 						),
-					).toBeNull()
+					).not.toBeNull()
 
 					expect(
 						game.components

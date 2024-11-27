@@ -1,4 +1,5 @@
 import {CardComponent} from '../components'
+import {onTurnEnd} from '../types/priorities'
 import {Counter, StatusEffect, statusEffect} from './status-effect'
 
 export const MiningFatigueEffect: Counter<CardComponent> = {
@@ -52,8 +53,12 @@ export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
 			})
 		}
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			effect.remove()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				effect.remove()
+			},
+		)
 	},
 }
