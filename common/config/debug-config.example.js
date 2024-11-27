@@ -20,5 +20,5 @@ export default {
 	autoEndTurn: false,
 	logAttackHistory: false,
 	disableRewardCards: false,
-	showCardsAsHTML: false,
-}
+	renderCardsDynamically: false,
+};
