@@ -143,8 +143,12 @@ Returns information for each type.
 
 Returns information about the total games played.
 
--   `amount` The amount of games played.
+-   `amount` The amount of games played after 1.0.
 -   `averageLength` The average length of games.
+-   `allTimeGames` The amount of games played ever, even before 1.0. These games are not included in any other statistics.
+-   `tieRate` The percentage of games that have ended in ties.
+-   `forfeit` The percentage of games that have ended in forfeits.
+-   `errorRate` The percentage of games that have ended in server errors.
 
 **Query Parameters**
 | Query | Type | Description |
