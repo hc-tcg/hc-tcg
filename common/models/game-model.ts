@@ -99,7 +99,6 @@ export class GameModel {
 	private internalId: string
 	private internalGameCode: string | null
 	private internalSpectatorCode: string | null
-	private internalApiSecret: string | null
 
 	public rng: () => number
 

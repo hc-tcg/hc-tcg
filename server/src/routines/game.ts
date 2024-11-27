@@ -10,7 +10,7 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
+import {GameModel, GameProps} from 'common/models/game-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {TypeT} from 'common/types/cards'
 import {TurnAction, TurnActions} from 'common/types/game-state'
