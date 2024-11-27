@@ -443,12 +443,15 @@ function* turnActionSaga(
 				yield* call(sendGameState, game)
 				yield* call(delaySaga, game, turnAction.action.delay)
 				break
+			case 'FORFEIT':
+				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
+				endTurn = true
+				return 'FORFEIT'
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
-				return
 		}
 	} catch (e) {
 		if (game.settings.logErrorsToStderr) {
@@ -652,7 +655,7 @@ function* turnActionsSaga(game: GameModel) {
 					break
 				}
 
-				game.endInfo.reason = 'time'
+				game.endInfo.victoryReason = 'timeout-without-hermits'
 				game.endInfo.deadPlayerEntities = [currentPlayer.entity]
 				return 'GAME_END'
 			}
@@ -696,11 +699,11 @@ export function* turnSaga(game: GameModel) {
 	if (game.state.turn.turnNumber > 2) {
 		const turnStartDeadPlayers = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayers.length) {
-			game.endInfo.reason = turnStartDeadPlayers.every(
+			game.endInfo.victoryReason = turnStartDeadPlayers.every(
 				(deadPlayer) => deadPlayer.lives <= 0,
 			)
 				? 'lives'
-				: 'hermits'
+				: 'no-hermits-on-board'
 			game.endInfo.deadPlayerEntities = turnStartDeadPlayers.map(
 				(player) => player.entity,
 			)
@@ -734,9 +737,9 @@ export function* turnSaga(game: GameModel) {
 	const deadPlayers: PlayerComponent[] = yield* call(checkHermitHealth, game)
 	if (deadPlayers.length) {
 		if (deadPlayers.every((player) => player.lives <= 0)) {
-			game.endInfo.reason = 'lives'
+			game.endInfo.victoryReason = 'lives'
 		} else {
-			game.endInfo.reason = 'hermits'
+			game.endInfo.victoryReason = 'no-hermits-on-board'
 		}
 		game.endInfo.deadPlayerEntities = deadPlayers.map((player) => player.entity)
 		return 'GAME_END'
@@ -744,7 +747,7 @@ export function* turnSaga(game: GameModel) {
 
 	const deckedOutPlayers: PlayerEntity[] = yield* call(checkDeckedOut, game)
 	if (deckedOutPlayers.length) {
-		game.endInfo.reason = 'cards'
+		game.endInfo.victoryReason = 'decked-out'
 		game.endInfo.deadPlayerEntities = deckedOutPlayers
 		return 'GAME_END'
 	}

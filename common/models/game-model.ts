@@ -14,8 +14,6 @@ import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	GameEndOutcomeT,
-	GameEndReasonT,
 	GameOutcome,
 	GameState,
 	GameVictoryReason,

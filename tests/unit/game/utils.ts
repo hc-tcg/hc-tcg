@@ -1,8 +1,9 @@
-import {Card} from 'common/cards/base/types'
+import assert from 'assert'
 import EvilXisumaBossHermitCard, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
+import {Card} from 'common/cards/types'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -13,7 +14,7 @@ import {
 import query, {ComponentQuery} from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
-import {SlotTypeT} from 'common'
+import {SlotTypeT} from 'common/types/cards'
 import {GameOutcome} from 'common/types/game-state'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
@@ -198,6 +199,17 @@ export function* finishModalRequest(
 	})
 }
 
+export function* forfeit(player: PlayerEntity) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: player,
+		action: {
+			type: 'FORFEIT',
+			player,
+		},
+	})
+}
+
 export function getWinner(
 	game: GameModel,
 	outcome: GameOutcome,
@@ -291,7 +303,8 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	if (options.then) options.then(game)
+	assert(game.outcome, 'All games must have an outcome')
+	if (options.then) options.then(game, game.outcome)
 }
 
 /**
