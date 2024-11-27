@@ -22,8 +22,20 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {NumberOrNull, requestUrlRoot} from './utils'
+import {z} from 'zod'
+
+const apiKeyParser = z.union([z.array(z.string()), z.string(), z.undefined()])
 
 export function addApi(app: Express) {
+	const parsedKeys = apiKeyParser.parse(process.env.API_KEYS)
+	const keys: string[] = []
+	if (!parsedKeys) {
+	} else if (typeof parsedKeys === 'string') {
+		keys.push(parsedKeys)
+	} else {
+		parsedKeys.forEach((key) => keys.push(key))
+	}
+
 	app.get('/api/cards', (req, res) => {
 		res.send(cards(requestUrlRoot(req)))
 	})
@@ -89,7 +101,16 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats/decks', async (req, res) => {
+		let authentication = req.header('authentication')
 		let query = DeckStatQuery.parse(req.query)
+		const requiresAuth = (NumberOrNull(query.minimumWins) || 20) < 20
+
+		if (requiresAuth && !(authentication && keys.includes(authentication))) {
+			res.statusCode = 403
+			res.send({error: 'Invalid authentication.'})
+			return
+		}
+
 		let ret = await getDeckStats({
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
