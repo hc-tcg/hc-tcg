@@ -143,8 +143,19 @@ Returns information for each type.
 
 Returns information about the total games played.
 
--   `amount` The amount of games played.
+-   `amount` The amount of games played after 1.0.
+-   `allTimeGames` The amount of games ever played, even before 1.0. These games are not included in any other statistics.
+-   `tieRate` The percentage of games that have ended in ties.
+-   `forfeit` The percentage of games that have ended in forfeits.
+-   `errorRate` The percentage of games that have ended in server errors.
+
+The following information is found within `gameLength`.
+
 -   `averageLength` The average length of games.
+-   `medianLength` The median length of games.
+-   `standardDeviation` The size of a standard deviation.
+-   `minimum` The shortest game, discarding the bottom 5%.
+-   `maximum` The longest game, discarding the top 5%.
 
 **Query Parameters**
 | Query | Type | Description |

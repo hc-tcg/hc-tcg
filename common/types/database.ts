@@ -45,9 +45,23 @@ export type TypeDistributionStats = Array<{
 	usage: number
 	winrate: number
 }>
+
+export type TimeInformation = {}
+
 export type GamesStats = {
 	amount: number
-	averageLength: number
+	gameLength: {
+		averageLength: number
+		medianLength: TimeInformation
+		standardDeviation: TimeInformation
+		firstQuartile: TimeInformation
+		thirdQuartile: TimeInformation
+		minimum: TimeInformation
+		maximum: TimeInformation
+	}
+	tieRate: number
+	forfeitRate: number
+	errorRate: number
 }
 
 export type Achievement = {

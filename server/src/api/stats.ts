@@ -145,6 +145,9 @@ export async function getGamesStats(params: {
 	after: number | null
 }): Promise<[number, Record<string, any>]> {
 	let stats = await root.db.getGamesStats(params)
+	// Games played before we switched to the new database
+	const oldGames = 657835
+	const updateTime = 1731172320
 
 	if (stats.type === 'failure') {
 		return [
@@ -155,5 +158,14 @@ export async function getGamesStats(params: {
 		]
 	}
 
-	return [200, stats.body]
+	return [
+		200,
+		{
+			...stats.body,
+			allTimeGames:
+				!params.after || params.after < updateTime
+					? oldGames + stats.body.amount
+					: null,
+		},
+	]
 }
