@@ -68,7 +68,6 @@ const FullBundle: SingleUse = {
 			const prefix = attackPreview ? ' + ' : ''
 			if (card.props.attackPreview)
 				attackPreview += prefix + card.props.attackPreview(game)
-			console.log(attackPreview)
 		})
 
 		return attackPreview

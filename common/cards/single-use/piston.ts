@@ -80,7 +80,10 @@ const Piston: SingleUse = {
 				game.swapSlots(pickedItemSlot, pickedSlot)
 				applySingleUse(game, pickedSlot)
 
-				if (component.slot.onBoard()) component.discard()
+				if (player.singleUseCardUsed)
+					game.components
+						.find(CardComponent, query.card.slot(query.slot.singleUse))
+						?.discard()
 				// Remove playing a single use from completed actions so it can be done again
 				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false
