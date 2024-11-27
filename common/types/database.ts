@@ -50,13 +50,15 @@ export type TimeInformation = {}
 
 export type GamesStats = {
 	amount: number
-	averageLength: number
-	medianLength: TimeInformation
-	standardDeviation: TimeInformation
-	firstQuartile: TimeInformation
-	thirdQuartile: TimeInformation
-	minimum: TimeInformation
-	maximum: TimeInformation
+	gameLength: {
+		averageLength: number
+		medianLength: TimeInformation
+		standardDeviation: TimeInformation
+		firstQuartile: TimeInformation
+		thirdQuartile: TimeInformation
+		minimum: TimeInformation
+		maximum: TimeInformation
+	}
 	tieRate: number
 	forfeitRate: number
 	errorRate: number

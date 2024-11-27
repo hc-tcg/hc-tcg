@@ -1127,13 +1127,15 @@ export class Database {
 					tieRate: Number(stats.rows[0]['tie_rate']),
 					forfeitRate: Number(stats.rows[0]['forfeit_rate']),
 					errorRate: Number(stats.rows[0]['error_rate']),
-					averageLength: stats.rows[0]['average_length'],
-					medianLength: stats.rows[0]['median_length'],
-					standardDeviation: stats.rows[0]['standard_deviation'],
-					firstQuartile: stats.rows[0]['first_quartile'],
-					thirdQuartile: stats.rows[0]['third_quartile'],
-					minimum: stats.rows[0]['minimum'],
-					maximum: stats.rows[0]['maximum'],
+					gameLength: {
+						averageLength: stats.rows[0]['average_length'],
+						medianLength: stats.rows[0]['median_length'],
+						standardDeviation: stats.rows[0]['standard_deviation'],
+						firstQuartile: stats.rows[0]['first_quartile'],
+						thirdQuartile: stats.rows[0]['third_quartile'],
+						minimum: stats.rows[0]['minimum'],
+						maximum: stats.rows[0]['maximum'],
+					},
 				},
 			}
 		} catch (e) {
