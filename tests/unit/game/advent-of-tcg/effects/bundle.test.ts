@@ -1,6 +1,19 @@
 import {describe, expect, test} from '@jest/globals'
+import Bundle from 'common/cards/advent-of-tcg/single-use/bundle'
+import Feather from 'common/cards/advent-of-tcg/single-use/feather'
+import FullBundle from 'common/cards/advent-of-tcg/single-use/full_bundle'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BalancedItem from 'common/cards/items/balanced-common'
+import FishingRod from 'common/cards/single-use/fishing-rod'
+import Piston from 'common/cards/single-use/piston'
+import {DiamondSword, IronSword} from 'common/cards/single-use/sword'
+import TNT from 'common/cards/single-use/tnt'
+import {Card} from 'common/cards/types'
+import {CardComponent} from 'common/components'
+import query from 'common/components/query'
+import {GameModel} from 'common/models/game-model'
+import {SelectCards} from 'common/types/modal-requests'
 import {
-	applyEffect,
 	attack,
 	endTurn,
 	finishModalRequest,
@@ -8,21 +21,6 @@ import {
 	playCardFromHand,
 	testGame,
 } from '../../utils'
-import Bundle from 'common/cards/advent-of-tcg/single-use/bundle'
-import FishingRod from 'common/cards/single-use/fishing-rod'
-import TNT from 'common/cards/single-use/tnt'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {SelectCards} from 'common/types/modal-requests'
-import FullBundle from 'common/cards/advent-of-tcg/single-use/full_bundle'
-import Feather from 'common/cards/advent-of-tcg/single-use/feather'
-import {Card} from 'common/cards/types'
-import {GameModel} from 'common/models/game-model'
-import {DiamondSword, IronSword} from 'common/cards/single-use/sword'
-import Piston from 'common/cards/single-use/piston'
-import BalancedItem from 'common/cards/items/balanced-common'
-import query from 'common/components/query'
-import { CardComponent } from 'common/components'
-import { assert } from 'console'
 
 function testBundleSetup(
 	card1: Card,
@@ -157,12 +155,15 @@ describe('Test Bundle single use', () => {
 			)
 
 			expect(game.currentPlayer.singleUseCardUsed).toBeFalsy()
-			const cardEntity = game.components.find(CardComponent, query.card.is(BalancedItem))
+			const cardEntity = game.components.find(
+				CardComponent,
+				query.card.is(BalancedItem),
+			)
 			expect(cardEntity).toBeTruthy()
 			const slotQuery = query.every(
 				query.slot.active,
 				query.slot.item,
-				query.slot.currentPlayer
+				query.slot.currentPlayer,
 			)
 			expect(slotQuery(game, cardEntity!.slot)).toBeTruthy()
 
