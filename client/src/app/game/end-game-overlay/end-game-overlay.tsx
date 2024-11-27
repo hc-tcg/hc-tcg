@@ -29,12 +29,12 @@ const EndGameOverlay = ({
 }: Props) => {
 	let animation
 
-	let myOutcome: 'tie' | 'win' | 'loss' = 'tie'
+	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' = 'tie'
 
 	if (outcome === 'tie') {
 		myOutcome = 'tie'
 	} else if (outcome === 'game-crash') {
-		myOutcome = 'loss'
+		myOutcome = 'crash'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
@@ -47,6 +47,7 @@ const EndGameOverlay = ({
 		tie: 'It`s a tie',
 		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
+		crash: 'The game crashed. Please report this.',
 	}
 
 	const REASON_MSG: Record<GameVictoryReason, string> = {
