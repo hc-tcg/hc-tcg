@@ -127,7 +127,10 @@ export const singleUse = {
 	attachCondition: query.every(
 		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,
-		query.actionAvailable('PLAY_SINGLE_USE_CARD'),
+		query.some(
+			query.actionAvailable('PLAY_SINGLE_USE_CARD'),
+			(_game, value) => value.getCard()?.props.id === 'full_bundle',
+		),
 	),
 	getFormattedDescription,
 }

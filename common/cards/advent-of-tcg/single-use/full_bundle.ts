@@ -2,7 +2,7 @@ import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import BundledStatusEffect from '../../../status-effects/bundled'
-import {applyCard} from '../../../utils/board'
+import {applyCard, applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
 
@@ -15,7 +15,6 @@ const FullBundle: SingleUse = {
 	rarity: 'rare',
 	tokens: 0,
 	description: 'Play this card to play both bundled single use cards.',
-	showConfirmationModal: true,
 	attachCondition(game, value) {
 		if (!query.slot.singleUse(game, value)) return false
 
@@ -28,7 +27,6 @@ const FullBundle: SingleUse = {
 
 		let canAttach = true
 		bundledCards.forEach((card) => {
-			console.log(card.props.name, card.props.attachCondition(game, value))
 			canAttach &&= card.props.attachCondition(game, value)
 		})
 
@@ -89,15 +87,41 @@ const FullBundle: SingleUse = {
 				value.getStatusEffect(BundledStatusEffect)?.creator === component,
 		)
 
-		bundledCards.forEach((card) => {
-			const cardObserver = game.components.new(ObserverComponent, card.entity)
-			card.props.onAttach(game, card, cardObserver)
-		})
-
 		observer.subscribe(player.hooks.onApply, () => {
 			bundledCards.forEach((card) => {
 				applyCard(card as CardComponent<SingleUse>)
 			})
+		})
+
+		game.addModalRequest({
+			player: player.entity,
+			modal: {
+				type: 'selectCards',
+				name: 'Play these cards?',
+				description: 'Playing this full bundle will play these single use cards.',
+				cards: bundledCards.map((card) => card.entity),
+				selectionSize: 0,
+				primaryButton: {
+					text: 'Confirm',
+				},
+				secondaryButton: {
+					text: 'Cancel',
+					variant: 'error',
+				},
+				cancelable: true,
+			},
+			onResult(result) {
+				if (!result) return
+				if (!result.result) return
+
+				bundledCards.forEach((card) => {
+					const cardObserver = game.components.new(ObserverComponent, card.entity)
+					card.props.onAttach(game, card, cardObserver)
+				})
+
+				applySingleUse(game)
+			},
+			onTimeout() {}
 		})
 	},
 	onDetach(game, component, _observer) {
