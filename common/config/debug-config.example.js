@@ -12,7 +12,7 @@ export default {
 	availableActions: [],
 	shuffleDeck: true,
 	logErrorsToStderr: true,
-	logBoardState: true,
+	verboseLogging: true,
 	showHooksState: {
 		enabled: false,
 		clearConsole: true,
