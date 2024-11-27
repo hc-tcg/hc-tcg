@@ -245,7 +245,7 @@ const defaultGameSettings = {
 	forceCoinFlip: true,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
-	verboseLogging: !process.env.CI,
+	verboseLogging: !!process.env.UNIT_VERBOSE,
 	disableRewardCards: false,
 } satisfies GameSettings
 
