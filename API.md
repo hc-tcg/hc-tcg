@@ -148,6 +148,9 @@ Returns information about the total games played.
 -   `tieRate` The percentage of games that have ended in ties.
 -   `forfeit` The percentage of games that have ended in forfeits.
 -   `errorRate` The percentage of games that have ended in server errors.
+
+The following information is found within `gameLength`.
+
 -   `averageLength` The average length of games.
 -   `medianLength` The median length of games.
 -   `standardDeviation` The size of a standard deviation.
