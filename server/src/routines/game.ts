@@ -655,7 +655,7 @@ export function* turnSaga(
 	)
 
 	if (turnActionResult === 'FORFEIT') {
-		game.endInfo.victoryReason = 'forfeit'
+		game.endInfo.outcome = 'forfeit'
 		return 'GAME_END'
 	}
 

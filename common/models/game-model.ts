@@ -83,6 +83,17 @@ export function gameSettingsFromEnv(): GameSettings {
 	}
 }
 
+export type GameProps = {
+	player1: PlayerSetupDefs
+	player2: PlayerSetupDefs | AISetupDefs
+	settings: GameSettings
+	gameCode?: string
+	spectatorCode?: string
+	randomizeOrder?: boolean
+	randomNumberSeed: string
+	id: string
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
@@ -139,30 +150,19 @@ export class GameModel {
 		reason: GameEndReasonT | null
 	}
 
-	constructor(
-		rngSeed: string,
-		player1: PlayerSetupDefs,
-		player2: PlayerSetupDefs,
-		settings: GameSettings,
-		options?: {
-			gameCode?: string
-			apiSecret?: string
-			spectatorCode?: string
-			randomizeOrder?: false
-		},
-	) {
-		options = options ?? {}
-
-		this.settings = settings
-		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
-		this.rngSeed = rngSeed
-		this.rng = newRandomNumberGenerator(rngSeed)
+	constructor(props: GameProps) {
+		this.settings = props.settings
+		assert(
+			props.randomNumberSeed.length < 16,
+			'Game RNG seed must be under 16 characters',
+		)
+		this.rngSeed = props.randomNumberSeed
+		this.rng = newRandomNumberGenerator(props.randomNumberSeed)
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
-		this.internalApiSecret = options.apiSecret || null
+		this.internalGameCode = props.gameCode || null
+		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -183,14 +183,14 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this, this.components, player1, player2, {
-			shuffleDeck: settings.shuffleDeck,
-			startWithAllCards: settings.startWithAllCards,
-			unlimitedCards: settings.unlimitedCards,
-			extraStartingCards: settings.extraStartingCards,
+		setupComponents(this, this.components, props.player1, props.player2, {
+			shuffleDeck: props.settings.shuffleDeck,
+			startWithAllCards: props.settings.startWithAllCards,
+			unlimitedCards: props.settings.unlimitedCards,
+			extraStartingCards: props.settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(this, props.randomizeOrder)
 		this.voiceLineQueue = []
 	}
 
