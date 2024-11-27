@@ -246,7 +246,6 @@ const defaultGameSettings = {
 	shuffleDeck: false,
 	logErrorsToStderr: false,
 	verboseLogging: !process.env.CI,
-	logTurnActions: !process.env.CI,
 	disableRewardCards: false,
 } satisfies GameSettings
 
