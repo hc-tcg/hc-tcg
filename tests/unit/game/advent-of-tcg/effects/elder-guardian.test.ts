@@ -52,7 +52,7 @@ describe('Test Elder Guardian', () => {
 							query.effect.is(SingleTurnMiningFatigueEffect),
 							query.effect.targetEntity(null),
 						),
-					).not.toBeNull()
+					).toBeNull()
 
 					expect(
 						game.components
