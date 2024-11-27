@@ -1,12 +1,7 @@
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
+import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
@@ -71,8 +66,7 @@ export type ServerMessages = [
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
@@ -99,7 +93,7 @@ export type ServerMessages = [
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
 	{
 		type: typeof serverMessages.GAME_OVER_STAT
-		outcome: GameEndOutcomeT
+		outcome: GameOutcome
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},

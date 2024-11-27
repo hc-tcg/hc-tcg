@@ -4,8 +4,7 @@ import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 } from 'common/types/game-state'
@@ -183,8 +182,7 @@ type Messages = [
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_HIDE

@@ -326,7 +326,7 @@ function Game() {
 
 			{renderModal(openedModal, handleOpenModal)}
 			<Chat />
-			<EndGameOverlay {...endGameOverlay} />
+			<EndGameOverlay outcome={endGameOverlay} />
 		</div>
 	)
 }

@@ -120,14 +120,6 @@ function* gameManager(game: GameModel) {
 							.player.id,
 					),
 			),
-			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-				(action: any) =>
-					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(
-						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-							.playerId,
-					),
-			),
 		})
 
 		for (const viewer of game.viewers) {
