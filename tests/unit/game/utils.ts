@@ -13,7 +13,8 @@ import {
 import query, {ComponentQuery} from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
-import {SlotTypeT} from 'common/types/cards'
+import {SlotTypeT} from 'common'
+import {GameOutcome} from 'common/types/game-state'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,
@@ -199,14 +200,14 @@ export function* finishModalRequest(
 
 export function getWinner(
 	game: GameModel,
-): 'playerOne' | 'playerTwo' | undefined {
-	if (game.endInfo.deadPlayerEntities.length === 0)
-		throw new Error('There are no dead players that lost')
-	let winnerComponent = game.components.find(
+	outcome: GameOutcome,
+): PlayerComponent | null {
+	if (outcome === 'tie') return null
+	if (outcome === 'game-crash') return null
+	return game.components.find(
 		PlayerComponent,
-		(game, player) => !game.endInfo.deadPlayerEntities.includes(player.entity),
+		(_game, component) => component.entity === outcome.winner,
 	)
-	return winnerComponent?.playerName as any
 }
 
 function testSagas(rootSaga: any, testingSaga: any) {
@@ -257,7 +258,7 @@ export function testGame(
 	options: {
 		saga: (game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
-		then?: (game: GameModel) => any
+		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},

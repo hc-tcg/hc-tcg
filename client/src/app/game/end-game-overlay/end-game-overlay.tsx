@@ -33,6 +33,8 @@ const EndGameOverlay = ({
 
 	if (outcome === 'tie') {
 		myOutcome = 'tie'
+	} else if (outcome === 'game-crash') {
+		myOutcome = 'loss'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
@@ -84,7 +86,7 @@ const EndGameOverlay = ({
 					[css.win]: myOutcome === 'win',
 				})}
 			>
-				{outcome !== 'tie' && (
+				{outcome !== 'tie' && outcome !== 'game-crash' && (
 					<span>
 						{viewer.type === 'spectator' && nameOfLoser}
 						{viewer.type === 'player' &&

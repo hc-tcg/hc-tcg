@@ -16,6 +16,7 @@ import ComponentTable from '../types/ecs'
 import {
 	GameEndOutcomeT,
 	GameEndReasonT,
+	GameOutcome,
 	GameState,
 	GameVictoryReason,
 	Message,
@@ -137,6 +138,7 @@ export class GameModel {
 		deadPlayerEntities: Array<PlayerEntity>
 		victoryReason?: GameVictoryReason
 	}
+	public outcome?: GameOutcome
 
 	constructor(
 		rngSeed: string,
@@ -169,7 +171,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			victoryReason: null,
+			victoryReason: undefined,
 		}
 
 		this.components = new ComponentTable(this)

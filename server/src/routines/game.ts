@@ -12,7 +12,7 @@ import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {TypeT} from 'common/types/cards'
-import {TurnAction, TurnActions} from 'common/types/game-state'
+import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
 import {
 	AttackActionData,
 	PickSlotActionData,
@@ -68,6 +68,36 @@ function getAvailableEnergy(game: GameModel) {
 		})
 
 	return currentPlayer.hooks.availableEnergy.call(energy)
+}
+
+function figureOutGameResult(game: GameModel): GameOutcome {
+	assert(
+		game.endInfo.deadPlayerEntities.length !== 0,
+		'Games can not end without at least one dead player',
+	)
+	assert(
+		game.endInfo.victoryReason !== undefined,
+		'Games can not end without a reason',
+	)
+
+	if (game.endInfo.deadPlayerEntities.length === 2) {
+		return 'tie'
+	}
+
+	let alivePlayer = game.components.findEntity(
+		PlayerComponent,
+		(game, component) =>
+			!game.endInfo.deadPlayerEntities.includes(component.entity),
+	)
+	assert(
+		alivePlayer,
+		'The game must have a living player at the end if it was not a draw',
+	)
+
+	return {
+		winner: alivePlayer,
+		victoryReason: game.endInfo.victoryReason,
+	}
 }
 
 /**Returns if an action is currently available for the player to execute.
@@ -762,6 +792,7 @@ function* gameSaga(game: GameModel) {
 		const result = yield* call(turnSaga, game)
 		if (result === 'GAME_END') break
 	}
+	game.outcome = figureOutGameResult(game)
 }
 
 export default gameSaga

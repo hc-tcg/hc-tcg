@@ -115,6 +115,7 @@ export type TurnActions = Array<TurnAction>
 
 export type GameOutcome =
 	| 'tie'
+	| 'game-crash'
 	| {
 			winner: PlayerEntity
 			victoryReason: GameVictoryReason
@@ -126,14 +127,6 @@ export type GameVictoryReason =
 	| 'timeout-without-hermits'
 	| 'decked-out'
 	| 'lives'
-
-export type GameEndOutcomeT =
-	| 'timeout'
-	| 'forfeit'
-	| 'tie'
-	| 'tie-with-crash'
-	| 'player_won'
-	| 'error'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity

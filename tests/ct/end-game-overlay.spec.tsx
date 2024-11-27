@@ -64,3 +64,18 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 
 	await expect(component).toHaveScreenshot()
 })
+
+test('Game crash displays correctly.', async ({mount}) => {
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={'game-crash'}
+			viewer={{
+				type: 'spectator',
+			}}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
