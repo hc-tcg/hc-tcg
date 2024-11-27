@@ -70,7 +70,7 @@ function getAvailableEnergy(game: GameModel) {
 	return currentPlayer.hooks.availableEnergy.call(energy)
 }
 
-function figureOutGameResult(game: GameModel): GameOutcome {
+export function figureOutGameResult(game: GameModel): GameOutcome {
 	assert(
 		game.endInfo.deadPlayerEntities.length !== 0,
 		'Games can not end without at least one dead player',
@@ -386,6 +386,7 @@ function* turnActionSaga(
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
+		// Forfeits are always able to be used so they are not checked.
 		assert(
 			![
 				'SINGLE_USE_ATTACK',
@@ -494,7 +495,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
+			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
 				playerAction(type, opponentPlayer.entity),
 			),
 			...[
@@ -512,6 +513,7 @@ function* turnActionsSaga(game: GameModel) {
 				'SECONDARY_ATTACK',
 				'END_TURN',
 				'DELAY',
+				'FORFEIT',
 			].map((type) => playerAction(type, currentPlayer.entity)),
 		],
 		buffers.dropping(10),
@@ -665,6 +667,10 @@ function* turnActionsSaga(game: GameModel) {
 
 			if (result === 'END_TURN') {
 				break
+			}
+			if (result === 'FORFEIT') {
+				game.endInfo.victoryReason = 'forfeit'
+				return 'GAME_END'
 			}
 		}
 	} finally {

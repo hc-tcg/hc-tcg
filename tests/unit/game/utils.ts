@@ -24,7 +24,7 @@ import {
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
-import gameSaga from 'server/routines/game'
+import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
@@ -303,8 +303,7 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	assert(game.outcome, 'All games must have an outcome')
-	if (options.then) options.then(game, game.outcome)
+	if (options.then) options.then(game, figureOutGameResult(game))
 }
 
 /**
