@@ -4,7 +4,7 @@ import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const clientMessages = messages({
+export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
 	UPDATE_MINECRAFT_NAME: null,
