@@ -35,7 +35,7 @@ export const MiningFatigueEffect: Counter<CardComponent> = {
 
 export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
-	id: 'mining-fatigue',
+	id: 'single-turn-mining-fatigue',
 	icon: 'mining-fatigue',
 	name: 'Mining Fatigue',
 	description:
