@@ -98,7 +98,8 @@ const FullBundle: SingleUse = {
 			modal: {
 				type: 'selectCards',
 				name: 'Play these cards?',
-				description: 'Playing this full bundle will play these single use cards.',
+				description:
+					'Playing this full bundle will play these single use cards.',
 				cards: bundledCards.map((card) => card.entity),
 				selectionSize: 0,
 				primaryButton: {
@@ -115,13 +116,16 @@ const FullBundle: SingleUse = {
 				if (!result.result) return
 
 				bundledCards.forEach((card) => {
-					const cardObserver = game.components.new(ObserverComponent, card.entity)
+					const cardObserver = game.components.new(
+						ObserverComponent,
+						card.entity,
+					)
 					card.props.onAttach(game, card, cardObserver)
 				})
 
 				applySingleUse(game)
 			},
-			onTimeout() {}
+			onTimeout() {},
 		})
 	},
 	onDetach(game, component, _observer) {

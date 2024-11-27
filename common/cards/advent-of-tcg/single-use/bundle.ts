@@ -44,7 +44,7 @@ const Bundle: SingleUse = {
 		component: CardComponent,
 		_observer: ObserverComponent,
 	) {
-		const {player} = component
+		const {player, opponentPlayer} = component
 
 		const singleUses = game.components.filterEntities(
 			CardComponent<SingleUse>,
@@ -84,6 +84,23 @@ const Bundle: SingleUse = {
 						.apply(card.entity)
 				})
 				applySingleUse(game)
+
+				game.addModalRequest({
+					player: opponentPlayer.entity,
+					modal: {
+						type: 'selectCards',
+						name: "Opponent's bundle",
+						description: '',
+						cards: result.cards.map((card) => card.entity),
+						selectionSize: 0,
+						cancelable: true,
+						primaryButton: {
+							text: 'Ok',
+						},
+					},
+					onResult() {},
+					onTimeout() {},
+				})
 			},
 			onTimeout: () => {},
 		})
