@@ -98,6 +98,7 @@ This project contains a few tests that are run against every PR.
 npm run test              # run all the tests
 npm run test:unit         # run unittests written with jest, this will catch most errors.
 npm run test:unit-verbose # run unittests written with jest and print verbose logs for debugging.
+npm run test:vunit        # the same as test:unit-verbose
 npm run test:ct           # run component tests with playwright.
 npm run test:ct-update    # update component snapshots.
 npm run test:api          # run tests for the hc-tcg API.
