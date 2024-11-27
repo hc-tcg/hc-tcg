@@ -1,6 +1,7 @@
 import {DEBUG} from 'common/config'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {z} from 'zod'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -22,7 +23,6 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {NumberOrNull, requestUrlRoot} from './utils'
-import {z} from 'zod'
 
 const apiKeyParser = z.union([z.array(z.string()), z.string(), z.undefined()])
 
