@@ -14,12 +14,12 @@ import {GameModel} from 'common/models/game-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
 import {TypeT} from 'common/types/cards'
 import {TurnAction, TurnActions} from 'common/types/game-state'
+import {Message as ChatMessage} from 'common/types/game-state'
 import {
 	AnyTurnActionData,
 	PickSlotActionData,
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {Message as ChatMessage} from 'common/types/game-state'
 import {
 	actionChannel,
 	call,
@@ -29,7 +29,7 @@ import {
 	race,
 	take,
 } from 'typed-redux-saga'
-import {virtualPlayerActionSaga} from './virtual'
+import {printBoardState, printHooksState} from 'utils'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -40,7 +40,7 @@ import {
 	removeEffectSaga,
 	timeoutSaga,
 } from './turn-actions'
-import {printBoardState, printHooksState} from 'utils'
+import {virtualPlayerActionSaga} from './virtual'
 
 export const gameMessages = messages('gameMessages', {
 	TURN_ACTION: null,
