@@ -21,4 +21,4 @@ export default {
 	logAttackHistory: false,
 	disableRewardCards: false,
 	showCardsAsHTML: false,
-};
+}
