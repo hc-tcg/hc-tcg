@@ -56,7 +56,7 @@ export type TypeDistributionStats = {
 export type TimeInformation = {}
 
 export type GamesStats = {
-	amount: number
+	games: number
 	gameLength: {
 		averageLength: number
 		medianLength: TimeInformation

@@ -151,7 +151,6 @@ export async function getGamesStats(params: {
 	let stats = await root.db.getGamesStats(params)
 	// Games played before we switched to the new database
 	const oldGames = 657835
-	const updateTime = 1731172320
 
 	if (stats.type === 'failure') {
 		return [
@@ -165,11 +164,12 @@ export async function getGamesStats(params: {
 	return [
 		200,
 		{
-			...stats.body,
-			allTimeGames:
-				!params.after || params.after < updateTime
-					? oldGames + stats.body.amount
-					: null,
+			games: stats.body.games,
+			allTimeGames: !params.after ? oldGames + stats.body.games : null,
+			tieRate: stats.body.tieRate,
+			forfeitRate: stats.body.forfeitRate,
+			errorRate: stats.body.errorRate,
+			gameLength: stats.body.gameLength,
 		},
 	]
 }

@@ -149,7 +149,7 @@ In addition, an array is also returned with all type combinations that appear in
 
 Returns information about the total games played.
 
--   `amount` The amount of games played after 1.0.
+-   `games` The amount of games played after 1.0.
 -   `allTimeGames` The amount of games ever played, even before 1.0. These games are not included in any other statistics.
 -   `tieRate` The percentage of games that have ended in ties.
 -   `forfeit` The percentage of games that have ended in forfeits.

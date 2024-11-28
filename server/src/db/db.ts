@@ -1157,7 +1157,7 @@ export class Database {
 			return {
 				type: 'success',
 				body: {
-					amount: Number(stats.rows[0]['amount']),
+					games: Number(stats.rows[0]['amount']),
 					tieRate: Number(stats.rows[0]['tie_rate']),
 					forfeitRate: Number(stats.rows[0]['forfeit_rate']),
 					errorRate: Number(stats.rows[0]['error_rate']),
