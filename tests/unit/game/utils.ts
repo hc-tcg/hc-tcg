@@ -1,4 +1,3 @@
-import assert from 'assert'
 import EvilXisumaBossHermitCard, {
 	BOSS_ATTACK,
 	supplyBossAttack,

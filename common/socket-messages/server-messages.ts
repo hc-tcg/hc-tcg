@@ -13,7 +13,6 @@ export const serverMessages = messages('serverMessages', {
 	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
-	GAME_CRASH: null,
 	GAME_START: null,
 	GAME_END: null,
 	PRIVATE_GAME_TIMEOUT: null,
@@ -61,7 +60,6 @@ export type ServerMessages = [
 		updates: Record<string, Array<string>>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
-	{type: typeof serverMessages.GAME_CRASH},
 	{type: typeof serverMessages.GAME_START},
 	{
 		type: typeof serverMessages.GAME_END

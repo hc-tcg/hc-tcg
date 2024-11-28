@@ -31,9 +31,9 @@ const EndGameOverlay = ({
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' = 'tie'
 
-	if (outcome === 'tie') {
+	if (outcome.type === 'tie') {
 		myOutcome = 'tie'
-	} else if (outcome === 'game-crash') {
+	} else if (outcome.type === 'game-crash') {
 		myOutcome = 'crash'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
@@ -47,7 +47,8 @@ const EndGameOverlay = ({
 		tie: 'It`s a tie',
 		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
-		crash: 'The game crashed. Please report this.',
+		crash:
+			'The game crashed. Please copy the crash message and report this to the developers.',
 	}
 
 	const REASON_MSG: Record<GameVictoryReason, string> = {
@@ -87,7 +88,7 @@ const EndGameOverlay = ({
 					[css.win]: myOutcome === 'win',
 				})}
 			>
-				{outcome !== 'tie' && outcome !== 'game-crash' && (
+				{outcome.type === 'player-won' && (
 					<span>
 						{viewer.type === 'spectator' && nameOfLoser}
 						{viewer.type === 'player' &&
@@ -97,6 +98,16 @@ const EndGameOverlay = ({
 				)}
 
 				{OUTCOME_MSG[myOutcome]}
+				{outcome.type === 'game-crash' && (
+					<Button
+						onClick={() => {
+							navigator.clipboard.writeText(outcome.error)
+						}}
+					>
+						Copy Crash Message
+					</Button>
+				)}
+
 				<Button onClick={onClose}>Return to Main Menu</Button>
 			</Modal.Description>
 		</Modal>

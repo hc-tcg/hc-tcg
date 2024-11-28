@@ -10,6 +10,7 @@ test('You won by killing all hermits!', async ({mount}) => {
 			nameOfWinner={'Winner Name'}
 			nameOfLoser={'Loser Name'}
 			outcome={{
+				type: 'player-won',
 				winner: entity,
 				victoryReason: 'no-hermits-on-board',
 			}}
@@ -32,6 +33,7 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 			nameOfWinner={'Winner Name'}
 			nameOfLoser={'Loser Name'}
 			outcome={{
+				type: 'player-won',
 				winner: playerOneEntity,
 				victoryReason: 'no-hermits-on-board',
 			}}
@@ -53,6 +55,7 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 			nameOfWinner={'Winner Name'}
 			nameOfLoser={'Loser Name'}
 			outcome={{
+				type: 'player-won',
 				winner: playerOneEntity,
 				victoryReason: 'no-hermits-on-board',
 			}}
@@ -70,7 +73,7 @@ test('Game crash displays correctly.', async ({mount}) => {
 		<EndGameOverlay
 			nameOfWinner={'Winner Name'}
 			nameOfLoser={'Loser Name'}
-			outcome={'game-crash'}
+			outcome={{type: 'game-crash', error: 'The reason the game crashed'}}
 			viewer={{
 				type: 'spectator',
 			}}

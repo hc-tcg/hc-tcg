@@ -1,3 +1,4 @@
+import assert from 'assert'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
@@ -33,11 +34,6 @@ import {
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
-import {
-	getGameOutcome,
-	getGamePlayerOutcome,
-	getWinner,
-} from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
 
@@ -104,7 +100,7 @@ function* gameManager(game: GameModel) {
 		game.task = yield* spawn(gameSaga, game)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
+		yield* race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
 			// kill a game after one hour
@@ -127,7 +123,7 @@ function* gameManager(game: GameModel) {
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.reason) {
+				if (!game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
 					game.components
@@ -137,22 +133,37 @@ function* gameManager(game: GameModel) {
 						)
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, viewer)
-			// assert(game.endInfo.reason, 'Games can not end without a reason')
+		}
+	} catch (err) {
+		console.log('Error: ', err)
+		game.outcome = {type: 'game-crash', error: `${err}`}
+	} finally {
+		const outcome = game.outcome
+
+		assert(outcome, 'All games should have an outcome after they end')
+
+		for (const viewer of game.viewers) {
+			const gameState = getLocalGameState(game, viewer)
+			if (gameState) {
+				gameState.timer.turnRemaining = 0
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
+				if (!game.endInfo.victoryReason) {
+					// Remove coin flips from state if game was terminated before game end to prevent
+					// clients replaying animations after a forfeit, disconnect, or excessive game duration
+					game.components
+						.filter(PlayerComponent)
+						.forEach(
+							(player) => (gameState.players[player.entity].coinFlips = []),
+						)
+				}
+			}
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
-				reason: game.endInfo.reason || undefined,
 			})
 		}
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	} finally {
+
 		if (game.task) yield* cancel(game.task)
 		game.hooks.afterGameEnd.call()
 
@@ -163,8 +174,9 @@ function* gameManager(game: GameModel) {
 		)
 
 		const gamePlayers = game.getPlayers()
+
 		const winner = gamePlayers.find(
-			(player) => player.id === game.endInfo.winner,
+			(player) => player.id === game.endInfo.deadPlayerEntities,
 		)
 
 		if (winner === null && game.endInfo.winner) {

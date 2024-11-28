@@ -115,9 +115,10 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameOutcome =
-	| 'tie'
-	| 'game-crash'
+	| {type: 'tie'}
+	| {type: 'game-crash'; error: string}
 	| {
+			type: 'player-won'
 			winner: PlayerEntity
 			victoryReason: GameVictoryReason
 	  }
