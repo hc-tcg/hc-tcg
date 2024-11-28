@@ -56,7 +56,7 @@ export type GameSettings = {
 	forceCoinFlip: boolean
 	shuffleDeck: boolean
 	logErrorsToStderr: boolean
-	logBoardState: boolean
+	verboseLogging: boolean
 	disableRewardCards: boolean
 }
 
@@ -78,7 +78,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
 		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
-		logBoardState: DEBUG_CONFIG.logBoardState,
+		verboseLogging: DEBUG_CONFIG.verboseLogging,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
 	}
 }

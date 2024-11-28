@@ -1075,9 +1075,47 @@ export class Database {
 	> {
 		try {
 			const stats = await this.pool.query(
-				`SELECT count(*) as amount,avg(completion_time - start_time) as average_length FROM games
-				WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-				AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))`,
+				`SELECT * FROM (
+					SELECT 
+						count(*) as amount,
+						avg(completion_time - start_time) as average_length,
+						sqrt(sum(
+							(
+								extract(epoch FROM completion_time - start_time -
+								(SELECT avg(completion_time - start_time) FROM games))
+							) ^ 2
+							) / ((SELECT count(*) FROM games) - 1)) * '1 second'::interval as standard_deviation,
+						cast(count(CASE WHEN outcome = 'tie' THEN 1 END) as decimal) / count(*) as tie_rate,
+						cast(count(CASE WHEN outcome = 'forfeit' THEN 1 END) as decimal) / count(*) as forfeit_rate,
+						cast(count(CASE WHEN 
+							outcome != 'player_won' AND 
+							outcome != 'forfeit' AND 
+							outcome != 'tie' THEN 1 END
+						) as decimal) / count(*) as error_rate
+					FROM games
+					WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+					AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as median_length FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 2
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as first_quartile FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 4
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as third_quartile FROM games 
+					ORDER BY (completion_time - start_time) DESC LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 4
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as minimum FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 20
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as maximum FROM games 
+					ORDER BY (completion_time - start_time) DESC LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 20
+				)`,
 				[after, before],
 			)
 
@@ -1085,7 +1123,18 @@ export class Database {
 				type: 'success',
 				body: {
 					amount: Number(stats.rows[0]['amount']),
-					averageLength: stats.rows[0]['average_length'],
+					tieRate: Number(stats.rows[0]['tie_rate']),
+					forfeitRate: Number(stats.rows[0]['forfeit_rate']),
+					errorRate: Number(stats.rows[0]['error_rate']),
+					gameLength: {
+						averageLength: stats.rows[0]['average_length'],
+						medianLength: stats.rows[0]['median_length'],
+						standardDeviation: stats.rows[0]['standard_deviation'],
+						firstQuartile: stats.rows[0]['first_quartile'],
+						thirdQuartile: stats.rows[0]['third_quartile'],
+						minimum: stats.rows[0]['minimum'],
+						maximum: stats.rows[0]['maximum'],
+					},
 				},
 			}
 		} catch (e) {
