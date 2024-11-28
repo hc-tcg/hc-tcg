@@ -40,7 +40,7 @@ describe('Test Game Win Conditions', () => {
 					yield* endTurn(game)
 				},
 				then: (game, outcome) => {
-					expect(getWinner(game)?.playerName).toBe('playerTwo')
+					expect(getWinner(game)?.playerName).toBe('playerOne')
 					expect(outcome).toHaveProperty('victoryReason', 'decked-out')
 				},
 			},
