@@ -1,6 +1,7 @@
 import {Card} from '../../types'
 import Biffa2001Rare from './biffa2001-rare'
 import BigBSt4tzRare from './bigbst4tz2-rare'
+import CyberpunkImpulseRare from './cyberpunkimpulse-rare'
 import DungeonTangoRare from './dungeontango-rare'
 import GrianchRare from './grianch-rare'
 import LDShadowLadyRare from './ldshadowlady-rare'
@@ -32,6 +33,7 @@ const hermitCardClasses: Array<Card> = [
 	PharaohRare,
 	GrianchRare,
 	PostmasterPearlRare,
+	CyberpunkImpulseRare,
 ]
 
 export default hermitCardClasses
