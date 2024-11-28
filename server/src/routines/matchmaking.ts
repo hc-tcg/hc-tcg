@@ -175,29 +175,49 @@ function* gameManager(game: GameModel) {
 
 		const gamePlayers = game.getPlayers()
 
-		const winner = gamePlayers.find(
-			(player) => player.id === game.endInfo.deadPlayerEntities,
-		)
+		const winnerEntity = game.components
+			.filterEntities(PlayerComponent)
+			.find((player) => !game.endInfo.deadPlayerEntities.includes(player))
 
-		if (winner === null && game.endInfo.winner) {
+		const winnerPlayerId = game.viewers.find(
+			(viewer) =>
+				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
+		)?.playerId
+
+		if (!winnerPlayerId && outcome.type === 'player-won') {
 			console.error(
-				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+				`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
 			)
 			return
 		}
+
+		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
 
 		if (
 			gamePlayers.length >= 2 &&
 			gamePlayers[0].uuid &&
 			gamePlayers[1].uuid &&
-			game.endInfo.outcome &&
 			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
 			gamePlayers[0].uuid !== gamePlayers[1].uuid
 		) {
+			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
+
+			if (outcome.type === 'tie') {
+				dbOutcome = 'tie'
+			} else if (outcome.type === 'game-crash') {
+				dbOutcome = 'error'
+			} else if (outcome.victoryReason === 'forfeit') {
+				dbOutcome = 'forfeit'
+			} else if (outcome.victoryReason === 'timeout-without-hermits') {
+				dbOutcome = 'timeout'
+			} else {
+				dbOutcome = 'player_won'
+			}
+
 			yield* addGame(
 				gamePlayers[0],
 				gamePlayers[1],
-				game.endInfo.outcome,
+				dbOutcome,
 				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
 				game.rngSeed,

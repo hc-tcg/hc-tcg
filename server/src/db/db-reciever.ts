@@ -1,7 +1,6 @@
 import {CARDS} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameEndOutcomeT} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
@@ -481,7 +480,7 @@ export function* getStats(
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
-	outcome: GameEndOutcomeT,
+	outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error',
 	gameLength: number,
 	winner: string | null,
 	seed: string,

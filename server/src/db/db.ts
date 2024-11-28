@@ -1,6 +1,5 @@
 import {Card} from 'common/cards/types'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
-import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
@@ -669,7 +668,7 @@ export class Database {
 		secondPlayerDeckCode: string,
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
-		outcome: GameEndOutcomeT,
+		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error',
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
