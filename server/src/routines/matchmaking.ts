@@ -175,9 +175,7 @@ function* gameManager(game: GameModel) {
 
 		const gamePlayers = game.getPlayers()
 
-		const winnerEntity = game.components
-			.filterEntities(PlayerComponent)
-			.find((player) => !game.endInfo.deadPlayerEntities.includes(player))
+		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
 
 		const winnerPlayerId = game.viewers.find(
 			(viewer) =>
