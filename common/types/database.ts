@@ -26,6 +26,8 @@ export type Stats = {
 export type CardStats = {
 	id: number
 	winrate: number | null
+	adjustedWinrate: number | null
+	winrateDifference: number | null
 	deckUsage: number
 	gameUsage: number
 	averagePlayers: number
@@ -40,11 +42,16 @@ export type DeckStats = {
 	winrate: number | null
 }
 
-export type TypeDistributionStats = Array<{
-	type: TypeT
-	usage: number
-	winrate: number
-}>
+export type TypeDistributionStats = {
+	monoTypeWinrate: number
+	dualTypeWinrate: number
+	dualTypeFrequency: number
+	types: Array<{
+		type: Array<TypeT | 'typeless'>
+		frequency: number
+		winrate: number
+	}>
+}
 
 export type TimeInformation = {}
 

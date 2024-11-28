@@ -5,6 +5,7 @@ import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import {CARDS} from 'common/cards'
+import {TypeT} from 'common/types/cards'
 import {
 	CardStats,
 	DeckStats,
@@ -728,12 +729,15 @@ export class Database {
 			| 'averageCopies'
 			| 'averagePlayers'
 			| 'encounterChance'
+			| 'adjustedWinrate'
+			| 'winrateDifference'
 			| null
 	}): Promise<DatabaseResult<Array<CardStats>>> {
 		try {
 			const stats = await this.pool.query(
 				`
-				SELECT * FROM
+				SELECT *,
+				adjusted_winrate - winrate as winrate_difference FROM
 				(
 					SELECT card_id, 
 					total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
@@ -759,14 +763,46 @@ export class Database {
 							WHERE deck_cards.card_id > -1
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-							) as result
+						) as result
 					GROUP BY result.card_id)
 					CROSS JOIN (SELECT count(*) as total_decks FROM decks)
 					CROSS JOIN (SELECT count(*) as total_games FROM games)
 					WHERE wins > 0
-				)
+				) as main_result
+				LEFT JOIN (
+					SELECT card_id, 
+						cast(wins as decimal) / NULLIF(wins + losses,0) as adjusted_winrate FROM (
+							SELECT card_id,
+							count(CASE WHEN wins THEN 1 END) as wins,
+							count(CASE WHEN losses THEN 1 END) as losses, 
+							count(deck_code) as included_in_decks, 
+							count(DISTINCT start_time) as included_in_games,
+							sum(copies) as copies FROM (
+								SELECT cards.card_id,
+								deck_cards.deck_code,
+								deck_cards.copies,
+								games.winner_deck_code = deck_cards.deck_code as wins,
+								games.loser_deck_code = deck_cards.deck_code as losses,
+								games.start_time
+								FROM cards
+								LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+								INNER JOIN 
+									games ON (games.winner_deck_code = deck_cards.deck_code
+									AND cards.card_id NOT IN (SELECT card_id FROM deck_cards WHERE deck_code = games.loser_deck_code)) OR
+									(games.loser_deck_code = deck_cards.deck_code
+									AND cards.card_id NOT IN (SELECT card_id FROM deck_cards WHERE deck_code = games.winner_deck_code))
+								WHERE deck_cards.card_id > -1
+								AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+								AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							) as result
+						GROUP BY result.card_id)
+						CROSS JOIN (SELECT count(*) as total_decks FROM decks)
+						CROSS JOIN (SELECT count(*) as total_games FROM games)
+					WHERE wins > 0) as adjusted_winrate_table ON adjusted_winrate_table.card_id = main_result.card_id
 				ORDER BY (
 					CASE WHEN $3 = 'winrate' THEN winrate 
+						WHEN $3 = 'adjustedWinrate' THEN winrate 
+						WHEN $3 = 'winrateDifference' THEN adjusted_winrate - winrate
 						WHEN $3 = 'deckUsage' THEN deck_usage 
 						WHEN $3 = 'gameUsage' THEN game_usage 
 						WHEN $3 = 'averageCopies' THEN average_copies 
@@ -784,6 +820,12 @@ export class Database {
 					return {
 						id: Number(row['card_id']),
 						winrate: row['winrate'] ? Number(row['winrate']) : null,
+						adjustedWinrate: row['adjusted_winrate']
+							? Number(row['adjusted_winrate'])
+							: null,
+						winrateDifference: row['winrate_difference']
+							? Number(row['winrate_difference'])
+							: null,
 						deckUsage: row['deck_usage'] ? Number(row['deck_usage']) : 0,
 						gameUsage: row['game_usage'] ? Number(row['game_usage']) : 0,
 						averagePlayers: row['average_players']
@@ -936,131 +978,112 @@ export class Database {
 		try {
 			const stats = await this.pool.query(
 				`
-				SELECT
-				cast(balanced_a as decimal) / total_amount as balanced_usage,
-				cast(builder_a as decimal) / total_amount as builder_usage,
-				cast(explorer_a as decimal) / total_amount as explorer_usage,
-				cast(farm_a as decimal) / total_amount as farm_usage,
-				cast(miner_a as decimal) / total_amount as miner_usage,
-				cast(prankster_a as decimal) / total_amount as prankster_usage,
-				cast(pvp_a as decimal) / total_amount as pvp_usage,
-				cast(redstone_a as decimal) / total_amount as redstone_usage,
-				cast(speedrunner_a as decimal) / total_amount as speedrunner_usage,
-				cast(terraform_a as decimal) / total_amount as terraform_usage,
-				cast(balanced_w as decimal) / NULLIF(balanced_w + balanced_l,0) as balanced_winrate,
-				cast(builder_w as decimal) / NULLIF(builder_w + builder_l,0) as builder_winrate,
-				cast(explorer_w as decimal) / NULLIF(explorer_w + explorer_l,0) as explorer_winrate,
-				cast(farm_w as decimal) / NULLIF(farm_w + farm_l,0) as farm_winrate,
-				cast(miner_w as decimal) / NULLIF(miner_w + miner_l,0) as miner_winrate,
-				cast(prankster_w as decimal) / NULLIF(prankster_w + prankster_l,0) as prankster_winrate,
-				cast(pvp_w as decimal) / NULLIF(pvp_w + pvp_l,0) as pvp_winrate,
-				cast(redstone_w as decimal) / NULLIF(redstone_w + balanced_l,0) as redstone_winrate,
-				cast(speedrunner_w as decimal) / NULLIF(speedrunner_w + speedrunner_l,0) as speedrunner_winrate,
-				cast(terraform_w as decimal) / NULLIF(terraform_w + terraform_l,0) as terraform_winrate
-				FROM (SELECT 
-						count(CASE WHEN card_id = 49 OR card_id = 50 THEN 1 END) as balanced_a,
-						count(CASE WHEN card_id = 51 OR card_id = 52 THEN 1 END) as builder_a,
-						count(CASE WHEN card_id = 53 OR card_id = 54 THEN 1 END) as explorer_a,
-						count(CASE WHEN card_id = 55 OR card_id = 56 THEN 1 END) as farm_a,
-						count(CASE WHEN card_id = 57 OR card_id = 58 THEN 1 END) as miner_a,
-						count(CASE WHEN card_id = 59 OR card_id = 60 THEN 1 END) as prankster_a,
-						count(CASE WHEN card_id = 61 OR card_id = 62 THEN 1 END) as pvp_a,
-						count(CASE WHEN card_id = 63 OR card_id = 64 THEN 1 END) as redstone_a,
-						count(CASE WHEN card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_a,
-						count(CASE WHEN card_id = 67 OR card_id = 68 THEN 1 END) as terraform_a,
-						count(CASE WHEN win AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_w,
-						count(CASE WHEN win AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_w,
-						count(CASE WHEN win AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_w,
-						count(CASE WHEN win AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_w,
-						count(CASE WHEN win AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_w,
-						count(CASE WHEN win AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_w,
-						count(CASE WHEN win AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_w,
-						count(CASE WHEN win AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_w,
-						count(CASE WHEN win AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_w,
-						count(CASE WHEN win AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_w,
-						count(CASE WHEN loss AND card_id = 49 OR card_id = 50 THEN 1 END) as balanced_l,
-						count(CASE WHEN loss AND card_id = 51 OR card_id = 52 THEN 1 END) as builder_l,
-						count(CASE WHEN loss AND card_id = 53 OR card_id = 54 THEN 1 END) as explorer_l,
-						count(CASE WHEN loss AND card_id = 55 OR card_id = 56 THEN 1 END) as farm_l,
-						count(CASE WHEN loss AND card_id = 57 OR card_id = 58 THEN 1 END) as miner_l,
-						count(CASE WHEN loss AND card_id = 59 OR card_id = 60 THEN 1 END) as prankster_l,
-						count(CASE WHEN loss AND card_id = 61 OR card_id = 62 THEN 1 END) as pvp_l,
-						count(CASE WHEN loss AND card_id = 63 OR card_id = 64 THEN 1 END) as redstone_l,
-						count(CASE WHEN loss AND card_id = 65 OR card_id = 66 THEN 1 END) as speedrunner_l,
-						count(CASE WHEN loss AND card_id = 67 OR card_id = 68 THEN 1 END) as terraform_l,
-						count(card_id) as total_amount
+				SELECT 
+					type_code,
+					cast(wins as decimal) / NULLIF(losses + wins,0) as winrate,
+					cast(wins + losses as decimal) / total_games as frequency,
+					cast(dual_type_wins as decimal) / NULLIF(dual_type_wins + dual_type_losses,0) as dual_type_winrate,
+					cast(dual_type_wins + dual_type_losses as decimal) / total_games as dual_type_frequency,
+					cast(mono_type_wins as decimal) / NULLIF(mono_type_wins + mono_type_losses,0) as mono_type_winrate,
+					cast(mono_type_wins + mono_type_losses as decimal) / total_games as mono_type_frequency
+					FROM (
+					WITH final_result AS 
+					(SELECT
+						type_code,
+						sum(wins) as wins,
+						sum(losses) as losses
 						FROM (
-							SELECT deck_cards.card_id,
-							games.winner_deck_code = decks.deck_code as win,
-							games.loser_deck_code = decks.deck_code as loss
-							FROM games
-							INNER JOIN decks ON decks.deck_code = games.winner_deck_code OR decks.deck_code = games.loser_deck_code
-							LEFT JOIN deck_cards ON deck_cards.deck_code = decks.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
-                            AND (games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code)
-							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-						)
+							SELECT * FROM (SELECT 
+								sum(type_index) as type_code,
+								decks_with_types.deck_code,
+								sum(decks_with_results.wins) as wins,
+								sum(decks_with_results.losses) as losses,
+								cast(sum(decks_with_results.wins) as decimal) / NULLIF(sum(decks_with_results.losses) + sum(decks_with_results.wins),0) as winrate
+								FROM (
+									SELECT DISTINCT decks.deck_code,2 ^ ((deck_cards.card_id - 49) / 2) as type_index FROM decks 
+									LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+									ORDER BY decks.deck_code
+								) as decks_with_types 
+								INNER JOIN (
+									SELECT deck_code,
+									wins, losses FROM (
+									SELECT result.deck_code,
+										count(CASE WHEN wins THEN 1 END) as wins,
+										count(CASE WHEN losses THEN 1 END) as losses
+										FROM (
+											SELECT decks.deck_code,
+											games.winner_deck_code = decks.deck_code as wins,
+											games.loser_deck_code = decks.deck_code as losses FROM decks
+											INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+											WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+											AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+										) as result
+									GROUP BY result.deck_code) as deck_code_list 
+								) as decks_with_results ON decks_with_results.deck_code = decks_with_types.deck_code
+								GROUP BY decks_with_types.deck_code
+								ORDER BY sum(type_index)
+							) as result
+							WHERE result.winrate > 0.05 AND result.winrate < 0.95
+						) as result
+						GROUP BY result.type_code
 					)
-						`,
+					SELECT * FROM final_result
+					CROSS JOIN (SELECT sum(wins) + sum(losses) as total_games FROM final_result)
+					CROSS JOIN (SELECT sum(wins) as dual_type_wins FROM final_result WHERE type_code NOT IN (1,2,4,8,16,32,64,128,256,512))
+					CROSS JOIN (SELECT sum(losses) as dual_type_losses FROM final_result WHERE type_code NOT IN (1,2,4,8,16,32,64,128,256,512))
+					CROSS JOIN (SELECT sum(wins) as mono_type_wins FROM final_result WHERE type_code IN (1,2,4,8,16,32,64,128,256,512))
+					CROSS JOIN (SELECT sum(losses) as mono_type_losses FROM final_result WHERE type_code IN (1,2,4,8,16,32,64,128,256,512))
+				)
+				`,
 				[after, before],
 			)
 
-			const info = stats.rows[0]
+			const info = stats.rows
+
+			const getTypeArray = (typeCode: number) => {
+				const types: Array<TypeT> = []
+				if ((typeCode & 0b0000000001) !== 0) types.push('balanced')
+				if ((typeCode & 0b0000000010) !== 0) types.push('builder')
+				if ((typeCode & 0b0000000100) !== 0) types.push('explorer')
+				if ((typeCode & 0b0000001000) !== 0) types.push('farm')
+				if ((typeCode & 0b0000010000) !== 0) types.push('miner')
+				if ((typeCode & 0b0000100000) !== 0) types.push('prankster')
+				if ((typeCode & 0b0001000000) !== 0) types.push('pvp')
+				if ((typeCode & 0b0010000000) !== 0) types.push('redstone')
+				if ((typeCode & 0b0100000000) !== 0) types.push('speedrunner')
+				if ((typeCode & 0b1000000000) !== 0) types.push('terraform')
+
+				return types
+			}
+
+			const types = info.map((row) => {
+				const typeCode: number | null = row['type_code']
+				const winrate = Number(row['winrate'])
+				const frequency = Number(row['frequency'])
+
+				if (typeCode === null) {
+					return {
+						type: ['typeless'],
+						winrate,
+						frequency,
+					}
+				}
+
+				return {
+					type: getTypeArray(typeCode),
+					winrate,
+					frequency,
+				}
+			})
 
 			return {
 				type: 'success',
-				body: [
-					{
-						type: 'balanced',
-						usage: Number(info['balanced_usage']),
-						winrate: Number(info['balanced_winrate']),
-					},
-					{
-						type: 'builder',
-						usage: Number(info['builder_usage']),
-						winrate: Number(info['builder_winrate']),
-					},
-					{
-						type: 'explorer',
-						usage: Number(info['explorer_usage']),
-						winrate: Number(info['explorer_winrate']),
-					},
-					{
-						type: 'farm',
-						usage: Number(info['farm_usage']),
-						winrate: Number(info['farm_winrate']),
-					},
-					{
-						type: 'miner',
-						usage: Number(info['miner_usage']),
-						winrate: Number(info['miner_winrate']),
-					},
-					{
-						type: 'prankster',
-						usage: Number(info['prankster_usage']),
-						winrate: Number(info['prankster_winrate']),
-					},
-					{
-						type: 'pvp',
-						usage: Number(info['pvp_usage']),
-						winrate: Number(info['pvp_winrate']),
-					},
-					{
-						type: 'redstone',
-						usage: Number(info['redstone_usage']),
-						winrate: Number(info['redstone_winrate']),
-					},
-					{
-						type: 'speedrunner',
-						usage: Number(info['speedrunner_usage']),
-						winrate: Number(info['speedrunner_winrate']),
-					},
-					{
-						type: 'terraform',
-						usage: Number(info['terraform_usage']),
-						winrate: Number(info['terraform_winrate']),
-					},
-				],
+				body: {
+					dualTypeFrequency: info[0]['dual_type_frequency'],
+					monoTypeWinrate: info[0]['mono_type_winrate'],
+					dualTypeWinrate: info[0]['dual_type_winrate'],
+					types: types,
+				} as TypeDistributionStats,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
