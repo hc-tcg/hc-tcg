@@ -214,21 +214,13 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		const result = yield* race({
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
-			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {
 			throw new Error('Unexpected game ending')
-		} else if (result.gameCrash) {
-			console.log('Server error')
-			yield put<LocalMessage>({
-				type: localMessages.GAME_END_OVERLAY_SHOW,
-				outcome: 'server_crash',
-				reason: 'error',
-			})
 		} else if (result.gameEnd) {
-			const {gameState: newGameState, outcome, reason} = result.gameEnd
+			const {gameState: newGameState, outcome} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
@@ -239,7 +231,6 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			}
 			yield put<LocalMessage>({
 				type: localMessages.GAME_END_OVERLAY_SHOW,
-				reason,
 				outcome,
 			})
 		}
@@ -247,8 +238,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		console.error('Client error: ', err)
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
-			outcome: 'client_crash',
-			reason: 'error',
+			outcome: {type: 'game-crash', error: `${err}`},
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
