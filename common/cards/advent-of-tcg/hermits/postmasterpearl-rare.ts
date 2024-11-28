@@ -4,10 +4,10 @@ import PostInspectorEffect from '../../../status-effects/post-inspector'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
-const PostmasterPearl: Hermit = {
+const PostmasterPearlRare: Hermit = {
 	...hermit,
-	id: 'postmaster_pearl',
-	numericId: 211,
+	id: 'postmasterpearl_rare',
+	numericId: 254,
 	name: 'Postmaster Pearl',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
@@ -65,4 +65,4 @@ const PostmasterPearl: Hermit = {
 	},
 }
 
-export default PostmasterPearl
+export default PostmasterPearlRare
