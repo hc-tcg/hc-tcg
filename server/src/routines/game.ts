@@ -448,7 +448,7 @@ function* turnActionSaga(
 				yield* call(delaySaga, game, turnAction.action.delay)
 				break
 			case 'FORFEIT':
-				game.endInfo.deadPlayerEntities = [turnAction.playerEntity]
+				game.endInfo.deadPlayerEntities = [turnAction.action.player]
 				endTurn = true
 				return 'FORFEIT'
 			default:
