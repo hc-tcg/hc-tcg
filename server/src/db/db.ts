@@ -792,8 +792,15 @@ export class Database {
 					)
 					WHERE wins > 0
 				)
-				SELECT *,
-				adjusted_winrate - winrate as winrate_difference FROM main_result
+				SELECT main_result.card_id,
+				main_result.winrate,
+				adjusted_winrate,
+				adjusted_winrate - winrate as winrate_difference,
+				deck_usage,
+				game_usage,
+				average_players,
+				average_copies
+				FROM main_result
 				LEFT JOIN adjusted_winrate_table ON adjusted_winrate_table.card_id = main_result.card_id
 				ORDER BY (
 					CASE WHEN $3 = 'winrate' THEN winrate 

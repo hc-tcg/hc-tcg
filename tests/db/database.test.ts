@@ -306,19 +306,17 @@ describe('Test Database', () => {
 			'The card stats should be retrieved successfully',
 		)
 
-		console.log(cardStats.body)
-
 		expect(
 			cardStats.body.find((card) => card.id === BdoubleO100Common.numericId)
-				?.adjustedWinrate,
+				?.winrate,
 		).toEqual(0.5)
 		expect(
 			cardStats.body.find((card) => card.id === EthosLabCommon.numericId)
-				?.adjustedWinrate,
+				?.winrate,
 		).toEqual(0.5)
 		expect(
 			cardStats.body.find((card) => card.id === GeminiTayRare.numericId)
-				?.adjustedWinrate,
+				?.winrate,
 		).toEqual(undefined)
 	})
 
