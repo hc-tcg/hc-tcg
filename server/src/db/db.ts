@@ -1056,32 +1056,43 @@ export class Database {
 				return types
 			}
 
-			const types = info.map((row) => {
-				const typeCode: number | null = row['type_code']
-				const winrate = Number(row['winrate'])
-				const frequency = Number(row['frequency'])
+			const types = info.reduce(
+				(r: Array<TypeDistributionStats['types']>, row) => {
+					const typeCode: number | null = row['type_code']
+					const winrate = Number(row['winrate'])
+					const frequency = Number(row['frequency'])
 
-				if (typeCode === null) {
-					return {
-						type: ['typeless'],
-						winrate,
-						frequency,
+					if (frequency < 0.01) return r
+
+					if (typeCode === null) {
+						return [
+							...r,
+							{
+								type: ['typeless'],
+								winrate,
+								frequency,
+							},
+						]
 					}
-				}
 
-				return {
-					type: getTypeArray(typeCode),
-					winrate,
-					frequency,
-				}
-			})
+					return [
+						...r,
+						{
+							type: getTypeArray(typeCode),
+							winrate,
+							frequency,
+						},
+					]
+				},
+				[],
+			)
 
 			return {
 				type: 'success',
 				body: {
-					dualTypeFrequency: info[0]['dual_type_frequency'],
-					monoTypeWinrate: info[0]['mono_type_winrate'],
-					dualTypeWinrate: info[0]['dual_type_winrate'],
+					dualTypeFrequency: Number(info[0]['dual_type_frequency']),
+					monoTypeWinrate: Number(info[0]['mono_type_winrate']),
+					dualTypeWinrate: Number(info[0]['dual_type_winrate']),
 					types: types,
 				} as TypeDistributionStats,
 			}
