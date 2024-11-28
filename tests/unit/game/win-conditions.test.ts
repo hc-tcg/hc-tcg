@@ -69,7 +69,7 @@ describe('Test Game Win Conditions', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
-					yield* forfeit(game.currentPlayerEntity)
+					yield* forfeit(game.opponentPlayerEntity)
 				},
 				then: (game, outcome) => {
 					expect(getWinner(game)?.playerName).toBe('playerOne')
