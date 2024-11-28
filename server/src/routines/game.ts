@@ -163,7 +163,8 @@ function getAvailableActions(
 						availableEnergy,
 						hermitCard.getAttackCost('primary'),
 						game.settings.noItemRequirements,
-					)
+					) &&
+					!hermitCard.props.primary.passive
 				) {
 					actions.push('PRIMARY_ATTACK')
 				}
@@ -172,7 +173,8 @@ function getAvailableActions(
 						availableEnergy,
 						hermitCard.getAttackCost('secondary'),
 						game.settings.noItemRequirements,
-					)
+					) &&
+					!hermitCard.props.secondary.passive
 				) {
 					actions.push('SECONDARY_ATTACK')
 				}
