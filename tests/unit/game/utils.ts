@@ -209,15 +209,16 @@ export function* forfeit(player: PlayerEntity) {
 	})
 }
 
-export function getWinner(
-	game: GameModel,
-	outcome: GameOutcome,
-): PlayerComponent | null {
-	if (outcome === 'tie') return null
-	if (outcome === 'game-crash') return null
+export function getWinner(game: GameModel): PlayerComponent | null {
+	if (game.outcome === undefined) return null
+	if (game.outcome.type === 'tie') return null
+	if (game.outcome.type === 'game-crash') return null
+	console.log(game.outcome)
 	return game.components.find(
 		PlayerComponent,
-		(_game, component) => component.entity === outcome.winner,
+		(_game, component) =>
+			game.outcome?.type === 'player-won' &&
+			component.entity === game.outcome.winner,
 	)
 }
 

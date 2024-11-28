@@ -81,7 +81,7 @@ export function figureOutGameResult(game: GameModel): GameOutcome {
 	)
 
 	if (game.endInfo.deadPlayerEntities.length === 2) {
-		return 'tie'
+		return {type: 'tie'}
 	}
 
 	let alivePlayer = game.components.findEntity(
@@ -95,6 +95,7 @@ export function figureOutGameResult(game: GameModel): GameOutcome {
 	)
 
 	return {
+		type: 'player-won',
 		winner: alivePlayer,
 		victoryReason: game.endInfo.victoryReason,
 	}

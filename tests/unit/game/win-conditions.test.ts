@@ -23,7 +23,7 @@ describe('Test Game Win Conditions', () => {
 					yield* attack(game, 'secondary')
 				},
 				then: (game, outcome) => {
-					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
+					expect(getWinner(game)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'no-hermits-on-board')
 				},
 			},
@@ -40,7 +40,7 @@ describe('Test Game Win Conditions', () => {
 					yield* endTurn(game)
 				},
 				then: (game, outcome) => {
-					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
+					expect(getWinner(game)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'decked-out')
 				},
 			},
@@ -56,7 +56,7 @@ describe('Test Game Win Conditions', () => {
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				then: (game, outcome) => {
-					expect(getWinner(game, outcome)?.playerName).toBe('playerTwo')
+					expect(getWinner(game)?.playerName).toBe('playerTwo')
 					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
 				},
 			},
@@ -72,7 +72,7 @@ describe('Test Game Win Conditions', () => {
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				then: (game, outcome) => {
-					expect(getWinner(game, outcome)?.playerName).toBe('playerOne')
+					expect(getWinner(game)?.playerName).toBe('playerOne')
 					expect(outcome).toHaveProperty('victoryReason', 'forfeit')
 				},
 			},
