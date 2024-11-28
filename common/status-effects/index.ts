@@ -38,6 +38,7 @@ import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
 import PoisonEffect from './poison'
 import PoisonQuiverEffect from './poison-quiver'
+import PostInspectorEffect from './post-inspector'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
 import SheepStareEffect from './sheep-stare'
@@ -115,6 +116,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MiningFatigueEffect,
 	SingleTurnMiningFatigueEffect,
 	SmithingTableEffect,
+	PostInspectorEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
