@@ -213,7 +213,6 @@ export function getWinner(game: GameModel): PlayerComponent | null {
 	if (game.outcome === undefined) return null
 	if (game.outcome.type === 'tie') return null
 	if (game.outcome.type === 'game-crash') return null
-	console.log(game.outcome)
 	return game.components.find(
 		PlayerComponent,
 		(_game, component) =>
