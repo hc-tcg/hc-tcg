@@ -1,4 +1,5 @@
 import {DEBUG} from 'common/config'
+import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
@@ -22,7 +23,6 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {requestUrlRoot} from './utils'
-import {NumberOrNull} from 'common/utils/database-codes'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
