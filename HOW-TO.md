@@ -2,7 +2,7 @@
 
 This document contains information on how to work on parts of the game.
 
-# Adding a Card
+## Adding a Card
 
 Adding a card has a few steps:
 
@@ -35,7 +35,7 @@ The project will helpfully not compile otherwise.
 Now when you open the game, your card will show up! Albiet, without a image.
 
 
-## Setting An Image For Your Card
+### Setting An Image For Your Card
 The image for your card should go in the `client/public/images/<your card type>` folder. For hermits additionally a file
 must be placed in the `client/public/images/backgrounds/` folder for your hermit's background.
 
@@ -48,10 +48,10 @@ To generate the card images for production you have to options.
 While developing your card, you can set `renderCardsDynamically: true` in `common/config/debug-config.js` to skip this step.
 
 
-# Adding a Status Effect
+## Adding a Status Effect
 
 Adding status effects is quite similar to cards.
 
-# TODO
+**TODO**
 
 
