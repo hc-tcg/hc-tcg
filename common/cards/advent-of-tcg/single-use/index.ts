@@ -8,7 +8,6 @@ import Feather from './feather'
 import FletchingTable from './fletching-table'
 import Glowstone from './glowstone'
 import Lantern from './lantern'
-import MiningFatigue from './mining-fatigue'
 import PowderSnowBucket from './powder-snow-bucket'
 import RedstoneTorch from './redstone-torch'
 import SmithingTable from './smithing-table'
@@ -27,7 +26,6 @@ const singleUseCardClasses: Array<Card> = [
 	Brush,
 	Glowstone,
 	Lantern,
-	MiningFatigue,
 	MinecartWithTNT,
 	PowderSnowBucket,
 	SmithingTable,
