@@ -1147,11 +1147,3 @@ export class Database {
 		}
 	}
 }
-
-export const setupDatabase = (
-	allCards: Array<Card>,
-	env: any,
-	bfDepth: number,
-) => {
-	return new Database(env, allCards, bfDepth)
-}
