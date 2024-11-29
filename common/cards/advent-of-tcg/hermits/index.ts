@@ -15,6 +15,7 @@ import ShubbleYTRare from './shubbleyt-rare'
 import Smajor1995Rare from './smajor1995'
 import SmallishbeansRare from './smallishbeans-rare'
 import SolidaritygamingRare from './solidaritygaming-rare'
+import ZookeeperScarRare from './zookeeperscar-rare'
 
 const hermitCardClasses: Array<Card> = [
 	//Advent calendar cards
@@ -34,6 +35,7 @@ const hermitCardClasses: Array<Card> = [
 	GrianchRare,
 	PostmasterPearlRare,
 	CyberpunkImpulseRare,
+	ZookeeperScarRare,
 ]
 
 export default hermitCardClasses
