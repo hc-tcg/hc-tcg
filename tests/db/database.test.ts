@@ -18,7 +18,7 @@ import Fortune from 'common/cards/single-use/fortune'
 import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
-import {Database, setupDatabase} from 'server/db/db'
+import {Database} from 'server/db/db'
 
 describe('Test Database', () => {
 	let database: Database
@@ -40,12 +40,12 @@ describe('Test Database', () => {
 
 	beforeAll(async () => {
 		const env = config()
-		database = setupDatabase(
-			CARDS_LIST,
+		database = new Database(
 			{
 				...process.env,
 				...env,
 			},
+			CARDS_LIST,
 			BF_DEPTH,
 		)
 	})

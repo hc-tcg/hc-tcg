@@ -23,7 +23,7 @@ export function* attackSaga(
 	if (!opponentActiveRow || !opponentActiveRow.hermit) return
 
 	yield put<LocalMessage>({
-		type: 'GAME_TURN_ACTION',
+		type: localMessages.GAME_TURN_ACTION,
 		action: {
 			type: actionType,
 		},
