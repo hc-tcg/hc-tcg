@@ -875,8 +875,8 @@ export class Database {
 		const limit = 100
 		try {
 			const decksResult = (
-				await this.pool.query(
-					`
+				await this.pool.query({
+					text: `
 					WITH statistics AS (
 						SELECT deck_code,
 						wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
@@ -903,7 +903,7 @@ export class Database {
                     LEFT JOIN deck_cards ON statistics.deck_code = deck_cards.deck_code
                     ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
 					`,
-					[
+					values: [
 						after,
 						before,
 						limit,
@@ -911,7 +911,8 @@ export class Database {
 						orderBy ? orderBy : 'winrate',
 						minimumWins !== null ? minimumWins : 50,
 					],
-				)
+					name: 'get-deck-result',
+				})
 			).rows
 
 			const decks = decksResult.reduce((allDecks: Array<DeckStats>, row) => {
@@ -989,8 +990,8 @@ export class Database {
 		after: number | null
 	}): Promise<DatabaseResult<TypeDistributionStats>> {
 		try {
-			const stats = await this.pool.query(
-				`
+			const stats = await this.pool.query({
+				text: `
 				WITH deck_winrate_statistics AS (
 					SELECT deck_code,
 					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
@@ -1023,7 +1024,8 @@ export class Database {
 						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 					)
-					SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,wins,losses FROM (
+					SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,
+					wins,(CASE WHEN losses is NULL THEN 0 ELSE losses END) as losses FROM (
 						SELECT winner_type_code,loser_type_code,count(*) as wins FROM games_with_types
 						GROUP BY winner_type_code,loser_type_code
 					) AS win_amounts
@@ -1063,8 +1065,9 @@ export class Database {
 				CROSS JOIN (SELECT sum(CASE WHEN loser_type_code IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as mono_type_losses FROM types_wins_and_losses)
 				WHERE frequency > 0.005
 				`,
-				[after, before],
-			)
+				values: [after, before],
+				name: 'get-type-distribution',
+			})
 
 			const info = stats.rows
 
