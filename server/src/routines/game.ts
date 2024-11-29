@@ -51,7 +51,7 @@ export const getTimerForSeconds = (
 	return Date.now() - maxTime + seconds * 1000
 }
 
-function getAvailableEnergy(game: GameModel) {
+export function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
 	const energy = game.components
