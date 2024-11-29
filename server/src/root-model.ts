@@ -1,7 +1,7 @@
 import {CARDS_LIST} from 'common/cards'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {Database, setupDatabase} from 'db/db'
+import {Database} from 'db/db'
 import dotenv from 'dotenv'
 import {Hook} from '../../common/types/hooks'
 
@@ -34,7 +34,7 @@ export class RootModel {
 
 	public constructor() {
 		const env = dotenv.config()
-		this.db = setupDatabase(CARDS_LIST, {...env, ...process.env}, 14)
+		this.db = new Database({...env, ...process.env}, CARDS_LIST, 14)
 		this.db.new()
 	}
 

@@ -31,11 +31,15 @@ export class Database {
 	public connected: boolean
 	private bfDepth: number
 
-	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
-		this.pool = pool
+	constructor(env: any, allCards: Array<Card>, bfDepth: number) {
+		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
 		this.bfDepth = bfDepth
 		this.connected = false
+
+		this.pool.on('error', (err, _client) => {
+			console.error('DB Error Encountered:', err)
+		})
 	}
 
 	public async new() {
@@ -1142,19 +1146,4 @@ export class Database {
 			return {type: 'failure', reason: `${e}`}
 		}
 	}
-}
-
-export const setupDatabase = (
-	allCards: Array<Card>,
-	env: any,
-	bfDepth: number,
-) => {
-	const pool = new Pool({
-		connectionString: env.DATABASE_URL,
-		max: 10,
-		idleTimeoutMillis: 0,
-		connectionTimeoutMillis: 0,
-	})
-
-	return new Database(pool, allCards, bfDepth)
 }
