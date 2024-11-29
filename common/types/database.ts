@@ -44,8 +44,8 @@ export type DeckStats = {
 
 export type TypeDistributionStats = {
 	monoTypeWinrate: number
-	dualTypeWinrate: number
-	dualTypeFrequency: number
+	multiTypeWinrate: number
+	multiTypeFrequency: number
 	types: Array<{
 		type: Array<TypeT | 'typeless'>
 		frequency: number

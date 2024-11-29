@@ -4,6 +4,7 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import {NumberOrNull} from 'api/utils'
 import {CARDS} from 'common/cards'
 import {TypeT} from 'common/types/cards'
 import {
@@ -779,12 +780,20 @@ export class Database {
 							games.loser_deck_code = deck_cards.deck_code as losses
 							FROM cards
 							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
-							INNER JOIN 
-								games ON (games.winner_deck_code = deck_cards.deck_code
-								AND cards.card_id NOT IN (SELECT card_id FROM deck_cards WHERE deck_code = games.loser_deck_code)) OR
-								(games.loser_deck_code = deck_cards.deck_code
-								AND cards.card_id NOT IN (SELECT card_id FROM deck_cards WHERE deck_code = games.winner_deck_code))
+							INNER JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
 							WHERE deck_cards.card_id > -1
+							AND ((games.loser_deck_code = deck_cards.deck_code AND NOT EXISTS (
+								SELECT card_id FROM deck_cards 
+								WHERE deck_code = games.winner_deck_code
+								AND deck_cards.card_id = cards.card_id
+								LIMIT 1
+							))
+							OR (games.winner_deck_code = deck_cards.deck_code AND NOT EXISTS (
+								SELECT card_id FROM deck_cards 
+								WHERE deck_code = games.loser_deck_code
+								AND deck_cards.card_id = cards.card_id
+								LIMIT 1
+							)))
 							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
 							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 						) as result
@@ -982,62 +991,77 @@ export class Database {
 		try {
 			const stats = await this.pool.query(
 				`
-				SELECT 
-					type_code,
-					cast(wins as decimal) / NULLIF(losses + wins,0) as winrate,
-					cast(wins + losses as decimal) / total_games as frequency,
-					cast(dual_type_wins as decimal) / NULLIF(dual_type_wins + dual_type_losses,0) as dual_type_winrate,
-					cast(dual_type_wins + dual_type_losses as decimal) / total_games as dual_type_frequency,
-					cast(mono_type_wins as decimal) / NULLIF(mono_type_wins + mono_type_losses,0) as mono_type_winrate,
-					cast(mono_type_wins + mono_type_losses as decimal) / total_games as mono_type_frequency
-					FROM (
-					WITH final_result AS 
-					(SELECT
-						type_code,
-						sum(wins) as wins,
-						sum(losses) as losses
-						FROM (
-							SELECT * FROM (SELECT 
-								sum(type_index) as type_code,
-								decks_with_types.deck_code,
-								sum(decks_with_results.wins) as wins,
-								sum(decks_with_results.losses) as losses,
-								cast(sum(decks_with_results.wins) as decimal) / NULLIF(sum(decks_with_results.losses) + sum(decks_with_results.wins),0) as winrate
-								FROM (
-									SELECT DISTINCT decks.deck_code,2 ^ ((deck_cards.card_id - 49) / 2) as type_index FROM decks 
-									LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
-									ORDER BY decks.deck_code
-								) as decks_with_types 
-								INNER JOIN (
-									SELECT deck_code,
-									wins, losses FROM (
-									SELECT result.deck_code,
-										count(CASE WHEN wins THEN 1 END) as wins,
-										count(CASE WHEN losses THEN 1 END) as losses
-										FROM (
-											SELECT decks.deck_code,
-											games.winner_deck_code = decks.deck_code as wins,
-											games.loser_deck_code = decks.deck_code as losses FROM decks
-											INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
-											WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-											AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-										) as result
-									GROUP BY result.deck_code) as deck_code_list 
-								) as decks_with_results ON decks_with_results.deck_code = decks_with_types.deck_code
-								GROUP BY decks_with_types.deck_code
-								ORDER BY sum(type_index)
+				WITH deck_winrate_statistics AS (
+					SELECT deck_code,
+					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT result.deck_code,
+							count(CASE WHEN wins THEN 1 END) as wins,
+							count(CASE WHEN losses THEN 1 END) as losses
+							FROM (
+								SELECT decks.deck_code,
+								games.winner_deck_code = decks.deck_code as wins,
+								games.loser_deck_code = decks.deck_code as losses FROM decks
+								INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+								WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+								AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 							) as result
-							WHERE result.winrate > 0.05 AND result.winrate < 0.95
-						) as result
-						GROUP BY result.type_code
+						GROUP BY result.deck_code) as deck_code_list 
+				),
+				types_wins_and_losses as (
+					WITH decks_with_types AS (
+						SELECT decks.deck_code,sum(2 ^ ((deck_cards.card_id - 49) / 2)) as type_code FROM decks 
+						JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+						GROUP BY decks.deck_code
+					),
+					games_with_types AS (
+						SELECT winner_deck_code,loser_deck_code,winner.type_code as winner_type_code,loser.type_code as loser_type_code
+						FROM games
+						JOIN deck_winrate_statistics ON deck_winrate_statistics.deck_code = games.winner_deck_code
+						JOIN (SELECT * FROM decks_with_types) as winner ON games.winner_deck_code = winner.deck_code
+						JOIN (SELECT * FROM decks_with_types) as loser ON games.loser_deck_code = loser.deck_code AND winner.type_code != loser.type_code
+						WHERE winrate > 0.05 AND winrate < 0.95
+						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 					)
-					SELECT * FROM final_result
-					CROSS JOIN (SELECT sum(wins) + sum(losses) as total_games FROM final_result)
-					CROSS JOIN (SELECT sum(wins) as dual_type_wins FROM final_result WHERE type_code NOT IN (1,2,4,8,16,32,64,128,256,512))
-					CROSS JOIN (SELECT sum(losses) as dual_type_losses FROM final_result WHERE type_code NOT IN (1,2,4,8,16,32,64,128,256,512))
-					CROSS JOIN (SELECT sum(wins) as mono_type_wins FROM final_result WHERE type_code IN (1,2,4,8,16,32,64,128,256,512))
-					CROSS JOIN (SELECT sum(losses) as mono_type_losses FROM final_result WHERE type_code IN (1,2,4,8,16,32,64,128,256,512))
+					SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,wins,losses FROM (
+						SELECT winner_type_code,loser_type_code,count(*) as wins FROM games_with_types
+						GROUP BY winner_type_code,loser_type_code
+					) AS win_amounts
+					LEFT JOIN (
+						SELECT loser_type_code,winner_type_code,count(*) as losses FROM games_with_types
+						GROUP BY loser_type_code,winner_type_code
+					) AS loss_amounts ON loss_amounts.loser_type_code = win_amounts.winner_type_code AND win_amounts.loser_type_code = loss_amounts.winner_type_code
 				)
+				SELECT
+					*,
+					cast(multi_type_wins + multi_type_losses as decimal) / (multi_type_wins + multi_type_losses + mono_type_wins + mono_type_losses) as multi_type_frequency,
+					cast(multi_type_wins as decimal) / (multi_type_wins + multi_type_losses) as multi_type_winrate,
+					cast(mono_type_wins + mono_type_losses as decimal) / (multi_type_wins + multi_type_losses + mono_type_wins + mono_type_losses) as mono_type_frequency,
+					cast(mono_type_wins as decimal) / (mono_type_wins + mono_type_losses) as mono_type_winrate
+					FROM (
+						SELECT 
+						winner_type_code as type_code,
+						cast(sum(wins) + sum(losses) as decimal) / (SELECT sum(wins) + sum(losses) FROM types_wins_and_losses) as frequency,
+						cast(sum(wins) as decimal) / NULLIF(sum(wins) + sum(losses), 0) as winrate,
+						cast(sum(CASE WHEN loser_type_code = 1 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 1 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 1 THEN losses ELSE 0 END), 0) as winrate_against_balanced,
+						cast(sum(CASE WHEN loser_type_code = 2 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 2 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 2 THEN losses ELSE 0 END), 0) as winrate_against_builder,
+						cast(sum(CASE WHEN loser_type_code = 4 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 4 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 4 THEN losses ELSE 0 END), 0) as winrate_against_explorer,
+						cast(sum(CASE WHEN loser_type_code = 8 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 8 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 8 THEN losses ELSE 0 END), 0) as winrate_against_farm,
+						cast(sum(CASE WHEN loser_type_code = 16 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 16 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 16 THEN losses ELSE 0 END), 0) as winrate_against_miner,
+						cast(sum(CASE WHEN loser_type_code = 32 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 32 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 32 THEN losses ELSE 0 END), 0) as winrate_against_prankster,
+						cast(sum(CASE WHEN loser_type_code = 64 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 64 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 64 THEN losses ELSE 0 END), 0) as winrate_against_pvp,
+						cast(sum(CASE WHEN loser_type_code = 128 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 128 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 128 THEN losses ELSE 0 END), 0) as winrate_against_redstone,
+						cast(sum(CASE WHEN loser_type_code = 256 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 256 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 256 THEN losses ELSE 0 END), 0) as winrate_against_speedrunner,
+						cast(sum(CASE WHEN loser_type_code = 512 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 512 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 512 THEN losses ELSE 0 END), 0) as winrate_against_terraform
+						FROM types_wins_and_losses
+						GROUP BY winner_type_code
+						ORDER BY winner_type_code
+					)
+				CROSS JOIN (SELECT sum(CASE WHEN winner_type_code NOT IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as multi_type_wins FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN loser_type_code NOT IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as multi_type_losses FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN winner_type_code IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as mono_type_wins FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN loser_type_code IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as mono_type_losses FROM types_wins_and_losses)
+				WHERE frequency > 0.005
 				`,
 				[after, before],
 			)
@@ -1060,43 +1084,47 @@ export class Database {
 				return types
 			}
 
-			const types = info.reduce(
-				(r: Array<TypeDistributionStats['types']>, row) => {
-					const typeCode: number | null = row['type_code']
-					const winrate = Number(row['winrate'])
-					const frequency = Number(row['frequency'])
+			const types = info.map((row) => {
+				const typeCode: number | null = row['type_code']
+				const winrate = Number(row['winrate'])
+				const frequency = Number(row['frequency'])
 
-					if (frequency < 0.01) return r
+				const typeMatchups = {
+					balanced: NumberOrNull(row['winrate_against_balanced']),
+					builder: NumberOrNull(row['winrate_against_builder']),
+					explorer: NumberOrNull(row['winrate_against_explorer']),
+					farm: NumberOrNull(row['winrate_against_farm']),
+					miner: NumberOrNull(row['winrate_against_miner']),
+					prankster: NumberOrNull(row['winrate_against_prankster']),
+					pvp: NumberOrNull(row['winrate_against_pvp']),
+					redstone: NumberOrNull(row['winrate_against_redstone']),
+					speedrunner: NumberOrNull(row['winrate_against_speedrunner']),
+					terraform: NumberOrNull(row['winrate_against_terraform']),
+				}
 
-					if (typeCode === null) {
-						return [
-							...r,
-							{
-								type: ['typeless'],
-								winrate,
-								frequency,
-							},
-						]
+				if (typeCode === null) {
+					return {
+						type: ['typeless'],
+						winrate,
+						frequency,
+						typeMatchups,
 					}
+				}
 
-					return [
-						...r,
-						{
-							type: getTypeArray(typeCode),
-							winrate,
-							frequency,
-						},
-					]
-				},
-				[],
-			)
+				return {
+					type: getTypeArray(typeCode),
+					winrate,
+					frequency,
+					typeMatchups,
+				}
+			})
 
 			return {
 				type: 'success',
 				body: {
-					dualTypeFrequency: Number(info[0]['dual_type_frequency']),
+					multiTypeFrequency: Number(info[0]['multi_type_frequency']),
 					monoTypeWinrate: Number(info[0]['mono_type_winrate']),
-					dualTypeWinrate: Number(info[0]['dual_type_winrate']),
+					multiTypeWinrate: Number(info[0]['multi_type_winrate']),
 					types: types,
 				} as TypeDistributionStats,
 			}
