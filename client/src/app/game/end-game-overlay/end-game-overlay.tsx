@@ -49,7 +49,7 @@ const EndGameOverlay = ({
 		tie: 'It`s a tie',
 		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
-		timeout: 'The game timed out',
+		timeout: 'The game timed out.',
 		crash:
 			'The game crashed. Please copy the crash message and report this to the developers.',
 	}
