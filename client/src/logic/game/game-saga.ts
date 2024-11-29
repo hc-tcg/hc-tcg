@@ -85,6 +85,8 @@ function* actionSaga(playerEntity: PlayerEntity) {
 			turnAction.action as ChangeActiveHermitActionData,
 		)
 		yield call(sendTurnAction, playerEntity, turnAction.action)
+	} else if (turnAction.action.type === 'FORFEIT') {
+		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
 }
 
@@ -147,9 +149,6 @@ function* gameStateReceiver() {
 function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
-			takeEvery(localMessages.GAME_FORFEIT, function* () {
-				yield sendMsg({type: clientMessages.FORFEIT})
-			}),
 			fork(gameStateReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),

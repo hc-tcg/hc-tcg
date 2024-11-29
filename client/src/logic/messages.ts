@@ -58,7 +58,6 @@ export const localMessages = messages('clientLocalMessages', {
 	GAME_CARD_SELECTED_SET: null,
 	GAME_MODAL_OPENED_SET: null,
 	GAME_SLOT_PICKED: null,
-	GAME_FORFEIT: null,
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
@@ -174,7 +173,6 @@ type Messages = [
 		row?: number
 		index?: number
 	},
-	{type: typeof localMessages.GAME_FORFEIT},
 	{
 		type: typeof localMessages.GAME_ATTACK_START
 		attackType: 'single-use' | 'primary' | 'secondary'
