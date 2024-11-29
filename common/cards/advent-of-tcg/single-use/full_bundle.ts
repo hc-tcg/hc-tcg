@@ -11,7 +11,7 @@ const FullBundle: SingleUse = {
 	id: 'full_bundle',
 	numericId: -2,
 	name: 'Full Bundle',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 0,
 	description: 'Play this card to play both bundled single use cards.',

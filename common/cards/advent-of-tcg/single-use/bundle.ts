@@ -25,7 +25,7 @@ const Bundle: SingleUse = {
 	id: 'bundle',
 	numericId: 251,
 	name: 'Bundle',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 0,
 	description:
