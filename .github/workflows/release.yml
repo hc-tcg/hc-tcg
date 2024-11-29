@@ -52,7 +52,7 @@ jobs:
           run: |
             MOST_RECENT_TAG=$(git describe --tags --abbrev=0 HEAD^1)
             NEW_TAG=$(git describe --tags --abbrev=0 HEAD)
-            COMMIT_HISTORY="[Commit History](<${{ github.server_url }}/${{ github.repository }}/compare/$MOST_RECENT_TAG...$NEW_TAG>)"
+            COMMIT_HISTORY="[View Detailed Changelog](<${{ github.server_url }}/${{ github.repository }}/compare/$MOST_RECENT_TAG...$NEW_TAG>)"
             CLEAN_BODY=$(echo $BODY | xargs)
             CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n\n$CLEAN_BODY\n\n$COMMIT_HISTORY";
             CONTENT=${CONTENT//$'\n'/\\n};
