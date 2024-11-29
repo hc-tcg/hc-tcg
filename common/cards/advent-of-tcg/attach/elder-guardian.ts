@@ -24,16 +24,28 @@ const ElderGuardian: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		let {opponentPlayer} = game
+		const {opponentPlayer} = component
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
-				if (!attack.isTargeting(component)) return
+				if (!attack.isTargeting(component) || attack.isType('status-effect'))
+					return
+				if (attack.player !== opponentPlayer) return
 
-				let opponentActiveHermit = opponentPlayer.getActiveHermit()
+				const opponentActiveHermit = opponentPlayer.getActiveHermit()
 				if (!opponentActiveHermit) return
+
+				const previousStatus = opponentActiveHermit.getStatusEffect(
+					SingleTurnMiningFatigueEffect,
+				)
+				if (
+					previousStatus &&
+					previousStatus.counter !== null &&
+					previousStatus.counter < 2
+				)
+					previousStatus.remove()
 
 				game.components
 					.new(
