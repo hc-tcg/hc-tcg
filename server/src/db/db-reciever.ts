@@ -9,6 +9,7 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
+import {GameOutcome} from 'common/types/game-state'
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]
@@ -480,7 +481,7 @@ export function* getStats(
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
-	outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error',
+	outcome: GameOutcome,
 	gameLength: number,
 	winner: string | null,
 	seed: string,

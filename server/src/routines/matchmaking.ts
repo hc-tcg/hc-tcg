@@ -198,24 +198,10 @@ function* gameManager(game: GameModel) {
 			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
 			gamePlayers[0].uuid !== gamePlayers[1].uuid
 		) {
-			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
-
-			if (outcome.type === 'tie') {
-				dbOutcome = 'tie'
-			} else if (outcome.type === 'game-crash') {
-				dbOutcome = 'error'
-			} else if (outcome.victoryReason === 'forfeit') {
-				dbOutcome = 'forfeit'
-			} else if (outcome.victoryReason === 'timeout-without-hermits') {
-				dbOutcome = 'timeout'
-			} else {
-				dbOutcome = 'player_won'
-			}
-
 			yield* addGame(
 				gamePlayers[0],
 				gamePlayers[1],
-				dbOutcome,
+				outcome,
 				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
 				game.rngSeed,

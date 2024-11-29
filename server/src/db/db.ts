@@ -13,6 +13,7 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
+import {GameOutcome} from 'common/types/game-state'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -668,7 +669,7 @@ export class Database {
 		secondPlayerDeckCode: string,
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
-		outcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error',
+		outcome: GameOutcome,
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
@@ -680,6 +681,19 @@ export class Database {
 			let winningDeck
 			let loser
 			let losingDeck
+			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
+
+			if (outcome.type === 'tie') {
+				dbOutcome = 'tie'
+			} else if (outcome.type === 'game-crash') {
+				dbOutcome = 'error'
+			} else if (outcome.victoryReason === 'forfeit') {
+				dbOutcome = 'forfeit'
+			} else if (outcome.victoryReason === 'timeout-without-hermits') {
+				dbOutcome = 'timeout'
+			} else {
+				dbOutcome = 'player_won'
+			}
 
 			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
 				winner = firstPlayerUuid
@@ -701,7 +715,7 @@ export class Database {
 					loser,
 					winningDeck,
 					losingDeck,
-					outcome,
+					dbOutcome,
 					seed,
 					replayBytes,
 				],
