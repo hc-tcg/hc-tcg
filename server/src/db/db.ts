@@ -32,12 +32,7 @@ export class Database {
 	private bfDepth: number
 
 	constructor(env: any, allCards: Array<Card>, bfDepth: number) {
-		this.pool = new Pool({
-			connectionString: env.DATABASE_URL,
-			max: 10,
-			idleTimeoutMillis: 0,
-			connectionTimeoutMillis: 0,
-		})
+		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
 		this.bfDepth = bfDepth
 		this.connected = false
