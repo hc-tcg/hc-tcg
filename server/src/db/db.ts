@@ -4,7 +4,6 @@ import {GameEndOutcomeT} from 'common/types/game-state'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
-import {NumberOrNull} from 'api/utils'
 import {CARDS} from 'common/cards'
 import {TypeT} from 'common/types/cards'
 import {
@@ -16,6 +15,7 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
+import {NumberOrNull} from 'common/utils/database-codes'
 
 export type DatabaseResult<T = undefined> =
 	| {

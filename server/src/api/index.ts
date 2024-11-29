@@ -21,7 +21,8 @@ import {
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
-import {NumberOrNull, requestUrlRoot} from './utils'
+import {requestUrlRoot} from './utils'
+import {NumberOrNull} from 'common/utils/database-codes'
 
 export function addApi(app: Express) {
 	app.get('/api/cards', (req, res) => {
