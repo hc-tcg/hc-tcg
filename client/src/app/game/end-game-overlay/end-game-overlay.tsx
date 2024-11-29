@@ -35,6 +35,8 @@ const EndGameOverlay = ({
 		myOutcome = 'tie'
 	} else if (outcome.type === 'game-crash') {
 		myOutcome = 'crash'
+	} else if (outcome.type === 'timeout') {
+		myOutcome = 'crash'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
@@ -47,6 +49,7 @@ const EndGameOverlay = ({
 		tie: 'It`s a tie',
 		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
+		timeout: 'The game timed out',
 		crash:
 			'The game crashed. Please copy the crash message and report this to the developers.',
 	}

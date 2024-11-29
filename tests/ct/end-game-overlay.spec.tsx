@@ -82,3 +82,18 @@ test('Game crash displays correctly.', async ({mount}) => {
 
 	await expect(component).toHaveScreenshot()
 })
+
+test('Game timeout displays correctly.', async ({mount}) => {
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={{type: 'timeout'}}
+			viewer={{
+				type: 'spectator',
+			}}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
