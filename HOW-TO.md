@@ -22,7 +22,6 @@ const MyCard: CardTypeInterface = {
 	tokens: 0,
 }
 ```
-
 Notes:
 - `CardTypeInterface` is a type imported from `common/cards/types.ts`.
 `cardTypeDefaults` is a dictionary with a similar name imported from `common/cards/defaults.ts`. Make sure these line up!
