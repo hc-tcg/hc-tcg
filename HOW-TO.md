@@ -11,22 +11,22 @@ This folder should contain a `index.ts` file with a list of all cards in the dir
 
 
 1. Next you need to create your card. Here is a template for cards:
-```ts
-const MyCard: CardTypeInterface = {
-    ...cardTypeDefaults,
-	id: 'ethoslab_rare',
-	numericId: 20,
-	name: 'Etho',
-	expansion: 'default',
-	rarity: 'rare',
-	tokens: 0,
-}
-```
-Notes:
-- `CardTypeInterface` is a type imported from `common/cards/types.ts`.
-`cardTypeDefaults` is a dictionary with a similar name imported from `common/cards/defaults.ts`. Make sure these line up!
-The project will helpfully not compile otherwise.
-- Different card types have different properties. Look at a similar card for an example.
+    ```ts
+    const MyCard: CardTypeInterface = {
+        ...cardTypeDefaults,
+    	id: 'ethoslab_rare',
+    	numericId: 20,
+    	name: 'Etho',
+    	expansion: 'default',
+    	rarity: 'rare',
+    	tokens: 0,
+    }
+    ```
+    Notes:
+    - `CardTypeInterface` is a type imported from `common/cards/types.ts`.
+    `cardTypeDefaults` is a dictionary with a similar name imported from `common/cards/defaults.ts`. Make sure these line up!
+    The project will helpfully not compile otherwise.
+    - Different card types have different properties. Look at a similar card for an example.
 
 1. Your card must be added to the `index.ts` file in the folder you placed it in. Place the card dictionary in the large array in this file.
 
