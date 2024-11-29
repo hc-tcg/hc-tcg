@@ -687,10 +687,10 @@ export class Database {
 				dbOutcome = 'tie'
 			} else if (outcome.type === 'game-crash') {
 				dbOutcome = 'error'
-			} else if (outcome.victoryReason === 'forfeit') {
-				dbOutcome = 'forfeit'
 			} else if (outcome.type === 'timeout') {
 				dbOutcome = 'timeout'
+			} else if (outcome.victoryReason === 'forfeit') {
+				dbOutcome = 'forfeit'
 			} else {
 				dbOutcome = 'player_won'
 			}
