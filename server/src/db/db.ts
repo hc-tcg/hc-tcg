@@ -689,7 +689,7 @@ export class Database {
 				dbOutcome = 'error'
 			} else if (outcome.victoryReason === 'forfeit') {
 				dbOutcome = 'forfeit'
-			} else if (outcome.victoryReason === 'timeout-without-hermits') {
+			} else if (outcome.type === 'timeout') {
 				dbOutcome = 'timeout'
 			} else {
 				dbOutcome = 'player_won'

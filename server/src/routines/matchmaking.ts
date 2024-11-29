@@ -100,7 +100,7 @@ function* gameManager(game: GameModel) {
 		game.task = yield* spawn(gameSaga, game)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
-		yield* race({
+		const result = yield* race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
 			// kill a game after one hour
@@ -117,6 +117,10 @@ function* gameManager(game: GameModel) {
 					),
 			),
 		})
+
+		if (result.timeout) {
+			game.outcome = {type: 'timeout'}
+		}
 
 		for (const viewer of game.viewers) {
 			const gameState = getLocalGameState(game, viewer)

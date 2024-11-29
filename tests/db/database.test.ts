@@ -227,7 +227,7 @@ describe('Test Database', () => {
 			loser.body.uuid,
 			{
 				type: 'player-won',
-				victoryReason: 'lives',
+				victoryReason: 'timeout-without-hermits',
 				winner: "Doesn't Matter" as PlayerEntity,
 			},
 			35000000,
