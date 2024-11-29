@@ -40,6 +40,13 @@ export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
 	name: 'Mining Fatigue',
 	description:
 		"This Hermit's attacks cost an additional item card of their type.",
+	counter: 2,
+	applyCondition(_game, value) {
+		return (
+			value instanceof CardComponent &&
+			value.getStatusEffect(SingleTurnMiningFatigueEffect)?.counter !== 2
+		)
+	},
 	onApply(_game, effect, target, observer) {
 		const {player} = target
 
@@ -57,7 +64,13 @@ export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
 			player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
-				effect.remove()
+				if (!effect.counter) return
+
+				effect.counter--
+				if (effect.counter === 0) {
+					effect.remove()
+					return
+				}
 			},
 		)
 	},
