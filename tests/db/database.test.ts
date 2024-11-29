@@ -15,6 +15,7 @@ import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import Fortune from 'common/cards/single-use/fortune'
+import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database, setupDatabase} from 'server/db/db'
@@ -192,7 +193,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'lives',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
@@ -204,7 +209,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'no-hermits-on-board',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
@@ -216,7 +225,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'lives',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
@@ -228,7 +241,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'forfeit',
+			{
+				type: 'player-won',
+				victoryReason: 'forfeit',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
@@ -240,7 +257,7 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'tie',
+			{type: 'tie'},
 			35000000,
 			null,
 			'123456789ABCDEF',
