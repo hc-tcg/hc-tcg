@@ -15,8 +15,8 @@ This folder should contain a `index.ts` file with a list of all cards in the dir
     const MyCard: CardTypeInterface = {
         ...cardTypeDefaults,
     	id: 'ethoslab_rare',
-    	numericId: 20,
-    	name: 'Etho',
+    	numericId: <New Numeric ID>,
+    	name: 'Your Hermit Name',
     	expansion: 'default',
     	rarity: 'rare',
     	tokens: 0,
