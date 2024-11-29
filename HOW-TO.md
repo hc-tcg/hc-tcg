@@ -45,11 +45,13 @@ To generate the card images for production you have to options.
 
 2. Push your code to github. The helpful hc tcg github actions will generate these images for you and make a commit with them.
 
+While developing your card, you can set `renderCardsDynamically: true` in `common/config/debug-config.js` to skip this step.
+
 
 # Adding a Status Effect
 
 Adding status effects is quite similar to cards.
 
-
+# TODO
 
 
