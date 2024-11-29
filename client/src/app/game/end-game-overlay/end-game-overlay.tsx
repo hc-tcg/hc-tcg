@@ -36,7 +36,7 @@ const EndGameOverlay = ({
 	} else if (outcome.type === 'game-crash') {
 		myOutcome = 'crash'
 	} else if (outcome.type === 'timeout') {
-		myOutcome = 'crash'
+		myOutcome = 'tie'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
