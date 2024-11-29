@@ -1153,7 +1153,7 @@ export const setupDatabase = (
 		connectionString: env.DATABASE_URL,
 		max: 10,
 		idleTimeoutMillis: 0,
-		connectionTimeoutMillis: 2000,
+		connectionTimeoutMillis: 0,
 	})
 
 	return new Database(pool, allCards, bfDepth)
