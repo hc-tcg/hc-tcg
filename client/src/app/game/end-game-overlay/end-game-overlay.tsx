@@ -29,14 +29,14 @@ const EndGameOverlay = ({
 }: Props) => {
 	let animation
 
-	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' = 'tie'
+	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' = 'tie'
 
 	if (outcome.type === 'tie') {
 		myOutcome = 'tie'
 	} else if (outcome.type === 'game-crash') {
 		myOutcome = 'crash'
 	} else if (outcome.type === 'timeout') {
-		myOutcome = 'tie'
+		myOutcome = 'timeout'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
