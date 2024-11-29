@@ -235,13 +235,13 @@ type Messages = [
 	{
 		type: typeof localMessages.IMPORT_DECK
 		code: string
-		newActiveDeck?: string
+		newActiveDeck?: boolean
 		newName: string
 		newIcon: string
 		newIconType: string
 	},
 	{type: typeof localMessages.EXPORT_DECK; code: string},
-	{type: typeof localMessages.GRAB_CURRENT_IMPORT; code: string},
+	{type: typeof localMessages.GRAB_CURRENT_IMPORT; code: string | null},
 	{type: typeof localMessages.MAKE_INFO_PUBLIC; code: string; public: boolean},
 	{type: typeof localMessages.NEW_PLAYER},
 	{

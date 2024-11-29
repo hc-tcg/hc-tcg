@@ -114,7 +114,7 @@ export type ServerMessages = [
 		newActiveDeck?: Deck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
-	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck},
+	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 ]
 

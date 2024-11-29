@@ -274,10 +274,12 @@ export function* importDeck(
 		!importedDeck.body.icon ||
 		!importedDeck.body.iconType
 	) {
-		importedDeck.body.name = 'Imported Deck'
-		importedDeck.body.iconType = 'item'
-		importedDeck.body.icon = 'any'
+		importedDeck.body.name = action.payload.newName
+		importedDeck.body.iconType = action.payload.newIconType
+		importedDeck.body.icon = action.payload.newIcon
 	}
+
+	const newCode = generateDatabaseCode()
 
 	// Insert deck
 	const result = yield* call(
@@ -287,7 +289,7 @@ export function* importDeck(
 		importedDeck.body.iconType,
 		importedDeck.body.cards.map((card) => CARDS[card].numericId),
 		[],
-		generateDatabaseCode(),
+		newCode,
 		player.uuid,
 	)
 
@@ -299,7 +301,18 @@ export function* importDeck(
 		return
 	}
 
-	if (action.payload.newActiveDeck) yield* getDecks(action as any)
+	if (action.payload.newActiveDeck) {
+		const newPayload: RecievedClientMessage<typeof clientMessages.GET_DECKS> = {
+			type: 'GET_DECKS',
+			payload: {
+				type: 'GET_DECKS',
+				newActiveDeck: newCode,
+			},
+			playerId: action.playerId,
+			playerSecret: action.playerSecret,
+		}
+		yield* getDecks(newPayload)
+	}
 }
 
 export function* exportDeck(
@@ -337,6 +350,14 @@ export function* grabCurrentImport(
 	}
 	const player = root.players[action.playerId]
 	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	if (!action.payload.code) {
+		broadcast([player], {
+			type: serverMessages.CURRENT_IMPORT_RECIEVED,
+			deck: null,
+		})
 		return
 	}
 

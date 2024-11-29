@@ -41,6 +41,16 @@ export const ImportModal = ({
 	const newIconType = currentImport?.iconType ? currentImport.iconType : 'item'
 	if (deckIcon === 'any' && newIcon !== 'any') setDeckIcon(newIcon)
 
+	if (currentImport && !readyToSubmit) setReadyToSubmit(true)
+
+	const fullOnClose = () => {
+		dispatch({
+			type: localMessages.GRAB_CURRENT_IMPORT,
+			code: null,
+		})
+		onClose()
+	}
+
 	async function importFromHash() {
 		if (!hashRef.current) return
 
@@ -50,12 +60,12 @@ export const ImportModal = ({
 			dispatch({
 				type: localMessages.IMPORT_DECK,
 				code: hash,
-				newActiveDeck: hash,
-				newName,
-				newIcon,
+				newActiveDeck: true,
+				newName: nameRef?.current?.value || newName,
+				newIcon: deckIcon || newIcon,
 				newIconType,
 			})
-			onClose()
+			fullOnClose()
 			return
 		}
 
@@ -82,7 +92,7 @@ export const ImportModal = ({
 			public: false,
 		})
 
-		onClose()
+		fullOnClose()
 	}
 
 	function onInputChange() {
@@ -105,7 +115,7 @@ export const ImportModal = ({
 			})
 		}
 
-		if (hashRef.current?.value && hashRef.current.value.length >= 7) {
+		if (hashRef.current?.value && hashRef.current.value.length > 7) {
 			setReadyToSubmit(true)
 		} else {
 			setReadyToSubmit(false)
@@ -202,7 +212,7 @@ export const ImportModal = ({
 	}))
 
 	return (
-		<Modal title="Import Decks" setOpen={setOpen} onClose={onClose}>
+		<Modal title="Import Decks" setOpen={setOpen} onClose={fullOnClose}>
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>
@@ -222,10 +232,12 @@ export const ImportModal = ({
 									<img src={`/images/types/type-${deckIcon}.png`} />
 								</button>
 							}
-							label="Deck Icon"
+							label=""
 							options={iconDropdownOptions}
-							showNames={true}
+							showNames={false}
 							action={(option: any) => setDeckIcon(option)}
+							grid={true}
+							maxHeight={2}
 						/>
 						<input
 							type="text"
