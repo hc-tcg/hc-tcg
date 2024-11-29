@@ -127,11 +127,18 @@ Returns the 20 top scoring decks that match the specified parameters. Each deck 
 
 -   `POST api/stats/type-distribution`
 
-Returns information for each type.
+Returns information for types. To make the analysis more accurate, this endpoint does not include decks with a winrate below 0.05% or above 0.95% in the data in analyzes.
 
--   `type` The name of the type.
--   `usage` The percentage of decks that were played in games that include an item card of this type.
+-   `multiTypeFrequency` The percent of decks that are not mono type. This stat also includes deck with no types.
+-   `monoTypeWinrate` The percent of games where a player used a mono type deck that the deck won.
+-   `multiTypeWinrate` The percent of games where a player used a non-mono type deck that the deck won.
+
+In addition, an array is also returned with all type combinations that appear in above 1% of games. Each entry includes this information:
+
+-   `type` The name of the types used in the combination. Decks are considered a type if they have an item card of that type in the deck.
+-   `frequency` The percentage of decks that were played in games that include an item card of this type.
 -   `winrate` The average winrate of the aforementioned decks.
+-   `typeMatchups` The winrate against each mono-type matchup.
 
 **Query Parameters**
 | Query | Type | Description |
@@ -143,7 +150,7 @@ Returns information for each type.
 
 Returns information about the total games played.
 
--   `amount` The amount of games played after 1.0.
+-   `games` The amount of games played after 1.0.
 -   `allTimeGames` The amount of games ever played, even before 1.0. These games are not included in any other statistics.
 -   `tieRate` The percentage of games that have ended in ties.
 -   `forfeit` The percentage of games that have ended in forfeits.
