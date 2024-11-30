@@ -1,16 +1,16 @@
 import {describe, expect, test} from '@jest/globals'
 import PostmasterPearlRare from 'common/cards/advent-of-tcg/hermits/postmasterpearl-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
+import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
+import ShadeEERare from 'common/cards/hermits/shadeee-rare'
+import {Hermit} from 'common/cards/types'
 import {
 	endTurn,
 	finishModalRequest,
 	playCardFromHand,
 	testGame,
 } from '../../utils'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
-import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
-import ShadeEERare from 'common/cards/hermits/shadeee-rare'
-import {Hermit} from 'common/cards/types'
 
 const deck = [
 	...Array(7).fill(PostmasterPearlRare),
@@ -34,7 +34,9 @@ function postMasterTest(pearls: number, results: boolean[], endResult: Hermit) {
 					expect(game.state.modalRequests.length).toStrictEqual(1)
 					yield* finishModalRequest(game, {result: results[i], cards: null})
 				}
-				expect(game.opponentPlayer.getHand().map((card) => card.props)).toStrictEqual([
+				expect(
+					game.opponentPlayer.getHand().map((card) => card.props),
+				).toStrictEqual([
 					...Array(7 - pearls).fill(PostmasterPearlRare),
 					endResult,
 				])

@@ -1,6 +1,7 @@
 import {Card} from '../cards/types'
 import {
 	CardComponent,
+	DeckSlotComponent,
 	ObserverComponent,
 	PlayerComponent,
 	StatusEffectComponent,
@@ -33,6 +34,7 @@ const PostInspectorEffect: Counter<PlayerComponent> = {
 			(drawCards) => {
 				if (!drawCards) return
 				if (drawCards.length === 0) return
+				let cardsToReturn: CardComponent[] = []
 				let chances = effect.counter || 1
 
 				const modalRequest = (cards: (CardComponent<Card> | null)[]) => ({
@@ -58,10 +60,23 @@ const PostInspectorEffect: Counter<PlayerComponent> = {
 						if (!result.result) return
 						chances--
 
-						cards.filter((card) => !!card).forEach((card) => card.discard()) // TODO: Replace with shuffle back into deck.
+						cards
+							.filter((card) => !!card)
+							.forEach((card) => cardsToReturn.push(card))
 
 						const newCards = target.draw(cards.length)
-						if (chances > 0) game.addModalRequest(modalRequest(newCards))
+						if (chances > 0) {
+							game.addModalRequest(modalRequest(newCards))
+						} else {
+							cardsToReturn.forEach((card) => {
+								const newDeckSlot = game.components.new(
+									DeckSlotComponent,
+									target.entity,
+									{position: 'random'},
+								)
+								card.attach(newDeckSlot)
+							})
+						}
 					},
 					onTimeout() {},
 				})

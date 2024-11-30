@@ -26,8 +26,8 @@ const PostmasterPearlRare: Hermit = {
 	},
 	secondary: {
 		name: 'Stamp',
-		cost: ['explorer', 'any'],
-		damage: 60,
+		cost: ['explorer', 'explorer'],
+		damage: 80,
 		power: null,
 	},
 	onAttach(game, component, _observer) {

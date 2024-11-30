@@ -1,11 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 import CyberpunkImpulseRare from 'common/cards/advent-of-tcg/hermits/cyberpunkimpulse-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import FarmItem from 'common/cards/items/farm-common'
 import RedstoneItem from 'common/cards/items/redstone-common'
 import WildItem from 'common/cards/items/wild-common'
 import {getAvailableEnergy} from 'server/routines/game'
 import {endTurn, playCardFromHand, testGame} from '../../utils'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 
 describe('Test Cyberpunk Impulse', () => {
 	test('Energy transferred', () => {
