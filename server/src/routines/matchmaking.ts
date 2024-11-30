@@ -36,6 +36,7 @@ import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import {safeCall} from 'utils'
 
 function setupGame(
 	player1: PlayerModel,
@@ -255,7 +256,7 @@ function* randomMatchmakingSaga() {
 				playersToRemove.push(player1.id, player2.id)
 				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
-				yield* fork(gameManager, newGame)
+				yield* safeCall(fork, gameManager, newGame)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -459,7 +460,7 @@ export function* createBossGame(
 
 	root.addGame(newBossGame)
 
-	yield* fork(gameManager, newBossGame)
+	yield* safeCall(fork, gameManager, newBossGame)
 }
 
 export function* createPrivateGame(
@@ -675,7 +676,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* fork(gameManager, newGame)
+		yield* safeCall(fork, gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
