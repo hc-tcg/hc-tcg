@@ -2,6 +2,7 @@ import {Card} from '../../types'
 import Allay from './allay'
 import ArrowOfPoison from './arrow-of-poison'
 import Brush from './brush'
+import Bundle from './bundle'
 import Candle from './candle'
 import Dropper from './dropper'
 import Feather from './feather'
@@ -20,6 +21,7 @@ const singleUseCardClasses: Array<Card> = [
 	// Advent calendar cards
 	ArrowOfPoison,
 	Allay,
+	Bundle,
 	Candle,
 	Dropper,
 	Feather,
