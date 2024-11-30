@@ -1015,7 +1015,7 @@ export class Database {
 				types_wins_and_losses as (
 							WITH decks_with_types AS (
 								SELECT decks.deck_code,sum(2 ^ ((deck_cards.card_id - 49) / 2)) as type_code FROM decks 
-								JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+								JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id IN (49,51,53,55,57,59,61,63,65,67)
 								GROUP BY decks.deck_code
 							),
 							games_with_types AS (
