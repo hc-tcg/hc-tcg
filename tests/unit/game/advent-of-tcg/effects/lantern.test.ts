@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import FletchingTable from 'common/cards/advent-of-tcg/single-use/fletching-table'
+import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import Lantern from 'common/cards/advent-of-tcg/single-use/lantern'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
@@ -23,12 +23,12 @@ describe('Test Lantern Single Use', () => {
 				playerOneDeck: [
 					EthosLabCommon,
 					Lantern,
-					...Array(5).fill(FletchingTable),
+					...Array(5).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
 					TerraformItem,
-					FletchingTable,
+					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -64,7 +64,7 @@ describe('Test Lantern Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([BuilderItem, MinerItem, FletchingTable])
+					).toStrictEqual([BuilderItem, MinerItem, Feather])
 					yield* finishModalRequest(game, {result: false, cards: null})
 					yield* endTurn(game)
 				},
