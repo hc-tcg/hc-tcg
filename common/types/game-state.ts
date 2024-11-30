@@ -106,6 +106,7 @@ export type TurnAction =
 	| 'WAIT_FOR_TURN'
 	| 'WAIT_FOR_OPPONENT_ACTION'
 	| 'DELAY'
+	| 'FORFEIT'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -113,28 +114,22 @@ export type GameRules = {
 
 export type TurnActions = Array<TurnAction>
 
-export type GameEndOutcomeT =
-	| 'timeout'
+export type GameOutcome =
+	| {type: 'tie'}
+	| {type: 'timeout'}
+	| {type: 'game-crash'; error: string}
+	| {
+			type: 'player-won'
+			winner: PlayerEntity
+			victoryReason: GameVictoryReason
+	  }
+
+export type GameVictoryReason =
 	| 'forfeit'
-	| 'tie'
-	| 'player_won'
-	| 'error'
-
-export type GamePlayerEndOutcomeT =
-	| 'client_crash'
-	| 'server_crash'
-	| 'timeout'
-	| 'forfeit_win'
-	| 'forfeit_loss'
-	| 'leave_win'
-	| 'leave_loss'
-	| 'tie'
-	| 'unknown'
-	| 'you_won'
-	| 'you_lost'
-	| null
-
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | 'error'
+	| 'no-hermits-on-board'
+	| 'timeout-without-hermits'
+	| 'decked-out'
+	| 'lives'
 
 export type LocalPlayerState = {
 	entity: PlayerEntity

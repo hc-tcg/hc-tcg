@@ -1,7 +1,6 @@
 import {BattleLogModel} from 'common/models/battle-log-model'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	Message,
@@ -20,8 +19,7 @@ type LocalGameRoot = {
 		info: null
 	} | null
 	endGameOverlay: {
-		reason: GameEndReasonT | null
-		outcome: GamePlayerEndOutcomeT
+		outcome: GameOutcome
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -48,11 +46,17 @@ const gameReducer = (
 ): LocalGameRoot => {
 	switch (action.type) {
 		case localMessages.GAME_LOCAL_STATE_SET:
+			// I really don't know if its a good idea to automatically close modals besides the forfeit modal, but I am too scared
+			// too stop all modals from automatically closing.
+			let nextOpenedModal =
+				state.openedModal !== null && state.openedModal.id === 'forfeit'
+					? state.openedModal
+					: null
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.localGameState,
 				time: action.time,
-				openedModal: null,
+				openedModal: nextOpenedModal,
 				selectedCard:
 					action.localGameState.hand.find(
 						(card) => card.entity === state.selectedCard?.entity,
@@ -94,7 +98,6 @@ const gameReducer = (
 			return {
 				...state,
 				endGameOverlay: {
-					reason: action.reason || null,
 					outcome: action.outcome,
 				},
 			}

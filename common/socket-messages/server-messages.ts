@@ -1,12 +1,7 @@
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
+import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
@@ -18,7 +13,6 @@ export const serverMessages = messages('serverMessages', {
 	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
-	GAME_CRASH: null,
 	GAME_START: null,
 	GAME_END: null,
 	PRIVATE_GAME_TIMEOUT: null,
@@ -66,13 +60,11 @@ export type ServerMessages = [
 		updates: Record<string, Array<string>>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
-	{type: typeof serverMessages.GAME_CRASH},
 	{type: typeof serverMessages.GAME_START},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
@@ -99,7 +91,7 @@ export type ServerMessages = [
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
 	{
 		type: typeof serverMessages.GAME_OVER_STAT
-		outcome: GameEndOutcomeT
+		outcome: GameOutcome
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},

@@ -53,7 +53,6 @@ export type ClientMessages = [
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 	},
-	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 	{
