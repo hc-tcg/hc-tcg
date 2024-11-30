@@ -94,6 +94,7 @@ const RedstoneTorch: SingleUse = {
 							assert(card.slot.inDeck())
 							return card.slot.order
 						}),
+						game.rng,
 					)
 					deckCards.forEach((card, i) => {
 						assert(card.slot.inDeck())

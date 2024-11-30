@@ -25,7 +25,7 @@ const MinecartWithTNT: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			const coinFlip = flipCoin(player, component)
+			const coinFlip = flipCoin(game, player, component)
 
 			if (coinFlip[0] === 'heads') {
 				return game
