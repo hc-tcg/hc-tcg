@@ -14,7 +14,7 @@ const RedstoneTorch: SingleUse = {
 	id: 'redstone_torch',
 	numericId: 252,
 	name: 'Redstone Torch',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 3,
 	description:
