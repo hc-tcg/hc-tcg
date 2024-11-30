@@ -119,34 +119,55 @@ export function executeExtraAttacks(
 	game.battleLog.sendLogs()
 }
 
+export function getRemainingEnergy(
+	energy: Array<TypeT>,
+	cost: Array<TypeT>,
+): Array<TypeT> | 'not-enough-energy' {
+	let remainingTypedEnergy = energy.filter((item) => item !== 'any')
+	let remainingWildEnergy = energy.filter((item) => item === 'any')
+
+	const specificCost: Array<TypeT> = cost.filter((item) => item !== 'any')
+	const anyCost: Array<TypeT> = cost.filter((item) => item === 'any')
+
+	remainingTypedEnergy = remainingTypedEnergy.filter((e) => {
+		let specificIndex = specificCost.indexOf(e)
+		if (specificIndex > -1) {
+			specificCost.splice(specificIndex, 1)
+			return false
+		}
+		if (anyCost.length > 0) {
+			anyCost.pop()
+			return false
+		}
+		return true
+	})
+
+	remainingWildEnergy = remainingWildEnergy.filter((_e) => {
+		if (specificCost.length > 0) {
+			specificCost.pop()
+			return false
+		}
+		if (anyCost.length > 0) {
+			anyCost.pop()
+			return false
+		}
+		return true
+	})
+
+	if (specificCost.length > 0 || anyCost.length > 0) {
+		return 'not-enough-energy'
+	}
+
+	return [...remainingTypedEnergy, ...remainingWildEnergy]
+}
+
 export function hasEnoughEnergy(
 	energy: Array<TypeT>,
 	cost: Array<TypeT>,
 	noItemRequirements: boolean,
 ) {
 	if (noItemRequirements) return true
-
-	const remainingEnergy = energy.slice()
-
-	const specificCost = cost.filter((item) => item !== 'any')
-	const anyCost = cost.filter((item) => item === 'any')
-	const hasEnoughSpecific = specificCost.every((costItem) => {
-		// First try find the exact card
-		let index = remainingEnergy.findIndex(
-			(energyItem) => energyItem === costItem,
-		)
-		if (index === -1) {
-			// Then try find an "any" card
-			index = remainingEnergy.findIndex((energyItem) => energyItem === 'any')
-			if (index === -1) return
-		}
-		remainingEnergy.splice(index, 1)
-		return true
-	})
-	if (!hasEnoughSpecific) return false
-
-	// check if remaining energy is enough to cover required "any" cost
-	return remainingEnergy.length >= anyCost.length
+	return getRemainingEnergy(energy, cost) !== 'not-enough-energy'
 }
 
 function createWeaknessAttack(
