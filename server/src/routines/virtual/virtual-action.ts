@@ -19,30 +19,18 @@ export default function* virtualPlayerActionSaga(
 	game: GameModel,
 	component: AIComponent,
 ) {
+	const coinFlips = game.currentPlayer.coinFlips
+	yield* delay(
+		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
+	)
 	try {
-		while (true) {
-			console.log('HERE1')
-			const coinFlips = game.currentPlayer.coinFlips
-			yield* delay(
-				coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
-			)
-			console.log('HERE3')
-			const action = component.getNextTurnAction()
-			console.log(action)
-			console.log('HERE')
-			yield* put({
-				type: clientMessages.TURN_ACTION,
-				payload: {action, playerEntity: component.playerEntity},
-				action: action,
-				playerEntity: component.playerEntity,
-			})
-			if (action.type === 'DELAY') {
-				yield* delay(action.delay)
-			}
-			if (action.type === 'END_TURN') {
-				break
-			}
-		}
+		const action = component.getNextTurnAction()
+		yield* put({
+			type: clientMessages.TURN_ACTION,
+			payload: {action, playerEntity: component.playerEntity},
+			action: action,
+			playerEntity: component.playerEntity,
+		})
 	} catch (e) {
 		game.chat.push({
 			createdAt: Date.now(),

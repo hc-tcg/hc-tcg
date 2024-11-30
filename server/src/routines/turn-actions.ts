@@ -1,14 +1,13 @@
 import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
 import {CopyAttack, SelectCards} from 'common/types/modal-requests'
 import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
 import {
-	AnyTurnActionData,
 	AttackActionData,
 	ChangeActiveHermitActionData,
 	PlayCardActionData,
@@ -17,9 +16,7 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
-import {delay, fork, put} from 'typed-redux-saga'
 import {getLocalModalData} from '../utils/state-gen'
-import {LocalMessage, localMessages} from 'messages'
 
 function getAttack(
 	game: GameModel,
@@ -389,4 +386,3 @@ export function* pickRequestSaga(
 
 	return
 }
-

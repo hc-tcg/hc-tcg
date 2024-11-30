@@ -20,16 +20,7 @@ import {
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
-import {
-	actionChannel,
-	all,
-	call,
-	cancel,
-	delay,
-	fork,
-	race,
-	take,
-} from 'typed-redux-saga'
+import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
@@ -502,6 +493,8 @@ function getPlayerAI(game: GameModel) {
 function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 	const {opponentPlayer, currentPlayer} = game
 
+	let playerAISagaRunning: boolean = false
+
 	while (true) {
 		if (game.settings.showHooksState.enabled) printHooksState(game)
 
@@ -561,6 +554,15 @@ function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 
 		yield* call(sendGameState, game)
 		game.battleLog.sendLogs()
+
+		const playerAI = getPlayerAI(game)
+		if (playerAI && !playerAISagaRunning) {
+			yield* fork(function* () {
+				playerAISagaRunning = true
+				yield* call(virtualPlayerActionSaga, game, playerAI)
+				playerAISagaRunning = false
+			})
+		}
 
 		const raceResult = yield* race({
 			turnAction: take(turnActionChannel),
@@ -719,16 +721,7 @@ export function* turnSaga(game: GameModel) {
 
 	let result
 	try {
-		let bossActions: any = undefined
-		const turnActionSaga = yield* fork(function* () {
-			result = yield* call(turnActionsSaga, game, turnActionChannel)
-		})
-		const playerAI = getPlayerAI(game)
-		if (playerAI) {
-			bossActions = yield* fork(virtualPlayerActionSaga, game, playerAI)
-		}
-		yield* turnActionSaga
-		if (bossActions) cancel(bossActions)
+		result = yield* call(turnActionsSaga, game, turnActionChannel)
 	} finally {
 		turnActionChannel.close()
 	}
