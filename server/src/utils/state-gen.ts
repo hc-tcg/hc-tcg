@@ -122,7 +122,8 @@ export function getLocalModalData(
 					query.card.entity(hermitCard.entity),
 					query.card.currentPlayer,
 				),
-			)
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.primary.passive)
 		) {
 			blockedActions.push('PRIMARY_ATTACK')
 		}
@@ -138,7 +139,8 @@ export function getLocalModalData(
 					query.card.entity(hermitCard.entity),
 					query.card.currentPlayer,
 				),
-			)
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.secondary.passive)
 		) {
 			blockedActions.push('SECONDARY_ATTACK')
 		}

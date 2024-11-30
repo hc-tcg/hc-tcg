@@ -30,6 +30,9 @@ const CyberpunkImpulseRare: Hermit = {
 		power: null,
 	},
 	onAttach(game, component, observer) {
+		// Prevent mocking passive
+		if (component.props !== this) return
+
 		const {player} = component
 
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {

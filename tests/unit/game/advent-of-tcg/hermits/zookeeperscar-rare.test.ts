@@ -233,4 +233,45 @@ describe('Test Zookeeper Scar', () => {
 			{startWithAllCards: false, noItemRequirements: true},
 		)
 	})
+
+	test('Rendog cannot mock Lasso with Roleplay', () => {
+		testGame(
+			{
+				playerOneDeck: [ZookeeperScarRare],
+				playerTwoDeck: [
+					RendogRare,
+					EthosLabCommon,
+					Cat,
+					...Array(7).fill(BalancedItem),
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ZookeeperScarRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Cat, 'attach', 1)
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					expect(
+						(
+							getLocalModalData(
+								game,
+								game.state.modalRequests[0].modal,
+							) as LocalCopyAttack.Data
+						).blockedActions,
+					).toContain('PRIMARY_ATTACK')
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(game.state.modalRequests).toStrictEqual([])
+					yield* endTurn(game)
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
 })

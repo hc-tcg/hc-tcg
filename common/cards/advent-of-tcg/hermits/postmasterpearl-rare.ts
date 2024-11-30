@@ -31,6 +31,9 @@ const PostmasterPearlRare: Hermit = {
 		power: null,
 	},
 	onAttach(game, component, _observer) {
+		// Prevent mocking passive
+		if (component.props !== this) return
+
 		const {player} = component
 
 		const status = game.components.find(
@@ -50,6 +53,7 @@ const PostmasterPearlRare: Hermit = {
 		status.counter = (status.counter || 0) + 1
 	},
 	onDetach(game, component, _observer) {
+		if (component.props !== this) return
 		const {player} = component
 
 		const status = game.components.find(
