@@ -1,12 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
 import Cat from 'common/cards/advent-of-tcg/attach/cat'
+import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import ZookeeperScarRare from 'common/cards/advent-of-tcg/hermits/zookeeperscar-rare'
 import Wolf from 'common/cards/attach/wolf'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import Emerald from 'common/cards/single-use/emerald'
-import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import RendogRare from 'common/cards/hermits/rendog-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
+import Emerald from 'common/cards/single-use/emerald'
+import GoldenAxe from 'common/cards/single-use/golden-axe'
 import Ladder from 'common/cards/single-use/ladder'
 import Mending from 'common/cards/single-use/mending'
 import {CardComponent, StatusEffectComponent} from 'common/components'
@@ -17,6 +18,7 @@ import {getLocalModalData} from 'server/utils/state-gen'
 import {
 	applyEffect,
 	attack,
+	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
 	pick,
@@ -269,6 +271,40 @@ describe('Test Zookeeper Scar', () => {
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
 					yield* endTurn(game)
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
+
+	test('Golden Axe disables Wolf + Lasso when Wolf is attached to active', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
+				playerTwoDeck: [EthosLabCommon, GoldenAxe, GoldenAxe],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Wolf, 'attach', 0)
+					yield* playCardFromHand(game, ZookeeperScarRare, 'hermit', 1)
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'single-use')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health - 2 * 20,
+					) // Wolf attached to Etho & Wolf "attached" to Scar
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					yield* attack(game, 'single-use')
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health - 2 * 20,
+					) // No further damage
 				},
 			},
 			{noItemRequirements: true},
