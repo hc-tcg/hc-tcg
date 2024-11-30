@@ -16,11 +16,12 @@ type MessageDict<T extends Record<string, null>> = {
 }
 
 export function messages<T extends Record<string, null>>(
+	groupName: string,
 	actions: T,
 ): MessageDict<T> {
 	let actionsDict: Record<string, string> = {}
 	for (const action of Object.keys(actions)) {
-		actionsDict[action] = action
+		actionsDict[action] = `${groupName}-${action}`
 	}
 	return actionsDict as any
 }

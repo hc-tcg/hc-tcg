@@ -15,6 +15,7 @@ import BeetlejhostCommon from './hermits/beetlejhost-common'
 import BeetlejhostRare from './hermits/beetlejhost-rare'
 import BoomerBdubsCommon from './hermits/boomerbdubs-common'
 import Cubfan135Rare from './hermits/cubfan135-rare'
+import EthosLabCommon from './hermits/ethoslab-common'
 import EthosLabRare from './hermits/ethoslab-rare'
 import EthosLabUltraRare from './hermits/ethoslab-ultra-rare'
 import EvilJevinRare from './hermits/eviljevin-rare'
@@ -29,7 +30,6 @@ import HelsknightRare from './hermits/helsknight-rare'
 import HotguyCommon from './hermits/hotguy-common'
 import HumanCleoCommon from './hermits/humancleo-common'
 import ImpulseSVRare from './hermits/impulsesv-rare'
-import Iskall85Common from './hermits/iskall85-common'
 import JinglerRare from './hermits/jingler-rare'
 import LlamadadRare from './hermits/llamadad-rare'
 import MumboJumboCommon from './hermits/mumbojumbo-common'
@@ -406,8 +406,8 @@ export const STARTER_DECKS = [
 		TargetBlock,
 	],
 	[
-		Iskall85Common,
-		Iskall85Common,
+		EthosLabCommon,
+		EthosLabCommon,
 		BeetlejhostRare,
 		FiveAMPearlRare,
 		LlamadadRare,

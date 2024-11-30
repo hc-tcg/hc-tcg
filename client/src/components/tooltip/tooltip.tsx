@@ -259,7 +259,7 @@ export const CurrentTooltip = ({
 				return
 			}
 			setTouchTime(touchTime + 1)
-		}, 50)
+		}, 10)
 
 		if (!shownByTouch) clearInterval(interval)
 
@@ -293,6 +293,11 @@ export const CurrentTooltip = ({
 			</div>
 		</div>
 	)
+}
+
+/** Tooltip container for testing the visuals for tooltips */
+export function TooltipTestContainer({children}: {children: React.ReactNode}) {
+	return <div className={css.tooltip}>{children}</div>
 }
 
 export default Tooltip

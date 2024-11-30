@@ -25,7 +25,6 @@ import {DatabaseInfo} from 'logic/game/database/database-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
-import {getPlayerDeck} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
@@ -55,7 +54,6 @@ function SelectDeck({
 }: Props) {
 	// REDUX
 	const dispatch = useMessageDispatch()
-	const playerDeck = useSelector(getPlayerDeck)
 	const settings = useSelector(getSettings)
 
 	const saveDeck = (deck: Deck) => {
@@ -123,6 +121,7 @@ function SelectDeck({
 		cards: [],
 		code: generateDatabaseCode(),
 		tags: [],
+		public: false,
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -131,8 +130,6 @@ function SelectDeck({
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
 	const [showManageTagsModal, setShowManageTagsModal] = useState<boolean>(false)
-	const [showValidateDeckModal, setShowValidateDeckModal] =
-		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [tagFilter, setTagFilter] = useState<Tag>(() => {
 		const lastSelectedTag = databaseInfo.tags.find(
@@ -170,12 +167,6 @@ function SelectDeck({
 		description: `${loadedDeck.name} is now your active deck`,
 		image: getIconPath(loadedDeck),
 	}
-	const lastValidDeckToast: ToastT = {
-		open: true,
-		title: 'Deck Selected!',
-		description: `${playerDeck.name} is now your active deck`,
-		image: getIconPath(loadedDeck),
-	}
 
 	// MENU LOGIC
 	const backToMenu = () => {
@@ -186,11 +177,6 @@ function SelectDeck({
 			newActiveDeck: loadedDeck,
 		})
 		setMenuSection('mainmenu')
-	}
-	const handleInvalidDeck = () => {
-		saveDeck(playerDeck)
-		setMenuSection('mainmenu')
-		dispatchToast(lastValidDeckToast)
 	}
 	const handleImportDeck = (deck: Deck) => {
 		setImportedDeck(deck)
@@ -230,6 +216,7 @@ function SelectDeck({
 		dispatchToast(deleteToast)
 		setActiveDeck(newSavedDecks[0])
 		setLoadedDeck(newSavedDecks[0])
+		setShowDeleteDeckModal(false)
 	}
 	const duplicateDeck = (deck: Deck) => {
 		const newDeck = {
@@ -239,6 +226,7 @@ function SelectDeck({
 		}
 
 		saveDeck(newDeck)
+		setShowDuplicateDeckModal(false)
 	}
 
 	const selectedDeckRef = useRef<HTMLLIElement>(null)
@@ -305,6 +293,7 @@ function SelectDeck({
 				}
 				label="Saved Tags"
 				options={tagsDropdownOptions}
+				showNames={true}
 				action={(option) => {
 					if (option.includes('No Filter')) {
 						setFilteredDecks(sortDecks(databaseInfo.decks))
@@ -403,16 +392,6 @@ function SelectDeck({
 			<TagsModal
 				setOpen={showManageTagsModal}
 				onClose={() => setShowManageTagsModal(false)}
-			/>
-
-			<ConfirmModal // Invalid Deck Modal
-				setOpen={showValidateDeckModal}
-				title="Invalid Deck"
-				description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
-                matches. If you continue, your last valid deck will be used instead.`}
-				confirmButtonText="Main Menu"
-				onCancel={() => setShowValidateDeckModal(false)}
-				onConfirm={handleInvalidDeck}
 			/>
 			<ConfirmModal // Delete Deck Modal
 				setOpen={showDeleteDeckModal}

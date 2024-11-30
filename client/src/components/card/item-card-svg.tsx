@@ -13,6 +13,7 @@ export type ItemCardProps = {
 const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 	const rank = getCardRankIcon(card)
 	const image = getCardImage(card)
+	const isDouble = card.energy.length === 2
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<rect
@@ -64,7 +65,7 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 					ITEM
 				</text>
 			</g>
-			{card.rarity === 'rare' ? (
+			{isDouble ? (
 				<g>
 					<rect
 						className={css.rarity}

@@ -40,6 +40,7 @@ export type OpponentDefs = PlayerDefs & {
  * - Cards in the deck and hand
  */
 export function setupComponents(
+	game: GameModel,
 	components: ComponentTable,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
@@ -48,12 +49,25 @@ export function setupComponents(
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
-	setupEcsForPlayer(components, player1Component.entity, player1.deck, options)
-	setupEcsForPlayer(components, player2Component.entity, player2.deck, options)
+	setupEcsForPlayer(
+		game,
+		components,
+		player1Component.entity,
+		player1.deck,
+		options,
+	)
+	setupEcsForPlayer(
+		game,
+		components,
+		player2Component.entity,
+		player2.deck,
+		options,
+	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(
+	game: GameModel,
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
@@ -112,7 +126,7 @@ function setupEcsForPlayer(
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
 	if (options.shuffleDeck) {
-		fisherYatesShuffle(cards).forEach((card, i) => {
+		fisherYatesShuffle(cards, game.rng).forEach((card, i) => {
 			if (card.slot.inDeck()) card.slot.order = i
 		})
 
@@ -121,7 +135,7 @@ function setupEcsForPlayer(
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
-			fisherYatesShuffle(cards).forEach((card, i) => {
+			fisherYatesShuffle(cards, game.rng).forEach((card, i) => {
 				if (card.slot.inDeck()) card.slot.order = i
 			})
 		}
@@ -182,5 +196,7 @@ export function getIconPath(deck: Deck): string {
 			return `/images/types/type-${deck.icon}.png`
 		case 'hermit':
 			return `/images/hermits-emoji/${deck.icon}.png`
+		case 'effect':
+			return `/images/effects/${deck.icon}.png`
 	}
 }

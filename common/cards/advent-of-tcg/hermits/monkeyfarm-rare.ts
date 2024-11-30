@@ -59,7 +59,7 @@ const MonkeyfarmRare: Hermit = {
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] !== 'heads') return
 
 				game.addPickRequest({

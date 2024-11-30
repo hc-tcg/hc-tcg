@@ -14,7 +14,7 @@ const RedstoneTorch: SingleUse = {
 	id: 'redstone_torch',
 	numericId: 252,
 	name: 'Redstone Torch',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 3,
 	description:
@@ -94,6 +94,7 @@ const RedstoneTorch: SingleUse = {
 							assert(card.slot.inDeck())
 							return card.slot.order
 						}),
+						game.rng,
 					)
 					deckCards.forEach((card, i) => {
 						assert(card.slot.inDeck())

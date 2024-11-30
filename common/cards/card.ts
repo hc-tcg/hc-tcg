@@ -39,12 +39,16 @@ export function getCardImage(card: Card) {
 	return `/images/effects/${card.id}.png`
 }
 
-export function getRenderedCardImage(card: Card, displayTokenCost: boolean) {
+export function getRenderedCardImage(
+	card: Card,
+	displayTokenCost: boolean,
+	ext: 'webp' | 'png' = 'webp',
+) {
 	let id = card.id
 	if (displayTokenCost) {
 		id += '_with_tokens'
 	}
-	return `/images/cards/${id}.webp`
+	return `/images/cards/${id}.${ext}`
 }
 
 export function getCardTypeIcon(type: TypeT) {

@@ -4,7 +4,7 @@ import {Message, MessageTable, messages} from 'common/redux-messages'
 import {Deck} from 'common/types/deck'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 
-export const localMessages = messages({
+export const localMessages = messages('serverLocalMessages', {
 	CLIENT_CONNECTED: null,
 	CLIENT_DISCONNECTED: null,
 	PLAYER_CONNECTED: null,
