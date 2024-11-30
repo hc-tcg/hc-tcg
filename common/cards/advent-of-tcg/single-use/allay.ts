@@ -93,10 +93,7 @@ const Allay: SingleUse = {
 
 				applySingleUse(game, pickedSlot)
 
-				if (player.singleUseCardUsed)
-					game.components
-						.find(CardComponent, query.card.slot(query.slot.singleUse))
-						?.discard()
+				if (component.slot.onBoard()) component.discard()
 				// Remove playing a single use from completed actions so it can be done again
 				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 				player.singleUseCardUsed = false

@@ -19,5 +19,5 @@ export default {
 		maxDeckCost: 42,
 		bannedCards: ['evilxisuma_boss', 'feather', 'full_bundle'],
 	},
-	logoSubText: 'EX-tra fun!',
+	logoSubText: 'Over 3 Games Played!',
 }

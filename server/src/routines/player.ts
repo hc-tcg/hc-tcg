@@ -14,7 +14,7 @@ import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 
-const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
+const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
 function getLocalGameStateForPlayer(
 	game: GameModel,
@@ -123,7 +123,7 @@ export function* updateDeckSaga(
 	const player = root.players[playerId]
 	if (!player) return
 	player.setPlayerDeck(playerDeck)
-
+	if (!player.deck) return
 	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 

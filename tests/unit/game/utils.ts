@@ -245,7 +245,7 @@ const defaultGameSettings = {
 	forceCoinFlip: true,
 	shuffleDeck: false,
 	logErrorsToStderr: false,
-	logBoardState: true,
+	verboseLogging: !!process.env.UNIT_VERBOSE,
 	disableRewardCards: false,
 } satisfies GameSettings
 
@@ -264,6 +264,7 @@ export function testGame(
 	settings: Partial<GameSettings> = {},
 ) {
 	let game = new GameModel(
+		'Test Game Seed',
 		getTestPlayer('playerOne', options.playerOneDeck),
 		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
@@ -317,6 +318,7 @@ export function testBossFight(
 	settings?: Partial<GameSettings>,
 ) {
 	let game = new GameModel(
+		'Boss fight seed',
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {

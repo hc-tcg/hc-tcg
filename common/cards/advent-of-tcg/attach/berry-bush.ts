@@ -16,7 +16,7 @@ const BerryBush: Attach & HasHealth = {
 	numericId: 200,
 	name: 'Sweet Berry Bush',
 	expansion: 'advent_of_tcg',
-	rarity: 'ultra_rare',
+	rarity: 'rare',
 	tokens: 2,
 	health: 30,
 	description:

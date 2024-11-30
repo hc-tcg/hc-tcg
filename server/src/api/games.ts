@@ -1,3 +1,5 @@
+import {ViewerComponent} from 'common/components/viewer-component'
+import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
@@ -24,6 +26,22 @@ function cancelGame(game: {
 	if (game.gameCode) delete root.privateQueue[game.gameCode]
 }
 
+function getPlayers(game: GameModel) {
+	return game.components.filter(ViewerComponent).flatMap((viewer) => {
+		if (viewer.spectator) return []
+		let player = viewer.playerOnLeft
+		return [
+			{
+				playerName: player.playerName,
+				censoredPlayerName: player.censoredPlayerName,
+				minecraftName: player.minecraftName,
+				lives: player.lives,
+				deck: player.getDeck().map((card) => card.props.id),
+			},
+		]
+	})
+}
+
 /** Create a hc-tcg game through the HC-TCG API.
  * API games automatically time out after 5 minutes if it is not started.
  */
@@ -45,10 +63,27 @@ export function createApiGame() {
 	}
 }
 
-export function cancelApiGame(code: string) {
+export function cancelApiGame(code: string): [number, Record<string, any>] {
 	let game = Object.values(root.privateQueue).find(
 		(game) => game.apiSecret === code,
 	)
+
+	if (!game) {
+		return [
+			404,
+			{
+				error: 'Could not find API code',
+			},
+		]
+	}
+
+	cancelGame(game)
+
+	return [200, {}]
+}
+
+export function getGameInfo(secret: string) {
+	let game = Object.values(root.games).find((game) => game.apiSecret === secret)
 
 	if (!game) {
 		return {
@@ -56,7 +91,21 @@ export function cancelApiGame(code: string) {
 		}
 	}
 
-	cancelGame(game)
+	return {
+		success: null,
+		id: game.id,
+		createdTime: game.createdTime,
+		spectatorCode: game.spectatorCode,
+		players: getPlayers(game),
+		viewers: game.viewers.length,
+		state: game.state,
+	}
+}
 
-	return {success: null}
+export function getPublicGameCount() {
+	return {games: root.getGameIds().length}
+}
+
+export function getPublicQueueLength() {
+	return {queueLength: root.queue.length}
 }

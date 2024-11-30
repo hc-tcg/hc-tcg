@@ -407,9 +407,11 @@ function* turnActionSaga(
 			case 'END_TURN':
 				endTurn = true
 				// Turn end actions are not in the battle log, so we log them to stdout manually.
-				console.info(
-					`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
-				)
+				if (game.settings.verboseLogging) {
+					console.info(
+						`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
+					)
+				}
 				break
 			case 'DELAY':
 				yield* call(sendGameState, game)
@@ -431,7 +433,7 @@ function* turnActionSaga(
 	}
 
 	// We log endTurn at the start of the turn so the state updates properly.
-	if (game.settings.logBoardState && !endTurn) {
+	if (game.settings.verboseLogging && !endTurn) {
 		printBoardState(game)
 	}
 
@@ -660,7 +662,7 @@ export function* turnSaga(game: GameModel) {
 	// Call turn start hooks
 	currentPlayer.hooks.onTurnStart.call()
 
-	if (game.settings.logBoardState) {
+	if (game.settings.verboseLogging) {
 		printBoardState(game)
 	}
 
@@ -756,9 +758,10 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 function* gameSaga(game: GameModel) {
-	console.info(
-		`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
-	)
+	if (game.settings.verboseLogging)
+		console.info(
+			`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
+		)
 	while (true) {
 		game.state.turn.turnNumber++
 		const result = yield* call(turnSaga, game)

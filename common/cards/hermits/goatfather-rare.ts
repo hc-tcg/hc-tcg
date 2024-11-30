@@ -44,7 +44,7 @@ const GoatfatherRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				let coinFlip = flipCoin(player, component)[0]
+				let coinFlip = flipCoin(game, player, component)[0]
 
 				if (coinFlip !== 'heads') return
 

@@ -80,8 +80,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			primary: card.primary,
 			secondary: card.secondary,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
@@ -94,8 +97,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	} else if (isItem(card)) {
@@ -108,8 +114,11 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
 			images: {
-				default: joinUrl(url, getRenderedCardImage(card, false)),
-				'with-token-cost': joinUrl(url, getRenderedCardImage(card, true)),
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
 			},
 		}
 	}
@@ -127,31 +136,50 @@ export function cards(url: string) {
 	return out
 }
 
-export async function getDeckInformation(url: string, hash: string) {
+export async function getDeckInformation(
+	url: string,
+	hash: string,
+): Promise<[number, Record<string, any>]> {
 	if (hash.length >= 10) {
 		let deck = getDeckFromHash(hash)
-		return {
-			success: deck
-				.map((card) => cardToCardResponse(card.props, url))
-				.filter((x) => x !== null),
-		}
+		return [
+			200,
+			{
+				name: null,
+				code: hash,
+				tags: [],
+				icon: null,
+				public: false,
+				cards: deck
+					.map((card) => cardToCardResponse(card.props, url))
+					.filter((x) => x !== null),
+				cost: getDeckCost(deck.map((card) => card.props)),
+			},
+		]
 	} else {
 		let deck = await root.db?.getDeckFromID(hash)
 		if (!deck)
-			return {
-				type: 'failure',
-				reason: 'Endpoint is unavailable because database is disabled',
-			}
+			return [
+				501,
+				{
+					reason: 'Endpoint is unavailable because database is disabled',
+				},
+			]
 		if (deck.type == 'success') {
-			return {
-				type: 'success',
-				...deck.body,
-			}
+			return [
+				200,
+				{
+					...deck.body,
+					cost: getDeckCost(deck.body.cards.map((card) => CARDS[card])),
+				},
+			]
 		} else {
-			return {
-				type: 'failure',
-				reason: 'Could not find deck.',
-			}
+			return [
+				404,
+				{
+					reason: 'Could not find deck.',
+				},
+			]
 		}
 	}
 }

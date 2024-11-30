@@ -13,6 +13,7 @@ import Accordion from 'components/accordion'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
+import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import {ConfirmModal} from 'components/modal'
@@ -28,7 +29,7 @@ import css from './deck.module.scss'
 import DeckLayout from './layout'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
-const DECK_ICONS = [
+const ITEM_DECK_ICONS = [
 	'any',
 	'balanced',
 	'builder',
@@ -40,6 +41,69 @@ const DECK_ICONS = [
 	'redstone',
 	'speedrunner',
 	'terraform',
+]
+
+const HERMIT_DECK_ICONS = [
+	'bdoubleo100',
+	'beetlejhost',
+	'boomerbdubs',
+	'cubfan135',
+	'docm77',
+	'dwarfimpulse',
+	'ethoslab',
+	'eviljevin',
+	'evilxisuma',
+	'falsesymmetry',
+	'fiveampearl',
+	'frenchkeralis',
+	'geminitay',
+	'goodtimeswithscar',
+	'architectfalse',
+	'grian',
+	'helsknight',
+	'horseheadhypno',
+	'hotguy',
+	'humancleo',
+	'hypnotizd',
+	'ijevin',
+	'impulsesv',
+	'jingler',
+	'joehills',
+	'keralis',
+	'llamadad',
+	'mumbojumbo',
+	'pearlescentmoon',
+	'potatoboy',
+	'poultryman',
+	'princessgem',
+	'renbob',
+	'rendog',
+	'shadee',
+	'skizzleman',
+	'smallishbeans',
+	'stressmonster101',
+	'spookystress',
+	'tangotek',
+	'tinfoilchef',
+	'vintagebeef',
+	'welsknight',
+	'wormman',
+	'xbcrafted',
+	'xisumavoid',
+	'zedaphplays',
+	'zombiecleo',
+]
+
+const EFFECT_DECK_ICONS = [
+	'bed',
+	'clock',
+	'fishing_rod',
+	'diamond_armor',
+	'diamond_sword',
+	'egg',
+	'golden_apple',
+	'fortune',
+	'bad_omen',
 ]
 
 const EXPANSION_NAMES = [
@@ -54,10 +118,22 @@ const EXPANSION_NAMES = [
 	}),
 ]
 
-const iconDropdownOptions = DECK_ICONS.map((option) => ({
+const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
+}))
+
+const hermitDropdownOptions = HERMIT_DECK_ICONS.map((option) => ({
+	name: option,
+	key: option,
+	icon: `/images/hermits-emoji/${option}.png`,
+}))
+
+const effectDropdownOptions = EFFECT_DECK_ICONS.map((option) => ({
+	name: option,
+	key: option,
+	icon: `/images/effects/${option}.png`,
 }))
 
 const rarityDropdownOptions = RANK_NAMES.map((option) => ({
@@ -142,6 +218,7 @@ type Props = {
 	back: () => void
 	title: string
 	saveDeck: (loadedDeck: Deck) => void
+	updateDeck: (loadedDeck: Deck) => void
 	deleteDeck: (initialDeck: Deck) => void
 	databaseInfo: DatabaseInfo
 	deck: Deck | null
@@ -223,6 +300,7 @@ function EditDeck({
 	back,
 	title,
 	saveDeck,
+	updateDeck,
 	deleteDeck,
 	deck,
 	databaseInfo,
@@ -234,7 +312,7 @@ function EditDeck({
 	const [textQuery, setTextQuery] = useState<string>('')
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
-	const [expansionQuery, setExpansionQuery] = useState<string>('')
+	const [expansionQuery, setExpansionQuery] = useState<Array<string>>([])
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(
 		deck
 			? deck
@@ -245,9 +323,11 @@ function EditDeck({
 					cards: [],
 					code: generateDatabaseCode(),
 					tags: [],
+					public: false,
 				},
 	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
+	const [isPublic, setIsPublic] = useState<boolean>(loadedDeck.public)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
@@ -303,7 +383,10 @@ function EditDeck({
 					((isHermit(card.props) || isItem(card.props)) &&
 						card.props.type.includes(typeQuery))) &&
 				// Card Expansion Filter
-				(expansionQuery === '' || card.props.expansion === expansionQuery),
+				(expansionQuery.length === 0 ||
+					expansionQuery.includes(card.props.expansion)) &&
+				// Don't show disabled cards
+				EXPANSIONS[card.props.expansion].disabled === false,
 		),
 	)
 
@@ -325,6 +408,7 @@ function EditDeck({
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
 	const addCard = (card: LocalCardInstance) => {
+		console.log('Card: ', card.props.id)
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
 			cards: [
@@ -354,12 +438,17 @@ function EditDeck({
 		setTextQuery('')
 		setRankQuery('')
 		setTypeQuery('')
-		setExpansionQuery('')
+		setExpansionQuery([])
 	}
 	const handleDeckIcon = (option: any) => {
+		const getIcon = (): Deck['iconType'] => {
+			if (ITEM_DECK_ICONS.includes(option)) return 'item'
+			if (EFFECT_DECK_ICONS.includes(option)) return 'effect'
+			return 'hermit'
+		}
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			iconType: 'item',
+			iconType: getIcon(),
 			icon: option,
 		}))
 	}
@@ -373,9 +462,24 @@ function EditDeck({
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
 
-		// Delete the old version of the deck
-		if (initialDeckState) {
-			deleteDeck(initialDeckState)
+		// Check they are different
+		if (
+			initialDeckState &&
+			newDeck &&
+			newDeck.name === initialDeckState.name &&
+			newDeck.icon === initialDeckState.icon &&
+			newDeck.cards === initialDeckState.cards &&
+			tags === initialDeckState.tags
+		) {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Deck Saved!',
+				description: `Saved ${newDeck.name}`,
+				image: getIconPath(newDeck),
+			})
+			back()
+			return
 		}
 
 		//If deck name is empty, do nothing
@@ -385,19 +489,26 @@ function EditDeck({
 		newDeck.tags = tags
 
 		// New code
-		newDeck.code = generateDatabaseCode()
+		if (!initialDeckState || newDeck.cards !== initialDeckState.cards) {
+			newDeck.code = generateDatabaseCode()
 
-		// Send toast and return to select deck screen
-		saveAndReturn(newDeck)
+			// Delete the old version of the deck
+			if (initialDeckState) deleteDeck(initialDeckState)
+
+			saveAndReturn(newDeck, 'insert')
+		} else {
+			saveAndReturn(newDeck, 'update')
+		}
 	}
-	const saveAndReturn = (deck: Deck) => {
+	const saveAndReturn = (deck: Deck, type: 'insert' | 'update') => {
 		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
 			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
 			return [...r, tag]
 		}, [])
 
 		databaseInfo.tags.push(...newTags)
-		saveDeck(deck)
+		if (type === 'insert') saveDeck(deck)
+		else if (type === 'update') updateDeck(deck)
 		dispatch({
 			type: localMessages.TOAST_OPEN,
 			open: true,
@@ -436,6 +547,7 @@ function EditDeck({
 								}
 								label="Rank Filter"
 								options={rarityDropdownOptions}
+								showNames={true}
 								action={(option) =>
 									setRankQuery(option === 'any' ? '' : option)
 								}
@@ -450,6 +562,7 @@ function EditDeck({
 								}
 								label="Type Filter"
 								options={iconDropdownOptions}
+								showNames={true}
 								action={(option) =>
 									setTypeQuery(option === 'any' ? '' : option)
 								}
@@ -459,15 +572,24 @@ function EditDeck({
 									<button className={css.dropdownButton}>
 										<img
 											src={`/images/expansion-icons/${
-												expansionQuery === '' ? 'any' : expansionQuery
+												expansionQuery.length === 0 ? 'any' : expansionQuery[0]
 											}.png`}
 										/>
 									</button>
 								}
 								label="Expansion Filter"
 								options={expansionDropdownOptions}
+								showNames={true}
+								checkboxes={true}
+								checked={expansionQuery}
 								action={(option) =>
-									setExpansionQuery(option === 'any' ? '' : option)
+									setExpansionQuery(
+										option === 'any'
+											? []
+											: expansionQuery.includes(option)
+												? expansionQuery.filter((a) => a !== option)
+												: [option, ...expansionQuery],
+									)
 								}
 							/>
 							<input
@@ -642,7 +764,14 @@ function EditDeck({
 											</button>
 										}
 										label="Deck Icon"
-										options={iconDropdownOptions}
+										options={[
+											...iconDropdownOptions,
+											...hermitDropdownOptions,
+											...effectDropdownOptions,
+										]}
+										showNames={false}
+										grid={true}
+										maxHeight={9}
 										action={(option) => handleDeckIcon(option)}
 									/>
 									<DeckName
@@ -665,6 +794,28 @@ function EditDeck({
 										Remove All
 									</Button>
 								</div>
+								<div className={css.editDeckInfoSettings}>
+									<p className={css.privacySettings}>
+										Keep name and icon private
+									</p>
+									<div className={css.spacingItem}></div>
+									<Checkbox
+										defaultChecked={isPublic}
+										onCheck={(e) => {
+											dispatch({
+												type: localMessages.MAKE_INFO_PUBLIC,
+												code: loadedDeck.code,
+												public: !e.currentTarget.checked,
+											})
+											const currentIndex = databaseInfo.decks.findIndex(
+												(code) => code.code === loadedDeck.code,
+											)
+											databaseInfo.decks[currentIndex].public =
+												e.currentTarget.checked
+											setIsPublic(!e.currentTarget.checked)
+										}}
+									></Checkbox>
+								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>
 								<form
 									className={css.deckTagsForm}
@@ -681,6 +832,7 @@ function EditDeck({
 										}
 										label="Saved Tags"
 										options={tagsDropdownOptions}
+										showNames={true}
 										action={(option) => {
 											const parsedTag = JSON.parse(option) as Tag
 											addCreatedTag(tags, setTags, parsedTag)

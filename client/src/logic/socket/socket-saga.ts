@@ -7,7 +7,9 @@ import {eventChannel} from 'redux-saga'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {getSocket} from './socket-selectors'
 
-export function* sendMsg(payload: ClientMessage): any {
+let messagesThatHaveNotBeenSent: Array<ClientMessage> = []
+
+export function* sendMsg(payload: ClientMessage) {
 	const socket = yield* select(getSocket)
 
 	if (socket.connected) {
@@ -19,8 +21,40 @@ export function* sendMsg(payload: ClientMessage): any {
 			playerId,
 			playerSecret,
 		})
+		return 'success'
 	} else {
-		throw new Error('Can not send message when socket is not connected')
+		console.error('Can not send message when socket is not connected')
+		messagesThatHaveNotBeenSent.push(payload)
+		return 'failure'
+	}
+}
+
+export function sendMessagesThatFailedToSend(
+	session: {
+		playerId: string
+		playerSecret: string
+	},
+	socket: any,
+) {
+	return () => {
+		console.log(
+			`Socket connected, attempting to send ${messagesThatHaveNotBeenSent.length} messages that failed to send.`,
+		)
+		let attempts = 0
+		while (messagesThatHaveNotBeenSent.length > 0) {
+			let payload = messagesThatHaveNotBeenSent.pop()
+			if (!payload) continue
+			socket.emit(payload.type, {
+				type: payload.type,
+				payload,
+				playerId: session.playerId,
+				playerSecret: session.playerSecret,
+			})
+			if (attempts > 100) {
+				throw new Error('Could not send all messages after reconnect.')
+			}
+			attempts += 1
+		}
 	}
 }
 
@@ -40,6 +74,7 @@ export function receiveMsg<T extends keyof ServerMessageTable>(
 
 function* socketSaga(): SagaIterator {
 	const socket = yield* select(getSocket)
+	const session = yield* select(getSession)
 
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')
@@ -47,6 +82,7 @@ function* socketSaga(): SagaIterator {
 		const connectErrorListener = () => emitter('connect_error')
 
 		socket.on('connect', connectListener)
+		socket.on('connect', sendMessagesThatFailedToSend(session, socket))
 		socket.on('disconnect', disconnectListener)
 		socket.on('connect_error', connectErrorListener)
 		return () => {

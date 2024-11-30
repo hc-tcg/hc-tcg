@@ -116,7 +116,7 @@ const PharaohRare: Hermit = {
 				)
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-				const coinFlip = flipCoin(player, component)
+				const coinFlip = flipCoin(game, player, component)
 				if (coinFlip[0] === 'tails') return
 
 				game.addPickRequest({

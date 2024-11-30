@@ -1,25 +1,25 @@
 .colorPicker {
-    padding: 0.5rem;
-    display: flex;
-    gap: 0.25rem;
-    flex-direction: column;
+	padding: 0.5rem;
+	display: flex;
+	gap: 0.25rem;
+	flex-direction: column;
 
-    .react-colorful__saturation {
-        border-radius: 2px 2px 0 0;
-    }
+	.react-colorful__saturation {
+		border-radius: 2px 2px 0 0;
+	}
 
-    .react-colorful__last-control {
-        border-radius: 0 0 2px 2px;
-    }
+	.react-colorful__last-control {
+		border-radius: 0 0 2px 2px;
+	}
 
-    .react-colorful__saturation-pointer {
-        width: 16px;
-        height: 16px;
-        border-radius: 2px;
-    }
+	.react-colorful__saturation-pointer {
+		width: 16px;
+		height: 16px;
+		border-radius: 2px;
+	}
 
-    .react-colorful__hue-pointer {
-        width: 16px;
-        border-radius: 2px;
-    }
+	.react-colorful__hue-pointer {
+		width: 16px;
+		border-radius: 2px;
+	}
 }

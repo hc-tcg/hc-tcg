@@ -116,7 +116,6 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MiningFatigueEffect,
 	SingleTurnMiningFatigueEffect,
 	SmithingTableEffect,
-	BundledEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
