@@ -408,7 +408,7 @@ function EditDeck({
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
 	const addCard = (card: LocalCardInstance) => {
-		console.log("Card: ", card.props.id)
+		console.log('Card: ', card.props.id)
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
 			cards: [
