@@ -116,15 +116,6 @@ npm run build
 To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
 ```
 npm run client:render-cards
-<<<<<<< HEAD
-```
-=======
-<<<<<<< HEAD
-``
-=======
-```
->>>>>>> 1c6e4f9b (merge)
->>>>>>> 60755a89 (continue rebase)
 
 Alternitively, you can use our [Docker](https://docs.docker.com/) image, which will have all the project dependencies set up for you.
 To build a docker image, cd to the root of the project then run the command:
