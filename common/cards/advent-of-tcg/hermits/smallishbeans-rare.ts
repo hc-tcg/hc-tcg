@@ -25,9 +25,9 @@ const SmallishbeansAdventRare: Hermit = {
 	secondary: {
 		name: 'Lore',
 		cost: ['pvp', 'pvp', 'any'],
-		damage: 30,
+		damage: 90,
 		power:
-			'Deal 20 extra damage for each item attached. Double items count twice.',
+			'Deal 20 extra damage for each additional item attached. Double items count twice.',
 	},
 	onAttach(
 		game: GameModel,
@@ -44,11 +44,12 @@ const SmallishbeansAdventRare: Hermit = {
 				const activeRow = component.slot.inRow() ? component.slot.row : null
 				if (!activeRow) return
 
-				let total = activeRow.getItems().reduce((partialSum, item) => {
-					return partialSum + (item.isItem() ? item.props.energy.length : 1)
-				}, 0)
+				let extraDamage =
+					activeRow.getItems().reduce((partialSum, item) => {
+						return partialSum + (item.isItem() ? item.props.energy.length : 1)
+					}, 0) - component.getAttackCost('secondary').length
 
-				attack.addDamage(component.entity, total * 20)
+				attack.addDamage(component.entity, extraDamage * 20)
 			},
 		)
 	},

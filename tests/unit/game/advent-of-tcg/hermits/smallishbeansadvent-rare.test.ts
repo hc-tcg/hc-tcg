@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import SmallishbeansAdventRare from 'common/cards/advent-of-tcg/hermits/smallishbeans-rare'
 import String from 'common/cards/attach/string'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -85,6 +86,53 @@ describe('Test Stratos Joel', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Elder Guardian reduces damage', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, ElderGuardian],
+				playerTwoDeck: [
+					SmallishbeansAdventRare,
+					PvPDoubleItem,
+					PvPDoubleItem,
+					PvPDoubleItem,
+				],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ElderGuardian, 'attach', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, SmallishbeansAdventRare, 'hermit', 1)
+					yield* attack(game, 'primary')
+
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health - SmallishbeansAdventRare.primary.damage,
+					)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 1, 0)
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 1, 1)
+					yield* playCardFromHand(game, PvPDoubleItem, 'item', 1, 2)
+
+					yield* attack(game, 'secondary')
+
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							SmallishbeansAdventRare.primary.damage -
+							SmallishbeansAdventRare.secondary.damage -
+							20 * 2 /* 2 extra items over cost */,
+					)
+				},
+			},
+			{
+				startWithAllCards: true,
+				noItemRequirements: true,
+				availableActions: ['PLAY_ITEM_CARD'],
+			},
 		)
 	})
 })
