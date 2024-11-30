@@ -15,10 +15,5 @@ Your opponent moves their active Hermit first.
 Freeze an AFK Hermit.
 Frozen effect: This Hermit cannot become active. Frozen Hermits cannot take damage. If all of a player's Hermits are Frozen, frozen is removed.
 
-**Mining Fatuigue** _Single Use_
-Give your opponent's active Hermit Mining Fatigue fot their next 3 turns
-Mining Fatigue: This hermit's attacks cost an additional item card of their type
-(Should be removable with milk, probably)
-
 **Smithing Table** _Single Use_
 Choose an Attach card from your Hand. This card cannot be removed from the board by either player after being played.
