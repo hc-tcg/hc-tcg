@@ -31,12 +31,12 @@ import {
 	spawn,
 	take,
 } from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
-import {safeCall} from 'utils'
 
 function setupGame(
 	player1: PlayerModel,
