@@ -397,7 +397,7 @@ export const ChatContent = ({
 					</form>
 					<Dropdown
 						button={
-							<button className={css.dropdownButton}>
+							<button className={css.emojiButton}>
 								<img
 									src={'/images/hermits-emoji/bdoubleo100.png'}
 									draggable={false}

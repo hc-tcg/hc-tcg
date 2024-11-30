@@ -294,6 +294,7 @@ function SelectDeck({
 				label="Saved Tags"
 				options={tagsDropdownOptions}
 				showNames={true}
+				direction={'up'}
 				action={(option) => {
 					if (option.includes('No Filter')) {
 						setFilteredDecks(sortDecks(databaseInfo.decks))

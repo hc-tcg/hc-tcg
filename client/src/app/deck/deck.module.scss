@@ -216,6 +216,9 @@
 
 .dropdownButton {
 	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
 	background-color: var(--gray-500);
 	border-radius: 6px;
 	width: 2rem;
