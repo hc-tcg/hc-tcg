@@ -1,4 +1,4 @@
-import {BoardSlotComponent, CardComponent} from '../../../components'
+import {CardComponent} from '../../../components'
 import query from '../../../components/query'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
@@ -31,24 +31,26 @@ const CyberpunkImpulseRare: Hermit = {
 	},
 	onAttach(game, component, observer) {
 		const {player} = component
-		const {rowEntity} = component.slot as BoardSlotComponent
 
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
-			const energy = game.components
+			if (!component.slot.inRow()) return availableEnergy
+			game.components
 				.filter(
 					CardComponent,
 					query.card.isItem,
 					query.card.attached,
-					query.card.rowEntity(rowEntity),
-					query.card.slot(query.slot.player(game.currentPlayer.entity)),
+					query.card.row(
+						query.row.entity(component.slot.rowEntity),
+						query.row.adjacent(query.row.active),
+					),
 				)
 				.flatMap((card) => {
 					if (!card.isItem()) return []
 					return card.props.energy
 				})
-			energy.forEach((newEnergy) => {
-				if (newEnergy === 'farm') availableEnergy.push('any')
-			})
+				.forEach((newEnergy) => {
+					if (newEnergy === 'farm') availableEnergy.push('any')
+				})
 			return availableEnergy
 		})
 	},
