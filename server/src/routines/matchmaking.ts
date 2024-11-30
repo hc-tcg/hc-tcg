@@ -123,6 +123,22 @@ function* gameManager(game: GameModel) {
 			game.outcome = {type: 'timeout'}
 		}
 
+		if (result.playerRemoved) {
+			let playerThatLeft = game.viewers.find(
+				(v) => v.playerId === result.playerRemoved?.player.id,
+			)?.playerOnLeft.entity
+			let remainingPlayer = game.components.find(
+				PlayerComponent,
+				(_g, c) => c.entity !== playerThatLeft,
+			)?.entity
+			assert(remainingPlayer, 'There is no way there is no remaining player.')
+			game.outcome = {
+				type: 'player-won',
+				victoryReason: 'forfeit',
+				winner: remainingPlayer,
+			}
+		}
+
 		for (const viewer of game.viewers) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
