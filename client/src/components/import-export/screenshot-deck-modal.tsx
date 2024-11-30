@@ -11,6 +11,8 @@ type Props = {
 }
 
 export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
+	const maxLength = Math.max(cards.length, 42)
+
 	return (
 		<Modal
 			title="Full Deck"
@@ -22,8 +24,8 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 				<div
 					className={classNames(css.cardListContainer, css.showOnMobile)}
 					style={{
-						gridTemplateRows: `repeat(${7}, 14vw)`,
-						gridTemplateColumns: `repeat(${Math.ceil(cards.length / 7)}, 14vw)`,
+						gridTemplateRows: `repeat(${maxLength / 6}, ${(42 - (maxLength - 42) / 3) / 3}vw)`,
+						gridTemplateColumns: `repeat(${Math.ceil(maxLength / (maxLength / 6))}, ${(42 - (maxLength - 42) / 3) / 3}vw)`,
 					}}
 				>
 					{cards.map((card) => {
@@ -40,8 +42,8 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 				<div
 					className={classNames(css.cardListContainer, css.hideOnMobile)}
 					style={{
-						gridTemplateRows: `repeat(${5}, 8vw)`,
-						gridTemplateColumns: `repeat(${Math.ceil(cards.length / 5)}, 8vw)`,
+						gridTemplateRows: `repeat(${maxLength / 9}, ${(42 - (maxLength - 42)) / 5.25}vw)`,
+						gridTemplateColumns: `repeat(${Math.ceil(maxLength / (maxLength / 9))}, ${((42 - (maxLength - 42)) * 1) / 5.25}vw)`,
 					}}
 				>
 					{cards.map((card) => {

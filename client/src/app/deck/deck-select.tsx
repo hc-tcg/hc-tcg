@@ -516,6 +516,12 @@ function SelectDeck({
 									)}
 								</span>
 								<span className={css.mobileDeckNamePadding}></span>
+								<button
+									className={css.dropdownButton}
+									onClick={() => setShowScreenshotModal(true)}
+								>
+									<img src="/images/toolbar/shulker.png" />
+								</button>
 								<div className={css.mobileDeckStats}>
 									<div className={css.mobileDeckStat}>
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
@@ -608,14 +614,6 @@ function SelectDeck({
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
-								</Button>
-								<Button
-									variant="default"
-									size="small"
-									onClick={() => setShowScreenshotModal(true)}
-								>
-									<ViewFullDeckIcon />
-									<span>View Full Deck</span>
 								</Button>
 							</div>
 						</div>
