@@ -541,7 +541,7 @@ export function* joinPrivateGame(
 				type: 'viewer',
 				id: player.id,
 			},
-			message: formatText(`$s${player.name}$ started spectating.`),
+			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
 		})
 
@@ -631,7 +631,7 @@ export function* joinPrivateGame(
 					type: 'viewer',
 					id: player.id,
 				},
-				message: formatText(`$s${player.name}$ started spectating.`),
+				message: formatText(`$s${player.name}$ $ystarted spectating$`),
 				createdAt: Date.now(),
 			})
 		}
