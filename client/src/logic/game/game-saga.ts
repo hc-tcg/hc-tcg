@@ -22,7 +22,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay} from './game-selectors'
+import {getEndGameOverlay, getPlayerEntity} from './game-selectors'
 import {
 	localApplyEffect,
 	localChangeActiveHermit,
@@ -38,7 +38,10 @@ import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 
-function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
+export function* sendTurnAction(
+	entity: PlayerEntity,
+	action: AnyTurnActionData,
+) {
 	yield* sendMsg({
 		type: clientMessages.TURN_ACTION,
 		playerEntity: entity,
@@ -84,8 +87,6 @@ function* actionSaga(playerEntity: PlayerEntity) {
 		yield* localChangeActiveHermit(
 			turnAction.action as ChangeActiveHermitActionData,
 		)
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'FORFEIT') {
 		yield call(sendTurnAction, playerEntity, turnAction.action)
 	}
 }
@@ -194,6 +195,17 @@ function* reconnectSaga() {
 	}
 }
 
+function* handleForfeitAction() {
+	let action = (yield* take(
+		(action: any) =>
+			action.type === localMessages.GAME_TURN_ACTION &&
+			action.action.type == 'FORFEIT',
+	)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+
+	let playerEntity = yield* select(getPlayerEntity)
+	yield* sendTurnAction(playerEntity, action.action)
+}
+
 function* gameSaga(initialGameState?: LocalGameState) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
@@ -202,6 +214,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			fork(chatSaga),
 			fork(spectatorSaga),
 			fork(reconnectSaga),
+			fork(handleForfeitAction),
 		]),
 	)
 
@@ -237,7 +250,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		console.error('Client error: ', err)
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
-			outcome: {type: 'game-crash', error: `${err}`},
+			outcome: {type: 'game-crash', error: `${(err as Error).stack}`},
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)

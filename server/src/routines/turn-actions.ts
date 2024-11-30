@@ -390,20 +390,3 @@ export function* pickRequestSaga(
 	return
 }
 
-export function* delaySaga(
-	game: GameModel,
-	delayMs: number,
-	playerEntity: PlayerEntity,
-	nextAction: AnyTurnActionData,
-) {
-	yield* fork(function* () {
-		if (game.viewers.length !== 0) {
-			yield* delay(delayMs)
-		}
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_TURN_ACTION,
-			playerEntity,
-			action: nextAction,
-		})
-	})
-}

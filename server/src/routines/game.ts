@@ -20,7 +20,16 @@ import {
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
-import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
+import {
+	actionChannel,
+	all,
+	call,
+	cancel,
+	delay,
+	fork,
+	race,
+	take,
+} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
@@ -31,7 +40,6 @@ import {
 	applyEffectSaga,
 	attackSaga,
 	changeActiveHermitSaga,
-	delaySaga,
 	modalRequestSaga,
 	pickRequestSaga,
 	playCardSaga,
@@ -445,17 +453,9 @@ function* turnActionSaga(
 				break
 			case 'DELAY':
 				yield* call(sendGameState, game)
-				yield* call(
-					delaySaga,
-					game,
-					turnAction.action.delay,
-					turnAction.playerEntity,
-					turnAction.action.then,
-				)
 				break
 			case 'FORFEIT':
 				game.endInfo.deadPlayerEntities = [turnAction.action.player]
-				endTurn = true
 				return 'FORFEIT'
 			default:
 				// Unknown action type, ignore it completely
@@ -499,193 +499,156 @@ function getPlayerAI(game: GameModel) {
 	)
 }
 
-function* turnActionsSaga(game: GameModel) {
+function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 	const {opponentPlayer, currentPlayer} = game
 
-	const turnActionChannel = yield* actionChannel(
-		[
-			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
-				playerAction(type, opponentPlayer.entity),
-			),
-			...[
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'PICK_REQUEST',
-				'MODAL_REQUEST',
-				'CHANGE_ACTIVE_HERMIT',
-				'APPLY_EFFECT',
-				'REMOVE_EFFECT',
-				'SINGLE_USE_ATTACK',
-				'PRIMARY_ATTACK',
-				'SECONDARY_ATTACK',
-				'END_TURN',
-				'DELAY',
-				'FORFEIT',
-			].map((type) => playerAction(type, currentPlayer.entity)),
-		],
-		buffers.dropping(10),
-	)
+	while (true) {
+		if (game.settings.showHooksState.enabled) printHooksState(game)
 
-	try {
-		while (true) {
-			if (game.settings.showHooksState.enabled) printHooksState(game)
+		// Available actions code
+		const availableEnergy = getAvailableEnergy(game)
+		let blockedActions: Array<TurnAction> = []
+		let availableActions = getAvailableActions(game, availableEnergy)
 
-			// Available actions code
-			const availableEnergy = getAvailableEnergy(game)
-			let blockedActions: Array<TurnAction> = []
-			let availableActions = getAvailableActions(game, availableEnergy)
+		// Get blocked actions from hooks
+		// @TODO this should also not really be a hook anymore
+		// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
+		currentPlayer.hooks.blockedActions.call(blockedActions)
 
-			// Get blocked actions from hooks
-			// @TODO this should also not really be a hook anymore
-			// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
-			currentPlayer.hooks.blockedActions.call(blockedActions)
+		blockedActions.push(...game.settings.blockedActions)
 
-			blockedActions.push(...game.settings.blockedActions)
+		// Remove blocked actions from the availableActions
+		availableActions = availableActions.filter(
+			(action) => !blockedActions.includes(action),
+		)
 
-			// Remove blocked actions from the availableActions
-			availableActions = availableActions.filter(
-				(action) => !blockedActions.includes(action),
-			)
+		availableActions.push(...game.settings.availableActions)
 
-			availableActions.push(...game.settings.availableActions)
-
-			// Set final actions in state
-			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
-			if (game.state.pickRequests[0]?.player === opponentPlayer.entity) {
-				opponentAction = 'PICK_REQUEST'
-			} else if (
-				game.state.modalRequests[0]?.player === opponentPlayer.entity
-			) {
-				opponentAction = 'MODAL_REQUEST'
-			}
-			game.state.turn.opponentAvailableActions = [opponentAction]
-			game.state.turn.availableActions = availableActions
-
-			if (
-				game.settings.autoEndTurn &&
-				availableActions.includes('END_TURN') &&
-				availableActions.length === 1
-			) {
-				break
-			}
-
-			// Timer calculation
-			game.state.timer.turnStartTime =
-				game.state.timer.turnStartTime || Date.now()
-			let maxTime = game.settings.maxTurnTime * 1000
-			let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
-
-			if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
-				game.state.timer.opponentActionStartTime =
-					game.state.timer.opponentActionStartTime || Date.now()
-				maxTime = game.settings.extraActionTime * 1000
-				remainingTime =
-					game.state.timer.opponentActionStartTime + maxTime - Date.now()
-			}
-
-			const graceTime = 1000
-			game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
-
-			yield* call(sendGameState, game)
-			game.battleLog.sendLogs()
-
-			const playerAI = getPlayerAI(game)
-			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
-
-			console.log("waiting for turn actions")
-			const raceResult = yield* race({
-				turnAction: take(turnActionChannel),
-				timeout: delay(remainingTime + graceTime),
-			}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
-			console.log("race result over")
-
-			// Reset coin flips
-			currentPlayer.coinFlips = []
-			opponentPlayer.coinFlips = []
-
-			// Handle timeout
-			if (raceResult.timeout) {
-				// @TODO this works, but could be cleaned
-				const currentAttack = game.state.turn.currentAttack
-				let reset = false
-
-				// First check to see if the opponent had a pick request active
-				const currentPickRequest = game.state.pickRequests[0]
-				if (currentPickRequest) {
-					if (currentPickRequest.player === currentPlayer.entity) {
-						if (!!currentAttack) {
-							reset = true
-						}
-					} else {
-						reset = true
-					}
-				}
-
-				// Check to see if the opponent had a modal request active
-				const currentModalRequest = game.state.modalRequests[0]
-				if (currentModalRequest) {
-					if (currentModalRequest.player === currentPlayer.entity) {
-						if (!!currentAttack) {
-							reset = true
-						}
-					} else {
-						reset = true
-					}
-				}
-
-				if (reset) {
-					// Timeout current request and remove it
-					if (currentPickRequest) {
-						game.removePickRequest()
-					} else {
-						game.removeModalRequest()
-					}
-
-					// Reset timer to max time
-					game.state.timer.turnStartTime = Date.now()
-					game.state.timer.turnRemaining = game.settings.maxTurnTime
-
-					// Execute attack now if there's a current attack
-					if (!game.hasActiveRequests() && !!currentAttack) {
-						// There are no active requests left, and we're in the middle of an attack. Execute it now.
-						const turnAction: AttackActionData = {
-							type: attackToAttackAction[currentAttack],
-						}
-						yield* call(attackSaga, game, turnAction, false)
-					}
-
-					continue
-				}
-
-				const hasActiveHermit = game.components.exists(
-					CardComponent,
-					query.card.player(currentPlayer.entity),
-					query.card.slot(query.slot.active, query.slot.hermit),
-				)
-				if (hasActiveHermit) {
-					break
-				}
-
-				game.endInfo.victoryReason = 'timeout-without-hermits'
-				game.endInfo.deadPlayerEntities = [currentPlayer.entity]
-				return 'GAME_END'
-			}
-
-			// Run action logic
-			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
-
-			if (result === 'END_TURN') {
-				break
-			}
-			if (result === 'FORFEIT') {
-				game.endInfo.victoryReason = 'forfeit'
-				return 'GAME_END'
-			}
+		// Set final actions in state
+		let opponentAction: TurnAction = 'WAIT_FOR_TURN'
+		if (game.state.pickRequests[0]?.player === opponentPlayer.entity) {
+			opponentAction = 'PICK_REQUEST'
+		} else if (game.state.modalRequests[0]?.player === opponentPlayer.entity) {
+			opponentAction = 'MODAL_REQUEST'
 		}
-	} finally {
-		turnActionChannel.close()
+		game.state.turn.opponentAvailableActions = [opponentAction]
+		game.state.turn.availableActions = availableActions
+
+		if (
+			game.settings.autoEndTurn &&
+			availableActions.includes('END_TURN') &&
+			availableActions.length === 1
+		) {
+			break
+		}
+
+		// Timer calculation
+		game.state.timer.turnStartTime =
+			game.state.timer.turnStartTime || Date.now()
+		let maxTime = game.settings.maxTurnTime * 1000
+		let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
+
+		if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
+			game.state.timer.opponentActionStartTime =
+				game.state.timer.opponentActionStartTime || Date.now()
+			maxTime = game.settings.extraActionTime * 1000
+			remainingTime =
+				game.state.timer.opponentActionStartTime + maxTime - Date.now()
+		}
+
+		const graceTime = 1000
+		game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
+
+		yield* call(sendGameState, game)
+		game.battleLog.sendLogs()
+
+		const raceResult = yield* race({
+			turnAction: take(turnActionChannel),
+			timeout: delay(remainingTime + graceTime),
+		}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
+
+		// Reset coin flips
+		currentPlayer.coinFlips = []
+		opponentPlayer.coinFlips = []
+
+		// Handle timeout
+		if (raceResult.timeout) {
+			// @TODO this works, but could be cleaned
+			const currentAttack = game.state.turn.currentAttack
+			let reset = false
+
+			// First check to see if the opponent had a pick request active
+			const currentPickRequest = game.state.pickRequests[0]
+			if (currentPickRequest) {
+				if (currentPickRequest.player === currentPlayer.entity) {
+					if (!!currentAttack) {
+						reset = true
+					}
+				} else {
+					reset = true
+				}
+			}
+
+			// Check to see if the opponent had a modal request active
+			const currentModalRequest = game.state.modalRequests[0]
+			if (currentModalRequest) {
+				if (currentModalRequest.player === currentPlayer.entity) {
+					if (!!currentAttack) {
+						reset = true
+					}
+				} else {
+					reset = true
+				}
+			}
+
+			if (reset) {
+				// Timeout current request and remove it
+				if (currentPickRequest) {
+					game.removePickRequest()
+				} else {
+					game.removeModalRequest()
+				}
+
+				// Reset timer to max time
+				game.state.timer.turnStartTime = Date.now()
+				game.state.timer.turnRemaining = game.settings.maxTurnTime
+
+				// Execute attack now if there's a current attack
+				if (!game.hasActiveRequests() && !!currentAttack) {
+					// There are no active requests left, and we're in the middle of an attack. Execute it now.
+					const turnAction: AttackActionData = {
+						type: attackToAttackAction[currentAttack],
+					}
+					yield* call(attackSaga, game, turnAction, false)
+				}
+
+				continue
+			}
+
+			const hasActiveHermit = game.components.exists(
+				CardComponent,
+				query.card.player(currentPlayer.entity),
+				query.card.slot(query.slot.active, query.slot.hermit),
+			)
+			if (hasActiveHermit) {
+				break
+			}
+
+			game.endInfo.victoryReason = 'timeout-without-hermits'
+			game.endInfo.deadPlayerEntities = [currentPlayer.entity]
+			return 'GAME_END'
+		}
+
+		// Run action logic
+		const result = yield* call(turnActionSaga, game, raceResult.turnAction)
+
+		if (result === 'END_TURN') {
+			break
+		}
+		if (result === 'FORFEIT') {
+			game.endInfo.victoryReason = 'forfeit'
+			return 'GAME_END'
+		}
 	}
 }
 
@@ -728,7 +691,48 @@ export function* turnSaga(game: GameModel) {
 		}
 	}
 
-	const result = yield* call(turnActionsSaga, game)
+	const turnActionChannel = yield* actionChannel(
+		[
+			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
+				playerAction(type, opponentPlayer.entity),
+			),
+			...[
+				'PLAY_HERMIT_CARD',
+				'PLAY_ITEM_CARD',
+				'PLAY_EFFECT_CARD',
+				'PLAY_SINGLE_USE_CARD',
+				'PICK_REQUEST',
+				'MODAL_REQUEST',
+				'CHANGE_ACTIVE_HERMIT',
+				'APPLY_EFFECT',
+				'REMOVE_EFFECT',
+				'SINGLE_USE_ATTACK',
+				'PRIMARY_ATTACK',
+				'SECONDARY_ATTACK',
+				'END_TURN',
+				'DELAY',
+				'FORFEIT',
+			].map((type) => playerAction(type, currentPlayer.entity)),
+		],
+		buffers.dropping(10),
+	)
+
+	let result
+	try {
+		let bossActions: any = undefined
+		const turnActionSaga = yield* fork(function* () {
+			result = yield* call(turnActionsSaga, game, turnActionChannel)
+		})
+		const playerAI = getPlayerAI(game)
+		if (playerAI) {
+			bossActions = yield* fork(virtualPlayerActionSaga, game, playerAI)
+		}
+		yield* turnActionSaga
+		if (bossActions) cancel(bossActions)
+	} finally {
+		turnActionChannel.close()
+	}
+
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Draw a card from deck when turn ends

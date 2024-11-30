@@ -140,7 +140,7 @@ function* gameManager(game: GameModel) {
 		}
 	} catch (err) {
 		console.log('Error: ', err)
-		game.outcome = {type: 'game-crash', error: `${err}`}
+		game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
 		const outcome = game.outcome
 

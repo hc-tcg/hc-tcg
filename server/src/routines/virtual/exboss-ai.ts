@@ -126,11 +126,8 @@ function getNextTurnAction(
 			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
 		}
 		return [
-			{
-				type: 'DELAY',
-				delay: bossAttack.length * 3000,
-				then: {type: attackType},
-			},
+			{type: 'DELAY', delay: bossAttack.length * 3000},
+			{type: attackType},
 		]
 	}
 
@@ -146,7 +143,7 @@ function getNextTurnAction(
 		const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 		supplyNineSpecial(nineEffect, nineSpecial)
 		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
-		return [{type: 'DELAY', delay: 10600, then: {type: 'END_TURN'}}]
+		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]
 	}
 
 	return [{type: 'END_TURN'}]
