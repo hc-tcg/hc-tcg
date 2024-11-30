@@ -31,6 +31,7 @@ import {
 	spawn,
 	take,
 } from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
@@ -120,6 +121,22 @@ function* gameManager(game: GameModel) {
 
 		if (result.timeout) {
 			game.outcome = {type: 'timeout'}
+		}
+
+		if (result.playerRemoved) {
+			let playerThatLeft = game.viewers.find(
+				(v) => v.playerId === result.playerRemoved?.player.id,
+			)?.playerOnLeft.entity
+			let remainingPlayer = game.components.find(
+				PlayerComponent,
+				(_g, c) => c.entity !== playerThatLeft,
+			)?.entity
+			assert(remainingPlayer, 'There is no way there is no remaining player.')
+			game.outcome = {
+				type: 'player-won',
+				victoryReason: 'forfeit',
+				winner: remainingPlayer,
+			}
 		}
 
 		for (const viewer of game.viewers) {
@@ -255,7 +272,7 @@ function* randomMatchmakingSaga() {
 				playersToRemove.push(player1.id, player2.id)
 				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
-				yield* fork(gameManager, newGame)
+				yield* safeCall(fork, gameManager, newGame)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -459,7 +476,7 @@ export function* createBossGame(
 
 	root.addGame(newBossGame)
 
-	yield* fork(gameManager, newBossGame)
+	yield* safeCall(fork, gameManager, newBossGame)
 }
 
 export function* createPrivateGame(
@@ -675,7 +692,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* fork(gameManager, newGame)
+		yield* safeCall(fork, gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
