@@ -186,6 +186,9 @@ function* gameManager(game: GameModel) {
 				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
 		)?.playerId
 
+		delete root.games[game.id]
+		root.hooks.gameRemoved.call(game)
+
 		if (!winnerPlayerId && outcome.type === 'player-won') {
 			console.error(
 				`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
@@ -212,9 +215,6 @@ function* gameManager(game: GameModel) {
 				Buffer.from([0x00]),
 			)
 		}
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
 	}
 }
 

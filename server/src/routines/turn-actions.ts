@@ -1,13 +1,14 @@
 import assert from 'assert'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
+import {PlayerEntity, SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
 import {CopyAttack, SelectCards} from 'common/types/modal-requests'
 import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
 import {
+	AnyTurnActionData,
 	AttackActionData,
 	ChangeActiveHermitActionData,
 	PlayCardActionData,
@@ -16,8 +17,9 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
-import {delay} from 'typed-redux-saga'
+import {delay, fork, put} from 'typed-redux-saga'
 import {getLocalModalData} from '../utils/state-gen'
+import {LocalMessage, localMessages} from 'messages'
 
 function getAttack(
 	game: GameModel,
@@ -388,8 +390,20 @@ export function* pickRequestSaga(
 	return
 }
 
-export function* delaySaga(game: GameModel, delayMs: number) {
-	if (game.viewers.length !== 0) {
-		yield* delay(delayMs)
-	}
+export function* delaySaga(
+	game: GameModel,
+	delayMs: number,
+	playerEntity: PlayerEntity,
+	nextAction: AnyTurnActionData,
+) {
+	yield* fork(function* () {
+		if (game.viewers.length !== 0) {
+			yield* delay(delayMs)
+		}
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_TURN_ACTION,
+			playerEntity,
+			action: nextAction,
+		})
+	})
 }

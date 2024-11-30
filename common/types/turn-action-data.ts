@@ -32,6 +32,7 @@ export type PlayCardActionData = {
 export type WaitActionData = {
 	type: 'DELAY'
 	delay: number
+	then: AnyTurnActionData
 }
 
 export type ChangeActiveHermitActionData = {

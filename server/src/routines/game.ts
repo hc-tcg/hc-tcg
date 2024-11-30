@@ -445,7 +445,13 @@ function* turnActionSaga(
 				break
 			case 'DELAY':
 				yield* call(sendGameState, game)
-				yield* call(delaySaga, game, turnAction.action.delay)
+				yield* call(
+					delaySaga,
+					game,
+					turnAction.action.delay,
+					turnAction.playerEntity,
+					turnAction.action.then,
+				)
 				break
 			case 'FORFEIT':
 				game.endInfo.deadPlayerEntities = [turnAction.action.player]
@@ -588,10 +594,12 @@ function* turnActionsSaga(game: GameModel) {
 			const playerAI = getPlayerAI(game)
 			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
 
+			console.log("waiting for turn actions")
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
 				timeout: delay(remainingTime + graceTime),
 			}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
+			console.log("race result over")
 
 			// Reset coin flips
 			currentPlayer.coinFlips = []
