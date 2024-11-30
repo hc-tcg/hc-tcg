@@ -757,18 +757,4 @@ function* matchmakingSaga() {
 	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
 
-/*
- receive: CANCEL_PRIVATE_GAME
- send: WAITING_FOR_PLAYER, JOIN_PRIVATE_GAME_SUCCESS, JOIN_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_SUCCESS (with code)
- */
-
-// client sends join queue
-// we send back join queue success or fail, and client acts accordingly
-
-// 2 things happening at the same time when action is dispatched to store:
-// 1) reducer receives action and updates matchmaking state, therefore changing the client look to show - waiting for public game
-// 2) matchmaking saga also receives action, and sends data to client, then waiting for the game to start
-
-// send and receive nessage is how we communicate with the server,completely independent of the store and reducer
-
 export default matchmakingSaga
