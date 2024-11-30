@@ -110,6 +110,7 @@ function BossLanding({setMenuSection}: Props) {
 								</p>,
 								<div>
 									<CardList
+										tooltipAboveModal={true}
 										cards={directlyOppositeCards}
 										wrap={true}
 										displayTokenCost={false}
@@ -124,6 +125,7 @@ function BossLanding({setMenuSection}: Props) {
 					<p>The following cards don't work in this battle:</p>
 					<div>
 						<CardList
+							tooltipAboveModal={true}
 							cards={nonFunctionalCards}
 							wrap={true}
 							displayTokenCost={false}
