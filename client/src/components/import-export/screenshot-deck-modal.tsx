@@ -1,8 +1,8 @@
-import {Modal} from 'components/modal'
-import css from './import-export.module.scss'
+import classNames from 'classnames'
 import {LocalCardInstance} from 'common/types/server-requests'
 import Card from 'components/card'
-import classNames from 'classnames'
+import {Modal} from 'components/modal'
+import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
