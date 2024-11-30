@@ -1013,31 +1013,40 @@ export class Database {
 						GROUP BY result.deck_code) as deck_code_list 
 				),
 				types_wins_and_losses as (
-					WITH decks_with_types AS (
-						SELECT decks.deck_code,sum(2 ^ ((deck_cards.card_id - 49) / 2)) as type_code FROM decks 
-						JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
-						GROUP BY decks.deck_code
-					),
-					games_with_types AS (
-						SELECT winner_deck_code,loser_deck_code,winner.type_code as winner_type_code,loser.type_code as loser_type_code
-						FROM games
-						JOIN deck_winrate_statistics ON deck_winrate_statistics.deck_code = games.winner_deck_code
-						JOIN (SELECT * FROM decks_with_types) as winner ON games.winner_deck_code = winner.deck_code
-						JOIN (SELECT * FROM decks_with_types) as loser ON games.loser_deck_code = loser.deck_code AND winner.type_code != loser.type_code
-						WHERE winrate > 0.05 AND winrate < 0.95
-						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
-					)
-					SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,
-					wins,(CASE WHEN losses is NULL THEN 0 ELSE losses END) as losses FROM (
-						SELECT winner_type_code,loser_type_code,count(*) as wins FROM games_with_types
-						GROUP BY winner_type_code,loser_type_code
-					) AS win_amounts
-					LEFT JOIN (
-						SELECT loser_type_code,winner_type_code,count(*) as losses FROM games_with_types
-						GROUP BY loser_type_code,winner_type_code
-					) AS loss_amounts ON loss_amounts.loser_type_code = win_amounts.winner_type_code AND win_amounts.loser_type_code = loss_amounts.winner_type_code
-				)
+							WITH decks_with_types AS (
+								SELECT decks.deck_code,sum(2 ^ ((deck_cards.card_id - 49) / 2)) as type_code FROM decks 
+								JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id >= 49 AND deck_cards.card_id <= 68
+								GROUP BY decks.deck_code
+							),
+							games_with_types AS (
+								SELECT winner_deck_code,loser_deck_code,winner.type_code as winner_type_code,loser.type_code as loser_type_code
+								FROM games
+								JOIN deck_winrate_statistics ON deck_winrate_statistics.deck_code = games.winner_deck_code
+								JOIN (SELECT * FROM decks_with_types) as winner ON games.winner_deck_code = winner.deck_code
+								JOIN (SELECT * FROM decks_with_types) as loser ON games.loser_deck_code = loser.deck_code AND winner.type_code != loser.type_code
+								WHERE winrate > 0.05 AND winrate < 0.95
+								AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+								AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							)
+							SELECT winner_type_code,loser_type_code,sum(wins) as wins,max(losses) as losses FROM (
+								SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,
+								wins,(CASE WHEN losses is NULL THEN 0 ELSE losses END) as losses FROM (
+									SELECT winner_type_code,loser_type_code,count(*) as wins FROM games_with_types
+									GROUP BY winner_type_code,loser_type_code
+								) AS win_amounts
+								LEFT JOIN (
+									SELECT loser_type_code,winner_type_code,count(*) as losses FROM games_with_types
+									GROUP BY loser_type_code,winner_type_code
+								) AS loss_amounts ON loss_amounts.loser_type_code = win_amounts.winner_type_code AND win_amounts.loser_type_code = loss_amounts.winner_type_code
+								UNION ALL (
+									SELECT extra_losses.loser_type_code,extra_losses.winner_type_code,
+									0,extra_losses.losses FROM (
+										SELECT winner_type_code,loser_type_code,count(*) as losses FROM games_with_types
+										GROUP BY winner_type_code,loser_type_code
+									) AS extra_losses
+								)
+							) GROUP BY (winner_type_code,loser_type_code)
+						)
 				SELECT
 					*,
 					cast(multi_type_wins + multi_type_losses as decimal) / (multi_type_wins + multi_type_losses + mono_type_wins + mono_type_losses) as multi_type_frequency,
