@@ -6,7 +6,7 @@ import {Hermit} from '../../types'
 const CyberpunkImpulseRare: Hermit = {
 	...hermit,
 	id: 'cyberpunkimpulse_rare',
-	numericId: 254,
+	numericId: 255,
 	name: 'Cyberpunk Impulse',
 	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
