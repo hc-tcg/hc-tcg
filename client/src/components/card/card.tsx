@@ -91,7 +91,7 @@ const Card = (props: CardReactProps) => {
 				) : (
 					<img
 						unselectable="on"
-						className={css.renderedCardImage}
+						className={cn(css.cardImage, css.renderedCardImage)}
 						src={getRenderedCardImage(props.card, displayTokenCost)}
 						width="100%"
 						height="100%"

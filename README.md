@@ -11,9 +11,10 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 ## How to run Hermitcraft TCG
 
 ```sh
-npm ci           # install packages
-npm run build    # build the server
-npm run server   # start the sever
+npm ci                      # install packages
+npm run build-dev           # build a developement build of the client
+npm run build-dev-windows   # build a developement build of the client on windows
+npm run server              # start the sever
 ```
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
@@ -115,7 +116,15 @@ npm run build
 To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
 ```
 npm run client:render-cards
+<<<<<<< HEAD
 ```
+=======
+<<<<<<< HEAD
+``
+=======
+```
+>>>>>>> 1c6e4f9b (merge)
+>>>>>>> 60755a89 (continue rebase)
 
 Alternitively, you can use our [Docker](https://docs.docker.com/) image, which will have all the project dependencies set up for you.
 To build a docker image, cd to the root of the project then run the command:
