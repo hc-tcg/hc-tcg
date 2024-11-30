@@ -23,6 +23,7 @@ import {
 	EditIcon,
 	ErrorIcon,
 	ExportIcon,
+	ViewFullDeckIcon,
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
@@ -613,6 +614,7 @@ function SelectDeck({
 									size="small"
 									onClick={() => setShowScreenshotModal(true)}
 								>
+									<ViewFullDeckIcon />
 									<span>View Full Deck</span>
 								</Button>
 							</div>
@@ -660,6 +662,7 @@ function SelectDeck({
 							size="small"
 							onClick={() => setShowScreenshotModal(true)}
 						>
+							<ViewFullDeckIcon />
 							<span>View Full Deck</span>
 						</Button>
 					</div>
