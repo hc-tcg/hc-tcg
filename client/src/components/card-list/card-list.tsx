@@ -61,6 +61,7 @@ const CardList = (props: CardListProps) => {
 				picked={isPicked}
 				tooltipAboveModal={props.tooltipAboveModal}
 				displayTokenCost={displayTokenCost}
+				key={card.entity}
 			/>
 		)
 

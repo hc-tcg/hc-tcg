@@ -1,11 +1,12 @@
 import {Stats} from 'common/types/database'
-import {Deck, Tag} from 'common/types/deck'
+import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 
 export type DatabaseInfo = {
 	userId: string | null
 	secret: string | null
 	decks: Array<Deck>
+	currentImport: ApiDeck | null
 	tags: Array<Tag>
 	stats: Stats
 	noConnection: boolean
@@ -29,6 +30,7 @@ const defaultInfo: DatabaseInfo = {
 		forfeitWins: 0,
 		forfeitLosses: 0,
 	},
+	currentImport: null,
 }
 
 const getDatabaseInfo = (): DatabaseInfo => {

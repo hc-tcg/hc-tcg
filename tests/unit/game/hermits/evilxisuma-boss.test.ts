@@ -37,13 +37,11 @@ function* testConsecutiveAmnesia(game: GameModel) {
 	yield* endTurn(game)
 
 	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
-
 	yield* bossAttack(game, '50DMG')
-
 	yield* endTurn(game)
 
+	yield* playCardFromHand(game, Anvil, 'single_use')
 	yield* attack(game, 'secondary')
-
 	yield* endTurn(game)
 
 	expect(
@@ -55,7 +53,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 			),
 	).toHaveLength(1)
 	expect(
-		game.components.exists(
+		game.components.find(
 			StatusEffectComponent,
 			query.effect.is(
 				PrimaryAttackDisabledEffect,
@@ -63,18 +61,17 @@ function* testConsecutiveAmnesia(game: GameModel) {
 			),
 			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		),
-	).toBeTruthy()
+	).not.toBeNull()
 
 	yield* bossAttack(game, '50DMG', 'ABLAZE')
-
 	yield* endTurn(game)
 
 	expect(game.currentPlayer.activeRow?.health).toBe(
 		ArchitectFalseRare.health - 50,
 	)
 
+	yield* playCardFromHand(game, Anvil, 'single_use')
 	yield* attack(game, 'secondary')
-
 	yield* endTurn(game)
 
 	// The status should not be present.
@@ -87,7 +84,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 			),
 	).toStrictEqual([])
 	expect(
-		game.components.exists(
+		game.components.find(
 			StatusEffectComponent,
 			query.effect.is(
 				PrimaryAttackDisabledEffect,
@@ -95,7 +92,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 			),
 			query.effect.targetIsCardAnd(query.card.currentPlayer),
 		),
-	).toBeFalsy()
+	).toBeNull()
 }
 
 function* testVersusRendogRare(game: GameModel) {
@@ -297,7 +294,7 @@ describe('Test Evil X Boss Fight', () => {
 		testBossFight(
 			{
 				saga: testConsecutiveAmnesia,
-				playerDeck: [ArchitectFalseRare],
+				playerDeck: [ArchitectFalseRare, Anvil, Anvil],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)

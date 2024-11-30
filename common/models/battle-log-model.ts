@@ -92,7 +92,9 @@ export class BattleLogModel {
 				message: formatText(firstEntry.description, {censor: true}),
 			})
 
-			console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			if (this.game.settings.verboseLogging) {
+				console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			}
 		}
 
 		// We skip waiting for the logs to send if there are no players. This is because

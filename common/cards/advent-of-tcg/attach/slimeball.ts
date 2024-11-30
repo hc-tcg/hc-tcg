@@ -10,7 +10,7 @@ const Slimeball: Attach = {
 	id: 'slimeball',
 	numericId: 204,
 	name: 'Slimeball',
-	rarity: 'ultra_rare',
+	rarity: 'rare',
 	tokens: 0,
 	expansion: 'advent_of_tcg',
 	description:

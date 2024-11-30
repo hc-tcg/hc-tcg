@@ -12,7 +12,7 @@ const Spyglass: SingleUse = {
 	numericId: 91,
 	name: 'Spyglass',
 	expansion: 'default',
-	rarity: 'common',
+	rarity: 'rare',
 	tokens: 1,
 	description:
 		"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
@@ -30,7 +30,7 @@ const Spyglass: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const coinFlip = flipCoin(player, component)
+			const coinFlip = flipCoin(game, player, component)
 			const canDiscard =
 				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
 
