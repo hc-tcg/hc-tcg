@@ -48,7 +48,10 @@ export class PlayerComponent {
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
 		availableEnergy: WaterfallHook<
-			(availableEnergy: Array<TypeT>) => Array<TypeT>
+			(
+				availableEnergy: Array<TypeT>,
+				attack: 'primary' | 'secondary',
+			) => Array<TypeT>
 		>
 
 		/** Hook that modifies and returns blockedActions */

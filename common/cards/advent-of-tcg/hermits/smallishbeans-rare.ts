@@ -49,6 +49,8 @@ const SmallishbeansAdventRare: Hermit = {
 						return partialSum + (item.isItem() ? item.props.energy.length : 1)
 					}, 0) - component.getAttackCost('secondary').length
 
+				extraDamage = Math.max(extraDamage, 0)
+
 				attack.addDamage(component.entity, extraDamage * 20)
 			},
 		)
