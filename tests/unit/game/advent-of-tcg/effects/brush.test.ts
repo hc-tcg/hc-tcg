@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import Brush from 'common/cards/advent-of-tcg/single-use/brush'
-import FletchingTable from 'common/cards/advent-of-tcg/single-use/fletching-table'
+import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BuilderItem from 'common/cards/items/builder-common'
@@ -22,11 +22,11 @@ describe('Test Brush Single Use', () => {
 				playerOneDeck: [
 					EthosLabCommon,
 					Brush,
-					...Array(5).fill(FletchingTable),
+					...Array(5).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
-					FletchingTable,
+					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -50,12 +50,7 @@ describe('Test Brush Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([
-						BalancedItem,
-						BuilderItem,
-						MinerItem,
-						FletchingTable,
-					])
+					).toStrictEqual([BalancedItem, BuilderItem, MinerItem, Feather])
 					yield* endTurn(game)
 				},
 			},
@@ -69,11 +64,11 @@ describe('Test Brush Single Use', () => {
 				playerOneDeck: [
 					EthosLabCommon,
 					Brush,
-					...Array(5).fill(FletchingTable),
+					...Array(5).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
-					FletchingTable,
+					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -94,12 +89,7 @@ describe('Test Brush Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([
-						FletchingTable,
-						BalancedItem,
-						BuilderItem,
-						MinerItem,
-					])
+					).toStrictEqual([Feather, BalancedItem, BuilderItem, MinerItem])
 					yield* endTurn(game)
 				},
 			},
@@ -113,11 +103,11 @@ describe('Test Brush Single Use', () => {
 				playerOneDeck: [
 					EthosLabCommon,
 					Brush,
-					...Array(5).fill(FletchingTable),
+					...Array(5).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
-					FletchingTable,
+					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -141,12 +131,7 @@ describe('Test Brush Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([
-						BalancedItem,
-						FletchingTable,
-						BuilderItem,
-						MinerItem,
-					])
+					).toStrictEqual([BalancedItem, Feather, BuilderItem, MinerItem])
 					yield* endTurn(game)
 				},
 			},
@@ -160,11 +145,11 @@ describe('Test Brush Single Use', () => {
 				playerOneDeck: [
 					EthosLabCommon,
 					Brush,
-					...Array(5).fill(FletchingTable),
+					...Array(5).fill(Feather),
 					BalancedItem,
 					BuilderItem,
 					MinerItem,
-					FletchingTable,
+					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
 				saga: function* (game) {
@@ -188,12 +173,7 @@ describe('Test Brush Single Use', () => {
 							.getDeck()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
-					).toStrictEqual([
-						BalancedItem,
-						MinerItem,
-						FletchingTable,
-						BuilderItem,
-					])
+					).toStrictEqual([BalancedItem, MinerItem, Feather, BuilderItem])
 					yield* endTurn(game)
 				},
 			},
