@@ -37,10 +37,9 @@ describe('Test Stratos Joel', () => {
 					yield* playCardFromHand(game, Efficiency, 'single_use')
 					yield* applyEffect(game)
 					yield* attack(game, 'secondary')
+					// We have less than 3 items so we only deal 90 damage
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						EthosLabCommon.health -
-							SmallishbeansAdventRare.secondary.damage -
-							20 /** 1 attached Wild Item */,
+						EthosLabCommon.health - SmallishbeansAdventRare.secondary.damage,
 					)
 					yield* endTurn(game)
 
@@ -60,7 +59,7 @@ describe('Test Stratos Joel', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							SmallishbeansAdventRare.secondary.damage -
-							80 /** 1 attached Wild Item + 1 String in item slot + 1 double PvP item*/,
+							20 /** 1 attached Wild Item + 1 String in item slot + 1 double PvP item = 4 items */,
 					)
 				},
 			},
