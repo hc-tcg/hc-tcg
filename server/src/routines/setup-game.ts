@@ -10,9 +10,11 @@ import {
 } from '../../../common/models/game-model'
 import {GameController, GameViewer} from '../game-controller'
 import assert from 'assert'
-import runGameSaga from './game'
+import runGameSaga, {GameMessage, gameMessages, GameMessageTable} from './game'
 import {PlayerComponent} from '../../../common/components'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameOutcome} from '../../../common/types/game-state'
+import { AIComponent } from '../../../common/components/ai-component'
 
 type Props = {
 	player1: PlayerModel
@@ -32,7 +34,7 @@ export function* gameManagerSaga({
 	code,
 	settings,
 	spectatorCode,
-}: Props) {
+}: Props): GameOutcome {
 	let identifierInRootState = Math.random().toString(16)
 
 	let player2Model
@@ -261,23 +263,8 @@ export function* gameManagerSaga({
 	yield* cancel(gameSaga)
 	yield* cancel(backgroundSagas)
 
-	if (
-		player2 instanceof PlayerModel &&
-		player1.uuid &&
-		player2.uuid &&
-		// Since you win and lose, this shouldn't count as a game, the count gets very messed up
-		player1.uuid !== player2.uuid
-	) {
-		yield* addGame(
-			player1,
-			player2,
-			gameOutcome,
-			Date.now() - (gameModel as unknown as GameModel).createdTime,
-			'', //@TODO Add seed
-			Buffer.from([0x00]),
-		)
-	}
-
 	// Cleanup! Remove the game when its over.
 	delete root.games[identifierInRootState]
+
+	return gameOutcome
 }

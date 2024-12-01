@@ -824,19 +824,6 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(game: GameModel) {
-	if (game.settings.verboseLogging)
-		console.info(
-			`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
-		)
-	while (true) {
-		game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, game)
-		if (result === 'GAME_END') break
-	}
-	game.outcome = figureOutGameResult(game)
-}
-
 /** Run a game. This saga ends when the game is competle. Send the game result with the gameMessage.GAME_END message. */
 export function* runGameSaga(
 	props: GameProps,
