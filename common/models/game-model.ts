@@ -253,10 +253,6 @@ export class GameModel {
 		return this.internalSpectatorCode
 	}
 
-	public get apiSecret() {
-		return this.internalApiSecret
-	}
-
 	public broadcastToViewers(payload: ServerMessage) {
 		broadcast(
 			this.viewers.map((viewer) => viewer.player),
