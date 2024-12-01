@@ -444,6 +444,14 @@ export class Database {
 
 			if (deleteable) {
 				await this.pool.query(
+					'DELETE FROM deck_tags WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+				await this.pool.query(
+					'DELETE FROM deck_cards WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+				await this.pool.query(
 					'DELETE FROM decks WHERE deck_code = $1 AND user_id = $2',
 					[deckCode, user_id],
 				)
