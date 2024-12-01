@@ -10,6 +10,9 @@ import {
 } from '../../../common/models/game-model'
 import {GameController, GameViewer} from '../game-controller'
 import assert from 'assert'
+import runGameSaga from './game'
+import {PlayerComponent} from '../../../common/components'
+import {serverMessages} from 'common/socket-messages/server-messages'
 
 type Props = {
 	player1: PlayerModel
@@ -87,7 +90,7 @@ export function* gameManagerSaga({
 	let backgroundSagas: any = undefined
 
 	let gameSaga = yield* fork(() =>
-		setupGameSaga(gameProps, {
+		runGameSaga(gameProps, {
 			onGameStart: function* (game) {
 				// Player one is added to the ECS first, Player two is added second
 				gameModel = game
