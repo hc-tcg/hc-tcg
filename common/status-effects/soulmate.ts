@@ -10,7 +10,7 @@ import {DeathloopReady} from './death-loop'
 import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
-export const soulmateEffectDamage = 140
+export const soulmateEffectDamage = 80
 
 function updateDescription(soulmateEffect: StatusEffectComponent) {
 	const {creator} = soulmateEffect
