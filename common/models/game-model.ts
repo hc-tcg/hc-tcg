@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -7,10 +6,8 @@ import {
 	SlotComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -39,7 +36,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {PlayerId, PlayerModel} from './player-model'
 
 export type GameSettings = {
 	maxTurnTime: number
@@ -219,24 +215,6 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
-	}
-
 	public get createdTime() {
 		return this.internalCreatedTime
 	}
@@ -251,13 +229,6 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
