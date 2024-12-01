@@ -17,7 +17,7 @@ const PostmasterPearlRare: Hermit = {
 	type: 'explorer',
 	health: 300,
 	primary: {
-		name: 'Post inspector',
+		name: 'Inspector',
 		cost: [],
 		damage: 0,
 		power:
