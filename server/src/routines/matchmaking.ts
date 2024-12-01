@@ -38,47 +38,6 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
 
-function setupGame(
-	player1: PlayerModel,
-	player2: PlayerModel,
-	player1Deck: Deck,
-	player2Deck: Deck,
-	code?: string,
-	spectatorCode?: string,
-	apiSecret?: string,
-): GameModel {
-	let game = new GameModel(
-		GameModel.newGameSeed(),
-		{
-			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
-		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode, apiSecret},
-	)
-
-	let playerEntities = game.components.filterEntities(PlayerComponent)
-
-	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
-		player: player1,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(ViewerComponent, {
-		player: player2,
-		spectator: false,
-		playerOnLeft: playerEntities[1],
-	})
-
-	return game
-}
-
 function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
 	try {
