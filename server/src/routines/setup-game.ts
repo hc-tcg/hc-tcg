@@ -2,19 +2,19 @@ import {all, call, cancel, fork, put, take} from 'typed-redux-saga'
 import {LocalMessageTable, localMessages} from '../messages'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {PlayerModel} from '../../../common/models/player-model'
+import {PlayerModel} from 'common/models/player-model'
 import {
 	GameModel,
 	GameSettings,
 	gameSettingsFromEnv,
-} from '../../../common/models/game-model'
+} from 'common/models/game-model'
 import {GameController, GameViewer} from '../game-controller'
 import assert from 'assert'
 import runGameSaga, {GameMessage, gameMessages, GameMessageTable} from './game'
-import {PlayerComponent} from '../../../common/components'
+import {PlayerComponent} from 'common/components'
+import {GameOutcome} from 'common/types/game-state'
+import {AIComponent} from 'common/components/ai-component'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameOutcome} from '../../../common/types/game-state'
-import { AIComponent } from '../../../common/components/ai-component'
 
 type Props = {
 	player1: PlayerModel
@@ -26,7 +26,7 @@ type Props = {
 	spectatorCode?: string
 }
 
-export function* gameManagerSaga({
+export function* setupGameSaga({
 	player1,
 	player2,
 	viewers,

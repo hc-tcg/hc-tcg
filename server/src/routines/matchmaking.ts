@@ -36,6 +36,7 @@ import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import {setupGameSaga} from './setup-game'
 
 function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
@@ -228,7 +229,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
+				const newGame = setupGameSaga(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
 				yield* safeCall(fork, gameManager, newGame)
 			} else {
