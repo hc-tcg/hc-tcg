@@ -28,7 +28,6 @@ for (let i = 1; i <= MAX; i++) {
 				])
 				components.push([
 					<div id={`${card.id}-with-tokens`} style={divStyle}>
-						<HermitCard card={card as any} displayTokenCost={false} />,
 						<HermitCard card={card as any} displayTokenCost={true} />,
 					</div>,
 				])
@@ -40,7 +39,6 @@ for (let i = 1; i <= MAX; i++) {
 				])
 				components.push([
 					<div id={`${card.id}-with-tokens`} style={divStyle}>
-						<ItemCard card={card as any} displayTokenCost={false} />,
 						<ItemCard card={card as any} displayTokenCost={true} />,
 					</div>,
 				])
@@ -52,7 +50,6 @@ for (let i = 1; i <= MAX; i++) {
 				])
 				components.push([
 					<div id={`${card.id}-with-tokens`} style={divStyle}>
-						<EffectCard card={card as any} displayTokenCost={false} />,
 						<EffectCard card={card as any} displayTokenCost={true} />,
 					</div>,
 				])
