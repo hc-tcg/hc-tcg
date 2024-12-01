@@ -116,13 +116,11 @@ export function* setupGameSaga({
 					if (p.type === 'player') {
 						broadcast([root.players[p.id]], {
 							type: serverMessages.GAME_START,
-							props: gameProps,
-							playerEntity: players[index].entity,
 						})
 					} else {
 						broadcast([root.players[p.id]], {
 							type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-							game: serverSideGame.startupInformation(),
+							localGameState: serverSideGame.startupInformation(),
 						})
 					}
 				})
