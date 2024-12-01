@@ -14,6 +14,7 @@ import query, {ComponentQuery} from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
+import {GameOutcome} from 'common/types/game-state'
 import {LocalModalResult} from 'common/types/server-requests'
 import {
 	attackToAttackAction,
@@ -22,7 +23,7 @@ import {
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {LocalMessage, localMessages} from 'server/messages'
-import gameSaga from 'server/routines/game'
+import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
@@ -197,16 +198,27 @@ export function* finishModalRequest(
 	})
 }
 
-export function getWinner(
-	game: GameModel,
-): 'playerOne' | 'playerTwo' | undefined {
-	if (game.endInfo.deadPlayerEntities.length === 0)
-		throw new Error('There are no dead players that lost')
-	let winnerComponent = game.components.find(
+export function* forfeit(player: PlayerEntity) {
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_TURN_ACTION,
+		playerEntity: player,
+		action: {
+			type: 'FORFEIT',
+			player,
+		},
+	})
+}
+
+export function getWinner(game: GameModel): PlayerComponent | null {
+	if (game.outcome === undefined) return null
+	if (game.outcome.type === 'tie') return null
+	if (game.outcome.type === 'game-crash') return null
+	return game.components.find(
 		PlayerComponent,
-		(game, player) => !game.endInfo.deadPlayerEntities.includes(player.entity),
+		(_game, component) =>
+			game.outcome?.type === 'player-won' &&
+			component.entity === game.outcome.winner,
 	)
-	return winnerComponent?.playerName as any
 }
 
 function testSagas(rootSaga: any, testingSaga: any) {
@@ -257,7 +269,7 @@ export function testGame(
 	options: {
 		saga: (game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
-		then?: (game: GameModel) => any
+		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
@@ -290,7 +302,7 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	if (options.then) options.then(game)
+	if (options.then) options.then(game, figureOutGameResult(game))
 }
 
 /**

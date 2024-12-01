@@ -8,6 +8,7 @@ const __dirname = execSync('git rev-parse --show-toplevel').toString().trim()
 export default defineConfig({
 	testDir: './tests/ct/',
 	snapshotDir: './tests/ct/__snapshots__',
+	snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
 	timeout: 10 * 1000,
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,

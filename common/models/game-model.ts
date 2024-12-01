@@ -14,9 +14,9 @@ import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	GameEndOutcomeT,
-	GameEndReasonT,
+	GameOutcome,
 	GameState,
+	GameVictoryReason,
 	Message,
 	TurnAction,
 	TurnActions,
@@ -139,10 +139,9 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		victoryReason?: GameVictoryReason
 	}
+	public outcome?: GameOutcome
 
 	constructor(
 		rngSeed: string,
@@ -175,9 +174,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			victoryReason: undefined,
 		}
 
 		this.components = new ComponentTable(this)
