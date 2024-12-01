@@ -10,7 +10,7 @@ const ArrowOfPoison: SingleUse = {
 	name: 'Tipped Arrows of Poison',
 	expansion: 'advent_of_tcg_ii',
 	numericId: 243,
-	rarity: 'ultra_rare',
+	rarity: 'rare',
 	tokens: 3,
 	description:
 		"Poison any of your opponent's AFK Hermits that take damage this turn.\nYou can use an another single use effect card this turn.",

@@ -35,8 +35,8 @@ const Allay: SingleUse = {
 	name: 'Allay',
 	expansion: 'advent_of_tcg_ii',
 	numericId: 242,
-	rarity: 'ultra_rare',
-	tokens: 2,
+	rarity: 'rare',
+	tokens: 1,
 	description:
 		'Show an effect card in your hand to the opponent. Retrieve a copy of the card you showed from your discard pile.\nYou can use another single use effect card this turn.',
 	attachCondition: query.every(

@@ -12,7 +12,7 @@ const Candle: SingleUse = {
 	numericId: 250,
 	name: 'Candle',
 	expansion: 'advent_of_tcg_ii',
-	rarity: 'common',
+	rarity: 'rare',
 	tokens: 2,
 	description:
 		'Search your deck for a pair of cards. For one pair you find, draw one copy, discard the other, then shuffle.',
