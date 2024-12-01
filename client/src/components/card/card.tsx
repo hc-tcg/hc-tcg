@@ -80,12 +80,14 @@ const Card = (props: CardReactProps) => {
 				{debugConfig.renderCardsDynamically ? (
 					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
 				) : (
-					<img
-						unselectable="on"
-						src={getRenderedCardImage(props.card, displayTokenCost)}
-						width="100%"
-						height="100%"
-					/>
+					<div className={css.noPointerEvents}>
+						<img
+							className={css.renderedCardImage}
+							src={getRenderedCardImage(props.card, displayTokenCost)}
+							width="100%"
+							height="100%"
+						/>
+					</div>
 				)}
 			</button>
 		</Tooltip>
