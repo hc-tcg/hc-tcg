@@ -8,7 +8,7 @@ const WildDoubleItem: Item = {
 	name: 'Wild Item x2',
 	description: 'Counts as 2 Wild Item cards.',
 	shortName: 'Wild',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'ultra_rare',
 	tokens: 4,
 	type: 'any',
