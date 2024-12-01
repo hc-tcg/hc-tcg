@@ -112,7 +112,8 @@ const EXPANSION_NAMES = [
 		return CARDS_LIST.some(
 			(card) =>
 				card.expansion === expansion &&
-				EXPANSIONS[expansion].disabled === false,
+				EXPANSIONS[expansion].disabled === false &&
+				!CONFIG.limits.bannedCards.includes(card.id),
 		)
 	}),
 ]
@@ -279,7 +280,12 @@ export function sortCards(
 }
 
 const ALL_CARDS = sortCards(
-	CARDS_LIST.map(
+	CARDS_LIST.filter(
+		(card) =>
+			// Don't show disabled cards
+			EXPANSIONS[card.expansion].disabled === false &&
+			!CONFIG.limits.bannedCards.includes(card.id),
+	).map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),
 			entity: newEntity('deck_editor_card'),
@@ -402,6 +408,7 @@ function EditDeck({
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
 	const addCard = (card: LocalCardInstance) => {
+		console.log('Card: ', card.props.id)
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
 			cards: [

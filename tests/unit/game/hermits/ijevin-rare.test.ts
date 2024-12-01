@@ -27,8 +27,10 @@ describe('Test iJevin Peace Out', () => {
 
 					// Manually timeout request
 					game.removePickRequest(0, true)
-					console.info(`${game.logHeader} Manually timed out pick request 0`)
-					printBoardState(game)
+					if (game.settings.verboseLogging) {
+						console.info(`${game.logHeader} Manually timed out pick request 0`)
+						printBoardState(game)
+					}
 
 					expect(game.opponentPlayer.activeRow?.index).toBe(2)
 					expect(game.opponentPlayer.activeRow?.playerId).toBe(

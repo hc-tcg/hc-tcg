@@ -2,7 +2,10 @@ import cn from 'classnames'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
-import {LocalCardInstance} from 'common/types/server-requests'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+} from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 
 type CardListProps = {
@@ -16,6 +19,8 @@ type CardListProps = {
 	wrap?: boolean
 	tooltipAboveModal?: boolean
 	disableAnimations?: boolean
+	/** @todo Needs to be displayed to client when provided */
+	statusEffects?: LocalStatusEffectInstance[]
 }
 
 const CardList = (props: CardListProps) => {

@@ -56,12 +56,12 @@ export class StatusEffectComponent<
 
 	/** Apply a status effect to a specific player or card */
 	public apply(targetEntity: Entity<TargetT> | null | undefined) {
-		if (!targetEntity) return
+		if (!targetEntity) return this
 
 		let target = this.game.components.get(targetEntity)
-		if (!target) return
+		if (!target) return this
 
-		if (!this.props.applyCondition(this.game, target)) return
+		if (!this.props.applyCondition(this.game, target)) return this
 
 		let observer = this.game.components.new(ObserverComponent, this.entity)
 
@@ -72,6 +72,8 @@ export class StatusEffectComponent<
 		if (this.props.applyLog) {
 			this.game.battleLog.addStatusEffectEntry(this.entity, this.props.applyLog)
 		}
+
+		return this
 	}
 
 	public remove() {
@@ -87,5 +89,10 @@ export class StatusEffectComponent<
 		}
 		this.targetEntity = null
 		this.observerEntity = null
+	}
+
+	public setCounter(number: number) {
+		this.counter = number
+		return this
 	}
 }

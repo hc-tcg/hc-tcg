@@ -22,6 +22,7 @@ export type Format =
 	| 'keyword'
 	| 'attackDamage'
 	| 'specialMove'
+	| 'system'
 
 export type FormattedTextNode =
 	| ListNode
@@ -92,6 +93,7 @@ const formatDict: Record<string, Format> = {
 	k: 'keyword',
 	A: 'attackDamage',
 	S: 'specialMove',
+	y: 'system',
 }
 export function formatNodefromShorthand(
 	formatShorthand: string,

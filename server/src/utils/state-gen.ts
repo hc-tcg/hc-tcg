@@ -88,6 +88,16 @@ export function getLocalModalData(
 				getLocalCard(game, game.components.get(entity)!),
 			),
 		}
+	} else if (modal.type == 'dragCards') {
+		return {
+			...modal,
+			leftCards: modal.leftCards.map((entity) =>
+				getLocalCard(game, game.components.get(entity)!),
+			),
+			rightCards: modal.rightCards.map((entity) =>
+				getLocalCard(game, game.components.get(entity)!),
+			),
+		}
 	} else if (modal.type === 'copyAttack') {
 		let hermitCard = game.components.get(modal.hermitCard)!
 		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(

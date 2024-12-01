@@ -167,3 +167,42 @@
 	flex-direction: column;
 	margin-left: 1rem;
 }
+
+.draggableCard {
+	width: 130px;
+	position: absolute;
+}
+
+.deckSpacer {
+	flex-grow: 1;
+}
+
+.retrievalBox {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1rem;
+	width: 200px;
+	max-width: 50%;
+}
+
+.retrievalName {
+	text-align: center;
+}
+
+.retrievalArea {
+	background-color: var(--gray-600);
+	border: 4px var(--gray-900) dashed;
+	height: 140px;
+}
+
+.draggableCardsContainer {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+}
+
+.subContainer {
+	position: absolute;
+	transform: translateY(6px);
+}

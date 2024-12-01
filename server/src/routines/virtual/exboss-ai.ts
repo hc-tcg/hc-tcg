@@ -68,8 +68,8 @@ function getNextTurnAction(
 	const {player} = component
 
 	if (game.state.modalRequests.length) {
-		if (game.state.modalRequests[0].modal.name.startsWith('Lantern')) {
-			// Handles when challenger plays "Lantern"
+		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
+			// Handles when challenger reveals card(s) to boss
 			return [
 				{
 					type: 'MODAL_REQUEST',

@@ -5,8 +5,12 @@ import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
-import {CopyAttack, SelectCards} from 'common/types/modal-requests'
-import {LocalCopyAttack, LocalSelectCards} from 'common/types/server-requests'
+import {CopyAttack, DragCards, SelectCards} from 'common/types/modal-requests'
+import {
+	LocalCopyAttack,
+	LocalDragCards,
+	LocalSelectCards,
+} from 'common/types/server-requests'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
@@ -16,7 +20,6 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
-import {call, delay} from 'typed-redux-saga'
 import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(
@@ -289,7 +292,10 @@ export function* changeActiveHermitSaga(
 
 export function* modalRequestSaga(
 	game: GameModel,
-	modalResult: LocalSelectCards.Result | LocalCopyAttack.Result,
+	modalResult:
+		| LocalSelectCards.Result
+		| LocalCopyAttack.Result
+		| LocalDragCards.Result,
 ): Generator<any, void> {
 	const modalRequest = game.state.modalRequests[0]
 
@@ -308,6 +314,18 @@ export function* modalRequestSaga(
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as SelectCards.Result)
+	} else if (modalRequest.modal.type === 'dragCards') {
+		let modalRequest_ = modalRequest as DragCards.Request
+		let modal = modalResult as LocalDragCards.Result
+		modalRequest_.onResult({
+			...modal,
+			leftCards: modal.leftCards
+				? modal.leftCards.map((entity) => game.components.get(entity)!)
+				: null,
+			rightCards: modal.rightCards
+				? modal.rightCards.map((entity) => game.components.get(entity)!)
+				: null,
+		} as DragCards.Result)
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
@@ -386,77 +404,4 @@ export function* pickRequestSaga(
 	}
 
 	return
-}
-
-export function* delaySaga(game: GameModel, delayMs: number) {
-	if (game.viewers.length !== 0) {
-		yield* delay(delayMs)
-	}
-}
-
-export function* timeoutSaga(game: GameModel) {
-	// @TODO this works, but could be cleaned
-	const currentAttack = game.state.turn.currentAttack
-	let reset = false
-	let currentPlayer = game.currentPlayer
-
-	// First check to see if the opponent had a pick request active
-	const currentPickRequest = game.state.pickRequests[0]
-	if (currentPickRequest) {
-		if (currentPickRequest.player === currentPlayer.entity) {
-			if (!!currentAttack) {
-				reset = true
-			}
-		} else {
-			reset = true
-		}
-	}
-
-	// Check to see if the opponent had a modal request active
-	const currentModalRequest = game.state.modalRequests[0]
-	if (currentModalRequest) {
-		if (currentModalRequest.player === currentPlayer.entity) {
-			if (!!currentAttack) {
-				reset = true
-			}
-		} else {
-			reset = true
-		}
-	}
-
-	if (reset) {
-		// Timeout current request and remove it
-		if (currentPickRequest) {
-			game.removePickRequest()
-		} else {
-			game.removeModalRequest()
-		}
-
-		// Reset timer to max time
-		game.state.timer.turnStartTime = Date.now()
-		game.state.timer.turnRemaining = game.settings.maxTurnTime
-
-		// Execute attack now if there's a current attack
-		if (!game.hasActiveRequests() && !!currentAttack) {
-			// There are no active requests left, and we're in the middle of an attack. Execute it now.
-			const turnAction: AttackActionData = {
-				type: attackToAttackAction[currentAttack],
-			}
-			yield* call(attackSaga, game, turnAction, false)
-		}
-	}
-
-	const hasActiveHermit = game.components.exists(
-		CardComponent,
-		query.card.player(currentPlayer.entity),
-		query.card.slot(query.slot.active, query.slot.hermit),
-	)
-
-	if (hasActiveHermit) {
-		return
-	}
-
-	game.endInfo.victoryReason = 'timeout-without-hermits'
-	game.endInfo.deadPlayerEntities = [currentPlayer.entity]
-	return 'GAME_END'
 }

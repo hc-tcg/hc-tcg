@@ -14,15 +14,20 @@ import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	GameEndOutcomeT,
-	GameEndReasonT,
+	GameOutcome,
 	GameState,
+	GameVictoryReason,
 	Message,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
 import {GameHook, Hook, PriorityHook} from '../types/hooks'
-import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {
+	CopyAttack,
+	DragCards,
+	ModalRequest,
+	SelectCards,
+} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
@@ -56,7 +61,7 @@ export type GameSettings = {
 	forceCoinFlip: boolean
 	shuffleDeck: boolean
 	logErrorsToStderr: boolean
-	logBoardState: boolean
+	verboseLogging: boolean
 	disableRewardCards: boolean
 }
 
@@ -78,7 +83,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		forceCoinFlip: DEBUG_CONFIG.forceCoinFlip,
 		shuffleDeck: DEBUG_CONFIG.shuffleDeck,
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
-		logBoardState: DEBUG_CONFIG.logBoardState,
+		verboseLogging: DEBUG_CONFIG.verboseLogging,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
 	}
 }
@@ -144,10 +149,9 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		victoryReason?: GameVictoryReason
 	}
+	public outcome?: GameOutcome
 
 	constructor(props: GameProps) {
 		this.settings = props.settings
@@ -169,9 +173,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			victoryReason: undefined,
 		}
 
 		this.components = new ComponentTable(this)
@@ -388,6 +390,7 @@ export class GameModel {
 		newRequest: SelectCards.Request,
 		before?: boolean,
 	): void
+	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {

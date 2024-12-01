@@ -29,7 +29,7 @@ const SplashPotionOfHarming: SingleUse = {
 	...singleUse,
 	id: 'splash_potion_of_harming',
 	numericId: 226,
-	name: 'Splash potion of harming',
+	name: 'Splash Potion of Harming',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 3,
