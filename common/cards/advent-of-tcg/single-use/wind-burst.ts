@@ -20,7 +20,7 @@ const WindBurst: SingleUse = {
 	numericId: 245,
 	name: 'Wind Burst',
 	expansion: 'advent_of_tcg_ii',
-	rarity: 'rare',
+	rarity: 'common',
 	tokens: 0,
 	description:
 		'After your attack, you and your opponent must move your active Hermit and any attached cards to an open row on the game board if able.\nYour opponent moves their active Hermit first.',
