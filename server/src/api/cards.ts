@@ -2,13 +2,13 @@ import {CARDS, CARDS_LIST} from 'common/cards'
 import {getCardTypeIcon, getRankIcon} from 'common/cards/card'
 import {getRenderedCardImage} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
+import {GLOSSARY} from 'common/glossary'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import root from 'serverRoot'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
-import {STATUS_EFFECTS} from 'common/status-effects'
-import {GLOSSARY} from 'common/glossary'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
