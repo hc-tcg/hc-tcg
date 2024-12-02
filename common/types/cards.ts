@@ -40,6 +40,7 @@ export type HermitAttackInfo = {
 	damage: number
 	power: string | null
 	formattedPower?: Array<Node>
+	passive?: boolean
 }
 
 export type PlayCardLog = {

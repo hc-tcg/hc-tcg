@@ -4,7 +4,15 @@
 
 Returns a list of all cards.
 
----
+- GET `/api/types`
+
+Returns a list of all card types and resources for them.
+
+- GET `/api/ranks`
+
+Returns a list of all card ranks and resources for them.
+
+- GET `/api/deck/{deckCode}`
 
 -   `GET /api/types`
 
