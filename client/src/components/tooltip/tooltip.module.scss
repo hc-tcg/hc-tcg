@@ -26,14 +26,20 @@
 	position: absolute;
 	top: 0;
 	left: 0;
+	pointer-events: none;
+	user-select: none;
 }
 
 .tooltipBox {
 	position: absolute;
+	pointer-events: none;
+	user-select: none;
 }
 
 .tooltip {
 	overflow: hidden;
+	pointer-events: none;
+	user-select: none;
 }
 
 .smallTooltip {
