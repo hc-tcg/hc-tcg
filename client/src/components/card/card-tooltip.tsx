@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {getCardTypeIcon} from 'common/cards/card'
 import {
 	Card,
 	hasDescription,
@@ -35,6 +36,7 @@ const HERMIT_TYPES: Record<string, string> = {
 
 type Props = {
 	card: WithoutFunctions<Card>
+	showStatsOnTooltip: boolean
 }
 
 const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
@@ -51,6 +53,62 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 		text = formatText(`*${card.description}*`)
 	}
 	return FormattedText(text)
+}
+
+const getDescriptionWithStats = (
+	card: WithoutFunctions<Card>,
+): React.ReactNode => {
+	let text: FormattedTextNode = EmptyNode()
+	if (isHermit(card)) {
+		return (
+			<div>
+				<div>{FormattedText(formatText(`Health - **${card.health}**`))}</div>
+				<div className={css.moveStats}>
+					<div>
+						{card.primary.cost.map((type, i) => (
+							<img
+								width={'16px'}
+								height={'16px'}
+								key={i}
+								src={getCardTypeIcon(type)}
+								className={classNames(css.costItem, css[type])}
+							/>
+						))}
+					</div>
+					{FormattedText(
+						formatText(`**${card.primary.name}** - **${card.primary.damage}**`),
+					)}
+				</div>
+				{card.primary.power && (
+					<div>{FormattedText(formatText(card.primary.power))}</div>
+				)}
+				<div className={css.moveStats}>
+					<div>
+						{card.secondary.cost.map((type, i) => (
+							<img
+								width={'16px'}
+								height={'16px'}
+								key={i}
+								src={getCardTypeIcon(type)}
+								className={classNames(css.costItem, css[type])}
+							/>
+						))}
+					</div>
+					{FormattedText(
+						formatText(
+							`**${card.secondary.name}** - **${card.secondary.damage}**`,
+						),
+					)}
+				</div>
+				{card.secondary.power && (
+					<div>{FormattedText(formatText(card.secondary.power))}</div>
+				)}
+			</div>
+		)
+	} else if (hasDescription(card)) {
+		text = formatText(`*${card.description}*`)
+		return FormattedText(text)
+	}
 }
 
 const joinJsx = (array: Array<React.ReactNode>) => {
@@ -185,7 +243,7 @@ const getSidebarDescriptions = (
 	})
 }
 
-const CardInstanceTooltip = ({card}: Props) => {
+const CardInstanceTooltip = ({card, showStatsOnTooltip}: Props) => {
 	const settings = useSelector(getSettings)
 
 	return (
@@ -205,7 +263,9 @@ const CardInstanceTooltip = ({card}: Props) => {
 				<div className={css.description}>
 					{getExpansion(card)}
 					{getStrengthsAndWeaknesses(card)}
-					{getDescription(card)}
+					{showStatsOnTooltip
+						? getDescriptionWithStats(card)
+						: getDescription(card)}
 				</div>
 				<div></div>
 			</div>

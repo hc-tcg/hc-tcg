@@ -24,7 +24,12 @@ const MobileCardComponent = (props: CardReactProps) => {
 
 	return (
 		<Tooltip
-			tooltip={<CardInstanceTooltip card={props.cards[0].props} />}
+			tooltip={
+				<CardInstanceTooltip
+					card={props.cards[0].props}
+					showStatsOnTooltip={true}
+				/>
+			}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
