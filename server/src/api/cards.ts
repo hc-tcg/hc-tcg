@@ -7,6 +7,8 @@ import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import root from 'serverRoot'
 import {ListOfCards} from './schema'
 import {joinUrl} from './utils'
+import {STATUS_EFFECTS} from 'common/status-effects'
+import {GLOSSARY} from 'common/glossary'
 
 type CardResponse = HermitResponse | EffectResponse | ItemResponse
 
@@ -31,6 +33,7 @@ type HermitResponse = {
 		damage: number
 		power: string | null
 	}
+	sidebarDescriptions: Array<{name: string; description: string}>
 	images: {
 		default: string
 		'with-token-cost': string
@@ -45,6 +48,7 @@ type EffectResponse = {
 	rarity: string
 	tokens: number
 	description: string
+	sidebarDescriptions: Array<{name: string; description: string}>
 	images: {
 		default: string
 		'with-token-cost': string
@@ -65,6 +69,37 @@ type ItemResponse = {
 	}
 }
 
+function getSidebarDescriptions(
+	sidebarDescriptions: Array<{type: string; name: string}> | undefined | null,
+) {
+	if (!sidebarDescriptions) return []
+	return sidebarDescriptions?.reduce(
+		(r: Array<{name: string; description: string}>, description) => {
+			if (description.type === 'statusEffect') {
+				const statusEffect = STATUS_EFFECTS[description.name]
+				return [
+					...r,
+					{
+						name: statusEffect.name,
+						description: statusEffect.description,
+					},
+				]
+			} else if (description.type === 'glossary') {
+				const glossaryEntry = GLOSSARY[description.name]
+				return [
+					...r,
+					{
+						name: glossaryEntry.name,
+						description: glossaryEntry.description,
+					},
+				]
+			}
+			return r
+		},
+		[],
+	)
+}
+
 function cardToCardResponse(card: Card, url: string): CardResponse | null {
 	if (isHermit(card)) {
 		return {
@@ -79,6 +114,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			health: card.health,
 			primary: card.primary,
 			secondary: card.secondary,
+			sidebarDescriptions: getSidebarDescriptions(card.sidebarDescriptions),
 			images: {
 				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
 				'with-token-cost': joinUrl(
@@ -96,6 +132,7 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
+			sidebarDescriptions: getSidebarDescriptions(card.sidebarDescriptions),
 			images: {
 				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
 				'with-token-cost': joinUrl(
