@@ -29,9 +29,10 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const dispatch = useDispatch()
 	const childRef = useRef<HTMLDivElement>(null)
 	const tooltipRef = useRef<HTMLDivElement>(null)
-	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
-		null,
-	)
+	const [tooltipSize, setTooltipSize] = useState<{
+		h: number
+		w: number
+	} | null>(null)
 
 	const showAdvancedTooltips = useSelector(getSettings).showAdvancedTooltips
 
@@ -53,7 +54,19 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	}
 
 	function toggleShow(newShow: boolean) {
-		if (newShow && childRef.current && tooltipSize) {
+		if (tooltipRef && tooltipRef.current && tooltipSize?.h === 0) {
+			setTooltipSize({
+				h: tooltipRef.current.offsetHeight,
+				w: tooltipRef.current.offsetWidth,
+			})
+			dispatch({
+				type: localMessages.SHOW_TOOLTIP,
+				tooltip: tooltipDiv,
+				anchor: childRef,
+				tooltipHeight: tooltipRef.current.offsetHeight,
+				tooltipWidth: tooltipRef.current.offsetWidth,
+			})
+		} else if (newShow && childRef.current && tooltipSize) {
 			dispatch({
 				type: localMessages.SHOW_TOOLTIP,
 				tooltip: tooltipDiv,
@@ -151,6 +164,7 @@ export const CurrentTooltip = ({
 		const height = tooltipHeight
 		const width = tooltipWidth - child.width
 		const showBelow = child.top - tooltipHeight - padding < 50
+
 		return {
 			above: child.top - height - padding,
 			below: child.bottom + padding,
@@ -164,6 +178,13 @@ export const CurrentTooltip = ({
 			right: child.right,
 			showBelow,
 		}
+	}
+
+	const setTooltipPosition = (tooltip: HTMLDivElement, offsets: Offsets) => {
+		const windowWidth = window.innerWidth
+
+		tooltip.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+		tooltip.style.left = `${offsets.left > windowWidth || offsets.left < 0 ? windowWidth / 2 - tooltipWidth / 2 : offsets.middle}px`
 	}
 
 	const onMouseMove = (e: MouseEvent) => {
@@ -196,8 +217,7 @@ export const CurrentTooltip = ({
 		}
 
 		setInactiveTime(0)
-		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-		tooltipRef.current.style.left = `${offsets.middle}px`
+		setTooltipPosition(tooltipRef.current, offsets)
 	}
 
 	const onTouchStart = (e: TouchEvent) => {
@@ -254,8 +274,7 @@ export const CurrentTooltip = ({
 			if (!shownByTouch || touchTime > 5) {
 				const offsets = getOffsets()
 				if (!offsets || !tooltipRef?.current) return
-				tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-				tooltipRef.current.style.left = `${offsets.middle}px`
+				setTooltipPosition(tooltipRef.current, offsets)
 				return
 			}
 			setTouchTime(touchTime + 1)

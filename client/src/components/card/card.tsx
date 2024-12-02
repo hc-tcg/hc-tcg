@@ -62,7 +62,9 @@ const Card = (props: CardReactProps) => {
 
 	return (
 		<Tooltip
-			tooltip={<CardInstanceTooltip card={props.card} />}
+			tooltip={
+				<CardInstanceTooltip card={props.card} showStatsOnTooltip={false} />
+			}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<button
