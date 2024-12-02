@@ -817,13 +817,7 @@ function EditDeck({
 									></Checkbox>
 								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>
-								<form
-									className={css.deckTagsForm}
-									onSubmit={(e) => {
-										addTag(tags, setTags, color, nextKey, setColor, e)
-										setNextKey(generateDatabaseCode())
-									}}
-								>
+								<div className={css.deckTagsForm}>
 									<Dropdown
 										button={
 											<button className={css.dropdownButton}>
@@ -847,26 +841,34 @@ function EditDeck({
 										}
 										action={setColor}
 									/>
-									<div className={css.customInput}>
-										<input
-											maxLength={25}
-											name="tag"
-											placeholder=" "
-											className={css.input}
-											id="tag"
-											ref={tagNameRef}
-										></input>
-									</div>
-									<Button
-										variant="default"
-										size="small"
-										type="submit"
-										className={css.submitButton}
-										disabled={databaseInfo.noConnection}
+									<form
+										className={css.deckTagsForm}
+										onSubmit={(e) => {
+											addTag(tags, setTags, color, nextKey, setColor, e)
+											setNextKey(generateDatabaseCode())
+										}}
 									>
-										+
-									</Button>
-								</form>
+										<div className={css.customInput}>
+											<input
+												maxLength={25}
+												name="tag"
+												placeholder=" "
+												className={css.input}
+												id="tag"
+												ref={tagNameRef}
+											></input>
+										</div>
+										<Button
+											variant="default"
+											size="small"
+											type="submit"
+											className={css.submitButton}
+											disabled={databaseInfo.noConnection}
+										>
+											Add
+										</Button>
+									</form>
+								</div>
 								<div className={css.tagList}>
 									{tags.map((tag) => {
 										return (
