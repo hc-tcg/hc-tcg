@@ -21,8 +21,6 @@ export default {
 			'evilxisuma_boss',
 			'feather',
 			'item_any_rare',
-			'elder_guardian',
-			'allay',
 			'arrow_of_poison',
 			'tnt_minecart',
 			'redstone_torch',
