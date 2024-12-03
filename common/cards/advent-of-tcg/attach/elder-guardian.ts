@@ -19,6 +19,12 @@ const ElderGuardian: Attach = {
 	tokens: 1,
 	description:
 		"When this hermit is attacked, the opponent's active hermit recieves mining fatigue for one round.",
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'single-turn-mining-fatigue',
+		},
+	],
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
