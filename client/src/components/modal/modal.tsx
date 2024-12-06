@@ -114,7 +114,13 @@ export function Modal({
 				className={cn(css.overlay, overlayClassName)}
 				onClick={!disableCloseOnOverlayClick ? onClose : undefined}
 			/>
-			<div className={cn(css.modal, modalClassName, veryWide && css.veryWide)}>
+			<div
+				className={cn(
+					css.modal,
+					modalClassName,
+					veryWide === true && css.veryWide,
+				)}
+			>
 				{title && (
 					<div className={css.title}>
 						{title && <span>{title}</span>}
