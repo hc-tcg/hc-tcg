@@ -143,6 +143,9 @@ export const CurrentTooltip = ({
 		})
 	}
 
+	const HOLD_MS = 10
+	const COMPUTER_MS = 20
+
 	const padding = 10
 
 	type Offsets = {
@@ -212,12 +215,13 @@ export const CurrentTooltip = ({
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
+			setTouchTime(0)
 			setInactiveTime(inactiveTime + 1)
 			return
 		}
 
 		setInactiveTime(0)
-		setTooltipPosition(tooltipRef.current, offsets)
+		if (touchTime > COMPUTER_MS) setTooltipPosition(tooltipRef.current, offsets)
 	}
 
 	const onTouchStart = (e: TouchEvent) => {
@@ -251,7 +255,7 @@ export const CurrentTooltip = ({
 	}
 
 	const onTouchEnd = () => {
-		if (touchTime <= 5) {
+		if (touchTime <= HOLD_MS) {
 			dispatch({
 				type: localMessages.HIDE_TOOLTIP,
 			})
@@ -260,7 +264,7 @@ export const CurrentTooltip = ({
 	}
 
 	const onTouchMove = () => {
-		if (touchTime <= 5) {
+		if (touchTime <= HOLD_MS) {
 			setTouchTime(0)
 			return
 		}
@@ -271,7 +275,7 @@ export const CurrentTooltip = ({
 
 	useLayoutEffect(() => {
 		const interval = setInterval(() => {
-			if (!shownByTouch || touchTime > 5) {
+			if ((shownByTouch && touchTime > HOLD_MS) || touchTime > COMPUTER_MS) {
 				const offsets = getOffsets()
 				if (!offsets || !tooltipRef?.current) return
 				setTooltipPosition(tooltipRef.current, offsets)
@@ -279,8 +283,6 @@ export const CurrentTooltip = ({
 			}
 			setTouchTime(touchTime + 1)
 		}, 10)
-
-		if (!shownByTouch) clearInterval(interval)
 
 		window.addEventListener('scroll', onMouseScroll, true)
 		window.addEventListener('mousemove', onMouseMove)
