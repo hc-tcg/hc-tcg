@@ -15,7 +15,7 @@
 	left: 50%;
 	transform: translate(-50%, -50%);
 	min-width: min(550px, 90vw);
-	max-width: 100%;
+	max-width: 300px;
 	max-height: 90vh;
 	background: var(--gray-700);
 	border: 2px solid var(--gray-900);
@@ -29,6 +29,7 @@
 
 	&.veryWide {
 		width: 75%;
+		max-width: 75%;
 	}
 
 	.title {
