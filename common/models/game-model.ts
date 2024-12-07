@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -7,10 +6,8 @@ import {
 	SlotComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -39,7 +36,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {PlayerId, PlayerModel} from './player-model'
 
 export type GameSettings = {
 	maxTurnTime: number
@@ -88,12 +84,22 @@ export function gameSettingsFromEnv(): GameSettings {
 	}
 }
 
+export type GameProps = {
+	player1: PlayerSetupDefs
+	player2: PlayerSetupDefs | AISetupDefs
+	settings: GameSettings
+	gameCode?: string
+	spectatorCode?: string
+	randomizeOrder?: boolean
+	randomNumberSeed: string
+	id: string
+}
+
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
 	private internalGameCode: string | null
 	private internalSpectatorCode: string | null
-	private internalApiSecret: string | null
 
 	public rng: () => number
 
@@ -143,30 +149,19 @@ export class GameModel {
 	}
 	public outcome?: GameOutcome
 
-	constructor(
-		rngSeed: string,
-		player1: PlayerSetupDefs,
-		player2: PlayerSetupDefs,
-		settings: GameSettings,
-		options?: {
-			gameCode?: string
-			apiSecret?: string
-			spectatorCode?: string
-			randomizeOrder?: false
-		},
-	) {
-		options = options ?? {}
-
-		this.settings = settings
-		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
-		this.rngSeed = rngSeed
-		this.rng = newRandomNumberGenerator(rngSeed)
+	constructor(props: GameProps) {
+		this.settings = props.settings
+		assert(
+			props.randomNumberSeed.length < 16,
+			'Game RNG seed must be under 16 characters',
+		)
+		this.rngSeed = props.randomNumberSeed
+		this.rng = newRandomNumberGenerator(props.randomNumberSeed)
 
 		this.internalCreatedTime = Date.now()
 		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
-		this.internalApiSecret = options.apiSecret || null
+		this.internalGameCode = props.gameCode || null
+		this.internalSpectatorCode = props.spectatorCode || null
 		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
@@ -185,14 +180,14 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
-		setupComponents(this, this.components, player1, player2, {
-			shuffleDeck: settings.shuffleDeck,
-			startWithAllCards: settings.startWithAllCards,
-			unlimitedCards: settings.unlimitedCards,
-			extraStartingCards: settings.extraStartingCards,
+		setupComponents(this, this.components, props.player1, props.player2, {
+			shuffleDeck: props.settings.shuffleDeck,
+			startWithAllCards: props.settings.startWithAllCards,
+			unlimitedCards: props.settings.unlimitedCards,
+			extraStartingCards: props.settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(this, props.randomizeOrder)
 		this.voiceLineQueue = []
 	}
 
@@ -220,24 +215,6 @@ export class GameModel {
 		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
-	}
-
 	public get createdTime() {
 		return this.internalCreatedTime
 	}
@@ -252,17 +229,6 @@ export class GameModel {
 
 	public get spectatorCode() {
 		return this.internalSpectatorCode
-	}
-
-	public get apiSecret() {
-		return this.internalApiSecret
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
