@@ -135,6 +135,7 @@ export const CurrentTooltip = ({
 	})
 	const [inactiveTime, setInactiveTime] = useState<number>(0)
 	const [shownByTouch, setShownByTouch] = useState<boolean>(false)
+	const [scrollingThisTime, setScrollingThisTime] = useState<boolean>(false)
 	const [touchTime, setTouchTime] = useState<number>(0)
 
 	if (!anchor.current || inactiveTime > 2) {
@@ -198,6 +199,7 @@ export const CurrentTooltip = ({
 		onMouseAction(offsets)
 	}
 	const onMouseScroll = () => {
+		if (shownByTouch && touchTime < 11) setScrollingThisTime(true)
 		if (shownByTouch) return
 		const offsets = getOffsets()
 		if (!offsets) return
@@ -208,10 +210,10 @@ export const CurrentTooltip = ({
 
 		if (
 			!shownByTouch &&
-			(mousePosition.x + 5 < offsets.left ||
-				mousePosition.x - 5 > offsets.right ||
-				mousePosition.y + 5 < offsets.top ||
-				mousePosition.y - 5 > offsets.bottom)
+			(mousePosition.x < offsets.left ||
+				mousePosition.x > offsets.right ||
+				mousePosition.y < offsets.top ||
+				mousePosition.y > offsets.bottom)
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
@@ -280,6 +282,11 @@ export const CurrentTooltip = ({
 				if (!offsets || !tooltipRef?.current) return
 				setTooltipPosition(tooltipRef.current, offsets)
 				return
+			}
+			if (scrollingThisTime) {
+				dispatch({
+					type: localMessages.HIDE_TOOLTIP,
+				})
 			}
 			setTouchTime(touchTime + 1)
 		}, 10)
