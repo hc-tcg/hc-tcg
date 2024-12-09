@@ -95,10 +95,6 @@ export const onTurnEnd = createPriorityDictionary({
 export const onCoinFlip = createPriorityDictionary({
 	/* Priority for Bad Omen */
 	BAD_OMEN: null,
-	/* Coin flip for Grianch's Naughty */
-	NAUGHTY: null,
-	/* Priority for Fortune */
+	/* Priority for Fortune and Spent Fortune status effect */
 	FORTUNE: null,
 })
-
-

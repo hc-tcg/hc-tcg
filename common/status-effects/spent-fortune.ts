@@ -21,7 +21,7 @@ const SpentFortuneEffect: StatusEffect<PlayerComponent> = {
 	) {
 		observer.subscribeWithPriority(
 			player.hooks.onCoinFlip,
-			onCoinFlip.NAUGHTY,
+			onCoinFlip.FORTUNE,
 			(_card, coinFlips) => {
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i].result = 'heads'
