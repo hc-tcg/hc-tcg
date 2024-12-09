@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {onTurnEnd} from '../types/priorities'
+import {onCoinFlip, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const SpentFortuneEffect: StatusEffect<PlayerComponent> = {
@@ -19,13 +19,17 @@ const SpentFortuneEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribe(player.hooks.onCoinFlip, (_card, coinFlips) => {
-			for (let i = 0; i < coinFlips.length; i++) {
-				coinFlips[i].result = 'heads'
-				coinFlips[i].forced = true
-			}
-			return coinFlips
-		})
+		observer.subscribeWithPriority(
+			player.hooks.onCoinFlip,
+			onCoinFlip.NAUGHTY,
+			(_card, coinFlips) => {
+				for (let i = 0; i < coinFlips.length; i++) {
+					coinFlips[i].result = 'heads'
+					coinFlips[i].forced = true
+				}
+				return coinFlips
+			},
+		)
 
 		observer.subscribeWithPriority(
 			player.opponentPlayer.hooks.onTurnEnd,
