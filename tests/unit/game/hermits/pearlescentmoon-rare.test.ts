@@ -95,6 +95,13 @@ describe('Test Pearlescent Moon Rare', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 10 /* Anvil damage */)
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(AussiePingImmuneEffect),
+							query.effect.targetEntity(game.opponentPlayer.entity),
+						),
+					).not.toBe(null)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
