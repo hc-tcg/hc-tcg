@@ -76,6 +76,7 @@ const CardList = (props: CardListProps) => {
 					{cardComponent}
 					<StatusEffectContainer
 						statusEffects={thisCardsEffects}
+						tooltipAboveModal={props.tooltipAboveModal}
 					/>
 				</div>
 			)

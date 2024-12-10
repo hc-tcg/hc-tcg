@@ -7,9 +7,13 @@ import css from './board.module.scss'
 
 type ExpandStatusEffectProps = {
 	statusEffects: Array<any>
+	tooltipAboveModal?: boolean
 }
 
-const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
+const ExpandStatusEffect = ({
+	statusEffects,
+	tooltipAboveModal,
+}: ExpandStatusEffectProps) => {
 	let tooltipWindow = (
 		<div>
 			<div className={css.expandStatusEffects}>
@@ -19,7 +23,7 @@ const ExpandStatusEffect = ({statusEffects}: ExpandStatusEffectProps) => {
 	)
 
 	return (
-		<Tooltip tooltip={tooltipWindow}>
+		<Tooltip tooltip={tooltipWindow} showAboveModal={tooltipAboveModal}>
 			<div className={statusEffectImageCss.statusEffect}>
 				<img
 					src="images/status/expand.png"
@@ -34,6 +38,7 @@ type StatusEffectDisplayProps = {
 	shouldDim?: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
 	forHermit?: boolean
+	tooltipAboveModal?: boolean
 }
 
 /** An object to display status effect for a specific card */
@@ -41,6 +46,7 @@ const StatusEffectContainer = ({
 	shouldDim,
 	statusEffects,
 	forHermit,
+	tooltipAboveModal,
 }: StatusEffectDisplayProps) => {
 	let classes
 	if (!forHermit) {
@@ -62,6 +68,7 @@ const StatusEffectContainer = ({
 				key={effect.instance}
 				statusEffect={effect}
 				counter={effect.counter}
+				tooltipAboveModal={tooltipAboveModal}
 			/>
 		)
 	})
@@ -69,7 +76,10 @@ const StatusEffectContainer = ({
 	if (sidebarStatusEffects.length > 4) {
 		sidebarStatusEffects = [
 			...sidebarStatusEffects.slice(0, 3),
-			<ExpandStatusEffect statusEffects={sidebarStatusEffects} />,
+			<ExpandStatusEffect
+				statusEffects={sidebarStatusEffects}
+				tooltipAboveModal={tooltipAboveModal}
+			/>,
 		]
 	}
 
