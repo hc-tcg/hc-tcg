@@ -30,7 +30,6 @@ function SelectCardsModal({closeModal}: Props) {
 	const primaryButton = modalData.primaryButton
 	const secondaryButton = modalData.secondaryButton
 	const cancelable = modalData.cancelable
-	const localGameState = useSelector(getGameState)
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
 		if (maxSelectionSize === 0) return
@@ -108,7 +107,6 @@ function SelectCardsModal({closeModal}: Props) {
 								cards={cards}
 								selected={selected}
 								wrap={true}
-								statusEffects={localGameState?.statusEffects}
 								tooltipAboveModal
 								disableAnimations
 								statusEffects={useSelector(getGameState)?.statusEffects}

@@ -70,19 +70,15 @@ const CardList = (props: CardListProps) => {
 			(x) => x.target.type === 'card' && x.target.card === card.entity,
 		)
 
-		if (thisCardsEffects) {
-			if (
-				statusEffects.filter(
-					(x) => x.target.type === 'card' && x.target.card === card.entity,
-				)
-			) {
-				cardComponent = (
-					<div>
-						{cardComponent}
-						<StatusEffectContainer statusEffects={thisCardsEffects} />
-					</div>
-				)
-			}
+		if (thisCardsEffects.length) {
+			cardComponent = (
+				<div className={css.cardWithStatus}>
+					{cardComponent}
+					<StatusEffectContainer
+						statusEffects={thisCardsEffects}
+					/>
+				</div>
+			)
 		}
 
 		if (!disableAnimations) {

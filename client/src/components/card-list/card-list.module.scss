@@ -47,6 +47,10 @@ $card-size: 118px;
 	display: grid;
 }
 
+.cardWithStatus {
+	position: relative;
+}
+
 .clickable:not(:disabled) {
 	transform: scale(100%);
 
