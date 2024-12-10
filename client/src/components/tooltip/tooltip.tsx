@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {localMessages} from 'logic/messages'
+import {LocalMessage, localMessages, useMessageDispatch} from 'logic/messages'
 import React, {
+	Dispatch,
 	memo,
 	useEffect,
 	useLayoutEffect,
@@ -26,15 +27,23 @@ type CurrentTooltipProps = {
 }
 
 const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
-	const dispatch = useDispatch()
+	let dispatch: Dispatch<LocalMessage>
+	let showAdvancedTooltips
+
+	try {
+		dispatch = useMessageDispatch()
+		showAdvancedTooltips = useSelector(getSettings).showAdvancedTooltips
+	} catch {
+		// Skip displaying tooltips in component render tests
+		return children
+	}
+
 	const childRef = useRef<HTMLDivElement>(null)
 	const tooltipRef = useRef<HTMLDivElement>(null)
 	const [tooltipSize, setTooltipSize] = useState<{
 		h: number
 		w: number
 	} | null>(null)
-
-	const showAdvancedTooltips = useSelector(getSettings).showAdvancedTooltips
 
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
