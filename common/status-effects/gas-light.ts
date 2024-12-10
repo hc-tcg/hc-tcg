@@ -33,6 +33,20 @@ function newGasLightAttack(
 		.multiplyDamage(effect.entity, effect.counter || 0)
 }
 
+export function isFromGasLightEffect(
+	game: GameModel,
+	attack: AttackModel,
+): boolean {
+	const damageSource = attack.getHistory('add_damage').at(0)?.source
+	if (damageSource === undefined || damageSource === 'debug') return false
+	const component = game.components.get(damageSource)
+	if (!component || component instanceof CardComponent) return false
+	return query.effect.is(GasLightTriggeredEffect, GasLightEffect)(
+		game,
+		component,
+	)
+}
+
 export const GasLightEffect: StatusEffect<CardComponent> = {
 	...hiddenStatusEffect,
 	id: 'gas-light',

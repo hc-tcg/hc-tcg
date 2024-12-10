@@ -22,6 +22,8 @@ type ModalProps = {
 	disableCloseOnOverlayClick?: boolean
 	/** If true, The close button will be hidden and the user will not be able to close the modal in any way. Overrides `disableCloseButton`, `disableCloseOnEsc`, and `disableCloseOnOverlayClick` to `true`. */
 	disableUserClose?: boolean
+	/** If true, makes the modal take up 75% of the screen width*/
+	veryWide?: boolean
 }
 
 export function Modal({
@@ -35,6 +37,7 @@ export function Modal({
 	disableCloseOnEsc = false,
 	disableCloseOnOverlayClick = false,
 	disableUserClose = false,
+	veryWide = false,
 }: ModalProps) {
 	if (!setOpen) return
 
@@ -111,7 +114,13 @@ export function Modal({
 				className={cn(css.overlay, overlayClassName)}
 				onClick={!disableCloseOnOverlayClick ? onClose : undefined}
 			/>
-			<div className={cn(css.modal, modalClassName)}>
+			<div
+				className={cn(
+					css.modal,
+					modalClassName,
+					veryWide === true && css.veryWide,
+				)}
+			>
 				{title && (
 					<div className={css.title}>
 						{title && <span>{title}</span>}

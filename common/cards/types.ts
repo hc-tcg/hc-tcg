@@ -102,8 +102,8 @@ export type Hermit = HasHealth & {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType,
 	): AttackModel | null
-	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharaoh'
-	background?: 'alter_egos' | 'advent_of_tcg'
+	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharaoh' | 'advent_of_tcg_ii'
+	background?: 'alter_egos' | 'advent_of_tcg' | 'advent_of_tcg_ii'
 }
 
 export function isHermit(

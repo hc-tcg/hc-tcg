@@ -63,13 +63,13 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			if (
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.props.primary.cost,
+					activeHermit.getAttackCost('primary'),
 					game.settings.noItemRequirements,
 				) ||
 					game.isActionBlocked('PRIMARY_ATTACK')) &&
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.props.secondary.cost,
+					activeHermit.getAttackCost('secondary'),
 					game.settings.noItemRequirements,
 				) ||
 					game.isActionBlocked('SECONDARY_ATTACK'))

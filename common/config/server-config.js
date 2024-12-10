@@ -17,6 +17,15 @@ export default {
 		maxCards: 42,
 		maxDuplicates: 3,
 		maxDeckCost: 42,
+		bannedCards: [
+			'evilxisuma_boss',
+			'feather',
+			'item_any_rare',
+			'redstone_torch',
+			'smithing_table',
+			'sculk_catalyst',
+			'wind_burst',
+		],
 	},
 	logoSubText: 'Over 3 Games Played!',
 }

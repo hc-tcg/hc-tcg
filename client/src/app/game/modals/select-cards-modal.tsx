@@ -111,6 +111,7 @@ function SelectCardsModal({closeModal}: Props) {
 								statusEffects={localGameState?.statusEffects}
 								tooltipAboveModal
 								disableAnimations
+								statusEffects={useSelector(getGameState)?.statusEffects}
 							/>
 						</div>
 					</div>

@@ -40,9 +40,10 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 
 	const childRef = useRef<HTMLDivElement>(null)
 	const tooltipRef = useRef<HTMLDivElement>(null)
-	const [tooltipSize, setTooltipSize] = useState<{h: number; w: number} | null>(
-		null,
-	)
+	const [tooltipSize, setTooltipSize] = useState<{
+		h: number
+		w: number
+	} | null>(null)
 
 	const [, forceUpdate] = useReducer((x) => x + 1, 0)
 
@@ -62,7 +63,19 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	}
 
 	function toggleShow(newShow: boolean) {
-		if (newShow && childRef.current && tooltipSize) {
+		if (tooltipRef && tooltipRef.current && tooltipSize?.h === 0) {
+			setTooltipSize({
+				h: tooltipRef.current.offsetHeight,
+				w: tooltipRef.current.offsetWidth,
+			})
+			dispatch({
+				type: localMessages.SHOW_TOOLTIP,
+				tooltip: tooltipDiv,
+				anchor: childRef,
+				tooltipHeight: tooltipRef.current.offsetHeight,
+				tooltipWidth: tooltipRef.current.offsetWidth,
+			})
+		} else if (newShow && childRef.current && tooltipSize) {
 			dispatch({
 				type: localMessages.SHOW_TOOLTIP,
 				tooltip: tooltipDiv,
@@ -131,6 +144,7 @@ export const CurrentTooltip = ({
 	})
 	const [inactiveTime, setInactiveTime] = useState<number>(0)
 	const [shownByTouch, setShownByTouch] = useState<boolean>(false)
+	const [scrollingThisTime, setScrollingThisTime] = useState<boolean>(false)
 	const [touchTime, setTouchTime] = useState<number>(0)
 
 	if (!anchor.current || inactiveTime > 2) {
@@ -138,6 +152,9 @@ export const CurrentTooltip = ({
 			type: localMessages.HIDE_TOOLTIP,
 		})
 	}
+
+	const HOLD_MS = 10
+	const COMPUTER_MS = 20
 
 	const padding = 10
 
@@ -160,6 +177,7 @@ export const CurrentTooltip = ({
 		const height = tooltipHeight
 		const width = tooltipWidth - child.width
 		const showBelow = child.top - tooltipHeight - padding < 50
+
 		return {
 			above: child.top - height - padding,
 			below: child.bottom + padding,
@@ -175,6 +193,13 @@ export const CurrentTooltip = ({
 		}
 	}
 
+	const setTooltipPosition = (tooltip: HTMLDivElement, offsets: Offsets) => {
+		const windowWidth = window.innerWidth
+
+		tooltip.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
+		tooltip.style.left = `${offsets.left > windowWidth || offsets.left < 0 ? windowWidth / 2 - tooltipWidth / 2 : offsets.middle}px`
+	}
+
 	const onMouseMove = (e: MouseEvent) => {
 		if (shownByTouch) setShownByTouch(false)
 		setMousePosition({x: e.x, y: e.y})
@@ -183,6 +208,7 @@ export const CurrentTooltip = ({
 		onMouseAction(offsets)
 	}
 	const onMouseScroll = () => {
+		if (shownByTouch && touchTime < 11) setScrollingThisTime(true)
 		if (shownByTouch) return
 		const offsets = getOffsets()
 		if (!offsets) return
@@ -193,20 +219,20 @@ export const CurrentTooltip = ({
 
 		if (
 			!shownByTouch &&
-			(mousePosition.x + 5 < offsets.left ||
-				mousePosition.x - 5 > offsets.right ||
-				mousePosition.y + 5 < offsets.top ||
-				mousePosition.y - 5 > offsets.bottom)
+			(mousePosition.x < offsets.left ||
+				mousePosition.x > offsets.right ||
+				mousePosition.y < offsets.top ||
+				mousePosition.y > offsets.bottom)
 		) {
 			tooltipRef.current.style.top = '-9999px'
 			tooltipRef.current.style.left = '-9999px'
+			setTouchTime(0)
 			setInactiveTime(inactiveTime + 1)
 			return
 		}
 
 		setInactiveTime(0)
-		tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-		tooltipRef.current.style.left = `${offsets.middle}px`
+		if (touchTime > COMPUTER_MS) setTooltipPosition(tooltipRef.current, offsets)
 	}
 
 	const onTouchStart = (e: TouchEvent) => {
@@ -240,7 +266,7 @@ export const CurrentTooltip = ({
 	}
 
 	const onTouchEnd = () => {
-		if (touchTime <= 5) {
+		if (touchTime <= HOLD_MS) {
 			dispatch({
 				type: localMessages.HIDE_TOOLTIP,
 			})
@@ -249,7 +275,7 @@ export const CurrentTooltip = ({
 	}
 
 	const onTouchMove = () => {
-		if (touchTime <= 5) {
+		if (touchTime <= HOLD_MS) {
 			setTouchTime(0)
 			return
 		}
@@ -260,17 +286,19 @@ export const CurrentTooltip = ({
 
 	useLayoutEffect(() => {
 		const interval = setInterval(() => {
-			if (!shownByTouch || touchTime > 5) {
+			if ((shownByTouch && touchTime > HOLD_MS) || touchTime > COMPUTER_MS) {
 				const offsets = getOffsets()
 				if (!offsets || !tooltipRef?.current) return
-				tooltipRef.current.style.top = `${offsets.showBelow ? offsets.below : offsets.above}px`
-				tooltipRef.current.style.left = `${offsets.middle}px`
+				setTooltipPosition(tooltipRef.current, offsets)
 				return
+			}
+			if (scrollingThisTime) {
+				dispatch({
+					type: localMessages.HIDE_TOOLTIP,
+				})
 			}
 			setTouchTime(touchTime + 1)
 		}, 10)
-
-		if (!shownByTouch) clearInterval(interval)
 
 		window.addEventListener('scroll', onMouseScroll, true)
 		window.addEventListener('mousemove', onMouseMove)

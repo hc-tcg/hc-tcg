@@ -53,7 +53,6 @@ export type ClientMessages = [
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 	},
-	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 	{
@@ -86,7 +85,7 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.IMPORT_DECK
 		code: string
-		newActiveDeck?: string
+		newActiveDeck?: boolean
 		newName: string
 		newIcon: string
 		newIconType: string
@@ -95,7 +94,7 @@ export type ClientMessages = [
 		type: typeof clientMessages.EXPORT_DECK
 		code: string
 	},
-	{type: typeof clientMessages.GRAB_CURRENT_IMPORT; code: string},
+	{type: typeof clientMessages.GRAB_CURRENT_IMPORT; code: string | null},
 	{
 		type: typeof clientMessages.MAKE_INFO_PUBLIC
 		code: string

@@ -25,7 +25,7 @@ function* spectatorLeaveSaga(
 			type: 'viewer',
 			id: action.playerId,
 		},
-		message: formatText(`$s${viewer?.player.name}$ stopped spectating.`),
+		message: formatText(`$s${viewer?.player.name}$ $ystopped spectating$`),
 		createdAt: Date.now(),
 	})
 

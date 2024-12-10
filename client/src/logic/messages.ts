@@ -4,8 +4,7 @@ import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 } from 'common/types/game-state'
@@ -59,7 +58,6 @@ export const localMessages = messages('clientLocalMessages', {
 	GAME_CARD_SELECTED_SET: null,
 	GAME_MODAL_OPENED_SET: null,
 	GAME_SLOT_PICKED: null,
-	GAME_FORFEIT: null,
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
@@ -175,7 +173,6 @@ type Messages = [
 		row?: number
 		index?: number
 	},
-	{type: typeof localMessages.GAME_FORFEIT},
 	{
 		type: typeof localMessages.GAME_ATTACK_START
 		attackType: 'single-use' | 'primary' | 'secondary'
@@ -183,8 +180,7 @@ type Messages = [
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_HIDE
@@ -235,13 +231,13 @@ type Messages = [
 	{
 		type: typeof localMessages.IMPORT_DECK
 		code: string
-		newActiveDeck?: string
+		newActiveDeck?: boolean
 		newName: string
 		newIcon: string
 		newIconType: string
 	},
 	{type: typeof localMessages.EXPORT_DECK; code: string},
-	{type: typeof localMessages.GRAB_CURRENT_IMPORT; code: string},
+	{type: typeof localMessages.GRAB_CURRENT_IMPORT; code: string | null},
 	{type: typeof localMessages.MAKE_INFO_PUBLIC; code: string; public: boolean},
 	{type: typeof localMessages.NEW_PLAYER},
 	{
