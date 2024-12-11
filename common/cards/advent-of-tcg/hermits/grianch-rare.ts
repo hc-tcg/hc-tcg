@@ -23,7 +23,7 @@ const GrianchRare: Hermit = {
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 3,
+	tokens: 4,
 	type: 'builder',
 	health: 250,
 	primary: {
