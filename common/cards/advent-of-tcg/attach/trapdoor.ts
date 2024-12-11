@@ -29,7 +29,7 @@ const Trapdoor: Attach = {
 	rarity: 'rare',
 	tokens: 3,
 	description:
-		"When the Hermit directly above Hermit card takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
+		"When the Hermit directly above this card takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
