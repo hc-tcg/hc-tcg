@@ -22,7 +22,7 @@ const SmithingTable: SingleUse = {
 	name: 'Smithing Table',
 	expansion: 'advent_of_tcg_ii',
 	rarity: 'common',
-	tokens: 0,
+	tokens: 1,
 	description:
 		'Choose an Attach card from your hand. That card cannot be removed from its slot by either player after being played.\nThe selected card may still discard itself according to its description.',
 	log: (values) => values.defaultLog,
