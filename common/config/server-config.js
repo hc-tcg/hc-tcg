@@ -21,8 +21,6 @@ export default {
 			'evilxisuma_boss',
 			'feather',
 			'item_any_rare',
-			'redstone_torch',
-			'smithing_table',
 			'sculk_catalyst',
 			'wind_burst',
 		],
