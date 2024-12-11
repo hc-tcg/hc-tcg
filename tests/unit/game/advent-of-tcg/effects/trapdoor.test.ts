@@ -432,12 +432,12 @@ describe('Test Trapdoor', () => {
 				],
 				playerTwoDeck: [VintageBeefCommon],
 				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
 					yield* endTurn(game)
 
@@ -456,16 +456,16 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(
+						EthosLabCommon.health - (VintageBeefCommon.secondary.damage - 40),
+					)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(
-						EthosLabCommon.health - (VintageBeefCommon.secondary.damage - 40),
-					)
+					).toBe(EthosLabCommon.health)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -647,11 +647,11 @@ describe('Test Trapdoor', () => {
 				playerOneDeck: [EthosLabCommon, Trapdoor],
 				playerTwoDeck: [RenbobRare],
 				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RenbobRare, 'hermit', 1)
+					yield* playCardFromHand(game, RenbobRare, 'hermit', 0)
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
@@ -722,7 +722,10 @@ describe('Test Trapdoor', () => {
 	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', () => {
 		testGame(
 			{
-				playerOneDeck: [...Array(5).fill(EthosLabCommon), Trapdoor, Trapdoor],
+				playerOneDeck: [
+					...Array(5).fill(EthosLabCommon),
+					...Array(3).fill(Trapdoor),
+				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Anvil],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -732,6 +735,7 @@ describe('Test Trapdoor', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 4)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 2)
@@ -784,7 +788,6 @@ describe('Test Trapdoor', () => {
 						)?.health,
 					).toBe(
 						EthosLabCommon.health -
-							40 /** Trapdoor */ -
 							10 /** Anvil */ -
 							20 /** Gaslight extra damage */,
 					)
@@ -796,6 +799,7 @@ describe('Test Trapdoor', () => {
 						)?.health,
 					).toBe(
 						EthosLabCommon.health -
+							40 /** Trapdoor (4) -> Trapdoor (5) */ -
 							10 /** Anvil */ -
 							20 /** Gaslight extra damage */,
 					)
