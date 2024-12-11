@@ -12,10 +12,11 @@ interface StatusEffectReactProps
 	> {
 	statusEffect: LocalStatusEffectInstance
 	counter: number | null
+	tooltipAboveModal?: boolean
 }
 
 const StatusEffect = (props: StatusEffectReactProps) => {
-	const {statusEffect, counter} = props
+	const {statusEffect, counter, tooltipAboveModal} = props
 
 	const extension = ['poison', 'fire'].includes(statusEffect.props.icon)
 		? '.gif'
@@ -33,6 +34,7 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 					counter={counter}
 				/>
 			}
+			showAboveModal={tooltipAboveModal}
 		>
 			<div className={classnames(css.statusEffect)}>
 				<img
