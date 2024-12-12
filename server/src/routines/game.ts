@@ -59,11 +59,6 @@ export type GameMessages = [
 		type: typeof gameMessages.GAME_END
 		outcome: GameOutcome
 	},
-	{
-		gameId: string
-		type: typeof gameMessages.CHAT_MESSAGE
-		message: ChatMessage
-	},
 ]
 
 export type GameMessage = Message<GameMessages>
@@ -552,7 +547,7 @@ function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 		let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
-			game.state.timer.opponentActionStartTime =
+		    game.state.timer.opponentActionStartTime =
 				game.state.timer.opponentActionStartTime || Date.now()
 			maxTime = game.settings.extraActionTime * 1000
 			remainingTime =

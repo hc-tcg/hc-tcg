@@ -7,7 +7,7 @@ import {ServerMessage} from 'common/socket-messages/server-messages'
 import {Message as ChatMessage} from 'common/types/game-state'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
-import { getLocalGameState } from 'utils/state-gen'
+import {getLocalGameState} from 'utils/state-gen'
 
 export type GameViewer = {id: PlayerId; type: 'player' | 'spectator'}
 
@@ -63,7 +63,16 @@ export class GameController {
 	}
 
 	public gameState(entity?: PlayerEntity): GameStartupInformation {
-    	getLocalGameState(ths.game, viewer)
+		let isSpectator = false
+		if (!entity) {
+			isSpectator = true
+			entity = this.game.state.order[0]
+		}
+		let game = getLocalGameState(
+			this.game,
+			this.game.components.get(entity),
+			isSpectator,
+		)
 	}
 
 	public broadcastToViewers(msg: ServerMessage) {
