@@ -11,9 +11,6 @@ import {applySingleUse} from '../../../utils/board'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
 
-const moveRowEntry = (row: RowComponent): string =>
-	`$p${row.player.playerName}$ moved $p${row.getHermit()?.props.name}$ to row #${row.index + 1}`
-
 const WindBurst: SingleUse = {
 	...singleUse,
 	id: 'wind_burst',
@@ -23,7 +20,7 @@ const WindBurst: SingleUse = {
 	rarity: 'common',
 	tokens: 0,
 	description:
-		'After your attack, you and your opponent must move your active Hermit and any attached cards to an open row on the game board if able.\nYour opponent moves their active Hermit first.',
+		"After your attack, choose an open row on the game board to move your opponent's active Hermit and any attached cards, if possible. Then choose an open row on the game board if able, to move your active Hermit and any attached cards.",
 	log: (values) => `${values.defaultLog} with {your|their} attack`,
 	onAttach(
 		game: GameModel,
@@ -31,6 +28,9 @@ const WindBurst: SingleUse = {
 		observer: ObserverComponent,
 	) {
 		const {player, opponentPlayer} = component
+
+		const moveRowEntry = (row: RowComponent): string =>
+			`$p{You|${player.playerName}}$ moved $${player === row.player ? 'p' : 'o'}${row.getHermit()?.props.name}$ to row #${row.index + 1}`
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -60,7 +60,7 @@ const WindBurst: SingleUse = {
 					game.components.exists(SlotComponent, opponentPickCondition)
 				) {
 					game.addPickRequest({
-						player: opponentPlayer.entity,
+						player: player.entity,
 						id: component.entity,
 						message: 'Pick an empty Hermit slot',
 						canPick: opponentPickCondition,
@@ -70,7 +70,21 @@ const WindBurst: SingleUse = {
 							game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
 
 							game.battleLog.addEntry(
-								opponentPlayer.entity,
+								player.entity,
+								moveRowEntry(opponentPlayer.activeRow),
+							)
+						},
+						onTimeout() {
+							const pickedSlot = game.components.find(
+								SlotComponent,
+								opponentPickCondition,
+							)
+							if (!pickedSlot?.inRow() || !opponentPlayer.activeRow) return
+
+							game.swapRows(opponentPlayer.activeRow, pickedSlot.row)
+
+							game.battleLog.addEntry(
+								player.entity,
 								moveRowEntry(opponentPlayer.activeRow),
 							)
 						},
@@ -102,6 +116,20 @@ const WindBurst: SingleUse = {
 						canPick: playerPickCondition,
 						onResult(pickedSlot) {
 							if (!pickedSlot.inRow() || !player.activeRow) return
+
+							game.swapRows(player.activeRow, pickedSlot.row)
+
+							game.battleLog.addEntry(
+								player.entity,
+								moveRowEntry(player.activeRow),
+							)
+						},
+						onTimeout() {
+							const pickedSlot = game.components.find(
+								SlotComponent,
+								playerPickCondition,
+							)
+							if (!pickedSlot?.inRow() || !player.activeRow) return
 
 							game.swapRows(player.activeRow, pickedSlot.row)
 
