@@ -20,7 +20,7 @@ const WindBurst: SingleUse = {
 	rarity: 'common',
 	tokens: 0,
 	description:
-		"After your attack, choose an open row on the game board to move your opponent's active Hermit and any attached cards, if possible. Then choose an open row on the game board if able, to move your active Hermit and any attached cards.",
+		"After your attack, choose an open row on the game board to move your opponent's active Hermit and any attached cards, if possible. Then, if possible, choose an open row on the game board to move your active Hermit and any attached cards.",
 	log: (values) => `${values.defaultLog} with {your|their} attack`,
 	onAttach(
 		game: GameModel,
