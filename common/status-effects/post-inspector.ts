@@ -37,7 +37,9 @@ const PostInspectorEffect: Counter<PlayerComponent> = {
 				let cardsToReturn: CardComponent[] = []
 				let chances = effect.counter || 1
 
-				const modalRequest = (cards: (CardComponent<Card> | null)[]) => ({
+				const modalRequest = (
+					cards: (CardComponent<Card> | null)[],
+				): SelectCards.Request => ({
 					player: target.entity,
 					modal: {
 						type: 'selectCards',
@@ -54,10 +56,19 @@ const PostInspectorEffect: Counter<PlayerComponent> = {
 							text: 'No',
 							variant: 'default',
 						},
-					} as SelectCards.Data,
-					onResult(result: SelectCards.Result) {
-						if (!result) return
-						if (!result.result) return
+					},
+					onResult(result) {
+						if (!result.result) {
+							cardsToReturn.forEach((card) => {
+								const newDeckSlot = game.components.new(
+									DeckSlotComponent,
+									target.entity,
+									{position: 'random'},
+								)
+								card.attach(newDeckSlot)
+							})
+							return
+						}
 						chances--
 
 						cards

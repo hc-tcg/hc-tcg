@@ -63,7 +63,7 @@ const DungeonTangoRare: Hermit = {
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>
 					items.includes(value)
 
-				if (!items) {
+				if (!items.length) {
 					pickedCard = null
 					return
 				}
