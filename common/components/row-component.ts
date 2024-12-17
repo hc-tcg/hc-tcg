@@ -1,7 +1,4 @@
-import CyberpunkImpulseRare from '../cards/advent-of-tcg/hermits/cyberpunkimpulse-rare'
-import FarmItem from '../cards/items/farm-common'
-import FarmDoubleItem from '../cards/items/farm-rare'
-import {Card} from '../cards/types'
+import {Item} from '../cards/types'
 import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardComponent} from './card-component'
@@ -59,12 +56,9 @@ export class RowComponent {
 				query.every(
 					query.slot.adjacent(query.slot.rowIs(this.entity)),
 					query.slot.row(
-						(_game, value) => CyberpunkImpulseRare === value.getHermit()?.props,
+						(_game, value) => 'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
 					),
-					(_game, value) =>
-						([FarmItem, FarmDoubleItem] as (Card | undefined)[]).includes(
-							value.getCard()?.props,
-						),
+					(_game, value) => (value.getCard()?.props as Item)?.energy.includes('farm'),
 					(_game, _value) => !excludeAdjacent,
 				),
 			),
@@ -95,7 +89,7 @@ export class RowComponent {
 				query.card.rowEntity(this.entity),
 				query.every(
 					query.card.rowEntity(this.entity),
-					(_game, value) => CyberpunkImpulseRare === value.props,
+					(_game, value) => 'cyberpunkimpulse_rare' === value.props.id,
 					(_game, _value) => excludeAdjacent,
 				),
 			),
