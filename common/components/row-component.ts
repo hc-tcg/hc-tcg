@@ -56,9 +56,11 @@ export class RowComponent {
 				query.every(
 					query.slot.adjacent(query.slot.rowIs(this.entity)),
 					query.slot.row(
-						(_game, value) => 'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
+						(_game, value) =>
+							'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
 					),
-					(_game, value) => (value.getCard()?.props as Item)?.energy.includes('farm'),
+					(_game, value) =>
+						(value.getCard()?.props as Item)?.energy.includes('farm'),
 					(_game, _value) => !excludeAdjacent,
 				),
 			),
