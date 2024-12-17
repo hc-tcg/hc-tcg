@@ -8,7 +8,7 @@ const CyberpunkImpulseRare: Hermit = {
 	id: 'cyberpunkimpulse_rare',
 	numericId: 255,
 	name: 'Cyberpunk Impulse',
-	expansion: 'advent_of_tcg',
+	expansion: 'advent_of_tcg_ii',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
