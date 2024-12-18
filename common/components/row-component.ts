@@ -60,7 +60,8 @@ export class RowComponent {
 					),
 					(_game, value) => {
 						const card = value.getCard()
-						return card?.isItem() && card.props.energy.includes('farm')
+						if (!card?.isItem()) return false
+						return card.props.energy.includes('farm')
 					},
 					(_game, _value) => !excludeAdjacent,
 				),
