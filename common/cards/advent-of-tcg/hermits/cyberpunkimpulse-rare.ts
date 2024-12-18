@@ -13,7 +13,7 @@ const CyberpunkImpulseRare: Hermit = {
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'rare',
-	tokens: 0,
+	tokens: 1,
 	type: 'farm',
 	health: 300,
 	primary: {
@@ -21,7 +21,7 @@ const CyberpunkImpulseRare: Hermit = {
 		cost: [],
 		damage: 0,
 		power:
-			'Farm item cards attached to this act as wild items attached to adjacent hermits.',
+			'Farm item cards attached to this act as wild items attached to adjacent hermits for their attacks.',
 		passive: true,
 	},
 	secondary: {
