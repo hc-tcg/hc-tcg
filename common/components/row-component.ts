@@ -1,4 +1,3 @@
-import {Item} from '../cards/types'
 import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {CardComponent} from './card-component'
@@ -59,8 +58,10 @@ export class RowComponent {
 						(_game, value) =>
 							'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
 					),
-					(_game, value) =>
-						(value.getCard()?.props as Item)?.energy.includes('farm'),
+					(_game, value) => {
+						const card = value.getCard()
+						return card?.isItem() && card.props.energy.includes('farm')
+					},
 					(_game, _value) => !excludeAdjacent,
 				),
 			),
@@ -84,17 +85,9 @@ export class RowComponent {
 	}
 
 	public getItems(excludeAdjacent: boolean = false) {
-		return this.game.components.filter(
-			CardComponent,
-			query.card.slot(query.slot.item),
-			query.some(
-				query.card.rowEntity(this.entity),
-				query.every(
-					query.card.rowEntity(this.entity),
-					(_game, value) => 'cyberpunkimpulse_rare' === value.props.id,
-					(_game, _value) => excludeAdjacent,
-				),
-			),
+		const itemSlots = this.getItemSlots(excludeAdjacent) as Array<SlotComponent>
+		return this.game.components.filter(CardComponent, (_game, value) =>
+			itemSlots.includes(value.slot),
 		)
 	}
 
