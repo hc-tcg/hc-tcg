@@ -7,7 +7,6 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -37,47 +36,7 @@ import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
-
-function setupGame(
-	player1: PlayerModel,
-	player2: PlayerModel,
-	player1Deck: Deck,
-	player2Deck: Deck,
-	code?: string,
-	spectatorCode?: string,
-	apiSecret?: string,
-): GameModel {
-	let game = new GameModel(
-		GameModel.newGameSeed(),
-		{
-			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
-		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode, apiSecret},
-	)
-
-	let playerEntities = game.components.filterEntities(PlayerComponent)
-
-	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
-		player: player1,
-		spectator: false,
-		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(ViewerComponent, {
-		player: player2,
-		spectator: false,
-		playerOnLeft: playerEntities[1],
-	})
-
-	return game
-}
+import {setupGameSaga} from './setup-game'
 
 function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
@@ -270,7 +229,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
+				const newGame = setupGameSaga(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
 				yield* safeCall(fork, gameManager, newGame)
 			} else {

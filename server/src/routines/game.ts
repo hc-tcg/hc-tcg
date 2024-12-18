@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {SingleUse} from 'common/cards/types'
 import {
 	CardComponent,
@@ -9,24 +10,25 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
-import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameModel, GameProps} from 'common/models/game-model'
+import {Message, MessageTable, messages} from 'common/redux-messages'
 import {TypeT} from 'common/types/cards'
 import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
 import {
-	AttackActionData,
+	AnyTurnActionData,
 	PickSlotActionData,
-	attackToAttackAction,
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {buffers} from 'redux-saga'
-import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
-import {printBoardState, printHooksState} from '../utils'
-import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
-
-import assert from 'assert'
-import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
+import {
+	actionChannel,
+	call,
+	delay,
+	fork,
+	put,
+	race,
+	take,
+} from 'typed-redux-saga'
+import {printBoardState, printHooksState} from 'utils'
 import {
 	applyEffectSaga,
 	attackSaga,
@@ -38,9 +40,40 @@ import {
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
-////////////////////////////////////////
-// @TODO sort this whole thing out properly
-/////////////////////////////////////////
+export const gameMessages = messages('gameMessages', {
+	TURN_ACTION: null,
+	GAME_END: null,
+	CHAT_MESSAGE: null,
+})
+
+export type GameMessages = [
+	{
+		gameId: string
+		type: typeof gameMessages.TURN_ACTION
+		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+		time: number
+	},
+	{
+		gameId: string
+		type: typeof gameMessages.GAME_END
+		outcome: GameOutcome
+	},
+]
+
+export type GameMessage = Message<GameMessages>
+export type GameMessageTable = MessageTable<GameMessages>
+
+/** The information required to start a game on the client */
+export type GameStartupInformation = {
+	props: GameProps
+	entity?: PlayerEntity
+	history: Array<GameMessage>
+	timer: {
+		turnRemaining: number
+		turnStartTime: number
+	}
+}
 
 export const getTimerForSeconds = (
 	game: GameModel,
@@ -176,7 +209,7 @@ function getAvailableActions(
 		// Su actions
 		if (su && !suUsed) {
 			actions.push('REMOVE_EFFECT')
-			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
+			actions.push('APPLY_EFFECT')
 		}
 
 		// Attack actions
@@ -282,19 +315,6 @@ function getAvailableActions(
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (actionAny: any) => {
-		const action = actionAny as LocalMessage
-		return (
-			action.type === localMessages.GAME_TURN_ACTION &&
-			'playerEntity' in action &&
-			'action' in action &&
-			action.action.type === actionType &&
-			action.playerEntity === playerEntity
-		)
-	}
-}
-
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
 function* checkHermitHealth(game: GameModel) {
@@ -364,22 +384,10 @@ function* checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function* sendGameState(game: GameModel) {
-	game.viewers.forEach((viewer) => {
-		const localGameState = getLocalGameState(game, viewer)
-
-		broadcast([viewer.player], {
-			type: serverMessages.GAME_STATE,
-			localGameState,
-		})
-	})
-
-	game.voiceLineQueue = []
-}
-
 function* turnActionSaga(
 	game: GameModel,
-	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
+	turnAction: GameMessageTable[typeof gameMessages.TURN_ACTION],
+	delaySaga: (ms: number) => any,
 ) {
 	const actionType = turnAction.action.type
 
@@ -405,7 +413,7 @@ function* turnActionSaga(
 				'MODAL_REQUEST',
 				'END_TURN',
 			].includes(actionType) || availableActions.includes(actionType),
-			'Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack.',
+			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. Action: ${JSON.stringify(turnAction.action, undefined, 2)}`,
 		)
 
 		switch (actionType) {
@@ -455,7 +463,6 @@ function* turnActionSaga(
 				game.endInfo.deadPlayerEntities = [turnAction.action.player]
 				return 'FORFEIT'
 			default:
-				// Unknown action type, ignore it completely
 				throw new Error(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
@@ -484,15 +491,9 @@ function* turnActionSaga(
 }
 
 function getPlayerAI(game: GameModel) {
-	const activePlayerEntity = game.state.turn.opponentAvailableActions.includes(
-		'WAIT_FOR_TURN',
-	)
-		? game.currentPlayerEntity
-		: game.opponentPlayerEntity
-
 	return game.components.find(
 		AIComponent,
-		(_game, ai) => ai.playerEntity === activePlayerEntity,
+		(_game, ai) => ai.playerEntity === game.currentPlayerEntity,
 	)
 }
 
@@ -548,7 +549,7 @@ function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 		let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
-			game.state.timer.opponentActionStartTime =
+		    game.state.timer.opponentActionStartTime =
 				game.state.timer.opponentActionStartTime || Date.now()
 			maxTime = game.settings.extraActionTime * 1000
 			remainingTime =
@@ -660,7 +661,13 @@ function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 	}
 }
 
-export function* turnSaga(game: GameModel) {
+export function* turnSaga(
+	game: GameModel,
+	turnActionChannel: any,
+	onTurnActionSaga: (action: any, game: GameModel) => void,
+	delaySaga: (ms: number) => void,
+	update?: (game: GameModel) => any,
+) {
 	const {currentPlayer, opponentPlayer} = game
 
 	// Reset turn state
@@ -675,6 +682,14 @@ export function* turnSaga(game: GameModel) {
 	game.state.timer.turnRemaining = game.settings.maxTurnTime * 1000
 
 	game.battleLog.addTurnStartEntry()
+
+	for (const chatMessage of game.chat) {
+		yield* put<GameMessage>({
+			type: gameMessages.CHAT_MESSAGE,
+			message: chatMessage,
+			gameId: game.id,
+		})
+	}
 
 	// Call turn start hooks
 	currentPlayer.hooks.onTurnStart.call()
@@ -806,17 +821,60 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(game: GameModel) {
-	if (game.settings.verboseLogging)
-		console.info(
-			`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
-		)
-	while (true) {
-		game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, game)
-		if (result === 'GAME_END') break
+/** Run a game. This saga ends when the game is competle. Send the game result with the gameMessage.GAME_END message. */
+export function* runGameSaga(
+	props: GameProps,
+	sagas: {
+		onGameStart?: (game: GameModel) => any
+		update?: (game: GameModel) => any
+		onTurnAction?: (
+			action: GameMessageTable[typeof gameMessages.TURN_ACTION],
+			game: GameModel,
+		) => any
+		delay?: (ms: number) => void
+	},
+) {
+	const game = new GameModel(props)
+
+	const turnActionChannel = yield* actionChannel(
+		(action: any) =>
+			action.gameId === game.id && action.type === gameMessages.TURN_ACTION,
+	)
+
+	game.state.turn.turnNumber++
+	if (sagas.onGameStart) {
+		yield* sagas.onGameStart(game)
 	}
-	game.outcome = figureOutGameResult(game)
+
+	if (sagas.onTurnAction === undefined) {
+		sagas.onTurnAction = function* () {}
+	}
+
+	while (true) {
+		const result = yield* call(
+			turnSaga,
+			game,
+			turnActionChannel,
+			sagas.onTurnAction,
+			sagas.delay ?? delay,
+			sagas.update,
+		)
+		if (result === 'GAME_END') break
+		game.state.turn.turnNumber++
+	}
+
+	turnActionChannel.close()
+
+	// Make sure to show the last game state to the client.
+	if (sagas.update) {
+		yield* sagas.update(game)
+	}
+
+	yield* put<GameMessage>({
+		type: gameMessages.GAME_END,
+		outcome: figureOutGameResult(game),
+		gameId: game.id,
+	})
 }
 
-export default gameSaga
+export default runGameSaga
