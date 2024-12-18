@@ -63,13 +63,14 @@ const HypnotizdRare: Hermit = {
 				)
 					return
 
-				const pickCondition = query.every(
-					query.slot.currentPlayer,
-					query.slot.active,
-					query.slot.item,
-					query.not(query.slot.empty),
-					query.not(query.slot.frozen),
+				const activeRow = component.slot.inRow() ? component.slot.row : null
+				if (!activeRow) return
+
+				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
+					(slot) => slot.getCard() && !query.slot.frozen(game, slot),
 				)
+				const pickCondition = (_game: GameModel, value: SlotComponent) =>
+					items.includes(value)
 
 				// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 				// to make the game easier to follow.

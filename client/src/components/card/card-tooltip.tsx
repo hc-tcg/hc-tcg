@@ -45,7 +45,11 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 		text = formatText(
 			[card.primary, card.secondary]
 				.flatMap((attack) =>
-					attack.power ? [`**${attack.name}**\n*${attack.power}*`] : [],
+					attack.power
+						? [
+								`**${attack.name}** ${attack.passive ? '(Passive)' : ''}\n*${attack.power}*`,
+							]
+						: [],
 				)
 				.join('\n'),
 		)

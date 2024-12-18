@@ -69,6 +69,9 @@ export const hermit = {
 	): AttackModel | null {
 		if (hermitAttackType === 'single-use') return null
 
+		if (hermitAttackType === 'primary' && this.primary.passive) return null
+		if (hermitAttackType === 'secondary' && this.secondary.passive) return null
+
 		const attack = game.newAttack({
 			attacker: component.entity,
 			target: game.components.findEntity(
