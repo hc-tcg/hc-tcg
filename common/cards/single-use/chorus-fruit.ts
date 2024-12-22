@@ -34,7 +34,7 @@ const ChorusFruit: SingleUse = {
 		query.exists(
 			CardComponent,
 			query.card.currentPlayer,
-			query.card.slot(query.slot.hermit),
+			query.card.slot(query.slot.hermit, query.slot.canBecomeActive),
 			query.not(query.card.active),
 		),
 	),
@@ -65,6 +65,7 @@ const ChorusFruit: SingleUse = {
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.not(query.slot.empty),
+						query.some(query.slot.active, query.slot.canBecomeActive),
 					),
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return

@@ -1,16 +1,21 @@
 import {Card} from 'common/cards/types'
-import {Deck, Tag} from 'common/types/deck'
-import {GameEndOutcomeT} from 'common/types/game-state'
+import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import {CARDS} from 'common/cards'
+import {TypeT} from 'common/types/cards'
 import {
 	CardStats,
 	DeckStats,
+	GamesStats,
 	Stats,
+	TypeDistributionStats,
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
+import {GameOutcome} from 'common/types/game-state'
+import {NumberOrNull} from 'common/utils/database-codes'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -28,11 +33,15 @@ export class Database {
 	public connected: boolean
 	private bfDepth: number
 
-	constructor(pool: pg.Pool, allCards: Array<Card>, bfDepth: number) {
-		this.pool = pool
+	constructor(env: any, allCards: Array<Card>, bfDepth: number) {
+		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
 		this.bfDepth = bfDepth
 		this.connected = false
+
+		this.pool.on('error', (err, _client) => {
+			console.error('DB Error Encountered:', err)
+		})
 	}
 
 	public async new() {
@@ -53,7 +62,9 @@ export class Database {
 					deck_code varchar(7) PRIMARY KEY,
 					name varchar(255) NOT NULL,
 					icon varchar(255) NOT NULL,
-					icon_type varchar(255) NOT NULL
+					icon_type varchar(255) NOT NULL,
+					exported boolean DEFAULT false NOT NULL,
+					show_info boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS games(
 					start_time timestamp NOT NULL,
@@ -70,10 +81,11 @@ export class Database {
 					card_id integer PRIMARY KEY NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS deck_cards(
-					deck_code varchar(7) REFERENCES decks(deck_code),
+					deck_code varchar(7),
 					card_id integer REFERENCES cards(card_id),
 					copies integer NOT NULL,
-					PRIMARY KEY (deck_code,card_id)
+					PRIMARY KEY (deck_code,card_id),
+					FOREIGN KEY (deck_code) REFERENCES decks(deck_code) ON DELETE CASCADE
 				);
 				CREATE TABLE IF NOT EXISTS user_tags(
 					user_id uuid REFERENCES users(user_id),
@@ -229,13 +241,49 @@ export class Database {
 		}
 	}
 
+	public async updateDeck(
+		name: string,
+		icon: string,
+		iconType: string,
+		tagIds: Array<string>,
+		code: string,
+		user_id: string,
+	): Promise<DatabaseResult<string>> {
+		try {
+			await this.pool.query(
+				'UPDATE decks SET name = $1, icon = $2, icon_type = $3 WHERE deck_code = $4 AND user_id = $5',
+				[name, icon, iconType, code, user_id],
+			)
+
+			await this.pool.query('DELETE FROM deck_tags WHERE deck_code = $1', [
+				code,
+			])
+
+			if (tagIds.length > 0) {
+				await this.pool.query(
+					'INSERT INTO deck_tags (deck_code,tag_id) SELECT * FROM UNNEST ($1::text[],$2::text[]) ON CONFLICT DO NOTHING',
+					[Array(tagIds.length).fill(code), tagIds],
+				)
+			}
+
+			return {
+				type: 'success',
+				body: code,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
 	/** Return the deck with a specific ID. */
-	public async getDeckFromID(deckCode: string): Promise<DatabaseResult<Deck>> {
+	public async getDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<ApiDeck>> {
 		try {
 			const deck = (
 				await this.pool.query(
 					`SELECT
-						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,decks.show_info,
 						deck_cards.card_id,deck_cards.copies,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
@@ -246,10 +294,11 @@ export class Database {
 					[deckCode],
 				)
 			).rows
+			const showAllInfo: boolean = deck[0]['show_info']
 			const code = deck[0]['deck_code']
-			const name = deck[0]['name']
-			const icon = deck[0]['icon']
-			const iconType = deck[0]['icon_type']
+			const name = showAllInfo ? deck[0]['name'] : null
+			const icon = showAllInfo ? deck[0]['icon'] : null
+			const iconType = showAllInfo ? deck[0]['icon_type'] : null
 			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
 				if (
 					row['card_id'] === null ||
@@ -279,7 +328,7 @@ export class Database {
 					name,
 					icon,
 					iconType,
-					cards: cards.map((card) => toLocalCardInstance(card)),
+					cards: cards.map((card) => card.id),
 					tags,
 				},
 			}
@@ -295,7 +344,7 @@ export class Database {
 				await this.pool.query(
 					`SELECT 
 						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-						deck_cards.card_id,deck_cards.copies,
+						deck_cards.card_id,deck_cards.copies,decks.show_info,
 						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
 						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
 						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
@@ -308,6 +357,7 @@ export class Database {
 
 			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
 				const code: string = row['deck_code']
+				const showInfo: boolean = row['show_info']
 				const name: string = row['name']
 				const icon: string = row['icon']
 				const iconType: string = row['icon_type']
@@ -333,6 +383,7 @@ export class Database {
 						code,
 						name,
 						icon,
+						public: showInfo,
 						//@ts-ignore
 						iconType,
 						tags: tag.key !== null ? [tag] : [],
@@ -375,15 +426,71 @@ export class Database {
 		}
 	}
 
-	/** Disassociate a deck from a user. This is used when a deck is deleted or updated.*/
-	public async disassociateDeck(
+	/** Delete or disassociate a deck from a user. This is used when a deck is deleted or updated.*/
+	public async deleteDeck(
+		deckCode: string,
+		user_id: string,
+	): Promise<DatabaseResult> {
+		try {
+			const deleteable = (
+				await this.pool.query(
+					`SELECT exported = 0 AND games_played = 0 as deletable 
+					FROM (SELECT count(CASE WHEN exported THEN 1 END) as exported,count(winner_deck_code) + count(loser_deck_code) as games_played FROM decks
+					LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+					WHERE decks.deck_code = $1 AND decks.user_id = $2)`,
+					[deckCode, user_id],
+				)
+			).rows[0]['deletable']
+
+			if (deleteable) {
+				await this.pool.query('DELETE FROM deck_tags WHERE deck_code = $1', [
+					deckCode,
+				])
+				await this.pool.query('DELETE FROM deck_cards WHERE deck_code = $1', [
+					deckCode,
+				])
+				await this.pool.query(
+					'DELETE FROM decks WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+			} else {
+				await this.pool.query(
+					'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
+					[deckCode, user_id],
+				)
+			}
+
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Set a deck as exported */
+	public async setAsExported(
 		deckCode: string,
 		user_id: string,
 	): Promise<DatabaseResult> {
 		try {
 			await this.pool.query(
-				'UPDATE decks SET user_id = NULL WHERE deck_code = $1 AND user_id = $2',
+				'UPDATE decks SET exported = TRUE WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
+			)
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	public async setShowData(
+		newShowData: boolean,
+		deckCode: string,
+		user_id: string,
+	): Promise<DatabaseResult> {
+		try {
+			await this.pool.query(
+				'UPDATE decks SET show_info = $1 WHERE deck_code = $2 AND user_id = $3',
+				[newShowData, deckCode, user_id],
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
@@ -574,7 +681,7 @@ export class Database {
 		secondPlayerDeckCode: string,
 		firstPlayerUuid: string,
 		secondPlayerUuid: string,
-		outcome: GameEndOutcomeT,
+		outcome: GameOutcome,
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
@@ -586,6 +693,19 @@ export class Database {
 			let winningDeck
 			let loser
 			let losingDeck
+			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
+
+			if (outcome.type === 'tie') {
+				dbOutcome = 'tie'
+			} else if (outcome.type === 'game-crash') {
+				dbOutcome = 'error'
+			} else if (outcome.type === 'timeout') {
+				dbOutcome = 'timeout'
+			} else if (outcome.victoryReason === 'forfeit') {
+				dbOutcome = 'forfeit'
+			} else {
+				dbOutcome = 'player_won'
+			}
 
 			if (winningPlayerUuid && winningPlayerUuid === firstPlayerUuid) {
 				winner = firstPlayerUuid
@@ -607,7 +727,7 @@ export class Database {
 					loser,
 					winningDeck,
 					losingDeck,
-					outcome,
+					dbOutcome,
 					seed,
 					replayBytes,
 				],
@@ -618,39 +738,117 @@ export class Database {
 		}
 	}
 
-	/**Get the current stats of */
+	/**Get the current stats of cards*/
 	public async getCardsStats({
 		before,
 		after,
-	}: {before: number | null; after: number | null}): Promise<
-		DatabaseResult<Array<CardStats>>
-	> {
+		orderBy,
+	}: {
+		before: number | null
+		after: number | null
+		orderBy:
+			| 'winrate'
+			| 'deckUsage'
+			| 'gameUsage'
+			| 'averageCopies'
+			| 'averagePlayers'
+			| 'encounterChance'
+			| 'adjustedWinrate'
+			| 'winrateDifference'
+			| null
+	}): Promise<DatabaseResult<Array<CardStats>>> {
 		try {
-			const stats = await this.pool.query(
-				`
-				SELECT card_id, 
-				total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
-				cast(included_in_decks as decimal) / total_decks as rarity, 
-				cast(wins as decimal)  / NULLIF(wins + losses,0) as winrate FROM (
-					SELECT card_id,count(CASE WHEN wins THEN 1 END) as wins,
-					count(CASE WHEN losses THEN 1 END) as losses, 
-					count(deck_code) as included_in_decks, 
-					sum(copies) as copies FROM (
-						SELECT cards.card_id,
-						deck_cards.deck_code,
-						deck_cards.copies,
-						games.winner_deck_code = deck_cards.deck_code as wins,
-						games.loser_deck_code = deck_cards.deck_code as losses FROM cards
-						LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
-						LEFT JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
-						WHERE deck_cards.card_id > -1
-						AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-						AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+			const stats = await this.pool.query({
+				text: `
+				WITH main_result AS (
+					SELECT card_id, 
+					total_decks, cast(copies as decimal) / NULLIF(included_in_decks,0) as average_copies, 
+					cast(included_in_decks as decimal) / total_decks as deck_usage, 
+					(cast(wins as decimal) + losses) / total_games as average_players,
+					cast(included_in_games as decimal) / total_games as game_usage,
+					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT card_id,
+						count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses, 
+						count(deck_code) as included_in_decks, 
+						count(DISTINCT start_time) as included_in_games,
+						sum(copies) as copies FROM (
+							SELECT cards.card_id,
+							deck_cards.deck_code,
+							deck_cards.copies,
+							games.winner_deck_code = deck_cards.deck_code as wins,
+							games.loser_deck_code = deck_cards.deck_code as losses,
+							games.start_time
+							FROM cards
+							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+							INNER JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+							WHERE deck_cards.card_id > -1
+							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
 						) as result
-				GROUP BY result.card_id) CROSS JOIN (SELECT count(*) as total_decks FROM decks) ORDER BY winrate
+					GROUP BY result.card_id)
+					CROSS JOIN (SELECT count(*) as total_decks FROM decks)
+					CROSS JOIN (SELECT count(*) as total_games FROM games)
+					WHERE wins > 0
+				),
+				adjusted_winrate_table AS (
+					SELECT card_id, 
+					cast(wins as decimal) / NULLIF(wins + losses,0) as adjusted_winrate FROM (
+						SELECT card_id,
+						count(CASE WHEN wins THEN 1 END) as wins,
+						count(CASE WHEN losses THEN 1 END) as losses
+						FROM (
+							SELECT cards.card_id,
+							games.winner_deck_code = deck_cards.deck_code as wins,
+							games.loser_deck_code = deck_cards.deck_code as losses
+							FROM cards
+							LEFT JOIN deck_cards ON cards.card_id = deck_cards.card_id
+							INNER JOIN games ON games.winner_deck_code = deck_cards.deck_code OR games.loser_deck_code = deck_cards.deck_code
+							WHERE deck_cards.card_id > -1
+							AND ((games.loser_deck_code = deck_cards.deck_code AND NOT EXISTS (
+								SELECT card_id FROM deck_cards 
+								WHERE deck_code = games.winner_deck_code
+								AND deck_cards.card_id = cards.card_id
+								LIMIT 1
+							))
+							OR (games.winner_deck_code = deck_cards.deck_code AND NOT EXISTS (
+								SELECT card_id FROM deck_cards 
+								WHERE deck_code = games.loser_deck_code
+								AND deck_cards.card_id = cards.card_id
+								LIMIT 1
+							)))
+							AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+						) as result
+						GROUP BY result.card_id
+					)
+					WHERE wins > 0
+				)
+				SELECT main_result.card_id,
+				main_result.winrate,
+				adjusted_winrate,
+				adjusted_winrate - winrate as winrate_difference,
+				deck_usage,
+				game_usage,
+				average_players,
+				average_copies
+				FROM main_result
+				LEFT JOIN adjusted_winrate_table ON adjusted_winrate_table.card_id = main_result.card_id
+				ORDER BY (
+					CASE WHEN $3 = 'winrate' THEN winrate 
+						WHEN $3 = 'adjustedWinrate' THEN adjusted_winrate 
+						WHEN $3 = 'winrateDifference' THEN adjusted_winrate - winrate
+						WHEN $3 = 'deckUsage' THEN deck_usage 
+						WHEN $3 = 'gameUsage' THEN game_usage 
+						WHEN $3 = 'averageCopies' THEN average_copies 
+						WHEN $3 = 'averagePlayers' THEN average_players 
+						WHEN $3 = 'encounterChance' THEN average_players 
+					ELSE winrate END) 
+				DESC
 					`,
-				[after, before],
-			)
+				values: [after, before, orderBy],
+				name: 'get-cards-stats',
+			})
 
 			return {
 				type: 'success',
@@ -658,7 +856,20 @@ export class Database {
 					return {
 						id: Number(row['card_id']),
 						winrate: row['winrate'] ? Number(row['winrate']) : null,
-						rarity: row['rarity'] ? Number(row['rarity']) : 0,
+						adjustedWinrate: row['adjusted_winrate']
+							? Number(row['adjusted_winrate'])
+							: null,
+						winrateDifference: row['winrate_difference']
+							? Number(row['winrate_difference'])
+							: null,
+						deckUsage: row['deck_usage'] ? Number(row['deck_usage']) : 0,
+						gameUsage: row['game_usage'] ? Number(row['game_usage']) : 0,
+						averagePlayers: row['average_players']
+							? Number(row['average_players'])
+							: 0,
+						encounterChance: row['average_players']
+							? Number(row['average_players'] / 2)
+							: 0,
 						averageCopies: row['average_copies']
 							? Number(row['average_copies'])
 							: 0,
@@ -670,6 +881,7 @@ export class Database {
 		}
 	}
 
+	/**Get the current stats of decks */
 	public async getDecksStats({
 		before,
 		after,
@@ -683,50 +895,54 @@ export class Database {
 		orderBy: 'wins' | 'winrate' | null
 		minimumWins: number | null
 	}): Promise<DatabaseResult<Array<DeckStats>>> {
-		const limit = 20
-		console.log(orderBy)
+		const limit = 100
 		try {
 			const decksResult = (
-				await this.pool.query(
-					`
-					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-					deck_cards.card_id,deck_cards.copies,
-					deck_code_list.deck_code, wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
-						SELECT 
-						deck_code,
-						count(CASE WHEN wins THEN 1 END) as wins,
-						count(CASE WHEN losses THEN 1 END) as losses
-						FROM (
-							SELECT decks.deck_code,
-							games.winner_deck_code = decks.deck_code as wins,
-							games.loser_deck_code = decks.deck_code as losses FROM decks
-							LEFT JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
-							WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
-							AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+				await this.pool.query({
+					text: `
+					WITH statistics AS (
+						SELECT deck_code,
+						wins, losses, cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+							SELECT result.deck_code,
+								count(CASE WHEN wins THEN 1 END) as wins,
+								count(CASE WHEN losses THEN 1 END) as losses
+								FROM (
+									SELECT decks.deck_code,
+									games.winner_deck_code = decks.deck_code as wins,
+									games.loser_deck_code = decks.deck_code as losses FROM decks
+									INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+									WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+									AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+								) as result
+							GROUP BY result.deck_code) as deck_code_list 
+							WHERE wins >= $6::int
 							LIMIT $3::int
 							OFFSET $3::int * $4::int
-						) as result
-					GROUP BY result.deck_code) as deck_code_list 
-					LEFT JOIN decks on deck_code_list.deck_code = decks.deck_code
-					LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-					WHERE wins > $6
-					ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
+					)
+					SELECT decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+					deck_cards.card_id,deck_cards.copies,wins,losses,winrate
+					FROM statistics
+                    LEFT JOIN decks on statistics.deck_code = decks.deck_code
+                    LEFT JOIN deck_cards ON statistics.deck_code = deck_cards.deck_code
+                    ORDER BY (CASE WHEN $5 = 'winrate' THEN cast(wins as decimal) / NULLIF(wins + losses,0) ELSE wins END) DESC
 					`,
-					[
+					values: [
 						after,
 						before,
 						limit,
 						offset ? offset : 0,
 						orderBy ? orderBy : 'winrate',
-						minimumWins ? minimumWins : 50,
+						minimumWins !== null ? minimumWins : 50,
 					],
-				)
+					name: 'get-deck-result',
+				})
 			).rows
 
 			const decks = decksResult.reduce((allDecks: Array<DeckStats>, row) => {
 				const code: string = row['deck_code']
 				const name: string = row['name']
 				const icon: string = row['icon']
+				const showInfo: boolean = row['show_info']
 				const iconType: string = row['icon_type']
 				const cardId: number | null = row['card_id']
 				const cards: Array<Card> =
@@ -748,15 +964,11 @@ export class Database {
 					const newDeck: DeckStats = {
 						deck: {
 							code,
-							name,
+							name: showInfo ? name : null,
 							icon,
-							//@ts-ignore
 							iconType,
 							tags: [],
-							cards:
-								cardId !== null
-									? cards.map((card) => toLocalCardInstance(card))
-									: [],
+							cards: cardId !== null ? cards.map((card) => card.id) : [],
 						},
 						winrate: winrate ? Number(winrate) : null,
 						wins: Number(wins),
@@ -768,15 +980,15 @@ export class Database {
 				if (
 					cardId !== null &&
 					foundDeck.deck.cards.find(
-						(card) => card.props.numericId !== cardId,
+						(card) => CARDS[card].numericId !== cardId,
 					) &&
 					!foundDeck.deck.cards
-						.map((card) => card.props.numericId)
+						.map((card) => CARDS[card].numericId)
 						.includes(cardId)
 				) {
 					foundDeck.deck.cards = [
 						...foundDeck.deck.cards,
-						...cards.map((card) => toLocalCardInstance(card)),
+						...cards.map((card) => card.id),
 					]
 				}
 
@@ -791,19 +1003,246 @@ export class Database {
 			return {type: 'failure', reason: `${e}`}
 		}
 	}
-}
 
-export const setupDatabase = (
-	allCards: Array<Card>,
-	env: any,
-	bfDepth: number,
-) => {
-	const pool = new Pool({
-		connectionString: env.DATABASE_URL,
-		max: 10,
-		idleTimeoutMillis: 0,
-		connectionTimeoutMillis: 2000,
-	})
+	/**Get the type distribution of decks*/
+	public async getTypeDistribution({
+		before,
+		after,
+	}: {
+		before: number | null
+		after: number | null
+	}): Promise<DatabaseResult<TypeDistributionStats>> {
+		try {
+			const stats = await this.pool.query({
+				text: `
+				WITH deck_winrate_statistics AS (
+					SELECT deck_code,
+					cast(wins as decimal) / NULLIF(wins + losses,0) as winrate FROM (
+						SELECT result.deck_code,
+							count(CASE WHEN wins THEN 1 END) as wins,
+							count(CASE WHEN losses THEN 1 END) as losses
+							FROM (
+								SELECT decks.deck_code,
+								games.winner_deck_code = decks.deck_code as wins,
+								games.loser_deck_code = decks.deck_code as losses FROM decks
+								INNER JOIN games ON games.winner_deck_code = decks.deck_code OR games.loser_deck_code = decks.deck_code
+								WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+								AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							) as result
+						GROUP BY result.deck_code) as deck_code_list 
+				),
+				types_wins_and_losses as (
+							WITH decks_with_types AS (
+								SELECT decks.deck_code,sum(2 ^ ((deck_cards.card_id - 49) / 2)) as type_code FROM decks 
+								JOIN deck_cards ON decks.deck_code = deck_cards.deck_code AND deck_cards.card_id IN (49,51,53,55,57,59,61,63,65,67)
+								GROUP BY decks.deck_code
+							),
+							games_with_types AS (
+								SELECT winner_deck_code,loser_deck_code,winner.type_code as winner_type_code,loser.type_code as loser_type_code
+								FROM games
+								JOIN deck_winrate_statistics ON deck_winrate_statistics.deck_code = games.winner_deck_code
+								JOIN (SELECT * FROM decks_with_types) as winner ON games.winner_deck_code = winner.deck_code
+								JOIN (SELECT * FROM decks_with_types) as loser ON games.loser_deck_code = loser.deck_code AND winner.type_code != loser.type_code
+								WHERE winrate > 0.05 AND winrate < 0.95
+								AND ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+								AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+							)
+							SELECT winner_type_code,loser_type_code,sum(wins) as wins,max(losses) as losses FROM (
+								SELECT win_amounts.winner_type_code,win_amounts.loser_type_code,
+								wins,(CASE WHEN losses is NULL THEN 0 ELSE losses END) as losses FROM (
+									SELECT winner_type_code,loser_type_code,count(*) as wins FROM games_with_types
+									GROUP BY winner_type_code,loser_type_code
+								) AS win_amounts
+								LEFT JOIN (
+									SELECT loser_type_code,winner_type_code,count(*) as losses FROM games_with_types
+									GROUP BY loser_type_code,winner_type_code
+								) AS loss_amounts ON loss_amounts.loser_type_code = win_amounts.winner_type_code AND win_amounts.loser_type_code = loss_amounts.winner_type_code
+								UNION ALL (
+									SELECT extra_losses.loser_type_code,extra_losses.winner_type_code,
+									0,extra_losses.losses FROM (
+										SELECT winner_type_code,loser_type_code,count(*) as losses FROM games_with_types
+										GROUP BY winner_type_code,loser_type_code
+									) AS extra_losses
+								)
+							) GROUP BY (winner_type_code,loser_type_code)
+						)
+				SELECT
+					*,
+					cast(multi_type_wins + multi_type_losses as decimal) / (multi_type_wins + multi_type_losses + mono_type_wins + mono_type_losses) as multi_type_frequency,
+					cast(multi_type_wins as decimal) / (multi_type_wins + multi_type_losses) as multi_type_winrate,
+					cast(mono_type_wins + mono_type_losses as decimal) / (multi_type_wins + multi_type_losses + mono_type_wins + mono_type_losses) as mono_type_frequency,
+					cast(mono_type_wins as decimal) / (mono_type_wins + mono_type_losses) as mono_type_winrate
+					FROM (
+						SELECT 
+						winner_type_code as type_code,
+						cast(sum(wins) + sum(losses) as decimal) / (SELECT sum(wins) + sum(losses) FROM types_wins_and_losses) as frequency,
+						cast(sum(wins) as decimal) / NULLIF(sum(wins) + sum(losses), 0) as winrate,
+						cast(sum(CASE WHEN loser_type_code = 1 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 1 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 1 THEN losses ELSE 0 END), 0) as winrate_against_balanced,
+						cast(sum(CASE WHEN loser_type_code = 2 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 2 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 2 THEN losses ELSE 0 END), 0) as winrate_against_builder,
+						cast(sum(CASE WHEN loser_type_code = 4 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 4 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 4 THEN losses ELSE 0 END), 0) as winrate_against_explorer,
+						cast(sum(CASE WHEN loser_type_code = 8 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 8 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 8 THEN losses ELSE 0 END), 0) as winrate_against_farm,
+						cast(sum(CASE WHEN loser_type_code = 16 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 16 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 16 THEN losses ELSE 0 END), 0) as winrate_against_miner,
+						cast(sum(CASE WHEN loser_type_code = 32 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 32 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 32 THEN losses ELSE 0 END), 0) as winrate_against_prankster,
+						cast(sum(CASE WHEN loser_type_code = 64 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 64 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 64 THEN losses ELSE 0 END), 0) as winrate_against_pvp,
+						cast(sum(CASE WHEN loser_type_code = 128 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 128 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 128 THEN losses ELSE 0 END), 0) as winrate_against_redstone,
+						cast(sum(CASE WHEN loser_type_code = 256 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 256 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 256 THEN losses ELSE 0 END), 0) as winrate_against_speedrunner,
+						cast(sum(CASE WHEN loser_type_code = 512 THEN wins ELSE 0 END) as decimal) / NULLIF(sum(CASE WHEN loser_type_code = 512 THEN wins ELSE 0 END) + sum(CASE WHEN loser_type_code = 512 THEN losses ELSE 0 END), 0) as winrate_against_terraform
+						FROM types_wins_and_losses
+						GROUP BY winner_type_code
+						ORDER BY winner_type_code
+					)
+				CROSS JOIN (SELECT sum(CASE WHEN winner_type_code NOT IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as multi_type_wins FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN loser_type_code NOT IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as multi_type_losses FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN winner_type_code IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as mono_type_wins FROM types_wins_and_losses)
+				CROSS JOIN (SELECT sum(CASE WHEN loser_type_code IN (1,2,4,8,16,32,64,128,256,512) THEN wins ELSE 0 END) as mono_type_losses FROM types_wins_and_losses)
+				WHERE frequency > 0.005
+				`,
+				values: [after, before],
+				name: 'get-type-distribution',
+			})
 
-	return new Database(pool, allCards, bfDepth)
+			const info = stats.rows
+
+			const getTypeArray = (typeCode: number) => {
+				const types: Array<TypeT> = []
+				if ((typeCode & 0b0000000001) !== 0) types.push('balanced')
+				if ((typeCode & 0b0000000010) !== 0) types.push('builder')
+				if ((typeCode & 0b0000000100) !== 0) types.push('explorer')
+				if ((typeCode & 0b0000001000) !== 0) types.push('farm')
+				if ((typeCode & 0b0000010000) !== 0) types.push('miner')
+				if ((typeCode & 0b0000100000) !== 0) types.push('prankster')
+				if ((typeCode & 0b0001000000) !== 0) types.push('pvp')
+				if ((typeCode & 0b0010000000) !== 0) types.push('redstone')
+				if ((typeCode & 0b0100000000) !== 0) types.push('speedrunner')
+				if ((typeCode & 0b1000000000) !== 0) types.push('terraform')
+
+				return types
+			}
+
+			const types = info.map((row) => {
+				const typeCode: number | null = row['type_code']
+				const winrate = Number(row['winrate'])
+				const frequency = Number(row['frequency'])
+
+				const typeMatchups = {
+					balanced: NumberOrNull(row['winrate_against_balanced']),
+					builder: NumberOrNull(row['winrate_against_builder']),
+					explorer: NumberOrNull(row['winrate_against_explorer']),
+					farm: NumberOrNull(row['winrate_against_farm']),
+					miner: NumberOrNull(row['winrate_against_miner']),
+					prankster: NumberOrNull(row['winrate_against_prankster']),
+					pvp: NumberOrNull(row['winrate_against_pvp']),
+					redstone: NumberOrNull(row['winrate_against_redstone']),
+					speedrunner: NumberOrNull(row['winrate_against_speedrunner']),
+					terraform: NumberOrNull(row['winrate_against_terraform']),
+				}
+
+				if (typeCode === null) {
+					return {
+						type: ['typeless'],
+						winrate,
+						frequency,
+						typeMatchups,
+					}
+				}
+
+				return {
+					type: getTypeArray(typeCode),
+					winrate,
+					frequency,
+					typeMatchups,
+				}
+			})
+
+			return {
+				type: 'success',
+				body: {
+					multiTypeFrequency: Number(info[0]['multi_type_frequency']),
+					monoTypeWinrate: Number(info[0]['mono_type_winrate']),
+					multiTypeWinrate: Number(info[0]['multi_type_winrate']),
+					types: types,
+				} as TypeDistributionStats,
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGamesStats({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<GamesStats>
+	> {
+		try {
+			const stats = await this.pool.query(
+				`WITH selection AS (
+					SELECT 
+						count(*) as amount,
+						avg(completion_time - start_time) as average_length,
+						sqrt(sum(
+							(
+								extract(epoch FROM completion_time - start_time -
+								(SELECT avg(completion_time - start_time) FROM games))
+							) ^ 2
+							) / ((SELECT count(*) FROM games) - 1)) * '1 second'::interval as standard_deviation,
+						cast(count(CASE WHEN outcome = 'tie' THEN 1 END) as decimal) / count(*) as tie_rate,
+						cast(count(CASE WHEN outcome = 'forfeit' THEN 1 END) as decimal) / count(*) as forfeit_rate,
+						cast(count(CASE WHEN 
+							outcome != 'player_won' AND 
+							outcome != 'forfeit' AND 
+							outcome != 'tie' THEN 1 END
+						) as decimal) / count(*) as error_rate
+					FROM games
+					WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+					AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+				)
+				SELECT * FROM selection
+				CROSS JOIN (
+					SELECT (completion_time - start_time) as median_length FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 2
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as first_quartile FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 4
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as third_quartile FROM games 
+					ORDER BY (completion_time - start_time) DESC LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 4
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as minimum FROM games 
+					ORDER BY (completion_time - start_time) LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 20
+				) CROSS JOIN (
+					SELECT (completion_time - start_time) as maximum FROM games 
+					ORDER BY (completion_time - start_time) DESC LIMIT 1
+					OFFSET (SELECT count(*) FROM games) / 20
+				)`,
+				[after, before],
+			)
+
+			return {
+				type: 'success',
+				body: {
+					games: Number(stats.rows[0]['amount']),
+					tieRate: Number(stats.rows[0]['tie_rate']),
+					forfeitRate: Number(stats.rows[0]['forfeit_rate']),
+					errorRate: Number(stats.rows[0]['error_rate']),
+					gameLength: {
+						averageLength: stats.rows[0]['average_length'],
+						medianLength: stats.rows[0]['median_length'],
+						standardDeviation: stats.rows[0]['standard_deviation'],
+						firstQuartile: stats.rows[0]['first_quartile'],
+						thirdQuartile: stats.rows[0]['third_quartile'],
+						minimum: stats.rows[0]['minimum'],
+						maximum: stats.rows[0]['maximum'],
+					},
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
 }

@@ -1,4 +1,5 @@
 import {CardComponent, PlayerComponent} from '../components'
+import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 
 /* Array of [coin flip number, weight of coinflip number] */
@@ -29,6 +30,7 @@ const COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
 )
 
 export function flipCoin(
+	game: GameModel,
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
@@ -47,7 +49,7 @@ export function flipCoin(
 				forced: true,
 			})
 		} else {
-			const coinFlip: CoinFlipResult = Math.random() >= 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipResult = game.rng() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push({
 				result: coinFlip,
 				forced: false,

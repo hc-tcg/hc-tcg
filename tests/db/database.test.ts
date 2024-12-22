@@ -8,16 +8,17 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
-import {CARDS_LIST} from 'common/cards'
+import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import Fortune from 'common/cards/single-use/fortune'
+import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
-import {Database, setupDatabase} from 'server/db/db'
+import {Database} from 'server/db/db'
 
 describe('Test Database', () => {
 	let database: Database
@@ -39,12 +40,12 @@ describe('Test Database', () => {
 
 	beforeAll(async () => {
 		const env = config()
-		database = setupDatabase(
-			CARDS_LIST,
+		database = new Database(
 			{
 				...process.env,
 				...env,
 			},
+			CARDS_LIST,
 			BF_DEPTH,
 		)
 	})
@@ -122,6 +123,12 @@ describe('Test Database', () => {
 			user.body.uuid,
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
+		const showData = await database.setShowData(true, code.body, user.body.uuid)
+
+		assert(
+			showData.type === 'success',
+			'The deck should properly be marked as visible',
+		)
 
 		const returnedDeck = await database.getDeckFromID(code.body)
 
@@ -135,9 +142,9 @@ describe('Test Database', () => {
 		expect(returnedDeck.body.iconType).toBe('item')
 		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
 
-		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
-			playerDeck.cards,
-		)
+		expect(
+			returnedDeck.body.cards.map((c) => CARDS[c].numericId),
+		).toStrictEqual(playerDeck.cards)
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
@@ -186,7 +193,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'lives',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
@@ -198,7 +209,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'no-hermits-on-board',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
@@ -210,7 +225,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'player_won',
+			{
+				type: 'player-won',
+				victoryReason: 'timeout-without-hermits',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
@@ -222,7 +241,11 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'forfeit',
+			{
+				type: 'player-won',
+				victoryReason: 'forfeit',
+				winner: "Doesn't Matter" as PlayerEntity,
+			},
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
@@ -234,7 +257,7 @@ describe('Test Database', () => {
 			loserDeckCode.body,
 			winner.body.uuid,
 			loser.body.uuid,
-			'tie',
+			{type: 'tie'},
 			35000000,
 			null,
 			'123456789ABCDEF',
@@ -289,7 +312,11 @@ describe('Test Database', () => {
 		expect(losingDeckStats.body.ties).toBe(1)
 		expect(losingDeckStats.body.gamesPlayed).toBe(5)
 
-		const cardStats = await database.getCardsStats({before: null, after: null})
+		const cardStats = await database.getCardsStats({
+			before: null,
+			after: null,
+			orderBy: null,
+		})
 
 		assert(
 			cardStats.type === 'success',
@@ -386,20 +413,34 @@ describe('Test Database', () => {
 		)
 		assert(code.type === 'success', 'The deck should be created successfully')
 
-		const returnedDeck = await database.getDeckFromID(code.body)
+		// Before show data is set
+		const returnedDeckWithoutData = await database.getDeckFromID(code.body)
 
 		assert(
-			returnedDeck.type === 'success',
+			returnedDeckWithoutData.type === 'success',
 			'The deck should be retrieved successfully',
 		)
 
-		expect(returnedDeck.body.name).toBe('Testing deck')
-		expect(returnedDeck.body.icon).toBe('balanced')
-		expect(returnedDeck.body.iconType).toBe('item')
-		expect(returnedDeck.body.tags).toStrictEqual([tag.body])
-		expect(returnedDeck.body.cards.map((c) => c.props.numericId)).toStrictEqual(
-			playerDeck.cards,
+		expect(returnedDeckWithoutData.body.name).toBeNull()
+		expect(returnedDeckWithoutData.body.icon).toBeNull()
+		expect(returnedDeckWithoutData.body.iconType).toBeNull()
+
+		// After show data is set
+		await database.setShowData(true, code.body, user.body.uuid)
+		const returnedDeckWithData = await database.getDeckFromID(code.body)
+
+		assert(
+			returnedDeckWithData.type === 'success',
+			'The deck should be retrieved successfully',
 		)
+
+		expect(returnedDeckWithData.body.name).toBe('Testing deck')
+		expect(returnedDeckWithData.body.icon).toBe('balanced')
+		expect(returnedDeckWithData.body.iconType).toBe('item')
+		expect(returnedDeckWithData.body.tags).toStrictEqual([tag.body])
+		expect(
+			returnedDeckWithData.body.cards.map((c) => CARDS[c].numericId),
+		).toStrictEqual(playerDeck.cards)
 
 		const allDecks = await database.getDecks(user.body.uuid)
 		assert(
@@ -455,32 +496,77 @@ describe('Test Database', () => {
 		const user = await database.insertUser('Test User', 'ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
-		const code = await database.insertDeck(
+		const tag = await database.insertTag(
+			user.body.uuid,
+			'Test Tag',
+			'#FF0000',
+			generateDatabaseCode(),
+		)
+		assert(tag.type === 'success', 'The tag should be created successfully')
+
+		// CASE BEFORE EXPORTING
+		const withoutExportedCode = await database.insertDeck(
 			playerDeck.name,
 			playerDeck.icon,
 			playerDeck.iconType,
 			playerDeck.cards,
-			[],
+			[tag.body.key],
 			generateDatabaseCode(),
 			user.body.uuid,
 		)
-		assert(code.type === 'success', 'The deck should be created successfully')
+		assert(
+			withoutExportedCode.type === 'success',
+			'The deck should be created successfully',
+		)
 
-		await database.disassociateDeck(code.body, user.body.uuid)
+		const deleteResult = await database.deleteDeck(
+			withoutExportedCode.body,
+			user.body.uuid,
+		)
 
-		const returnedDeckFromId = await database.getDeckFromID(code.body)
+		expect(deleteResult.type).toBe('success')
+
+		const withoutExportedDeck = await database.getDeckFromID(
+			withoutExportedCode.body,
+		)
+
+		assert(
+			withoutExportedDeck.type === 'failure',
+			'The deck should not be able to be retrieved',
+		)
+
+		// CASE AFTER EXPORTING
+		const withExportedCode = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.iconType,
+			playerDeck.cards,
+			[tag.body.key],
+			generateDatabaseCode(),
+			user.body.uuid,
+		)
+		assert(
+			withExportedCode.type === 'success',
+			'The deck should be created successfully',
+		)
+		await database.setAsExported(withExportedCode.body, user.body.uuid)
+
+		await database.deleteDeck(withExportedCode.body, user.body.uuid)
+
+		const withExportedDeck = await database.getDeckFromID(withExportedCode.body)
 		const userDecks = await database.getDecks(user.body.uuid)
 
 		assert(
-			returnedDeckFromId.type === 'success',
+			withExportedDeck.type === 'success',
 			'The deck should be retrieved successfully',
 		)
+		expect(withExportedDeck.body).toBeTruthy()
+
 		assert(
 			userDecks.type === 'success',
 			"The user's decks should be retrieved properly",
 		)
 
-		expect(returnedDeckFromId.body).toBeTruthy()
 		expect(userDecks.body).toStrictEqual([])
 	})
 
@@ -517,5 +603,53 @@ describe('Test Database', () => {
 		)
 
 		expect(returnedDeck.body.tags).toStrictEqual([])
+	})
+
+	test("Confirm deck deletion doesn't impact other decks", async () => {
+		const user = await database.insertUser('Test User', 'ethoslab')
+		assert(user.type === 'success', 'The user should be created successfully')
+
+		const deck1 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.iconType,
+			playerDeck.cards,
+			[],
+			generateDatabaseCode(),
+			user.body.uuid,
+		)
+		const deck2 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.iconType,
+			playerDeck.cards,
+			[],
+			generateDatabaseCode(),
+			user.body.uuid,
+		)
+		const deck3 = await database.insertDeck(
+			playerDeck.name,
+			playerDeck.icon,
+			playerDeck.iconType,
+			playerDeck.cards,
+			[],
+			generateDatabaseCode(),
+			user.body.uuid,
+		)
+		assert(deck1.type === 'success', 'The deck should be created successfully')
+		assert(deck2.type === 'success', 'The deck should be created successfully')
+		assert(deck3.type === 'success', 'The deck should be created successfully')
+
+		await database.deleteDeck(deck1.body, user.body.uuid)
+
+		const returnedDeck1 = await database.getDeckFromID(deck1.body)
+
+		expect(returnedDeck1.type).toBe('failure')
+
+		const returnedDeck2 = await database.getDeckFromID(deck2.body)
+		const returnedDeck3 = await database.getDeckFromID(deck3.body)
+
+		expect(returnedDeck2.type).toBe('success')
+		expect(returnedDeck3.type).toBe('success')
 	})
 })

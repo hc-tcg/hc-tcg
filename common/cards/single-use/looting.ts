@@ -37,7 +37,7 @@ const Looting: SingleUse = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const coinFlip = flipCoin(player, component)
+			const coinFlip = flipCoin(game, player, component)
 
 			if (coinFlip[0] === 'tails') return
 

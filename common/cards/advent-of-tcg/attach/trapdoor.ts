@@ -1,30 +1,22 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	StatusEffectComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {
-	GasLightEffect,
-	GasLightTriggeredEffect,
-} from '../../../status-effects/gas-light'
+import {isFromGasLightEffect} from '../../../status-effects/gas-light'
 import {TargetBlockEffect} from '../../../status-effects/target-block'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
 import LightningRod from '../../attach/lightning-rod'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
 
-function isFromGasLightEffect(game: GameModel, attack: AttackModel): boolean {
+export function isFromTrapdoor(game: GameModel, attack: AttackModel): boolean {
 	const damageSource = attack.getHistory('add_damage').at(0)?.source
-	if (damageSource === undefined) return false
-	const component: CardComponent | StatusEffectComponent | null =
-		game.components.get((damageSource as any) || null)
-	if (!component || component instanceof CardComponent) return false
-	return query.effect.is(GasLightTriggeredEffect, GasLightEffect)(
-		game,
-		component,
+	if (damageSource === undefined || damageSource === 'debug') return false
+	const component = game.components.get(damageSource)
+	if (!component) return false
+	return (
+		component instanceof CardComponent &&
+		query.card.is(Trapdoor)(game, component)
 	)
 }
 
@@ -35,9 +27,9 @@ const Trapdoor: Attach = {
 	name: 'Trapdoor',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	description:
-		"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
+		"When the Hermit directly above this card takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -60,13 +52,7 @@ const Trapdoor: Attach = {
 					return
 				if (attack.isType('status-effect') || attack.isBacklash) return
 				if (!component.slot.inRow()) return
-				if (
-					!query.row.adjacent(query.row.entity(component.slot.rowEntity))(
-						game,
-						target,
-					)
-				)
-					return
+				if (target.index !== component.slot.row.index - 1) return
 				const targetHermit = target.getHermit()
 				if (!targetHermit) return
 				// Target Block cannot be ignored so don't try intercepting damage for log clarity

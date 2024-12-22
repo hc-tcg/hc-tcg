@@ -6,7 +6,7 @@ import {
 import {GameModel} from '../../../models/game-model'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
-import FletchingTable from './fletching-table'
+import Feather from './feather'
 
 const Dropper: SingleUse = {
 	...singleUse,
@@ -14,9 +14,9 @@ const Dropper: SingleUse = {
 	numericId: 506,
 	name: 'Dropper',
 	expansion: 'advent_of_tcg',
-	rarity: 'rare',
+	rarity: 'common',
 	tokens: 0,
-	description: "Place a fletching table on the top of your opponent's deck",
+	description: "Place a feather on the top of your opponent's deck",
 	showConfirmationModal: true,
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -30,7 +30,7 @@ const Dropper: SingleUse = {
 			let slot = game.components.new(DeckSlotComponent, opponentPlayer.entity, {
 				position: 'front',
 			})
-			game.components.new(CardComponent, FletchingTable, slot.entity)
+			game.components.new(CardComponent, Feather, slot.entity)
 		})
 	},
 }

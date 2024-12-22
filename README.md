@@ -11,9 +11,10 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 ## How to run Hermitcraft TCG
 
 ```sh
-npm ci           # install packages
-npm run build    # build the server
-npm run server   # start the sever
+npm ci                      # install packages
+npm run build-dev           # build a developement build of the client
+npm run build-dev-windows   # build a developement build of the client on windows
+npm run server              # start the sever
 ```
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
@@ -95,12 +96,14 @@ wait a few minutes and there should be a commit with the card image!
 This project contains a few tests that are run against every PR.
 
 ```sh
-npm run test            # run all the tests
-npm run test:unit       # run unittests written with jest, this will catch most errors.
-npm run test:ct         # run component tests with playwright.
-npm run test:ct-update  # update component snapshots.
-npm run test:api        # run tests for the hc-tcg API.
-npm run test:e2e        # run end-to-end tests with Playwright.
+npm run test              # run all the tests
+npm run test:unit         # run unittests written with jest, this will catch most errors.
+npm run test:unit-verbose # run unittests written with jest and print verbose logs for debugging.
+npm run test:vunit        # the same as test:unit-verbose
+npm run test:ct           # run component tests with playwright.
+npm run test:ct-update    # update component snapshots.
+npm run test:api          # run tests for the hc-tcg API.
+npm run test:e2e          # run end-to-end tests with Playwright.
 ```
 
 # Building & Self Hosting

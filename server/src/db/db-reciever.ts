@@ -1,6 +1,7 @@
+import {CARDS} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameEndOutcomeT} from 'common/types/game-state'
+import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {call} from 'typed-redux-saga'
@@ -151,6 +152,54 @@ export function* insertDeck(
 	}
 }
 
+export function* updateDeck(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const deckTags = action.payload.deck.tags
+
+	for (let i = 0; i < deckTags.length; i++) {
+		yield* call(
+			[root.db, root.db.insertTag],
+			player.uuid,
+			deckTags[i].name,
+			deckTags[i].color,
+			deckTags[i].key,
+		)
+	}
+
+	// Update deck
+	const result = yield* call(
+		[root.db, root.db.updateDeck],
+		action.payload.deck.name,
+		action.payload.deck.icon,
+		action.payload.deck.iconType,
+		deckTags.map((tag) => tag.key),
+		action.payload.deck.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+		return
+	}
+
+	if (action.payload.newActiveDeck) {
+		yield* getDecks(action as any)
+	}
+}
+
 export function* insertDecks(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECKS>,
 ) {
@@ -216,9 +265,21 @@ export function* importDeck(
 
 	const code = action.payload.code
 
-	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code)
+	const importedDeck = yield* call([root.db, root.db.getDeckFromID], code, true)
 
 	if (importedDeck.type !== 'success') return
+
+	if (
+		!importedDeck.body.name ||
+		!importedDeck.body.icon ||
+		!importedDeck.body.iconType
+	) {
+		importedDeck.body.name = action.payload.newName
+		importedDeck.body.iconType = action.payload.newIconType
+		importedDeck.body.icon = action.payload.newIcon
+	}
+
+	const newCode = generateDatabaseCode()
 
 	// Insert deck
 	const result = yield* call(
@@ -226,9 +287,9 @@ export function* importDeck(
 		importedDeck.body.name,
 		importedDeck.body.icon,
 		importedDeck.body.iconType,
-		importedDeck.body.cards.map((card) => card.props.numericId),
+		importedDeck.body.cards.map((card) => CARDS[card].numericId),
 		[],
-		generateDatabaseCode(),
+		newCode,
 		player.uuid,
 	)
 
@@ -240,7 +301,111 @@ export function* importDeck(
 		return
 	}
 
-	if (action.payload.newActiveDeck) yield* getDecks(action as any)
+	if (action.payload.newActiveDeck) {
+		const newPayload: RecievedClientMessage<typeof clientMessages.GET_DECKS> = {
+			type: 'GET_DECKS',
+			payload: {
+				type: 'GET_DECKS',
+				newActiveDeck: newCode,
+			},
+			playerId: action.playerId,
+			playerSecret: action.playerSecret,
+		}
+		yield* getDecks(newPayload)
+	}
+}
+
+export function* exportDeck(
+	action: RecievedClientMessage<typeof clientMessages.EXPORT_DECK>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setAsExported],
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
+}
+
+export function* grabCurrentImport(
+	action: RecievedClientMessage<typeof clientMessages.GRAB_CURRENT_IMPORT>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	if (!action.payload.code) {
+		broadcast([player], {
+			type: serverMessages.CURRENT_IMPORT_RECIEVED,
+			deck: null,
+		})
+		return
+	}
+
+	const importedDeck = yield* call(
+		[root.db, root.db.getDeckFromID],
+		action.payload.code,
+		true,
+	)
+
+	if (importedDeck.type !== 'success') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: importedDeck.reason,
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.CURRENT_IMPORT_RECIEVED,
+		deck: importedDeck.body,
+	})
+}
+
+export function* setShowData(
+	action: RecievedClientMessage<typeof clientMessages.MAKE_INFO_PUBLIC>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		return
+	}
+
+	const result = yield* call(
+		[root.db, root.db.setShowData],
+		action.payload.public,
+		action.payload.code,
+		player.uuid,
+	)
+
+	if (result.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }
 
 export function* deleteDeck(
@@ -256,7 +421,7 @@ export function* deleteDeck(
 	}
 
 	const result = yield* call(
-		[root.db, root.db.disassociateDeck],
+		[root.db, root.db.deleteDeck],
 		action.payload.deck.code,
 		player.uuid,
 	)
@@ -337,7 +502,7 @@ export function* getStats(
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
-	outcome: GameEndOutcomeT,
+	outcome: GameOutcome,
 	gameLength: number,
 	winner: string | null,
 	seed: string,

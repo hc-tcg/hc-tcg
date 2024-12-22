@@ -41,6 +41,7 @@ const defaultState: SessionState = {
 		code: '',
 		cards: [],
 		tags: [],
+		public: false,
 	},
 	connecting: false,
 	connected: false,
@@ -88,6 +89,7 @@ const loginReducer = (
 				...action.updates,
 			}
 		case localMessages.INSERT_DECK:
+		case localMessages.UPDATE_DECK:
 		case localMessages.SELECT_DECK:
 			return {
 				...state,

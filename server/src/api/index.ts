@@ -1,16 +1,26 @@
 import {DEBUG} from 'common/config'
+import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
-import {cancelApiGame, createApiGame, getGameCount, getGameInfo} from './games'
+import {
+	cancelApiGame,
+	createApiGame,
+	getGameInfo,
+	getPublicGameCount,
+	getPublicQueueLength,
+} from './games'
 import {CancelGameBody} from './schema'
 import {
+	BasicStatsQuery,
 	CardStatsQuery,
-	DeckStatParams,
-	StatsHeader,
+	DeckStatQuery,
+	StatsQueryParams,
 	getCardStats,
 	getDeckStats,
+	getGamesStats,
 	getStats,
+	getTypeDistributionStats,
 } from './stats'
 import {requestUrlRoot} from './utils'
 
@@ -28,24 +38,32 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/deck/:deck', async (req, res) => {
-		res.send(await getDeckInformation(requestUrlRoot(req), req.params.deck))
+		let ret = await getDeckInformation(requestUrlRoot(req), req.params.deck)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.post('/api/deck/cost', async (req, res) => {
-		res.send(await deckCost(req.body))
+		res.send(deckCost(req.body))
 	})
 
 	app.get('/api/games/count', (_req, res) => {
-		res.send(getGameCount())
+		res.send(getPublicGameCount())
 	})
 
 	app.get('/api/games/create', (_req, res) => {
 		res.send(createApiGame())
 	})
 
+	app.get('/api/games/queue/length', (_req, res) => {
+		res.send(getPublicQueueLength())
+	})
+
 	app.delete('/api/games/cancel', (req, res) => {
 		let body = CancelGameBody.parse(req.body)
-		res.send(cancelApiGame(body.code))
+		let ret = cancelApiGame(body.code)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	app.get('/api/games/:secret', (req, res) => {
@@ -53,31 +71,55 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats', async (req, res) => {
-		let header = StatsHeader.parse(req.headers)
-		res.send(await getStats(root.db, header))
+		let params = StatsQueryParams.parse(req.query)
+		console.log(params)
+		let ret = await getStats(root.db, params.uuid)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
-	app.get('/api/hof/cards', async (req, res) => {
-		let query = CardStatsQuery.parse(req.params)
-		res.send(
-			await getCardStats({
-				before: query.before || null,
-				after: query.after || null,
-			}),
-		)
+	app.get('/api/stats/cards', async (req, res) => {
+		let query = CardStatsQuery.parse(req.query)
+		let ret = await getCardStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+			orderBy: query.orderBy || null,
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
-	app.get('/api/hof/decks', async (req, res) => {
-		let query = DeckStatParams.parse(req.params)
-		res.send(
-			await getDeckStats({
-				before: query.before || null,
-				after: query.after || null,
-				offset: query.offset || null,
-				orderBy: query.orderBy || null,
-				minimumWins: query.minimumWins || null,
-			}),
-		)
+	app.get('/api/stats/decks', async (req, res) => {
+		let query = DeckStatQuery.parse(req.query)
+		let ret = await getDeckStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+			offset: NumberOrNull(query.offset),
+			orderBy: query.orderBy || null,
+			minimumWins: NumberOrNull(query.minimumWins),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/stats/type-distribution', async (req, res) => {
+		let query = BasicStatsQuery.parse(req.query)
+		let ret = await getTypeDistributionStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/stats/games', async (req, res) => {
+		let query = BasicStatsQuery.parse(req.query)
+		let ret = await getGamesStats({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	if (DEBUG) {

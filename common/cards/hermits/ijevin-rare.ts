@@ -1,9 +1,4 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	RowComponent,
-	SlotComponent,
-} from '../../components'
+import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import {afterAttack} from '../../types/priorities'
@@ -52,6 +47,7 @@ const IJevinRare: Hermit = {
 					query.not(query.slot.empty),
 					query.slot.opponent,
 					query.slot.hermit,
+					query.slot.canBecomeActive,
 				)
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
@@ -66,14 +62,12 @@ const IJevinRare: Hermit = {
 						opponentPlayer.changeActiveRow(pickedSlot.row)
 					},
 					onTimeout() {
-						let rowComponent = game.components.find(
-							RowComponent,
-							query.not(query.row.active),
-							query.row.opponentPlayer,
-							query.row.hermitSlotOccupied,
+						let newActiveRow = game.components.find(
+							SlotComponent,
+							pickCondition,
 						)
-						if (!rowComponent) return
-						opponentPlayer.changeActiveRow(rowComponent)
+						if (!newActiveRow?.inRow()) return
+						opponentPlayer.changeActiveRow(newActiveRow.row)
 					},
 				})
 			},

@@ -23,7 +23,7 @@ const GrianchRare: Hermit = {
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 3,
+	tokens: 4,
 	type: ['builder'],
 	health: 250,
 	primary: {
@@ -67,7 +67,7 @@ const GrianchRare: Hermit = {
 				} else if (attack.type === 'secondary') {
 					const spentFortune = player.hasStatusEffect(SpentFortuneEffect)
 					spentFortune?.remove()
-					const coinFlip = flipCoin(player, component)
+					const coinFlip = flipCoin(game, player, component)
 					spentFortune?.apply(player.entity)
 
 					if (coinFlip[0] === 'tails') {

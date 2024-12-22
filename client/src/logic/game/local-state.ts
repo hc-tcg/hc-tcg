@@ -81,16 +81,22 @@ export function* localPutCardInSlot(
 			isHermit(hermit.card.props) &&
 			isItem(selectedCard.props)
 		) {
-			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false)) {
+			if (
+				hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false) &&
+				!hermit.card.props.primary.passive
+			) {
 				gameState.turn.availableActions.push('PRIMARY_ATTACK')
 			}
-			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false)) {
+			if (
+				hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false) &&
+				!hermit.card.props.secondary.passive
+			) {
 				gameState.turn.availableActions.push('SECONDARY_ATTACK')
 			}
 		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 /** Make the client look like a card has been removed from the hand. */
@@ -103,7 +109,7 @@ export function* localRemoveCardFromHand(selectedCard: LocalCardInstance) {
 		(card) => card.entity !== selectedCard.entity,
 	)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 export function* localApplyEffect() {
@@ -113,7 +119,7 @@ export function* localApplyEffect() {
 		playerState.board.singleUseCardUsed = true
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 export function* localRemoveEffect() {
@@ -126,7 +132,7 @@ export function* localRemoveEffect() {
 		}
 	}
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
@@ -157,7 +163,7 @@ export function* localChangeActiveHermit(action: ChangeActiveHermitActionData) {
 				].includes(action),
 		)
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }
 
 /** Make the client look like the turn has ended */
@@ -176,5 +182,5 @@ export function* localEndTurn() {
 	// Slots are cleared at the end of the turn
 	yield* localRemoveEffect()
 
-	yield* put({type: 'UPDATE_GAME'})
+	yield* put({type: localMessages.GAME_UPDATE})
 }

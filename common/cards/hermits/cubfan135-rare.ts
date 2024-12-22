@@ -48,6 +48,7 @@ const Cubfan135Rare: Hermit = {
 						query.slot.hermit,
 						query.not(query.slot.active),
 						query.not(query.slot.empty),
+						query.slot.canBecomeActive,
 					) ||
 					game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 				)
@@ -62,6 +63,7 @@ const Cubfan135Rare: Hermit = {
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.not(query.slot.empty),
+						query.some(query.slot.active, query.slot.canBecomeActive),
 					),
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return

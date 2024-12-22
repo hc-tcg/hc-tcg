@@ -109,6 +109,7 @@ function* insertUser(socket: any) {
 				icon: 'any',
 				tags: [],
 				cards: getStarterPack().map((card) => toLocalCardInstance(card)),
+				public: false,
 			}
 
 			yield* sendMsg({
@@ -142,7 +143,7 @@ function* setupData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: localStorageDecks,
+				value: localStorageDecks.map((deck) => ({...deck, public: false})),
 			},
 		})
 		yield* put<LocalMessage>({
@@ -254,6 +255,10 @@ export function* loginSaga() {
 				type: localMessages.SELECT_DECK,
 				deck: activeDeck,
 			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
 		}
 		let minecraftName = localStorage.getItem('minecraftName')
 		if (minecraftName)
@@ -261,6 +266,10 @@ export function* loginSaga() {
 				type: localMessages.MINECRAFT_NAME_SET,
 				name: minecraftName,
 			})
+		yield* sendMsg({
+			type: clientMessages.UPDATE_MINECRAFT_NAME,
+			name: minecraftName ? minecraftName : '',
+		})
 
 		if (result.playerReconnected.game) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
@@ -300,6 +309,10 @@ export function* loginSaga() {
 			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
 				deck: activeDeck,
 			})
 		}
@@ -353,6 +366,16 @@ export function* databaseConnectionSaga() {
 			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
 		},
 	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECK]>(
+		localMessages.UPDATE_DECK,
+		function* (action) {
+			if (noConnection) {
+				saveDeckToLocalStorage(action.deck)
+				return
+			}
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
+		},
+	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
 		localMessages.IMPORT_DECK,
 		function* (action) {
@@ -360,6 +383,37 @@ export function* databaseConnectionSaga() {
 				type: clientMessages.IMPORT_DECK,
 				code: action.code,
 				newActiveDeck: action.newActiveDeck,
+				newName: action.newName,
+				newIcon: action.newIcon,
+				newIconType: action.newIconType,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.EXPORT_DECK]>(
+		localMessages.EXPORT_DECK,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.EXPORT_DECK,
+				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.GRAB_CURRENT_IMPORT]>(
+		localMessages.GRAB_CURRENT_IMPORT,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.GRAB_CURRENT_IMPORT,
+				code: action.code,
+			})
+		},
+	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.MAKE_INFO_PUBLIC]>(
+		localMessages.MAKE_INFO_PUBLIC,
+		function* (action) {
+			yield* sendMsg({
+				type: clientMessages.MAKE_INFO_PUBLIC,
+				code: action.code,
+				public: action.public,
 			})
 		},
 	)
@@ -405,11 +459,6 @@ export function* databaseConnectionSaga() {
 			})
 		},
 	)
-}
-
-export function* logoutSaga() {
-	const socket = yield* select(getSocket)
-
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {
@@ -419,6 +468,11 @@ export function* logoutSaga() {
 			})
 		},
 	)
+}
+
+export function* logoutSaga() {
+	const socket = yield* select(getSocket)
+
 	yield* race([
 		take(localMessages.LOGOUT),
 		call(receiveMsg(socket, serverMessages.INVALID_PLAYER)),
@@ -460,6 +514,23 @@ export function* newDeckSaga() {
 }
 
 export function* recieveStatsSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(
+			receiveMsg(socket, serverMessages.CURRENT_IMPORT_RECIEVED),
+		)
+		console.log('recieved')
+		yield put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'currentImport',
+				value: result.deck,
+			},
+		})
+	}
+}
+
+export function* recieveCurrentImportSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(

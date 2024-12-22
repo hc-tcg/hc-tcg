@@ -2,6 +2,7 @@ import {useDrag} from '@use-gesture/react'
 import classNames from 'classnames'
 import {FormattedTextNode} from 'common/utils/formatting'
 import Button from 'components/button'
+import Dropdown from 'components/dropdown'
 import {FormattedText} from 'components/formatting/formatting'
 import {
 	getChatMessages,
@@ -13,9 +14,60 @@ import {
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerId, getPlayerName} from 'logic/session/session-selectors'
-import {SyntheticEvent, useEffect, useState} from 'react'
+import {SyntheticEvent, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './chat.module.scss'
+
+const HERMIT_EMOJIS = [
+	'bdoubleo100',
+	'beetlejhost',
+	'boomerbdubs',
+	'cubfan135',
+	'docm77',
+	'dwarfimpulse',
+	'ethoslab',
+	'eviljevin',
+	'evilxisuma',
+	'falsesymmetry',
+	'fiveampearl',
+	'frenchkeralis',
+	'geminitay',
+	'goodtimeswithscar',
+	'architectfalse',
+	'grian',
+	'helsknight',
+	'horseheadhypno',
+	'hotguy',
+	'humancleo',
+	'hypnotizd',
+	'ijevin',
+	'impulsesv',
+	'jingler',
+	'joehills',
+	'keralis',
+	'llamadad',
+	'mumbojumbo',
+	'pearlescentmoon',
+	'potatoboy',
+	'poultryman',
+	'princessgem',
+	'renbob',
+	'rendog',
+	'shadee',
+	'skizzleman',
+	'smallishbeans',
+	'stressmonster101',
+	'spookystress',
+	'tangotek',
+	'tinfoilchef',
+	'vintagebeef',
+	'welsknight',
+	'wormman',
+	'xbcrafted',
+	'xisumavoid',
+	'zedaphplays',
+	'zombiecleo',
+]
 
 function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)
@@ -238,6 +290,14 @@ export const ChatContent = ({
 	onClick,
 	style,
 }: ChatContentProps) => {
+	const inputRef = useRef<HTMLInputElement>()
+	const handleEmoji = (emoji: string) => {
+		if (!inputRef.current) return
+		console.log(inputRef.current?.value)
+		inputRef.current.value += `:${emoji}:`
+		inputRef.current.focus()
+	}
+
 	return (
 		<>
 			<div className={css.chat} onClick={onClick} style={style}>
@@ -321,12 +381,43 @@ export const ChatContent = ({
 						})}
 					</div>
 				</div>
-				<form className={css.publisher} onSubmit={handleNewMessage}>
-					<input autoComplete="off" autoFocus name="message" maxLength={140} />
-					<Button variant="default" size="small">
-						Send
-					</Button>
-				</form>
+				<div className={css.formBox}>
+					<form className={css.publisher} onSubmit={handleNewMessage}>
+						<input
+							autoComplete="off"
+							autoFocus
+							name="message"
+							maxLength={140}
+							//@ts-ignore
+							ref={inputRef}
+						/>
+						<Button variant="default" size="small">
+							Send
+						</Button>
+					</form>
+					<Dropdown
+						button={
+							<button className={css.emojiButton}>
+								<img
+									src={'/images/hermits-emoji/bdoubleo100.png'}
+									draggable={false}
+								/>
+							</button>
+						}
+						label="Emojis"
+						options={HERMIT_EMOJIS.map((emoji) => ({
+							name: emoji,
+							key: emoji,
+							icon: `/images/hermits-emoji/${emoji}.png`,
+						}))}
+						showNames={false}
+						grid={true}
+						maxHeight={6}
+						action={(option) => handleEmoji(option)}
+						direction={'up'}
+						align={'right'}
+					></Dropdown>
+				</div>
 			</div>
 		</>
 	)

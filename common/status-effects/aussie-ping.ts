@@ -77,6 +77,15 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 				if (gasLightRecord.length) {
 					updateGasLightRecord()
 					effect.remove()
+					if (flippedHeads) {
+						game.components
+							.new(
+								StatusEffectComponent,
+								AussiePingImmuneEffect,
+								effect.creator.entity,
+							)
+							.apply(player.entity)
+					}
 				}
 			},
 		)
@@ -92,6 +101,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 				// No need to flip a coin for multiple attacks
 				if (!coinFlipResult) {
 					const coinFlip = flipCoin(
+						game,
 						player.opponentPlayer,
 						effect.creator,
 						1,

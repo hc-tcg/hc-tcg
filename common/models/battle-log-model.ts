@@ -13,6 +13,7 @@ import {
 	RowEntity,
 	StatusEffectEntity,
 } from '../entities'
+import {serverMessages} from '../socket-messages/server-messages'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
 import {LineNode, formatText} from '../utils/formatting'
@@ -92,7 +93,9 @@ export class BattleLogModel {
 				message: formatText(firstEntry.description, {censor: true}),
 			})
 
-			console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			if (this.game.settings.verboseLogging) {
+				console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			}
 		}
 
 		// We skip waiting for the logs to send if there are no players. This is because
@@ -113,7 +116,7 @@ export class BattleLogModel {
 		)
 
 		broadcast(this.game.getPlayers(), {
-			type: 'CHAT_UPDATE',
+			type: serverMessages.CHAT_UPDATE,
 			messages: this.game.chat,
 		})
 	}
@@ -358,7 +361,7 @@ export class BattleLogModel {
 		})
 
 		broadcast(this.game.getPlayers(), {
-			type: 'CHAT_UPDATE',
+			type: serverMessages.CHAT_UPDATE,
 			messages: this.game.chat,
 		})
 	}

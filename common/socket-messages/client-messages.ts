@@ -4,7 +4,7 @@ import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
-export const clientMessages = messages({
+export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
 	UPDATE_MINECRAFT_NAME: null,
@@ -26,8 +26,12 @@ export const clientMessages = messages({
 	GET_DECKS: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
+	EXPORT_DECK: null,
+	GRAB_CURRENT_IMPORT: null,
+	MAKE_INFO_PUBLIC: null,
 	INSERT_DECKS: null,
 	IMPORT_DECK: null,
+	UPDATE_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 })
@@ -49,7 +53,6 @@ export type ClientMessages = [
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 	},
-	{type: typeof clientMessages.FORFEIT},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 	{
@@ -70,6 +73,11 @@ export type ClientMessages = [
 		newActiveDeck?: string
 	},
 	{
+		type: typeof clientMessages.UPDATE_DECK
+		deck: Deck
+		newActiveDeck?: string
+	},
+	{
 		type: typeof clientMessages.INSERT_DECKS
 		decks: Array<Deck>
 		newActiveDeck?: string
@@ -77,7 +85,20 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.IMPORT_DECK
 		code: string
-		newActiveDeck?: string
+		newActiveDeck?: boolean
+		newName: string
+		newIcon: string
+		newIconType: string
+	},
+	{
+		type: typeof clientMessages.EXPORT_DECK
+		code: string
+	},
+	{type: typeof clientMessages.GRAB_CURRENT_IMPORT; code: string | null},
+	{
+		type: typeof clientMessages.MAKE_INFO_PUBLIC
+		code: string
+		public: boolean
 	},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},

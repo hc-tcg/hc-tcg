@@ -9,6 +9,7 @@ import {
 	logoutSaga,
 	minecraftNameSaga,
 	newDeckSaga,
+	recieveCurrentImportSaga,
 	recieveStatsSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
@@ -18,11 +19,12 @@ import {SagaIterator} from 'redux-saga'
 import {all, call, fork, race, take} from 'redux-saga/effects'
 
 function* appSaga(): SagaIterator {
-	yield fork(databaseConnectionSaga)
 	yield call(loginSaga)
+	yield fork(databaseConnectionSaga)
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(recieveStatsSaga)
+	yield fork(recieveCurrentImportSaga)
 	yield fork(databaseErrorSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)

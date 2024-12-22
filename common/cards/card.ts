@@ -71,6 +71,8 @@ export function getRankIcon(rank: RankT) {
 export function getHermitBackground(card: Hermit) {
 	if (card.background === 'advent_of_tcg') {
 		return '/images/backgrounds/advent_of_tcg.png'
+	} else if (card.background === 'advent_of_tcg_ii') {
+		return '/images/backgrounds/advent_of_tcg_ii.png'
 	} else if (card.background === 'alter_egos') {
 		return '/images/backgrounds/alter_egos.png'
 	}

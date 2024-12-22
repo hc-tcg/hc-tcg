@@ -50,7 +50,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			const energy =
 				(activeHermit.slot.inRow() &&
 					player.hooks.availableEnergy.call(
-						activeHermit.slot.row.getItems().flatMap((item) => {
+						activeHermit.slot.row.getItems(true).flatMap((item) => {
 							if (item.isItem()) return item.props.energy
 							return []
 						}),
@@ -63,15 +63,17 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			if (
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.props.primary.cost,
+					activeHermit.getAttackCost('primary'),
 					game.settings.noItemRequirements,
 				) ||
+					activeHermit.props.primary.passive ||
 					game.isActionBlocked('PRIMARY_ATTACK')) &&
 				(!hasEnoughEnergy(
 					energy,
-					activeHermit.props.secondary.cost,
+					activeHermit.getAttackCost('secondary'),
 					game.settings.noItemRequirements,
 				) ||
+					activeHermit.props.secondary.passive ||
 					game.isActionBlocked('SECONDARY_ATTACK'))
 			) {
 				return
@@ -87,8 +89,18 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 		}
 
 		observer.subscribe(player.hooks.onTurnStart, blockActions)
-		observer.subscribe(player.hooks.onActiveRowChange, () => {
-			if (game.currentPlayerEntity === player.entity) blockActions()
+		observer.subscribe(player.hooks.onActiveRowChange, (oldHermit) => {
+			if (game.currentPlayerEntity !== player.entity) return
+			if (oldHermit === null) {
+				blockActions()
+			} else {
+				game.removeBlockedActions(
+					this.icon,
+					'CHANGE_ACTIVE_HERMIT',
+					'SINGLE_USE_ATTACK',
+					'END_TURN',
+				)
+			}
 		})
 		observer.subscribe(player.hooks.afterApply, blockActions)
 		observer.subscribe(player.hooks.onAttach, blockActions)

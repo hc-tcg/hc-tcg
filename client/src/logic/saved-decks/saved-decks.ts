@@ -16,6 +16,7 @@ export const getActiveDeck = (): Deck | null => {
 			code: '',
 			tags: [],
 			cards: [],
+			public: false,
 		}
 	}
 }
@@ -99,6 +100,7 @@ export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 							}
 							return toLocalCardInstance(CARDS[card.cardId])
 						}),
+						public: false,
 					}
 					decks.push(newDeck)
 				} catch {

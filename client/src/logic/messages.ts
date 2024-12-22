@@ -4,8 +4,7 @@ import {Message, MessageTable, messages} from 'common/redux-messages'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
+	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 } from 'common/types/game-state'
@@ -25,7 +24,7 @@ import {
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
 
-export const localMessages = messages({
+export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
 	SOCKET_CONNECT: null,
 	SOCKET_DISCONNECT: null,
@@ -59,7 +58,6 @@ export const localMessages = messages({
 	GAME_CARD_SELECTED_SET: null,
 	GAME_MODAL_OPENED_SET: null,
 	GAME_SLOT_PICKED: null,
-	GAME_FORFEIT: null,
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
@@ -85,11 +83,15 @@ export const localMessages = messages({
 	RESET_ID_AND_SECRET: null,
 	DATABASE_SET: null,
 	INSERT_DECK: null,
+	UPDATE_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 	UPDATE_DECKS: null,
 	SELECT_DECK: null,
 	IMPORT_DECK: null,
+	EXPORT_DECK: null,
+	GRAB_CURRENT_IMPORT: null,
+	MAKE_INFO_PUBLIC: null,
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
@@ -171,7 +173,6 @@ type Messages = [
 		row?: number
 		index?: number
 	},
-	{type: typeof localMessages.GAME_FORFEIT},
 	{
 		type: typeof localMessages.GAME_ATTACK_START
 		attackType: 'single-use' | 'primary' | 'secondary'
@@ -179,8 +180,7 @@ type Messages = [
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_HIDE
@@ -223,6 +223,7 @@ type Messages = [
 	{type: typeof localMessages.RESET_ID_AND_SECRET},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
+	{type: typeof localMessages.UPDATE_DECK; deck: Deck},
 	{type: typeof localMessages.SELECT_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_DECK; deck: Deck},
 	{type: typeof localMessages.DELETE_TAG; tag: Tag},
@@ -230,8 +231,14 @@ type Messages = [
 	{
 		type: typeof localMessages.IMPORT_DECK
 		code: string
-		newActiveDeck?: string
+		newActiveDeck?: boolean
+		newName: string
+		newIcon: string
+		newIconType: string
 	},
+	{type: typeof localMessages.EXPORT_DECK; code: string},
+	{type: typeof localMessages.GRAB_CURRENT_IMPORT; code: string | null},
+	{type: typeof localMessages.MAKE_INFO_PUBLIC; code: string; public: boolean},
 	{type: typeof localMessages.NEW_PLAYER},
 	{
 		type: typeof localMessages.SHOW_TOOLTIP

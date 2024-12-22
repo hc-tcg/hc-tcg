@@ -1,87 +1,98 @@
 import {CARDS} from 'common/cards'
-import {Stats} from 'common/types/database'
 import {Database} from 'db/db'
 import root from 'serverRoot'
 import {z} from 'zod'
 
-type StatsResult =
-	| {
-			type: 'success'
-			stats: Stats
-	  }
-	| {
-			type: 'failure'
-			reason?: string
-	  }
-
-export const StatsHeader = z.object({uuid: z.string()})
+export const StatsQueryParams = z.object({uuid: z.string().optional()})
 
 export async function getStats(
 	db: Database | undefined,
-	header: {uuid: string},
-): Promise<StatsResult> {
+	uuid?: string,
+): Promise<[number, Record<string, any>]> {
 	if (!db) {
-		return {
-			type: 'failure',
-			reason: 'Endpoint is unavailable because database is disabled',
-		}
+		return [
+			502,
+			{
+				error: 'Endpoint is unavailable because database is disabled',
+			},
+		]
 	}
 
-	let stats = await db.getUserStats(header.uuid)
+	if (!uuid) {
+		return [
+			400,
+			{
+				error: '`uuid` query param must be provided for this endpoint',
+			},
+		]
+	}
+
+	let stats = await db.getUserStats(uuid)
 
 	if (stats.type === 'success') {
-		return {
-			type: 'success',
-			stats: stats.body,
-		}
+		return [200, stats.body]
 	}
 
-	return {type: 'failure', reason: stats.reason}
+	return [502, {error: stats.reason}]
 }
 
 export const CardStatsQuery = z.object({
-	before: z.number().nullish(),
-	after: z.number().nullish(),
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+	orderBy: z
+		.enum([
+			'winrate',
+			'deckUsage',
+			'gameUsage',
+			'averageCopies',
+			'averagePlayers',
+			'encounterChance',
+			'adjustedWinrate',
+			'winrateDifference',
+		])
+		.nullish(),
 })
 
 export async function getCardStats(params: {
 	before: number | null
 	after: number | null
-}) {
+	orderBy:
+		| 'winrate'
+		| 'deckUsage'
+		| 'gameUsage'
+		| 'averageCopies'
+		| 'averagePlayers'
+		| 'encounterChance'
+		| 'adjustedWinrate'
+		| 'winrateDifference'
+		| null
+}): Promise<[number, Record<string, any>]> {
 	let cards = await root.db.getCardsStats(params)
 
 	if (cards.type === 'failure') {
-		return {
-			type: 'failure',
-			reason: cards.reason,
-		}
-	}
-
-	const correctCards = cards.body.map((card) => {
-		return {
-			...card,
-			card: CARDS[card.id.toFixed(0).toString()],
-		}
-	})
-
-	return {
-		success: correctCards.map((card) => ({
-			card: card.card.id,
-			statistics: {
-				winrate: card.winrate,
-				rarity: card.rarity,
-				averageCopies: card.averageCopies,
+		return [
+			500,
+			{
+				error: cards.reason,
 			},
-		})),
+		]
 	}
+
+	return [
+		200,
+		cards.body.map((card) => ({
+			...card,
+			id: CARDS[card.id] ? CARDS[card.id].id : null,
+		})),
+	]
 }
 
-export const DeckStatParams = z.object({
-	before: z.number().nullish(),
-	after: z.number().nullish(),
-	offset: z.number().nullish(),
+export const DeckStatQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+	offset: z.string().nullish(),
 	orderBy: z.enum(['wins', 'winrate']).nullish(),
-	minimumWins: z.number().nullish(),
+	minimumWins: z.string().nullish(),
 })
 
 export async function getDeckStats(params: {
@@ -90,17 +101,75 @@ export async function getDeckStats(params: {
 	offset: number | null
 	orderBy: 'wins' | 'winrate' | null
 	minimumWins: number | null
-}) {
+}): Promise<[number, Record<string, any>]> {
 	let decks = await root.db.getDecksStats(params)
 
 	if (decks.type === 'failure') {
-		return {
-			type: 'failure',
-			reason: decks.reason,
-		}
+		return [
+			500,
+			{
+				error: decks.reason,
+			},
+		]
 	}
 
-	return {
-		success: decks,
+	return [200, decks]
+}
+
+export const TypeDistributionStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+})
+
+export async function getTypeDistributionStats(params: {
+	before: number | null
+	after: number | null
+}): Promise<[number, Record<string, any>]> {
+	let typeDistribution = await root.db.getTypeDistribution(params)
+
+	if (typeDistribution.type === 'failure') {
+		return [
+			500,
+			{
+				error: typeDistribution.reason,
+			},
+		]
 	}
+
+	return [200, typeDistribution.body]
+}
+
+export const BasicStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+})
+
+export async function getGamesStats(params: {
+	before: number | null
+	after: number | null
+}): Promise<[number, Record<string, any>]> {
+	let stats = await root.db.getGamesStats(params)
+	// Games played before we switched to the new database
+	const oldGames = 657835
+
+	if (stats.type === 'failure') {
+		return [
+			500,
+			{
+				error: stats.reason,
+			},
+		]
+	}
+
+	return [
+		200,
+		{
+			games: stats.body.games,
+			allTimeGames: !params.after ? oldGames + stats.body.games : null,
+			tieRate: stats.body.tieRate,
+			forfeitRate: stats.body.forfeitRate,
+			errorRate: stats.body.errorRate,
+			gameLength: stats.body.gameLength,
+		},
+	]
 }

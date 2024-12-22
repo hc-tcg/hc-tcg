@@ -217,4 +217,30 @@ describe('Test Human Cleo Betrayal', () => {
 			{noItemRequirements: false, forceCoinFlip: true},
 		)
 	})
+
+	test('Test Betrayed allows ending turn when opponent switches from row with no items', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, BalancedDoubleItem],
+				playerTwoDeck: [HumanCleoRare, Efficiency],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, BalancedDoubleItem, 'item', 1, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, Efficiency, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+					expect(game.state.turn.availableActions).toContain('END_TURN')
+					yield* endTurn(game)
+				},
+			},
+			{noItemRequirements: false, forceCoinFlip: true},
+		)
+	})
 })

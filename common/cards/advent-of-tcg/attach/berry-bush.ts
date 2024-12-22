@@ -16,7 +16,7 @@ const BerryBush: Attach & HasHealth = {
 	numericId: 334,
 	name: 'Sweet Berry Bush',
 	expansion: 'advent_of_tcg',
-	rarity: 'ultra_rare',
+	rarity: 'rare',
 	tokens: 2,
 	health: 30,
 	description:
@@ -50,6 +50,7 @@ const BerryBush: Attach & HasHealth = {
 								.entity,
 						)
 					}
+					observer.unsubscribe(game.hooks.afterAttack)
 				}
 			},
 		)

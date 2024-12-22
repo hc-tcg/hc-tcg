@@ -48,6 +48,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 					tags: [],
 					iconType: 'item',
 					icon: 'any',
+					public: false,
 				},
 	)
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])
@@ -63,6 +64,21 @@ const DeckComponent = ({setMenuSection}: Props) => {
 		//Load new deck
 		setLoadedDeck(deck)
 		databaseInfo.decks = [...databaseInfo.decks, deck]
+	}
+
+	async function updateDeckInternal(deck: Deck) {
+		//Save new deck to Database
+		dispatch({
+			type: localMessages.UPDATE_DECK,
+			deck: deck,
+		})
+
+		//Load new deck
+		setLoadedDeck(deck)
+		const oldDeckIndex = databaseInfo.decks.findIndex(
+			(oldDeck) => oldDeck.code === deck.code,
+		)
+		databaseInfo.decks[oldDeckIndex] = deck
 	}
 
 	const deleteDeckInternal = (deletedDeck: Deck) => {
@@ -95,6 +111,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						back={() => setMode('select')}
 						title={'Deck Editor'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
+						updateDeck={(returnedDeck) => updateDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}
 						deck={loadedDeck}
 						databaseInfo={databaseInfo}
@@ -106,6 +123,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 						back={() => setMode('select')}
 						title={'Deck Creation'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
+						updateDeck={(returnedDeck) => updateDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}
 						deck={null}
 						databaseInfo={databaseInfo}

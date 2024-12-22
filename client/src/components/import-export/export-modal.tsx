@@ -1,6 +1,7 @@
 import {Deck} from 'common/types/deck'
 import {Modal} from 'components/modal'
 import {CopyIcon} from 'components/svgs'
+import {localMessages, useMessageDispatch} from 'logic/messages'
 import css from './import-export.module.scss'
 
 type Props = {
@@ -10,6 +11,14 @@ type Props = {
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
+	const dispatch = useMessageDispatch()
+
+	if (setOpen)
+		dispatch({
+			type: localMessages.EXPORT_DECK,
+			code: loadedDeck.code,
+		})
+
 	return (
 		<Modal title="Export Deck" setOpen={setOpen} onClose={onClose}>
 			<Modal.Description>

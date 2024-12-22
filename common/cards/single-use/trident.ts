@@ -47,7 +47,7 @@ const Trident: SingleUse = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
 
-				coinflipResult = flipCoin(player, component)[0]
+				coinflipResult = flipCoin(game, player, component)[0]
 
 				applySingleUse(game)
 				observer.unsubscribeFromEverything()

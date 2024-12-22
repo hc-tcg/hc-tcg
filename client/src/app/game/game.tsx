@@ -10,6 +10,7 @@ import {
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
+	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
@@ -50,6 +51,7 @@ function Game() {
 	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
+	const playerEntity = useSelector(getPlayerEntity)
 	const isSpectator = useSelector(getIsSpectator)
 	const [filter, setFilter] = useState<string>('')
 
@@ -229,7 +231,10 @@ function Game() {
 	useEffect(() => {
 		if (!gameState.isBossGame) return
 		if (endGameOverlay) {
-			if (endGameOverlay.outcome === 'you_won')
+			if (
+				endGameOverlay.outcome.type === 'player-won' &&
+				endGameOverlay.outcome.winner === playerEntity
+			)
 				dispatch({
 					type: localMessages.QUEUE_VOICE,
 					lines: ['/voice/EXLOSE.ogg'],
@@ -319,6 +324,7 @@ function Game() {
 							onClick={(card: LocalCardInstance) => selectCard(card)}
 							selected={[selectedCard]}
 							unpickable={unpickableCards}
+							statusEffects={gameState.statusEffects}
 						/>
 					</div>
 				)}
@@ -326,7 +332,36 @@ function Game() {
 
 			{renderModal(openedModal, handleOpenModal)}
 			<Chat />
-			<EndGameOverlay {...endGameOverlay} />
+
+			{endGameOverlay?.outcome && (
+				<EndGameOverlay
+					{...endGameOverlay}
+					nameOfWinner={
+						endGameOverlay.outcome.type === 'player-won'
+							? gameState.players[endGameOverlay.outcome.winner].playerName
+							: null
+					}
+					nameOfLoser={
+						endGameOverlay.outcome.type === 'player-won'
+							? gameState.players[
+									Object.keys(gameState.players).find(
+										(k) =>
+											endGameOverlay.outcome.type === 'player-won' &&
+											k !== endGameOverlay.outcome.winner,
+									) as PlayerEntity
+								].playerName
+							: null
+					}
+					viewer={
+						isSpectator
+							? {type: 'spectator'}
+							: {type: 'player', entity: playerEntity}
+					}
+					onClose={() => {
+						dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+					}}
+				/>
+			)}
 		</div>
 	)
 }

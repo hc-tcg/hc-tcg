@@ -41,7 +41,7 @@ const FalseSymmetryRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(player, component)[0]
+				const coinFlip = flipCoin(game, player, component)[0]
 
 				if (coinFlip === 'tails') return
 

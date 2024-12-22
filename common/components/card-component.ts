@@ -27,6 +27,7 @@ import type {
 } from '../entities'
 import type {GameModel} from '../models/game-model'
 import {StatusEffect} from '../status-effects/status-effect'
+import {TypeT} from '../types/cards'
 import {GameHook} from '../types/hooks'
 import query from './query'
 
@@ -46,6 +47,10 @@ export class CardComponent<CardType extends Card = Card> {
 
 	hooks: {
 		onChangeSlot: GameHook<(slot: SlotComponent) => void>
+		/** Get the cost of the primary attack from this card, if it is a hermit */
+		getPrimaryCost: GameHook<() => Array<TypeT>>
+		/** Get the cost of the secondary attack from this card, if it is a hermit */
+		getSecondaryCost: GameHook<() => Array<TypeT>>
 	}
 
 	constructor(
@@ -67,15 +72,15 @@ export class CardComponent<CardType extends Card = Card> {
 
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
-			this.observerEntity = observer.entity
-			this.props.onAttach(this.game, this, observer)
-			this.player?.hooks.onAttach.call(this)
+			this.onAttach(observer)
 		}
 
 		this.turnedOver = false
 
 		this.hooks = {
 			onChangeSlot: new GameHook(),
+			getPrimaryCost: new GameHook(),
+			getSecondaryCost: new GameHook(),
 		}
 
 		this.props.onCreate(this.game, this)
@@ -94,6 +99,22 @@ export class CardComponent<CardType extends Card = Card> {
 	static compareOrder(a: CardComponent, b: CardComponent) {
 		if (!('order' in a.slot) || !('order' in b.slot)) return 0
 		return (a.slot.order as number) - (b.slot.order as number)
+	}
+
+	private onAttach(observer: ObserverComponent) {
+		this.observerEntity = observer.entity
+		this.player?.hooks.onAttach.call(this)
+		this.props.onAttach(this.game, this, observer)
+		if (isHermit(this.props)) {
+			observer.subscribe(this.hooks.getPrimaryCost, () => {
+				if (!isHermit(this.props)) return []
+				return this.props.primary.cost
+			})
+			observer.subscribe(this.hooks.getSecondaryCost, () => {
+				if (!isHermit(this.props)) return []
+				return this.props.secondary.cost
+			})
+		}
 	}
 
 	/** The slot that this card is in */
@@ -168,9 +189,7 @@ export class CardComponent<CardType extends Card = Card> {
 
 		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
-			this.observerEntity = observer.entity
-			this.props.onAttach(this.game, this, observer)
-			this.player.hooks.onAttach.call(this)
+			this.onAttach(observer)
 		}
 
 		this.hooks.onChangeSlot.call(component)
@@ -206,5 +225,14 @@ export class CardComponent<CardType extends Card = Card> {
 			query.effect.is(...statusEffect),
 			query.effect.targetEntity(this.entity),
 		)
+	}
+
+	public getAttackCost(attack: 'primary' | 'secondary'): Array<TypeT> {
+		if (attack === 'primary') {
+			return this.hooks.getPrimaryCost.call().flat()
+		} else if (attack === 'secondary') {
+			return this.hooks.getSecondaryCost.call().flat()
+		}
+		throw new Error("`attack` should be 'primary' or 'secondary'")
 	}
 }

@@ -1,3 +1,4 @@
+import assert from 'assert'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
@@ -30,14 +31,10 @@ import {
 	spawn,
 	take,
 } from 'typed-redux-saga'
+import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
-import {
-	getGameOutcome,
-	getGamePlayerOutcome,
-	getWinner,
-} from '../utils/win-conditions'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
 
@@ -51,6 +48,7 @@ function setupGame(
 	apiSecret?: string,
 ): GameModel {
 	let game = new GameModel(
+		GameModel.newGameSeed(),
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
@@ -106,7 +104,7 @@ function* gameManager(game: GameModel) {
 		const result = yield* race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
-			// kill a game after two hours
+			// kill a game after one hour
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take<
@@ -119,22 +117,34 @@ function* gameManager(game: GameModel) {
 							.player.id,
 					),
 			),
-			forfeit: take<RecievedClientMessage<typeof clientMessages.FORFEIT>>(
-				(action: any) =>
-					action.type === clientMessages.FORFEIT &&
-					playerIds.includes(
-						(action as RecievedClientMessage<typeof clientMessages.FORFEIT>)
-							.playerId,
-					),
-			),
 		})
+
+		if (result.timeout) {
+			game.outcome = {type: 'timeout'}
+		}
+
+		if (result.playerRemoved) {
+			let playerThatLeft = game.viewers.find(
+				(v) => v.playerId === result.playerRemoved?.player.id,
+			)?.playerOnLeft.entity
+			let remainingPlayer = game.components.find(
+				PlayerComponent,
+				(_g, c) => c.entity !== playerThatLeft,
+			)?.entity
+			assert(remainingPlayer, 'There is no way there is no remaining player.')
+			game.outcome = {
+				type: 'player-won',
+				victoryReason: 'forfeit',
+				winner: remainingPlayer,
+			}
+		}
 
 		for (const viewer of game.viewers) {
 			const gameState = getLocalGameState(game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.reason) {
+				if (!game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
 					game.components
@@ -144,22 +154,37 @@ function* gameManager(game: GameModel) {
 						)
 				}
 			}
-			const outcome = getGamePlayerOutcome(game, result, viewer)
-			// assert(game.endInfo.reason, 'Games can not end without a reason')
+		}
+	} catch (err) {
+		console.log('Error: ', err)
+		game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
+	} finally {
+		const outcome = game.outcome
+
+		assert(outcome, 'All games should have an outcome after they end')
+
+		for (const viewer of game.viewers) {
+			const gameState = getLocalGameState(game, viewer)
+			if (gameState) {
+				gameState.timer.turnRemaining = 0
+				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
+				if (!game.endInfo.victoryReason) {
+					// Remove coin flips from state if game was terminated before game end to prevent
+					// clients replaying animations after a forfeit, disconnect, or excessive game duration
+					game.components
+						.filter(PlayerComponent)
+						.forEach(
+							(player) => (gameState.players[player.entity].coinFlips = []),
+						)
+				}
+			}
 			broadcast([viewer.player], {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
-				reason: game.endInfo.reason || undefined,
 			})
 		}
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers(), {type: serverMessages.GAME_CRASH})
-	} finally {
+
 		if (game.task) yield* cancel(game.task)
 		game.hooks.afterGameEnd.call()
 
@@ -170,38 +195,43 @@ function* gameManager(game: GameModel) {
 		)
 
 		const gamePlayers = game.getPlayers()
-		const winner = gamePlayers.find(
-			(player) => player.id === game.endInfo.winner,
-		)
 
-		if (winner === null && game.endInfo.winner) {
+		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
+
+		const winnerPlayerId = game.viewers.find(
+			(viewer) =>
+				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
+		)?.playerId
+
+		delete root.games[game.id]
+		root.hooks.gameRemoved.call(game)
+
+		if (!winnerPlayerId && outcome.type === 'player-won') {
 			console.error(
-				`[Public Game] There was a winner, but no winner was found with ID ${game.endInfo.winner}`,
+				`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
 			)
 			return
 		}
+
+		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
 
 		if (
 			gamePlayers.length >= 2 &&
 			gamePlayers[0].uuid &&
 			gamePlayers[1].uuid &&
-			game.endInfo.outcome &&
 			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
 			gamePlayers[0].uuid !== gamePlayers[1].uuid
 		) {
 			yield* addGame(
 				gamePlayers[0],
 				gamePlayers[1],
-				game.endInfo.outcome,
+				outcome,
 				Date.now() - game.createdTime,
 				winner ? winner.uuid : null,
-				'', //@TODO Add seed
+				game.rngSeed,
 				Buffer.from([0x00]),
 			)
 		}
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
 	}
 }
 
@@ -242,7 +272,7 @@ function* randomMatchmakingSaga() {
 				playersToRemove.push(player1.id, player2.id)
 				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
-				yield* fork(gameManager, newGame)
+				yield* safeCall(fork, gameManager, newGame)
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -342,6 +372,7 @@ function setupSolitareGame(
 	opponent: OpponentDefs,
 ): GameModel {
 	const game = new GameModel(
+		GameModel.newGameSeed(),
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),
@@ -445,7 +476,7 @@ export function* createBossGame(
 
 	root.addGame(newBossGame)
 
-	yield* fork(gameManager, newBossGame)
+	yield* safeCall(fork, gameManager, newBossGame)
 }
 
 export function* createPrivateGame(
@@ -539,7 +570,7 @@ export function* joinPrivateGame(
 				type: 'viewer',
 				id: player.id,
 			},
-			message: formatText(`$s${player.name}$ started spectating.`),
+			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
 		})
 
@@ -629,7 +660,7 @@ export function* joinPrivateGame(
 					type: 'viewer',
 					id: player.id,
 				},
-				message: formatText(`$s${player.name}$ started spectating.`),
+				message: formatText(`$s${player.name}$ $ystarted spectating$`),
 				createdAt: Date.now(),
 			})
 		}
@@ -661,7 +692,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* fork(gameManager, newGame)
+		yield* safeCall(fork, gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
@@ -742,19 +773,5 @@ function* matchmakingSaga() {
 
 	yield* all([fork(randomMatchmakingSaga), fork(cleanUpSaga)])
 }
-
-/*
- receive: CANCEL_PRIVATE_GAME
- send: WAITING_FOR_PLAYER, JOIN_PRIVATE_GAME_SUCCESS, JOIN_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_FAILURE, CREATE_PRIVATE_GAME_SUCCESS (with code)
- */
-
-// client sends join queue
-// we send back join queue success or fail, and client acts accordingly
-
-// 2 things happening at the same time when action is dispatched to store:
-// 1) reducer receives action and updates matchmaking state, therefore changing the client look to show - waiting for public game
-// 2) matchmaking saga also receives action, and sends data to client, then waiting for the game to start
-
-// send and receive nessage is how we communicate with the server,completely independent of the store and reducer
 
 export default matchmakingSaga

@@ -13,6 +13,7 @@ const pickCondition = query.every(
 	query.slot.hermit,
 	query.not(query.slot.active),
 	query.not(query.slot.empty),
+	query.slot.canBecomeActive,
 )
 
 const Egg: SingleUse = {
@@ -62,7 +63,7 @@ const Egg: SingleUse = {
 
 						opponentPlayer.changeActiveRow(afkHermitSlot.row)
 
-						const coinFlip = flipCoin(player, component)
+						const coinFlip = flipCoin(game, player, component)
 						if (coinFlip[0] === 'heads') {
 							const eggAttack = game
 								.newAttack({

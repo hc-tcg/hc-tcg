@@ -2,6 +2,8 @@ import { CARDS, CARDS_LIST } from 'common/cards'
 import { getCardTypeIcon, getRankIcon } from 'common/cards/card'
 import {getCardImage, getHermitBackground} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
+import {GLOSSARY} from 'common/glossary'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {getDeckFromHash} from 'common/utils/import-export'
 import {getCardVisualTokenCost, getDeckCost} from 'common/utils/ranks'
 import root from 'serverRoot'
@@ -31,9 +33,11 @@ type HermitResponse = {
 		damage: number
 		power: string | null
 	}
-	image: string
-	background: string
-	palette?: string
+	sidebarDescriptions: Array<{name: string; description: string}>
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 type EffectResponse = {
@@ -44,7 +48,11 @@ type EffectResponse = {
 	rarity: string
 	tokens: number
 	description: string
-	image: string
+	sidebarDescriptions: Array<{name: string; description: string}>
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 type ItemResponse = {
@@ -56,6 +64,37 @@ type ItemResponse = {
 	tokens: number
 	energy: Array<string>
 	image: string
+}
+
+function getSidebarDescriptions(
+	sidebarDescriptions: Array<{type: string; name: string}> | undefined | null,
+) {
+	if (!sidebarDescriptions) return []
+	return sidebarDescriptions?.reduce(
+		(r: Array<{name: string; description: string}>, description) => {
+			if (description.type === 'statusEffect') {
+				const statusEffect = STATUS_EFFECTS[description.name]
+				return [
+					...r,
+					{
+						name: statusEffect.name,
+						description: statusEffect.description,
+					},
+				]
+			} else if (description.type === 'glossary') {
+				const glossaryEntry = GLOSSARY[description.name]
+				return [
+					...r,
+					{
+						name: glossaryEntry.name,
+						description: glossaryEntry.description,
+					},
+				]
+			}
+			return r
+		},
+		[],
+	)
 }
 
 function cardToCardResponse(card: Card, url: string): CardResponse | null {
@@ -72,9 +111,14 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			health: card.health,
 			primary: card.primary,
 			secondary: card.secondary,
-			image: joinUrl(url, getCardImage(card)),
-			background: joinUrl(url, getHermitBackground(card)),
-			palette: card.palette,
+			sidebarDescriptions: getSidebarDescriptions(card.sidebarDescriptions),
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
+			},
 		}
 	} else if (isSingleUse(card) || isAttach(card)) {
 		return {
@@ -85,7 +129,14 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			description: card.description,
-			image: joinUrl(url, getCardImage(card)),
+			sidebarDescriptions: getSidebarDescriptions(card.sidebarDescriptions),
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
+			},
 		}
 	} else if (isItem(card)) {
 		return {
@@ -96,7 +147,13 @@ function cardToCardResponse(card: Card, url: string): CardResponse | null {
 			rarity: card.rarity,
 			tokens: getCardVisualTokenCost(card.tokens),
 			energy: card.energy,
-			image: joinUrl(url, getCardImage(card)),
+			images: {
+				default: joinUrl(url, getRenderedCardImage(card, false, 'png')),
+				'with-token-cost': joinUrl(
+					url,
+					getRenderedCardImage(card, true, 'png'),
+				),
+			},
 		}
 	}
 	return null
@@ -113,31 +170,50 @@ export function cards(url: string) {
 	return out
 }
 
-export async function getDeckInformation(url: string, hash: string) {
+export async function getDeckInformation(
+	url: string,
+	hash: string,
+): Promise<[number, Record<string, any>]> {
 	if (hash.length >= 10) {
 		let deck = getDeckFromHash(hash)
-		return {
-			success: deck
-				.map((card) => cardToCardResponse(card.props, url))
-				.filter((x) => x !== null),
-		}
+		return [
+			200,
+			{
+				name: null,
+				code: hash,
+				tags: [],
+				icon: null,
+				public: false,
+				cards: deck
+					.map((card) => cardToCardResponse(card.props, url))
+					.filter((x) => x !== null),
+				cost: getDeckCost(deck.map((card) => card.props)),
+			},
+		]
 	} else {
 		let deck = await root.db?.getDeckFromID(hash)
 		if (!deck)
-			return {
-				type: 'failure',
-				reason: 'Endpoint is unavailable because database is disabled',
-			}
+			return [
+				501,
+				{
+					reason: 'Endpoint is unavailable because database is disabled',
+				},
+			]
 		if (deck.type == 'success') {
-			return {
-				type: 'success',
-				...deck.body,
-			}
+			return [
+				200,
+				{
+					...deck.body,
+					cost: getDeckCost(deck.body.cards.map((card) => CARDS[card])),
+				},
+			]
 		} else {
-			return {
-				type: 'failure',
-				reason: 'Could not find deck.',
-			}
+			return [
+				404,
+				{
+					reason: 'Could not find deck.',
+				},
+			]
 		}
 	}
 }

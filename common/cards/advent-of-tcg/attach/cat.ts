@@ -19,7 +19,7 @@ const Cat: Attach = {
 	rarity: 'rare',
 	tokens: 1,
 	description:
-		'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to place the bottom card of your deck on top to be drawn next.',
+		'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to move the bottom card of your deck to the top to be drawn next.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -57,16 +57,16 @@ const Cat: Attach = {
 					modal: {
 						type: 'selectCards',
 						name: 'Cat - View your top card',
-						description: 'Place a card from the bottom of your deck on top?',
+						description: 'Move a card from the bottom of your deck to the top?',
 						cards: [currentTopCard.entity],
 						selectionSize: 0,
 						cancelable: false,
 						primaryButton: {
-							text: 'Place from Bottom',
+							text: 'Move to top',
 							variant: 'primary',
 						},
 						secondaryButton: {
-							text: 'Do Nothing',
+							text: 'Do nothing',
 							variant: 'secondary',
 						},
 					},

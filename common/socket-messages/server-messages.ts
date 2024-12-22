@@ -1,16 +1,11 @@
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
-import {Deck, Tag} from '../types/deck'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	GamePlayerEndOutcomeT,
-	LocalGameState,
-} from '../types/game-state'
+import {ApiDeck, Deck, Tag} from '../types/deck'
+import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo} from '../types/server-requests'
 
-export const serverMessages = messages({
+export const serverMessages = messages('serverMessages', {
 	PLAYER_RECONNECTED: null,
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,
@@ -18,7 +13,6 @@ export const serverMessages = messages({
 	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
-	GAME_CRASH: null,
 	GAME_START: null,
 	GAME_END: null,
 	PRIVATE_GAME_TIMEOUT: null,
@@ -46,6 +40,7 @@ export const serverMessages = messages({
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
 	STATS_RECIEVED: null,
+	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 })
 
@@ -65,13 +60,11 @@ export type ServerMessages = [
 		updates: Record<string, Array<string>>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
-	{type: typeof serverMessages.GAME_CRASH},
 	{type: typeof serverMessages.GAME_START},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
-		outcome: GamePlayerEndOutcomeT
-		reason?: GameEndReasonT
+		outcome: GameOutcome
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
@@ -98,7 +91,7 @@ export type ServerMessages = [
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
 	{
 		type: typeof serverMessages.GAME_OVER_STAT
-		outcome: GameEndOutcomeT
+		outcome: GameOutcome
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
@@ -113,6 +106,7 @@ export type ServerMessages = [
 		newActiveDeck?: Deck
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 ]
 
