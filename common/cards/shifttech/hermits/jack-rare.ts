@@ -42,7 +42,7 @@ const JackCommon: Hermit = {
 					return
 				if (!(attack.attacker instanceof CardComponent)) return
 
-				const coinFlip = flipCoin(player, attack.attacker)
+				const coinFlip = flipCoin(game, player, attack.attacker)
 
 				if (coinFlip[0] === 'heads') {
 					const playerDeck = player.getDeck().sort(CardComponent.compareOrder)

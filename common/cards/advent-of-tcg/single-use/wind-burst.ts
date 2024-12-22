@@ -16,7 +16,7 @@ const WindBurst: SingleUse = {
 	id: 'wind_burst',
 	numericId: 245,
 	name: 'Wind Burst',
-	expansion: 'advent_of_tcg_ii',
+	expansion: 'minecraft',
 	rarity: 'common',
 	tokens: 0,
 	description:

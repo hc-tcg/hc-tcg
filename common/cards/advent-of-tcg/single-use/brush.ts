@@ -13,7 +13,7 @@ const Brush: SingleUse = {
 	id: 'brush',
 	numericId: 504,
 	name: 'Brush',
-	expansion: 'advent_of_tcg',
+	expansion: 'minecraft',
 	rarity: 'common',
 	tokens: 0,
 	description:

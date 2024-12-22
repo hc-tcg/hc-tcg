@@ -10,7 +10,7 @@ const FletchingTable: SingleUse = {
 	id: 'fletching_table',
 	numericId: 507,
 	name: 'Fletching table',
-	expansion: 'advent_of_tcg',
+	expansion: 'minecraft',
 	rarity: 'common',
 	tokens: -1,
 	description:
