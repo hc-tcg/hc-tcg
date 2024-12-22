@@ -10,7 +10,11 @@ import Button from 'components/button'
 import CardList from 'components/card-list'
 import MobileCardList from 'components/card-list/mobile-card-list'
 import Dropdown from 'components/dropdown'
-import {ExportModal, ImportModal} from 'components/import-export'
+import {
+	ExportModal,
+	ImportModal,
+	ScreenshotDeckModal,
+} from 'components/import-export'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {ConfirmModal} from 'components/modal'
 import {
@@ -19,6 +23,7 @@ import {
 	EditIcon,
 	ErrorIcon,
 	ExportIcon,
+	ViewFullDeckIcon,
 } from 'components/svgs'
 import {TagsModal} from 'components/tags-modal'
 import {DatabaseInfo} from 'logic/game/database/database-reducer'
@@ -131,6 +136,8 @@ function SelectDeck({
 	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
 	const [showManageTagsModal, setShowManageTagsModal] = useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+	const [showScreenshotModal, setShowScreenshotModal] = useState<boolean>(false)
+
 	const [tagFilter, setTagFilter] = useState<Tag>(() => {
 		const lastSelectedTag = databaseInfo.tags.find(
 			(tag) => tag.key === settings.lastSelectedTag,
@@ -390,6 +397,11 @@ function SelectDeck({
 				setOpen={showMassExportModal}
 				onClose={() => setShowMassExportModal(false)}
 			/>
+			<ScreenshotDeckModal
+				setOpen={showScreenshotModal}
+				cards={sortCards(loadedDeck.cards)}
+				onClose={() => setShowScreenshotModal(false)}
+			/>
 			<TagsModal
 				setOpen={showManageTagsModal}
 				onClose={() => setShowManageTagsModal(false)}
@@ -504,6 +516,12 @@ function SelectDeck({
 									)}
 								</span>
 								<span className={css.mobileDeckNamePadding}></span>
+								<button
+									className={css.dropdownButton}
+									onClick={() => setShowScreenshotModal(true)}
+								>
+									<img src="/images/toolbar/shulker.png" />
+								</button>
 								<div className={css.mobileDeckStats}>
 									<div className={css.mobileDeckStat}>
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
@@ -637,6 +655,14 @@ function SelectDeck({
 								<span>Delete Deck</span>
 							</Button>
 						)}
+						<Button
+							variant="default"
+							size="small"
+							onClick={() => setShowScreenshotModal(true)}
+						>
+							<ViewFullDeckIcon />
+							<span>View Full Deck</span>
+						</Button>
 					</div>
 					{!validationResult.valid && (
 						<div className={css.validationMessage}>

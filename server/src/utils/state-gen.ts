@@ -121,7 +121,8 @@ export function getLocalModalData(
 					query.card.entity(hermitCard.entity),
 					query.card.currentPlayer,
 				),
-			)
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.primary.passive)
 		) {
 			blockedActions.push('PRIMARY_ATTACK')
 		}
@@ -137,7 +138,8 @@ export function getLocalModalData(
 					query.card.entity(hermitCard.entity),
 					query.card.currentPlayer,
 				),
-			)
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.secondary.passive)
 		) {
 			blockedActions.push('SECONDARY_ATTACK')
 		}
@@ -209,7 +211,7 @@ function getLocalPlayerState(
 				const attachCard = row.getAttach()
 				const attachSlot = row.getAttachSlot()
 
-				const items = row.getItemSlots().map((itemSlot) => {
+				const items = row.getItemSlots(true).map((itemSlot) => {
 					let itemCard = game.components.find(
 						CardComponent,
 						query.card.slotEntity(itemSlot.entity),

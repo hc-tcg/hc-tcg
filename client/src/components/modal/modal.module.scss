@@ -27,6 +27,11 @@
 	animation: contentShow 250ms 100ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 	pointer-events: all;
 
+	&.veryWide {
+		width: 75%;
+		max-width: 75%;
+	}
+
 	.title {
 		margin: 0;
 		color: var(--text-light);
@@ -97,12 +102,12 @@
 	background: var(--gray-500);
 	flex-grow: 1;
 
-	>button {
+	> button {
 		flex-grow: 1;
 		max-width: 50%;
 	}
 
-	&.fillSpace>button {
+	&.fillSpace > button {
 		max-width: 100%;
 	}
 }

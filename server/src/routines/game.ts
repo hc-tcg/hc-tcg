@@ -83,7 +83,7 @@ export const getTimerForSeconds = (
 	return Date.now() - maxTime + seconds * 1000
 }
 
-function getAvailableEnergy(game: GameModel) {
+export function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
 	const energy = game.components
@@ -226,7 +226,8 @@ function getAvailableActions(
 						availableEnergy,
 						hermitCard.getAttackCost('primary'),
 						game.settings.noItemRequirements,
-					)
+					) &&
+					!hermitCard.props.primary.passive
 				) {
 					actions.push('PRIMARY_ATTACK')
 				}
@@ -235,7 +236,8 @@ function getAvailableActions(
 						availableEnergy,
 						hermitCard.getAttackCost('secondary'),
 						game.settings.noItemRequirements,
-					)
+					) &&
+					!hermitCard.props.secondary.passive
 				) {
 					actions.push('SECONDARY_ATTACK')
 				}
@@ -345,7 +347,7 @@ function* checkHermitHealth(game: GameModel) {
 			// We wait to discard becuse you can not change from a row with no hermits to a new active row.
 			card.slot.row.health = null
 			card.slot.row.getAttach()?.discard()
-			card.slot.row.getItems().map((item) => item.discard())
+			card.slot.row.getItems(true).map((item) => item.discard())
 			card.discard()
 
 			// Only hermit cards give points

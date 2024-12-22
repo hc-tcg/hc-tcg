@@ -61,18 +61,6 @@
 	display: none;
 }
 
-@media screen and (max-width: 720px) {
-	.bodyWrapper {
-		position: absolute;
-		background: #313233fd;
-		width: calc(100% + 4px);
-		transform: translateX(-2px);
-		max-height: calc(80vh);
-		z-index: 12;
-		border: 2px solid black;
-	}
-}
-
 // DESKTOP
 @media (min-width: 720px) {
 	.sidebar {
@@ -105,6 +93,10 @@
 @media (max-width: 720px) {
 	.sidebar {
 		border: 0px solid black;
+		position: relative;
+		display: flex;
+		max-height: 100%;
+		flex-direction: column;
 	}
 
 	.showOnMobile {
@@ -115,5 +107,15 @@
 	.hideOnMobile {
 		display: none;
 		visibility: hidden;
+	}
+
+	.bodyWrapper {
+		background: #313233fd;
+		width: calc(100% + 4px);
+		transform: translateX(-2px);
+		max-height: 100%;
+		z-index: 12;
+		border: 2px solid black;
+		border-bottom: 0px;
 	}
 }

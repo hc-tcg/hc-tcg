@@ -16,9 +16,15 @@ const ElderGuardian: Attach = {
 	expansion: 'advent_of_tcg_ii',
 	numericId: 249,
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 2,
 	description:
 		"When this hermit is attacked, the opponent's active hermit recieves mining fatigue for one round.",
+	sidebarDescriptions: [
+		{
+			type: 'statusEffect',
+			name: 'single-turn-mining-fatigue',
+		},
+	],
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

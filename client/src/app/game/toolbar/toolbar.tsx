@@ -1,7 +1,9 @@
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getActiveDeck} from 'logic/saved-decks/saved-decks'
 import {useSelector} from 'react-redux'
+import {sortCards} from './../../deck/deck-edit'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
@@ -13,7 +15,28 @@ function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
 	const isSpectator = useSelector(getIsSpectator)
+	const activeDeck = useSelector(getActiveDeck)
 	const dispatch = useMessageDispatch()
+
+	const handleViewDeck = () => {
+		if (!gameState) return
+		gameState.currentModalData = {
+			type: 'selectCards',
+			name: 'Deck',
+			description: '',
+			cards: activeDeck ? sortCards(activeDeck.cards) : [],
+			selectionSize: 0,
+			primaryButton: {
+				text: 'Close',
+				variant: 'default',
+			},
+			cancelable: true,
+		}
+		dispatch({
+			type: localMessages.GAME_MODAL_OPENED_SET,
+			id: gameState.currentModalData.type,
+		})
+	}
 
 	const handleDiscarded = () => {
 		if (!gameState) return
@@ -43,6 +66,11 @@ function Toolbar() {
 	return (
 		<div className={css.toolbar}>
 			{/* Cards in Deck */}
+			{!isSpectator && (
+				<button className={css.item} title="Deck" onClick={handleViewDeck}>
+					<img src="/images/toolbar/shulker.png" width="35" height="35" />
+				</button>
+			)}
 			{!isSpectator && (
 				<div className={css.item} title="Cards Remaining in Deck">
 					<p>{gameState.pileCount}</p>

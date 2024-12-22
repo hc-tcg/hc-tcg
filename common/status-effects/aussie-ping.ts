@@ -77,6 +77,15 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 				if (gasLightRecord.length) {
 					updateGasLightRecord()
 					effect.remove()
+					if (flippedHeads) {
+						game.components
+							.new(
+								StatusEffectComponent,
+								AussiePingImmuneEffect,
+								effect.creator.entity,
+							)
+							.apply(player.entity)
+					}
 				}
 			},
 		)

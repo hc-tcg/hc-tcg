@@ -443,6 +443,12 @@ export class Database {
 			).rows[0]['deletable']
 
 			if (deleteable) {
+				await this.pool.query('DELETE FROM deck_tags WHERE deck_code = $1', [
+					deckCode,
+				])
+				await this.pool.query('DELETE FROM deck_cards WHERE deck_code = $1', [
+					deckCode,
+				])
 				await this.pool.query(
 					'DELETE FROM decks WHERE deck_code = $1 AND user_id = $2',
 					[deckCode, user_id],
