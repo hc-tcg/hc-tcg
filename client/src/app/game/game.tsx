@@ -40,58 +40,28 @@ const renderModal = (
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
 }
 
-function Game() {
-	const gameState = useSelector(getGameState)
-	const availableActions = useSelector(getAvailableActions)
-	const selectedCard = useSelector(getSelectedCard)
+function ModalContainer() {
 	const openedModal = useSelector(getOpenedModal)
-	const playerState = useSelector(getPlayerState)
-	const endGameOverlay = useSelector(getEndGameOverlay)
-	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
-	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
-	const handRef = useRef<HTMLDivElement>(null)
-	const playerEntity = useSelector(getPlayerEntity)
-	const isSpectator = useSelector(getIsSpectator)
-	const [filter, setFilter] = useState<string>('')
-
-	if (!gameState || !playerState) return <p>Loading</p>
-	const [gameScale, setGameScale] = useState<number>(1)
-	const filteredCards = DEBUG_CONFIG.unlimitedCards
-		? gameState.hand.filter((c) =>
-				c.props.name.toLowerCase().includes(filter.toLowerCase()),
-			)
-		: gameState.hand
-
-	const gameWrapperRef = useRef<HTMLDivElement>(null)
-	const gameRef = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeys)
-		return () => {
-			window.removeEventListener('keydown', handleKeys)
-		}
-	}, [handleKeys])
 
 	const handleOpenModal = (id: ModalVariant | null) => {
 		dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: id})
 	}
 
-	const handleBoardClick = (
-		slotInfo: SlotInfo,
-		player: PlayerEntity,
-		row?: number,
-		index?: number,
-	) => {
-		console.log('Slot selected: ', slotInfo)
-		dispatch({
-			type: localMessages.GAME_SLOT_PICKED,
-			slotInfo,
-			player,
-			row,
-			index,
-		})
-	}
+	return renderModal(openedModal, handleOpenModal)
+}
+
+function Hand(handRef: any) {
+	const gameState = useSelector(getGameState)
+	if (!gameState) return null
+
+	const availableActions = useSelector(getAvailableActions)
+	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
+	const [filter, setFilter] = useState<string>('')
+	const pickableCards = pickRequestPickableSlots
+	const selectedCard = useSelector(getSelectedCard)
+
+	const dispatch = useMessageDispatch()
 
 	const selectCard = (card: LocalCardInstance) => {
 		if (availableActions.includes('PICK_REQUEST')) {
@@ -115,6 +85,91 @@ function Game() {
 				dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card})
 			}
 		}
+	}
+
+	const filteredCards = DEBUG_CONFIG.unlimitedCards
+		? gameState.hand.filter((c) =>
+				c.props.name.toLowerCase().includes(filter.toLowerCase()),
+			)
+		: gameState.hand
+
+	// Search for cards when debug.unlimitedCards is enabled
+	const Filter = () => {
+		if (DEBUG_CONFIG.unlimitedCards) {
+			return (
+				<input
+					type="text"
+					placeholder="Search for cards..."
+					value={filter}
+					onChange={(e) => setFilter(e.target.value)}
+				/>
+			)
+		}
+		return null
+	}
+
+	let unpickableCards: Array<LocalCardInstance> = []
+
+	if (pickableCards != undefined) {
+		for (let card of filteredCards) {
+			if (card.slot && !pickableCards.includes(card.slot))
+				unpickableCards.push(card)
+		}
+	}
+
+	return (
+		<div className={css.hand} ref={handRef}>
+			{Filter()}
+			<CardList
+				wrap={false}
+				displayTokenCost={false}
+				cards={filteredCards}
+				onClick={(card: LocalCardInstance) => selectCard(card)}
+				selected={[selectedCard]}
+				unpickable={unpickableCards}
+				statusEffects={gameState.statusEffects}
+			/>
+		</div>
+	)
+}
+
+function Game() {
+	const gameState = useSelector(getGameState)
+	const availableActions = useSelector(getAvailableActions)
+	const playerState = useSelector(getPlayerState)
+	const endGameOverlay = useSelector(getEndGameOverlay)
+	const settings = useSelector(getSettings)
+	const dispatch = useMessageDispatch()
+	const handRef = useRef<HTMLDivElement>(null)
+	const playerEntity = useSelector(getPlayerEntity)
+	const isSpectator = useSelector(getIsSpectator)
+
+	if (!gameState || !playerState) return <p>Loading</p>
+	const [gameScale, setGameScale] = useState<number>(1)
+	const gameWrapperRef = useRef<HTMLDivElement>(null)
+	const gameRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeys)
+		return () => {
+			window.removeEventListener('keydown', handleKeys)
+		}
+	}, [handleKeys])
+
+	const handleBoardClick = (
+		slotInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number,
+	) => {
+		console.log('Slot selected: ', slotInfo)
+		dispatch({
+			type: localMessages.GAME_SLOT_PICKED,
+			slotInfo,
+			player,
+			row,
+			index,
+		})
 	}
 
 	if (availableActions.includes('PICK_REQUEST')) {
@@ -274,31 +329,6 @@ function Game() {
 		}
 	}, [])
 
-	// Search for cards when debug.unlimitedCards is enabled
-	const Filter = () => {
-		if (DEBUG_CONFIG.unlimitedCards) {
-			return (
-				<input
-					type="text"
-					placeholder="Search for cards..."
-					value={filter}
-					onChange={(e) => setFilter(e.target.value)}
-				/>
-			)
-		}
-		return null
-	}
-
-	let unpickableCards: Array<LocalCardInstance> = []
-	const pickableCards = pickRequestPickableSlots
-
-	if (pickableCards != undefined) {
-		for (let card of filteredCards) {
-			if (card.slot && !pickableCards.includes(card.slot))
-				unpickableCards.push(card)
-		}
-	}
-
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -314,24 +344,11 @@ function Game() {
 
 			<div className={css.bottom}>
 				<Toolbar />
-				{!isSpectator && (
-					<div className={css.hand} ref={handRef}>
-						{Filter()}
-						<CardList
-							wrap={false}
-							displayTokenCost={false}
-							cards={filteredCards}
-							onClick={(card: LocalCardInstance) => selectCard(card)}
-							selected={[selectedCard]}
-							unpickable={unpickableCards}
-							statusEffects={gameState.statusEffects}
-						/>
-					</div>
-				)}
+				{!isSpectator && <Hand handRef={handRef} />}
 			</div>
 
-			{renderModal(openedModal, handleOpenModal)}
 			<Chat />
+			<ModalContainer />
 
 			{endGameOverlay?.outcome && (
 				<EndGameOverlay
