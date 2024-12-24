@@ -51,10 +51,11 @@ function ModalContainer() {
 	return renderModal(openedModal, handleOpenModal)
 }
 
-function Hand(handRef: any) {
+function Hand() {
 	const gameState = useSelector(getGameState)
 	if (!gameState) return null
 
+	const handRef = useRef<HTMLDivElement>(null)
 	const availableActions = useSelector(getAvailableActions)
 	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	const [filter, setFilter] = useState<string>('')
@@ -62,6 +63,27 @@ function Hand(handRef: any) {
 	const selectedCard = useSelector(getSelectedCard)
 
 	const dispatch = useMessageDispatch()
+
+	function horizontalScroll(e: any) {
+		const scrollSpeed = 45
+
+		if (!handRef.current) return
+
+		if (e.deltaY > 0) {
+			e.preventDefault()
+			handRef.current.scrollLeft += scrollSpeed
+		} else {
+			e.preventDefault()
+			handRef.current.scrollLeft -= scrollSpeed
+		}
+	}
+
+	useEffect(() => {
+		handRef.current?.addEventListener('wheel', horizontalScroll)
+		return () => {
+			handRef.current?.removeEventListener('wheel', horizontalScroll)
+		}
+	}, [])
 
 	const selectCard = (card: LocalCardInstance) => {
 		if (availableActions.includes('PICK_REQUEST')) {
@@ -140,7 +162,6 @@ function Game() {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
-	const handRef = useRef<HTMLDivElement>(null)
 	const playerEntity = useSelector(getPlayerEntity)
 	const isSpectator = useSelector(getIsSpectator)
 
@@ -242,20 +263,6 @@ function Game() {
 		setGameScale(scale)
 	}
 
-	function horizontalScroll(e: any) {
-		const scrollSpeed = 45
-
-		if (!handRef.current) return
-
-		if (e.deltaY > 0) {
-			e.preventDefault()
-			handRef.current.scrollLeft += scrollSpeed
-		} else {
-			e.preventDefault()
-			handRef.current.scrollLeft -= scrollSpeed
-		}
-	}
-
 	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
 		if (
@@ -317,15 +324,11 @@ function Game() {
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
-		// window.addEventListener('keyup', handleKeys)
 		window.addEventListener('resize', handleResize)
-		handRef.current?.addEventListener('wheel', horizontalScroll)
 
 		// Clean up event listeners
 		return () => {
-			// window.removeEventListener('keyup', handleKeys)
 			window.removeEventListener('resize', handleResize)
-			handRef.current?.removeEventListener('wheel', horizontalScroll)
 		}
 	}, [])
 
@@ -344,11 +347,11 @@ function Game() {
 
 			<div className={css.bottom}>
 				<Toolbar />
-				{!isSpectator && <Hand handRef={handRef} />}
+				{!isSpectator && <Hand />}
 			</div>
 
-			<Chat />
 			<ModalContainer />
+			<Chat />
 
 			{endGameOverlay?.outcome && (
 				<EndGameOverlay
