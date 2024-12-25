@@ -35,7 +35,7 @@ const FortuneEffect: StatusEffect<PlayerComponent> = {
 					coinFlips[i].result = 'heads'
 					coinFlips[i].forced = true
 				}
-		},
+			},
 		)
 
 		observer.subscribeWithPriority(
