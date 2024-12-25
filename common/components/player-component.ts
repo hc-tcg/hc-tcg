@@ -12,7 +12,7 @@ import type {
 	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
-import {onTurnEnd} from '../types/priorities'
+import {onCoinFlip, onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -95,8 +95,9 @@ export class PlayerComponent {
 		>
 
 		/** Hook called when the player flips a coin */
-		onCoinFlip: GameHook<
-			(card: CardComponent, coinFlips: Array<CoinFlip>) => Array<CoinFlip>
+		onCoinFlip: PriorityHook<
+			(card: CardComponent, coinFlips: Array<CoinFlip>) => void,
+			typeof onCoinFlip
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
@@ -143,7 +144,7 @@ export class PlayerComponent {
 			getAttack: new GameHook(),
 			onTurnStart: new GameHook(),
 			onTurnEnd: new PriorityHook(onTurnEnd),
-			onCoinFlip: new GameHook(),
+			onCoinFlip: new PriorityHook(onCoinFlip),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
 		}
