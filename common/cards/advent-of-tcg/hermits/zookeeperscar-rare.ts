@@ -30,7 +30,7 @@ const ZookeeperScarRare: Hermit = {
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	type: 'balanced',
 	health: 280,
 	primary: {
