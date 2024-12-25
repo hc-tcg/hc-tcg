@@ -46,11 +46,26 @@ export class RowComponent {
 		) as BoardSlotComponent
 	}
 
-	public getItemSlots() {
+	public getItemSlots(excludeAdjacent: boolean = false) {
 		return this.game.components.filter(
 			SlotComponent,
 			query.slot.item,
-			query.slot.rowIs(this.entity),
+			query.some(
+				query.slot.rowIs(this.entity),
+				query.every(
+					query.slot.adjacent(query.slot.rowIs(this.entity)),
+					query.slot.row(
+						(_game, value) =>
+							'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
+					),
+					(_game, value) => {
+						const card = value.getCard()
+						if (!card?.isItem()) return false
+						return card.props.energy.includes('farm')
+					},
+					(_game, _value) => !excludeAdjacent,
+				),
+			),
 		) as Array<BoardSlotComponent>
 	}
 
@@ -70,11 +85,10 @@ export class RowComponent {
 		)
 	}
 
-	public getItems() {
-		return this.game.components.filter(
-			CardComponent,
-			query.card.slot(query.slot.item),
-			query.card.rowEntity(this.entity),
+	public getItems(excludeAdjacent: boolean = false) {
+		const itemSlots = this.getItemSlots(excludeAdjacent) as Array<SlotComponent>
+		return this.game.components.filter(CardComponent, (_game, value) =>
+			itemSlots.includes(value.slot),
 		)
 	}
 

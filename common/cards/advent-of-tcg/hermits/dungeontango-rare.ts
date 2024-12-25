@@ -54,15 +54,16 @@ const DungeonTangoRare: Hermit = {
 				)
 					return
 
-				const pickCondition = query.every(
-					query.slot.currentPlayer,
-					query.slot.item,
-					query.slot.active,
-					query.not(query.slot.empty),
-					query.not(query.slot.frozen),
-				)
+				const activeRow = component.slot.inRow() ? component.slot.row : null
+				if (!activeRow) return
 
-				if (!game.components.exists(SlotComponent, pickCondition)) {
+				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
+					(slot) => slot.getCard() && !query.slot.frozen(game, slot),
+				)
+				const pickCondition = (_game: GameModel, value: SlotComponent) =>
+					items.includes(value)
+
+				if (!items.length) {
 					pickedCard = null
 					return
 				}

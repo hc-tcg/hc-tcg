@@ -45,7 +45,11 @@ const getDescription = (card: WithoutFunctions<Card>): React.ReactNode => {
 		text = formatText(
 			[card.primary, card.secondary]
 				.flatMap((attack) =>
-					attack.power ? [`**${attack.name}**\n*${attack.power}*`] : [],
+					attack.power
+						? [
+								`**${attack.name}**${attack.passive ? ' (Passive)' : ''}\n*${attack.power}*`,
+							]
+						: [],
 				)
 				.join('\n'),
 		)
@@ -63,46 +67,32 @@ const getDescriptionWithStats = (
 		return (
 			<div>
 				<div>{FormattedText(formatText(`Health - **${card.health}**`))}</div>
-				<div className={css.moveStats}>
-					<div>
-						{card.primary.cost.map((type, i) => (
-							<img
-								width={'16px'}
-								height={'16px'}
-								key={i}
-								src={getCardTypeIcon(type)}
-								className={classNames(css.costItem, css[type])}
-							/>
-						))}
-					</div>
-					{FormattedText(
-						formatText(`**${card.primary.name}** - **${card.primary.damage}**`),
-					)}
-				</div>
-				{card.primary.power && (
-					<div>{FormattedText(formatText(card.primary.power))}</div>
-				)}
-				<div className={css.moveStats}>
-					<div>
-						{card.secondary.cost.map((type, i) => (
-							<img
-								width={'16px'}
-								height={'16px'}
-								key={i}
-								src={getCardTypeIcon(type)}
-								className={classNames(css.costItem, css[type])}
-							/>
-						))}
-					</div>
-					{FormattedText(
-						formatText(
-							`**${card.secondary.name}** - **${card.secondary.damage}**`,
-						),
-					)}
-				</div>
-				{card.secondary.power && (
-					<div>{FormattedText(formatText(card.secondary.power))}</div>
-				)}
+				{[card.primary, card.secondary].flatMap((attack) => [
+					attack.passive ? (
+						<div className={css.moveStats}>
+							<div />
+							{FormattedText(formatText(`**${attack.name}** (Passive)`))}
+						</div>
+					) : (
+						<div className={css.moveStats}>
+							<div>
+								{attack.cost.map((type, i) => (
+									<img
+										width={'16px'}
+										height={'16px'}
+										key={i}
+										src={getCardTypeIcon(type)}
+										className={classNames(css.costItem, css[type])}
+									/>
+								))}
+							</div>
+							{FormattedText(
+								formatText(`**${attack.name}** - **${attack.damage}**`),
+							)}
+						</div>
+					),
+					attack.power && <div>{FormattedText(formatText(attack.power))}</div>,
+				])}
 			</div>
 		)
 	} else if (hasDescription(card)) {

@@ -27,9 +27,9 @@ const Trapdoor: Attach = {
 	name: 'Trapdoor',
 	expansion: 'advent_of_tcg',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	description:
-		"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
+		"When the Hermit directly above this card takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -52,13 +52,7 @@ const Trapdoor: Attach = {
 					return
 				if (attack.isType('status-effect') || attack.isBacklash) return
 				if (!component.slot.inRow()) return
-				if (
-					!query.row.adjacent(query.row.entity(component.slot.rowEntity))(
-						game,
-						target,
-					)
-				)
-					return
+				if (target.index !== component.slot.row.index - 1) return
 				const targetHermit = target.getHermit()
 				if (!targetHermit) return
 				// Target Block cannot be ignored so don't try intercepting damage for log clarity

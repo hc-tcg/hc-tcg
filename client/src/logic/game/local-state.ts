@@ -81,10 +81,16 @@ export function* localPutCardInSlot(
 			isHermit(hermit.card.props) &&
 			isItem(selectedCard.props)
 		) {
-			if (hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false)) {
+			if (
+				hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false) &&
+				!hermit.card.props.primary.passive
+			) {
 				gameState.turn.availableActions.push('PRIMARY_ATTACK')
 			}
-			if (hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false)) {
+			if (
+				hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false) &&
+				!hermit.card.props.secondary.passive
+			) {
 				gameState.turn.availableActions.push('SECONDARY_ATTACK')
 			}
 		}
