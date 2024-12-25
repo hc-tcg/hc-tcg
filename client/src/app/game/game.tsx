@@ -27,6 +27,7 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
+import {RootState} from 'store'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -49,6 +50,46 @@ function ModalContainer() {
 	}
 
 	return renderModal(openedModal, handleOpenModal)
+}
+
+function EndGameOverlayContainer() {
+	const endGameOverlay = useSelector(getEndGameOverlay)
+	const gameState = useSelector(getGameState)
+	const isSpectator = useSelector(getIsSpectator)
+	const playerEntity = useSelector(getPlayerEntity)
+	const dispatch = useMessageDispatch()
+
+	if (!gameState || !endGameOverlay?.outcome) return
+
+	return (
+		<EndGameOverlay
+			{...endGameOverlay}
+			nameOfWinner={
+				endGameOverlay.outcome.type === 'player-won'
+					? gameState.players[endGameOverlay.outcome.winner].playerName
+					: null
+			}
+			nameOfLoser={
+				endGameOverlay.outcome.type === 'player-won'
+					? gameState.players[
+							Object.keys(gameState.players).find(
+								(k) =>
+									endGameOverlay.outcome.type === 'player-won' &&
+									k !== endGameOverlay.outcome.winner,
+							) as PlayerEntity
+						].playerName
+					: null
+			}
+			viewer={
+				isSpectator
+					? {type: 'spectator'}
+					: {type: 'player', entity: playerEntity}
+			}
+			onClose={() => {
+				dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+			}}
+		/>
+	)
 }
 
 function Hand() {
@@ -158,14 +199,15 @@ function Hand() {
 function Game() {
 	const gameState = useSelector(getGameState)
 	const availableActions = useSelector(getAvailableActions)
-	const playerState = useSelector(getPlayerState)
-	const endGameOverlay = useSelector(getEndGameOverlay)
+	const hasPlayerState = useSelector(
+		(root: RootState) => getPlayerState(root) !== null,
+	)
 	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
 	const playerEntity = useSelector(getPlayerEntity)
 	const isSpectator = useSelector(getIsSpectator)
 
-	if (!gameState || !playerState) return <p>Loading</p>
+	if (!gameState || !hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
@@ -344,44 +386,13 @@ function Game() {
 					<Board onClick={handleBoardClick} localGameState={gameState} />
 				</div>
 			</div>
-
 			<div className={css.bottom}>
 				<Toolbar />
 				{!isSpectator && <Hand />}
 			</div>
-
 			<ModalContainer />
 			<Chat />
-
-			{endGameOverlay?.outcome && (
-				<EndGameOverlay
-					{...endGameOverlay}
-					nameOfWinner={
-						endGameOverlay.outcome.type === 'player-won'
-							? gameState.players[endGameOverlay.outcome.winner].playerName
-							: null
-					}
-					nameOfLoser={
-						endGameOverlay.outcome.type === 'player-won'
-							? gameState.players[
-									Object.keys(gameState.players).find(
-										(k) =>
-											endGameOverlay.outcome.type === 'player-won' &&
-											k !== endGameOverlay.outcome.winner,
-									) as PlayerEntity
-								].playerName
-							: null
-					}
-					viewer={
-						isSpectator
-							? {type: 'spectator'}
-							: {type: 'player', entity: playerEntity}
-					}
-					onClose={() => {
-						dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
-					}}
-				/>
-			)}
+			<EndGameOverlayContainer />)
 		</div>
 	)
 }
