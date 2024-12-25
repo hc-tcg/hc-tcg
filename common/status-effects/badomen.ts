@@ -47,7 +47,6 @@ const BadOmenEffect: Counter<CardComponent> = {
 					coinFlips[i].result = 'tails'
 					coinFlips[i].forced = true
 				}
-				return
 			},
 		)
 	},
