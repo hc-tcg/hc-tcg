@@ -96,7 +96,7 @@ export class PlayerComponent {
 
 		/** Hook called when the player flips a coin */
 		onCoinFlip: PriorityHook<
-			(card: CardComponent, coinFlips: Array<CoinFlip>) => Array<CoinFlip>,
+			(card: CardComponent, coinFlips: Array<CoinFlip>) => void,
 			typeof onCoinFlip
 		>
 

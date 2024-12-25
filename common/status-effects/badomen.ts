@@ -41,13 +41,13 @@ const BadOmenEffect: Counter<CardComponent> = {
 					(game.currentPlayer.entity !== player.entity ||
 						player.activeRow?.getHermit()?.entity !== target.entity)
 				)
-					return coinFlips
+					return
 
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i].result = 'tails'
 					coinFlips[i].forced = true
 				}
-				return coinFlips
+				return
 			},
 		)
 	},

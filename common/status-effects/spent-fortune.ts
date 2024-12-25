@@ -27,7 +27,6 @@ const SpentFortuneEffect: StatusEffect<PlayerComponent> = {
 					coinFlips[i].result = 'heads'
 					coinFlips[i].forced = true
 				}
-				return coinFlips
 			},
 		)
 
