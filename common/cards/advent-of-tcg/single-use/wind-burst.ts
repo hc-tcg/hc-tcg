@@ -14,7 +14,7 @@ import {SingleUse} from '../../types'
 const WindBurst: SingleUse = {
 	...singleUse,
 	id: 'wind_burst',
-	numericId: 245,
+	numericId: 1401,
 	name: 'Wind Burst',
 	expansion: 'minecraft',
 	rarity: 'common',
