@@ -96,8 +96,9 @@ const TinFoilChefMythic: Hermit = {
 						let hermit = row.getHermit()
 						if (!hermit) return
 						if (!hermit.isHealth()) return
+						if (!row.health) return
 
-						if (row.health !== hermit.props.health) {
+						if (row.health >= hermit.props.health) {
 							allFullHealth = false
 						}
 					})
