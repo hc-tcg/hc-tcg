@@ -232,43 +232,10 @@ function Hand() {
 	)
 }
 
-function Game() {
-	const gameState = useSelector(getGameState)
-	const availableActions = useSelector(getAvailableActions)
-	const hasPlayerState = useSelector(
-		(root: RootState) => getPlayerState(root) !== null,
-	)
-	const settings = useSelector(getSettings)
+function RequiresAvaiableActions() {
 	const dispatch = useMessageDispatch()
-	const isSpectator = useSelector(getIsSpectator)
-
-	if (!gameState || !hasPlayerState) return <p>Loading</p>
-	const [gameScale, setGameScale] = useState<number>(1)
-	const gameWrapperRef = useRef<HTMLDivElement>(null)
-	const gameRef = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeys)
-		return () => {
-			window.removeEventListener('keydown', handleKeys)
-		}
-	}, [handleKeys])
-
-	const handleBoardClick = (
-		slotInfo: SlotInfo,
-		player: PlayerEntity,
-		row?: number,
-		index?: number,
-	) => {
-		console.log('Slot selected: ', slotInfo)
-		dispatch({
-			type: localMessages.GAME_SLOT_PICKED,
-			slotInfo,
-			player,
-			row,
-			index,
-		})
-	}
+	const availableActions = useSelector(getAvailableActions)
+	const settings = useSelector(getSettings)
 
 	if (availableActions.includes('PICK_REQUEST')) {
 		dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
@@ -329,6 +296,45 @@ function Game() {
 				})
 			}
 		}
+	}
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeys)
+		return () => {
+			window.removeEventListener('keydown', handleKeys)
+		}
+	}, [handleKeys])
+
+	return null
+}
+
+function Game() {
+	const gameState = useSelector(getGameState)
+	const hasPlayerState = useSelector(
+		(root: RootState) => getPlayerState(root) !== null,
+	)
+	const dispatch = useMessageDispatch()
+	const isSpectator = useSelector(getIsSpectator)
+
+	if (!gameState || !hasPlayerState) return <p>Loading</p>
+	const [gameScale, setGameScale] = useState<number>(1)
+	const gameWrapperRef = useRef<HTMLDivElement>(null)
+	const gameRef = useRef<HTMLDivElement>(null)
+
+	const handleBoardClick = (
+		slotInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number,
+	) => {
+		console.log('Slot selected: ', slotInfo)
+		dispatch({
+			type: localMessages.GAME_SLOT_PICKED,
+			slotInfo,
+			player,
+			row,
+			index,
+		})
 	}
 
 	function handleResize() {
@@ -392,6 +398,7 @@ function Game() {
 			<ModalContainer />
 			<Chat />
 			<EndGameOverlayContainer />)
+			<RequiresAvaiableActions />
 		</div>
 	)
 }
