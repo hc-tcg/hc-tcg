@@ -1,5 +1,5 @@
-import {item} from '../../defaults'
-import {Item} from '../../types'
+import {item} from '../defaults'
+import {Item} from '../types'
 
 const WildDoubleItem: Item = {
 	...item,
