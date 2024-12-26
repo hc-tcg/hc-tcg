@@ -12,7 +12,7 @@ const PostmasterPearlCommon: Hermit = {
 	background: 'advent_of_tcg_ii',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 290,
 	primary: {
 		name: 'Delivery',

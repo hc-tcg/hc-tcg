@@ -14,7 +14,7 @@ const PythonGBRare: Hermit = {
 	id: 'pythongb_rare',
 	numericId: 452,
 	name: 'Python',
-	expansion: 'advent_of_tcg',
+	expansion: 'hc_plus',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',

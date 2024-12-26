@@ -11,7 +11,7 @@ const MinerItem: Item = {
 	numericId: 0.026,
 	name: 'Miner Item',
 	shortName: 'Miner',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['miner'],

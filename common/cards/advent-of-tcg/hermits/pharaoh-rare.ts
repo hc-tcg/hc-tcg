@@ -22,7 +22,7 @@ const PharaohRare: Hermit = {
 	id: 'pharaoh_rare',
 	numericId: 309,
 	name: 'Pharaoh',
-	expansion: 'advent_of_tcg',
+	expansion: 'hc_plus',
 	palette: 'pharaoh',
 	rarity: 'rare',
 	tokens: 2,

@@ -13,7 +13,7 @@ const FarmDoubleItem: Item = {
 	name: 'Farm Item x2',
 	shortName: 'Farm',
 	description: 'Counts as 2 Farm Item cards.',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'rare',
 	tokens: 2,
 	type: ['farm'],

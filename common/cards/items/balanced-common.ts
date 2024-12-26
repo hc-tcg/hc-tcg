@@ -12,7 +12,7 @@ const BalancedItem: Item = {
 	numericId: 0.004,
 	name: 'Balanced Item',
 	shortName: 'Balanced',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['balanced'],

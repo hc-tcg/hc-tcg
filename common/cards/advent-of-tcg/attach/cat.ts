@@ -15,7 +15,7 @@ const Cat: Attach = {
 	id: 'cat',
 	numericId: 505,
 	name: 'Cat',
-	expansion: 'advent_of_tcg',
+	expansion: 'minecraft',
 	rarity: 'rare',
 	tokens: 1,
 	description:

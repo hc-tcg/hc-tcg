@@ -9,7 +9,7 @@ const SmallishbeansUltraRare: Hermit = {
 	id: 'smallishbeansadvent_ultra_rare',
 	numericId: 454,
 	name: 'Stratos Joel',
-	expansion: 'advent_of_tcg',
+	expansion: 'hc_plus',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',

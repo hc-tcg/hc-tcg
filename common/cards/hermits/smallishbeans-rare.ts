@@ -11,7 +11,7 @@ import SmallishbeansCommon from './smallishbeans-common'
 const SmallishbeansRare: Hermit = {
 	...hermit,
 	id: 'smallishbeans_rare',
-	numericId: 0,
+	numericId: 267,
 	name: 'Joel',
 	expansion: 'season_x',
 	rarity: 'rare',

@@ -16,7 +16,7 @@ const OrionSoundRare: Hermit = {
 	id: 'orionsound_rare',
 	numericId: 464,
 	name: 'Oli',
-	expansion: 'advent_of_tcg',
+	expansion: 'mcyt',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',

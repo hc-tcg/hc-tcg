@@ -12,7 +12,7 @@ const LooperItem: Item = {
 	numericId: 0.024,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: [convenience],

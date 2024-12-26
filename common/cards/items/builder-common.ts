@@ -12,7 +12,7 @@ const BuilderItem: Item = {
 	numericId: 0.008,
 	name: 'Builder Item',
 	shortName: 'Builder',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['builder'],

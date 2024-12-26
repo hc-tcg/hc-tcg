@@ -16,7 +16,7 @@ const Smajor1995Rare: Hermit = {
 	id: 'smajor1995_rare',
 	numericId: 276,
 	name: 'Scott',
-	expansion: 'advent_of_tcg',
+	expansion: 'mcyt',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',

@@ -12,7 +12,7 @@ const PranksterDoubleItem: Item = {
 	name: 'Prankster Item x2',
 	shortName: 'Prankster',
 	description: 'Counts as 2 Prankster Item cards.',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'rare',
 	tokens: 2,
 	type: ['prankster'],

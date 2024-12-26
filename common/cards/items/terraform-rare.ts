@@ -13,7 +13,7 @@ const TerraformDoubleItem: Item = {
 	name: 'Terraform Item x2',
 	shortName: 'Terraform',
 	description: 'Counts as 2 Terraform Item cards.',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'rare',
 	tokens: 2,
 	type: ['terraform'],

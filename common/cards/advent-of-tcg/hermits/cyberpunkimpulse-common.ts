@@ -12,7 +12,7 @@ const CyberpunkImpulseCommon: Hermit = {
 	background: 'advent_of_tcg_ii',
 	rarity: 'common',
 	tokens: 0,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 280,
 	primary: {
 		name: 'Station',

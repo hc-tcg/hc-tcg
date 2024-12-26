@@ -13,7 +13,7 @@ const SpeedrunnerDoubleItem: Item = {
 	name: 'Speedrunner Item x2',
 	shortName: 'Speedrunner',
 	description: 'Counts as 2 Speedrunner Item cards.',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'rare',
 	tokens: 2,
 	type: ['speedrunner'],

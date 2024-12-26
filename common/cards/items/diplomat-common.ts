@@ -12,7 +12,7 @@ const DiplomatItem: Item = {
 	numericId: 0.014,
 	name: capitalize(convenience) + ' Item',
 	shortName: capitalize(convenience),
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: [convenience],

@@ -14,7 +14,7 @@ const ShubbleYTRare: Hermit = {
 	id: 'shubbleyt_rare',
 	numericId: 465,
 	name: 'Shelby',
-	expansion: 'advent_of_tcg',
+	expansion: 'mcyt',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',

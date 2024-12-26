@@ -14,7 +14,7 @@ const CyberpunkImpulseRare: Hermit = {
 	background: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 300,
 	primary: {
 		name: "Bop 'N' Go",

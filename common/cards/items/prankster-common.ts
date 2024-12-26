@@ -11,7 +11,7 @@ const PranksterItem: Item = {
 	numericId: 0.03,
 	name: 'Prankster Item',
 	shortName: 'Prankster',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['prankster'],

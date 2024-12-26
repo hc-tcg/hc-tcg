@@ -12,7 +12,7 @@ const FarmItem: Item = {
 	numericId: 0.018,
 	name: 'Farm Item',
 	shortName: 'Farm',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['farm'],

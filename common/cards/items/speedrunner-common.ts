@@ -12,7 +12,7 @@ const SpeedrunnerItem: Item = {
 	numericId: 0.038,
 	name: 'Speedrunner Item',
 	shortName: 'Speedrunner',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['speedrunner'],

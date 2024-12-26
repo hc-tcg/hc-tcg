@@ -12,7 +12,7 @@ const TerraformItem: Item = {
 	numericId: 0.04,
 	name: 'Terraform Item',
 	shortName: 'Terraform',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['terraform'],

@@ -12,7 +12,7 @@ const ExplorerItem: Item = {
 	numericId: 0.016,
 	name: 'Explorer Item',
 	shortName: 'Explorer',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
 	type: ['explorer'],
