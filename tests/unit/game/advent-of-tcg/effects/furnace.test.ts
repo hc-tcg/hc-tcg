@@ -1,7 +1,7 @@
 import assert from 'assert'
 import {describe, expect, test} from '@jest/globals'
 import Furnace from 'common/cards/advent-of-tcg/attach/furnace'
-import WildDoubleItem from 'common/cards/advent-of-tcg/items/wild-rare'
+import WildDoubleItem from 'common/cards/items/wild-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
