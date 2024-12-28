@@ -34,31 +34,31 @@ const Card = (props: CardReactProps) => {
 		...otherProps
 	} = props
 
-	const {category} = props.card
+	const clas = props.card.class //I have gone too deep into my stupid mistake. 20241226
 
 	let card = null
-	if (category === 'hermit')
+	if (clas === 'hermit')
 		card = (
 			<HermitCardModule
 				{...(otherProps as HermitCardProps)}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
-	else if (category === 'item')
+	else if (clas === 'item')
 		card = (
 			<ItemCardModule
 				{...(otherProps as ItemCardProps)}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
-	else if (['attach', 'single_use'].includes(category))
+	else if (['attach', 'single_use'].includes(clas))
 		card = (
 			<EffectCardModule
 				{...(otherProps as EffectCardProps)}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
-	else throw new Error('Unsupported card category: ' + category)
+	else throw new Error('Unsupported card category: ' + clas)
 
 	return (
 		<Tooltip

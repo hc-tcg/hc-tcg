@@ -3,7 +3,7 @@ import query from '../components/query'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {HermitAttackType} from '../types/attack'
-import type {CardCategoryT, PlayCardLog} from '../types/cards'
+import type {CardClassT, PlayCardLog} from '../types/cards'
 import {FormattedTextNode, formatText} from '../utils/formatting'
 import {Attach, Card, Hermit, SingleUse} from './types'
 
@@ -35,7 +35,7 @@ export const card = {
 export const item = {
 	...card,
 	item: null,
-	category: 'item' as CardCategoryT,
+	class: 'item' as CardClassT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
 		query.slot.item,
@@ -51,7 +51,7 @@ export const item = {
 export const hermit = {
 	...card,
 	hermit: null,
-	category: 'hermit' as CardCategoryT,
+	class: 'hermit' as CardClassT,
 	attachCondition: query.every(
 		query.slot.hermit,
 		query.slot.currentPlayer,
@@ -107,7 +107,7 @@ export const hermit = {
 export const attach = {
 	...card,
 	attachable: null,
-	category: 'attach' as CardCategoryT,
+	class: 'attach' as CardClassT,
 	attachCondition: query.every(
 		query.slot.currentPlayer,
 		query.slot.attach,
@@ -126,7 +126,7 @@ export const singleUse = {
 	singleUse: null,
 	showConfirmationModal: false,
 	hasAttack: false,
-	category: 'single_use' as CardCategoryT,
+	class: 'single_use' as CardClassT,
 	attachCondition: query.every(
 		query.slot.singleUse,
 		query.slot.playerHasActiveHermit,

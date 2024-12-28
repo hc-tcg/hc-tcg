@@ -9,7 +9,7 @@ import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {HermitAttackType} from '../types/attack'
 import type {
-	CardCategoryT,
+	CardClassT,
 	CardRarityT,
 	HermitAttackInfo,
 	PlayCardLog,
@@ -21,7 +21,8 @@ import {FormattedTextNode} from '../utils/formatting'
 
 export type Card = {
 	id: string
-	category: CardCategoryT
+	class: CardClassT
+	category?: string
 	expansion: ExpansionT
 	numericId: number
 	name: string
@@ -94,7 +95,7 @@ export function hasDescription(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: TypeT[] | null
+	type: Array<TypeT> | null
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	getAttack(

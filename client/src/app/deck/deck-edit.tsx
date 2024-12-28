@@ -271,7 +271,7 @@ export function sortCards(
 	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
 		return (
 			[
-				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
+				TYPE_ORDER[a.props.class] - TYPE_ORDER[b.props.class],
 				isHermit(a.props) &&
 					isHermit(b.props) &&
 					a.props.type &&
