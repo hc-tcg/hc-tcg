@@ -22,12 +22,12 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import Board from './board'
 import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
-import {RootState} from 'store'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
