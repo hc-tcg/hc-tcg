@@ -41,7 +41,7 @@ export type ExpansionDict = {
 }
 
 export const EXPANSIONS: ExpansionDict = {
-	item: { name: 'Item', disabled: false },
+	item: {name: 'Item', disabled: false},
 	default: {name: 'Hermitcraft', disabled: false},
 	hermitcraftX: {name: 'HermitcraftX', disabled: false},
 	hc_plus: {name: 'HC+', disabled: false},

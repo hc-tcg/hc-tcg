@@ -267,10 +267,11 @@ const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isHermit(card)) {
-		return (card.type?
+		return card.type ? (
 			<div className={classNames(css.type, css[card.type[0]])}>
 				{HERMIT_TYPES[card.type[0]] || card.type}
-			</div> :
+			</div>
+		) : (
 			<div className={classNames(css.type, css['null'])}>
 				{HERMIT_TYPES['null'] || card.type}
 			</div>

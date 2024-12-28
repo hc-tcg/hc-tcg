@@ -5,9 +5,9 @@ import defaultAttachCards from './attach'
 import bossHermitCards from './boss/hermits'
 import defaultHermitCards from './hermits'
 import itemCards from './items'
+import shifttechHermits from './shifttech/hermits'
 import defaultSingleUseCards from './single-use'
 import tempHermits from './temp'
-import shifttechHermits from './shifttech/hermits'
 import {Card} from './types'
 
 export const attachCardClasses: Array<Card> = [
@@ -20,12 +20,10 @@ export const hermitCardClasses: Array<Card> = [
 	...adventOfTcgHermitCards,
 	...bossHermitCards,
 	...tempHermits,
-	...shifttechHermits
+	...shifttechHermits,
 ]
 
-export const itemCardClasses: Array<Card> = [
-	...itemCards,
-]
+export const itemCardClasses: Array<Card> = [...itemCards]
 
 export const singleUseCardClasses: Array<Card> = [
 	...defaultSingleUseCards,
