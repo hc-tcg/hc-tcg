@@ -1,6 +1,6 @@
-import { CARDS, CARDS_LIST } from 'common/cards'
-import { getCardTypeIcon, getRankIcon } from 'common/cards/card'
-import {getCardImage, getHermitBackground} from 'common/cards/card'
+import {CARDS, CARDS_LIST} from 'common/cards'
+import {getCardTypeIcon, getRankIcon} from 'common/cards/card'
+import {getRenderedCardImage} from 'common/cards/card'
 import {Card, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/types'
 import {GLOSSARY} from 'common/glossary'
 import {STATUS_EFFECTS} from 'common/status-effects'
@@ -18,6 +18,7 @@ type HermitResponse = {
 	name: string
 	shortName: string
 	expansion: string
+	set?: string
 	rarity: string
 	tokens: number
 	type: string[] | null
@@ -45,6 +46,7 @@ type EffectResponse = {
 	id: string
 	name: string
 	expansion: string
+	set?: string
 	rarity: string
 	tokens: number
 	description: string
@@ -63,7 +65,10 @@ type ItemResponse = {
 	rarity: string
 	tokens: number
 	energy: Array<string>
-	image: string
+	images: {
+		default: string
+		'with-token-cost': string
+	}
 }
 
 function getSidebarDescriptions(
@@ -271,6 +276,50 @@ export function types(url: string) {
 			type: 'any',
 			icon: joinUrl(url, getCardTypeIcon('any')),
 		},
+		{
+			type: 'anarchist',
+			icon: joinUrl(url, getCardTypeIcon('anarchist')),
+		},
+		{
+			type: 'athlete',
+			icon: joinUrl(url, getCardTypeIcon('athlete')),
+		},
+		{
+			type: 'bard',
+			icon: joinUrl(url, getCardTypeIcon('bard')),
+		},
+		{
+			type: 'challenger',
+			icon: joinUrl(url, getCardTypeIcon('challenger')),
+		},
+		{
+			type: 'collector',
+			icon: joinUrl(url, getCardTypeIcon('collector')),
+		},
+		{
+			type: 'diplomat',
+			icon: joinUrl(url, getCardTypeIcon('diplomat')),
+		},
+		{
+			type: 'historian',
+			icon: joinUrl(url, getCardTypeIcon('historian')),
+		},
+		{
+			type: 'inventor',
+			icon: joinUrl(url, getCardTypeIcon('inventor')),
+		},
+		{
+			type: 'looper',
+			icon: joinUrl(url, getCardTypeIcon('looper')),
+		},
+		{
+			type: 'pacifist',
+			icon: joinUrl(url, getCardTypeIcon('pacifist')),
+		},
+		{
+			type: 'scavenger',
+			icon: joinUrl(url, getCardTypeIcon('scavenger')),
+		},
 	]
 }
 export function ranks(url: string) {
@@ -278,7 +327,7 @@ export function ranks(url: string) {
 		{
 			rank: 'stone',
 			icon: joinUrl(url, getRankIcon('stone')),
-			cost: 0,
+			cost: 0 | -1 | -2 | -3,
 		},
 		{
 			rank: 'iron',
@@ -299,6 +348,16 @@ export function ranks(url: string) {
 			rank: 'diamond',
 			icon: joinUrl(url, getRankIcon('diamond')),
 			cost: 4,
+		},
+		{
+			rank: 'netherite',
+			icon: joinUrl(url, getRankIcon('netherite')),
+			cost: 5,
+		},
+		{
+			rank: 'obsidian',
+			icon: joinUrl(url, getRankIcon('obsidian')),
+			cost: 6 | 7 | 8,
 		},
 	]
 }
