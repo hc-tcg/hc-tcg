@@ -1,6 +1,6 @@
 import type {Card} from '../cards/types'
 import type {CardEntity} from '../entities'
-import type {CardClassT} from '../types/cards'
+import type {CardCategoryT} from '../types/cards'
 import type {
 	LocalCardInstance,
 	WithoutFunctions,
@@ -21,7 +21,7 @@ export function equalCard(
  */
 export function isCardInstanceType(
 	card: LocalCardInstance | null,
-	type: CardClassT,
+	type: CardCategoryT,
 ): boolean {
 	if (!card) return false
 	return card.props.category == type

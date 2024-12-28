@@ -43,7 +43,7 @@ function* pickWithSelectedSaga(
 
 	// If the hand is clicked don't send data
 	if (pickInfo.slotType !== 'hand') {
-		const actionType = slotToPlayCardAction[selectedCard.props.class]
+		const actionType = slotToPlayCardAction[selectedCard.props.category]
 		if (!actionType) return
 
 		yield* localPutCardInSlot(action, selectedCard)
