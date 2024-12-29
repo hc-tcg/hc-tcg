@@ -11,7 +11,7 @@ title: '[Balance Request] <title>'
 
 ### Original Suggestor:
 <!-- The Discord username of the community member who originally suggested this change. -->
-<
+
 ### Sponsors:
 <!-- The Discord usernames of three community members who want to sponsor this change. Please provide as a list like A, B, C. -->
 
