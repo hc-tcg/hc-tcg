@@ -14,6 +14,6 @@ Please ensure CI passes. Adjust starter decks as neccesary to ensure they are va
 ### Original Suggestor:
 <!-- The Discord username of the community member who originally suggested this change. -->
 <
-### Supporters:
-<!-- The Discord usernames of three community members who support this change. Please provide as a list like A, B, C. -->
+### Sponsors:
+<!-- The Discord usernames of three community members who want to sponsor this change. Please provide as a list like A, B, C. -->
 
