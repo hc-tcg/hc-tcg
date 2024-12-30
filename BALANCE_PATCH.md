@@ -1,4 +1,5 @@
-To make a balancing change do the following:
+To suggest a balancing change do the following:
+
 1. Open a pull request with your changes in the hc-tcg repo with the title `[Balance Request] <your change>`.
     Please follow this template for your pull request:
     ```
