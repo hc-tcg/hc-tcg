@@ -107,5 +107,7 @@ export const LevelTwo = newInstantHealth(
 
 ## Adding Tests For Cards
 When creating a new card, you should add tests for any slightly complicated behavior or interactions with other cards that should never change.
+Tests should be created in a suitable subdirectory in the `tests/unit/game` directory.
+The `utils.ts` file provides you with tools to help create your tests, please read over this before starting.
 
 
