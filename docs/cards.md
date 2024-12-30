@@ -45,11 +45,52 @@ While developing your card, you can set `renderCardsDynamically: true` in `commo
 ### Cards With Multiple Levels
 For cards with multiple levels, such as Thorns or Instant Health, its best practice to share as much code between them as possible.
 To accomplish this, you can create a function that returns a level of the card for givin values.
+Here is an example of this:
 
-```
+```ts
+function newCard(
+	props: {
+		id: string
+		name: string
+		rarity: CardRarityT
+		numericId: number
+		tokens: TokenCostT
+	},
+	amount: number,
+): SingleUse {
+	return {
+		...singleUse,
+		id: props.id,
+		numericId: props.numericId,
+		name: props.name,
+		expansion: 'default',
+		rarity: props.rarity,
+		tokens: props.tokens,
+		description: `Deal ${amount} damage.`,
+	}
+}
 
+export const LevelOne = newCard(
+	{
+		id: 'level_one',
+		name: 'Level One',
+		rarity: 'common',
+		numericId: 42,
+		tokens: 0,
+	},
+	30,
+)
 
-
+export const LevelTwo = newInstantHealth(
+	{
+		id: 'level_two',
+		name: 'Level Two',
+		rarity: 'rare',
+		numericId: 43,
+		tokens: 2,
+	},
+	60,
+)
 ```
 
 
