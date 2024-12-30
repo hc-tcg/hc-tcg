@@ -2,6 +2,7 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {z} from 'zod'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -24,7 +25,18 @@ import {
 } from './stats'
 import {requestUrlRoot} from './utils'
 
+const apiKeyParser = z.union([z.array(z.string()), z.string(), z.undefined()])
+
 export function addApi(app: Express) {
+	const parsedKeys = apiKeyParser.parse(process.env.API_KEYS)
+	const keys: string[] = []
+	if (!parsedKeys) {
+	} else if (typeof parsedKeys === 'string') {
+		keys.push(parsedKeys)
+	} else {
+		parsedKeys.forEach((key) => keys.push(key))
+	}
+
 	app.get('/api/cards', (req, res) => {
 		res.send(cards(requestUrlRoot(req)))
 	})
@@ -90,7 +102,16 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats/decks', async (req, res) => {
+		let authentication = req.header('authentication')
 		let query = DeckStatQuery.parse(req.query)
+		const requiresAuth = (NumberOrNull(query.minimumWins) || 20) < 20
+
+		if (requiresAuth && !(authentication && keys.includes(authentication))) {
+			res.statusCode = 403
+			res.send({error: 'Invalid authentication.'})
+			return
+		}
+
 		let ret = await getDeckStats({
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
