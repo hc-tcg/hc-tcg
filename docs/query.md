@@ -1,2 +1,0 @@
-## Querying Board State 
-
