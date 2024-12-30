@@ -1,5 +1,13 @@
 ## Changing the Token Cost For a Card
+To change the token cost for a card simply follow this process:
 
+
+1. First navigate to the card. The card should be in the `common/cards/<card type>` directory.
+If the card is an advent of tcg card, it will be in the `common/cards/advent-of-tcg/<card type>` dictionary.
+
+1. In the file for this card, change `token: ??` to the new value that you want.
+
+1. Run the unit tests with the `npm run test:unit` command. If they fail, you may need to adjust starter decks so that they have a valid token cost.
 
 ## Adding a New Card
 
