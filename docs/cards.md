@@ -44,6 +44,13 @@ While developing your card, you can set `renderCardsDynamically: true` in `commo
 
 ### Cards With Multiple Levels
 For cards with multiple levels, such as Thorns or Instant Health, its best practice to share as much code between them as possible.
+To accomplish this, you can create a function that returns a level of the card for givin values.
+
+```
+
+
+
+```
 
 
 ### Adding Tests For Cards
