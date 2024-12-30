@@ -136,4 +136,5 @@ describe('Test Something', () => {
 })
 ```
 
+You can run the test you just added with `npm run test:unit -- -t "<your test name>"`.
 
