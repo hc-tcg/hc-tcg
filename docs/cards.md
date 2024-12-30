@@ -106,8 +106,40 @@ export const LevelTwo = newInstantHealth(
 
 
 ## Adding Tests For Cards
+Card tests are done with [`jest`](https://jestjs.io/). Please become familiar with `jest` before continuing.
+
 When creating a new card, you should add tests for any slightly complicated behavior or interactions with other cards that should never change.
 Tests should be created in a suitable subdirectory in the `tests/unit/game` directory.
-The `utils.ts` file provides you with tools to help create your tests, please read over this before starting.
+The `utils.ts` file provides you with tools to help create your tests, please read over this file before starting.
+
+To create a test you can use the `testGame` util function. Here is an example of it in use:
+```ts
+import {describe, expect, test} from '@jest/globals'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import {attack, endTurn, playCardFromHand, testGame} from './utils'
+
+describe('Test Something', () => {
+	test('Test Game', () => {
+		expect(() =>
+			testGame(
+				{
+					playerOneDeck: [EthosLabCommon],
+					playerTwoDeck: [EthosLabCommon],
+					saga: function* (game) {
+						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+						yield* endTurn(game)
+
+						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+						yield* attack(game, 'secondary')
+						// The game should never reach this point
+						yield* endTurn(game)
+					},
+				},
+				{oneShotMode: true},
+			),
+		).toThrow()
+	})
+})
+```
 
 
