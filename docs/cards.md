@@ -1,8 +1,4 @@
-# How To!
-
-This document contains information on how to work on parts of the game.
-
-## Adding a Card
+## How to Add a New Card
 
 Adding a card has a few steps:
 
@@ -46,11 +42,10 @@ To generate the card images for production you have to options.
 
 While developing your card, you can set `renderCardsDynamically: true` in `common/config/debug-config.js` to skip this step.
 
+### Cards With Multiple Levels
+For cards with multiple levels, such as Thorns or Instant Health, its best practice to share as much code between them as possible.
 
-## Adding a Status Effect
 
-Adding status effects is quite similar to cards.
-
-**TODO**
+### Adding Tests For Cards
 
 
