@@ -17,7 +17,7 @@ To suggest a balance or game design change change do the following:
 
     Make sure to properly fill out all these fields with the most best information you can.
     Adjust starter decks as neccesary to ensure all unit tests pass. You can find the starter decks
-    in `common/cards/starter-decks.ts`.
+    in [common/cards/starter-decks.ts](/common/cards/starter-decks.ts).
 
 2. After your pull request is made, and passes CI, a poll will be opened.
 If over half of all community members vote in favor of the change it will be merged and available in the next patch.
