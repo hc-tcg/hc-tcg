@@ -1,4 +1,7 @@
-## How to Add a New Card
+## Changing the Token Cost For a Card
+
+
+## Adding a New Card
 
 Adding a card has a few steps:
 
@@ -94,6 +97,7 @@ export const LevelTwo = newInstantHealth(
 ```
 
 
-### Adding Tests For Cards
+## Adding Tests For Cards
+When creating a new card, you should add tests for any slightly complicated behavior or interactions with other cards that should never change.
 
 
