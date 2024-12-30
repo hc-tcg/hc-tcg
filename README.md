@@ -92,7 +92,7 @@ After pushing your code to your branch on github,
 wait a few minutes and there should be a commit with the card image!
 
 ### Submitting a Balance or Game Design Change
-Please see (BALANCE_PATCH.md)[../BALANCE_PATCH.md]
+Please see (BALANCE_PATCH.md)[../BALANCE_PATCH.md].
 
 
 ### Testing
