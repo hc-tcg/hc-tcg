@@ -126,13 +126,7 @@ describe('Test Something', () => {
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
 					saga: function* (game) {
-						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-						yield* endTurn(game)
-
-						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-						yield* attack(game, 'secondary')
-						// The game should never reach this point
-						yield* endTurn(game)
+						// Place your tests here
 					},
 				},
 				{oneShotMode: true},
