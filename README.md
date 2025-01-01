@@ -37,7 +37,7 @@ By default, the client is hosted on port 3002.
 
 ## Contributing
 
-Please see [./docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+Please see [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md).
 
 ## Configuration
 
