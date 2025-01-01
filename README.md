@@ -35,9 +35,9 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 By default, the client is hosted on port 3002.
 
-## Contributing
+## Design Documentation
 
-Please see [docs/CONTRIBUTING.md](./docs/CONTRIBUTING.md).
+Please see [docs/README.md](./docs/README.md).
 
 ## Configuration
 
