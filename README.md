@@ -35,7 +35,7 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 By default, the client is hosted on port 3002.
 
-## Design Documentation
+## Architecture
 
 Please see [docs/README.md](./docs/README.md).
 
