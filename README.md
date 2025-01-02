@@ -37,7 +37,7 @@ By default, the client is hosted on port 3002.
 
 ## Architecture
 
-Please see [docs/README.md](./docs/README.md).
+See [docs/README.md](./docs/README.md).
 
 ## Configuration
 

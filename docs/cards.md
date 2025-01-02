@@ -104,6 +104,14 @@ export const LevelTwo = newInstantHealth(
 )
 ```
 
+### Hooks
+To perform an action when the game state changes, the hooks system should be used. See
+[./hooks.md](hooks) for more information.
+
+### Saving Information Between Rounds
+Saving information between rounds should be done using status effcts. This is to ensure
+the card works properly with the mocking system that Rendog Rare and ZombieCleo Rare use.
+See [./status-effects.md](Status Effects) for more information.
 
 ## Adding Tests For Cards
 Card tests are done with [`jest`](https://jestjs.io/). Please become familiar with `jest` before continuing.
