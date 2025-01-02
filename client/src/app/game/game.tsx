@@ -22,6 +22,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import Board from './board'
 import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
@@ -49,6 +50,82 @@ function ModalContainer() {
 	}
 
 	return renderModal(openedModal, handleOpenModal)
+}
+
+function EndGameOverlayContainer() {
+	const endGameOverlay = useSelector(getEndGameOverlay)
+	const gameState = useSelector(getGameState)
+	const isSpectator = useSelector(getIsSpectator)
+	const playerEntity = useSelector(getPlayerEntity)
+	const dispatch = useMessageDispatch()
+
+	if (!gameState || !endGameOverlay?.outcome) return
+
+	// Play EX voice lines on hermit deaths and game end
+	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
+		(id) => gameState.players[id].lives,
+	)
+	const [prevLives, setPrevLives] = useState(lives)
+	useEffect(() => {
+		if (!gameState.isBossGame) return
+		if (endGameOverlay) {
+			if (
+				endGameOverlay.outcome.type === 'player-won' &&
+				endGameOverlay.outcome.winner === playerEntity
+			)
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/EXLOSE.ogg'],
+				})
+			else
+				dispatch({
+					type: localMessages.QUEUE_VOICE,
+					lines: ['/voice/PLAYERLOSE.ogg'],
+				})
+			return
+		}
+		const playerLostLife = lives[0] - prevLives[0] < 0
+		const opponentLostLife = lives[1] - prevLives[1] < 0
+		setPrevLives(lives)
+		if (opponentLostLife) {
+			dispatch({type: localMessages.QUEUE_VOICE, lines: ['/voice/EXLIFE.ogg']})
+		} else if (playerLostLife) {
+			dispatch({
+				type: localMessages.QUEUE_VOICE,
+				lines: ['/voice/PLAYERLIFE.ogg'],
+			})
+		}
+	}, [...lives, endGameOverlay])
+
+	return (
+		<EndGameOverlay
+			{...endGameOverlay}
+			nameOfWinner={
+				endGameOverlay.outcome.type === 'player-won'
+					? gameState.players[endGameOverlay.outcome.winner].playerName
+					: null
+			}
+			nameOfLoser={
+				endGameOverlay.outcome.type === 'player-won'
+					? gameState.players[
+							Object.keys(gameState.players).find(
+								(k) =>
+									endGameOverlay.outcome.type === 'player-won' &&
+									k !== endGameOverlay.outcome.winner,
+							) as PlayerEntity
+						].playerName
+					: null
+			}
+			viewer={
+				isSpectator
+					? {type: 'spectator'}
+					: {type: 'player', entity: playerEntity}
+			}
+			onClose={() => {
+				dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+			}}
+		/>
+	)
 }
 
 function Hand() {
@@ -155,43 +232,10 @@ function Hand() {
 	)
 }
 
-function Game() {
-	const gameState = useSelector(getGameState)
-	const availableActions = useSelector(getAvailableActions)
-	const playerState = useSelector(getPlayerState)
-	const endGameOverlay = useSelector(getEndGameOverlay)
-	const settings = useSelector(getSettings)
+function RequiresAvaiableActions() {
 	const dispatch = useMessageDispatch()
-	const playerEntity = useSelector(getPlayerEntity)
-	const isSpectator = useSelector(getIsSpectator)
-
-	if (!gameState || !playerState) return <p>Loading</p>
-	const [gameScale, setGameScale] = useState<number>(1)
-	const gameWrapperRef = useRef<HTMLDivElement>(null)
-	const gameRef = useRef<HTMLDivElement>(null)
-
-	useEffect(() => {
-		window.addEventListener('keydown', handleKeys)
-		return () => {
-			window.removeEventListener('keydown', handleKeys)
-		}
-	}, [handleKeys])
-
-	const handleBoardClick = (
-		slotInfo: SlotInfo,
-		player: PlayerEntity,
-		row?: number,
-		index?: number,
-	) => {
-		console.log('Slot selected: ', slotInfo)
-		dispatch({
-			type: localMessages.GAME_SLOT_PICKED,
-			slotInfo,
-			player,
-			row,
-			index,
-		})
-	}
+	const availableActions = useSelector(getAvailableActions)
+	const settings = useSelector(getSettings)
 
 	if (availableActions.includes('PICK_REQUEST')) {
 		dispatch({type: localMessages.GAME_CARD_SELECTED_SET, card: null})
@@ -254,6 +298,45 @@ function Game() {
 		}
 	}
 
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeys)
+		return () => {
+			window.removeEventListener('keydown', handleKeys)
+		}
+	}, [handleKeys])
+
+	return null
+}
+
+function Game() {
+	const gameState = useSelector(getGameState)
+	const hasPlayerState = useSelector(
+		(root: RootState) => getPlayerState(root) !== null,
+	)
+	const dispatch = useMessageDispatch()
+	const isSpectator = useSelector(getIsSpectator)
+
+	if (!gameState || !hasPlayerState) return <p>Loading</p>
+	const [gameScale, setGameScale] = useState<number>(1)
+	const gameWrapperRef = useRef<HTMLDivElement>(null)
+	const gameRef = useRef<HTMLDivElement>(null)
+
+	const handleBoardClick = (
+		slotInfo: SlotInfo,
+		player: PlayerEntity,
+		row?: number,
+		index?: number,
+	) => {
+		console.log('Slot selected: ', slotInfo)
+		dispatch({
+			type: localMessages.GAME_SLOT_PICKED,
+			slotInfo,
+			player,
+			row,
+			index,
+		})
+	}
+
 	function handleResize() {
 		if (!gameWrapperRef.current || !gameRef.current) return
 		const scale = Math.min(
@@ -285,42 +368,6 @@ function Game() {
 		}
 	}, [gameState.currentPickMessage, gameState.currentModalData])
 
-	// Play EX voice lines on hermit deaths and game end
-	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
-		(id) => gameState.players[id].lives,
-	)
-	const [prevLives, setPrevLives] = useState(lives)
-	useEffect(() => {
-		if (!gameState.isBossGame) return
-		if (endGameOverlay) {
-			if (
-				endGameOverlay.outcome.type === 'player-won' &&
-				endGameOverlay.outcome.winner === playerEntity
-			)
-				dispatch({
-					type: localMessages.QUEUE_VOICE,
-					lines: ['/voice/EXLOSE.ogg'],
-				})
-			else
-				dispatch({
-					type: localMessages.QUEUE_VOICE,
-					lines: ['/voice/PLAYERLOSE.ogg'],
-				})
-			return
-		}
-		const playerLostLife = lives[0] - prevLives[0] < 0
-		const opponentLostLife = lives[1] - prevLives[1] < 0
-		setPrevLives(lives)
-		if (opponentLostLife) {
-			dispatch({type: localMessages.QUEUE_VOICE, lines: ['/voice/EXLIFE.ogg']})
-		} else if (playerLostLife) {
-			dispatch({
-				type: localMessages.QUEUE_VOICE,
-				lines: ['/voice/PLAYERLIFE.ogg'],
-			})
-		}
-	}, [...lives, endGameOverlay])
-
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
@@ -344,44 +391,14 @@ function Game() {
 					<Board onClick={handleBoardClick} localGameState={gameState} />
 				</div>
 			</div>
-
 			<div className={css.bottom}>
 				<Toolbar />
 				{!isSpectator && <Hand />}
 			</div>
-
 			<ModalContainer />
 			<Chat />
-
-			{endGameOverlay?.outcome && (
-				<EndGameOverlay
-					{...endGameOverlay}
-					nameOfWinner={
-						endGameOverlay.outcome.type === 'player-won'
-							? gameState.players[endGameOverlay.outcome.winner].playerName
-							: null
-					}
-					nameOfLoser={
-						endGameOverlay.outcome.type === 'player-won'
-							? gameState.players[
-									Object.keys(gameState.players).find(
-										(k) =>
-											endGameOverlay.outcome.type === 'player-won' &&
-											k !== endGameOverlay.outcome.winner,
-									) as PlayerEntity
-								].playerName
-							: null
-					}
-					viewer={
-						isSpectator
-							? {type: 'spectator'}
-							: {type: 'player', entity: playerEntity}
-					}
-					onClose={() => {
-						dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
-					}}
-				/>
-			)}
+			<EndGameOverlayContainer />)
+			<RequiresAvaiableActions />
 		</div>
 	)
 }
