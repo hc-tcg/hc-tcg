@@ -1,11 +1,11 @@
 ## Components
 
-The code bases's design is loosely based off the `ECS` model for game developement.
-That is, everything in the game is a compoent. For example, cards are a component, status effects are a componet, and players are a component.
-Componets can be accesed with `game.components`. `components` is an instance of the `ComponentManager` class.
+The code bases's design is loosely based off the `ECS` model for game development.
+That is, everything in the game is a component. For example, cards are a component, status effects are a component, and players are a component.
+Components can be accessed with `game.components`. `components` is an instance of the `ComponentManager` class.
 You should exclusively use this system to read the game state.
 
-Componets have two special properties:
+Components have two special properties:
 - All components have a unique id, called the `entity`.
 - Components can be queried with the component query API.
 
@@ -32,5 +32,5 @@ function example(game) {
 }
 ```
 
-You can similarly use the `componets.filter` function to find ALL components that satisfy a function.
+You can similarly use the `components.filter` function to find ALL components that satisfy a function.
 

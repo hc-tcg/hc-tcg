@@ -20,7 +20,7 @@ the entity of the card to apply this status effect to.
 import StatusEffectComponent from 'common/components/status-effect-component'
 import SleepingEffect from 'common/status-effects/sleeping'
 
-target = game.componets.find
+target = game.components.find
 
 game.components
 	# Create the status effect component

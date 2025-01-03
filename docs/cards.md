@@ -38,7 +38,7 @@ This folder should contain a `index.ts` file with a list of all cards in the dir
 1. Your card must be added to the `index.ts` file in the folder you placed it in. Place the card dictionary in the large array in this file.
 
 
-Now when you open the game, your card will show up! Albiet, without a image.
+Now when you open the game, your card will show up! Albeit, without a image.
 
 
 ### Setting An Image For Your Card
@@ -55,7 +55,7 @@ While developing your card, you can set `renderCardsDynamically: true` in `commo
 
 ### Cards With Multiple Levels
 For cards with multiple levels, such as Thorns or Instant Health, its best practice to share as much code between them as possible.
-To accomplish this, you can create a function that returns a level of the card for givin values.
+To accomplish this, you can create a function that returns a level of the card for given values.
 Here is an example of this:
 
 ```ts
@@ -109,7 +109,7 @@ To perform an action when the game state changes, the hooks system should be use
 [./hooks.md](hooks) for more information.
 
 ### Saving Information Between Rounds
-Saving information between rounds should be done using status effcts. This is to ensure
+Saving information between rounds should be done using status effects. This is to ensure
 the card works properly with the mocking system that Rendog Rare and ZombieCleo Rare use.
 See [./status-effects.md](Status Effects) for more information.
 

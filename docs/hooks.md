@@ -17,7 +17,7 @@ function example(game, observer) {
 ```
 
 There also exists priority hooks. Priority hooks have extra control over the order that each
-listener recieves an event. Available priorities are stored in the `common/types/priorities.ts` file.
+listener receives an event. Available priorities are stored in the `common/types/priorities.ts` file.
 There is one "priority dictionary" for each priority hook.
 You can go to references for a certain priority category to see when it is used and how.
 
