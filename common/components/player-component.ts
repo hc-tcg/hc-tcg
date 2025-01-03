@@ -17,6 +17,7 @@ import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {SlotComponent} from './slot-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -346,6 +347,41 @@ export class PlayerComponent {
 	public knockback(row: RowComponent) {
 		if (this.canBeKnockedBack()) {
 			this.changeActiveRow(row)
+		}
+	}
+
+	public getKnockbackPickRequest(component: CardComponent) {
+		const pickCondition = query.every(
+			query.slot.player(this.entity),
+			query.slot.hermit,
+			query.not(query.slot.active),
+			query.not(query.slot.empty),
+			query.slot.canBecomeActive,
+		)
+
+		if (!component.game.components.exists(SlotComponent, pickCondition))
+			return null
+		if (!this.activeRow || !this.activeRow.health || !this.canBeKnockedBack()) {
+			return null
+		}
+
+		return {
+			player: this.entity,
+			id: component.entity,
+			message: 'Choose a new active Hermit from your AFK Hermits',
+			canPick: pickCondition,
+			onResult: (pickedSlot: SlotComponent) => {
+				if (!pickedSlot.inRow()) return
+				this.knockback(pickedSlot.row)
+			},
+			onTimeout: () => {
+				const slot = component.game.components.find(
+					SlotComponent,
+					pickCondition,
+				)
+				if (!slot?.inRow()) return
+				this.knockback(slot.row)
+			},
 		}
 	}
 }
