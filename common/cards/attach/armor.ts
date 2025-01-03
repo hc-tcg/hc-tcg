@@ -70,6 +70,16 @@ function armorBlockEffect(
 	)
 }
 
+function armorBlockKnockback(
+	component: CardComponent,
+	observer: ObserverComponent,
+) {
+	observer.subscribe(component.player.hooks.blockKnockback, () => {
+		if (!component.slot.inRow()) return false
+		return component.slot.row.entity === component.player.activeRowEntity
+	})
+}
+
 export const GoldArmor = {
 	...attach,
 	id: 'gold_armor',
@@ -164,5 +174,6 @@ export const NetheriteArmor: Attach = {
 	) {
 		armorBlockEffect(game, component, observer)
 		armorBlockDamage(20, game, component, observer)
+		armorBlockKnockback(component, observer)
 	},
 }
