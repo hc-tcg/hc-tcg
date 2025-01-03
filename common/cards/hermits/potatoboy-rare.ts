@@ -19,8 +19,8 @@ const PotatoBoyRare: Hermit = {
 	health: 270,
 	primary: {
 		name: 'Peace & Love',
-		cost: ['farm'],
-		damage: 0,
+		cost: ['any'],
+		damage: 30,
 		power: 'Heal all Hermits that are adjacent to your active Hermit 40hp.',
 	},
 	secondary: {

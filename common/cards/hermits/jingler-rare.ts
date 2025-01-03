@@ -15,7 +15,7 @@ const JinglerRare: Hermit = {
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 0,
 	type: 'speedrunner',
 	health: 280,
 	primary: {

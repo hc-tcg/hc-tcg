@@ -15,7 +15,7 @@ const SteampunkTangoRare: Hermit = {
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 3,
 	type: 'terraform',
 	health: 270,
 	primary: {
