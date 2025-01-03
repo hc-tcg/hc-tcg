@@ -16,8 +16,8 @@ import {onCoinFlip, onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
-import {StatusEffectComponent} from './status-effect-component'
 import {SlotComponent} from './slot-component'
+import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
