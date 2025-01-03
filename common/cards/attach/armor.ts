@@ -146,7 +146,7 @@ export const DiamondArmor: Attach = {
 	rarity: 'rare',
 	tokens: 3,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -166,7 +166,7 @@ export const NetheriteArmor: Attach = {
 	rarity: 'ultra_rare',
 	tokens: 4,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to. Opponent can not make this Hermit go AFK.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards. Opponent can not make this Hermit go AFK.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
