@@ -8,5 +8,5 @@ Sections:
 
 ## Architecture
 
-TODO
+TODO, *please make contributions to help fill this section out.*
 
