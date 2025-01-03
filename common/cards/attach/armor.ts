@@ -80,7 +80,7 @@ function armorBlockKnockback(
 	})
 }
 
-export const GoldArmor = {
+export const GoldArmor: Attach = {
 	...attach,
 	id: 'gold_armor',
 	numericId: 29,
@@ -99,7 +99,7 @@ export const GoldArmor = {
 	},
 }
 
-export const IronArmor = {
+export const IronArmor: Attach = {
 	...attach,
 	id: 'iron_armor',
 	numericId: 45,
