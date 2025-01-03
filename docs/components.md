@@ -20,7 +20,7 @@ function example(game) {
 ```
 Here is an example query for the active hermit card:
 
-```
+```ts
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 

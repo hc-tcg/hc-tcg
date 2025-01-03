@@ -25,6 +25,8 @@ For priority hooks these use the `subscribeWithPriority` function.
 Here is an example of subribing to the `game.hooks.beforeAttack` hook.
 
 ```ts
+import {beforeAttack} from 'common/types/priorities.ts'
+
 function example(game, observer) {
     observer.subscribeWithPriority(
     	game.hooks.beforeAttack,
