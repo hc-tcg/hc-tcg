@@ -3,6 +3,8 @@ import MenuLayout from 'components/menu-layout'
 import {useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
 import {useState} from 'react'
+import {CARDS} from 'common/cards'
+import {isHermit, isItem} from 'common/cards/types'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -87,6 +89,21 @@ function HallOfFame({setMenuSection}: Props) {
 		)
 	}
 
+	const parseDeckCards = (cards: Array<string>) => {
+		return cards.map((card) => CARDS[card])
+	}
+
+	const getDeckTypes = (cards: Array<string>) => {
+		const parsedCards = parseDeckCards(cards)
+		console.log(parsedCards)
+		const reducedCards = parsedCards.reduce((r: Array<string>, card) => {
+			if (!isHermit(card) && !isItem(card)) return r
+			if (!r.includes(card.type) && card.type !== 'any') r.push(card.type)
+			return r
+		}, [])
+		return reducedCards.join(', ')
+	}
+
 	const parseDecks = (decks: Array<Record<string, any>>) => {
 		return (
 			<table className={css.hallOfFameTable}>
@@ -95,15 +112,17 @@ function HallOfFame({setMenuSection}: Props) {
 					<th>Winrate</th>
 					<th>Wins</th>
 					<th>Losses</th>
+					<th>Included Types</th>
 					<th>Cards</th>
 				</tr>
 				{decks.map((deck) => {
 					return (
-						<tr>
+						<tr key={deck.deck.code}>
 							<td>{deck.deck.code}</td>
 							<td>{Math.round(deck.winrate * 10000) / 100}%</td>
 							<td>{deck.wins}</td>
 							<td>{deck.lossses}</td>
+							<td>{getDeckTypes(deck.deck.cards)}</td>
 							<td>CARDS</td>
 						</tr>
 					)
