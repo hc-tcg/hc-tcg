@@ -1,20 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 import {NetheriteArmor} from 'common/cards/attach/armor'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import Egg from 'common/cards/single-use/egg'
 import TargetBlock from 'common/cards/single-use/target-block'
-import {CardComponent, RowComponent} from 'common/components'
+import {RowComponent} from 'common/components'
 import query from 'common/components/query'
+import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Netherite Armor', () => {
 	test('Netherite Armor prevents damage', () => {
