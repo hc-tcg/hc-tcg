@@ -25,6 +25,7 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import HallOfFame from './main-menu/hall-of-fame'
 
 function App() {
 	const section = useRouter()
@@ -61,6 +62,9 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />
+				case 'hall-of-fame':
+					return <HallOfFame setMenuSection={setMenuSection} />
+
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'boss-landing':
