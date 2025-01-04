@@ -152,14 +152,16 @@ function HallOfFame({setMenuSection}: Props) {
 				returnText="More"
 				className={css.settingsMenu}
 			>
-				<h2> Hall of Fame </h2>
 				<div className={css.bigHallOfFameArea}>
-					{data && parseDecks(data.body)}
+					<div className={css.mainHallOfFameArea}>
+						<h2> Hall of Fame </h2>
+						<div className={css.tableArea}>{data && parseDecks(data.body)}</div>
+					</div>
 				</div>
 			</MenuLayout>
 			<ScreenshotDeckModal
 				setOpen={screenshotDeckModalContents !== null}
-				cards={screenshotDeckModalContents}
+				cards={[]}
 				onClose={() => setScreenshotDeckModalContents(null)}
 			/>
 		</>
