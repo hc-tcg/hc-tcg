@@ -341,7 +341,7 @@ export class PlayerComponent {
 	}
 
 	public canBeKnockedBack() {
-		return this.hooks.blockKnockback.call().some((x) => x)
+		return !this.hooks.blockKnockback.call().some((x) => x)
 	}
 
 	public knockback(row: RowComponent) {
@@ -350,18 +350,23 @@ export class PlayerComponent {
 		}
 	}
 
+	/** Create a pick request for knockback. This function will return null if there is no
+	 * valid hermit to switch to or the player can not be knocked back.
+	 */
 	public getKnockbackPickRequest(component: CardComponent) {
 		const pickCondition = query.every(
 			query.slot.player(this.entity),
 			query.slot.hermit,
 			query.not(query.slot.active),
 			query.not(query.slot.empty),
+			query.not(query.slot.frozen),
 			query.slot.canBecomeActive,
 		)
 
 		if (!component.game.components.exists(SlotComponent, pickCondition))
 			return null
-		if (!this.activeRow || !this.activeRow.health || !this.canBeKnockedBack()) {
+
+		if (!this.canBeKnockedBack()) {
 			return null
 		}
 
