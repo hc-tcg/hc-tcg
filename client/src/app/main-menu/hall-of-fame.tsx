@@ -1,8 +1,10 @@
-import classNames from 'classnames'
 import MenuLayout from 'components/menu-layout'
 import {useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
 import {useState} from 'react'
+import {ScreenshotDeckModal} from 'components/import-export'
+import {LocalCardInstance} from 'common/types/server-requests'
+import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -10,6 +12,9 @@ type Props = {
 
 function HallOfFame({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
+
+	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
+		useState<Array<LocalCardInstance> | null>(null)
 
 	const [data, setData] = useState<Record<any, any> | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<string>('decks')
@@ -104,7 +109,15 @@ function HallOfFame({setMenuSection}: Props) {
 							<td>{Math.round(deck.winrate * 10000) / 100}%</td>
 							<td>{deck.wins}</td>
 							<td>{deck.lossses}</td>
-							<td>CARDS</td>
+							<td>
+								<Button
+									onClick={() => {
+										setScreenshotDeckModalContents([])
+									}}
+								>
+									View
+								</Button>
+							</td>
 						</tr>
 					)
 				})}
@@ -113,17 +126,24 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	return (
-		<MenuLayout
-			back={() => setMenuSection('settings')}
-			title="Hall of Fame"
-			returnText="More"
-			className={css.settingsMenu}
-		>
-			<h2> Hall of Fame </h2>
-			<div className={css.bigHallOfFameArea}>
-				{data && parseDecks(data.body)}
-			</div>
-		</MenuLayout>
+		<>
+			<MenuLayout
+				back={() => setMenuSection('settings')}
+				title="Hall of Fame"
+				returnText="More"
+				className={css.settingsMenu}
+			>
+				<h2> Hall of Fame </h2>
+				<div className={css.bigHallOfFameArea}>
+					{data && parseDecks(data.body)}
+				</div>
+			</MenuLayout>
+			<ScreenshotDeckModal
+				setOpen={screenshotDeckModalContents !== null}
+				cards={screenshotDeckModalContents}
+				onClose={() => setScreenshotDeckModalContents(null)}
+			/>
+		</>
 	)
 }
 
