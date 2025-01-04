@@ -1,8 +1,13 @@
 import {Card} from '../types'
-import {DiamondArmor, GoldArmor, IronArmor, NetheriteArmor} from './armor'
+import {
+	ChainmailArmor,
+	DiamondArmor,
+	GoldArmor,
+	IronArmor,
+	NetheriteArmor,
+} from './armor'
 import ArmorStand from './armor-stand'
 import Bed from './bed'
-import ChainmailArmor from './chainmail-armor'
 import CommandBlock from './command-block'
 import LightningRod from './lightning-rod'
 import Loyalty from './loyalty'

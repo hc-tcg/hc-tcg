@@ -99,7 +99,7 @@ describe('Test Pharaoh Xibalba', () => {
 					).toBe(
 						EthosLabCommon.health -
 							EthosLabCommon.secondary.damage +
-							(PharaohRare.secondary.damage - 30) /** Diamond Armor */,
+							(PharaohRare.secondary.damage - 20) /** Diamond Armor */,
 					)
 				},
 			},
@@ -140,7 +140,7 @@ describe('Test Pharaoh Xibalba', () => {
 					)
 					const attackDamage =
 						PharaohRare.secondary.damage -
-						30 /** Diamond Armor */ +
+						20 /** Diamond Armor */ +
 						WEAKNESS_DAMAGE
 					expect(
 						game.components.find(
@@ -643,7 +643,7 @@ describe('Test Pharaoh Xibalba', () => {
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
-							(PharaohRare.secondary.damage - 30) /** Diamond Armor */ -
+							(PharaohRare.secondary.damage - 20) /** Diamond Armor */ -
 							soulmateEffectDamage,
 					)
 					expect(
@@ -669,7 +669,7 @@ describe('Test Pharaoh Xibalba', () => {
 					).toBe(
 						BigBSt4tzRare.health -
 							GrianchRare.secondary.damage +
-							(PharaohRare.secondary.damage - 30) /** Diamond Armor */,
+							(PharaohRare.secondary.damage - 20) /** Diamond Armor */,
 					)
 				},
 			},
