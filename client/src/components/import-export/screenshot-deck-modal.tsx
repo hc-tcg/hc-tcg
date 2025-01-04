@@ -1,9 +1,9 @@
 import classNames from 'classnames'
-import Card from 'components/card'
 import type {Card as CardType} from 'common/cards/types'
+import {WithoutFunctions} from 'common/types/server-requests'
+import Card from 'components/card'
 import {Modal} from 'components/modal'
 import css from './import-export.module.scss'
-import {WithoutFunctions} from 'common/types/server-requests'
 
 type Props = {
 	setOpen: boolean

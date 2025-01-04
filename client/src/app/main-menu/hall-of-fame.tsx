@@ -1,11 +1,11 @@
-import MenuLayout from 'components/menu-layout'
-import {useMessageDispatch} from 'logic/messages'
-import css from './main-menu.module.scss'
-import {useState} from 'react'
-import {ScreenshotDeckModal} from 'components/import-export'
-import Button from 'components/button'
 import {CARDS} from 'common/cards'
 import {Card, isHermit, isItem} from 'common/cards/types'
+import Button from 'components/button'
+import {ScreenshotDeckModal} from 'components/import-export'
+import MenuLayout from 'components/menu-layout'
+import {useMessageDispatch} from 'logic/messages'
+import {useState} from 'react'
+import css from './main-menu.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void

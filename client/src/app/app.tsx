@@ -23,9 +23,9 @@ import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
+import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
-import HallOfFame from './main-menu/hall-of-fame'
 
 function App() {
 	const section = useRouter()
