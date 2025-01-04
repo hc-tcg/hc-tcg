@@ -3,10 +3,9 @@ import {useMessageDispatch} from 'logic/messages'
 import css from './main-menu.module.scss'
 import {useState} from 'react'
 import {ScreenshotDeckModal} from 'components/import-export'
-import {LocalCardInstance} from 'common/types/server-requests'
 import Button from 'components/button'
 import {CARDS} from 'common/cards'
-import {isHermit, isItem} from 'common/cards/types'
+import {Card, isHermit, isItem} from 'common/cards/types'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,7 +15,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
-		useState<Array<LocalCardInstance> | null>(null)
+		useState<Array<Card> | null>(null)
 
 	const [data, setData] = useState<Record<any, any> | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<string>('decks')
@@ -100,7 +99,6 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const getDeckTypes = (cards: Array<string>) => {
 		const parsedCards = parseDeckCards(cards)
-		console.log(parsedCards)
 		const reducedCards = parsedCards.reduce((r: Array<string>, card) => {
 			if (!isHermit(card) && !isItem(card)) return r
 			if (!r.includes(card.type) && card.type !== 'any') r.push(card.type)
@@ -131,7 +129,9 @@ function HallOfFame({setMenuSection}: Props) {
 							<td>
 								<Button
 									onClick={() => {
-										setScreenshotDeckModalContents([])
+										setScreenshotDeckModalContents(
+											parseDeckCards(deck.deck.cards),
+										)
 									}}
 								>
 									View
@@ -157,11 +157,13 @@ function HallOfFame({setMenuSection}: Props) {
 					{data && parseDecks(data.body)}
 				</div>
 			</MenuLayout>
-			<ScreenshotDeckModal
-				setOpen={screenshotDeckModalContents !== null}
-				cards={screenshotDeckModalContents}
-				onClose={() => setScreenshotDeckModalContents(null)}
-			/>
+			{screenshotDeckModalContents !== null && (
+				<ScreenshotDeckModal
+					setOpen={screenshotDeckModalContents !== null}
+					cards={screenshotDeckModalContents}
+					onClose={() => setScreenshotDeckModalContents(null)}
+				/>
+			)}
 		</>
 	)
 }
