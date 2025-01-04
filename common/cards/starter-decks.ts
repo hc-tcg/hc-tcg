@@ -37,6 +37,7 @@ import MumboJumboRare from './hermits/mumbojumbo-rare'
 import PearlescentMoonRare from './hermits/pearlescentmoon-rare'
 import PoePoeSkizzRare from './hermits/poepoeskizz-rare'
 import PotatoBoyCommon from './hermits/potatoboy-common'
+import PoultrymanCommon from './hermits/poultryman-common'
 import SmallishbeansCommon from './hermits/smallishbeans-common'
 import SpookyStressCommon from './hermits/spookystress-common'
 import SteampunkTangoCommon from './hermits/steampunktango-common'
@@ -389,7 +390,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 		cards: [
 			MumboJumboRare,
 			MumboJumboRare,
-			MumboJumboRare,
+			PoultrymanCommon,
 			StressMonster101Rare,
 			StressMonster101Rare,
 			BoomerBdubsCommon,
@@ -569,7 +570,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			BoomerBdubsCommon,
 			PranksterItem,
 			FishingRod,
-			GoldenAxe,
+			DiamondSword,
 		],
 	},
 	{
