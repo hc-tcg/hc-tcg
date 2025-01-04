@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import ArmorStand from 'common/cards/attach/armor-stand'
 import {ChainmailArmor} from 'common/cards/attach/armor'
+import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import RendogRare from 'common/cards/hermits/rendog-rare'
 import TinFoilChefUltraRare from 'common/cards/hermits/tinfoilchef-ultra-rare'
