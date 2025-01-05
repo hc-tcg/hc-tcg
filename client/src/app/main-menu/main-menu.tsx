@@ -7,12 +7,12 @@ import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
 import debugOptions from 'debug'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
