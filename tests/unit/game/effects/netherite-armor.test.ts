@@ -132,7 +132,7 @@ describe('Test Netherite Armor', () => {
 							query.row.index(1),
 							query.row.opponentPlayer,
 						)?.health,
-					).toBe(EthosLabCommon.health - EthosLabCommon.primary.damage)
+					).toBe(EthosLabCommon.health - EthosLabCommon.primary.damage - 20)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
