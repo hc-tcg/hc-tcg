@@ -60,11 +60,12 @@ function EndGameOverlayContainer() {
 	const dispatch = useMessageDispatch()
 
 	// Play EX voice lines on hermit deaths and game end
-	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
-		(id) => gameState.players[id].lives,
+	const lives = [gameState?.playerEntity, gameState?.opponentPlayerEntity].map(
+		(id) => (id && gameState?.players[id].lives) || 0,
 	)
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
+		if (!gameState) return
 		if (!gameState.isBossGame) return
 		if (endGameOverlay) {
 			if (
