@@ -4,7 +4,7 @@ import {beforeAttack} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
 
-function armorBlockDamage(
+function blockDamage(
 	amount: number,
 	game: GameModel,
 	component: CardComponent,
@@ -41,7 +41,7 @@ function armorBlockDamage(
 	observer.subscribe(opponentPlayer.hooks.onTurnStart, resetCounter)
 }
 
-function armorBlockEffect(
+function blockEffect(
 	game: GameModel,
 	component: CardComponent,
 	observer: ObserverComponent,
@@ -70,10 +70,7 @@ function armorBlockEffect(
 	)
 }
 
-function armorBlockKnockback(
-	component: CardComponent,
-	observer: ObserverComponent,
-) {
+function blockKnockback(component: CardComponent, observer: ObserverComponent) {
 	observer.subscribe(component.player.hooks.blockKnockback, () => {
 		if (!component.slot.inRow()) return false
 		return component.slot.row.entity === component.player.activeRowEntity
@@ -95,7 +92,7 @@ export const GoldArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		return armorBlockDamage(10, game, component, observer)
+		return blockDamage(10, game, component, observer)
 	},
 }
 
@@ -114,7 +111,7 @@ export const IronArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		return armorBlockDamage(20, game, component, observer)
+		return blockDamage(20, game, component, observer)
 	},
 }
 
@@ -133,7 +130,7 @@ export const ChainmailArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		armorBlockEffect(game, component, observer)
+		blockEffect(game, component, observer)
 	},
 }
 
@@ -152,8 +149,8 @@ export const DiamondArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		armorBlockEffect(game, component, observer)
-		armorBlockDamage(20, game, component, observer)
+		blockEffect(game, component, observer)
+		blockDamage(20, game, component, observer)
 	},
 }
 
@@ -172,8 +169,8 @@ export const NetheriteArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		armorBlockEffect(game, component, observer)
-		armorBlockDamage(20, game, component, observer)
-		armorBlockKnockback(component, observer)
+		blockEffect(game, component, observer)
+		blockDamage(20, game, component, observer)
+		blockKnockback(component, observer)
 	},
 }
