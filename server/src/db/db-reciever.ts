@@ -545,3 +545,12 @@ export function* addGame(
 		})
 	}
 }
+
+export function* getDeck(code: string) {
+	if (!root.db?.connected) return
+
+	const deck = yield* call([root.db, root.db.getPlayerDeckFromID], code)
+
+	if (deck.type === 'failure') return null
+	return deck.body
+}

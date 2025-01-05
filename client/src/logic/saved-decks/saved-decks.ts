@@ -22,7 +22,7 @@ export const getActiveDeck = (): Deck | null => {
 }
 
 export const setActiveDeck = (deck: Deck) => {
-	localStorage.setItem('activeDeck', JSON.stringify(deck))
+	localStorage.setItem('activeDeck', deck.code)
 }
 
 function getLocalStorageTags(): Array<Tag> {

@@ -118,7 +118,7 @@ function* insertUser(socket: any) {
 				newActiveDeck: starterDeck.code,
 			})
 
-			localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
+			localStorage.setItem('activeDeck', starterDeck.code)
 
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
@@ -504,7 +504,7 @@ export function* newDeckSaga() {
 		})
 		if (result.newActiveDeck) {
 			// Select new active deck
-			localStorage.setItem('activeDeck', JSON.stringify(result.newActiveDeck))
+			localStorage.setItem('activeDeck', result.newActiveDeck.code)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
 				deck: result.newActiveDeck,

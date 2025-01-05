@@ -5,7 +5,7 @@ import {getDeckCost} from 'common/utils/ranks'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
-import {getPlayerDeck} from 'logic/session/session-selectors'
+import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
@@ -31,16 +31,18 @@ type Props = {
 
 const DeckComponent = ({setMenuSection}: Props) => {
 	// REDUX
-	const playerDeck = useSelector(getPlayerDeck)
+	const playerDeck = useSelector(getPlayerDeckCode)
 	const dispatch = useMessageDispatch()
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 
+	const foundDeck = databaseInfo.decks.find((deck) => deck.code === playerDeck)
+
 	const [loadedDeck, setLoadedDeck] = useState<Deck>(
-		playerDeck
-			? playerDeck
+		playerDeck && foundDeck
+			? foundDeck
 			: {
 					name: '',
 					code: '',

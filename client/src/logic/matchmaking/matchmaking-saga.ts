@@ -70,7 +70,10 @@ function* privateLobbySaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 
-		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
+		const activeDeckCode = localStorage.getItem('activeDeck')
+		if (!activeDeckCode) return
+
+		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME, activeDeckCode})
 
 		const matchmakingCodeTask = yield* fork(function* () {
 			while (true) {
@@ -78,7 +81,11 @@ function* privateLobbySaga() {
 					LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
 				>(localMessages.MATCHMAKING_CODE_SET)
 
-				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
+				yield* sendMsg({
+					type: clientMessages.JOIN_PRIVATE_GAME,
+					code,
+					activeDeckCode,
+				})
 			}
 		})
 
@@ -223,9 +230,16 @@ function* privateLobbySaga() {
 function* joinQueueSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+
+		const activeDeckCode = localStorage.getItem('activeDeck')
+		if (!activeDeckCode) return
+
 		try {
 			// Send message to server to join the queue
-			yield sendMsg({type: clientMessages.JOIN_QUEUE})
+			yield sendMsg({
+				type: clientMessages.JOIN_QUEUE,
+				activeDeckCode: activeDeckCode,
+			})
 
 			// Wait for response
 			const joinResponse = yield* race({

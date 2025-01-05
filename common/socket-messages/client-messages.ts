@@ -42,12 +42,16 @@ export type ClientMessages = [
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{type: typeof clientMessages.CREATE_BOSS_GAME},
 	{type: typeof clientMessages.CANCEL_BOSS_GAME},
-	{type: typeof clientMessages.CREATE_PRIVATE_GAME},
+	{type: typeof clientMessages.CREATE_PRIVATE_GAME; activeDeckCode: string},
 	{type: typeof clientMessages.CANCEL_PRIVATE_GAME},
-	{type: typeof clientMessages.JOIN_QUEUE},
+	{type: typeof clientMessages.JOIN_QUEUE; activeDeckCode: string},
 	{type: typeof clientMessages.LEAVE_QUEUE},
 	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
-	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
+	{
+		type: typeof clientMessages.JOIN_PRIVATE_GAME
+		code: string
+		activeDeckCode: string
+	},
 	{
 		type: typeof clientMessages.TURN_ACTION
 		playerEntity: PlayerEntity

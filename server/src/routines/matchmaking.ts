@@ -19,7 +19,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame} from 'db/db-reciever'
+import {addGame, getDeck} from 'db/db-reciever'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
@@ -306,11 +306,21 @@ function* cleanUpSaga() {
 	}
 }
 
+function* updateDeckSaga(player: PlayerModel, deckCode: string) {
+	const newDeck = yield* getDeck(deckCode)
+	if (!newDeck) return
+	player.setPlayerDeck(newDeck)
+}
+
 export function* joinQueue(
 	msg: RecievedClientMessage<typeof clientMessages.JOIN_QUEUE>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload.activeDeckCode)
+
+	console.log(player.deck)
 
 	if (!player) {
 		console.log('[Join queue] Player not found: ', playerId)
