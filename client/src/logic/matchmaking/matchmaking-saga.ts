@@ -19,9 +19,13 @@ import {
 function* createBossGameSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+
+		const activeDeckCode = localStorage.getItem('activeDeck')
+		if (!activeDeckCode) return
+
 		try {
 			// Send message to server to create the game
-			yield* sendMsg({type: clientMessages.CREATE_BOSS_GAME})
+			yield* sendMsg({type: clientMessages.CREATE_BOSS_GAME, activeDeckCode})
 
 			const createBossResponse = yield* race({
 				success: call(

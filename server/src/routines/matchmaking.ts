@@ -412,6 +412,9 @@ export function* createBossGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload.activeDeckCode)
+
 	if (!player) {
 		console.log('[Create Boss game] Player not found: ', playerId)
 		return
@@ -494,6 +497,9 @@ export function* createPrivateGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload.activeDeckCode)
+
 	if (!player) {
 		console.log('[Create private game] Player not found: ', playerId)
 		return
@@ -533,6 +539,9 @@ export function* joinPrivateGame(
 		payload: {code},
 	} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload.activeDeckCode)
+
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
 		return
