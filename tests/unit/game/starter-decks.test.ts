@@ -7,9 +7,14 @@ import {validateDeck} from 'common/utils/validation'
 describe('Test starter decks', () => {
 	test('Verify starter decks are valid.', () => {
 		for (const deck of STARTER_DECKS) {
+			const validation = validateDeck(deck.cards)
 			assert(
-				validateDeck(deck.cards).valid === true,
-				`The deck "${deck.name}" is not valid. Current token count: ${getDeckCost(deck.cards)}`,
+				validation.valid === true,
+				`The deck "${deck.name}" is not valid. Reason: ${validation.valid === false && validation.reason} `,
+			)
+			assert(
+				getDeckCost(deck.cards) === 42,
+				`The deck "${deck.name}" does not cost 42 tokens. Current token count: ${getDeckCost(deck.cards)}`,
 			)
 		}
 	})
