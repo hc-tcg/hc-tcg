@@ -87,11 +87,7 @@ describe('Test Netherite Armor', () => {
 							query.row.index(0),
 							query.row.opponentPlayer,
 						)?.health,
-					).toBe(
-						EthosLabCommon.health -
-							EthosLabCommon.primary.damage -
-							40 /* Diamond Sword */,
-					)
+					).toBe(EthosLabCommon.health - (EthosLabCommon.primary.damage - 20))
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -132,7 +128,7 @@ describe('Test Netherite Armor', () => {
 							query.row.index(1),
 							query.row.opponentPlayer,
 						)?.health,
-					).toBe(EthosLabCommon.health - EthosLabCommon.primary.damage - 20)
+					).toBe(EthosLabCommon.health - (EthosLabCommon.primary.damage - 20))
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
