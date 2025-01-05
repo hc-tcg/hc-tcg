@@ -1,10 +1,10 @@
 import {
+	ChainmailArmor,
 	DiamondArmor,
 	GoldArmor,
 	IronArmor,
 	NetheriteArmor,
 } from './attach/armor'
-import ChainmailArmor from './attach/chainmail-armor'
 import LightningRod from './attach/lightning-rod'
 import Loyalty from './attach/loyalty'
 import TurtleShell from './attach/turtle-shell'
