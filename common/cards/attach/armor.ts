@@ -60,7 +60,7 @@ function blockEffect(
 	)
 }
 
-function blockSuRedirect(
+function blockSingleUseRedirect(
 	game: GameModel,
 	component: CardComponent,
 	observer: ObserverComponent,
@@ -150,7 +150,7 @@ export const ChainmailArmor: Attach = {
 		observer: ObserverComponent,
 	) {
 		blockEffect(game, component, observer)
-		blockSuRedirect(game, component, observer)
+		blockSingleUseRedirect(game, component, observer)
 	},
 }
 
