@@ -2,6 +2,7 @@ import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -20,7 +21,7 @@ function* createBossGameSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 
-		const activeDeckCode = localStorage.getItem('activeDeck')
+		const activeDeckCode = yield* select(getPlayerDeckCode)
 		if (!activeDeckCode) return
 
 		try {
@@ -74,7 +75,7 @@ function* privateLobbySaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 
-		const activeDeckCode = localStorage.getItem('activeDeck')
+		const activeDeckCode = yield* select(getPlayerDeckCode)
 		if (!activeDeckCode) return
 
 		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME, activeDeckCode})
@@ -235,7 +236,7 @@ function* joinQueueSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 
-		const activeDeckCode = localStorage.getItem('activeDeck')
+		const activeDeckCode = yield* select(getPlayerDeckCode)
 		if (!activeDeckCode) return
 
 		try {
