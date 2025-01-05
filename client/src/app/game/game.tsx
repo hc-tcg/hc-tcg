@@ -59,8 +59,6 @@ function EndGameOverlayContainer() {
 	const playerEntity = useSelector(getPlayerEntity)
 	const dispatch = useMessageDispatch()
 
-	if (!gameState || !endGameOverlay?.outcome) return
-
 	// Play EX voice lines on hermit deaths and game end
 	const lives = [gameState.playerEntity, gameState.opponentPlayerEntity].map(
 		(id) => gameState.players[id].lives,
@@ -96,6 +94,8 @@ function EndGameOverlayContainer() {
 			})
 		}
 	}, [...lives, endGameOverlay])
+
+	if (!gameState || !endGameOverlay?.outcome) return null
 
 	return (
 		<EndGameOverlay
