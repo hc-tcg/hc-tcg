@@ -53,6 +53,25 @@ function blockEffect(
 			if (!attack.isTargeting(component)) {
 				return
 			}
+			if (attack.isType('effect')) {
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
+			}
+		},
+	)
+}
+
+function blockSingleUseRedirect(
+	game: GameModel,
+	component: CardComponent,
+	observer: ObserverComponent,
+) {
+	observer.subscribeWithPriority(
+		game.hooks.beforeAttack,
+		beforeAttack.EFFECT_BLOCK_DAMAGE,
+		(attack) => {
+			if (!attack.isTargeting(component)) {
+				return
+			}
 
 			// only protect against su attacks and attacks which have been redirected by su cards
 			let suRedirect = false
@@ -63,7 +82,7 @@ function blockEffect(
 				suRedirect = true
 			}
 
-			if (attack.isType('effect') || suRedirect) {
+			if (suRedirect) {
 				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		},
@@ -131,6 +150,7 @@ export const ChainmailArmor: Attach = {
 		observer: ObserverComponent,
 	) {
 		blockEffect(game, component, observer)
+		blockSingleUseRedirect(game, component, observer)
 	},
 }
 
@@ -143,7 +163,7 @@ export const DiamondArmor: Attach = {
 	rarity: 'rare',
 	tokens: 3,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -163,7 +183,7 @@ export const NetheriteArmor: Attach = {
 	rarity: 'ultra_rare',
 	tokens: 4,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards and any damage redirected by effect cards. Opponent can not make this Hermit go AFK.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards. Opponent can not make this Hermit go AFK.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
