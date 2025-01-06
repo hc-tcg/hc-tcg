@@ -42,6 +42,7 @@ function blockDamage(
 }
 
 function blockEffect(
+	amount: number | null,
 	game: GameModel,
 	component: CardComponent,
 	observer: ObserverComponent,
@@ -54,7 +55,13 @@ function blockEffect(
 				return
 			}
 			if (attack.isType('effect')) {
-				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
+				if (amount !== null) {
+					attack.removeDamage(component.entity, amount)
+				} else {
+					attack
+						.multiplyDamage(component.entity, 0)
+						.lockDamage(component.entity)
+				}
 			}
 		},
 	)
@@ -149,7 +156,7 @@ export const ChainmailArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		blockEffect(game, component, observer)
+		blockEffect(null, game, component, observer)
 		blockSingleUseRedirect(game, component, observer)
 	},
 }
@@ -163,13 +170,13 @@ export const DiamondArmor: Attach = {
 	rarity: 'rare',
 	tokens: 3,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents any damage from effect cards.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents up to 20 damage from effect cards.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		blockEffect(game, component, observer)
+		blockEffect(20, game, component, observer)
 		blockDamage(20, game, component, observer)
 	},
 }
@@ -189,7 +196,7 @@ export const NetheriteArmor: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		blockEffect(game, component, observer)
+		blockEffect(null, game, component, observer)
 		blockDamage(20, game, component, observer)
 		blockKnockback(component, observer)
 	},
