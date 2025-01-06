@@ -1,12 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
 import {DiamondArmor} from 'common/cards/attach/armor'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import {DiamondSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
-import {DiamondSword} from 'common/cards/single-use/sword'
 
-describe('Test Diamond Armor  Armor', () => {
+describe('Test Diamond Armor', () => {
 	test('Diamond Armor prevents damage', () => {
 		testGame(
 			{
