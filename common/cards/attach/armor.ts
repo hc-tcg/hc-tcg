@@ -170,7 +170,7 @@ export const DiamondArmor: Attach = {
 	rarity: 'rare',
 	tokens: 3,
 	description:
-		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents up to 20 damage from effect cards.',
+		'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn. Prevents up to an aditional 20 damage from effect cards.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
