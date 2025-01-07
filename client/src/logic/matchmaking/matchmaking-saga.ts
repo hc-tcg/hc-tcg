@@ -1,6 +1,6 @@
 import {
-	clientMessages,
 	ClientMessageTable,
+	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
