@@ -105,7 +105,10 @@ function* createBossGameSaga() {
 
 		try {
 			// Send message to server to create the game
-			sendJoinQueueMessage(clientMessages.CREATE_BOSS_GAME, activeDeckResult)
+			yield* sendJoinQueueMessage(
+				clientMessages.CREATE_BOSS_GAME,
+				activeDeckResult,
+			)
 			const createBossResponse = yield* race({
 				success: call(
 					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
@@ -154,7 +157,10 @@ function* privateLobbySaga() {
 		const socket = yield* select(getSocket)
 		const activeDeckResult = yield* getActiveDeckSaga()
 
-		sendJoinQueueMessage(clientMessages.CREATE_PRIVATE_GAME, activeDeckResult)
+		yield* sendJoinQueueMessage(
+			clientMessages.CREATE_PRIVATE_GAME,
+			activeDeckResult,
+		)
 
 		const matchmakingCodeTask = yield* fork(function* () {
 			while (true) {
@@ -162,7 +168,7 @@ function* privateLobbySaga() {
 					LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
 				>(localMessages.MATCHMAKING_CODE_SET)
 
-				sendJoinPrivateGameMessage(
+				yield* sendJoinPrivateGameMessage(
 					clientMessages.JOIN_PRIVATE_GAME,
 					activeDeckResult,
 					code,
@@ -315,7 +321,7 @@ function* joinQueueSaga() {
 
 		try {
 			// Send message to server to join the queue
-			sendJoinQueueMessage(clientMessages.JOIN_QUEUE, activeDeckResult)
+			yield* sendJoinQueueMessage(clientMessages.JOIN_QUEUE, activeDeckResult)
 
 			// Wait for response
 			const joinResponse = yield* race({
