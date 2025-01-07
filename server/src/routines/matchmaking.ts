@@ -306,10 +306,26 @@ function* cleanUpSaga() {
 	}
 }
 
-function* updateDeckSaga(player: PlayerModel, deckCode: string) {
-	const newDeck = yield* getDeck(deckCode)
-	if (!newDeck) return
-	player.setPlayerDeck(newDeck)
+function* updateDeckSaga(
+	player: PlayerModel,
+	payload:
+		| {
+				databaseConnected: true
+				activeDeckCode: string
+		  }
+		| {
+				databaseConnected: false
+				activeDeck: Deck
+		  },
+) {
+	if (payload.databaseConnected) {
+		const newDeck = yield* getDeck(payload.activeDeckCode)
+		if (!newDeck) return
+		player.setPlayerDeck(newDeck)
+		return
+	}
+
+	player.setPlayerDeck(payload.activeDeck)
 }
 
 export function* joinQueue(
@@ -318,7 +334,7 @@ export function* joinQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload.activeDeckCode)
+	updateDeckSaga(player, msg.payload)
 
 	console.log(player.deck)
 
@@ -413,7 +429,7 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload.activeDeckCode)
+	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.log('[Create Boss game] Player not found: ', playerId)
@@ -498,7 +514,7 @@ export function* createPrivateGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload.activeDeckCode)
+	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.log('[Create private game] Player not found: ', playerId)
@@ -540,7 +556,7 @@ export function* joinPrivateGame(
 	} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload.activeDeckCode)
+	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
