@@ -86,7 +86,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	const localStorageDecks = getLocalStorageDecks(false)
+	const localStorageDecks = getLocalStorageDecks()
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -138,7 +138,7 @@ function* setupData(socket: any) {
 	})
 
 	if (result.failure) {
-		const localStorageDecks = getLocalStorageDecks(true)
+		const localStorageDecks = getLocalStorageDecks()
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
 			data: {

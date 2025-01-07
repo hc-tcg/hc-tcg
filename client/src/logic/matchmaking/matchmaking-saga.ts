@@ -41,8 +41,7 @@ function* getActiveDeckSaga(): Generator<any, activeDeckSagaT> {
 	if (!activeDeckCode) return null
 
 	if (databaseInfo.noConnection) {
-		const localStorageDecks = getLocalStorageDecks(false)
-		const activeDeck = localStorageDecks.find(
+		const activeDeck = databaseInfo.decks.find(
 			(deck) => deck.code === activeDeckCode,
 		)
 		if (!activeDeck) return null
