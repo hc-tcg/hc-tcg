@@ -12,7 +12,7 @@ import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	deleteDeckFromLocalStorage,
-	getActiveDeck,
+	getActiveDeckCode,
 	getLocalStorageDecks,
 	saveDeckToLocalStorage,
 } from 'logic/saved-decks/saved-decks'
@@ -248,7 +248,11 @@ export function* loginSaga() {
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
-		let activeDeck = getActiveDeck()
+		const activeDeckCode = getActiveDeckCode()
+		const localDatabase = yield* select(getLocalDatabaseInfo)
+		const activeDeck = localDatabase.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
 		if (activeDeck) {
 			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
@@ -303,8 +307,11 @@ export function* loginSaga() {
 		}
 
 		// Set active deck
-		const activeDeck = getActiveDeck()
-
+		const activeDeckCode = getActiveDeckCode()
+		const localDatabase = yield* select(getLocalDatabaseInfo)
+		const activeDeck = localDatabase.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
 		if (activeDeck) {
 			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
