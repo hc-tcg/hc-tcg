@@ -15,7 +15,7 @@ const HotguyRare: Hermit = {
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 2,
 	type: 'explorer',
 	health: 280,
 	primary: {
