@@ -569,7 +569,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PranksterItem,
 			BoomerBdubsCommon,
 			PranksterItem,
-			FishingRod,
+			Composter,
 			DiamondSword,
 		],
 	},
