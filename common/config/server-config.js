@@ -27,5 +27,5 @@ export default {
 			'iskallman_rare',
 		],
 	},
-	logoSubText: 'Over 3 Games Played!',
+	logoSubText: 'We nerfed Mumbo!',
 }
