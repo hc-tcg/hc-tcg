@@ -469,9 +469,37 @@ nav {
 }
 
 .hallOfFameTable {
-	width: 100%;
 	background-color: #000;
 	color: var(--text-light);
+}
+
+.hallOfFameTable > tr:nth-child(odd) {
+	background-color: lightgrey;
+}
+
+.hallOfFameTable > tr:nth-child(even) {
+	background-color: grey;
+}
+
+.hallOfFameTable > tr {
+	color: black;
+	text-align: center;
+}
+
+.hallOfFameTable > tr:first-child {
+	background-color: black;
+	color: white;
+}
+
+.actionColumn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 10px;
+}
+
+.hallOfFameTable > tr > th {
+	width: 10%;
 }
 
 .tableArea {
