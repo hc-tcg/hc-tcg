@@ -1,12 +1,11 @@
 import {CARDS} from 'common/cards'
 import {Card, isHermit, isItem} from 'common/cards/types'
 import Button from 'components/button'
-import {ImportModal, ScreenshotDeckModal} from 'components/import-export'
+import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import {useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
-import { Deck } from 'common/types/deck'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -20,7 +19,6 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const [data, setData] = useState<Record<any, any> | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<string>('decks')
-	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 
 	async function getData() {
 		const url =
@@ -107,12 +105,6 @@ function HallOfFame({setMenuSection}: Props) {
 			return r
 		}, [])
 		return reducedCards.join(', ')
-	}
-
-	const handleImportDeck = (deck: Deck) => {
-		setImportedDeck(deck)
-		saveDeck(deck)
-		setShowImportModal(false)
 	}
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
