@@ -6,6 +6,17 @@ import {CARDS_LIST} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
 import App from './app'
 import store from './store'
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+} from 'chart.js'
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
 // Make the store available in the playwright test.
 // @ts-ignore
