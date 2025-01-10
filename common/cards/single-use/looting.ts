@@ -20,7 +20,7 @@ const Looting: SingleUse = {
 	name: 'Looting',
 	expansion: 'default',
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 0,
 	description:
 		"Flip a coin.\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
 	showConfirmationModal: true,

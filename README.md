@@ -96,14 +96,16 @@ wait a few minutes and there should be a commit with the card image!
 This project contains a few tests that are run against every PR.
 
 ```sh
-npm run test              # run all the tests
-npm run test:unit         # run unittests written with jest, this will catch most errors.
-npm run test:unit-verbose # run unittests written with jest and print verbose logs for debugging.
-npm run test:vunit        # the same as test:unit-verbose
-npm run test:ct           # run component tests with playwright.
-npm run test:ct-update    # update component snapshots.
-npm run test:api          # run tests for the hc-tcg API.
-npm run test:e2e          # run end-to-end tests with Playwright.
+npm run test                # run all the tests
+npm run test:unit           # run unittests written with jest, this will catch most errors.
+npm run test:unit-verbose   # run unittests written with jest and print verbose logs for debugging.
+npm run test:vunit          # the same as test:unit-verbose
+npm run test:starter-decks` # run starter deck verification check
+npm run test:db`            # run database tests
+npm run test:ct             # run component tests with playwright.
+npm run test:ct-update      # update component snapshots.
+npm run test:api            # run tests for the hc-tcg API.
+npm run test:e2e            # run end-to-end tests with Playwright.
 ```
 
 # Building & Self Hosting

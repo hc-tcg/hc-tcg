@@ -12,10 +12,11 @@ import type {
 	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
-import {onTurnEnd} from '../types/priorities'
+import {onCoinFlip, onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
+import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
@@ -95,8 +96,9 @@ export class PlayerComponent {
 		>
 
 		/** Hook called when the player flips a coin */
-		onCoinFlip: GameHook<
-			(card: CardComponent, coinFlips: Array<CoinFlip>) => Array<CoinFlip>
+		onCoinFlip: PriorityHook<
+			(card: CardComponent, coinFlips: Array<CoinFlip>) => void,
+			typeof onCoinFlip
 		>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
@@ -114,6 +116,9 @@ export class PlayerComponent {
 				newActiveHermit: CardComponent,
 			) => void
 		>
+
+		/** Hook to block active hermit from being knocked back. */
+		blockKnockback: GameHook<() => boolean>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
@@ -143,9 +148,10 @@ export class PlayerComponent {
 			getAttack: new GameHook(),
 			onTurnStart: new GameHook(),
 			onTurnEnd: new PriorityHook(onTurnEnd),
-			onCoinFlip: new GameHook(),
+			onCoinFlip: new PriorityHook(onCoinFlip),
 			beforeActiveRowChange: new GameHook(),
 			onActiveRowChange: new GameHook(),
+			blockKnockback: new GameHook(),
 		}
 	}
 
@@ -332,5 +338,55 @@ export class PlayerComponent {
 		if (this.lastHermitAttack?.[0].turn === attackInfo.turn)
 			this.lastHermitAttack.push(attackInfo)
 		else this.lastHermitAttack = [attackInfo]
+	}
+
+	public canBeKnockedBack() {
+		return !this.hooks.blockKnockback.call().some((x) => x)
+	}
+
+	public knockback(row: RowComponent) {
+		if (this.canBeKnockedBack()) {
+			this.changeActiveRow(row)
+		}
+	}
+
+	/** Create a pick request for knockback. This function will return null if there is no
+	 * valid hermit to switch to or the player can not be knocked back.
+	 */
+	public getKnockbackPickRequest(component: CardComponent) {
+		const pickCondition = query.every(
+			query.slot.player(this.entity),
+			query.slot.hermit,
+			query.not(query.slot.active),
+			query.not(query.slot.empty),
+			query.not(query.slot.frozen),
+			query.slot.canBecomeActive,
+		)
+
+		if (!component.game.components.exists(SlotComponent, pickCondition))
+			return null
+
+		if (!this.canBeKnockedBack()) {
+			return null
+		}
+
+		return {
+			player: this.entity,
+			id: component.entity,
+			message: 'Choose a new active Hermit from your AFK Hermits',
+			canPick: pickCondition,
+			onResult: (pickedSlot: SlotComponent) => {
+				if (!pickedSlot.inRow()) return
+				this.knockback(pickedSlot.row)
+			},
+			onTimeout: () => {
+				const slot = component.game.components.find(
+					SlotComponent,
+					pickCondition,
+				)
+				if (!slot?.inRow()) return
+				this.knockback(slot.row)
+			},
+		}
 	}
 }
