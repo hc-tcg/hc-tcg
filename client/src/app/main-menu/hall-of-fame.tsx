@@ -70,6 +70,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
 	const [showDisabled, setShowAdvent] = useState<boolean>(false)
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
+	const [sortBy, setSortBy] = useState<'winrate' | 'frequency'>('winrate')
 
 	const endpoints: Record<Endpoints, string> = {
 		decks: 'decks?minimumWins=10&orderBy=winrate',
@@ -222,20 +223,20 @@ function HallOfFame({setMenuSection}: Props) {
 		types: Record<string, number | Array<Record<string, any>>>,
 	) => {
 		const typeList = types.types as Array<Record<string, any>>
-		typeList.sort((a, b) => b.winrate - a.winrate)
+		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
 		return (
 			<Bar
-				title="Types sorted by winrates"
+				title={"Types sorted by " + sortBy}
 				className={css.typeGraph}
 				data={{
 					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
 					labels: typeList.map((_type) => '                '),
 					datasets: [
 						{
-							label: 'Types sorted by winrates',
+							label: 'Types sorted by ' + sortBy,
 							data: typeList.map(
-								(type) => Math.round(type.winrate * 10000) / 100,
+								(type) => Math.round(type[sortBy] * 10000) / 100,
 							),
 							backgroundColor: typeList.map((value) =>
 								getTypeColor(value.type),
@@ -247,7 +248,7 @@ function HallOfFame({setMenuSection}: Props) {
 				plugins={[
 					{
 						id: 'iconDrawer',
-						afterDraw: (chart) => {
+						afterDatasetsDraw: (chart) => {
 							const ctx = chart.ctx
 							const xAxis = chart.scales.x
 							const offset =
@@ -324,6 +325,11 @@ function HallOfFame({setMenuSection}: Props) {
 							{selectedEndpoint === 'cards' && (
 								<Button onClick={() => setShowAdvent(!showDisabled)}>
 									Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
+								</Button>
+							)}
+							{selectedEndpoint === 'types' && (
+								<Button onClick={() => setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')}>
+									Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
 								</Button>
 							)}
 						</div>
