@@ -43,6 +43,7 @@ function HallOfFame({setMenuSection}: Props) {
 
 	async function getData() {
 		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+		console.log(url)
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
