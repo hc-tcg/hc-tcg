@@ -457,15 +457,18 @@ nav {
 	width: 100vw;
 	height: 100vh;
 	right: 0px;
-	top: 5vh;
+	top: 0px;
 	position: absolute;
+	display: flex;
 }
 
 .mainHallOfFameArea {
 	width: 80%;
-	height: 85%;
 	margin-left: 10%;
 	margin-right: 10%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 5vh;
 }
 
 .hallOfFameTable {
@@ -491,6 +494,23 @@ nav {
 	color: white;
 }
 
+.hallOfFameTable > tr > th {
+	position: sticky;
+	top: 2px;
+	background-color: black;
+}
+
+.hallOfFameTable > tr > th::before {
+	content: "";
+	background-color: black;
+	height: calc(1.5rem + 1px);
+	width: 100%;
+	position: absolute;
+	top: -3px;
+	left: 0px;
+	z-index: -1;
+}
+
 .actionColumn {
 	display: flex;
 	flex-direction: row;
@@ -504,7 +524,7 @@ nav {
 
 .tableArea {
 	overflow-y: scroll;
-	max-height: 100%;
+	flex-grow: 1;
 }
 
 .dropdownButton {
@@ -528,4 +548,47 @@ nav {
 		background: var(--gray-600);
 		filter: brightness(1.1);
 	}
+}
+
+.hofOptions {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.dropdownButton {
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-500);
+	border-radius: 6px;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.loadingIndicator {
+	position: absolute;
+	background-color: black;
+	color: var(--text-light);
+	width: 80%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	padding: 1rem;
+	gap: 1rem;
+	flex-direction: row;
 }
