@@ -1,5 +1,5 @@
 import {CARDS} from 'common/cards'
-import {Card, isHermit, isItem} from 'common/cards/types'
+import {Card as CardType, isHermit, isItem} from 'common/cards/types'
 import Button from 'components/button'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
@@ -7,6 +7,8 @@ import {useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
 import Dropdown from 'components/dropdown'
+import Card from 'components/card'
+import { WithoutFunctions } from 'common/types/server-requests'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,7 +18,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
-		useState<Array<Card> | null>(null)
+		useState<Array<CardType> | null>(null)
 
 	const [data, setData] = useState<any | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<'decks' | 'cards'>('decks')
@@ -29,7 +31,6 @@ function HallOfFame({setMenuSection}: Props) {
 	async function getData() {
 		const url =
 			`https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
-		console.log(url)
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
@@ -107,16 +108,17 @@ function HallOfFame({setMenuSection}: Props) {
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
-					<th>Card Id</th>
+					<th>Card</th>
 					<th>Winrate</th>
 					<th>in % decks</th>
 					<th>in % games</th>
 				</tr>
 				{cards.map((card) => {
-					console.log(card)
+					const cardObject = CARDS[card.id]
+					if (!cardObject) return
 					return (
 						<tr key={card.id}>
-							<td>{card.id}</td>
+							<td className={css.actionColumn}><div className={css.cardTableImage}><Card displayTokenCost={true} card={cardObject as WithoutFunctions<CardType>}/></div></td>
 							<td>{Math.round(card.winrate * 10000) / 100}%</td>
 							<td>{Math.round(card.deckUsage * 10000) / 100}%</td>
 							<td>{Math.round(card.gameUsage * 10000) / 100}%</td>
@@ -147,8 +149,8 @@ function HallOfFame({setMenuSection}: Props) {
 					<div className={css.mainHallOfFameArea}>
 						<h2> Hall of Fame </h2>
 						<Dropdown
-							button={<Button>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
-							label="Select hall of fame endpoint"
+							button={<Button className={css.endpointDropDown}>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
+							label="Select stats"
 							options={[
 								{name: 'Decks', key: 'decks'},
 								{name: 'Cards', key: 'cards'},
