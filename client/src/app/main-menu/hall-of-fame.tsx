@@ -43,7 +43,6 @@ function HallOfFame({setMenuSection}: Props) {
 
 	async function getData() {
 		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
-		console.log(url)
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
@@ -137,7 +136,6 @@ function HallOfFame({setMenuSection}: Props) {
 					<th>in % games</th>
 				</tr>
 				{cards.map((card) => {
-					console.log(card)
 					return (
 						<tr key={card.id}>
 							<td>{card.id}</td>
