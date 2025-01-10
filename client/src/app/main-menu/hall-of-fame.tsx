@@ -6,6 +6,7 @@ import MenuLayout from 'components/menu-layout'
 import {useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
+import Dropdown from 'components/dropdown'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -17,12 +18,18 @@ function HallOfFame({setMenuSection}: Props) {
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
 		useState<Array<Card> | null>(null)
 
-	const [data, setData] = useState<Record<any, any> | null>(null)
-	const [selectedEndpoint, setSelectedEndpoint] = useState<string>('decks')
+	const [data, setData] = useState<any | null>(null)
+	const [selectedEndpoint, setSelectedEndpoint] = useState<'decks' | 'cards'>('decks')
+
+	const endpoints = {
+		decks: 'decks?minimumWins=10&orderBy=winrate',
+		cards: 'cards',
+	}
 
 	async function getData() {
 		const url =
-			'https://hc-tcg.online/api/stats/decks?minimumWins=10&orderBy=winrate'
+			`https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+		console.log(url)
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
@@ -30,7 +37,6 @@ function HallOfFame({setMenuSection}: Props) {
 			}
 
 			const json = await response.json()
-			console.log(json)
 			setData(json)
 		} catch (err) {
 			console.error('Chat error: ', err)
@@ -38,60 +44,6 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	if (!data) getData()
-
-	const parseArray = (arr: Array<any>) => {
-		return (
-			<div>
-				{arr.map((element) => {
-					if (typeof element === 'object') {
-						if (Array.isArray(element)) {
-							return (
-								<div>
-									{element}: {parseArray(element)}
-								</div>
-							)
-						}
-
-						return parseObject(element)
-					}
-
-					return <div>{element}</div>
-				})}
-			</div>
-		)
-	}
-
-	const parseObject = (object: Record<any, any>): JSX.Element => {
-		return (
-			<div>
-				{Object.keys(object).map((key) => {
-					if (key === 'type') return null
-
-					const value = object[key]
-
-					if (value === null) return null
-
-					if (typeof value === 'object') {
-						if (Array.isArray(value)) {
-							return (
-								<div>
-									{key}: {parseArray(value)}
-								</div>
-							)
-						}
-
-						return parseObject(value)
-					}
-
-					return (
-						<div>
-							{key}: {object[key]}
-						</div>
-					)
-				})}
-			</div>
-		)
-	}
 
 	const parseDeckCards = (cards: Array<string>) => {
 		return cards.map((card) => CARDS[card])
@@ -126,7 +78,7 @@ function HallOfFame({setMenuSection}: Props) {
 							<td>{deck.wins}</td>
 							<td>{deck.lossses}</td>
 							<td>{getDeckTypes(deck.deck.cards)}</td>
-							<td>
+							<td className={css.actionColumn}>
 								<Button
 									onClick={() => {
 										setScreenshotDeckModalContents(
@@ -136,12 +88,51 @@ function HallOfFame({setMenuSection}: Props) {
 								>
 									View
 								</Button>
+								<Button
+									onClick={() => {
+										navigator.clipboard.writeText(deck.deck.code)
+									}}
+								>
+									Copy Hash
+								</Button>
 							</td>
 						</tr>
 					)
 				})}
 			</table>
 		)
+	}
+
+	const parseCards = (cards: Array<Record<string, any>>) => {
+		return (
+			<table className={css.hallOfFameTable}>
+				<tr>
+					<th>Card Id</th>
+					<th>Winrate</th>
+					<th>in % decks</th>
+					<th>in % games</th>
+				</tr>
+				{cards.map((card) => {
+					console.log(card)
+					return (
+						<tr key={card.id}>
+							<td>{card.id}</td>
+							<td>{Math.round(card.winrate * 10000) / 100}%</td>
+							<td>{Math.round(card.deckUsage * 10000) / 100}%</td>
+							<td>{Math.round(card.gameUsage * 10000) / 100}%</td>
+						</tr>
+					)
+				})}
+			</table>
+		)
+	}
+
+	let table
+	if (!data) {table = <></>}
+	else if (selectedEndpoint === 'decks') {
+		table = parseDecks(data.body)
+	} else if (selectedEndpoint === 'cards') {
+		table = parseCards(data)
 	}
 
 	return (
@@ -155,7 +146,21 @@ function HallOfFame({setMenuSection}: Props) {
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
 						<h2> Hall of Fame </h2>
-						<div className={css.tableArea}>{data && parseDecks(data.body)}</div>
+						<Dropdown
+							button={<Button>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
+							label="Select hall of fame endpoint"
+							options={[
+								{name: 'Decks', key: 'decks'},
+								{name: 'Cards', key: 'cards'},
+							]}
+							showNames={true}
+							action={(option) => {
+								if (option === selectedEndpoint) return
+								setData(null)
+								setSelectedEndpoint(option as 'decks' | 'cards')
+							}}
+						/>
+						<div className={css.tableArea}>{table}</div>
 					</div>
 				</div>
 			</MenuLayout>
