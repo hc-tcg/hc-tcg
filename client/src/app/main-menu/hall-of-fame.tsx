@@ -9,9 +9,24 @@ import css from './main-menu.module.scss'
 import Dropdown from 'components/dropdown'
 import Card from 'components/card'
 import { WithoutFunctions } from 'common/types/server-requests'
+import {EXPANSIONS} from 'common/const/expansions'
+import serverConfig from 'common/config/server-config'
+import Spinner from 'components/spinner'
 
 type Props = {
 	setMenuSection: (section: string) => void
+}
+
+type Endpoints = 'decks' | 'cards'
+
+function padDecimal(n: number, paddingAmount: number) {
+	const percent = Math.round(n * 10000) / 100
+	let percentString = percent.toString()
+	if (!percentString.includes('.')) percentString += '.'
+
+	const [beforeDecimal, afterDecimal] = percentString.split('.')
+
+	return `${beforeDecimal}.${afterDecimal.padEnd(paddingAmount, '0')}%`
 }
 
 function HallOfFame({setMenuSection}: Props) {
@@ -21,7 +36,8 @@ function HallOfFame({setMenuSection}: Props) {
 		useState<Array<CardType> | null>(null)
 
 	const [data, setData] = useState<any | null>(null)
-	const [selectedEndpoint, setSelectedEndpoint] = useState<'Decks' | 'Cards' | 'Game'>('Decks')
+	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
+	const [showDisabled, setShowAdvent] = useState<boolean>(false)
 
 	const endpoints = {
 		Decks: 'decks?minimumWins=10&orderBy=winrate',
@@ -30,8 +46,10 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	async function getData() {
+
 		const url =
 			`https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
@@ -76,7 +94,7 @@ function HallOfFame({setMenuSection}: Props) {
 					return (
 						<tr key={deck.deck.code}>
 							<td>{deck.deck.code}</td>
-							<td>{Math.round(deck.winrate * 10000) / 100}%</td>
+							<td>{padDecimal(deck.winrate, 2)}</td>
 							<td>{deck.wins}</td>
 							<td>{deck.lossses}</td>
 							<td>{getDeckTypes(deck.deck.cards)}</td>
@@ -106,6 +124,16 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	const parseCards = (cards: Array<Record<string, any>>) => {
+		if (!showDisabled) {
+			cards = cards.filter(
+				(card) =>
+					!(
+						EXPANSIONS[CARDS[card.id].expansion].disabled ||
+						serverConfig.limits.bannedCards.includes(card.id)
+					),
+			)
+		}
+
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
@@ -120,15 +148,16 @@ function HallOfFame({setMenuSection}: Props) {
 					return (
 						<tr key={card.id}>
 							<td className={css.actionColumn}><div className={css.cardTableImage}><Card displayTokenCost={true} card={cardObject as WithoutFunctions<CardType>}/></div></td>
-							<td>{Math.round(card.winrate * 10000) / 100}%</td>
-							<td>{Math.round(card.deckUsage * 10000) / 100}%</td>
-							<td>{Math.round(card.gameUsage * 10000) / 100}%</td>
+							<td>{padDecimal(card.winrate, 2)}</td>
+							<td>{padDecimal(card.deckUsage, 2)}</td>
+							<td>{padDecimal(card.gameUsage, 2)}</td>
 						</tr>
 					)
 				})}
 			</table>
 		)
 	}
+
 
 	const formatTime = (time: Record<string, number>) => {
 		return `${time.minutes}:${time.seconds}.${Math.round(time.milliseconds)}`
@@ -141,14 +170,14 @@ function HallOfFame({setMenuSection}: Props) {
 		</div>
 	}
 
-	let table
-	if (!data) {table = <></>}
-	else if (selectedEndpoint === 'Decks') {
-		table = parseDecks(data.body)
-	} else if (selectedEndpoint === 'Cards') {
-		table = parseCards(data)
-	} else if (selectedEndpoint === 'Game') {
-		table = parseGame(data)
+	const getTable = () => {
+		if (!data) {
+			return <></>
+		} else if (selectedEndpoint === 'decks') {
+			return parseDecks(data.body)
+		} else if (selectedEndpoint === 'cards') {
+			return parseCards(data)
+		}
 	}
 
 	return (
@@ -162,6 +191,7 @@ function HallOfFame({setMenuSection}: Props) {
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
 						<h2> Hall of Fame </h2>
+						<div className={css.hofOptions}>
 						<Dropdown
 							button={<Button className={css.endpointDropDown}>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
 							label="Select stats"
@@ -177,7 +207,19 @@ function HallOfFame({setMenuSection}: Props) {
 								setSelectedEndpoint(option as 'Decks' | 'Cards' | 'Game')
 							}}
 						/>
-						<div className={css.tableArea}>{table}</div>
+							{selectedEndpoint === 'cards' && (
+								<Button onClick={() => setShowAdvent(!showDisabled)}>
+									Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
+								</Button>
+							)}
+						</div>
+						<div className={css.tableArea}>
+							{getTable()}
+							<div className={css.loadingIndicator}>
+								<Spinner></Spinner>
+							</div>
+						</div>
+
 					</div>
 				</div>
 			</MenuLayout>
