@@ -474,24 +474,35 @@ nav {
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
-}
+	margin-bottom: 4vh;
 
-.hallOfFameTable > tr:nth-child(odd) {
-	background-color: lightgrey;
-}
+	tr {
+		color: black;
+		text-align: center;
+	}
 
-.hallOfFameTable > tr:nth-child(even) {
-	background-color: grey;
-}
+	tr:nth-child(odd) {
+		background-color: lightgrey;
+	}
 
-.hallOfFameTable > tr {
-	color: black;
-	text-align: center;
-}
+	tr:nth-child(even) {
+		background-color: grey;
+	}
 
-.hallOfFameTable > tr:first-child {
-	background-color: black;
-	color: white;
+	tr:first-child {
+		background-color: black;
+		color: white;
+	}
+
+	tr th {
+		width: 10%;
+	}
+
+	tr td button {
+		margin-top: .2vh;
+		margin-bottom: .2vh;
+	}
+
 }
 
 .hallOfFameTable > tr > th {
@@ -518,12 +529,9 @@ nav {
 	gap: 10px;
 }
 
-.hallOfFameTable > tr > th {
-	width: 10%;
-}
-
 .tableArea {
 	overflow-y: scroll;
+
 	flex-grow: 1;
 }
 
@@ -557,27 +565,12 @@ nav {
 	margin-bottom: 0.5rem;
 }
 
-.dropdownButton {
-	place-content: center;
-	display: flex;
-	align-items: center;
-	justify-items: center;
-	background-color: var(--gray-500);
-	border-radius: 6px;
-	width: 2rem;
-	height: 2rem;
-	flex-shrink: 0;
-	cursor: pointer;
+.endpointDropDown {
+	margin-bottom: 1vh;
+}
 
-	> img {
-		height: 1.5rem;
-		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
-	}
-
-	&:hover {
-		background: var(--gray-600);
-		filter: brightness(1.1);
-	}
+.cardTableImage {
+	height: 1vh;
 }
 
 .loadingIndicator {
