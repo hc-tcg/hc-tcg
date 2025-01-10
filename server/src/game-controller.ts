@@ -4,10 +4,11 @@ import {GameModel, GameProps} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {GameMessage, GameStartupInformation} from './routines/game'
 import {ServerMessage} from 'common/socket-messages/server-messages'
-import {Message as ChatMessage} from 'common/types/game-state'
+import {Message as ChatMessage, LocalGameState} from 'common/types/game-state'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 import {getLocalGameState} from 'utils/state-gen'
+import assert from 'node:assert'
 
 export type GameViewer = {id: PlayerId; type: 'player' | 'spectator'}
 
@@ -62,17 +63,15 @@ export class GameController {
 		}
 	}
 
-	public gameState(entity?: PlayerEntity): GameStartupInformation {
+	public gameState(entity?: PlayerEntity): LocalGameState {
 		let isSpectator = false
 		if (!entity) {
 			isSpectator = true
 			entity = this.game.state.order[0]
 		}
-		let game = getLocalGameState(
-			this.game,
-			this.game.components.get(entity),
-			isSpectator,
-		)
+		let player = this.game.components.get(entity)
+		assert(player)
+		return getLocalGameState(this.game, player, isSpectator)
 	}
 
 	public broadcastToViewers(msg: ServerMessage) {

@@ -4,10 +4,11 @@ import {PlayerModel} from 'common/models/player-model'
 import {Database} from 'db/db'
 import dotenv from 'dotenv'
 import {Hook} from '../../common/types/hooks'
+import {GameController} from 'game-controller'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
-	public games: Record<string, GameModel> = {}
+	public games: Record<string, GameController> = {}
 	public queue: Array<string> = []
 	public db: Database
 	/** Game code ->  time code was created, and info */

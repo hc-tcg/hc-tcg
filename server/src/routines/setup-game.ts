@@ -120,7 +120,7 @@ export function* setupGameSaga({
 					} else {
 						broadcast([root.players[p.id]], {
 							type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-							localGameState: serverSideGame.startupInformation(),
+							localGameState: serverSideGame.gameState(),
 						})
 					}
 				})
