@@ -12,6 +12,8 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
+type Endpoints = 'decks' | 'cards'
+
 function HallOfFame({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 
@@ -19,7 +21,7 @@ function HallOfFame({setMenuSection}: Props) {
 		useState<Array<Card> | null>(null)
 
 	const [data, setData] = useState<any | null>(null)
-	const [selectedEndpoint, setSelectedEndpoint] = useState<'decks' | 'cards'>('decks')
+	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
 
 	const endpoints = {
 		decks: 'decks?minimumWins=10&orderBy=winrate',
@@ -27,8 +29,7 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	async function getData() {
-		const url =
-			`https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
 		console.log(url)
 		try {
 			const response = await fetch(url)
@@ -127,12 +128,14 @@ function HallOfFame({setMenuSection}: Props) {
 		)
 	}
 
-	let table
-	if (!data) {table = <></>}
-	else if (selectedEndpoint === 'decks') {
-		table = parseDecks(data.body)
-	} else if (selectedEndpoint === 'cards') {
-		table = parseCards(data)
+	const getTable = () => {
+		if (!data) {
+			return <></>
+		} else if (selectedEndpoint === 'decks') {
+			return parseDecks(data.body)
+		} else if (selectedEndpoint === 'cards') {
+			return parseCards(data)
+		}
 	}
 
 	return (
@@ -147,7 +150,12 @@ function HallOfFame({setMenuSection}: Props) {
 					<div className={css.mainHallOfFameArea}>
 						<h2> Hall of Fame </h2>
 						<Dropdown
-							button={<Button>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
+							button={
+								<Button>
+									{selectedEndpoint.charAt(0).toUpperCase() +
+										selectedEndpoint.slice(1)}
+								</Button>
+							} // The things I do to make it look nice
 							label="Select hall of fame endpoint"
 							options={[
 								{name: 'Decks', key: 'decks'},
@@ -157,10 +165,11 @@ function HallOfFame({setMenuSection}: Props) {
 							action={(option) => {
 								if (option === selectedEndpoint) return
 								setData(null)
-								setSelectedEndpoint(option as 'decks' | 'cards')
+								setSelectedEndpoint(option as Endpoints)
 							}}
 						/>
-						<div className={css.tableArea}>{table}</div>
+						{selectedEndpoint === 'cards' && <Button>Show Advent</Button>}
+						<div className={css.tableArea}>{getTable()}</div>
 					</div>
 				</div>
 			</MenuLayout>

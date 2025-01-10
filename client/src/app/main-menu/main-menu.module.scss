@@ -24,7 +24,7 @@
 	text-align: right;
 	animation: fadeIn 250ms ease-in-out forwards;
 
-	> img {
+	>img {
 		height: 4vh;
 	}
 
@@ -240,7 +240,7 @@ nav {
 	padding: 1vh 0;
 	color: var(--text-light);
 
-	> span {
+	>span {
 		font-size: 2vh;
 		user-select: text;
 	}
@@ -279,8 +279,8 @@ nav {
 		height: 5.5vh;
 		font-size: 2vh;
 
-		&:focus-visible + label,
-		&:not(:placeholder-shown) + label {
+		&:focus-visible+label,
+		&:not(:placeholder-shown)+label {
 			top: -3vh;
 			left: 0.8vh;
 			color: var(--text-light);
@@ -315,8 +315,7 @@ nav {
 		.playerHead {
 			width: 15vh;
 			height: 15vh;
-			filter: drop-shadow(2px 2px 0 white) drop-shadow(2px -2px 0 white)
-				drop-shadow(-2px 2px 0 white) drop-shadow(-2px -2px 0 white);
+			filter: drop-shadow(2px 2px 0 white) drop-shadow(2px -2px 0 white) drop-shadow(-2px 2px 0 white) drop-shadow(-2px -2px 0 white);
 		}
 	}
 
@@ -332,7 +331,7 @@ nav {
 			width: 100%;
 			display: flex;
 
-			> * {
+			>* {
 				font-size: 2vh;
 				line-height: 100%;
 			}
@@ -357,7 +356,7 @@ nav {
 	flex-wrap: wrap;
 }
 
-.developerCreditsContainer > div {
+.developerCreditsContainer>div {
 	margin: 0.5vh;
 }
 
@@ -457,15 +456,18 @@ nav {
 	width: 100vw;
 	height: 100vh;
 	right: 0px;
-	top: 5vh;
+	top: 0px;
 	position: absolute;
+	display: flex;
 }
 
 .mainHallOfFameArea {
 	width: 80%;
-	height: 85%;
 	margin-left: 10%;
 	margin-right: 10%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 5vh;
 }
 
 .hallOfFameTable {
@@ -473,20 +475,20 @@ nav {
 	color: var(--text-light);
 }
 
-.hallOfFameTable > tr:nth-child(odd) {
+.hallOfFameTable>tr:nth-child(odd) {
 	background-color: lightgrey;
 }
 
-.hallOfFameTable > tr:nth-child(even) {
+.hallOfFameTable>tr:nth-child(even) {
 	background-color: grey;
 }
 
-.hallOfFameTable > tr {
+.hallOfFameTable>tr {
 	color: black;
 	text-align: center;
 }
 
-.hallOfFameTable > tr:first-child {
+.hallOfFameTable>tr:first-child {
 	background-color: black;
 	color: white;
 }
@@ -498,13 +500,13 @@ nav {
 	gap: 10px;
 }
 
-.hallOfFameTable > tr > th {
+.hallOfFameTable>tr>th {
 	width: 10%;
 }
 
 .tableArea {
 	overflow-y: scroll;
-	max-height: 100%;
+	flex-grow: 1;
 }
 
 .dropdownButton {
@@ -519,7 +521,7 @@ nav {
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
