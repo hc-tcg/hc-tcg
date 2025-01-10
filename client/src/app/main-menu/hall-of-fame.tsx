@@ -21,11 +21,12 @@ function HallOfFame({setMenuSection}: Props) {
 		useState<Array<CardType> | null>(null)
 
 	const [data, setData] = useState<any | null>(null)
-	const [selectedEndpoint, setSelectedEndpoint] = useState<'decks' | 'cards'>('decks')
+	const [selectedEndpoint, setSelectedEndpoint] = useState<'Decks' | 'Cards' | 'Game'>('Decks')
 
 	const endpoints = {
-		decks: 'decks?minimumWins=10&orderBy=winrate',
-		cards: 'cards',
+		Decks: 'decks?minimumWins=10&orderBy=winrate',
+		Cards: 'cards',
+		Game: 'games',
 	}
 
 	async function getData() {
@@ -129,12 +130,25 @@ function HallOfFame({setMenuSection}: Props) {
 		)
 	}
 
+	const formatTime = (time: Record<string, number>) => {
+		return `${time.minutes}:${time.seconds}.${Math.round(time.milliseconds)}`
+	}
+
+	const parseGame = (game: Record<string, any>) => {
+		return <div className={css.stats}>
+			<div className={css.stat}><span>All time games</span><span>{game.allTimeGames}</span></div>
+			<div className={css.stat}><span>Average game length</span><span>{formatTime(game.gameLength.averageLength)}</span></div>
+		</div>
+	}
+
 	let table
 	if (!data) {table = <></>}
-	else if (selectedEndpoint === 'decks') {
+	else if (selectedEndpoint === 'Decks') {
 		table = parseDecks(data.body)
-	} else if (selectedEndpoint === 'cards') {
+	} else if (selectedEndpoint === 'Cards') {
 		table = parseCards(data)
+	} else if (selectedEndpoint === 'Game') {
+		table = parseGame(data)
 	}
 
 	return (
@@ -152,14 +166,15 @@ function HallOfFame({setMenuSection}: Props) {
 							button={<Button className={css.endpointDropDown}>{selectedEndpoint.charAt(0).toUpperCase() + selectedEndpoint.slice(1)}</Button>} // The things I do to make it look nice
 							label="Select stats"
 							options={[
-								{name: 'Decks', key: 'decks'},
-								{name: 'Cards', key: 'cards'},
+								{name: 'Decks'},
+								{name: 'Cards'},
+								{name: 'Game'},
 							]}
 							showNames={true}
 							action={(option) => {
 								if (option === selectedEndpoint) return
 								setData(null)
-								setSelectedEndpoint(option as 'decks' | 'cards')
+								setSelectedEndpoint(option as 'Decks' | 'Cards' | 'Game')
 							}}
 						/>
 						<div className={css.tableArea}>{table}</div>
