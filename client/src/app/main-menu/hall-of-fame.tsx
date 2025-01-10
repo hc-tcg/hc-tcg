@@ -16,7 +16,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-type Endpoints = 'decks' | 'cards' | 'games'
+type Endpoints = 'decks' | 'cards' | 'game'
 
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
@@ -35,15 +35,18 @@ function HallOfFame({setMenuSection}: Props) {
 	const [data, setData] = useState<any | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
 	const [showDisabled, setShowAdvent] = useState<boolean>(false)
+	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
 
 	const endpoints: Record<Endpoints, string> = {
 		decks: 'decks?minimumWins=10&orderBy=winrate',
 		cards: 'cards',
-		games: 'games',
+		game: 'games',
 	}
 
 	async function getData() {
 		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+
+		console.log(url)
 
 		try {
 			const response = await fetch(url)
@@ -53,12 +56,13 @@ function HallOfFame({setMenuSection}: Props) {
 
 			const json = await response.json()
 			setData(json)
+			setDataRetrieved(true)
 		} catch (err) {
 			console.error('Chat error: ', err)
 		}
 	}
 
-	if (!data) getData()
+	if (!data && !dataRetrieved) getData()
 
 	const parseDeckCards = (cards: Array<string>) => {
 		return cards.map((card) => CARDS[card])
@@ -186,7 +190,7 @@ function HallOfFame({setMenuSection}: Props) {
 			return parseDecks(data.body)
 		} else if (selectedEndpoint === 'cards') {
 			return parseCards(data)
-		} else if (selectedEndpoint === 'games') {
+		} else if (selectedEndpoint === 'game') {
 			return parseGame(data)
 		}
 	}
@@ -216,7 +220,8 @@ function HallOfFame({setMenuSection}: Props) {
 								action={(option) => {
 									if (option === selectedEndpoint) return
 									setData(null)
-									setSelectedEndpoint(option as Endpoints)
+									setDataRetrieved(false)
+									setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
 								}}
 							/>
 							{selectedEndpoint === 'cards' && (
@@ -226,10 +231,12 @@ function HallOfFame({setMenuSection}: Props) {
 							)}
 						</div>
 						<div className={css.tableArea}>
-							{getTable()}
-							<div className={css.loadingIndicator}>
-								<Spinner></Spinner>
-							</div>
+							{dataRetrieved && getTable()}
+							{!dataRetrieved && (
+								<div className={css.loadingIndicator}>
+									<Spinner></Spinner>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
