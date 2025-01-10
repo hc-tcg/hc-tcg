@@ -107,6 +107,7 @@ export type TurnAction =
 	| 'WAIT_FOR_OPPONENT_ACTION'
 	| 'DELAY'
 	| 'FORFEIT'
+	| 'ADD_AI'
 
 export type GameRules = {
 	disableTimer: boolean

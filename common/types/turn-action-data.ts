@@ -58,6 +58,11 @@ export type ForfeitAction = {
 	player: PlayerEntity
 }
 
+export type AddAi = {
+	type: 'ADD_AI'
+	ai: string
+}
+
 export type OtherTurnActions = {
 	type:
 		| 'END_TURN'
@@ -77,3 +82,4 @@ export type AnyTurnActionData =
 	| ModalResult
 	| WaitActionData
 	| ForfeitAction
+	| AddAi

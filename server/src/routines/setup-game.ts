@@ -34,7 +34,7 @@ export function* setupGameSaga({
 	code,
 	settings,
 	spectatorCode,
-}: Props): GameOutcome {
+}: Props) {
 	let identifierInRootState = Math.random().toString(16)
 
 	let player2Model
@@ -112,7 +112,7 @@ export function* setupGameSaga({
 					props: gameProps,
 				})
 
-				viewers.forEach((p, index) => {
+				viewers.forEach((p) => {
 					if (p.type === 'player') {
 						broadcast([root.players[p.id]], {
 							type: serverMessages.GAME_START,
@@ -147,35 +147,13 @@ export function* setupGameSaga({
 								localMessages.GAME_TURN_ACTION,
 							)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 
-							assert(
-								action.time > game.lastTurnActionTime,
-								'Server should not recieve actions from the past',
-							)
-
 							if (game.state.order.includes(action.playerEntity)) {
 								yield* put<GameMessage>({
 									type: gameMessages.TURN_ACTION,
 									playerEntity: action.playerEntity,
 									action: action.action,
-									time: action.time,
+									time: Date.now(),
 									gameId: game.id,
-								})
-							}
-						}
-					}),
-					call(function* () {
-						while (true) {
-							let action = (yield* take(
-								localMessages.REQUEST_GAME_RECONNECT_INFORMATION,
-							)) as LocalMessageTable[typeof localMessages.REQUEST_GAME_RECONNECT_INFORMATION]
-
-							if (
-								serverSideGame.viewers.find(({id}) => id == action.playerId)
-							) {
-								broadcast([root.players[action.playerId]], {
-									type: serverMessages.GAME_RECONNECT_INFORMATION,
-									history: serverSideGame.history,
-									timer: serverSideGame.game.state.timer,
 								})
 							}
 						}
@@ -235,8 +213,6 @@ export function* setupGameSaga({
 				) {
 					return
 				}
-
-				let gameStateHash = game.getStateHash()
 
 				serverSideGame.broadcastToViewers({
 					type: serverMessages.GAME_TURN_ACTION,
