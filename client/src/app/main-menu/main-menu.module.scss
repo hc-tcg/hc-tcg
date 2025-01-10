@@ -474,7 +474,6 @@ nav {
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
-	margin-bottom: 4vh;
 
 	tr {
 		color: black;
@@ -499,10 +498,31 @@ nav {
 	}
 
 	tr td button {
-		margin-top: .2vh;
-		margin-bottom: .2vh;
+		margin-top: 0.2vh;
+		margin-bottom: 0.2vh;
+	}
+}
+
+.hallOfFameTableGrid {
+	background-color: #000;
+	color: var(--text-light);
+
+	tr {
+		color: black;
+		text-align: center;
 	}
 
+	tr:nth-child(odd) {
+		background-color: lightgrey;
+	}
+
+	tr:nth-child(even) {
+		background-color: grey;
+	}
+
+	tr > td {
+		width: 9.3%;
+	}
 }
 
 .hallOfFameTable > tr > th {
@@ -569,10 +589,6 @@ nav {
 	margin-bottom: 1vh;
 }
 
-.cardTableImage {
-	height: 1vh;
-}
-
 .loadingIndicator {
 	position: absolute;
 	background-color: black;
@@ -584,4 +600,9 @@ nav {
 	padding: 1rem;
 	gap: 1rem;
 	flex-direction: row;
+}
+
+.fakeCard {
+	height: 100%;
+	width: 100%;
 }

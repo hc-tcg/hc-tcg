@@ -133,34 +133,73 @@ function HallOfFame({setMenuSection}: Props) {
 			)
 		}
 
+		const cardGroups = cards.reduce(
+			(r: Array<Array<Record<string, any>>>, card, index) => {
+				if (index % 10 === 0) {
+					r.push([])
+				}
+				r[r.length - 1].push(card)
+				if (index === cards.length - 1) {
+					for (let i = (index % 10) + 1; i < 10; i++) {
+						r[r.length - 1].push({extraCard: null})
+					}
+				}
+				return r
+			},
+			[],
+		)
+
+		console.log(cardGroups)
+
 		return (
-			<table className={css.hallOfFameTable}>
-				<tr>
-					<th>Card</th>
-					<th>Winrate</th>
-					<th>in % decks</th>
-					<th>in % games</th>
-				</tr>
-				{cards.map((card) => {
-					const cardObject = CARDS[card.id]
-					if (!cardObject) return
+			<div>
+				{cardGroups.map((cardGroup) => {
+					const cards = cardGroup
+					const cardObjects = cards.map((card) => {
+						const cardObject = CARDS[card.id]
+						if (!cardObject) return null
+						return cardObject
+					})
 					return (
-						<tr key={card.id}>
-							<td className={css.actionColumn}>
-								<div className={css.cardTableImage}>
-									<Card
-										displayTokenCost={true}
-										card={cardObject as WithoutFunctions<CardType>}
-									/>
-								</div>
-							</td>
-							<td>{padDecimal(card.winrate, 2)}</td>
-							<td>{padDecimal(card.deckUsage, 2)}</td>
-							<td>{padDecimal(card.gameUsage, 2)}</td>
-						</tr>
+						<table className={css.hallOfFameTableGrid}>
+							<tr>
+								<th></th>
+								{cardObjects.map((card, index) => {
+									if (!card) return <td key={index}></td>
+									return (
+										<td key={index}>
+											<div>
+												<Card
+													displayTokenCost={false}
+													card={card as WithoutFunctions<CardType>}
+												/>
+											</div>
+										</td>
+									)
+								})}
+							</tr>
+							<tr>
+								<th>Winrate</th>
+								{cards.map((card) => (
+									<td>{card.winrate ? padDecimal(card.winrate, 2) : ''}</td>
+								))}
+							</tr>
+							<tr>
+								<th>in % decks</th>
+								{cards.map((card) => (
+									<td>{card.deckUsage ? padDecimal(card.deckUsage, 2) : ''}</td>
+								))}
+							</tr>
+							<tr>
+								<th>in % games</th>
+								{cards.map((card) => (
+									<td>{card.gameUsage ? padDecimal(card.gameUsage, 2) : ''}</td>
+								))}
+							</tr>
+						</table>
 					)
 				})}
-			</table>
+			</div>
 		)
 	}
 
