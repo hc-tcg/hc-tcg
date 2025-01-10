@@ -9,6 +9,7 @@ import css from './main-menu.module.scss'
 import Dropdown from 'components/dropdown'
 import {EXPANSIONS} from 'common/const/expansions'
 import serverConfig from 'common/config/server-config'
+import Spinner from 'components/spinner'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -197,7 +198,12 @@ function HallOfFame({setMenuSection}: Props) {
 								</Button>
 							)}
 						</div>
-						<div className={css.tableArea}>{getTable()}</div>
+						<div className={css.tableArea}>
+							{getTable()}
+							<div className={css.loadingIndicator}>
+								<Spinner></Spinner>
+							</div>
+						</div>
 					</div>
 				</div>
 			</MenuLayout>

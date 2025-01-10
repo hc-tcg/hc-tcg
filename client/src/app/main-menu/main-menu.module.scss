@@ -579,3 +579,16 @@ nav {
 		filter: brightness(1.1);
 	}
 }
+
+.loadingIndicator {
+	position: absolute;
+	background-color: black;
+	color: var(--text-light);
+	width: 80%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	padding: 1rem;
+	gap: 1rem;
+	flex-direction: row;
+}
