@@ -506,6 +506,7 @@ nav {
 .hallOfFameTableGrid {
 	background-color: #000;
 	color: var(--text-light);
+	margin-bottom: -2px;
 
 	tr {
 		color: black;
@@ -522,6 +523,11 @@ nav {
 
 	tr > td {
 		width: 9.3%;
+	}
+
+	tr > th {
+		color: var(--text-light);
+		background-color: black;
 	}
 }
 
