@@ -57,7 +57,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const [showDisabled, setShowAdvent] = useState<boolean>(false)
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
 
-	/** Ordering Options */
+	/** Endpoint Options */
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
 
