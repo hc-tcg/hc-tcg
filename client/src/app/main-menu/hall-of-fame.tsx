@@ -10,7 +10,7 @@ import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
-import {useState} from 'react'
+import {useRef, useState} from 'react'
 import css from './main-menu.module.scss'
 
 type Props = {
@@ -58,17 +58,49 @@ function HallOfFame({setMenuSection}: Props) {
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
 
 	/** Endpoint Options */
+	const beforeRef = useRef<any>()
+	const afterRef = useRef<any>()
+
+	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
+	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
 
-	const endpoints: Record<Endpoints, string> = {
-		decks: 'decks?minimumWins=10&orderBy=winrate',
-		cards: `cards?orderBy=${cardOrderBy}`,
-		game: 'games',
+	const endpoints: Record<Endpoints, () => string> = {
+		decks: () => {
+			let url = 'decks?minimumWins=10&orderBy=winrate'
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
+		cards: () => {
+			let url = `cards?orderBy=${cardOrderBy}`
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
+		game: () => {
+			let url = 'games'
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
 	}
 
 	async function getData() {
-		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
+		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]()}`
 
 		console.log(url)
 
@@ -326,6 +358,28 @@ function HallOfFame({setMenuSection}: Props) {
 										setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
 									}}
 								/>
+								<p>
+									After:
+									<input
+										type="date"
+										ref={afterRef}
+										onChange={(_e) => {
+											setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											setDataRetrieved(false)
+										}}
+									/>
+								</p>
+								<p>
+									Before:
+									<input
+										type="date"
+										ref={beforeRef}
+										onChange={(_e) => {
+											setEndpointBefore(beforeRef.current.valueAsNumber / 1000)
+											setDataRetrieved(false)
+										}}
+									/>
+								</p>
 								<p>
 									<b>Selected Statistic Options</b>
 								</p>
