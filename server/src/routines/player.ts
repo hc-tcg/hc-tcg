@@ -1,4 +1,3 @@
-import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {

@@ -4,7 +4,6 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {isCounter} from 'common/status-effects/status-effect'
