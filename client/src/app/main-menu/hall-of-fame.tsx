@@ -342,7 +342,7 @@ function HallOfFame({setMenuSection}: Props) {
 							<div className={css.hallOfFameHeader}>Hall of Fame</div>
 							<div className={css.hofOptions}>
 								<p>
-									<b>Selected Statistic</b>
+									<b>Statistic</b>
 								</p>
 								<Dropdown
 									button={
@@ -359,7 +359,10 @@ function HallOfFame({setMenuSection}: Props) {
 									}}
 								/>
 								<p>
-									After:
+									<b>Parameters</b>
+								</p>
+								<div className={css.hofOption}>
+									<p style={{flexGrow: 1}}>After:</p>
 									<input
 										type="date"
 										ref={afterRef}
@@ -368,9 +371,9 @@ function HallOfFame({setMenuSection}: Props) {
 											setDataRetrieved(false)
 										}}
 									/>
-								</p>
-								<p>
-									Before:
+								</div>
+								<div className={css.hofOption}>
+									<p style={{flexGrow: 1}}>Before:</p>
 									<input
 										type="date"
 										ref={beforeRef}
@@ -379,10 +382,7 @@ function HallOfFame({setMenuSection}: Props) {
 											setDataRetrieved(false)
 										}}
 									/>
-								</p>
-								<p>
-									<b>Selected Statistic Options</b>
-								</p>
+								</div>
 								{selectedEndpoint === 'cards' && (
 									<div className={css.hofCheckBox}>
 										<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
