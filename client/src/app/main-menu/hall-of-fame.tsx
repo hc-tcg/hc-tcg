@@ -13,6 +13,7 @@ import {useState} from 'react'
 import css from './main-menu.module.scss'
 import {Bar} from 'react-chartjs-2'
 import {TypeT} from 'common/types/cards'
+import {Chart} from 'chart.js'
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -225,9 +226,32 @@ function HallOfFame({setMenuSection}: Props) {
 		const typeList = types.types as Array<Record<string, any>>
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
+		const renderIcons = (chart: Chart) => {
+			const ctx = chart.ctx
+			const icons = chart.options.plugins?.iconDrawer?.icons
+			if (!icons) return
+			const xAxis = chart.scales.x
+			const offset = (xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
+			xAxis.ticks.forEach((_value, index: number) => {
+				const x = xAxis.getPixelForTick(index) - offset + 10
+				icons[index].forEach((type: string | undefined, index: number) => {
+					if (!type) return
+					const image = new Image()
+					image.src = `/images/types/type-${type}.png`
+					ctx.drawImage(
+						image,
+						x,
+						chart.scales.y.bottom + 5 + index * 20,
+						20,
+						20,
+					)
+				})
+			})
+		}
+
 		return (
 			<Bar
-				title={"Types sorted by " + sortBy}
+				title={'Types sorted by ' + sortBy}
 				className={css.typeGraph}
 				data={{
 					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
@@ -244,30 +268,15 @@ function HallOfFame({setMenuSection}: Props) {
 						},
 					],
 				}}
-				options={{}}
+				options={{
+					plugins: {
+						iconDrawer: {icons: typeList.map((type) => type.type)},
+					},
+				}}
 				plugins={[
 					{
 						id: 'iconDrawer',
-						afterDatasetsDraw: (chart) => {
-							const ctx = chart.ctx
-							const xAxis = chart.scales.x
-							const offset =
-								(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
-							xAxis.ticks.forEach((_value, index: number) => {
-								const x = xAxis.getPixelForTick(index) - offset + 10
-								typeList[index].type.forEach((type: string, index: number) => {
-									const image = new Image()
-									image.src = `/images/types/type-${type}.png`
-									ctx.drawImage(
-										image,
-										x,
-										chart.scales.y.bottom + 5 + index * 20,
-										20,
-										20,
-									)
-								})
-							})
-						},
+						afterDraw: renderIcons,
 					},
 				]}
 			/>
@@ -328,7 +337,11 @@ function HallOfFame({setMenuSection}: Props) {
 								</Button>
 							)}
 							{selectedEndpoint === 'types' && (
-								<Button onClick={() => setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')}>
+								<Button
+									onClick={() =>
+										setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
+									}
+								>
 									Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
 								</Button>
 							)}
