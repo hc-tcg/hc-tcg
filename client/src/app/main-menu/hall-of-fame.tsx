@@ -79,6 +79,7 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
+		if (!decks) return
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
@@ -135,12 +136,12 @@ function HallOfFame({setMenuSection}: Props) {
 
 		const cardGroups = cards.reduce(
 			(r: Array<Array<Record<string, any>>>, card, index) => {
-				if (index % 10 === 0) {
+				if (index % 9 === 0) {
 					r.push([])
 				}
 				r[r.length - 1].push(card)
 				if (index === cards.length - 1) {
-					for (let i = (index % 10) + 1; i < 10; i++) {
+					for (let i = (index % 9) + 1; i < 9; i++) {
 						r[r.length - 1].push({extraCard: null})
 					}
 				}
@@ -168,12 +169,10 @@ function HallOfFame({setMenuSection}: Props) {
 									if (!card) return <td key={index}></td>
 									return (
 										<td key={index}>
-											<div>
-												<Card
-													displayTokenCost={false}
-													card={card as WithoutFunctions<CardType>}
-												/>
-											</div>
+											<Card
+												displayTokenCost={false}
+												card={card as WithoutFunctions<CardType>}
+											/>
 										</td>
 									)
 								})}
@@ -209,16 +208,36 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const parseGame = (game: Record<string, any>) => {
 		return (
-			<div className={css.stats}>
-				<div className={css.stat}>
-					<span>All time games</span>
-					<span>{game.allTimeGames}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Average game length</span>
-					<span>{formatTime(game.gameLength.averageLength)}</span>
-				</div>
-			</div>
+			<table className={css.hallOfFameTableNoHeader}>
+				<tr>
+					<th>All time games</th>
+					<td>{game.allTimeGames}</td>
+				</tr>
+				<tr>
+					<th>Games since 1.0</th>
+					<td>{game.games}</td>
+				</tr>
+				<tr>
+					<th>Tie rate</th>
+					<td>{padDecimal(game.tieRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Forfeit rate</th>
+					<td>{padDecimal(game.forfeitRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Error rate</th>
+					<td>{padDecimal(game.errorRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Average game length</th>
+					<td>{formatTime(game.gameLength.averageLength)}</td>
+				</tr>
+				<tr>
+					<th>Median game length</th>
+					<td>{formatTime(game.gameLength.medianLength)}</td>
+				</tr>
+			</table>
 		)
 	}
 
@@ -244,38 +263,43 @@ function HallOfFame({setMenuSection}: Props) {
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						<h2> Hall of Fame </h2>
-						<div className={css.hofOptions}>
-							<Dropdown
-								button={
-									<Button className={css.endpointDropDown}>
-										{selectedEndpoint.charAt(0).toUpperCase() +
-											selectedEndpoint.slice(1)}
-									</Button>
-								} // The things I do to make it look nice
-								label="Select stats"
-								options={[{name: 'Decks'}, {name: 'Cards'}, {name: 'Game'}]}
-								showNames={true}
-								action={(option) => {
-									if (option === selectedEndpoint) return
-									setData(null)
-									setDataRetrieved(false)
-									setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
-								}}
-							/>
-							{selectedEndpoint === 'cards' && (
-								<Button onClick={() => setShowAdvent(!showDisabled)}>
-									Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
-								</Button>
-							)}
-						</div>
 						<div className={css.tableArea}>
 							{dataRetrieved && getTable()}
 							{!dataRetrieved && (
 								<div className={css.loadingIndicator}>
 									<Spinner></Spinner>
+									Loading...
 								</div>
 							)}
+						</div>
+						<div className={css.hofSidebar}>
+							<h2>Hall of Fame</h2>
+							<div className={css.hofOptions}>
+								<p>Selected Statistic</p>
+								<Dropdown
+									button={
+										<Button className={css.endpointDropDown}>
+											{selectedEndpoint.charAt(0).toUpperCase() +
+												selectedEndpoint.slice(1)}
+										</Button>
+									} // The things I do to make it look nice
+									label="Selected statistic"
+									options={[{name: 'Decks'}, {name: 'Cards'}, {name: 'Game'}]}
+									showNames={true}
+									action={(option) => {
+										if (option === selectedEndpoint) return
+										setData(null)
+										setDataRetrieved(false)
+										setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
+									}}
+								/>
+								<p>Selected Statistic Options</p>
+								{selectedEndpoint === 'cards' && (
+									<Button onClick={() => setShowAdvent(!showDisabled)}>
+										Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
+									</Button>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
