@@ -476,9 +476,8 @@ nav {
 }
 
 .hofSidebar {
-	background-color: var(--gray-600);
+	background-color: var(--gray-700);
 	border: 2px black solid;
-	padding: 5px;
 	width: 20%;
 }
 
@@ -492,11 +491,11 @@ nav {
 	}
 
 	tr:nth-child(odd) {
-		background-color: lightgrey;
+		background-color: var(--gray-200);
 	}
 
 	tr:nth-child(even) {
-		background-color: grey;
+		background-color: var(--gray-400);
 	}
 
 	tr:first-child {
@@ -525,11 +524,11 @@ nav {
 	}
 
 	tr:nth-child(odd) {
-		background-color: lightgrey;
+		background-color: var(--gray-200);
 	}
 
 	tr:nth-child(even) {
-		background-color: grey;
+		background-color: var(--gray-400);
 	}
 
 	tr > td {
@@ -558,11 +557,11 @@ nav {
 	}
 
 	tr:nth-child(odd) {
-		background-color: lightgrey;
+		background-color: var(--gray-200);
 	}
 
 	tr:nth-child(even) {
-		background-color: grey;
+		background-color: var(--gray-400);
 	}
 
 	td {
@@ -608,7 +607,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-items: center;
-	background-color: var(--gray-500);
+	background-color: var(--gray-400);
 	border-radius: 6px;
 	width: 2rem;
 	height: 2rem;
@@ -632,6 +631,7 @@ nav {
 	gap: 0.5rem;
 	margin-bottom: 0.5rem;
 	color: var(--text-light);
+	padding: 5px;
 }
 
 .endpointDropDown {
@@ -653,7 +653,29 @@ nav {
 	font-size: 1.2rem;
 }
 
-.fakeCard {
-	height: 100%;
+.hallOfFameHeader {
+	height: 5%;
+	background-color: var(--gray-600);
+	color: var(--text-light);
+	font-family: Minecrafter;
+	font-size: 1.4rem;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	border-bottom: 2px solid black;
+}
+
+.hofCheckBox {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hofOption {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
 	width: 100%;
 }

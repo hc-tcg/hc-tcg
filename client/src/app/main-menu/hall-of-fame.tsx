@@ -11,12 +11,24 @@ import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
+import Checkbox from 'components/checkbox'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 
 type Endpoints = 'decks' | 'cards' | 'game'
+
+const cardOrderByOptions = [
+	'winrate',
+	'deckUsage',
+	'gameUsage',
+	'averageCopies',
+	'averagePlayers',
+	'encounterChance',
+	'adjustedWinrate',
+	'winrateDifference',
+]
 
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
@@ -36,10 +48,11 @@ function HallOfFame({setMenuSection}: Props) {
 	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
 	const [showDisabled, setShowAdvent] = useState<boolean>(false)
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
+	const [cardOrderBy, setCardOrderBy] = useState<string>('winrate')
 
 	const endpoints: Record<Endpoints, string> = {
 		decks: 'decks?minimumWins=10&orderBy=winrate',
-		cards: 'cards',
+		cards: `cards?orderBy=${cardOrderBy}`,
 		game: 'games',
 	}
 
@@ -62,7 +75,7 @@ function HallOfFame({setMenuSection}: Props) {
 		}
 	}
 
-	if (!data && !dataRetrieved) getData()
+	if (!dataRetrieved) getData()
 
 	const parseDeckCards = (cards: Array<string>) => {
 		return cards.map((card) => CARDS[card])
@@ -184,13 +197,23 @@ function HallOfFame({setMenuSection}: Props) {
 								))}
 							</tr>
 							<tr>
-								<th>in % decks</th>
+								<th>In % decks</th>
 								{cards.map((card) => (
 									<td>{card.deckUsage ? padDecimal(card.deckUsage, 2) : ''}</td>
 								))}
 							</tr>
 							<tr>
-								<th>in % games</th>
+								<th>Avg. copies</th>
+								{cards.map((card) => (
+									<td>
+										{card.averageCopies
+											? Math.round(card.averageCopies * 100) / 100
+											: ''}
+									</td>
+								))}
+							</tr>
+							<tr>
+								<th>In % games</th>
 								{cards.map((card) => (
 									<td>{card.gameUsage ? padDecimal(card.gameUsage, 2) : ''}</td>
 								))}
@@ -273,9 +296,11 @@ function HallOfFame({setMenuSection}: Props) {
 							)}
 						</div>
 						<div className={css.hofSidebar}>
-							<h2>Hall of Fame</h2>
+							<div className={css.hallOfFameHeader}>Hall of Fame</div>
 							<div className={css.hofOptions}>
-								<p>Selected Statistic</p>
+								<p>
+									<b>Selected Statistic</b>
+								</p>
 								<Dropdown
 									button={
 										<Button className={css.endpointDropDown}>
@@ -293,11 +318,38 @@ function HallOfFame({setMenuSection}: Props) {
 										setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
 									}}
 								/>
-								<p>Selected Statistic Options</p>
+								<p>
+									<b>Selected Statistic Options</b>
+								</p>
 								{selectedEndpoint === 'cards' && (
-									<Button onClick={() => setShowAdvent(!showDisabled)}>
-										Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
-									</Button>
+									<div className={css.hofCheckBox}>
+										<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+										<Checkbox
+											defaultChecked={showDisabled}
+											onCheck={() => setShowAdvent(!showDisabled)}
+										></Checkbox>
+									</div>
+								)}
+								{selectedEndpoint === 'cards' && (
+									<div className={css.hofOption}>
+										<p style={{flexGrow: 1}}>Order By:</p>
+										<Dropdown
+											button={
+												<Button className={css.endpointDropDown}>
+													{cardOrderBy}
+												</Button>
+											}
+											label="Order By"
+											options={cardOrderByOptions.map((option) => ({
+												name: option,
+											}))}
+											showNames={true}
+											action={(option) => {
+												setDataRetrieved(false)
+												setCardOrderBy(option)
+											}}
+										/>
+									</div>
 								)}
 							</div>
 						</div>
