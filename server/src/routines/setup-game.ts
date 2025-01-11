@@ -12,7 +12,6 @@ import {GameController, GameViewer} from '../game-controller'
 import assert from 'assert'
 import runGameSaga, {GameMessage, gameMessages, GameMessageTable} from './game'
 import {PlayerComponent} from 'common/components'
-import {GameOutcome} from 'common/types/game-state'
 import {AIComponent} from 'common/components/ai-component'
 import {serverMessages} from 'common/socket-messages/server-messages'
 

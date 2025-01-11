@@ -229,9 +229,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGameSaga(player1, player2, player1.deck, player2.deck)
-				root.addGame(newGame)
-				yield* safeCall(fork, gameManager, newGame)
+				yield* setupGameSaga({player1, player2, viewers: []})
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)

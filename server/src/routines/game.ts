@@ -549,7 +549,7 @@ function* turnActionsSaga(game: GameModel, turnActionChannel: any) {
 		let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
-		    game.state.timer.opponentActionStartTime =
+			game.state.timer.opponentActionStartTime =
 				game.state.timer.opponentActionStartTime || Date.now()
 			maxTime = game.settings.extraActionTime * 1000
 			remainingTime =
@@ -713,32 +713,6 @@ export function* turnSaga(
 			return 'GAME_END'
 		}
 	}
-
-	const turnActionChannel = yield* actionChannel(
-		[
-			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
-				playerAction(type, opponentPlayer.entity),
-			),
-			...[
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'PICK_REQUEST',
-				'MODAL_REQUEST',
-				'CHANGE_ACTIVE_HERMIT',
-				'APPLY_EFFECT',
-				'REMOVE_EFFECT',
-				'SINGLE_USE_ATTACK',
-				'PRIMARY_ATTACK',
-				'SECONDARY_ATTACK',
-				'END_TURN',
-				'DELAY',
-				'FORFEIT',
-			].map((type) => playerAction(type, currentPlayer.entity)),
-		],
-		buffers.dropping(10),
-	)
 
 	let result
 	try {
