@@ -19,16 +19,16 @@ type Props = {
 
 type Endpoints = 'decks' | 'cards' | 'game'
 
-const cardOrderByOptions = [
-	'winrate',
-	'deckUsage',
-	'gameUsage',
-	'averageCopies',
-	'averagePlayers',
-	'encounterChance',
-	'adjustedWinrate',
-	'winrateDifference',
-]
+const cardOrderByOptions = {
+	winrate: 'Winrate',
+	deckUsage: 'Deck Usage',
+	gameUsage: 'Game Usage',
+	averageCopies: 'Average Copies',
+	averagePlayers: 'Average Players',
+	encounterChance: 'Encounter Chance',
+	adjustedWinrate: 'Adjusted Winrate',
+	winrateDifference: 'Winrate Difference',
+}
 
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
@@ -40,6 +40,14 @@ function padDecimal(n: number, paddingAmount: number) {
 	return `${beforeDecimal}.${afterDecimal.padEnd(paddingAmount, '0')}%`
 }
 
+function title(s: string) {
+	return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase()
+}
+
+function DropDownButton({children}: {children: React.ReactChild}) {
+	return <Button>{children} ▼</Button>
+}
+
 function HallOfFame({setMenuSection}: Props) {
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
 		useState<Array<CardType> | null>(null)
@@ -48,7 +56,10 @@ function HallOfFame({setMenuSection}: Props) {
 	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
 	const [showDisabled, setShowAdvent] = useState<boolean>(false)
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
-	const [cardOrderBy, setCardOrderBy] = useState<string>('winrate')
+
+	/** Ordering Options */
+	const [cardOrderBy, setCardOrderBy] =
+		useState<keyof typeof cardOrderByOptions>('winrate')
 
 	const endpoints: Record<Endpoints, string> = {
 		decks: 'decks?minimumWins=10&orderBy=winrate',
@@ -303,11 +314,8 @@ function HallOfFame({setMenuSection}: Props) {
 								</p>
 								<Dropdown
 									button={
-										<Button className={css.endpointDropDown}>
-											{selectedEndpoint.charAt(0).toUpperCase() +
-												selectedEndpoint.slice(1)}
-										</Button>
-									} // The things I do to make it look nice
+										<DropDownButton>{title(selectedEndpoint)}</DropDownButton>
+									}
 									label="Selected statistic"
 									options={[{name: 'Decks'}, {name: 'Cards'}, {name: 'Game'}]}
 									showNames={true}
@@ -335,18 +343,23 @@ function HallOfFame({setMenuSection}: Props) {
 										<p style={{flexGrow: 1}}>Order By:</p>
 										<Dropdown
 											button={
-												<Button className={css.endpointDropDown}>
-													{cardOrderBy}
-												</Button>
+												<DropDownButton>
+													{cardOrderByOptions[cardOrderBy]}
+												</DropDownButton>
 											}
 											label="Order By"
-											options={cardOrderByOptions.map((option) => ({
-												name: option,
-											}))}
+											options={Object.entries(cardOrderByOptions).map(
+												([k, v]) => ({
+													name: v,
+													key: k,
+												}),
+											)}
 											showNames={true}
 											action={(option) => {
 												setDataRetrieved(false)
-												setCardOrderBy(option)
+												setCardOrderBy(
+													option as keyof typeof cardOrderByOptions,
+												)
 											}}
 										/>
 									</div>
