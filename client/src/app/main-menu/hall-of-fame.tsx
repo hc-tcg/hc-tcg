@@ -5,13 +5,13 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Button from 'components/button'
 import Card from 'components/card'
+import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
 import {useState} from 'react'
 import css from './main-menu.module.scss'
-import Checkbox from 'components/checkbox'
 
 type Props = {
 	setMenuSection: (section: string) => void
