@@ -264,8 +264,6 @@ function HallOfFame({setMenuSection}: Props) {
 			[],
 		)
 
-		console.log(cardGroups)
-
 		return (
 			<div>
 				{cardGroups.map((cardGroup) => {
@@ -368,7 +366,6 @@ function HallOfFame({setMenuSection}: Props) {
 	const parseTypes = (
 		types: Record<string, number | Array<Record<string, any>>>,
 	) => {
-		if (!types.types) return 'ERROR'
 		const typeList = types.types as Array<Record<string, any>>
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
@@ -378,7 +375,7 @@ function HallOfFame({setMenuSection}: Props) {
 				className={css.typeGraph}
 				data={{
 					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
-					labels: typeList.map((_type) => '      '),
+					labels: typeList.map((_type) => '     '),
 					datasets: [
 						{
 							label: 'Types sorted by ' + sortBy,
@@ -598,9 +595,10 @@ function HallOfFame({setMenuSection}: Props) {
 								)}
 								{selectedEndpoint === 'types' && (
 									<Button
-										onClick={() =>
+										onClick={() => {
 											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
-										}
+											setDataRetrieved(false)
+										}}
 									>
 										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
 									</Button>
