@@ -207,7 +207,7 @@ function HallOfFame({setMenuSection}: Props) {
 							<td>{deck.deck.code}</td>
 							<td>{padDecimal(deck.winrate, 2)}</td>
 							<td>{deck.wins}</td>
-							<td>{deck.lossses}</td>
+							<td>{deck.losses}</td>
 							<td>{getDeckTypes(deck.deck.cards)}</td>
 							<td className={css.actionColumn}>
 								<Button
