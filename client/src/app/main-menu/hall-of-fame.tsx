@@ -1,3 +1,4 @@
+import {defaults} from 'chart.js'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
@@ -15,6 +16,8 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
+
+defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -365,6 +368,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const parseTypes = (
 		types: Record<string, number | Array<Record<string, any>>>,
 	) => {
+		if (!types.types) return 'ERROR'
 		const typeList = types.types as Array<Record<string, any>>
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
@@ -374,7 +378,7 @@ function HallOfFame({setMenuSection}: Props) {
 				className={css.typeGraph}
 				data={{
 					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
-					labels: typeList.map((_type) => '                '),
+					labels: typeList.map((_type) => '      '),
 					datasets: [
 						{
 							label: 'Types sorted by ' + sortBy,
@@ -387,7 +391,26 @@ function HallOfFame({setMenuSection}: Props) {
 						},
 					],
 				}}
-				options={{}}
+				options={{
+					plugins: {
+						tooltip: {
+							titleFont: () => {
+								return {size: 16}
+							},
+							bodyFont: () => {
+								return {size: 12}
+							},
+							backgroundColor: 'rgba(10, 1, 15, 0.95)',
+							borderWidth: 2,
+							borderColor: 'rgb(38, 13, 77)',
+							callbacks: {
+								title: (item) => item[0].formattedValue + '%',
+								label: (item) =>
+									typeList[item.dataIndex].type.map(title).join(', '),
+							},
+						},
+					},
+				}}
 				plugins={[
 					{
 						id: 'iconDrawer',
