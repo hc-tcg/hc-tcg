@@ -14,6 +14,7 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
+import {getCardTypeIcon} from 'common/cards/card'
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -397,9 +398,9 @@ function HallOfFame({setMenuSection}: Props) {
 								(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
 							xAxis.ticks.forEach((_value, index: number) => {
 								const x = xAxis.getPixelForTick(index) - offset + 10
-								typeList[index].type.forEach((type: string, index: number) => {
+								typeList[index].type.forEach((type: TypeT, index: number) => {
 									const image = new Image()
-									image.src = `/images/types/type-${type}.png`
+									image.src = getCardTypeIcon(type)
 									ctx.drawImage(
 										image,
 										x,
