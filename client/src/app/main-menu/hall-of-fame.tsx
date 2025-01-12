@@ -96,21 +96,21 @@ function HallOfFame({setMenuSection}: Props) {
 			return url
 		},
 		game: () => {
-			let url = 'games'
+			if (endpointBefore !== null && endpointAfter !== null) {
+				return `games?after=${endpointAfter}&before=${endpointBefore}`
+			}
 			if (endpointBefore !== null) {
-				url += `&before=${endpointBefore}`
+				return `games?before=${endpointBefore}`
 			}
 			if (endpointAfter !== null) {
-				url += `&after=${endpointAfter}`
+				return `games?after=${endpointAfter}`
 			}
-			return url
+			return 'games'
 		},
 	}
 
 	async function getData() {
 		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]()}`
-
-		console.log(url)
 
 		try {
 			const response = await fetch(url)
