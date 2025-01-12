@@ -30,6 +30,11 @@ const cardOrderByOptions = {
 	winrateDifference: 'Winrate Difference',
 }
 
+const decksOrderByOptions = {
+	winrate: 'Winrate',
+	wins: 'Wins',
+}
+
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
 	let percentString = percent.toString()
@@ -60,15 +65,18 @@ function HallOfFame({setMenuSection}: Props) {
 	/** Endpoint Options */
 	const beforeRef = useRef<any>()
 	const afterRef = useRef<any>()
-
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
+
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
 
+	const [decksOrderyBy, setDecksOrderBy] =
+		useState<keyof typeof decksOrderByOptions>('winrate')
+
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
-			let url = 'decks?minimumWins=10&orderBy=winrate'
+			let url = `decks?minimumWins=10&orderBy=${decksOrderyBy}`
 			if (endpointBefore !== null) {
 				url += `&before=${endpointBefore}`
 			}
@@ -383,40 +391,68 @@ function HallOfFame({setMenuSection}: Props) {
 										}}
 									/>
 								</div>
-								{selectedEndpoint === 'cards' && (
-									<div className={css.hofCheckBox}>
-										<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
-										<Checkbox
-											defaultChecked={showDisabled}
-											onCheck={() => setShowAdvent(!showDisabled)}
-										></Checkbox>
-									</div>
+								{selectedEndpoint === 'decks' && (
+									<>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Order By:</p>
+											<Dropdown
+												button={
+													<DropDownButton>
+														{decksOrderByOptions[decksOrderyBy]}
+													</DropDownButton>
+												}
+												label="Order By"
+												options={Object.entries(decksOrderByOptions).map(
+													([k, v]) => ({
+														name: v,
+														key: k,
+													}),
+												)}
+												showNames={true}
+												action={(option) => {
+													setDataRetrieved(false)
+													setDecksOrderBy(
+														option as keyof typeof decksOrderByOptions,
+													)
+												}}
+											/>
+										</div>
+									</>
 								)}
 								{selectedEndpoint === 'cards' && (
-									<div className={css.hofOption}>
-										<p style={{flexGrow: 1}}>Order By:</p>
-										<Dropdown
-											button={
-												<DropDownButton>
-													{cardOrderByOptions[cardOrderBy]}
-												</DropDownButton>
-											}
-											label="Order By"
-											options={Object.entries(cardOrderByOptions).map(
-												([k, v]) => ({
-													name: v,
-													key: k,
-												}),
-											)}
-											showNames={true}
-											action={(option) => {
-												setDataRetrieved(false)
-												setCardOrderBy(
-													option as keyof typeof cardOrderByOptions,
-												)
-											}}
-										/>
-									</div>
+									<>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+											<Checkbox
+												defaultChecked={showDisabled}
+												onCheck={() => setShowAdvent(!showDisabled)}
+											></Checkbox>
+										</div>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Order By:</p>
+											<Dropdown
+												button={
+													<DropDownButton>
+														{cardOrderByOptions[cardOrderBy]}
+													</DropDownButton>
+												}
+												label="Order By"
+												options={Object.entries(cardOrderByOptions).map(
+													([k, v]) => ({
+														name: v,
+														key: k,
+													}),
+												)}
+												showNames={true}
+												action={(option) => {
+													setDataRetrieved(false)
+													setCardOrderBy(
+														option as keyof typeof cardOrderByOptions,
+													)
+												}}
+											/>
+										</div>
+									</>
 								)}
 							</div>
 						</div>
