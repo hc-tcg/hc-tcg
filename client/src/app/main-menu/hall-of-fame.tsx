@@ -2,17 +2,18 @@ import {CARDS} from 'common/cards'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
+import {TypeT} from 'common/types/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Button from 'components/button'
 import Card from 'components/card'
+import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
-import {useState} from 'react'
-import css from './main-menu.module.scss'
+import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
-import {TypeT} from 'common/types/cards'
+import css from './main-menu.module.scss'
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -52,6 +53,22 @@ type Props = {
 
 type Endpoints = 'decks' | 'cards' | 'game' | 'types'
 
+const cardOrderByOptions = {
+	winrate: 'Winrate',
+	deckUsage: 'Deck Usage',
+	gameUsage: 'Game Usage',
+	averageCopies: 'Average Copies',
+	averagePlayers: 'Average Players',
+	encounterChance: 'Encounter Chance',
+	adjustedWinrate: 'Adjusted Winrate',
+	winrateDifference: 'Winrate Difference',
+}
+
+const decksOrderByOptions = {
+	winrate: 'Winrate',
+	wins: 'Wins',
+}
+
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
 	let percentString = percent.toString()
@@ -60,6 +77,14 @@ function padDecimal(n: number, paddingAmount: number) {
 	const [beforeDecimal, afterDecimal] = percentString.split('.')
 
 	return `${beforeDecimal}.${afterDecimal.padEnd(paddingAmount, '0')}%`
+}
+
+function title(s: string) {
+	return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase()
+}
+
+function DropDownButton({children}: {children: React.ReactChild}) {
+	return <Button>{children} ▼</Button>
 }
 
 function HallOfFame({setMenuSection}: Props) {
@@ -72,17 +97,66 @@ function HallOfFame({setMenuSection}: Props) {
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
 	const [sortBy, setSortBy] = useState<'winrate' | 'frequency'>('winrate')
 
-	const endpoints: Record<Endpoints, string> = {
-		decks: 'decks?minimumWins=10&orderBy=winrate',
-		cards: 'cards',
-		game: 'games',
-		types: 'type-distribution',
+	/** Endpoint Options */
+	const beforeRef = useRef<any>()
+	const afterRef = useRef<any>()
+	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
+	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
+
+	const [cardOrderBy, setCardOrderBy] =
+		useState<keyof typeof cardOrderByOptions>('winrate')
+
+	const [decksOrderyBy, setDecksOrderBy] =
+		useState<keyof typeof decksOrderByOptions>('winrate')
+
+	const endpoints: Record<Endpoints, () => string> = {
+		decks: () => {
+			let url = `decks?minimumWins=10&orderBy=${decksOrderyBy}`
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
+		cards: () => {
+			let url = `cards?orderBy=${cardOrderBy}`
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
+		game: () => {
+			if (endpointBefore !== null && endpointAfter !== null) {
+				return `games?after=${endpointAfter}&before=${endpointBefore}`
+			}
+			if (endpointBefore !== null) {
+				return `games?before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				return `games?after=${endpointAfter}`
+			}
+
+			return 'games'
+		},
+		types: () => {
+			let url = 'type-distribution'
+			if (endpointBefore !== null) {
+				url += `&before=${endpointBefore}`
+			}
+			if (endpointAfter !== null) {
+				url += `&after=${endpointAfter}`
+			}
+			return url
+		},
 	}
 
 	async function getData() {
-		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]}`
-
-		console.log(url)
+		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]()}`
 
 		try {
 			const response = await fetch(url)
@@ -98,7 +172,7 @@ function HallOfFame({setMenuSection}: Props) {
 		}
 	}
 
-	if (!data && !dataRetrieved) getData()
+	if (!dataRetrieved) getData()
 
 	const parseDeckCards = (cards: Array<string>) => {
 		return cards.map((card) => CARDS[card])
@@ -115,6 +189,7 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
+		if (!decks) return
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
@@ -169,34 +244,81 @@ function HallOfFame({setMenuSection}: Props) {
 			)
 		}
 
+		const cardGroups = cards.reduce(
+			(r: Array<Array<Record<string, any>>>, card, index) => {
+				if (index % 9 === 0) {
+					r.push([])
+				}
+				r[r.length - 1].push(card)
+				if (index === cards.length - 1) {
+					for (let i = (index % 9) + 1; i < 9; i++) {
+						r[r.length - 1].push({extraCard: null})
+					}
+				}
+				return r
+			},
+			[],
+		)
+
+		console.log(cardGroups)
+
 		return (
-			<table className={css.hallOfFameTable}>
-				<tr>
-					<th>Card</th>
-					<th>Winrate</th>
-					<th>in % decks</th>
-					<th>in % games</th>
-				</tr>
-				{cards.map((card) => {
-					const cardObject = CARDS[card.id]
-					if (!cardObject) return
+			<div>
+				{cardGroups.map((cardGroup) => {
+					const cards = cardGroup
+					const cardObjects = cards.map((card) => {
+						const cardObject = CARDS[card.id]
+						if (!cardObject) return null
+						return cardObject
+					})
 					return (
-						<tr key={card.id}>
-							<td className={css.actionColumn}>
-								<div className={css.cardTableImage}>
-									<Card
-										displayTokenCost={true}
-										card={cardObject as WithoutFunctions<CardType>}
-									/>
-								</div>
-							</td>
-							<td>{padDecimal(card.winrate, 2)}</td>
-							<td>{padDecimal(card.deckUsage, 2)}</td>
-							<td>{padDecimal(card.gameUsage, 2)}</td>
-						</tr>
+						<table className={css.hallOfFameTableGrid}>
+							<tr>
+								<th></th>
+								{cardObjects.map((card, index) => {
+									if (!card) return <td key={index}></td>
+									return (
+										<td key={index}>
+											<Card
+												displayTokenCost={false}
+												card={card as WithoutFunctions<CardType>}
+											/>
+										</td>
+									)
+								})}
+							</tr>
+							<tr>
+								<th>Winrate</th>
+								{cards.map((card) => (
+									<td>{card.winrate ? padDecimal(card.winrate, 2) : ''}</td>
+								))}
+							</tr>
+							<tr>
+								<th>In % decks</th>
+								{cards.map((card) => (
+									<td>{card.deckUsage ? padDecimal(card.deckUsage, 2) : ''}</td>
+								))}
+							</tr>
+							<tr>
+								<th>Avg. copies</th>
+								{cards.map((card) => (
+									<td>
+										{card.averageCopies
+											? Math.round(card.averageCopies * 100) / 100
+											: ''}
+									</td>
+								))}
+							</tr>
+							<tr>
+								<th>In % games</th>
+								{cards.map((card) => (
+									<td>{card.gameUsage ? padDecimal(card.gameUsage, 2) : ''}</td>
+								))}
+							</tr>
+						</table>
 					)
 				})}
-			</table>
+			</div>
 		)
 	}
 
@@ -206,16 +328,36 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const parseGame = (game: Record<string, any>) => {
 		return (
-			<div className={css.stats}>
-				<div className={css.stat}>
-					<span>All time games</span>
-					<span>{game.allTimeGames}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Average game length</span>
-					<span>{formatTime(game.gameLength.averageLength)}</span>
-				</div>
-			</div>
+			<table className={css.hallOfFameTableNoHeader}>
+				<tr>
+					<th>All time games</th>
+					<td>{game.allTimeGames}</td>
+				</tr>
+				<tr>
+					<th>Games since 1.0</th>
+					<td>{game.games}</td>
+				</tr>
+				<tr>
+					<th>Tie rate</th>
+					<td>{padDecimal(game.tieRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Forfeit rate</th>
+					<td>{padDecimal(game.forfeitRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Error rate</th>
+					<td>{padDecimal(game.errorRate, 3)}</td>
+				</tr>
+				<tr>
+					<th>Average game length</th>
+					<td>{formatTime(game.gameLength.averageLength)}</td>
+				</tr>
+				<tr>
+					<th>Median game length</th>
+					<td>{formatTime(game.gameLength.medianLength)}</td>
+				</tr>
+			</table>
 		)
 	}
 
@@ -227,7 +369,7 @@ function HallOfFame({setMenuSection}: Props) {
 
 		return (
 			<Bar
-				title={"Types sorted by " + sortBy}
+				title={'Types sorted by ' + sortBy}
 				className={css.typeGraph}
 				data={{
 					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
@@ -298,48 +440,138 @@ function HallOfFame({setMenuSection}: Props) {
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						<h2> Hall of Fame </h2>
-						<div className={css.hofOptions}>
-							<Dropdown
-								button={
-									<Button className={css.endpointDropDown}>
-										{selectedEndpoint.charAt(0).toUpperCase() +
-											selectedEndpoint.slice(1)}
-									</Button>
-								} // The things I do to make it look nice
-								label="Select stats"
-								options={[
-									{name: 'Decks'},
-									{name: 'Cards'},
-									{name: 'Game'},
-									{name: 'Types'},
-								]}
-								showNames={true}
-								action={(option) => {
-									if (option === selectedEndpoint) return
-									setData(null)
-									setDataRetrieved(false)
-									setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
-								}}
-							/>
-							{selectedEndpoint === 'cards' && (
-								<Button onClick={() => setShowAdvent(!showDisabled)}>
-									Show Disabled Cards: {showDisabled ? 'Yes' : 'No'}
-								</Button>
-							)}
-							{selectedEndpoint === 'types' && (
-								<Button onClick={() => setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')}>
-									Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-								</Button>
-							)}
-						</div>
 						<div className={css.tableArea}>
 							{dataRetrieved && getTable()}
 							{!dataRetrieved && (
 								<div className={css.loadingIndicator}>
 									<Spinner></Spinner>
+									Loading...
 								</div>
 							)}
+						</div>
+						<div className={css.hofSidebar}>
+							<div className={css.hallOfFameHeader}>Hall of Fame</div>
+							<div className={css.hofOptions}>
+								<p>
+									<b>Statistic</b>
+								</p>
+								<Dropdown
+									button={
+										<DropDownButton>{title(selectedEndpoint)}</DropDownButton>
+									}
+									label="Selected statistic"
+									options={[
+										{name: 'Decks'},
+										{name: 'Cards'},
+										{name: 'Game'},
+										{name: 'Types'},
+									]}
+									showNames={true}
+									action={(option) => {
+										if (option === selectedEndpoint) return
+										setData(null)
+										setDataRetrieved(false)
+										setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
+									}}
+								/>
+								<p>
+									<b>Parameters</b>
+								</p>
+								<div className={css.hofOption}>
+									<p style={{flexGrow: 1}}>After:</p>
+									<input
+										type="date"
+										ref={afterRef}
+										onChange={(_e) => {
+											setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											setDataRetrieved(false)
+										}}
+									/>
+								</div>
+								<div className={css.hofOption}>
+									<p style={{flexGrow: 1}}>Before:</p>
+									<input
+										type="date"
+										ref={beforeRef}
+										onChange={(_e) => {
+											setEndpointBefore(beforeRef.current.valueAsNumber / 1000)
+											setDataRetrieved(false)
+										}}
+									/>
+								</div>
+								{selectedEndpoint === 'decks' && (
+									<>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Order By:</p>
+											<Dropdown
+												button={
+													<DropDownButton>
+														{decksOrderByOptions[decksOrderyBy]}
+													</DropDownButton>
+												}
+												label="Order By"
+												options={Object.entries(decksOrderByOptions).map(
+													([k, v]) => ({
+														name: v,
+														key: k,
+													}),
+												)}
+												showNames={true}
+												action={(option) => {
+													setDataRetrieved(false)
+													setDecksOrderBy(
+														option as keyof typeof decksOrderByOptions,
+													)
+												}}
+											/>
+										</div>
+									</>
+								)}
+								{selectedEndpoint === 'cards' && (
+									<>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+											<Checkbox
+												defaultChecked={showDisabled}
+												onCheck={() => setShowAdvent(!showDisabled)}
+											></Checkbox>
+										</div>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Order By:</p>
+											<Dropdown
+												button={
+													<DropDownButton>
+														{cardOrderByOptions[cardOrderBy]}
+													</DropDownButton>
+												}
+												label="Order By"
+												options={Object.entries(cardOrderByOptions).map(
+													([k, v]) => ({
+														name: v,
+														key: k,
+													}),
+												)}
+												showNames={true}
+												action={(option) => {
+													setDataRetrieved(false)
+													setCardOrderBy(
+														option as keyof typeof cardOrderByOptions,
+													)
+												}}
+											/>
+										</div>
+									</>
+								)}
+								{selectedEndpoint === 'types' && (
+									<Button
+										onClick={() =>
+											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
+										}
+									>
+										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+									</Button>
+								)}
+							</div>
 						</div>
 					</div>
 				</div>

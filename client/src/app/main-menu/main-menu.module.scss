@@ -466,15 +466,24 @@ nav {
 	width: 80%;
 	margin-left: 10%;
 	margin-right: 10%;
+	margin-top: 5%;
+	margin-bottom: 1%;
 	display: flex;
 	flex-direction: column;
-	margin-top: 5vh;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.hofSidebar {
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	width: 20%;
 }
 
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
-	margin-bottom: 4vh;
 
 	tr {
 		color: black;
@@ -482,11 +491,11 @@ nav {
 	}
 
 	tr:nth-child(odd) {
-		background-color: lightgrey;
+		background-color: var(--gray-200);
 	}
 
 	tr:nth-child(even) {
-		background-color: grey;
+		background-color: var(--gray-400);
 	}
 
 	tr:first-child {
@@ -499,10 +508,65 @@ nav {
 	}
 
 	tr td button {
-		margin-top: .2vh;
-		margin-bottom: .2vh;
+		margin-top: 0.2vh;
+		margin-bottom: 0.2vh;
+	}
+}
+
+.hallOfFameTableGrid {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+
+	tr {
+		color: black;
+		text-align: center;
 	}
 
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr > td {
+		width: 10%;
+	}
+
+	tr > th {
+		color: var(--text-light);
+		background-color: black;
+	}
+}
+
+.hallOfFameTableNoHeader {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+	width: 100%;
+
+	th {
+		font-weight: normal;
+	}
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	td {
+		width: 80%;
+	}
 }
 
 .hallOfFameTable > tr > th {
@@ -531,8 +595,11 @@ nav {
 
 .tableArea {
 	overflow-y: scroll;
-
 	flex-grow: 1;
+	overflow-x: hidden;
+	width: 90%;
+	border: 2px black solid;
+	background-color: var(--gray-700);
 }
 
 .dropdownButton {
@@ -540,7 +607,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-items: center;
-	background-color: var(--gray-500);
+	background-color: var(--gray-400);
 	border-radius: 6px;
 	width: 2rem;
 	height: 2rem;
@@ -560,30 +627,53 @@ nav {
 
 .hofOptions {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	gap: 0.5rem;
 	margin-bottom: 0.5rem;
-}
-
-.endpointDropDown {
-	margin-bottom: 1vh;
-}
-
-.cardTableImage {
-	height: 1vh;
+	color: var(--text-light);
+	padding: 5px;
 }
 
 .loadingIndicator {
-	position: absolute;
 	background-color: black;
 	color: var(--text-light);
-	width: 80%;
+	width: 100%;
 	height: 100%;
 	overflow: hidden;
 	display: flex;
 	padding: 1rem;
 	gap: 1rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+}
+
+.hallOfFameHeader {
+	height: 5%;
+	background-color: var(--gray-600);
+	color: var(--text-light);
+	font-family: Minecrafter;
+	font-size: 1.4rem;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	border-bottom: 2px solid black;
+}
+
+.hofCheckBox {
+	display: flex;
 	flex-direction: row;
+	width: 100%;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hofOption {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	width: 100%;
 }
 
 .typeGraph {
