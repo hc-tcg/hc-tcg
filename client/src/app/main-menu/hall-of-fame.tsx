@@ -1,4 +1,5 @@
 import {CARDS} from 'common/cards'
+import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
@@ -14,7 +15,6 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
-import {getCardTypeIcon} from 'common/cards/card'
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -484,7 +484,11 @@ function HallOfFame({setMenuSection}: Props) {
 										type="date"
 										ref={afterRef}
 										onChange={(_e) => {
-											setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											if (!afterRef.current.valueAsNumber) {
+												setEndpointAfter(null)
+											} else {
+												setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											}
 											setDataRetrieved(false)
 										}}
 									/>
@@ -495,7 +499,13 @@ function HallOfFame({setMenuSection}: Props) {
 										type="date"
 										ref={beforeRef}
 										onChange={(_e) => {
-											setEndpointBefore(beforeRef.current.valueAsNumber / 1000)
+											if (!beforeRef.current.valueAsNumber) {
+												setEndpointBefore(null)
+											} else {
+												setEndpointBefore(
+													beforeRef.current.valueAsNumber / 1000,
+												)
+											}
 											setDataRetrieved(false)
 										}}
 									/>
