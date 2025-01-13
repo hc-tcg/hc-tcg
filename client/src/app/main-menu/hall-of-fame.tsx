@@ -389,6 +389,9 @@ function HallOfFame({setMenuSection}: Props) {
 					],
 				}}
 				options={{
+					animation: {
+						duration: 0,
+					},
 					plugins: {
 						tooltip: {
 							titleFont: () => {
