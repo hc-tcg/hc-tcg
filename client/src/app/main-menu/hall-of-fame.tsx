@@ -7,6 +7,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import Card from 'components/card'
 import Checkbox from 'components/checkbox'
@@ -14,9 +15,13 @@ import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import Spinner from 'components/spinner'
+import {localMessages} from 'logic/messages'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
+import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
+
+defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
 const STATS_URL = `${debugConfig.statsUrl || window.location.origin}/api/stats`
 
@@ -40,9 +45,6 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 }
 
 const getTypeColor = (types: Array<string>) => {
-	if (types[0] === 'farm') {
-		console.log(TYPE_COLORS[types[0]])
-	}
 	let r = 0
 	let g = 0
 	let b = 0
@@ -107,12 +109,14 @@ function DropDownButton({children}: {children: React.ReactChild}) {
 }
 
 function HallOfFame({setMenuSection}: Props) {
+	const dispatch = useDispatch()
+
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
 		useState<Array<CardType> | null>(null)
 
 	const [data, setData] = useState<any | null>(null)
 	const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoints>('decks')
-	const [showDisabled, setShowAdvent] = useState<boolean>(false)
+	const [showDisabled, setShowDisabled] = useState<boolean>(false)
 	const [dataRetrieved, setDataRetrieved] = useState<boolean>(false)
 	const [sortBy, setSortBy] = useState<'winrate' | 'frequency'>('winrate')
 
@@ -188,7 +192,7 @@ function HallOfFame({setMenuSection}: Props) {
 			setData(json)
 			setDataRetrieved(true)
 		} catch (err) {
-			console.error('Chat error: ', err)
+			console.error('Error loading data: ', err)
 		}
 	}
 
@@ -241,6 +245,13 @@ function HallOfFame({setMenuSection}: Props) {
 								<Button
 									onClick={() => {
 										navigator.clipboard.writeText(deck.deck.code)
+										dispatch({
+											type: localMessages.TOAST_OPEN,
+											open: true,
+											title: 'Hash copied!',
+											description: `Copied ${deck.deck.code} to clipboard`,
+											image: getIconPath(deck.deck),
+										})
 									}}
 								>
 									Copy Hash
@@ -474,7 +485,7 @@ function HallOfFame({setMenuSection}: Props) {
 								min: 0,
 								ticks: {
 									callback: function (value, _index, _values) {
-										return value + ' %'
+										return value + '%'
 									},
 								},
 							},
@@ -640,7 +651,7 @@ function HallOfFame({setMenuSection}: Props) {
 											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
 											<Checkbox
 												defaultChecked={showDisabled}
-												onCheck={() => setShowAdvent(!showDisabled)}
+												onCheck={() => setShowDisabled(!showDisabled)}
 											></Checkbox>
 										</div>
 										<div className={css.hofOption}>

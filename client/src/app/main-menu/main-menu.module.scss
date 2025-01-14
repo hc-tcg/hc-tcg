@@ -237,13 +237,17 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 1vh 0;
+	padding: .8vh 0;
 	color: var(--text-light);
 
 	> span {
 		font-size: 2vh;
 		user-select: text;
 	}
+}
+
+.hofButton {
+	width: 100%;
 }
 
 .setUuidSecretForm {
@@ -688,4 +692,6 @@ nav {
 .typeGraph {
 	background-color: var(--gray-700);
 	color: white;
+	margin: 1vh;
+	width: 100%;
 }

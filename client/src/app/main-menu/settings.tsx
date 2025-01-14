@@ -181,6 +181,13 @@ function Settings({setMenuSection}: Props) {
 									: 'N/A'}
 							</span>
 						</div>
+						<Button
+							className={css.hofButton}
+							variant="stone"
+							onClick={handleHallOfFame}
+						>
+							Hall of Fame
+						</Button>
 					</div>
 				</div>
 				<Button variant="stone" onClick={handleHallOfFame}>
