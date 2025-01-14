@@ -47,10 +47,10 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://avatars.githubusercontent.com/u/63879236?v=4"
 				/>
 				<DeveloperCredit
-					name="Lunarmagpie"
-					handle="Lunarmagpie"
+					name="Zunda"
+					handle="ずんだアロー"
 					social="github"
-					link="https://github.com/lunarmagpie"
+					link="https://github.com/zunda-arrow"
 					avatar="https://avatars.githubusercontent.com/u/65521138"
 				/>
 				<DeveloperCredit
