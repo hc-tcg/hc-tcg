@@ -399,7 +399,7 @@ function SelectDeck({
 			/>
 			<ScreenshotDeckModal
 				setOpen={showScreenshotModal}
-				cards={sortCards(loadedDeck.cards)}
+				cards={sortCards(loadedDeck.cards).map((card) => card.props)}
 				onClose={() => setShowScreenshotModal(false)}
 			/>
 			<TagsModal
