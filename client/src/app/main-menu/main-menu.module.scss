@@ -538,6 +538,7 @@ nav {
 	tr > th {
 		color: var(--text-light);
 		background-color: black;
+		border-bottom: 1px white dashed;
 	}
 }
 
@@ -676,7 +677,15 @@ nav {
 	width: 100%;
 }
 
+.barContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	margin: 1rem;
+}
+
 .typeGraph {
-	background-color: whitesmoke;
-	padding-bottom: 1vh;
+	background-color: var(--gray-700);
+	color: white;
 }
