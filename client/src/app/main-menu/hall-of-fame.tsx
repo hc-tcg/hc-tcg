@@ -420,7 +420,7 @@ function HallOfFame({setMenuSection}: Props) {
 						y: {
 							min: 0,
 							ticks: {
-								callback: function (value, index, values) {
+								callback: function (value, _index, _values) {
 									return value + ' %'
 								},
 							},
