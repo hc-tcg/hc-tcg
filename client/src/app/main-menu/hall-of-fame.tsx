@@ -374,8 +374,7 @@ function HallOfFame({setMenuSection}: Props) {
 				title={'Types sorted by ' + sortBy}
 				className={css.typeGraph}
 				data={{
-					// @TODO: This is pretty hacky, it extends the bottom of the chart to ensure the images fit
-					labels: typeList.map((_type) => '     '),
+					labels: typeList.map((type) => (type.type as string[]).join(', ')),
 					datasets: [
 						{
 							label: 'Types sorted by ' + sortBy,
@@ -409,6 +408,24 @@ function HallOfFame({setMenuSection}: Props) {
 									typeList[item.dataIndex].type.map(title).join(', '),
 							},
 						},
+					},
+					scales: {
+						x: {
+							ticks: {
+								display: false,
+							},
+						},
+						y: {
+							min: 0,
+							ticks: {
+								callback: function (value, index, values) {
+									return value + ' %'
+								},
+							},
+						},
+					},
+					layout: {
+						padding: {bottom: 40},
 					},
 				}}
 				plugins={[
