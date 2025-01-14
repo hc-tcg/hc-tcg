@@ -151,14 +151,16 @@ function HallOfFame({setMenuSection}: Props) {
 			return 'games'
 		},
 		types: () => {
-			let url = 'type-distribution'
+			if (endpointBefore !== null && endpointAfter !== null) {
+				return `type-distribution?after=${endpointAfter}&before=${endpointBefore}`
+			}
 			if (endpointBefore !== null) {
-				url += `&before=${endpointBefore}`
+				return `type-distribution?before=${endpointBefore}`
 			}
 			if (endpointAfter !== null) {
-				url += `&after=${endpointAfter}`
+				return `type-distribution?after=${endpointAfter}`
 			}
-			return url
+			return 'type-distribution'
 		},
 	}
 
