@@ -1,9 +1,3 @@
----
-name: Balance Request
-about: Request a change to the balacing for a card.
-title: '[Balance Request] <title>'
----
-
 <!-- Please ensure CI passes. Adjust starter decks as neccesary to ensure they are valid after your changes. -->
 
 ### Description:
