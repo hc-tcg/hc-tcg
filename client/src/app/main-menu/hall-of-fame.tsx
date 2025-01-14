@@ -1,4 +1,6 @@
+import {defaults} from 'chart.js'
 import {CARDS} from 'common/cards'
+import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
@@ -14,7 +16,8 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
-import {Chart} from 'chart.js'
+
+defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -207,7 +210,7 @@ function HallOfFame({setMenuSection}: Props) {
 							<td>{deck.deck.code}</td>
 							<td>{padDecimal(deck.winrate, 2)}</td>
 							<td>{deck.wins}</td>
-							<td>{deck.lossses}</td>
+							<td>{deck.losses}</td>
 							<td>{getDeckTypes(deck.deck.cards)}</td>
 							<td className={css.actionColumn}>
 								<Button
@@ -260,8 +263,6 @@ function HallOfFame({setMenuSection}: Props) {
 			},
 			[],
 		)
-
-		console.log(cardGroups)
 
 		return (
 			<div>
@@ -368,35 +369,12 @@ function HallOfFame({setMenuSection}: Props) {
 		const typeList = types.types as Array<Record<string, any>>
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
-		const renderIcons = (chart: Chart) => {
-			const ctx = chart.ctx
-			const icons = chart.options.plugins?.iconDrawer?.icons
-			if (!icons) return
-			const xAxis = chart.scales.x
-			const offset = (xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
-			xAxis.ticks.forEach((_value, index: number) => {
-				const x = xAxis.getPixelForTick(index) - offset + 10
-				icons[index].forEach((type: string | undefined, index: number) => {
-					if (!type) return
-					const image = new Image()
-					image.src = `/images/types/type-${type}.png`
-					ctx.drawImage(
-						image,
-						x,
-						chart.scales.y.bottom + 5 + index * 20,
-						20,
-						20,
-					)
-				})
-			})
-		}
-
 		return (
 			<Bar
 				title={'Types sorted by ' + sortBy}
 				className={css.typeGraph}
 				data={{
-					labels: typeList.map((type) => (type.type as string[]).join(' + ')),
+					labels: typeList.map((type) => (type.type as string[]).join(', ')),
 					datasets: [
 						{
 							label: 'Types sorted by ' + sortBy,
@@ -410,13 +388,26 @@ function HallOfFame({setMenuSection}: Props) {
 					],
 				}}
 				options={{
+					animation: {
+						duration: 0,
+					},
 					plugins: {
-						iconDrawer: {icons: typeList.map((type) => type.type)},
 						tooltip: {
+							titleFont: () => {
+								return {size: 16}
+							},
+							bodyFont: () => {
+								return {size: 12}
+							},
+							backgroundColor: 'rgba(10, 1, 15, 0.95)',
+							borderWidth: 2,
+							borderColor: 'rgb(38, 13, 77)',
 							callbacks: {
-								label: (tooltipItem) => tooltipItem.parsed.y + "%"
-							}
-						}
+								title: (item) => item[0].formattedValue + '%',
+								label: (item) =>
+									typeList[item.dataIndex].type.map(title).join(', '),
+							},
+						},
 					},
 					scales: {
 						x: {
@@ -440,7 +431,26 @@ function HallOfFame({setMenuSection}: Props) {
 				plugins={[
 					{
 						id: 'iconDrawer',
-						afterDraw: renderIcons,
+						afterDatasetsDraw: (chart) => {
+							const ctx = chart.ctx
+							const xAxis = chart.scales.x
+							const offset =
+								(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
+							xAxis.ticks.forEach((_value, index: number) => {
+								const x = xAxis.getPixelForTick(index) - offset + 10
+								typeList[index].type.forEach((type: TypeT, index: number) => {
+									const image = new Image()
+									image.src = getCardTypeIcon(type)
+									ctx.drawImage(
+										image,
+										x,
+										chart.scales.y.bottom + 5 + index * 20,
+										20,
+										20,
+									)
+								})
+							})
+						},
 					},
 				]}
 			/>
@@ -514,7 +524,11 @@ function HallOfFame({setMenuSection}: Props) {
 										type="date"
 										ref={afterRef}
 										onChange={(_e) => {
-											setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											if (!afterRef.current.valueAsNumber) {
+												setEndpointAfter(null)
+											} else {
+												setEndpointAfter(afterRef.current.valueAsNumber / 1000)
+											}
 											setDataRetrieved(false)
 										}}
 									/>
@@ -525,7 +539,13 @@ function HallOfFame({setMenuSection}: Props) {
 										type="date"
 										ref={beforeRef}
 										onChange={(_e) => {
-											setEndpointBefore(beforeRef.current.valueAsNumber / 1000)
+											if (!beforeRef.current.valueAsNumber) {
+												setEndpointBefore(null)
+											} else {
+												setEndpointBefore(
+													beforeRef.current.valueAsNumber / 1000,
+												)
+											}
 											setDataRetrieved(false)
 										}}
 									/>
@@ -595,9 +615,10 @@ function HallOfFame({setMenuSection}: Props) {
 								)}
 								{selectedEndpoint === 'types' && (
 									<Button
-										onClick={() =>
+										onClick={() => {
 											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
-										}
+											setDataRetrieved(false)
+										}}
 									>
 										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
 									</Button>

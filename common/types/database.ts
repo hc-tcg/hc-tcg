@@ -38,7 +38,7 @@ export type CardStats = {
 export type DeckStats = {
 	deck: ApiDeck
 	wins: number
-	lossses: number
+	losses: number
 	winrate: number | null
 }
 
