@@ -75,6 +75,7 @@ You can configure debug settings using `common/config/debug-config.js`. See the 
 | logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
 | showHooksState        | Show hooks in the console.                                                  |
 | autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
+| statsUrl              | URL to use for the Hall of Fame.                                            |
 
 ### Formatting & coding style
 

@@ -2,6 +2,7 @@ import {defaults} from 'chart.js'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
+import debugConfig from 'common/config/debug-config'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
@@ -16,6 +17,8 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
+
+const STATS_URL = `${debugConfig.statsUrl || window.location.origin}/api/stats`
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -160,8 +163,7 @@ function HallOfFame({setMenuSection}: Props) {
 	}
 
 	async function getData() {
-		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]()}`
-
+		let url = `${STATS_URL}/${endpoints[selectedEndpoint]()}`
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
