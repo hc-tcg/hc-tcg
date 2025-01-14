@@ -2,19 +2,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {Provider} from 'react-redux'
 import './index.scss'
+import {
+	BarElement,
+	CategoryScale,
+	Chart as ChartJS,
+	Legend,
+	LinearScale,
+	Title,
+	Tooltip,
+} from 'chart.js'
 import {CARDS_LIST} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
 import App from './app'
 import store from './store'
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend,
-} from 'chart.js'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
