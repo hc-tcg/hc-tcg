@@ -2,6 +2,7 @@ import {defaults} from 'chart.js'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType, isHermit, isItem} from 'common/cards/types'
+import debugConfig from 'common/config/debug-config'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
@@ -16,12 +17,18 @@ import Spinner from 'components/spinner'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import css from './main-menu.module.scss'
-import Toast, {ToastContainer} from 'components/toast/toast'
 import {useDispatch} from 'react-redux'
 import {localMessages} from 'logic/messages'
 import {getIconPath} from 'common/utils/state-gen'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
+
+const STATS_URL = `${debugConfig.statsUrl || window.location.origin}/api/stats`
+
+defaults.font = {size: 16, family: 'Minecraft, Unifont'}
+defaults.color = '#f8faff'
+defaults.borderColor = '#585860'
+defaults.aspectRatio = 1.75
 
 const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	farm: [124, 204, 12],
@@ -34,7 +41,7 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	speedrunner: [223, 226, 36],
 	terraform: [217, 119, 147],
 	miner: [110, 105, 108],
-	any: [0, 0, 0],
+	any: [255, 255, 255],
 }
 
 const getTypeColor = (types: Array<string>) => {
@@ -49,9 +56,15 @@ const getTypeColor = (types: Array<string>) => {
 	})
 	return (
 		'#' +
-		Math.round(r / types.length).toString(16) +
-		Math.round(g / types.length).toString(16) +
-		Math.round(b / types.length).toString(16)
+		Math.round(r / types.length)
+			.toString(16)
+			.padStart(2, '0') +
+		Math.round(g / types.length)
+			.toString(16)
+			.padStart(2, '0') +
+		Math.round(b / types.length)
+			.toString(16)
+			.padStart(2, '0')
 	)
 }
 
@@ -154,20 +167,21 @@ function HallOfFame({setMenuSection}: Props) {
 			return 'games'
 		},
 		types: () => {
-			let url = 'type-distribution'
+			if (endpointBefore !== null && endpointAfter !== null) {
+				return `type-distribution?after=${endpointAfter}&before=${endpointBefore}`
+			}
 			if (endpointBefore !== null) {
-				url += `&before=${endpointBefore}`
+				return `type-distribution?before=${endpointBefore}`
 			}
 			if (endpointAfter !== null) {
-				url += `&after=${endpointAfter}`
+				return `type-distribution?after=${endpointAfter}`
 			}
-			return url
+			return 'type-distribution'
 		},
 	}
 
 	async function getData() {
-		const url = `https://hc-tcg.online/api/stats/${endpoints[selectedEndpoint]()}`
-
+		let url = `${STATS_URL}/${endpoints[selectedEndpoint]()}`
 		try {
 			const response = await fetch(url)
 			if (!response.ok) {
@@ -305,20 +319,48 @@ function HallOfFame({setMenuSection}: Props) {
 							<tr>
 								<th>Winrate</th>
 								{cards.map((card) => (
-									<td>{card.winrate ? padDecimal(card.winrate, 2) : ''}</td>
+									<td>
+										{card.winrate !== undefined
+											? padDecimal(card.winrate, 2)
+											: ''}
+									</td>
+								))}
+							</tr>
+							<tr>
+								<th>Winrate vs Others</th>
+								{cards.map((card) => (
+									<td>
+										{card.adjustedWinrate !== undefined
+											? padDecimal(card.adjustedWinrate, 2)
+											: ''}
+									</td>
+								))}
+							</tr>
+							<tr>
+								<th>Winrate Difference</th>
+								{cards.map((card) => (
+									<td>
+										{card.winrateDifference !== undefined
+											? padDecimal(card.winrateDifference, 2)
+											: ''}
+									</td>
 								))}
 							</tr>
 							<tr>
 								<th>In % decks</th>
 								{cards.map((card) => (
-									<td>{card.deckUsage ? padDecimal(card.deckUsage, 2) : ''}</td>
+									<td>
+										{card.deckUsage !== undefined
+											? padDecimal(card.deckUsage, 2)
+											: ''}
+									</td>
 								))}
 							</tr>
 							<tr>
 								<th>Avg. copies</th>
 								{cards.map((card) => (
 									<td>
-										{card.averageCopies
+										{card.averageCopies !== undefined
 											? Math.round(card.averageCopies * 100) / 100
 											: ''}
 									</td>
@@ -328,6 +370,16 @@ function HallOfFame({setMenuSection}: Props) {
 								<th>In % games</th>
 								{cards.map((card) => (
 									<td>{card.gameUsage ? padDecimal(card.gameUsage, 2) : ''}</td>
+								))}
+							</tr>
+							<tr>
+								<th>Encounter Chance</th>
+								{cards.map((card) => (
+									<td>
+										{card.encounterChance
+											? padDecimal(card.encounterChance, 2)
+											: ''}
+									</td>
 								))}
 							</tr>
 						</table>
@@ -383,90 +435,92 @@ function HallOfFame({setMenuSection}: Props) {
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
 		return (
-			<Bar
-				title={'Types sorted by ' + sortBy}
-				className={css.typeGraph}
-				data={{
-					labels: typeList.map((type) => (type.type as string[]).join(', ')),
-					datasets: [
-						{
-							label: 'Types sorted by ' + sortBy,
-							data: typeList.map(
-								(type) => Math.round(type[sortBy] * 10000) / 100,
-							),
-							backgroundColor: typeList.map((value) =>
-								getTypeColor(value.type),
-							),
+			<div className={css.barContainer}>
+				<Bar
+					title={'Types sorted by ' + sortBy}
+					className={css.typeGraph}
+					data={{
+						labels: typeList.map((type) => (type.type as string[]).join(', ')),
+						datasets: [
+							{
+								label: 'Types sorted by ' + sortBy,
+								data: typeList.map(
+									(type) => Math.round(type[sortBy] * 10000) / 100,
+								),
+								backgroundColor: typeList.map((value) =>
+									getTypeColor(value.type),
+								),
+							},
+						],
+					}}
+					options={{
+						animation: {
+							duration: 0,
 						},
-					],
-				}}
-				options={{
-					animation: {
-						duration: 0,
-					},
-					plugins: {
-						tooltip: {
-							titleFont: () => {
-								return {size: 16}
-							},
-							bodyFont: () => {
-								return {size: 12}
-							},
-							backgroundColor: 'rgba(10, 1, 15, 0.95)',
-							borderWidth: 2,
-							borderColor: 'rgb(38, 13, 77)',
-							callbacks: {
-								title: (item) => item[0].formattedValue + '%',
-								label: (item) =>
-									typeList[item.dataIndex].type.map(title).join(', '),
-							},
-						},
-					},
-					scales: {
-						x: {
-							ticks: {
-								display: false,
-							},
-						},
-						y: {
-							min: 0,
-							ticks: {
-								callback: function (value, index, values) {
-									return value + '%'
+						plugins: {
+							tooltip: {
+								titleFont: () => {
+									return {size: 16}
+								},
+								bodyFont: () => {
+									return {size: 12}
+								},
+								backgroundColor: 'rgba(10, 1, 15, 0.95)',
+								borderWidth: 2,
+								borderColor: 'rgb(38, 13, 77)',
+								callbacks: {
+									title: (item) => item[0].formattedValue + '%',
+									label: (item) =>
+										typeList[item.dataIndex].type.map(title).join(', '),
 								},
 							},
 						},
-					},
-					layout: {
-						padding: {bottom: 40},
-					},
-				}}
-				plugins={[
-					{
-						id: 'iconDrawer',
-						afterDatasetsDraw: (chart) => {
-							const ctx = chart.ctx
-							const xAxis = chart.scales.x
-							const offset =
-								(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
-							xAxis.ticks.forEach((_value, index: number) => {
-								const x = xAxis.getPixelForTick(index) - offset + 10
-								typeList[index].type.forEach((type: TypeT, index: number) => {
-									const image = new Image()
-									image.src = getCardTypeIcon(type)
-									ctx.drawImage(
-										image,
-										x,
-										chart.scales.y.bottom + 5 + index * 20,
-										20,
-										20,
-									)
-								})
-							})
+						scales: {
+							x: {
+								ticks: {
+									display: false,
+								},
+							},
+							y: {
+								min: 0,
+								ticks: {
+									callback: function (value, _index, _values) {
+										return value + '%'
+									},
+								},
+							},
 						},
-					},
-				]}
-			/>
+						layout: {
+							padding: {bottom: 40},
+						},
+					}}
+					plugins={[
+						{
+							id: 'iconDrawer',
+							afterDatasetsDraw: (chart) => {
+								const ctx = chart.ctx
+								const xAxis = chart.scales.x
+								const offset =
+									(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
+								xAxis.ticks.forEach((_value, index: number) => {
+									const x = xAxis.getPixelForTick(index) - offset + 10
+									typeList[index].type.forEach((type: TypeT, index: number) => {
+										const image = new Image()
+										image.src = getCardTypeIcon(type)
+										ctx.drawImage(
+											image,
+											x,
+											chart.scales.y.bottom + 5 + index * 20,
+											20,
+											20,
+										)
+									})
+								})
+							},
+						},
+					]}
+				/>
+			</div>
 		)
 	}
 
