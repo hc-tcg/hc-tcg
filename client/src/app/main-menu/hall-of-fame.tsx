@@ -419,7 +419,7 @@ function HallOfFame({setMenuSection}: Props) {
 							min: 0,
 							ticks: {
 								callback: function (value, index, values) {
-									return value + ' %'
+									return value + '%'
 								},
 							},
 						},
