@@ -190,9 +190,6 @@ function Settings({setMenuSection}: Props) {
 						</Button>
 					</div>
 				</div>
-				<Button variant="stone" onClick={handleHallOfFame}>
-					Hall of Fame
-				</Button>
 			</MenuLayout>
 		</>
 	)
