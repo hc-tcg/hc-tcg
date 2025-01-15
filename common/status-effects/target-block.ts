@@ -1,13 +1,13 @@
+import LightningRod from '../cards/attach/lightning-rod'
 import {
 	CardComponent,
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
-import query from './../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
+import query from './../components/query'
 import {StatusEffect, systemStatusEffect} from './status-effect'
-import LightningRod from '../cards/attach/lightning-rod'
 
 export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
@@ -30,12 +30,9 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 			(attack) => {
 				if (attack.player.entity !== target.opponentPlayer.entity) return
 				if (!target.slot.inRow()) return
-				attack.shouldIgnoreCards.push(
-					query.card.is(LightningRod)
-				)
+				attack.shouldIgnoreCards.push(query.card.is(LightningRod))
 			},
 		)
-
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
