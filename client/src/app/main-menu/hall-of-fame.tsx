@@ -44,25 +44,56 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	any: [255, 255, 255],
 }
 
-const getTypeColor = (types: Array<string>) => {
+// Code modified from: https://stackoverflow.com/questions/28569667/fill-chart-js-bar-chart-with-diagonal-stripes-or-other-patterns
+const createDiagonalPattern = (types: Array<string>) => {
+	const color = getTypeColor(types)
+	const backgroundColor = getTypeColor(types, 0.5)
+
+	let shape = document.createElement('canvas')
+	shape.width = 10
+	shape.height = 10
+
+	let canvas = shape.getContext('2d')
+	if (!canvas) return null
+	canvas.strokeStyle = color
+	canvas.lineCap = 'square'
+	canvas.lineWidth = 5
+
+	canvas.fillStyle = backgroundColor
+	canvas.fillRect(0, 0, 10, 10)
+
+	canvas.beginPath()
+	canvas.moveTo(0, 5)
+	canvas.lineTo(5, 10)
+	canvas.stroke()
+
+	canvas.beginPath()
+	canvas.moveTo(5, 0)
+	canvas.lineTo(10, 5)
+	canvas.stroke()
+
+	return canvas.createPattern(shape, 'repeat')
+}
+
+const getTypeColor = (types: Array<string>, brightness: number = 1) => {
 	let r = 0
 	let g = 0
 	let b = 0
 	types.forEach((type) => {
 		const color = TYPE_COLORS[type as TypeT]
-		r += color[0]
-		g += color[1]
-		b += color[2]
+		r += color[0] * brightness
+		g += color[1] * brightness
+		b += color[2] * brightness
 	})
 	return (
 		'#' +
-		Math.round(r / types.length)
+		Math.round(Math.min(255, r / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(g / types.length)
+		Math.round(Math.min(255, g / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(b / types.length)
+		Math.round(Math.min(255, b / types.length))
 			.toString(16)
 			.padStart(2, '0')
 	)
@@ -131,6 +162,10 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const [decksOrderyBy, setDecksOrderBy] =
 		useState<keyof typeof decksOrderByOptions>('winrate')
+
+	/* Types */
+	const [showTypeWinrate, setShowTypeWinrate] = useState<boolean>(true)
+	const [showTypeFrequency, setShowTypeFrequency] = useState<boolean>(true)
 
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
@@ -443,13 +478,30 @@ function HallOfFame({setMenuSection}: Props) {
 						labels: typeList.map((type) => (type.type as string[]).join(', ')),
 						datasets: [
 							{
-								label: 'Types sorted by ' + sortBy,
+								label: 'Frequency',
 								data: typeList.map(
-									(type) => Math.round(type[sortBy] * 10000) / 100,
+									(type) => Math.round(type['frequency'] * 10000) / 100,
+								),
+								backgroundColor: typeList.map((value) => {
+									const pattern = createDiagonalPattern(value.type)
+									if (!pattern) return getTypeColor(value.type)
+									return pattern
+								}),
+								borderColor: typeList.map((value) =>
+									getTypeColor(value.type, 0.5),
+								),
+								borderWidth: 1,
+								hidden: !showTypeFrequency,
+							},
+							{
+								label: 'Winrate',
+								data: typeList.map(
+									(type) => Math.round(type['winrate'] * 10000) / 100,
 								),
 								backgroundColor: typeList.map((value) =>
 									getTypeColor(value.type),
 								),
+								hidden: !showTypeWinrate,
 							},
 						],
 					}}
@@ -458,6 +510,9 @@ function HallOfFame({setMenuSection}: Props) {
 							duration: 0,
 						},
 						plugins: {
+							legend: {
+								onClick: () => {},
+							},
 							tooltip: {
 								titleFont: () => {
 									return {size: 16}
@@ -684,14 +739,33 @@ function HallOfFame({setMenuSection}: Props) {
 									</>
 								)}
 								{selectedEndpoint === 'types' && (
-									<Button
-										onClick={() => {
-											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
-											setDataRetrieved(false)
-										}}
-									>
-										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-									</Button>
+									<>
+										<Button
+											onClick={() => {
+												setSortBy(
+													sortBy === 'winrate' ? 'frequency' : 'winrate',
+												)
+												setDataRetrieved(false)
+											}}
+										>
+											Sort by:{' '}
+											{sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+										</Button>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Frequency:</p>
+											<Checkbox
+												defaultChecked={showTypeFrequency}
+												onCheck={() => setShowTypeFrequency(!showTypeFrequency)}
+											></Checkbox>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Winrate:</p>
+											<Checkbox
+												defaultChecked={showTypeWinrate}
+												onCheck={() => setShowTypeWinrate(!showTypeWinrate)}
+											></Checkbox>
+										</div>
+									</>
 								)}
 							</div>
 						</div>
