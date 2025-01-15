@@ -3,9 +3,11 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import query from './../components/query'
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
+import LightningRod from '../cards/attach/lightning-rod'
 
 export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,
@@ -21,6 +23,20 @@ export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	) {
 		let {opponentPlayer} = target
 		// Redirect all future attacks this turn
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.IGNORE_CARDS,
+			(attack) => {
+				if (attack.player.entity !== target.opponentPlayer.entity) return
+				if (!target.slot.inRow()) return
+				attack.shouldIgnoreCards.push(
+					query.card.is(LightningRod)
+				)
+			},
+		)
+
+
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.TARGET_BLOCK_REDIRECT,
