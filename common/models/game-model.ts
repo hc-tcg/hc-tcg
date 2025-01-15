@@ -14,15 +14,20 @@ import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
-	GameEndOutcomeT,
-	GameEndReasonT,
+	GameOutcome,
 	GameState,
+	GameVictoryReason,
 	Message,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
 import {GameHook, Hook, PriorityHook} from '../types/hooks'
-import {CopyAttack, ModalRequest, SelectCards} from '../types/modal-requests'
+import {
+	CopyAttack,
+	DragCards,
+	ModalRequest,
+	SelectCards,
+} from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
@@ -134,10 +139,9 @@ export class GameModel {
 
 	public endInfo: {
 		deadPlayerEntities: Array<PlayerEntity>
-		winner: PlayerId | null
-		outcome: GameEndOutcomeT | null
-		reason: GameEndReasonT | null
+		victoryReason?: GameVictoryReason
 	}
+	public outcome?: GameOutcome
 
 	constructor(
 		rngSeed: string,
@@ -170,9 +174,7 @@ export class GameModel {
 
 		this.endInfo = {
 			deadPlayerEntities: [],
-			winner: null,
-			outcome: null,
-			reason: null,
+			victoryReason: undefined,
 		}
 
 		this.components = new ComponentTable(this)
@@ -389,6 +391,7 @@ export class GameModel {
 		newRequest: SelectCards.Request,
 		before?: boolean,
 	): void
+	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {

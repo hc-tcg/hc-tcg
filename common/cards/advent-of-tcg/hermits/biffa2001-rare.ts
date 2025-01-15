@@ -82,7 +82,8 @@ const Biffa2001Rare: Hermit = {
 				oldHandSize = handSize
 				if (cardInstance.slot.type === 'single_use') return
 				const record = cardsPlayed.get(game)
-				record[player.entity] = (record[player.entity] || 0) + 1
+				const value = (record[player.entity] || 0) + 1
+				record[player.entity] = value
 				if (museumEffect === null) {
 					// Create display status effect if first Biffa is placed on board
 					if (!query.card.is(Biffa2001Rare)(game, cardInstance)) return
@@ -93,14 +94,25 @@ const Biffa2001Rare: Hermit = {
 					)
 					museumEffect.apply(player.entity)
 				}
-				museumEffect.counter = record[player.entity]! // This should be a positive number but ts doesn't recognize it
+				museumEffect.counter = value
 			})
 
-			newObserver.subscribe(player.hooks.onApply, () => {
+			newObserver.subscribe(player.hooks.afterApply, () => {
 				oldHandSize = player.getHand().length
 				const record = cardsPlayed.get(game)
-				record[player.entity] = (record[player.entity] || 0) + 1
-				if (museumEffect) museumEffect.counter = record[player.entity]! // see comment above
+				const value = (record[player.entity] || 0) + 1
+				record[player.entity] = value
+				if (museumEffect) museumEffect.counter = value
+				const singleUse = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+				)
+				if (!singleUse) return
+				newObserver.subscribe(singleUse.hooks.onChangeSlot, (newSlot) => {
+					newObserver.unsubscribe(singleUse.hooks.onChangeSlot)
+					if (newSlot.type === 'hand' && newSlot.player === player)
+						oldHandSize = player.getHand().length
+				})
 			})
 
 			newObserver.subscribeWithPriority(

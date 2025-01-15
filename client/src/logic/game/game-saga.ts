@@ -22,7 +22,7 @@ import {
 	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {getEndGameOverlay} from './game-selectors'
+import {getEndGameOverlay, getPlayerEntity} from './game-selectors'
 import {
 	localApplyEffect,
 	localChangeActiveHermit,
@@ -38,7 +38,10 @@ import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 
-function* sendTurnAction(entity: PlayerEntity, action: AnyTurnActionData) {
+export function* sendTurnAction(
+	entity: PlayerEntity,
+	action: AnyTurnActionData,
+) {
 	yield* sendMsg({
 		type: clientMessages.TURN_ACTION,
 		playerEntity: entity,
@@ -147,9 +150,6 @@ function* gameStateReceiver() {
 function* gameActionsSaga(initialGameState?: LocalGameState) {
 	yield* fork(() =>
 		all([
-			takeEvery(localMessages.GAME_FORFEIT, function* () {
-				yield sendMsg({type: clientMessages.FORFEIT})
-			}),
 			fork(gameStateReceiver),
 			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
 		]),
@@ -195,6 +195,17 @@ function* reconnectSaga() {
 	}
 }
 
+function* handleForfeitAction() {
+	let action = (yield* take(
+		(action: any) =>
+			action.type === localMessages.GAME_TURN_ACTION &&
+			action.action.type == 'FORFEIT',
+	)) as LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+
+	let playerEntity = yield* select(getPlayerEntity)
+	yield* sendTurnAction(playerEntity, action.action)
+}
+
 function* gameSaga(initialGameState?: LocalGameState) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
@@ -203,6 +214,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			fork(chatSaga),
 			fork(spectatorSaga),
 			fork(reconnectSaga),
+			fork(handleForfeitAction),
 		]),
 	)
 
@@ -214,21 +226,13 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		const result = yield* race({
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
-			gameCrash: call(receiveMsg(socket, serverMessages.GAME_CRASH)),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
 		if (result.game) {
 			throw new Error('Unexpected game ending')
-		} else if (result.gameCrash) {
-			console.log('Server error')
-			yield put<LocalMessage>({
-				type: localMessages.GAME_END_OVERLAY_SHOW,
-				outcome: 'server_crash',
-				reason: 'error',
-			})
 		} else if (result.gameEnd) {
-			const {gameState: newGameState, outcome, reason} = result.gameEnd
+			const {gameState: newGameState, outcome} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
@@ -239,7 +243,6 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			}
 			yield put<LocalMessage>({
 				type: localMessages.GAME_END_OVERLAY_SHOW,
-				reason,
 				outcome,
 			})
 		}
@@ -247,8 +250,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		console.error('Client error: ', err)
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
-			outcome: 'client_crash',
-			reason: 'error',
+			outcome: {type: 'game-crash', error: `${(err as Error).stack}`},
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)

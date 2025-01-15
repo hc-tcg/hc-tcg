@@ -112,7 +112,8 @@ const EXPANSION_NAMES = [
 		return CARDS_LIST.some(
 			(card) =>
 				card.expansion === expansion &&
-				EXPANSIONS[expansion].disabled === false,
+				EXPANSIONS[expansion].disabled === false &&
+				!CONFIG.limits.bannedCards.includes(card.id),
 		)
 	}),
 ]
@@ -279,7 +280,12 @@ export function sortCards(
 }
 
 const ALL_CARDS = sortCards(
-	CARDS_LIST.map(
+	CARDS_LIST.filter(
+		(card) =>
+			// Don't show disabled cards
+			EXPANSIONS[card.expansion].disabled === false &&
+			!CONFIG.limits.bannedCards.includes(card.id),
+	).map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),
 			entity: newEntity('deck_editor_card'),
@@ -402,6 +408,7 @@ function EditDeck({
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
 	const addCard = (card: LocalCardInstance) => {
+		console.log('Card: ', card.props.id)
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
 			cards: [
@@ -810,13 +817,7 @@ function EditDeck({
 									></Checkbox>
 								</div>
 								<label htmlFor="tags">Tags ({tags.length}/3)</label>
-								<form
-									className={css.deckTagsForm}
-									onSubmit={(e) => {
-										addTag(tags, setTags, color, nextKey, setColor, e)
-										setNextKey(generateDatabaseCode())
-									}}
-								>
+								<div className={css.deckTagsForm}>
 									<Dropdown
 										button={
 											<button className={css.dropdownButton}>
@@ -840,26 +841,34 @@ function EditDeck({
 										}
 										action={setColor}
 									/>
-									<div className={css.customInput}>
-										<input
-											maxLength={25}
-											name="tag"
-											placeholder=" "
-											className={css.input}
-											id="tag"
-											ref={tagNameRef}
-										></input>
-									</div>
-									<Button
-										variant="default"
-										size="small"
-										type="submit"
-										className={css.submitButton}
-										disabled={databaseInfo.noConnection}
+									<form
+										className={css.deckTagsForm}
+										onSubmit={(e) => {
+											addTag(tags, setTags, color, nextKey, setColor, e)
+											setNextKey(generateDatabaseCode())
+										}}
 									>
-										+
-									</Button>
-								</form>
+										<div className={css.customInput}>
+											<input
+												maxLength={25}
+												name="tag"
+												placeholder=" "
+												className={css.input}
+												id="tag"
+												ref={tagNameRef}
+											></input>
+										</div>
+										<Button
+											variant="default"
+											size="small"
+											type="submit"
+											className={css.submitButton}
+											disabled={databaseInfo.noConnection}
+										>
+											Add
+										</Button>
+									</form>
+								</div>
 								<div className={css.tagList}>
 									{tags.map((tag) => {
 										return (

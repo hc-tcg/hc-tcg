@@ -2,8 +2,12 @@ import cn from 'classnames'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
-import {LocalCardInstance} from 'common/types/server-requests'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+} from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import StatusEffectContainer from '../../app/game/board/board-status-effects'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
@@ -16,6 +20,7 @@ type CardListProps = {
 	wrap?: boolean
 	tooltipAboveModal?: boolean
 	disableAnimations?: boolean
+	statusEffects?: Array<LocalStatusEffectInstance>
 }
 
 const CardList = (props: CardListProps) => {
@@ -29,6 +34,7 @@ const CardList = (props: CardListProps) => {
 		selected,
 		picked,
 		disableAnimations,
+		statusEffects = [],
 	} = props
 
 	const cardsOutput = cards.map((card) => {
@@ -59,6 +65,22 @@ const CardList = (props: CardListProps) => {
 				key={card.entity}
 			/>
 		)
+
+		let thisCardsEffects = statusEffects.filter(
+			(x) => x.target.type === 'card' && x.target.card === card.entity,
+		)
+
+		if (thisCardsEffects.length) {
+			cardComponent = (
+				<div className={css.cardWithStatus}>
+					{cardComponent}
+					<StatusEffectContainer
+						statusEffects={thisCardsEffects}
+						tooltipAboveModal={props.tooltipAboveModal}
+					/>
+				</div>
+			)
+		}
 
 		if (!disableAnimations) {
 			return (

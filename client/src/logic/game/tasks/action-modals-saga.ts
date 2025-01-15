@@ -6,6 +6,7 @@ import {
 	AttackModal,
 	ChangeHermitModal,
 	CopyAttackModal,
+	DragCardsModal,
 	EndTurnModal,
 	ExitModal,
 	ForfeitModal,
@@ -24,6 +25,7 @@ export const MODAL_COMPONENTS = {
 	// Custom modals
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
+	dragCards: DragCardsModal,
 }
 
 export type ModalVariant = keyof typeof MODAL_COMPONENTS
@@ -45,6 +47,7 @@ export const ActionMap: Record<TurnAction, string | null> = {
 	WAIT_FOR_TURN: null,
 	MODAL_REQUEST: null,
 	DELAY: null,
+	FORFEIT: null,
 }
 
 function* endTurnActionSaga(): SagaIterator {

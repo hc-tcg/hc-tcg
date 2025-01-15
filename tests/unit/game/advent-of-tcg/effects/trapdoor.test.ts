@@ -16,7 +16,9 @@ import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import SpookyStressRare from 'common/cards/hermits/spookystress-rare'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import Anvil from 'common/cards/single-use/anvil'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
+import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {NetheriteSword} from 'common/cards/single-use/sword'
@@ -166,7 +168,7 @@ describe('Test Trapdoor', () => {
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
 					yield* playCardFromHand(game, IronArmor, 'attach', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
 					yield* playCardFromHand(game, EnderPearl, 'single_use')
 					yield* pick(
 						game,
@@ -174,9 +176,9 @@ describe('Test Trapdoor', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 3)
@@ -200,21 +202,21 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(EthosLabCommon.health - 10)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(EthosLabCommon.health - 50)
+					).toBe(EthosLabCommon.health)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(3),
 						)?.health,
-					).toBe(EthosLabCommon.health - 10)
+					).toBe(EthosLabCommon.health - 50)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -279,17 +281,21 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(EthosLabCommon.health - 50)
+					).toBe(EthosLabCommon.health - 20)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(3),
 						)?.health,
-					).toBe(EthosLabCommon.health - 10)
+					).toBe(EthosLabCommon.health - 40)
 				},
 			},
-			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
+			{
+				startWithAllCards: true,
+				noItemRequirements: true,
+				forceCoinFlip: true,
+			},
 		)
 	})
 
@@ -359,10 +365,10 @@ describe('Test Trapdoor', () => {
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, LightningRod],
 				playerTwoDeck: [Iskall85Common, TargetBlock],
 				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, LightningRod, 'attach', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
@@ -373,14 +379,14 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(0),
 						)?.health,
-					).toBe(EthosLabCommon.health - 40)
+					).toBe(EthosLabCommon.health - (Iskall85Common.primary.damage - 40))
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health - (Iskall85Common.primary.damage - 40))
+					).toBe(EthosLabCommon.health - 40)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -390,21 +396,21 @@ describe('Test Trapdoor', () => {
 						game,
 						query.slot.opponent,
 						query.slot.hermit,
-						query.slot.rowIndex(1),
+						query.slot.rowIndex(0),
 					)
 					yield* attack(game, 'primary')
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
-							query.row.index(0),
+							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
-							query.row.index(1),
+							query.row.index(0),
 						)?.health,
 					).toBe(
 						EthosLabCommon.health -
@@ -426,12 +432,12 @@ describe('Test Trapdoor', () => {
 				],
 				playerTwoDeck: [VintageBeefCommon],
 				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
 					yield* endTurn(game)
 
@@ -443,14 +449,16 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(0),
 						)?.health,
-					).toBe(EthosLabCommon.health - 40 /** Chained interception */)
+					).toBe(EthosLabCommon.health)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(
+						EthosLabCommon.health - (VintageBeefCommon.secondary.damage - 40),
+					)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -464,9 +472,7 @@ describe('Test Trapdoor', () => {
 							query.row.opponentPlayer,
 							query.row.index(3),
 						)?.health,
-					).toBe(
-						EthosLabCommon.health - (VintageBeefCommon.secondary.damage - 40),
-					)
+					).toBe(EthosLabCommon.health - 40)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -641,11 +647,11 @@ describe('Test Trapdoor', () => {
 				playerOneDeck: [EthosLabCommon, Trapdoor],
 				playerTwoDeck: [RenbobRare],
 				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RenbobRare, 'hermit', 1)
+					yield* playCardFromHand(game, RenbobRare, 'hermit', 0)
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
@@ -716,7 +722,10 @@ describe('Test Trapdoor', () => {
 	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', () => {
 		testGame(
 			{
-				playerOneDeck: [...Array(5).fill(EthosLabCommon), Trapdoor, Trapdoor],
+				playerOneDeck: [
+					...Array(5).fill(EthosLabCommon),
+					...Array(3).fill(Trapdoor),
+				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Anvil],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -726,6 +735,7 @@ describe('Test Trapdoor', () => {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
 					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 4)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 2)
@@ -757,11 +767,7 @@ describe('Test Trapdoor', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(
-						EthosLabCommon.health -
-							40 /** Trapdoor */ -
-							20 /** Gaslight extra damage */,
-					)
+					).toBe(EthosLabCommon.health)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -772,8 +778,7 @@ describe('Test Trapdoor', () => {
 						EthosLabCommon.health -
 							(SkizzlemanRare.secondary.damage +
 								30 /** Anvil */ -
-								40 /** Trapdoor (1) */ -
-								40) /** Trapdoor (3) */,
+								40) /** Trapdoor */,
 					)
 					expect(
 						game.components.find(
@@ -783,7 +788,6 @@ describe('Test Trapdoor', () => {
 						)?.health,
 					).toBe(
 						EthosLabCommon.health -
-							40 /** Trapdoor */ -
 							10 /** Anvil */ -
 							20 /** Gaslight extra damage */,
 					)
@@ -795,12 +799,61 @@ describe('Test Trapdoor', () => {
 						)?.health,
 					).toBe(
 						EthosLabCommon.health -
+							40 /** Trapdoor (4) -> Trapdoor (5) */ -
 							10 /** Anvil */ -
 							20 /** Gaslight extra damage */,
 					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Invisibility Tails does not multiply damage intercepted by Trapdoor', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					Trapdoor,
+					InvisibilityPotion,
+				],
+				playerTwoDeck: [EthosLabCommon, BadOmen],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(
+						EthosLabCommon.health - (EthosLabCommon.secondary.damage * 2 - 40),
+					)
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - 40)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })

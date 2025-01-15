@@ -32,9 +32,7 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled =
-		EXPANSIONS[card.expansion].disabled === true && card.expansion !== 'boss'
-			? 'disabled'
-			: 'enabled'
+		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -129,17 +127,18 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.primary.cost.map((type, i: number) => (
-						<image
-							key={i}
-							href={getCardTypeIcon(type)}
-							x={COST_X[card.primary.cost.length - 1][i]}
-							y="273"
-							width={COST_SIZE}
-							height={COST_SIZE}
-							className={classnames(css.attackItems, css[palette], css[type])}
-						/>
-					))}
+					{!card.primary.passive &&
+						card.primary.cost.map((type, i: number) => (
+							<image
+								key={i}
+								href={getCardTypeIcon(type)}
+								x={COST_X[card.primary.cost.length - 1][i]}
+								y="273"
+								width={COST_SIZE}
+								height={COST_SIZE}
+								className={classnames(css.attackItems, css[palette], css[type])}
+							/>
+						))}
 				</g>
 				<text
 					x="200"
@@ -151,30 +150,33 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 				>
 					{card.primary.shortName ? card.primary.shortName : card.primary.name}
 				</text>
-				<text
-					x="380"
-					y="270"
-					className={classnames(css.attackDamage, css[palette], {
-						[css.specialMove]: !!card.primary.power,
-					})}
-					textAnchor="middle"
-					dominantBaseline="hanging"
-					key={3}
-				>
-					{card.primary.damage === 0 ? '00' : card.primary.damage}
-				</text>
+				{!card.primary.passive && (
+					<text
+						x="380"
+						y="270"
+						className={classnames(css.attackDamage, css[palette], {
+							[css.specialMove]: !!card.primary.power,
+						})}
+						textAnchor="middle"
+						dominantBaseline="hanging"
+						key={3}
+					>
+						{card.primary.damage === 0 ? '00' : card.primary.damage}
+					</text>
+				)}
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.secondary.cost.map((type, i: number) => (
-					<image
-						key={i}
-						href={getCardTypeIcon(type)}
-						x={COST_X[card.secondary.cost.length - 1][i]}
-						y="343"
-						width={COST_SIZE}
-						height={COST_SIZE}
-						className={classnames(css.attackItems, css[palette], css[type])}
-					/>
-				))}
+				{!card.secondary.passive &&
+					card.secondary.cost.map((type, i: number) => (
+						<image
+							key={i}
+							href={getCardTypeIcon(type)}
+							x={COST_X[card.secondary.cost.length - 1][i]}
+							y="343"
+							width={COST_SIZE}
+							height={COST_SIZE}
+							className={classnames(css.attackItems, css[palette], css[type])}
+						/>
+					))}
 				<text
 					x="200"
 					y="342"
@@ -189,18 +191,36 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 						? card.secondary.shortName
 						: card.secondary.name}
 				</text>
-				<text
-					x="380"
-					y="340"
-					className={classnames(css.attackDamage, css[palette], {
-						[css.specialMove]: !!card.secondary.power,
-					})}
-					textAnchor="middle"
-					dominantBaseline="hanging"
-					key={5}
-				>
-					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
-				</text>
+				{!card.secondary.passive && (
+					<text
+						x="380"
+						y="340"
+						className={classnames(css.attackDamage, css[palette], {
+							[css.specialMove]: !!card.secondary.power,
+						})}
+						textAnchor="middle"
+						dominantBaseline="hanging"
+						key={5}
+					>
+						{card.secondary.damage === 0 ? '00' : card.secondary.damage}
+					</text>
+				)}
+				{card.primary.passive && (
+					<image
+						width="110"
+						y="260"
+						x="10"
+						href={'/images/icons/passive-logo.png'}
+					></image>
+				)}
+				{card.secondary.passive && (
+					<image
+						width="110"
+						y="330"
+						x="10"
+						href={'/images/icons/passive-logo.png'}
+					></image>
+				)}
 			</g>
 		</svg>
 	)

@@ -11,6 +11,7 @@ const pickCondition = query.every(
 	query.slot.hermit,
 	query.not(query.slot.active),
 	query.not(query.slot.empty),
+	query.slot.canBecomeActive,
 )
 
 const Knockback: SingleUse = {
@@ -44,26 +45,9 @@ const Knockback: SingleUse = {
 				// Only Apply this for the first attack
 				observer.unsubscribe(game.hooks.afterAttack)
 
-				if (!game.components.exists(SlotComponent, pickCondition)) return
-
-				let activeRow = opponentPlayer.activeRow
-				if (activeRow && activeRow.health) {
-					game.addPickRequest({
-						player: opponentPlayer.entity,
-						id: component.entity,
-						message: 'Choose a new active Hermit from your AFK Hermits',
-						canPick: pickCondition,
-						onResult(pickedSlot) {
-							if (!pickedSlot.inRow()) return
-							opponentPlayer.changeActiveRow(pickedSlot.row)
-						},
-						onTimeout: () => {
-							const slot = game.components.find(SlotComponent, pickCondition)
-							if (!slot?.inRow()) return
-							game.opponentPlayer.changeActiveRow(slot.row)
-						},
-					})
-				}
+				let knockbackPickRequest =
+					opponentPlayer.getKnockbackPickRequest(component)
+				if (knockbackPickRequest) game.addPickRequest(knockbackPickRequest)
 			},
 		)
 	},

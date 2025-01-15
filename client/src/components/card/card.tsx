@@ -62,7 +62,9 @@ const Card = (props: CardReactProps) => {
 
 	return (
 		<Tooltip
-			tooltip={<CardInstanceTooltip card={props.card} />}
+			tooltip={
+				<CardInstanceTooltip card={props.card} showStatsOnTooltip={false} />
+			}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<button
@@ -78,24 +80,16 @@ const Card = (props: CardReactProps) => {
 				onClick={unpickable ? () => {} : onClick}
 			>
 				{debugConfig.renderCardsDynamically ? (
-					<button
-						className={cn(props.className, css.card, {
-							[css.selected]: selected,
-							[css.picked]: picked,
-							[css.unpickable]: unpickable,
-						})}
-						onClick={unpickable ? () => {} : onClick}
-					>
-						<div className={css.noPointerEvents}>{card}</div>
-					</button>
+					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
 				) : (
-					<img
-						unselectable="on"
-						className={css.renderedCardImage}
-						src={getRenderedCardImage(props.card, displayTokenCost)}
-						width="100%"
-						height="100%"
-					/>
+					<div className={css.noPointerEvents}>
+						<img
+							className={css.renderedCardImage}
+							src={getRenderedCardImage(props.card, displayTokenCost)}
+							width="100%"
+							height="100%"
+						/>
+					</div>
 				)}
 			</button>
 		</Tooltip>

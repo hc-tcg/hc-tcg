@@ -7,100 +7,105 @@ $item: #c4c4c4;
 $good: #63b45c;
 $bad: #da5558;
 $keyword: var(--gray-200);
+$system: var(--gray-300);
 $attackDamage: #e44649;
 $specialMove: rgb(74, 128, 255);
 
 .selectable {
-  user-select: all;
+	user-select: all;
 }
 
 .player {
-  color: $player;
-  font-family: MinecraftBold;
+	color: $player;
+	font-family: MinecraftBold;
 
-  &.viewedByOpponent {
-    color: $opponent;
-  }
+	&.viewedByOpponent {
+		color: $opponent;
+	}
 }
 
 .opponent {
-  color: $opponent;
-  font-family: MinecraftBold;
+	color: $opponent;
+	font-family: MinecraftBold;
 
-  &.viewedByOpponent {
-    color: $player;
-  }
+	&.viewedByOpponent {
+		color: $player;
+	}
 }
 
 .spectator {
-  color: $spectator;
-  font-family: MinecraftBold;
+	color: $spectator;
+	font-family: MinecraftBold;
 }
 
 .effect {
-  color: $effect;
-  font-family: MinecraftBold;
+	color: $effect;
+	font-family: MinecraftBold;
 }
 
 .attack {
-  color: $attack;
-  font-family: MinecraftBold;
+	color: $attack;
+	font-family: MinecraftBold;
 }
 
 .item {
-  color: $item;
-  font-family: MinecraftBold;
+	color: $item;
+	font-family: MinecraftBold;
 }
 
 .good {
-  color: $good;
-  font-family: MinecraftBold;
+	color: $good;
+	font-family: MinecraftBold;
 }
 
 .bad {
-  color: $bad;
-  font-family: MinecraftBold;
+	color: $bad;
+	font-family: MinecraftBold;
 }
 
 .bold {
-  font-family: MinecraftBold;
+	font-family: MinecraftBold;
 
-  > span > .italic {
-    font-family: MinecraftItalic;
-    font-weight: 1000;
-  }
+	> span > .italic {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
 }
 
 .italic {
-  font-family: MinecraftItalic;
+	font-family: MinecraftItalic;
 
-  > span > .bold {
-    font-family: MinecraftItalic;
-    font-weight: 1000;
-  }
+	> span > .bold {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
 }
 
 .keyword {
-  font-family: MinecraftItalic;
-  font-weight: 1000;
-  color: $keyword;
+	font-family: MinecraftItalic;
+	font-weight: 1000;
+	color: $keyword;
+}
+
+.system {
+	color: $system;
 }
 
 .attackDamage {
-  color: $attackDamage;
+	color: $attackDamage;
 }
 
 .specialMove {
-  color: $specialMove;
+	color: $specialMove;
 }
 
 .tab {
-  margin-right: 5em;
+	margin-right: 5em;
 }
 
 .emoji {
-  height: 1.4rem;
-  transform: translateY(0.3rem);
-  pointer-events: none;
-  margin-top: -0.4rem;
+	height: 1.4rem;
+	transform: translateY(0.3rem);
+	pointer-events: none;
+	margin-top: -0.4rem;
 }

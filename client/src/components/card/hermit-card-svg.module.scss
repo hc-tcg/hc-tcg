@@ -30,6 +30,10 @@
 	&.advent_of_tcg {
 		fill: rgb(206, 211, 206);
 	}
+
+	&.advent_of_tcg_ii {
+		fill: rgb(209, 177, 161);
+	}
 }
 
 .name {
@@ -98,11 +102,13 @@ text.attackName {
 }
 
 .attackItems.alter_egos.prankster {
-	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
+	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white)
+		drop-shadow(1px -1px 0 white);
 }
 
 .attackItems.alter_egos.redstone {
-	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
+	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white)
+		drop-shadow(1px -1px 0 white);
 }
 
 .rank {

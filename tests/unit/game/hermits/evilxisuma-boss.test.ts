@@ -350,8 +350,8 @@ describe('Test Evil X Boss Fight', () => {
 				],
 				saga: testChallengerVictory,
 				then: (game) => {
-					expect(getWinner(game)).toBe('playerOne')
-					expect(game.endInfo.reason).toBe('lives')
+					expect(getWinner(game)?.playerName).toBe('playerOne')
+					expect(game.outcome).toHaveProperty('victoryReason', 'lives')
 				},
 			},
 			{startWithAllCards: true, forceCoinFlip: true},
@@ -370,8 +370,11 @@ describe('Test Evil X Boss Fight', () => {
 					yield* bossAttack(game, '90DMG')
 				},
 				then: (game) => {
-					expect(getWinner(game)).toBe('Evil Xisuma')
-					expect(game.endInfo.reason).toBe('hermits')
+					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')
+					expect(game.outcome).toHaveProperty(
+						'victoryReason',
+						'no-hermits-on-board',
+					)
 				},
 			},
 			{startWithAllCards: true, oneShotMode: true},
@@ -402,8 +405,8 @@ describe('Test Evil X Boss Fight', () => {
 					yield* bossAttack(game, '90DMG')
 				},
 				then: (game) => {
-					expect(getWinner(game)).toBe('Evil Xisuma')
-					expect(game.endInfo.reason).toBe('lives')
+					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')
+					expect(game.outcome).toHaveProperty('victoryReason', 'lives')
 				},
 			},
 			{startWithAllCards: true, oneShotMode: true},

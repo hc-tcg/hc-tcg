@@ -79,6 +79,7 @@ function Settings({setMenuSection}: Props) {
 	}
 	const handleGameSettings = () => changeMenuSection('game-settings')
 	const handleDataSettings = () => changeMenuSection('data-settings')
+	const handleHallOfFame = () => changeMenuSection('hall-of-fame')
 
 	const handleCredits = () => changeMenuSection('credits')
 
@@ -180,8 +181,18 @@ function Settings({setMenuSection}: Props) {
 									: 'N/A'}
 							</span>
 						</div>
+						<Button
+							className={css.hofButton}
+							variant="stone"
+							onClick={handleHallOfFame}
+						>
+							Hall of Fame
+						</Button>
 					</div>
 				</div>
+				<Button variant="stone" onClick={handleHallOfFame}>
+					Hall of Fame
+				</Button>
 			</MenuLayout>
 		</>
 	)

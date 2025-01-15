@@ -17,6 +17,15 @@ export default {
 		maxCards: 42,
 		maxDuplicates: 3,
 		maxDeckCost: 42,
+		bannedCards: [
+			'evilxisuma_boss',
+			'feather',
+			'item_any_rare',
+			'iskall85_common',
+			'iskall85_rare',
+			'iskallman_common',
+			'iskallman_rare',
+		],
 	},
-	logoSubText: 'Over 3 Games Played!',
+	logoSubText: 'We nerfed Mumbo!',
 }

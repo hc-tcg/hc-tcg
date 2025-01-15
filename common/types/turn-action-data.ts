@@ -1,4 +1,4 @@
-import {SlotEntity} from '../entities'
+import {PlayerEntity, SlotEntity} from '../entities'
 import {HermitAttackType} from './attack'
 import {CardCategoryT} from './cards'
 import {AttackAction, PlayCardAction} from './game-state'
@@ -53,6 +53,11 @@ export type ModalResult = {
 	modalResult: LocalModalResult
 }
 
+export type ForfeitAction = {
+	type: 'FORFEIT'
+	player: PlayerEntity
+}
+
 export type OtherTurnActions = {
 	type:
 		| 'END_TURN'
@@ -71,3 +76,4 @@ export type AnyTurnActionData =
 	| PickSlotActionData
 	| ModalResult
 	| WaitActionData
+	| ForfeitAction
