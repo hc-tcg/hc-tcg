@@ -162,6 +162,10 @@ function HallOfFame({setMenuSection}: Props) {
 	const [decksOrderyBy, setDecksOrderBy] =
 		useState<keyof typeof decksOrderByOptions>('winrate')
 
+	/* Types */
+	const [showTypeWinrate, setShowTypeWinrate] = useState<boolean>(true)
+	const [showTypeFrequency, setShowTypeFrequency] = useState<boolean>(true)
+
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
 			let url = `decks?minimumWins=10&orderBy=${decksOrderyBy}`
@@ -486,6 +490,7 @@ function HallOfFame({setMenuSection}: Props) {
 									getTypeColor(value.type, 0.5),
 								),
 								borderWidth: 1,
+								hidden: !showTypeFrequency,
 							},
 							{
 								label: 'Winrate',
@@ -495,6 +500,7 @@ function HallOfFame({setMenuSection}: Props) {
 								backgroundColor: typeList.map((value) =>
 									getTypeColor(value.type),
 								),
+								hidden: !showTypeWinrate,
 							},
 						],
 					}}
@@ -503,6 +509,9 @@ function HallOfFame({setMenuSection}: Props) {
 							duration: 0,
 						},
 						plugins: {
+							legend: {
+								onClick: () => {},
+							},
 							tooltip: {
 								titleFont: () => {
 									return {size: 16}
@@ -729,14 +738,33 @@ function HallOfFame({setMenuSection}: Props) {
 									</>
 								)}
 								{selectedEndpoint === 'types' && (
-									<Button
-										onClick={() => {
-											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
-											setDataRetrieved(false)
-										}}
-									>
-										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-									</Button>
+									<>
+										<Button
+											onClick={() => {
+												setSortBy(
+													sortBy === 'winrate' ? 'frequency' : 'winrate',
+												)
+												setDataRetrieved(false)
+											}}
+										>
+											Sort by:{' '}
+											{sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+										</Button>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Frequency:</p>
+											<Checkbox
+												defaultChecked={showTypeFrequency}
+												onCheck={() => setShowTypeFrequency(!showTypeFrequency)}
+											></Checkbox>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Winrate:</p>
+											<Checkbox
+												defaultChecked={showTypeWinrate}
+												onCheck={() => setShowTypeWinrate(!showTypeWinrate)}
+											></Checkbox>
+										</div>
+									</>
 								)}
 							</div>
 						</div>
