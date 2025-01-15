@@ -14,7 +14,7 @@ const Trident: SingleUse = {
 	name: 'Trident',
 	expansion: 'alter_egos',
 	rarity: 'rare',
-	tokens: 2,
+	tokens: 1,
 	description:
 		"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
 	hasAttack: true,
