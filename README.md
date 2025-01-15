@@ -36,6 +36,10 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 By default, the client is hosted on port 3002.
 
+## How To & Architecture
+
+See [docs/README.md](./docs/README.md).
+
 ## Configuration
 
 ### Server Config
@@ -86,11 +90,6 @@ npm run lint      # check your code for linting and formatting issues
 npm run format    # format your code
 npm run fix       # fix any autofixable linting errors
 ```
-
-### Adding New Cards
-After adding your card, you will need to render the card.
-After pushing your code to your branch on github,
-wait a few minutes and there should be a commit with the card image!
 
 ### Testing
 
