@@ -491,7 +491,10 @@ function HallOfFame({setMenuSection}: Props) {
 							},
 						},
 						layout: {
-							padding: {bottom: 40},
+							padding: {
+								/* Each type icon needs twenty pixels of padding */
+								bottom: Math.max(...typeList.map((x) => x.type.length)) * 20,
+							},
 						},
 					}}
 					plugins={[
