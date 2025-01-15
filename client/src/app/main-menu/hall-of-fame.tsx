@@ -44,14 +44,15 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	any: [255, 255, 255],
 }
 
+// Code modified from: https://stackoverflow.com/questions/28569667/fill-chart-js-bar-chart-with-diagonal-stripes-or-other-patterns
 const createDiagonalPattern = (types: Array<string>) => {
 	const color = getTypeColor(types)
 	const backgroundColor = getTypeColor(types, 0.5)
-	// create a 10x10 px canvas for the pattern's base shape
+
 	let shape = document.createElement('canvas')
 	shape.width = 10
 	shape.height = 10
-	// get the context for drawing
+
 	let canvas = shape.getContext('2d')
 	if (!canvas) return null
 	canvas.strokeStyle = color
