@@ -44,15 +44,45 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	any: [255, 255, 255],
 }
 
-const getTypeColor = (types: Array<string>) => {
+const createDiagonalPattern = (types: Array<string>) => {
+	const color = getTypeColor(types)
+	const backgroundColor = getTypeColor(types, 0.5)
+	// create a 10x10 px canvas for the pattern's base shape
+	let shape = document.createElement('canvas')
+	shape.width = 10
+	shape.height = 10
+	// get the context for drawing
+	let canvas = shape.getContext('2d')
+	if (!canvas) return null
+	canvas.strokeStyle = color
+	canvas.lineCap = 'square'
+	canvas.lineWidth = 5
+
+	canvas.fillStyle = backgroundColor
+	canvas.fillRect(0, 0, 10, 10)
+
+	canvas.beginPath()
+	canvas.moveTo(0, 5)
+	canvas.lineTo(5, 10)
+	canvas.stroke()
+
+	canvas.beginPath()
+	canvas.moveTo(5, 0)
+	canvas.lineTo(10, 5)
+	canvas.stroke()
+
+	return canvas.createPattern(shape, 'repeat')
+}
+
+const getTypeColor = (types: Array<string>, brightness: number = 1) => {
 	let r = 0
 	let g = 0
 	let b = 0
 	types.forEach((type) => {
 		const color = TYPE_COLORS[type as TypeT]
-		r += color[0]
-		g += color[1]
-		b += color[2]
+		r += color[0] * brightness
+		g += color[1] * brightness
+		b += color[2] * brightness
 	})
 	return (
 		'#' +
@@ -443,9 +473,24 @@ function HallOfFame({setMenuSection}: Props) {
 						labels: typeList.map((type) => (type.type as string[]).join(', ')),
 						datasets: [
 							{
-								label: 'Types sorted by ' + sortBy,
+								label: 'Frequency',
 								data: typeList.map(
-									(type) => Math.round(type[sortBy] * 10000) / 100,
+									(type) => Math.round(type['frequency'] * 10000) / 100,
+								),
+								backgroundColor: typeList.map((value) => {
+									const pattern = createDiagonalPattern(value.type)
+									if (!pattern) return getTypeColor(value.type)
+									return pattern
+								}),
+								borderColor: typeList.map((value) =>
+									getTypeColor(value.type, 0.5),
+								),
+								borderWidth: 1,
+							},
+							{
+								label: 'Winrate',
+								data: typeList.map(
+									(type) => Math.round(type['winrate'] * 10000) / 100,
 								),
 								backgroundColor: typeList.map((value) =>
 									getTypeColor(value.type),
