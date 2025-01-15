@@ -87,13 +87,13 @@ const getTypeColor = (types: Array<string>, brightness: number = 1) => {
 	})
 	return (
 		'#' +
-		Math.round(r / types.length)
+		Math.round(Math.min(255, r / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(g / types.length)
+		Math.round(Math.min(255, g / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(b / types.length)
+		Math.round(Math.min(255, b / types.length))
 			.toString(16)
 			.padStart(2, '0')
 	)
