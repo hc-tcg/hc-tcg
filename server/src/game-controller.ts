@@ -2,7 +2,10 @@ import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {ServerMessage} from 'common/socket-messages/server-messages'
+import {
+	ServerMessage,
+	serverMessages,
+} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {Message} from 'common/types/game-state'
 import {broadcast} from 'utils/comm'
@@ -68,6 +71,15 @@ export class GameController {
 
 	private publishBattleLog(logs: Array<Message>) {
 		this.chat.push(...logs)
+		this.chatUpdate()
+	}
+
+	/** Send new chat messages to the viewers */
+	public chatUpdate() {
+		broadcast(this.game.getPlayers(), {
+			type: serverMessages.CHAT_UPDATE,
+			messages: this.chat,
+		})
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {

@@ -91,7 +91,7 @@ export class GameModel {
 
 	public readonly id: string
 	public readonly settings: GameSettings
-	public publishBattleLog?: (logs: Array<Message>) => void
+	public publishBattleLog: (logs: Array<Message>) => void
 
 	public battleLog: BattleLogModel
 	public state: GameState
@@ -150,6 +150,8 @@ export class GameModel {
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog
+		} else {
+			this.publishBattleLog = () => {}
 		}
 
 		this.settings = settings
