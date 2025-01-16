@@ -3,13 +3,13 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getActiveDeck} from 'logic/saved-decks/saved-decks'
 import {useSelector} from 'react-redux'
-import {sortCards} from './../../deck/deck-edit'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
 import SoundItem from './sound-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
+import {sortCardInstances} from 'common/utils/cards'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
@@ -24,7 +24,7 @@ function Toolbar() {
 			type: 'selectCards',
 			name: 'Deck',
 			description: '',
-			cards: activeDeck ? sortCards(activeDeck.cards) : [],
+			cards: activeDeck ? sortCardInstances(activeDeck.cards) : [],
 			selectionSize: 0,
 			primaryButton: {
 				text: 'Close',
