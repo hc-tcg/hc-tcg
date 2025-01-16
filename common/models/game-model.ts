@@ -15,6 +15,7 @@ import {
 	GameOutcome,
 	GameState,
 	GameVictoryReason,
+	Message,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
@@ -90,6 +91,7 @@ export class GameModel {
 
 	public readonly id: string
 	public readonly settings: GameSettings
+	public publishBattleLog?: (logs: Array<Message>) => void
 
 	public battleLog: BattleLogModel
 	public state: GameState
@@ -140,10 +142,15 @@ export class GameModel {
 		settings: GameSettings,
 		options?: {
 			randomizeOrder?: false
+			publishBattleLog?: (logs: Array<Message>) => void
 		},
 	) {
 		options = options ?? {}
 		this.id = `game_${Math.random()}`
+
+		if (options?.publishBattleLog) {
+			this.publishBattleLog = options.publishBattleLog
+		}
 
 		this.settings = settings
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')

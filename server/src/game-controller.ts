@@ -39,6 +39,7 @@ export class GameController {
 				deck: player2Deck.cards.map((card) => card.props.numericId),
 			},
 			gameSettingsFromEnv(),
+			{publishBattleLog: this.publishBattleLog},
 		)
 
 		this.createdTime = Date.now()
@@ -63,6 +64,10 @@ export class GameController {
 			spectator: false,
 			playerOnLeft: playerEntities[1],
 		})
+	}
+
+	private publishBattleLog(logs: Array<Message>) {
+		this.chat.push(...logs)
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {
