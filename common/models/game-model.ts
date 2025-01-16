@@ -94,7 +94,6 @@ export class GameModel {
 	public readonly id: string
 	public readonly settings: GameSettings
 
-	public chat: Array<Message>
 	public battleLog: BattleLogModel
 	public task: any
 	public state: GameState
@@ -155,7 +154,6 @@ export class GameModel {
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
 
-		this.chat = []
 		this.battleLog = new BattleLogModel(this)
 
 		this.task = null
