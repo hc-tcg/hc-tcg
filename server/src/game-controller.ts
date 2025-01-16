@@ -1,5 +1,3 @@
-import {PlayerComponent} from 'common/components'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {
@@ -31,6 +29,8 @@ export class GameController {
 		spectatorCode?: string,
 		apiSecret?: string,
 	) {
+		this.chat = []
+
 		this.game = new GameModel(
 			GameModel.newGameSeed(),
 			{
@@ -42,7 +42,7 @@ export class GameController {
 				deck: player2Deck.cards.map((card) => card.props.numericId),
 			},
 			gameSettingsFromEnv(),
-			{publishBattleLog: this.publishBattleLog},
+			{publishBattleLog: (logs) => this.publishBattleLog(logs)},
 		)
 
 		this.createdTime = Date.now()
@@ -50,7 +50,6 @@ export class GameController {
 		this.gameCode = gameCode || null
 		this.spectatorCode = spectatorCode || null
 		this.apiSecret = apiSecret || null
-		this.chat = []
 		this.task = null
 	}
 

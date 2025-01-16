@@ -26,6 +26,7 @@ import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 
 import assert from 'assert'
+import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectSaga,
@@ -37,7 +38,6 @@ import {
 	removeEffectSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import {GameController} from 'game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

@@ -61,7 +61,8 @@ export function* playerConnectedSaga(
 			const game = yield* select(getGame(existingPlayer.id))
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
-				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
+				game: game && getLocalGameStateForPlayer(game.game, existingPlayer.id),
+				messages: game?.chat,
 			})
 		} else {
 			console.log('invalid player connected')
