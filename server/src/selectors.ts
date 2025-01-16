@@ -4,7 +4,7 @@ import root from 'serverRoot'
 export function getGame(player: PlayerId) {
 	return () => {
 		return Object.values(root.games).find((game) =>
-			Object.keys(game.players).includes(player),
+			Object.keys(game.game.players).includes(player),
 		)
 	}
 }

@@ -1,5 +1,4 @@
 import {CARDS_LIST} from 'common/cards'
-import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {Database} from 'db/db'
 import dotenv from 'dotenv'
@@ -25,8 +24,8 @@ export class RootModel {
 		}
 	> = {}
 	public hooks = {
-		newGame: new Hook<string, (game: GameModel) => void>(),
-		gameRemoved: new Hook<string, (game: GameModel) => void>(),
+		newGame: new Hook<string, (game: GameController) => void>(),
+		gameRemoved: new Hook<string, (game: GameController) => void>(),
 		playerJoined: new Hook<string, (player: PlayerModel) => void>(),
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),

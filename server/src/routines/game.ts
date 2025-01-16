@@ -37,6 +37,7 @@ import {
 	removeEffectSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import { GameController } from 'game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -806,7 +807,7 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(game: GameModel) {
+function* gameSaga(game: GameController) {
 	if (game.settings.verboseLogging)
 		console.info(
 			`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,

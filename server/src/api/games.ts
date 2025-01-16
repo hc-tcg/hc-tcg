@@ -1,6 +1,6 @@
 import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {GameController} from 'game-controller'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 
@@ -26,8 +26,8 @@ function cancelGame(game: {
 	if (game.gameCode) delete root.privateQueue[game.gameCode]
 }
 
-function getPlayers(game: GameModel) {
-	return game.components.filter(ViewerComponent).flatMap((viewer) => {
+function getPlayers(game: GameController) {
+	return game.game.components.filter(ViewerComponent).flatMap((viewer) => {
 		if (viewer.spectator) return []
 		let player = viewer.playerOnLeft
 		return [

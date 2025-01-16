@@ -2,8 +2,10 @@ import {PlayerComponent} from 'common/components'
 import {ViewerComponent} from 'common/components/viewer-component'
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
+import {ServerMessage} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {Message} from 'common/types/game-state'
+import {broadcast} from 'utils/comm'
 
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
 export class GameController {
@@ -15,6 +17,7 @@ export class GameController {
 
 	game: GameModel
 	chat: Array<Message>
+	task: any
 
 	constructor(
 		player1: PlayerModel,
@@ -44,6 +47,7 @@ export class GameController {
 		this.spectatorCode = spectatorCode || null
 		this.apiSecret = apiSecret || null
 		this.chat = []
+		this.task = null
 
 		let playerEntities = this.game.components.filterEntities(PlayerComponent)
 
@@ -59,5 +63,12 @@ export class GameController {
 			spectator: false,
 			playerOnLeft: playerEntities[1],
 		})
+	}
+
+	public broadcastToViewers(payload: ServerMessage) {
+		broadcast(
+			this.game.viewers.map((viewer) => viewer.player),
+			payload,
+		)
 	}
 }

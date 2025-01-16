@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -10,14 +9,12 @@ import query, {ComponentQuery} from '../components/query'
 import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
 	GameOutcome,
 	GameState,
 	GameVictoryReason,
-	Message,
 	TurnAction,
 	TurnActions,
 } from '../types/game-state'
@@ -95,7 +92,6 @@ export class GameModel {
 	public readonly settings: GameSettings
 
 	public battleLog: BattleLogModel
-	public task: any
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -155,8 +151,6 @@ export class GameModel {
 		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.battleLog = new BattleLogModel(this)
-
-		this.task = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],
@@ -222,13 +216,6 @@ export class GameModel {
 
 	public getPlayers() {
 		return this.viewers.map((viewer) => viewer.player)
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
