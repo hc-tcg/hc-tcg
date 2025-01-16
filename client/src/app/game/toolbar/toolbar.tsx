@@ -1,3 +1,4 @@
+import {sortCardInstances} from 'common/utils/cards'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -9,7 +10,6 @@ import ForfeitItem from './forfeit-item'
 import SoundItem from './sound-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
-import {sortCardInstances} from 'common/utils/cards'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
