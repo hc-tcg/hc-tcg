@@ -24,7 +24,7 @@ export function isCardInstanceType(
 	type: CardCategoryT,
 ): boolean {
 	if (!card) return false
-	return card.category == type
+	return card.props.category == type
 }
 
 /**Converts a Card to a local card instance */
