@@ -104,7 +104,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-type Endpoints = 'decks' | 'cards' | 'game' | 'types'
+type Endpoints = 'decks' | 'cards' | 'games' | 'types'
 
 const cardOrderByOptions = {
 	winrate: 'Winrate',
@@ -189,7 +189,7 @@ function HallOfFame({setMenuSection}: Props) {
 			}
 			return url
 		},
-		game: () => {
+		games: () => {
 			if (endpointBefore !== null && endpointAfter !== null) {
 				return `games?after=${endpointAfter}&before=${endpointBefore}`
 			}
@@ -432,14 +432,24 @@ function HallOfFame({setMenuSection}: Props) {
 	const parseGame = (game: Record<string, any>) => {
 		return (
 			<table className={css.hallOfFameTableNoHeader}>
-				<tr>
-					<th>All time games</th>
-					<td>{game.allTimeGames}</td>
-				</tr>
-				<tr>
-					<th>Games since 1.0</th>
-					<td>{game.games}</td>
-				</tr>
+				{endpointAfter === null && endpointBefore === null && (
+					<>
+						<tr>
+							<th>All time games</th>
+							<td>{game.allTimeGames}</td>
+						</tr>
+						<tr>
+							<th>Games since 1.0</th>
+							<td>{game.games}</td>
+						</tr>
+					</>
+				)}
+				{(endpointAfter !== null || endpointBefore !== null) && (
+					<tr>
+						<th>Games</th>
+						<td>{game.games}</td>
+					</tr>
+				)}
 				<tr>
 					<th>Tie rate</th>
 					<td>{padDecimal(game.tieRate, 3)}</td>
@@ -590,7 +600,7 @@ function HallOfFame({setMenuSection}: Props) {
 			return parseDecks(data.body)
 		} else if (selectedEndpoint === 'cards') {
 			return parseCards(data)
-		} else if (selectedEndpoint === 'game') {
+		} else if (selectedEndpoint === 'games') {
 			return parseGame(data)
 		} else if (selectedEndpoint === 'types') {
 			return parseTypes(data)
@@ -630,7 +640,7 @@ function HallOfFame({setMenuSection}: Props) {
 									options={[
 										{name: 'Decks'},
 										{name: 'Cards'},
-										{name: 'Game'},
+										{name: 'Games'},
 										{name: 'Types'},
 									]}
 									showNames={true}
