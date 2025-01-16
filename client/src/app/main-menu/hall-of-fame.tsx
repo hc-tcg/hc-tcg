@@ -7,6 +7,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {sortCards} from 'common/utils/cards'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import Card from 'components/card'
@@ -271,7 +272,7 @@ function HallOfFame({setMenuSection}: Props) {
 								<Button
 									onClick={() => {
 										setScreenshotDeckModalContents(
-											parseDeckCards(deck.deck.cards),
+											sortCards(parseDeckCards(deck.deck.cards)),
 										)
 									}}
 								>
