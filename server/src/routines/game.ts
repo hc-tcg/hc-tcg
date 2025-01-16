@@ -37,7 +37,7 @@ import {
 	removeEffectSaga,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
-import { GameController } from 'game-controller'
+import {GameController} from 'game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -807,17 +807,17 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(game: GameController) {
-	if (game.settings.verboseLogging)
+function* gameSaga(conn: GameController) {
+	if (conn.game.settings.verboseLogging)
 		console.info(
-			`${game.logHeader} ${game.opponentPlayer.playerName} was decided to be the first player.`,
+			`${conn.game.logHeader} ${conn.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
 	while (true) {
-		game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, game)
+		conn.game.state.turn.turnNumber++
+		const result = yield* call(turnSaga, conn.game)
 		if (result === 'GAME_END') break
 	}
-	game.outcome = figureOutGameResult(game)
+	conn.game.outcome = figureOutGameResult(conn.game)
 }
 
 export default gameSaga

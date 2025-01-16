@@ -52,21 +52,6 @@ export class GameController {
 		this.apiSecret = apiSecret || null
 		this.chat = []
 		this.task = null
-
-		let playerEntities = this.game.components.filterEntities(PlayerComponent)
-
-		// Note player one must be added before player two to make sure each player has the right deck.
-		this.game.components.new(ViewerComponent, {
-			player: player1,
-			spectator: false,
-			playerOnLeft: playerEntities[0],
-		})
-
-		this.game.components.new(ViewerComponent, {
-			player: player2,
-			spectator: false,
-			playerOnLeft: playerEntities[1],
-		})
 	}
 
 	private publishBattleLog(logs: Array<Message>) {

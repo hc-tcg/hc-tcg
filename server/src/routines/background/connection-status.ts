@@ -14,12 +14,12 @@ export function* statusChangedSaga(
 	if (!game) return
 
 	const playerId = action.player.id
-	const opponentId = getOpponentId(game, playerId)
-	const connectionStatus = game.players[playerId]?.socket.connected
+	const opponentId = getOpponentId(game.game, playerId)
+	const connectionStatus = game.game.players[playerId]?.socket.connected
 
-	if (!opponentId || !game.players[opponentId]) return
+	if (!opponentId || !game.game.players[opponentId]) return
 
-	broadcast([game.players[opponentId]], {
+	broadcast([game.game.players[opponentId]], {
 		type: serverMessages.OPPONENT_CONNECTION,
 		isConnected: connectionStatus,
 	})

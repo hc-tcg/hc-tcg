@@ -39,6 +39,43 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
 
+function setupGame(
+	player1: PlayerModel,
+	player2: PlayerModel,
+	player1Deck: Deck,
+	player2Deck: Deck,
+	gameCode?: string,
+	spectatorCode?: string,
+	apiSecret?: string,
+): GameController {
+	let conn = new GameController(
+		player1,
+		player2,
+		player1Deck,
+		player2Deck,
+		gameCode,
+		spectatorCode,
+		apiSecret,
+	)
+
+	let playerEntities = conn.game.components.filterEntities(PlayerComponent)
+
+	// Note player one must be added before player two to make sure each player has the right deck.
+	conn.game.components.new(ViewerComponent, {
+		player: player1,
+		spectator: false,
+		playerOnLeft: playerEntities[0],
+	})
+
+	conn.game.components.new(ViewerComponent, {
+		player: player2,
+		spectator: false,
+		playerOnLeft: playerEntities[1],
+	})
+
+	return conn
+}
+
 function* gameManager(conn: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
@@ -231,12 +268,7 @@ function* randomMatchmakingSaga() {
 
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = new GameController(
-					player1,
-					player2,
-					player1.deck,
-					player2.deck,
-				)
+				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
 				root.addGame(newGame)
 				yield* safeCall(fork, gameManager, newGame)
 			} else {
@@ -336,31 +368,25 @@ function setupSolitareGame(
 	player: PlayerModel,
 	playerDeck: Deck,
 	opponent: OpponentDefs,
-): GameModel {
-	const game = new GameModel(
-		GameModel.newGameSeed(),
-		{
-			model: player,
-			deck: playerDeck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: opponent,
-			deck: opponent.deck,
-		},
-		gameSettingsFromEnv(),
-		{gameCode: 'solitare', randomizeOrder: false},
+): GameController {
+	const conn = new GameController(
+		player,
+		opponent,
+		playerDeck.cards.map((card) => card.props.numericId),
+		opponent.deck,
+		{randomizeOrder: false},
 	)
 
-	const playerEntities = game.components.filterEntities(PlayerComponent)
-	game.components.new(ViewerComponent, {
+	const playerEntities = conn.game.components.filterEntities(PlayerComponent)
+	conn.game.components.new(ViewerComponent, {
 		player,
 		spectator: false,
 		playerOnLeft: playerEntities[0],
 	})
 
-	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
+	conn.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
-	return game
+	return conn
 }
 
 export function* createBossGame(
@@ -608,7 +634,7 @@ export function* joinPrivateGame(
 			return
 		}
 
-		const newGame = new GameController(
+		const newGame = setupGame(
 			player,
 			existingPlayer,
 			player.deck,
