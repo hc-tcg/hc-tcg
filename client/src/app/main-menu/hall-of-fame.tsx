@@ -445,7 +445,7 @@ function HallOfFame({setMenuSection}: Props) {
 				)}
 				{(endpointAfter !== null || endpointBefore !== null) && (
 					<tr>
-						<th>Games Within Time Window</th>
+						<th>Games</th>
 						<td>{game.games}</td>
 					</tr>
 				)}
