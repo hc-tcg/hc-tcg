@@ -6,8 +6,8 @@ import {
 	formatNodefromShorthand,
 	formatText,
 } from 'common/utils/formatting'
-import {GameController} from 'game-controller'
 import {delay, put} from 'typed-redux-saga'
+import {GameController} from '../../game-controller'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
