@@ -10,6 +10,7 @@ import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
+import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
@@ -20,7 +21,6 @@ import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
-import CardComponent from 'components/card'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
