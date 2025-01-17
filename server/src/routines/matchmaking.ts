@@ -7,7 +7,6 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -80,7 +79,7 @@ function setupGame(
 function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
-		const viewers = con.game.viewers
+		const viewers = con.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType =
@@ -122,8 +121,8 @@ function* gameManager(con: GameController) {
 		}
 
 		if (result.playerRemoved) {
-			let playerThatLeft = con.game.viewers.find(
-				(v) => v.playerId === result.playerRemoved?.player.id,
+			let playerThatLeft = con.viewers.find(
+				(v) => v.player.id === result.playerRemoved?.player.id,
 			)?.playerOnLeft.entity
 			let remainingPlayer = con.game.components.find(
 				PlayerComponent,
@@ -137,7 +136,7 @@ function* gameManager(con: GameController) {
 			}
 		}
 
-		for (const viewer of con.game.viewers) {
+		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
@@ -161,7 +160,7 @@ function* gameManager(con: GameController) {
 
 		assert(outcome, 'All games should have an outcome after they end')
 
-		for (const viewer of con.game.viewers) {
+		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
@@ -192,14 +191,14 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length - 1,
 		)
 
-		const gamePlayers = con.game.getPlayers()
+		const gamePlayers = con.getPlayers()
 
 		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
 
-		const winnerPlayerId = con.game.viewers.find(
+		const winnerPlayerId = con.viewers.find(
 			(viewer) =>
 				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
-		)?.playerId
+		)?.player.id
 
 		delete root.games[con.id]
 		root.hooks.gameRemoved.call(con)
@@ -237,8 +236,7 @@ export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
 		.some(
-			(game) =>
-				!!game.game.viewers.find((viewer) => viewer.player.id === playerId),
+			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
 		)
 }
 
@@ -575,10 +573,7 @@ export function* joinPrivateGame(
 			createdAt: Date.now(),
 		})
 
-		broadcast(spectatorGame.game.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: spectatorGame.chat,
-		})
+		spectatorGame.chatUpdate()
 
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
@@ -667,7 +662,7 @@ export function* joinPrivateGame(
 		}
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const viewer = newGame.game.components.new(ViewerComponent, {
+			const viewer = newGame.addViewer({
 				player: root.players[playerId],
 				spectator: true,
 				playerOnLeft: newGame.game.state.order[0],

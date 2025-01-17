@@ -1,4 +1,3 @@
-import {ViewerComponent} from 'common/components/viewer-component'
 import {
 	RecievedClientMessage,
 	clientMessages,
@@ -26,9 +25,8 @@ export function* chatMessage(
 	if (message.length < 1) return
 	if (message.length > 140) return
 
-	const isSpectator = game.game.components.find(
-		ViewerComponent,
-		(_game, component) => component.player.id === playerId,
+	const isSpectator = game.viewers.find(
+		(viewer) => viewer.player.id === playerId,
 	)?.spectator
 
 	game.chat.push({

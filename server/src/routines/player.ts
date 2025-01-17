@@ -1,5 +1,3 @@
-import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -13,25 +11,26 @@ import {delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {GameController} from 'game-controller'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
 function getLocalGameStateForPlayer(
-	game: GameModel,
+	controller: GameController,
 	playerId: PlayerId,
 ): LocalGameState | undefined {
-	const player = game.players[playerId]
+	const player = controller.players[playerId]
 
-	if (game.state.timer.turnStartTime) {
-		const maxTime = game.settings.maxTurnTime * 1000
-		const remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
+	if (controller.game.state.timer.turnStartTime) {
+		const maxTime = controller.game.settings.maxTurnTime * 1000
+		const remainingTime =
+			controller.game.state.timer.turnStartTime + maxTime - Date.now()
 		const graceTime = 1000
-		game.state.timer.turnRemaining = remainingTime + graceTime
+		controller.game.state.timer.turnRemaining = remainingTime + graceTime
 	}
 
-	let viewer = game.components.find(
-		ViewerComponent,
-		(_game, viewer) => viewer.playerId === player.id,
+	let viewer = controller.viewers.find(
+		(viewer) => viewer.player.id === player.id,
 	)
 
 	if (!viewer) {
@@ -39,7 +38,7 @@ function getLocalGameStateForPlayer(
 		return undefined
 	}
 
-	return getLocalGameState(game, viewer)
+	return getLocalGameState(controller.game, viewer)
 }
 
 export function* playerConnectedSaga(
@@ -61,7 +60,7 @@ export function* playerConnectedSaga(
 			const game = yield* select(getGame(existingPlayer.id))
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
-				game: game && getLocalGameStateForPlayer(game.game, existingPlayer.id),
+				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
 				messages: game?.chat,
 			})
 		} else {

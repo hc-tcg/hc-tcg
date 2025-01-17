@@ -30,12 +30,14 @@ type GameViewerProps = {
 }
 
 export class GameViewer {
+	id: string
 	game: GameModel
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
 	player: PlayerModel
 
 	public constructor(game: GameModel, props: GameViewerProps) {
+		this.id = `${Math.random()}`
 		this.game = game
 		this.spectator = props.spectator
 		this.playerOnLeftEntity = props.playerOnLeft
@@ -95,6 +97,10 @@ export class GameController {
 		let v = new GameViewer(this.game, viewer)
 		this.viewers.push(v)
 		return v
+	}
+
+	public removeViewer(viewer: GameViewer) {
+		this.viewers = this.viewers.filter((v) => v.id !== viewer.id)
 	}
 
 	public getPlayers() {
