@@ -89,7 +89,7 @@ export class GameModel {
 
 	public readonly id: string
 	public readonly settings: GameSettings
-	public publishBattleLog: (logs: Array<Message>) => void
+	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
 	public battleLog: BattleLogModel
 	public state: GameState
@@ -140,7 +140,7 @@ export class GameModel {
 		settings: GameSettings,
 		options?: {
 			randomizeOrder?: boolean
-			publishBattleLog?: (logs: Array<Message>) => void
+			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
 		options = options ?? {}

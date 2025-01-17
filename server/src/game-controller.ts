@@ -77,7 +77,8 @@ export class GameController {
 			player2,
 			props.settings || gameSettingsFromEnv(),
 			{
-				publishBattleLog: (logs) => this.publishBattleLog(logs),
+				publishBattleLog: (logs, timeout) =>
+					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
 			},
 		)
@@ -97,14 +98,27 @@ export class GameController {
 		return v
 	}
 
-	private publishBattleLog(logs: Array<Message>) {
+	public getPlayers() {
+		return this.viewers.map((viewer) => viewer.player)
+	}
+
+	private async publishBattleLog(logs: Array<Message>, timeout: number) {
+		// We skip waiting for the logs to send if there are no players. This is because
+		// the coin flip delay confuses jest. Additionally we don't want to wait longer
+		// than what is needed in tests.
+		if (this.getPlayers().length === 0) {
+			return
+		}
+
+		await new Promise((e) => setTimeout(e, timeout))
+
 		this.chat.push(...logs)
 		this.chatUpdate()
 	}
 
 	/** Send new chat messages to the viewers */
 	public chatUpdate() {
-		broadcast(this.game.getPlayers(), {
+		broadcast(this.getPlayers(), {
 			type: serverMessages.CHAT_UPDATE,
 			messages: this.chat,
 		})
