@@ -10,7 +10,6 @@ import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
-import Card from 'components/card'
 import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
@@ -21,6 +20,7 @@ import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch} from 'react-redux'
 import css from './main-menu.module.scss'
+import CardComponent from 'components/card'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -161,8 +161,13 @@ function HallOfFame({setMenuSection}: Props) {
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
 
+	/**Decks */
 	const [decksOrderyBy, setDecksOrderBy] =
 		useState<keyof typeof decksOrderByOptions>('winrate')
+	const [showDecksWithDisabled, setShowDecksWithDisabled] =
+		useState<boolean>(false)
+	const [showDecksBelow50Winrate, setShowDecksBelow50Winrate] =
+		useState<boolean>(false)
 
 	/* Types */
 	const [showTypeWinrate, setShowTypeWinrate] = useState<boolean>(true)
@@ -170,7 +175,7 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
-			let url = `decks?minimumWins=10&orderBy=${decksOrderyBy}`
+			let url = `decks?minimumWins=25&orderBy=${decksOrderyBy}`
 			if (endpointBefore !== null) {
 				url += `&before=${endpointBefore}`
 			}
@@ -250,6 +255,23 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
 		if (!decks) return
+
+		if (!showDecksWithDisabled) {
+			decks = decks.filter((deck) =>
+				deck.deck.cards.every(
+					(card: string) =>
+						!(
+							EXPANSIONS[CARDS[card].expansion].disabled ||
+							serverConfig.limits.bannedCards.includes(card)
+						),
+				),
+			)
+		}
+
+		if (!showDecksBelow50Winrate) {
+			decks = decks.filter((deck) => deck.winrate >= 0.5)
+		}
+
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
@@ -344,7 +366,7 @@ function HallOfFame({setMenuSection}: Props) {
 									if (!card) return <td key={index}></td>
 									return (
 										<td key={index}>
-											<Card
+											<CardComponent
 												displayTokenCost={false}
 												card={card as WithoutFunctions<CardType>}
 											/>
@@ -689,7 +711,7 @@ function HallOfFame({setMenuSection}: Props) {
 								{selectedEndpoint === 'decks' && (
 									<>
 										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Order By:</p>
+											<p style={{flexGrow: 1}}>Sort By:</p>
 											<Dropdown
 												button={
 													<DropDownButton>
@@ -712,19 +734,34 @@ function HallOfFame({setMenuSection}: Props) {
 												}}
 											/>
 										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>
+												Show decks that include disabled cards:
+											</p>
+											<Checkbox
+												defaultChecked={showDecksWithDisabled}
+												onCheck={() =>
+													setShowDecksWithDisabled(!showDecksWithDisabled)
+												}
+											></Checkbox>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>
+												Show decks below a 50% winrate:
+											</p>
+											<Checkbox
+												defaultChecked={showDecksBelow50Winrate}
+												onCheck={() =>
+													setShowDecksBelow50Winrate(!showDecksBelow50Winrate)
+												}
+											></Checkbox>
+										</div>
 									</>
 								)}
 								{selectedEndpoint === 'cards' && (
 									<>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
-											<Checkbox
-												defaultChecked={showDisabled}
-												onCheck={() => setShowDisabled(!showDisabled)}
-											></Checkbox>
-										</div>
 										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Order By:</p>
+											<p style={{flexGrow: 1}}>Sort By:</p>
 											<Dropdown
 												button={
 													<DropDownButton>
@@ -746,6 +783,13 @@ function HallOfFame({setMenuSection}: Props) {
 													)
 												}}
 											/>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+											<Checkbox
+												defaultChecked={showDisabled}
+												onCheck={() => setShowDisabled(!showDisabled)}
+											></Checkbox>
 										</div>
 									</>
 								)}
