@@ -822,7 +822,7 @@ function* gameSaga(con: GameController) {
 		)
 	while (true) {
 		con.game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, conn)
+		const result = yield* call(turnSaga, con)
 		if (result === 'GAME_END') break
 	}
 	con.game.outcome = figureOutGameResult(con.game)

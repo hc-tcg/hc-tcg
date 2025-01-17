@@ -47,7 +47,7 @@ function setupGame(
 	spectatorCode?: string,
 	apiSecret?: string,
 ): GameController {
-	let conn = new GameController(
+	let con = new GameController(
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
@@ -76,7 +76,7 @@ function setupGame(
 		playerOnLeft: playerEntities[1],
 	})
 
-	return conn
+	return con
 }
 
 function* gameManager(con: GameController) {
