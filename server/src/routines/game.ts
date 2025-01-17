@@ -816,16 +816,16 @@ function* checkDeckedOut(game: GameModel) {
 }
 
 function* gameSaga(conn: GameController) {
-	if (conn.game.settings.verboseLogging)
+	if (con.game.settings.verboseLogging)
 		console.info(
-			`${conn.game.logHeader} ${conn.game.opponentPlayer.playerName} was decided to be the first player.`,
+			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
 	while (true) {
-		conn.game.state.turn.turnNumber++
+		con.game.state.turn.turnNumber++
 		const result = yield* call(turnSaga, conn)
 		if (result === 'GAME_END') break
 	}
-	conn.game.outcome = figureOutGameResult(conn.game)
+	con.game.outcome = figureOutGameResult(con.game)
 }
 
 export default gameSaga

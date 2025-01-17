@@ -61,16 +61,16 @@ function setupGame(
 		apiSecret,
 	)
 
-	let playerEntities = conn.game.components.filterEntities(PlayerComponent)
+	let playerEntities = con.game.components.filterEntities(PlayerComponent)
 
 	// Note player one must be added before player two to make sure each player has the right deck.
-	conn.game.components.new(ViewerComponent, {
+	con.game.components.new(ViewerComponent, {
 		player: player1,
 		spectator: false,
 		playerOnLeft: playerEntities[0],
 	})
 
-	conn.game.components.new(ViewerComponent, {
+	con.game.components.new(ViewerComponent, {
 		player: player2,
 		spectator: false,
 		playerOnLeft: playerEntities[1],
@@ -82,14 +82,14 @@ function setupGame(
 function* gameManager(conn: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
-		const viewers = conn.game.viewers
+		const viewers = con.game.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType =
-			playerIds.length === 2 ? (conn.gameCode ? 'Private' : 'Public') : 'PvE'
+			playerIds.length === 2 ? (con.gameCode ? 'Private' : 'Public') : 'PvE'
 
 		console.info(
-			`${conn.game.logHeader}`,
+			`${con.game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
 			'Total games:',
@@ -120,34 +120,34 @@ function* gameManager(conn: GameController) {
 		})
 
 		if (result.timeout) {
-			conn.game.outcome = {type: 'timeout'}
+			con.game.outcome = {type: 'timeout'}
 		}
 
 		if (result.playerRemoved) {
-			let playerThatLeft = conn.game.viewers.find(
+			let playerThatLeft = con.game.viewers.find(
 				(v) => v.playerId === result.playerRemoved?.player.id,
 			)?.playerOnLeft.entity
-			let remainingPlayer = conn.game.components.find(
+			let remainingPlayer = con.game.components.find(
 				PlayerComponent,
 				(_g, c) => c.entity !== playerThatLeft,
 			)?.entity
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
-			conn.game.outcome = {
+			con.game.outcome = {
 				type: 'player-won',
 				victoryReason: 'forfeit',
 				winner: remainingPlayer,
 			}
 		}
 
-		for (const viewer of conn.game.viewers) {
-			const gameState = getLocalGameState(conn.game, viewer)
+		for (const viewer of con.game.viewers) {
+			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(conn.game, 0)
-				if (!conn.game.endInfo.victoryReason) {
+				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+				if (!con.game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					conn.game.components
+					con.game.components
 						.filter(PlayerComponent)
 						.forEach(
 							(player) => (gameState.players[player.entity].coinFlips = []),
@@ -157,21 +157,21 @@ function* gameManager(conn: GameController) {
 		}
 	} catch (err) {
 		console.log('Error: ', err)
-		conn.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
+		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
-		const outcome = conn.game.outcome
+		const outcome = con.game.outcome
 
 		assert(outcome, 'All games should have an outcome after they end')
 
-		for (const viewer of conn.game.viewers) {
-			const gameState = getLocalGameState(conn.game, viewer)
+		for (const viewer of con.game.viewers) {
+			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(conn.game, 0)
-				if (!conn.game.endInfo.victoryReason) {
+				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+				if (!con.game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					conn.game.components
+					con.game.components
 						.filter(PlayerComponent)
 						.forEach(
 							(player) => (gameState.players[player.entity].coinFlips = []),
@@ -186,19 +186,19 @@ function* gameManager(conn: GameController) {
 		}
 
 		if (conn.task) yield* cancel(conn.task)
-		conn.game.hooks.afterGameEnd.call()
+		con.game.hooks.afterGameEnd.call()
 
-		const gameType = conn.gameCode ? 'Private' : 'Public'
+		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
 
-		const gamePlayers = conn.game.getPlayers()
+		const gamePlayers = con.game.getPlayers()
 
 		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
 
-		const winnerPlayerId = conn.game.viewers.find(
+		const winnerPlayerId = con.game.viewers.find(
 			(viewer) =>
 				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
 		)?.playerId
@@ -228,7 +228,7 @@ function* gameManager(conn: GameController) {
 				outcome,
 				Date.now() - conn.createdTime,
 				winner ? winner.uuid : null,
-				conn.game.rngSeed,
+				con.game.rngSeed,
 				Buffer.from([0x00]),
 			)
 		}
@@ -387,14 +387,14 @@ function setupSolitareGame(
 		false,
 	)
 
-	const playerEntities = conn.game.components.filterEntities(PlayerComponent)
-	conn.game.components.new(ViewerComponent, {
+	const playerEntities = con.game.components.filterEntities(PlayerComponent)
+	con.game.components.new(ViewerComponent, {
 		player,
 		spectator: false,
 		playerOnLeft: playerEntities[0],
 	})
 
-	conn.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
+	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
 	return conn
 }
