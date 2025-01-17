@@ -62,16 +62,16 @@ function setupGame(
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
 
 	// Note player one must be added before player two to make sure each player has the right deck.
-	con.game.components.new(ViewerComponent, {
+	con.addViewer({
 		player: player1,
-		spectator: false,
 		playerOnLeft: playerEntities[0],
+		spectator: false,
 	})
 
-	con.game.components.new(ViewerComponent, {
+	con.addViewer({
 		player: player2,
-		spectator: false,
 		playerOnLeft: playerEntities[1],
+		spectator: false,
 	})
 
 	return con
@@ -383,10 +383,10 @@ function setupSolitareGame(
 	)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
-	con.game.components.new(ViewerComponent, {
+	con.addViewer({
 		player,
-		spectator: false,
 		playerOnLeft: playerEntities[0],
+		spectator: false,
 	})
 
 	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
@@ -556,10 +556,10 @@ export function* joinPrivateGame(
 	)
 
 	if (spectatorGame) {
-		const viewer = spectatorGame.game.components.new(ViewerComponent, {
+		const viewer = spectatorGame.addViewer({
 			player: player,
-			spectator: true,
 			playerOnLeft: spectatorGame.game.state.order[0],
+			spectator: true,
 		})
 
 		console.log(

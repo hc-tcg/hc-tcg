@@ -12,6 +12,7 @@ import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
 import {PlayerModel} from 'common/models/player-model'
+import {PlayerEntity} from 'common/entities'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -22,16 +23,33 @@ export type GameControllerProps = {
 	settings?: GameSettings
 }
 
-export type GameViewer =
-	| {
-			type: 'player'
-			side: 'left' | 'right'
-			player: PlayerModel
-	  }
-	| {
-			type: 'spectator'
-			player: PlayerModel
-	  }
+type GameViewerProps = {
+	spectator: boolean
+	playerOnLeft: PlayerEntity
+	player: PlayerModel
+}
+
+export class GameViewer {
+	game: GameModel
+	spectator: boolean
+	playerOnLeftEntity: PlayerEntity
+	player: PlayerModel
+
+	public constructor(game: GameModel, props: GameViewerProps) {
+		this.game = game
+		this.spectator = props.spectator
+		this.playerOnLeftEntity = props.playerOnLeft
+		this.player = props.player
+	}
+
+	get playerOnLeft() {
+		return this.game.components.getOrError(this.playerOnLeftEntity)
+	}
+
+	get playerOnRight() {
+		return this.playerOnLeft.opponentPlayer
+	}
+}
 
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
 export class GameController {
@@ -73,8 +91,10 @@ export class GameController {
 		this.viewers = []
 	}
 
-	public addViewer(viewer: GameViewer) {
-		this.viewers.push(viewer)
+	public addViewer(viewer: GameViewerProps) {
+		let v = new GameViewer(this.game, viewer)
+		this.viewers.push(v)
+		return v
 	}
 
 	private publishBattleLog(logs: Array<Message>) {
@@ -91,7 +111,7 @@ export class GameController {
 	}
 
 	public broadcastState() {
-		this.game.viewers.forEach((viewer) => {
+		this.viewers.forEach((viewer) => {
 			const localGameState = getLocalGameState(this.game, viewer)
 
 			broadcast([viewer.player], {
