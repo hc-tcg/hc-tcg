@@ -569,7 +569,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		if (playerAI && !playerAISagaRunning) {
 			yield* fork(function* () {
 				playerAISagaRunning = true
-				yield* call(virtualPlayerActionSaga, con.game, playerAI)
+				yield* call(virtualPlayerActionSaga, con, playerAI)
 				playerAISagaRunning = false
 			})
 		}
