@@ -335,16 +335,19 @@ export class BattleLogModel {
 	}
 
 	public addTurnStartEntry() {
-		this.game.publishBattleLog([
-			{
-				sender: {
-					type: 'system',
-					id: this.game.currentPlayer.entity,
+		this.game.publishBattleLog(
+			[
+				{
+					sender: {
+						type: 'system',
+						id: this.game.currentPlayer.entity,
+					},
+					createdAt: Date.now(),
+					message: LineNode(),
 				},
-				createdAt: Date.now(),
-				message: LineNode(),
-			},
-		])
+			],
+			0,
+		)
 	}
 
 	public addStatusEffectEntry(

@@ -11,7 +11,7 @@ import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {PlayerEntity} from 'common/entities'
 
 export type GameControllerProps = {
@@ -61,8 +61,7 @@ export class GameController {
 	game: GameModel
 	chat: Array<Message>
 	task: any
-
-	private viewers: Array<GameViewer>
+	viewers: Array<GameViewer>
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -100,6 +99,16 @@ export class GameController {
 
 	public getPlayers() {
 		return this.viewers.map((viewer) => viewer.player)
+	}
+
+	public get players() {
+		return this.viewers.reduce(
+			(acc, viewer) => {
+				acc[viewer.player.id] = viewer.player
+				return acc
+			},
+			{} as Record<PlayerId, PlayerModel>,
+		)
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {

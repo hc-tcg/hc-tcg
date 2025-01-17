@@ -39,7 +39,7 @@ export function* chatMessage(
 		message: concatFormattedTextNodes(
 			FormatNode(
 				isSpectator ? 'spectator' : 'player',
-				PlaintextNode(`${game.game.players[playerId].name}`),
+				PlaintextNode(`${game.players[playerId].name}`),
 			),
 			formatText(` ${message}`, {
 				censor: true,
