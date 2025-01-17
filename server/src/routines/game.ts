@@ -10,7 +10,6 @@ import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {TypeT} from 'common/types/cards'
 import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
 import {
@@ -22,8 +21,6 @@ import {hasEnoughEnergy} from 'common/utils/attacks'
 import {buffers} from 'redux-saga'
 import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
-import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
 
 import assert from 'assert'
 import {GameController} from 'game-controller'
@@ -365,21 +362,8 @@ function* checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function* sendGameState(game: GameModel) {
-	game.viewers.forEach((viewer) => {
-		const localGameState = getLocalGameState(game, viewer)
-
-		broadcast([viewer.player], {
-			type: serverMessages.GAME_STATE,
-			localGameState,
-		})
-	})
-
-	game.voiceLineQueue = []
-}
-
 function* turnActionSaga(
-	game: GameModel,
+	con: GameController,
 	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
@@ -387,9 +371,9 @@ function* turnActionSaga(
 	let endTurn = false
 
 	const availableActions =
-		turnAction.playerEntity === game.currentPlayer.entity
-			? game.state.turn.availableActions
-			: game.state.turn.opponentAvailableActions
+		turnAction.playerEntity === con.game.currentPlayer.entity
+			? con.game.state.turn.availableActions
+			: con.game.state.turn.opponentAvailableActions
 
 	try {
 		// We don't check if slot actions are available because the playCardSaga will verify that.
@@ -414,46 +398,46 @@ function* turnActionSaga(
 			case 'PLAY_ITEM_CARD':
 			case 'PLAY_EFFECT_CARD':
 			case 'PLAY_SINGLE_USE_CARD':
-				yield* call(playCardSaga, game, turnAction.action)
+				yield* call(playCardSaga, con.game, turnAction.action)
 				break
 			case 'SINGLE_USE_ATTACK':
 			case 'PRIMARY_ATTACK':
 			case 'SECONDARY_ATTACK':
-				yield* call(attackSaga, game, turnAction.action)
+				yield* call(attackSaga, con.game, turnAction.action)
 				break
 			case 'CHANGE_ACTIVE_HERMIT':
-				yield* call(changeActiveHermitSaga, game, turnAction.action)
+				yield* call(changeActiveHermitSaga, con.game, turnAction.action)
 				break
 			case 'APPLY_EFFECT':
-				yield* call(applyEffectSaga, game, turnAction.action)
+				yield* call(applyEffectSaga, con.game, turnAction.action)
 				break
 			case 'REMOVE_EFFECT':
-				yield* call(removeEffectSaga, game)
+				yield* call(removeEffectSaga, con.game)
 				break
 			case 'PICK_REQUEST':
 				yield* call(
 					pickRequestSaga,
-					game,
+					con.game,
 					(turnAction.action as PickSlotActionData)?.entity,
 				)
 				break
 			case 'MODAL_REQUEST':
-				yield* call(modalRequestSaga, game, turnAction?.action?.modalResult)
+				yield* call(modalRequestSaga, con.game, turnAction?.action?.modalResult)
 				break
 			case 'END_TURN':
 				endTurn = true
 				// Turn end actions are not in the battle log, so we log them to stdout manually.
-				if (game.settings.verboseLogging) {
+				if (con.game.settings.verboseLogging) {
 					console.info(
-						`${game.logHeader} ${game.currentPlayer.playerName} ended their turn.`,
+						`${con.game.logHeader} ${con.game.currentPlayer.playerName} ended their turn.`,
 					)
 				}
 				break
 			case 'DELAY':
-				yield* call(sendGameState, game)
+				con.broadcastState()
 				break
 			case 'FORFEIT':
-				game.endInfo.deadPlayerEntities = [turnAction.action.player]
+				con.game.endInfo.deadPlayerEntities = [turnAction.action.player]
 				return 'FORFEIT'
 			default:
 				// Unknown action type, ignore it completely
@@ -462,21 +446,21 @@ function* turnActionSaga(
 				)
 		}
 	} catch (e) {
-		if (game.settings.logErrorsToStderr) {
-			console.error(`${game.logHeader} ${(e as Error).stack}`.trimStart())
+		if (con.game.settings.logErrorsToStderr) {
+			console.error(`${con.game.logHeader} ${(e as Error).stack}`.trimStart())
 		} else {
 			throw e
 		}
 	}
 
 	// We log endTurn at the start of the turn so the state updates properly.
-	if (game.settings.verboseLogging && !endTurn) {
-		printBoardState(game)
+	if (con.game.settings.verboseLogging && !endTurn) {
+		printBoardState(con.game)
 	}
 
 	let deadPlayers = []
-	deadPlayers.push(...(yield* call(checkDeckedOut, game)))
-	deadPlayers.push(...(yield* call(checkHermitHealth, game)))
+	deadPlayers.push(...(yield* call(checkDeckedOut, con.game)))
+	deadPlayers.push(...(yield* call(checkHermitHealth, con.game)))
 	if (deadPlayers.length) endTurn = true
 
 	if (endTurn) {
@@ -562,7 +546,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		const graceTime = 1000
 		con.game.state.timer.turnRemaining = Math.floor(remainingTime + graceTime)
 
-		yield* call(sendGameState, con.game)
+		con.broadcastState()
 		con.game.battleLog.sendLogs()
 
 		const playerAI = getPlayerAI(con.game)
@@ -652,7 +636,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		}
 
 		// Run action logic
-		const result = yield* call(turnActionSaga, con.game, raceResult.turnAction)
+		const result = yield* call(turnActionSaga, con, raceResult.turnAction)
 
 		if (result === 'END_TURN') {
 			break

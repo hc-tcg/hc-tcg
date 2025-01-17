@@ -10,6 +10,7 @@ import {
 import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
+import {getLocalGameState} from 'utils/state-gen'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -69,6 +70,19 @@ export class GameController {
 			type: serverMessages.CHAT_UPDATE,
 			messages: this.chat,
 		})
+	}
+
+	public broadcastState() {
+		this.game.viewers.forEach((viewer) => {
+			const localGameState = getLocalGameState(this.game, viewer)
+
+			broadcast([viewer.player], {
+				type: serverMessages.GAME_STATE,
+				localGameState,
+			})
+		})
+
+		this.game.voiceLineQueue = []
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {
