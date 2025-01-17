@@ -5,7 +5,7 @@ import {
 } from 'common/socket-messages/server-messages'
 import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {broadcast} from 'utils/comm'
+import {broadcast} from './utils/comm'
 
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
 export class GameController {
