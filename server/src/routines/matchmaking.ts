@@ -48,10 +48,14 @@ function setupGame(
 	apiSecret?: string,
 ): GameController {
 	let conn = new GameController(
-		player1,
-		player2,
-		player1Deck,
-		player2Deck,
+		{
+			model: player1,
+			deck: player1Deck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: player2,
+			deck: player2Deck.cards.map((card) => card.props.numericId),
+		},
 		gameCode,
 		spectatorCode,
 		apiSecret,
@@ -369,11 +373,18 @@ function setupSolitareGame(
 	opponent: OpponentDefs,
 ): GameController {
 	const conn = new GameController(
-		player,
-		opponent,
-		playerDeck.cards.map((card) => card.props.numericId),
-		opponent.deck,
-		{randomizeOrder: false},
+		{
+			model: player,
+			deck: playerDeck.cards.map((card) => card.props.numericId),
+		},
+		{
+			model: opponent,
+			deck: opponent.deck,
+		},
+		undefined,
+		undefined,
+		undefined,
+		false,
 	)
 
 	const playerEntities = conn.game.components.filterEntities(PlayerComponent)

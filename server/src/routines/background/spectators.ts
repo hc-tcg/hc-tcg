@@ -15,7 +15,7 @@ function* spectatorLeaveSaga(
 	let game = yield* select(getGame(action.playerId))
 	if (!game) return
 
-	let viewer = game.components.find(
+	let viewer = game.game.components.find(
 		ViewerComponent,
 		(_game, component) => component.playerId === action.playerId,
 	)
@@ -29,12 +29,12 @@ function* spectatorLeaveSaga(
 		createdAt: Date.now(),
 	})
 
-	broadcast(game.getPlayers(), {
+	broadcast(game.game.getPlayers(), {
 		type: serverMessages.CHAT_UPDATE,
 		messages: game.chat,
 	})
 
-	if (viewer) game.components.delete(viewer.entity)
+	if (viewer) game.game.components.delete(viewer.entity)
 }
 
 export default spectatorLeaveSaga

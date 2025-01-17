@@ -141,7 +141,7 @@ export class GameModel {
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
 		options?: {
-			randomizeOrder?: false
+			randomizeOrder?: boolean
 			publishBattleLog?: (logs: Array<Message>) => void
 		},
 	) {

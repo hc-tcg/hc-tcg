@@ -1,11 +1,10 @@
 import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
 import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {Deck} from 'common/types/deck'
 import {Message} from 'common/types/game-state'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from 'utils/comm'
 
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
@@ -21,28 +20,24 @@ export class GameController {
 	task: any
 
 	constructor(
-		player1: PlayerModel,
-		player2: PlayerModel,
-		player1Deck: Deck,
-		player2Deck: Deck,
+		player1: PlayerSetupDefs,
+		player2: PlayerSetupDefs,
 		gameCode?: string,
 		spectatorCode?: string,
 		apiSecret?: string,
+		randomizeOrder?: boolean,
 	) {
 		this.chat = []
 
 		this.game = new GameModel(
 			GameModel.newGameSeed(),
-			{
-				model: player1,
-				deck: player1Deck.cards.map((card) => card.props.numericId),
-			},
-			{
-				model: player2,
-				deck: player2Deck.cards.map((card) => card.props.numericId),
-			},
+			player1,
+			player2,
 			gameSettingsFromEnv(),
-			{publishBattleLog: (logs) => this.publishBattleLog(logs)},
+			{
+				publishBattleLog: (logs) => this.publishBattleLog(logs),
+				randomizeOrder: randomizeOrder ?? true,
+			},
 		)
 
 		this.createdTime = Date.now()
