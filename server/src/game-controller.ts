@@ -10,7 +10,8 @@ import {
 import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
-import {getLocalGameState} from 'utils/state-gen'
+import {getLocalGameState} from './utils/state-gen'
+import {PlayerModel} from 'common/models/player-model'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -21,6 +22,17 @@ export type GameControllerProps = {
 	settings?: GameSettings
 }
 
+export type GameViewer =
+	| {
+			type: 'player'
+			side: 'left' | 'right'
+			player: PlayerModel
+	  }
+	| {
+			type: 'spectator'
+			player: PlayerModel
+	  }
+
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
 export class GameController {
 	createdTime: number
@@ -28,10 +40,11 @@ export class GameController {
 	gameCode: string | null
 	spectatorCode: string | null
 	apiSecret: string | null
-
 	game: GameModel
 	chat: Array<Message>
 	task: any
+
+	private viewers: Array<GameViewer>
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -57,6 +70,11 @@ export class GameController {
 		this.spectatorCode = props.spectatorCode || null
 		this.apiSecret = props.apiSecret || null
 		this.task = null
+		this.viewers = []
+	}
+
+	public addViewer(viewer: GameViewer) {
+		this.viewers.push(viewer)
 	}
 
 	private publishBattleLog(logs: Array<Message>) {
@@ -87,7 +105,7 @@ export class GameController {
 
 	public broadcastToViewers(payload: ServerMessage) {
 		broadcast(
-			this.game.viewers.map((viewer) => viewer.player),
+			this.viewers.map((viewer) => viewer.player),
 			payload,
 		)
 	}
