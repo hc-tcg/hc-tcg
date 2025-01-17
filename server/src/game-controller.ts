@@ -1,8 +1,10 @@
+import {PlayerEntity} from 'common/entities'
 import {
 	GameModel,
 	GameSettings,
 	gameSettingsFromEnv,
 } from 'common/models/game-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	ServerMessage,
 	serverMessages,
@@ -11,8 +13,6 @@ import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
-import {PlayerEntity} from 'common/entities'
 
 export type GameControllerProps = {
 	gameCode?: string
