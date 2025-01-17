@@ -1,4 +1,8 @@
-import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
+import {
+	GameModel,
+	GameSettings,
+	gameSettingsFromEnv,
+} from 'common/models/game-model'
 import {
 	ServerMessage,
 	serverMessages,
@@ -6,6 +10,15 @@ import {
 import {Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
+
+export type GameControllerProps = {
+	gameCode?: string
+	spectatorCode?: string
+	apiSecret?: string
+	randomizeOrder?: boolean
+	randomSeed?: any
+	settings?: GameSettings
+}
 
 /** An object that contains the HC TCG game and infromation related to the game, such as chat messages */
 export class GameController {
@@ -22,29 +35,26 @@ export class GameController {
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
-		gameCode?: string,
-		spectatorCode?: string,
-		apiSecret?: string,
-		randomizeOrder?: boolean,
+		props: GameControllerProps,
 	) {
 		this.chat = []
 
 		this.game = new GameModel(
-			GameModel.newGameSeed(),
+			props.randomSeed || GameModel.newGameSeed(),
 			player1,
 			player2,
-			gameSettingsFromEnv(),
+			props.settings || gameSettingsFromEnv(),
 			{
 				publishBattleLog: (logs) => this.publishBattleLog(logs),
-				randomizeOrder: randomizeOrder ?? true,
+				randomizeOrder: props.randomizeOrder ?? true,
 			},
 		)
 
 		this.createdTime = Date.now()
 		this.id = 'game-controller_' + Math.random().toString()
-		this.gameCode = gameCode || null
-		this.spectatorCode = spectatorCode || null
-		this.apiSecret = apiSecret || null
+		this.gameCode = props.gameCode || null
+		this.spectatorCode = props.spectatorCode || null
+		this.apiSecret = props.apiSecret || null
 		this.task = null
 	}
 

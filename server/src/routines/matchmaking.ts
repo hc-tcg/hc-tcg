@@ -56,9 +56,7 @@ function setupGame(
 			model: player2,
 			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
-		gameCode,
-		spectatorCode,
-		apiSecret,
+		{gameCode, spectatorCode, apiSecret},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -96,14 +94,14 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
-		conn.broadcastToViewers({type: serverMessages.GAME_START})
-		root.hooks.newGame.call(conn)
-		conn.task = yield* spawn(gameSaga, conn)
+		con.broadcastToViewers({type: serverMessages.GAME_START})
+		root.hooks.newGame.call(con)
+		con.task = yield* spawn(gameSaga, con)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield* race({
 			// game ended (or crashed -> catch)
-			gameEnd: join(conn.task),
+			gameEnd: join(con.task),
 			// kill a game after one hour
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
@@ -185,7 +183,7 @@ function* gameManager(con: GameController) {
 			})
 		}
 
-		if (conn.task) yield* cancel(conn.task)
+		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
@@ -203,8 +201,8 @@ function* gameManager(con: GameController) {
 				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
 		)?.playerId
 
-		delete root.games[conn.id]
-		root.hooks.gameRemoved.call(conn)
+		delete root.games[con.id]
+		root.hooks.gameRemoved.call(con)
 
 		if (!winnerPlayerId && outcome.type === 'player-won') {
 			console.error(
@@ -226,7 +224,7 @@ function* gameManager(con: GameController) {
 				gamePlayers[0],
 				gamePlayers[1],
 				outcome,
-				Date.now() - conn.createdTime,
+				Date.now() - con.createdTime,
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				Buffer.from([0x00]),
@@ -372,7 +370,7 @@ function setupSolitareGame(
 	playerDeck: Deck,
 	opponent: OpponentDefs,
 ): GameController {
-	const conn = new GameController(
+	const con = new GameController(
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),
@@ -381,10 +379,7 @@ function setupSolitareGame(
 			model: opponent,
 			deck: opponent.deck,
 		},
-		undefined,
-		undefined,
-		undefined,
-		false,
+		{randomizeOrder: false},
 	)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -396,7 +391,7 @@ function setupSolitareGame(
 
 	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
-	return conn
+	return con
 }
 
 export function* createBossGame(
