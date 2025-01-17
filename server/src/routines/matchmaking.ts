@@ -79,7 +79,7 @@ function setupGame(
 	return conn
 }
 
-function* gameManager(conn: GameController) {
+function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
 		const viewers = con.game.viewers

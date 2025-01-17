@@ -815,7 +815,7 @@ function* checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(conn: GameController) {
+function* gameSaga(con: GameController) {
 	if (con.game.settings.verboseLogging)
 		console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
