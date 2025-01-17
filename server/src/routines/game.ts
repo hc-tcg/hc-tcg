@@ -731,7 +731,7 @@ export function* turnSaga(con: GameController) {
 
 	let result
 	try {
-		result = yield* call(turnActionsSaga, con.game, turnActionChannel)
+		result = yield* call(turnActionsSaga, con, turnActionChannel)
 	} finally {
 		turnActionChannel.close()
 	}
