@@ -432,7 +432,7 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGame = setupSolitareGame(player, player.deck, {
+	const newBossGameController = setupSolitareGame(player, player.deck, {
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
@@ -440,17 +440,19 @@ export function* createBossGame(
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 	})
-	newBossGame.state.isBossGame = true
+	newBossGameController.game.state.isBossGame = true
 
 	function destroyRow(row: RowComponent) {
-		newBossGame.components
+		newBossGameController.game.components
 			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-		newBossGame.components.delete(row.entity)
+			.forEach((slotEntity) =>
+				newBossGameController.game.components.delete(slotEntity),
+			)
+		newBossGameController.game.components.delete(row.entity)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGame.components
+	newBossGameController.game.components
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
@@ -458,7 +460,7 @@ export function* createBossGame(
 		)
 		.forEach(destroyRow)
 	// Remove boss' rows other than index 0
-	newBossGame.components
+	newBossGameController.game.components
 		.filter(
 			RowComponent,
 			query.row.currentPlayer,
@@ -466,19 +468,21 @@ export function* createBossGame(
 		)
 		.forEach(destroyRow)
 	// Remove boss' item slots
-	newBossGame.components
+	newBossGameController.game.components
 		.filterEntities(
 			BoardSlotComponent,
 			query.slot.currentPlayer,
 			query.slot.item,
 		)
-		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+		.forEach((slotEntity) =>
+			newBossGameController.game.components.delete(slotEntity),
+		)
 
-	newBossGame.settings.disableRewardCards = true
+	newBossGameController.game.settings.disableRewardCards = true
 
-	root.addGame(newBossGame)
+	root.addGame(newBossGameController)
 
-	yield* safeCall(fork, gameManager, newBossGame)
+	yield* safeCall(fork, gameManager, newBossGameController)
 }
 
 export function* createPrivateGame(

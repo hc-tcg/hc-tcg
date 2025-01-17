@@ -97,8 +97,8 @@ export function getGameInfo(secret: string) {
 		createdTime: game.createdTime,
 		spectatorCode: game.spectatorCode,
 		players: getPlayers(game),
-		viewers: game.viewers.length,
-		state: game.state,
+		viewers: game.game.viewers.length,
+		state: game.game.state,
 	}
 }
 

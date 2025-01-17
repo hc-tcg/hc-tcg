@@ -1,7 +1,5 @@
 import {AIComponent} from 'common/components/ai-component'
-import {GameModel} from 'common/models/game-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {
 	PlaintextNode,
 	concatFormattedTextNodes,
@@ -9,17 +7,17 @@ import {
 	formatText,
 } from 'common/utils/formatting'
 import {delay, put} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
+import {GameController} from 'game-controller'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
 }
 
 export default function* virtualPlayerActionSaga(
-	game: GameModel,
+	con: GameController,
 	component: AIComponent,
 ) {
-	const coinFlips = game.currentPlayer.coinFlips
+	const coinFlips = con.game.currentPlayer.coinFlips
 	yield* delay(
 		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
 	)
@@ -32,7 +30,7 @@ export default function* virtualPlayerActionSaga(
 			playerEntity: component.playerEntity,
 		})
 	} catch (e) {
-		game.chat.push({
+		con.chat.push({
 			createdAt: Date.now(),
 			message: concatFormattedTextNodes(
 				formatText(`$oAI$: "${component.ai.id}" `),
@@ -43,9 +41,6 @@ export default function* virtualPlayerActionSaga(
 				id: component.playerEntity,
 			},
 		})
-		broadcast(game.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: game.chat,
-		})
+		con.chatUpdate()
 	}
 }
