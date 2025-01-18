@@ -32,7 +32,7 @@ import {
 	LocalStatusEffectInstance,
 	WithoutFunctions,
 } from 'common/types/server-requests'
-import {GameViewer} from 'game-controller'
+import {GameViewer} from '../game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
