@@ -295,7 +295,7 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
-function* checkHermitHealth(game: GameModel) {
+function checkHermitHealth(game: GameModel) {
 	const deadPlayers: Array<PlayerComponent> = []
 	for (let playerState of game.components.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
@@ -457,8 +457,8 @@ function* turnActionSaga(
 	}
 
 	let deadPlayers = []
-	deadPlayers.push(...(yield* call(checkDeckedOut, con.game)))
-	deadPlayers.push(...(yield* call(checkHermitHealth, con.game)))
+	deadPlayers.push(...checkDeckedOut(con.game))
+	deadPlayers.push(...checkHermitHealth(con.game))
 	if (deadPlayers.length) endTurn = true
 
 	if (endTurn) {
@@ -784,7 +784,7 @@ export function* turnSaga(con: GameController) {
 	return 'DONE'
 }
 
-function* checkDeckedOut(game: GameModel) {
+function checkDeckedOut(game: GameModel) {
 	if (
 		game.settings.disableDeckOut ||
 		game.settings.startWithAllCards ||
