@@ -26,13 +26,13 @@ import assert from 'assert'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
-	applyEffectSaga,
-	attackSaga,
-	changeActiveHermitSaga,
-	modalRequestSaga,
-	pickRequestSaga,
-	playCardSaga,
-	removeEffectSaga,
+	applyEffectAction,
+	attackAction,
+	changeActiveHermitAction,
+	modalRequestAction,
+	pickRequestAction,
+	playCardAction,
+	removeEffectAction,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
@@ -295,7 +295,7 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
-function* checkHermitHealth(game: GameModel) {
+function checkHermitHealth(game: GameModel) {
 	const deadPlayers: Array<PlayerComponent> = []
 	for (let playerState of game.components.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
@@ -362,7 +362,7 @@ function* checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function* turnActionSaga(
+function handleSingleTurnAction(
 	con: GameController,
 	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
@@ -392,37 +392,35 @@ function* turnActionSaga(
 			].includes(actionType) || availableActions.includes(actionType),
 			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. \n Action:${JSON.stringify(turnAction.action, null, 2)}`,
 		)
-
 		switch (actionType) {
 			case 'PLAY_HERMIT_CARD':
 			case 'PLAY_ITEM_CARD':
 			case 'PLAY_EFFECT_CARD':
 			case 'PLAY_SINGLE_USE_CARD':
-				yield* call(playCardSaga, con.game, turnAction.action)
+				playCardAction(con.game, turnAction.action)
 				break
 			case 'SINGLE_USE_ATTACK':
 			case 'PRIMARY_ATTACK':
 			case 'SECONDARY_ATTACK':
-				yield* call(attackSaga, con.game, turnAction.action)
+				attackAction(con.game, turnAction.action)
 				break
 			case 'CHANGE_ACTIVE_HERMIT':
-				yield* call(changeActiveHermitSaga, con.game, turnAction.action)
+				changeActiveHermitAction(con.game, turnAction.action)
 				break
 			case 'APPLY_EFFECT':
-				yield* call(applyEffectSaga, con.game, turnAction.action)
+				applyEffectAction(con.game)
 				break
 			case 'REMOVE_EFFECT':
-				yield* call(removeEffectSaga, con.game)
+				removeEffectAction(con.game)
 				break
 			case 'PICK_REQUEST':
-				yield* call(
-					pickRequestSaga,
+				pickRequestAction(
 					con.game,
 					(turnAction.action as PickSlotActionData)?.entity,
 				)
 				break
 			case 'MODAL_REQUEST':
-				yield* call(modalRequestSaga, con.game, turnAction?.action?.modalResult)
+				modalRequestAction(con.game, turnAction?.action?.modalResult)
 				break
 			case 'END_TURN':
 				endTurn = true
@@ -459,8 +457,8 @@ function* turnActionSaga(
 	}
 
 	let deadPlayers = []
-	deadPlayers.push(...(yield* call(checkDeckedOut, con.game)))
-	deadPlayers.push(...(yield* call(checkHermitHealth, con.game)))
+	deadPlayers.push(...checkDeckedOut(con.game))
+	deadPlayers.push(...checkHermitHealth(con.game))
 	if (deadPlayers.length) endTurn = true
 
 	if (endTurn) {
@@ -615,7 +613,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 					const turnAction: AttackActionData = {
 						type: attackToAttackAction[currentAttack],
 					}
-					yield* call(attackSaga, con.game, turnAction, false)
+					attackAction(con.game, turnAction, false)
 				}
 
 				continue
@@ -636,7 +634,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		}
 
 		// Run action logic
-		const result = yield* call(turnActionSaga, con, raceResult.turnAction)
+		const result = handleSingleTurnAction(con, raceResult.turnAction)
 
 		if (result === 'END_TURN') {
 			break
@@ -786,7 +784,7 @@ export function* turnSaga(con: GameController) {
 	return 'DONE'
 }
 
-function* checkDeckedOut(game: GameModel) {
+function checkDeckedOut(game: GameModel) {
 	if (
 		game.settings.disableDeckOut ||
 		game.settings.startWithAllCards ||
