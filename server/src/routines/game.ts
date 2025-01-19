@@ -362,7 +362,7 @@ function checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function* turnActionSaga(
+function handleSingleTurnAction(
 	con: GameController,
 	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
@@ -634,7 +634,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		}
 
 		// Run action logic
-		const result = yield* call(turnActionSaga, con, raceResult.turnAction)
+		const result = handleSingleTurnAction(con, raceResult.turnAction)
 
 		if (result === 'END_TURN') {
 			break
