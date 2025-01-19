@@ -26,13 +26,13 @@ import assert from 'assert'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
-	applyEffectSaga,
-	attackSaga,
-	changeActiveHermitSaga,
-	modalRequestSaga,
-	pickRequestSaga,
-	playCardSaga,
-	removeEffectSaga,
+	applyEffectAction,
+	attackAction,
+	changeActiveHermitAction,
+	modalRequestAction,
+	pickRequestAction,
+	playCardAction,
+	removeEffectAction,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
@@ -392,37 +392,35 @@ function* turnActionSaga(
 			].includes(actionType) || availableActions.includes(actionType),
 			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. \n Action:${JSON.stringify(turnAction.action, null, 2)}`,
 		)
-
 		switch (actionType) {
 			case 'PLAY_HERMIT_CARD':
 			case 'PLAY_ITEM_CARD':
 			case 'PLAY_EFFECT_CARD':
 			case 'PLAY_SINGLE_USE_CARD':
-				yield* call(playCardSaga, con.game, turnAction.action)
+				playCardAction(con.game, turnAction.action)
 				break
 			case 'SINGLE_USE_ATTACK':
 			case 'PRIMARY_ATTACK':
 			case 'SECONDARY_ATTACK':
-				yield* call(attackSaga, con.game, turnAction.action)
+				attackAction(con.game, turnAction.action)
 				break
 			case 'CHANGE_ACTIVE_HERMIT':
-				yield* call(changeActiveHermitSaga, con.game, turnAction.action)
+				changeActiveHermitAction(con.game, turnAction.action)
 				break
 			case 'APPLY_EFFECT':
-				yield* call(applyEffectSaga, con.game, turnAction.action)
+				applyEffectAction(con.game)
 				break
 			case 'REMOVE_EFFECT':
-				yield* call(removeEffectSaga, con.game)
+				removeEffectAction(con.game)
 				break
 			case 'PICK_REQUEST':
-				yield* call(
-					pickRequestSaga,
+				pickRequestAction(
 					con.game,
 					(turnAction.action as PickSlotActionData)?.entity,
 				)
 				break
 			case 'MODAL_REQUEST':
-				yield* call(modalRequestSaga, con.game, turnAction?.action?.modalResult)
+				modalRequestAction(con.game, turnAction?.action?.modalResult)
 				break
 			case 'END_TURN':
 				endTurn = true
@@ -615,7 +613,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 					const turnAction: AttackActionData = {
 						type: attackToAttackAction[currentAttack],
 					}
-					yield* call(attackSaga, con.game, turnAction, false)
+					attackAction(con.game, turnAction, false)
 				}
 
 				continue
