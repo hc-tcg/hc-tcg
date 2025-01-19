@@ -1,5 +1,5 @@
-import { hermit } from '../defaults'
-import { Hermit } from '../types'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const FarmerBeefCommon: Hermit = {
 	...hermit,

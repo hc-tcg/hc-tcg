@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import KingJoelRare from 'common/cards/hermits/kingjoel-rare'
 import WelsknightCommon from 'common/cards/hermits/welsknight-common'
 import BalancedItem from 'common/cards/items/balanced-common'
@@ -13,11 +13,11 @@ describe('Test rare King Joel Steal', () => {
 	test('Test regular Steal behavior', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, BalancedItem],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
 
 					yield* endTurn(game)
@@ -62,11 +62,11 @@ describe('Test rare King Joel Steal', () => {
 	test('Test Steal pick request runs before Egg pick request.', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, BalancedItem],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon, Egg],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
 
 					yield* endTurn(game)
@@ -119,7 +119,7 @@ describe('Test rare King Joel Steal', () => {
 							query.row.opponentPlayer,
 							query.row.active,
 						)?.health,
-					).toBe(Iskall85Common.health - 10)
+					).toBe(FarmerBeefCommon.health - 10)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
