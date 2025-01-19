@@ -1,8 +1,8 @@
-import { CardComponent, ObserverComponent } from '../../components'
-import { GameModel } from '../../models/game-model'
-import { beforeAttack } from '../../types/priorities'
-import { hermit } from '../defaults'
-import { Hermit } from '../types'
+import {CardComponent, ObserverComponent} from '../../components'
+import {GameModel} from '../../models/game-model'
+import {beforeAttack} from '../../types/priorities'
+import {hermit} from '../defaults'
+import {Hermit} from '../types'
 
 const FarmerBeefRare: Hermit = {
 	...hermit,
