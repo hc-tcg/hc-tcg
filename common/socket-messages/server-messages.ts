@@ -45,7 +45,11 @@ export const serverMessages = messages('serverMessages', {
 })
 
 export type ServerMessages = [
-	{type: typeof serverMessages.PLAYER_RECONNECTED; game?: LocalGameState},
+	{
+		type: typeof serverMessages.PLAYER_RECONNECTED
+		game?: LocalGameState
+		messages?: Array<ChatMessage>
+	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{
 		type: typeof serverMessages.PLAYER_INFO

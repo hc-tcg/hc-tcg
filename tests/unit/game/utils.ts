@@ -22,6 +22,7 @@ import {
 } from 'common/types/turn-action-data'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
+import {GameController} from 'server/game-controller'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
@@ -275,25 +276,27 @@ export function testGame(
 	},
 	settings: Partial<GameSettings> = {},
 ) {
-	let game = new GameModel(
-		'Test Game Seed',
+	let controller = new GameController(
 		getTestPlayer('playerOne', options.playerOneDeck),
 		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
-			...defaultGameSettings,
-			...settings,
+			randomizeOrder: false,
+			randomSeed: 'Test Game Seed',
+			settings: {
+				...defaultGameSettings,
+				...settings,
+			},
 		},
-		{randomizeOrder: false},
 	)
 
 	let testEnded = false
 
 	testSagas(
 		call(function* () {
-			yield* call(gameSaga, game)
+			yield* call(gameSaga, controller)
 		}),
 		call(function* () {
-			yield* call(options.saga, game)
+			yield* call(options.saga, controller.game)
 			testEnded = true
 		}),
 	)
@@ -302,7 +305,8 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	if (options.then) options.then(game, figureOutGameResult(game))
+	if (options.then)
+		options.then(controller.game, figureOutGameResult(controller.game))
 }
 
 /**
@@ -329,8 +333,7 @@ export function testBossFight(
 	},
 	settings?: Partial<GameSettings>,
 ) {
-	let game = new GameModel(
-		'Boss fight seed',
+	let controller = new GameController(
 		getTestPlayer('playerOne', options.playerDeck),
 		{
 			model: {
@@ -341,21 +344,24 @@ export function testBossFight(
 			},
 			deck: [EvilXisumaBoss],
 		},
-		{...defaultGameSettings, ...settings, disableRewardCards: true},
-		{randomizeOrder: false},
+		{
+			randomizeOrder: false,
+			randomSeed: 'Boss fight seed',
+			settings: {...defaultGameSettings, ...settings, disableRewardCards: true},
+		},
 	)
 
-	game.state.isBossGame = true
+	controller.game.state.isBossGame = true
 
 	function destroyRow(row: RowComponent) {
-		game.components
+		controller.game.components
 			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => game.components.delete(slotEntity))
-		game.components.delete(row.entity)
+			.forEach((slotEntity) => controller.game.components.delete(slotEntity))
+		controller.game.components.delete(row.entity)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
-	game.components
+	controller.game.components
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
@@ -363,7 +369,7 @@ export function testBossFight(
 		)
 		.forEach(destroyRow)
 	// Remove boss' rows other than index 0
-	game.components
+	controller.game.components
 		.filter(
 			RowComponent,
 			query.row.currentPlayer,
@@ -371,22 +377,22 @@ export function testBossFight(
 		)
 		.forEach(destroyRow)
 	// Remove boss' item slots
-	game.components
+	controller.game.components
 		.filterEntities(
 			BoardSlotComponent,
 			query.slot.currentPlayer,
 			query.slot.item,
 		)
-		.forEach((slotEntity) => game.components.delete(slotEntity))
+		.forEach((slotEntity) => controller.game.components.delete(slotEntity))
 
 	let testEnded = false
 
 	testSagas(
 		call(function* () {
-			yield* call(gameSaga, game)
+			yield* call(gameSaga, controller)
 		}),
 		call(function* () {
-			yield* call(options.saga, game)
+			yield* call(options.saga, controller.game)
 			testEnded = true
 		}),
 	)
@@ -395,7 +401,7 @@ export function testBossFight(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	if (options.then) options.then(game)
+	if (options.then) options.then(controller.game)
 }
 
 export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {

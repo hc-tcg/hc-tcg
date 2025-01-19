@@ -187,6 +187,13 @@ function* reconnectSaga() {
 		// There should be a game state because the player is in a game.
 		if (!action.game) continue
 
+		if (action.messages) {
+			yield* put<LocalMessage>({
+				type: localMessages.CHAT_UPDATE,
+				messages: action.messages,
+			})
+		}
+
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
 			localGameState: action.game,
