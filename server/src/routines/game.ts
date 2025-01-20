@@ -671,7 +671,7 @@ export function* turnSaga(con: GameController) {
 
 	// Check for dead hermits on turn start
 	if (con.game.state.turn.turnNumber > 2) {
-		const turnStartDeadPlayers = yield* call(checkHermitHealth, con.game)
+		const turnStartDeadPlayers = checkHermitHealth(con.game)
 		if (turnStartDeadPlayers.length) {
 			con.game.endInfo.victoryReason = turnStartDeadPlayers.every(
 				(deadPlayer) => deadPlayer.lives <= 0,
@@ -740,10 +740,7 @@ export function* turnSaga(con: GameController) {
 	}
 	con.game.state.modalRequests = []
 
-	const deadPlayers: PlayerComponent[] = yield* call(
-		checkHermitHealth,
-		con.game,
-	)
+	const deadPlayers: PlayerComponent[] = checkHermitHealth(con.game)
 	if (deadPlayers.length) {
 		if (deadPlayers.every((player) => player.lives <= 0)) {
 			con.game.endInfo.victoryReason = 'lives'
@@ -756,7 +753,7 @@ export function* turnSaga(con: GameController) {
 		return 'GAME_END'
 	}
 
-	const deckedOutPlayers: PlayerEntity[] = yield* call(checkDeckedOut, con.game)
+	const deckedOutPlayers: PlayerEntity[] = checkDeckedOut(con.game)
 	if (deckedOutPlayers.length) {
 		con.game.endInfo.victoryReason = 'decked-out'
 		con.game.endInfo.deadPlayerEntities = deckedOutPlayers
