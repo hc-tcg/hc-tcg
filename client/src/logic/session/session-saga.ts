@@ -508,13 +508,6 @@ export function* newDecksSaga() {
 				value: result.tags,
 			},
 		})
-		if (result.newActiveDeck) {
-			// Select new active deck
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: result.newActiveDeck,
-			})
-		}
 	}
 }
 
