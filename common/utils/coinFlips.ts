@@ -60,12 +60,12 @@ export function flipCoin(
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
 	let coinFlipAmount =
-		COIN_FLIP_ARRAY[Math.floor(Math.random() * COIN_FLIP_ARRAY.length)]
+		COIN_FLIP_ARRAY[Math.floor(game.rng() * COIN_FLIP_ARRAY.length)]
 
 	if (coinFlips.map((c) => c.forced).every((c) => c)) {
 		coinFlipAmount =
 			COIN_FLIP_FORCED_ARRAY[
-				Math.floor(Math.random() * COIN_FLIP_FORCED_ARRAY.length)
+				Math.floor(game.rng() * COIN_FLIP_FORCED_ARRAY.length)
 			]
 	}
 

@@ -201,7 +201,9 @@ describe('Test Database', () => {
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
-			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			5,
+			Buffer.from([0x00]),
+			null,
 		)
 
 		await database.insertGame(
@@ -217,7 +219,9 @@ describe('Test Database', () => {
 			35000000,
 			winner.body.uuid,
 			'123456789ABCDEF',
-			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			5,
+			Buffer.from([0x00]),
+			null,
 		)
 
 		await database.insertGame(
@@ -233,7 +237,9 @@ describe('Test Database', () => {
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
-			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			5,
+			Buffer.from([0x00]),
+			null,
 		)
 
 		await database.insertGame(
@@ -249,7 +255,9 @@ describe('Test Database', () => {
 			35000000,
 			loser.body.uuid,
 			'123456789ABCDEF',
-			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			5,
+			Buffer.from([0x00]),
+			null,
 		)
 
 		await database.insertGame(
@@ -261,7 +269,9 @@ describe('Test Database', () => {
 			35000000,
 			null,
 			'123456789ABCDEF',
-			Buffer.from([0x00, 0x0a, 0x00, 0x04, 0x00]),
+			5,
+			Buffer.from([0x00]),
+			null,
 		)
 
 		const winningPlayerStats = await database.getUserStats(winner.body.uuid)

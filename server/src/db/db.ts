@@ -75,7 +75,10 @@ export class Database {
 					loser_deck_code varchar(7) REFERENCES decks(deck_code),
 					outcome varchar(31) NOT NULL,
 					seed varchar(15) NOT NULL,
-					replay bytea NOT NULL
+					turns integer,
+					first_player_won boolean,
+					replay bytea NOT NULL,
+					opponent_code varchar(15)
 				);
 				CREATE TABLE IF NOT EXISTS cards(
 					card_id integer PRIMARY KEY NOT NULL
@@ -748,7 +751,9 @@ export class Database {
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
+		turns: number,
 		replay: Buffer,
+		opponentCode: string | null,
 	): Promise<DatabaseResult> {
 		try {
 			const replayBytes = replay.reduce((r, c) => (r << 8) & c, 0)
@@ -782,8 +787,10 @@ export class Database {
 				losingDeck = firstPlayerDeckCode
 			}
 
+			const firstPlayerWon = winner === firstPlayerUuid
+
 			await this.pool.query(
-				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, replay) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8)",
+				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
 				[
 					gameLength,
 					winner,
@@ -792,7 +799,10 @@ export class Database {
 					losingDeck,
 					dbOutcome,
 					seed,
+					turns,
+					firstPlayerWon,
 					replayBytes,
+					opponentCode,
 				],
 			)
 			return {type: 'success', body: undefined}
