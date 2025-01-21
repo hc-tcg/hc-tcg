@@ -1,4 +1,5 @@
 import {AIComponent} from 'common/components/ai-component'
+import {GameModel} from 'common/models/game-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {
 	PlaintextNode,
@@ -8,7 +9,6 @@ import {
 } from 'common/utils/formatting'
 import {delay, put} from 'typed-redux-saga'
 import {GameController} from '../../game-controller'
-import {GameModel} from 'common/models/game-model'
 
 function getRandomDelay(game: GameModel) {
 	return game.rng() * 500 + 500
