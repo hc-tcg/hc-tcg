@@ -48,7 +48,7 @@ const attackLog = (
 	}
 
 	const baseLog = (values: AttackLog) =>
-		`${values.attacker} attacked ${values.target} with ${attackName} for ${values.damage} damage`
+		`${values.attacker} attacked ${values.target} with ${attackName} for ${values.health} ${values.healing ? 'healing' : 'damage'}`
 	let footer: string
 	switch (bossAttack[2]) {
 		case 'ITEMCARD':
@@ -184,7 +184,7 @@ const EvilXisumaBoss: Hermit = {
 								target: afkRow.entity,
 								type: hermitAttackType,
 								log: (values) =>
-									`, ${values.damage} damage to ${values.target}`,
+									`, ${values.health} ${values.healing ? 'healing' : 'damage'} to ${values.target}`,
 							})
 							.addDamage(component.entity, 20)
 						newAttack.shouldIgnoreCards.push(

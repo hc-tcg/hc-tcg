@@ -51,7 +51,8 @@ const StressMonster101Rare: Hermit = {
 					target: player.activeRowEntity,
 					type: 'secondary',
 					isBacklash: true,
-					log: (values) => ` and took ${values.damage} backlash damage`,
+					log: (values) =>
+						` and took ${values.health} backlash ${values.healing ? 'healing' : 'damage'}`,
 				})
 				const attackDamage = component.slot.row.health
 				console.log(attackDamage)

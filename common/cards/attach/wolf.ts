@@ -41,9 +41,6 @@ const Wolf: Attach = {
 				if (attack.player !== opponentPlayer) return
 				if (attack.target?.player.entity !== player.entity) return
 
-				// Make sure the attack is doing some damage
-				if (attack.calculateDamage() <= 0) return
-
 				if (activated) return
 				activated = true
 
@@ -54,7 +51,7 @@ const Wolf: Attach = {
 						type: 'effect',
 						isBacklash: true,
 						log: (values) =>
-							`${values.target} took ${values.damage} damage from $eWolf$`,
+							`${values.target} took ${values.health} ${values.healing ? 'healing' : 'damage'} from $eWolf$`,
 					})
 					.addDamage(component.entity, 20)
 

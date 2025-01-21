@@ -66,7 +66,7 @@ function getThorns(
 							type: 'effect',
 							isBacklash: true,
 							log: (values) =>
-								`${values.target} took ${values.damage} damage from $eThorns$`,
+								`${values.target} took ${values.health} ${values.healing ? 'healing' : 'damage'} from $eThorns$`,
 						})
 						.addDamage(component.entity, amount)
 

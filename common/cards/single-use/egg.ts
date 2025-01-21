@@ -71,7 +71,7 @@ const Egg: SingleUse = {
 									player: player.entity,
 									target: afkHermitSlot?.row.entity,
 									log: (values) =>
-										`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
+										`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.health} to ${values.target}`,
 									type: 'effect',
 								})
 								.addDamage(component.entity, 10)

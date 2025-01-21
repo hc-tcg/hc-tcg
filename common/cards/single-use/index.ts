@@ -1,3 +1,4 @@
+import Inverter from '../advent-of-tcg/single-use/inverter'
 import {Card} from '../types'
 import Anvil from './anvil'
 import BadOmen from './bad-omen'
@@ -86,6 +87,8 @@ const singleUseCardClasses: Array<Card> = [
 	TNT,
 	TargetBlock,
 	Trident,
+
+	Inverter,
 ]
 
 export default singleUseCardClasses

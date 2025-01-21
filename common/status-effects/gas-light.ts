@@ -27,7 +27,7 @@ function newGasLightAttack(
 			type: 'secondary',
 			shouldIgnoreSlots: [query.card.entity(effect.creator.entity)],
 			log: (values) =>
-				`${values.target} took ${values.damage} damage from $vGas Light$`,
+				`${values.target} took ${values.health} ${values.healing ? 'healing' : 'damage'} from $vGas Light$`,
 		})
 		.addDamage(effect.entity, 20)
 		.multiplyDamage(effect.entity, effect.counter || 0)

@@ -82,7 +82,7 @@ const RedstoneTorch: SingleUse = {
 							target: opponentPlayer.activeRowEntity,
 							type: 'effect',
 							log: (values) =>
-								`${values.player} detonated their ${tntCardEntities.length} $e${TNT.name}$ with $e${RedstoneTorch.name}$ to attack ${values.target} for ${values.damage} damage `,
+								`${values.player} detonated their ${tntCardEntities.length} $e${TNT.name}$ with $e${RedstoneTorch.name}$ to attack ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'} `,
 						})
 						.addDamage(component.entity, 40 * tntCardEntities.length)
 

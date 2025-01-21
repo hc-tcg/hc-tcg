@@ -70,7 +70,7 @@ const RendogRare: Hermit = {
 			}
 			return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 				values.target
-			} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.damage} damage`
+			} with $v${mockedAttack.hermitName}'s ${attackName}$ for ${values.health} ${values.healing ? 'healing' : 'damage'}`
 		})
 		return newAttack
 	},

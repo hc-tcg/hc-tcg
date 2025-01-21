@@ -95,8 +95,7 @@ export class RowComponent {
 	public damage(amount: number) {
 		// Deduct and clamp health
 		if (this.health === null) return
-		const newHealth = Math.max(this.health - amount, 0)
-		this.health = Math.min(newHealth, this.health)
+		this.health = this.health - amount
 	}
 
 	public heal(amount: number) {

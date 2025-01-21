@@ -90,7 +90,7 @@ export const hermit = {
 				}
 				return `${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with ${values.attackName} for ${values.damage} damage`
+				} with ${values.attackName} for ${values.health} ${values.healing ? 'healing' : 'damage'}`
 			},
 		})
 

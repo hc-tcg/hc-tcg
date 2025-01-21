@@ -35,7 +35,7 @@ const PoisonEffect: StatusEffect<CardComponent> = {
 					player: opponentPlayer.entity,
 					type: 'status-effect',
 					log: (values) =>
-						`${values.target} took ${values.damage} damage from $bPoison$`,
+						`${values.target} took ${values.health} ${values.healing ? 'healing' : 'damage'} from $bPoison$`,
 				})
 
 				let damage = 0

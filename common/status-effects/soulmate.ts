@@ -63,7 +63,7 @@ const SoulmateEffect: StatusEffect<PlayerComponent> = {
 					type: 'status-effect',
 					isBacklash: true,
 					log: (values) =>
-						`${values.target} took ${values.damage} from $e${effect.props.name}$`,
+						`${values.target} took ${values.health} from $e${effect.props.name}$`,
 				})
 				statusEffectAttack.addDamage(effect.entity, soulmateEffectDamage)
 

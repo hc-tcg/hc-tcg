@@ -31,7 +31,9 @@ export type AttackLog = {
 	/**The name of target of this attack.*/
 	target: string
 	/**The damage this attack deals.*/
-	damage: string
+	health: string
+	/**Is this attack healing or damaging */
+	healing: boolean
 	/**The coinflip for this attack.*/
 	coinFlip: string | null
 	/**The previously defined log entry.*/

@@ -35,7 +35,7 @@ const FireEffect: StatusEffect<CardComponent> = {
 					player: opponentPlayer.entity,
 					type: 'status-effect',
 					log: (values) =>
-						`${values.target} took ${values.damage} damage from $bBurn$`,
+						`${values.target} took ${values.health} ${values.healing ? 'healing' : 'damage'} from $bBurn$`,
 				})
 				statusEffectAttack.addDamage(target.entity, 20)
 

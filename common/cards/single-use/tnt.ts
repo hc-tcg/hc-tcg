@@ -32,7 +32,7 @@ const TNT: SingleUse = {
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
-						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
+						`${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'} `,
 				})
 				.addDamage(component.entity, 60)
 
@@ -43,7 +43,8 @@ const TNT: SingleUse = {
 					target: player.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
-					log: (values) => `and took ${values.damage} backlash damage`,
+					log: (values) =>
+						`and took ${values.health} backlash ${values.healing ? 'healing' : 'damage'}`,
 				})
 				.addDamage(component.entity, 20)
 

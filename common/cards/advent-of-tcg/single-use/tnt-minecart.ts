@@ -35,7 +35,7 @@ const MinecartWithTNT: SingleUse = {
 						target: opponentPlayer.activeRowEntity,
 						type: 'effect',
 						log: (values) =>
-							`${values.defaultLog}, and ${values.coinFlip} to attack ${values.target} for ${values.damage} damage `,
+							`${values.defaultLog}, and ${values.coinFlip} to attack ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'} `,
 					})
 					.addDamage(component.entity, 100)
 			} else {
@@ -47,7 +47,7 @@ const MinecartWithTNT: SingleUse = {
 						type: 'effect',
 						isBacklash: true,
 						log: (values) =>
-							`${values.defaultLog}, and ${values.coinFlip} so ${values.target} took ${values.damage} backlash damage`,
+							`${values.defaultLog}, and ${values.coinFlip} so ${values.target} took ${values.health} backlash ${values.healing ? 'healing' : 'damage'}`,
 					})
 					.addDamage(component.entity, 40)
 			}

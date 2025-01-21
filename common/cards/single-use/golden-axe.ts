@@ -37,7 +37,7 @@ const GoldenAxe: SingleUse = {
 					target: opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
-						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+						`${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 				})
 				.addDamage(component.entity, 40)
 

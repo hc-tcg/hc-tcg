@@ -97,8 +97,8 @@ const Crossbow: SingleUse = {
 							type: 'effect',
 							log: (values) =>
 								i === 0
-									? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
-									: `, ${values.target} for ${values.damage} damage`,
+									? `${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`
+									: `, ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 						})
 						.addDamage(component.entity, 20)
 

@@ -115,7 +115,7 @@ const PoePoeSkizzRare: Hermit = {
 					target: jumpscareTarget.entity,
 					type: 'secondary',
 					log: (values) =>
-						` and moved to row #${newRowIndex + 1} to deal ${values.damage} to ${values.target}`,
+						` and moved to row #${newRowIndex + 1} to deal ${values.health} to ${values.target}`,
 				})
 				jumpscareAttack.addDamage(component.entity, 20)
 				jumpscareAttack.shouldIgnoreCards.push(

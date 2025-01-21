@@ -126,10 +126,7 @@ export class AttackModel {
 
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
-		return Math.max(
-			this.damage * this.damageMultiplier - this.damageReduction,
-			0,
-		)
+		return this.damage * this.damageMultiplier - this.damageReduction
 	}
 
 	/** Returns the damage this attack will do */
@@ -196,7 +193,7 @@ export class AttackModel {
 	/** Multiplies the damage the attack does */
 	public multiplyDamage(source: AttackerEntity, multiplier: number) {
 		if (this.damageLocked) return this
-		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
+		this.damageMultiplier = this.damageMultiplier * multiplier
 
 		this.addHistory(source, 'multiply_damage', multiplier)
 		return this

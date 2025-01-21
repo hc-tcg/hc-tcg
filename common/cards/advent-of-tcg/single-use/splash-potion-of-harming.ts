@@ -66,7 +66,7 @@ const SplashPotionOfHarming: SingleUse = {
 					player: player.entity,
 					type: 'effect',
 					log: (values) =>
-						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+						`${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 				})
 				.addDamage(
 					component.entity,
@@ -79,7 +79,8 @@ const SplashPotionOfHarming: SingleUse = {
 						attacker: component.entity,
 						target: row.entity,
 						type: 'effect',
-						log: (values) => `, ${values.target} for ${values.damage} damage`,
+						log: (values) =>
+							`, ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 					})
 					.addDamage(component.entity, 20)
 				attack.addNewAttack(newAttack)

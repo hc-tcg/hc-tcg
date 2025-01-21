@@ -75,7 +75,7 @@ const Trapdoor: Attach = {
 							type: attack.type,
 							log: (values) =>
 								values.attack.getDamageMultiplier()
-									? ` (${values.damage} was intercepted by ${values.target} with $eTrapdoor$)`
+									? ` (${values.health} was intercepted by ${values.target} with $eTrapdoor$)`
 									: ` ($b${damageReduction}hp$ was blocked by ${values.target} with $eTrapdoor$)`,
 						})
 						.addDamage(component.entity, damageReduction)

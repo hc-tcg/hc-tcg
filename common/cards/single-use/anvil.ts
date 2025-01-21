@@ -74,9 +74,9 @@ const Anvil: SingleUse = {
 										log:
 											attacks === null
 												? (values) =>
-														`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+														`${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`
 												: (values) =>
-														`, ${values.target} for ${values.damage} damage`,
+														`, ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 									})
 									.addDamage(
 										component.entity,
@@ -115,7 +115,7 @@ const Anvil: SingleUse = {
 								),
 								type: 'effect',
 								log: (values) =>
-									`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+									`${values.defaultLog} to ${values.healing ? 'heal' : 'attack'} ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 							})
 							.addDamage(component.entity, 30),
 		)

@@ -69,7 +69,8 @@ const GoatfatherRare: Hermit = {
 							attacker: component.entity,
 							target: row.entity,
 							type: 'secondary',
-							log: (values) => `, ${values.target} for ${values.damage} damage`,
+							log: (values) =>
+								`, ${values.target} for ${values.health} ${values.healing ? 'healing' : 'damage'}`,
 						})
 						newAttack.addDamage(component.entity, 10)
 						newAttack.shouldIgnoreCards.push(
