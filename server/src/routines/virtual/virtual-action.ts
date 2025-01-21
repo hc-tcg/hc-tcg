@@ -8,9 +8,10 @@ import {
 } from 'common/utils/formatting'
 import {delay, put} from 'typed-redux-saga'
 import {GameController} from '../../game-controller'
+import {GameModel} from 'common/models/game-model'
 
-function getRandomDelay() {
-	return Math.random() * 500 + 500
+function getRandomDelay(game: GameModel) {
+	return game.rng() * 500 + 500
 }
 
 export default function* virtualPlayerActionSaga(
@@ -19,7 +20,7 @@ export default function* virtualPlayerActionSaga(
 ) {
 	const coinFlips = con.game.currentPlayer.coinFlips
 	yield* delay(
-		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(),
+		coinFlips.reduce((r, flip) => r + flip.delay, 0) + getRandomDelay(con.game),
 	)
 	try {
 		const action = component.getNextTurnAction()
