@@ -1,6 +1,8 @@
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {useSelector} from 'react-redux'
 import {sortCards} from './../../deck/deck-edit'
 import ChatItem from './chat-item'
@@ -9,8 +11,6 @@ import ForfeitItem from './forfeit-item'
 import SoundItem from './sound-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {getPlayerDeckCode} from 'logic/session/session-selectors'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
