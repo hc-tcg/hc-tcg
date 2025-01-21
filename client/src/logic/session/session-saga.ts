@@ -488,7 +488,7 @@ export function* logoutSaga() {
 	yield put<LocalMessage>({type: localMessages.DISCONNECT})
 }
 
-export function* newDeckSaga() {
+export function* newDecksSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(
@@ -510,12 +510,21 @@ export function* newDeckSaga() {
 		})
 		if (result.newActiveDeck) {
 			// Select new active deck
-			localStorage.setItem('activeDeck', result.newActiveDeck.code)
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
 				deck: result.newActiveDeck,
 			})
 		}
+	}
+}
+
+export function* newDeckSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(receiveMsg(socket, serverMessages.NEW_DECK))
+
+		// Select new active deck
+		localStorage.setItem('activeDeck', result.deck.code)
 	}
 }
 

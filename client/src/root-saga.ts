@@ -9,6 +9,7 @@ import {
 	logoutSaga,
 	minecraftNameSaga,
 	newDeckSaga,
+	newDecksSaga,
 	recieveCurrentImportSaga,
 	recieveStatsSaga,
 	updatesSaga,
@@ -22,6 +23,7 @@ function* appSaga(): SagaIterator {
 	yield call(loginSaga)
 	yield fork(databaseConnectionSaga)
 	yield fork(logoutSaga)
+	yield fork(newDecksSaga)
 	yield fork(newDeckSaga)
 	yield fork(recieveStatsSaga)
 	yield fork(recieveCurrentImportSaga)
