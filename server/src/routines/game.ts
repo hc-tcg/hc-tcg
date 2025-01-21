@@ -452,6 +452,16 @@ function handleSingleTurnAction(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
 		}
+
+		// If no error has been thown, add the action to the game's history
+		const currentTime = Date.now()
+		con.game.turnActions.push({
+			action: turnAction.action,
+			millisecondsSinceLastAction: con.game.lastActionTime
+				? currentTime - con.game.lastActionTime
+				: 0,
+		})
+		con.game.lastActionTime = currentTime
 	} catch (e) {
 		if (con.game.settings.logErrorsToStderr) {
 			console.error(`${con.game.logHeader} ${(e as Error).stack}`.trimStart())
