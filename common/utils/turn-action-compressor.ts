@@ -1,3 +1,4 @@
+import {GameController} from '../../server/src/game-controller'
 import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
 import query from '../components/query'
 import {CardEntity} from '../entities'
@@ -16,6 +17,7 @@ import {
 } from '../types/turn-action-data'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
+const VERSION = 0x01
 
 type ReplayAction = {
 	value: number
@@ -25,7 +27,7 @@ type ReplayAction = {
 	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
 }
 
-type ReplayActionData = {
+export type ReplayActionData = {
 	action: AnyTurnActionData
 	millisecondsSinceLastAction: number
 }
@@ -484,7 +486,7 @@ const replayActionsFromValues = Object.entries(replayActions).reduce(
 	{},
 )
 
-export function turnActionToBuffer(
+function turnActionToBuffer(
 	game: GameModel,
 	action: AnyTurnActionData,
 	millisecondsSinceLastAction: number,
@@ -513,6 +515,35 @@ export function turnActionToBuffer(
 		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
 	}
 	return Buffer.concat([headerBuffer, timeBuffer])
+}
+
+export function turnActionsToBuffer(controller: GameController) {
+	const originalGame = controller.game as GameModel
+	const newGame = new GameModel(
+		originalGame.rngSeed,
+		controller.players[0],
+		controller.players[1],
+		originalGame.settings,
+		{
+			publishBattleLog: (logs, timeout) =>
+				newGame.publishBattleLog(logs, timeout),
+			randomizeOrder: true,
+		},
+	)
+
+	const buffers: Array<Buffer> = []
+
+	originalGame.turnActions.forEach((action) => {
+		buffers.push(
+			turnActionToBuffer(
+				originalGame,
+				action.action,
+				action.millisecondsSinceLastAction,
+			),
+		)
+	})
+
+	return Buffer.concat([Buffer.from([VERSION]), ...buffers])
 }
 
 export function bufferToTurnActions(

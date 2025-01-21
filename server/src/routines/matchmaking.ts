@@ -36,6 +36,7 @@ import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import ExBossAI from './virtual/exboss-ai'
+import {turnActionsToBuffer} from 'common/utils/turn-action-compressor'
 
 function setupGame(
 	player1: PlayerModel,
@@ -226,7 +227,7 @@ function* gameManager(con: GameController) {
 				Date.now() - con.createdTime,
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
-				Buffer.from([0x00]),
+				turnActionsToBuffer(con),
 			)
 		}
 	}
