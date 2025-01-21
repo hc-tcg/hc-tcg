@@ -1,8 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
+import FarmerBeefRare from 'common/cards/hermits/farmerbeef-rare'
 import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
-import Iskall85Rare from 'common/cards/hermits/iskall85-rare'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
@@ -19,16 +19,16 @@ describe('Test Tango Extra Flee', () => {
 	test('Both players change active hermits', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common],
-				playerTwoDeck: [TangoTekRare, Iskall85Rare],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon],
+				playerTwoDeck: [TangoTekRare, FarmerBeefRare],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Rare, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
 
 					yield* attack(game, 'secondary')
 
@@ -80,11 +80,11 @@ describe('Test Tango Extra Flee', () => {
 	test('Curse of Binding prevents Tango from fleeing', () => {
 		testGame(
 			{
-				playerOneDeck: [TangoTekRare, Iskall85Rare],
+				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
 				saga: function* (game) {
 					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Rare, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
 
 					yield* endTurn(game)
 
@@ -107,11 +107,11 @@ describe('Test Tango Extra Flee', () => {
 	test('Betrayal effect does not prevent Tango from fleeing', () => {
 		testGame(
 			{
-				playerOneDeck: [TangoTekRare, Iskall85Rare],
+				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [HumanCleoRare],
 				saga: function* (game) {
 					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Rare, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
 
 					yield* endTurn(game)
 

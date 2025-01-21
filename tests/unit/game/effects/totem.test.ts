@@ -2,9 +2,9 @@ import {describe, expect, test} from '@jest/globals'
 import {Thorns} from 'common/cards/attach/thorns'
 import Totem from 'common/cards/attach/totem'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import GoodTimesWithScarRare from 'common/cards/hermits/goodtimeswithscar-rare'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import PearlescentMoonCommon from 'common/cards/hermits/pearlescentmoon-common'
 import WelsknightCommon from 'common/cards/hermits/welsknight-common'
 import Bow from 'common/cards/single-use/bow'
@@ -203,11 +203,11 @@ describe('Test Totem of Undying', () => {
 	test('Test Totem with AFK Thorns', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, Thorns, Thorns],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Thorns, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, Bow],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 
 					yield* playCardFromHand(game, Thorns, 'attach', 0)
 					yield* playCardFromHand(game, Thorns, 'attach', 1)
@@ -325,11 +325,11 @@ describe('Test Totem of Undying', () => {
 	test('Test Totem revives rows before `afterAttack` requests are created', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, Totem],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Totem],
 				playerTwoDeck: [IJevinRare, Bow],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, Totem, 'attach', 1)
 					yield* endTurn(game)
 

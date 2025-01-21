@@ -23,6 +23,8 @@ import EvilXisumaCommon from './evilxisuma-common'
 import EvilXisumaRare from './evilxisuma_rare'
 import FalseSymmetryCommon from './falsesymmetry-common'
 import FalseSymmetryRare from './falsesymmetry-rare'
+import FarmerBeefCommon from './farmerbeef-common'
+import FarmerBeefRare from './farmerbeef-rare'
 import FiveAMPearlCommon from './fiveampearl-common'
 import FiveAMPearlRare from './fiveampearl-rare'
 import FrenchKeralisCommon from './frenchkeralis-common'
@@ -49,8 +51,6 @@ import IJevinCommon from './ijevin-common'
 import IJevinRare from './ijevin-rare'
 import ImpulseSVCommon from './impulsesv-common'
 import ImpulseSVRare from './impulsesv-rare'
-import Iskall85Common from './iskall85-common'
-import Iskall85Rare from './iskall85-rare'
 import IskallManCommon from './iskallman-common'
 import IskallmanRare from './iskallman-rare'
 import JinglerCommon from './jingler-common'
@@ -167,8 +167,8 @@ const hermitCardClasses: Array<Card> = [
 	IJevinRare,
 	ImpulseSVCommon,
 	ImpulseSVRare,
-	Iskall85Common,
-	Iskall85Rare,
+	FarmerBeefCommon,
+	FarmerBeefRare,
 	IskallManCommon,
 	IskallmanRare,
 	JinglerCommon,

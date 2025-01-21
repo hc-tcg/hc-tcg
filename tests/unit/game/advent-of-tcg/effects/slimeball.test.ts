@@ -9,9 +9,9 @@ import WaterBucket from 'common/cards/attach/water-bucket'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import DwarfImpulseRare from 'common/cards/hermits/dwarfimpulse-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import HypnotizdRare from 'common/cards/hermits/hypnotizd-rare'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import KingJoelRare from 'common/cards/hermits/kingjoel-rare'
 import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
@@ -55,7 +55,7 @@ import Piston from 'common/cards/single-use/piston'
 describe('Test Slimeball', () => {
 	test('Slimeball can be placed on and removed from both players', () => {
 		testGame({
-			playerOneDeck: [Iskall85Common],
+			playerOneDeck: [FarmerBeefCommon],
 			playerTwoDeck: [
 				EthosLabCommon,
 				Slimeball,
@@ -64,7 +64,7 @@ describe('Test Slimeball', () => {
 				CurseOfVanishing,
 			],
 			saga: function* (game) {
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -109,8 +109,8 @@ describe('Test Slimeball', () => {
 	test('Slimeball prevents Lead and Piston removing items', () => {
 		testGame({
 			playerOneDeck: [
-				Iskall85Common,
-				Iskall85Common,
+				FarmerBeefCommon,
+				FarmerBeefCommon,
 				Slimeball,
 				BalancedItem,
 				BalancedItem,
@@ -126,8 +126,8 @@ describe('Test Slimeball', () => {
 				Lead,
 			],
 			saga: function* (game) {
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 				yield* playCardFromHand(game, Slimeball, 'attach', 0)
 				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
 				expect(game.getPickableSlots(Piston.attachCondition)).toStrictEqual([])
@@ -180,7 +180,7 @@ describe('Test Slimeball', () => {
 	test('Slimeball prevents Ladder swapping Hermits', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Slimeball, Ladder],
-			playerTwoDeck: [Iskall85Common],
+			playerTwoDeck: [FarmerBeefCommon],
 			saga: function* (game) {
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
@@ -189,7 +189,7 @@ describe('Test Slimeball', () => {
 				yield* changeActiveHermit(game, 1)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
@@ -269,10 +269,10 @@ describe('Test Slimeball', () => {
 
 	test('Slimeball prevents Fire Charge and Water Bucket removing items', () => {
 		testGame({
-			playerOneDeck: [Iskall85Common, WaterBucket, FireCharge],
+			playerOneDeck: [FarmerBeefCommon, WaterBucket, FireCharge],
 			playerTwoDeck: [EthosLabCommon, Slimeball, String],
 			saga: function* (game) {
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
