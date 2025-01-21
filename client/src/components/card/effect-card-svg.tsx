@@ -1,7 +1,5 @@
-import classNames from 'classnames'
 import {getCardImage, getCardRankIcon} from 'common/cards/card'
 import {Attach, SingleUse} from 'common/cards/types'
-import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './effect-card-svg.module.scss'
@@ -13,17 +11,10 @@ export type EffectCardProps = {
 
 const EffectCardModule = memo(({card, displayTokenCost}: EffectCardProps) => {
 	const rank = getCardRankIcon(card)
-	const disabled =
-		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 	const image = getCardImage(card)
 
 	return (
-		<svg
-			className={classNames(css.card, css[disabled])}
-			width="100%"
-			height="100%"
-			viewBox="0 0 400 400"
-		>
+		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<rect
 				className={css.cardBackground}
 				x="10"

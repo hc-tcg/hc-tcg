@@ -114,7 +114,10 @@ const EXPANSION_NAMES = [
 			(card) =>
 				card.expansion === expansion &&
 				EXPANSIONS[expansion].disabled === false &&
-				!CONFIG.limits.bannedCards.includes(card.id),
+				!(
+					CONFIG.limits.bannedCards.includes(card.id) ||
+					CONFIG.limits.disabledCards.includes(card.id)
+				),
 		)
 	}),
 ]
@@ -230,7 +233,10 @@ const ALL_CARDS = sortCardInstances(
 		(card) =>
 			// Don't show disabled cards
 			EXPANSIONS[card.expansion].disabled === false &&
-			!CONFIG.limits.bannedCards.includes(card.id),
+			!(
+				CONFIG.limits.bannedCards.includes(card.id) ||
+				CONFIG.limits.disabledCards.includes(card.id)
+			),
 	).map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),

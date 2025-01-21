@@ -262,7 +262,8 @@ function HallOfFame({setMenuSection}: Props) {
 					(card: string) =>
 						!(
 							EXPANSIONS[CARDS[card].expansion].disabled ||
-							serverConfig.limits.bannedCards.includes(card)
+							serverConfig.limits.bannedCards.includes(card) ||
+							serverConfig.limits.disabledCards.includes(card)
 						),
 				),
 			)
@@ -328,7 +329,8 @@ function HallOfFame({setMenuSection}: Props) {
 				(card) =>
 					!(
 						EXPANSIONS[CARDS[card.id].expansion].disabled ||
-						serverConfig.limits.bannedCards.includes(card.id)
+						serverConfig.limits.bannedCards.includes(card.id) ||
+						serverConfig.limits.disabledCards.includes(card.id)
 					),
 			)
 		}

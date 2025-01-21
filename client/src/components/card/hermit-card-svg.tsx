@@ -6,7 +6,6 @@ import {
 	getHermitBackground,
 } from 'common/cards/card'
 import {Hermit} from 'common/cards/types'
-import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './hermit-card-svg.module.scss'
@@ -31,16 +30,9 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const hermitImage = getCardImage(card)
 	const name = card.shortName || card.name
 	const nameLength = name.length
-	const disabled =
-		EXPANSIONS[card.expansion].disabled === true ? 'disabled' : 'enabled'
 
 	return (
-		<svg
-			className={classnames(css.card, css[disabled])}
-			width="100%"
-			height="100%"
-			viewBox="0 0 400 400"
-		>
+		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<defs>
 				<clipPath id="myClip">
 					<rect x="55" y="70" width="290" height="178" />
