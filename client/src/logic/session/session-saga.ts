@@ -443,13 +443,13 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* (action) {
-			if (noConnection && action.newActiveDeck) {
+			if (action.newActiveDeck) {
 				yield* put<LocalMessage>({
 					type: localMessages.SELECT_DECK,
 					deck: action.newActiveDeck,
 				})
-				return
 			}
+			if (!noConnection) return
 			yield* sendMsg({
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck?.code,
