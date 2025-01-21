@@ -153,7 +153,7 @@ function findDeckPosition(
 
 	if (position.position === 'random') {
 		let numberOfPossibleSpots = deckPositionsWithCards.length + 1
-		let targetPosition = Math.floor(Math.random() * numberOfPossibleSpots)
+		let targetPosition = Math.floor(game.rng() * numberOfPossibleSpots)
 
 		if (targetPosition === 0) {
 			return findDeckPosition(game, player, {position: 'front'})
