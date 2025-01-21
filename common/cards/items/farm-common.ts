@@ -7,7 +7,7 @@ const FarmItem: Item = {
 	numericId: 55,
 	name: 'Farm Item',
 	shortName: 'Farm',
-	expansion: 'default',
+	expansion: 'alter_egos_iii',
 	rarity: 'common',
 	tokens: 0,
 	type: 'farm',
