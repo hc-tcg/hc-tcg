@@ -226,7 +226,9 @@ function* gameManager(con: GameController) {
 				Date.now() - con.createdTime,
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
+				con.game.state.turn.turnNumber,
 				Buffer.from([0x00]),
+				con.gameCode,
 			)
 		}
 	}
