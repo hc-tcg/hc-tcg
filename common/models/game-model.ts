@@ -1,5 +1,4 @@
 import assert from 'assert'
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -7,10 +6,8 @@ import {
 	SlotComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
-import {ViewerComponent} from '../components/viewer-component'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
-import {ServerMessage} from '../socket-messages/server-messages'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -39,7 +36,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {PlayerId, PlayerModel} from './player-model'
 
 export type GameSettings = {
 	maxTurnTime: number
@@ -89,19 +85,13 @@ export function gameSettingsFromEnv(): GameSettings {
 }
 
 export class GameModel {
-	private internalCreatedTime: number
-	private internalId: string
-	private internalGameCode: string | null
-	private internalSpectatorCode: string | null
-	private internalApiSecret: string | null
-
 	public rng: () => number
 
+	public readonly id: string
 	public readonly settings: GameSettings
+	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
-	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public task: any
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -149,28 +139,25 @@ export class GameModel {
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
 		options?: {
-			gameCode?: string
-			apiSecret?: string
-			spectatorCode?: string
-			randomizeOrder?: false
+			randomizeOrder?: boolean
+			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
 		options = options ?? {}
+		this.id = `game_${Math.random()}`
+
+		if (options?.publishBattleLog) {
+			this.publishBattleLog = options.publishBattleLog
+		} else {
+			this.publishBattleLog = () => {}
+		}
 
 		this.settings = settings
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
 
-		this.internalCreatedTime = Date.now()
-		this.internalId = 'game_' + Math.random().toString()
-		this.internalGameCode = options.gameCode || null
-		this.internalSpectatorCode = options.spectatorCode || null
-		this.internalApiSecret = options.apiSecret || null
-		this.chat = []
 		this.battleLog = new BattleLogModel(this)
-
-		this.task = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],
@@ -218,51 +205,6 @@ export class GameModel {
 
 	public get opponentPlayer(): PlayerComponent {
 		return this.components.getOrError(this.opponentPlayerEntity)
-	}
-
-	public get viewers(): Array<ViewerComponent> {
-		return this.components.filter(ViewerComponent)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
-	}
-
-	public get createdTime() {
-		return this.internalCreatedTime
-	}
-
-	public get id() {
-		return this.internalId
-	}
-
-	public get gameCode() {
-		return this.internalGameCode
-	}
-
-	public get spectatorCode() {
-		return this.internalSpectatorCode
-	}
-
-	public get apiSecret() {
-		return this.internalApiSecret
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
-		)
 	}
 
 	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {

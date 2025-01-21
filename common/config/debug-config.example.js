@@ -21,4 +21,5 @@ export default {
 	logAttackHistory: false,
 	disableRewardCards: false,
 	renderCardsDynamically: false,
+	statsUrl: null,
 }

@@ -1,10 +1,10 @@
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {sortCardInstances} from 'common/utils/cards'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {useSelector} from 'react-redux'
-import {sortCards} from './../../deck/deck-edit'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
@@ -31,7 +31,7 @@ function Toolbar() {
 			type: 'selectCards',
 			name: 'Deck',
 			description: '',
-			cards: activeDeck ? sortCards(activeDeck.cards) : [],
+			cards: activeDeck ? sortCardInstances(activeDeck.cards) : [],
 			selectionSize: 0,
 			primaryButton: {
 				text: 'Close',

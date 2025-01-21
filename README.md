@@ -36,6 +36,10 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 By default, the client is hosted on port 3002.
 
+## How To & Architecture
+
+See [docs/README.md](./docs/README.md).
+
 ## Configuration
 
 ### Server Config
@@ -75,6 +79,7 @@ You can configure debug settings using `common/config/debug-config.js`. See the 
 | logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
 | showHooksState        | Show hooks in the console.                                                  |
 | autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
+| statsUrl              | URL to use for the Hall of Fame.                                            |
 
 ### Formatting & coding style
 
@@ -86,24 +91,21 @@ npm run format    # format your code
 npm run fix       # fix any autofixable linting errors
 ```
 
-### Adding New Cards
-After adding your card, you will need to render the card.
-After pushing your code to your branch on github,
-wait a few minutes and there should be a commit with the card image!
-
 ### Testing
 
 This project contains a few tests that are run against every PR.
 
 ```sh
-npm run test              # run all the tests
-npm run test:unit         # run unittests written with jest, this will catch most errors.
-npm run test:unit-verbose # run unittests written with jest and print verbose logs for debugging.
-npm run test:vunit        # the same as test:unit-verbose
-npm run test:ct           # run component tests with playwright.
-npm run test:ct-update    # update component snapshots.
-npm run test:api          # run tests for the hc-tcg API.
-npm run test:e2e          # run end-to-end tests with Playwright.
+npm run test                # run all the tests
+npm run test:unit           # run unittests written with jest, this will catch most errors.
+npm run test:unit-verbose   # run unittests written with jest and print verbose logs for debugging.
+npm run test:vunit          # the same as test:unit-verbose
+npm run test:starter-decks` # run starter deck verification check
+npm run test:db`            # run database tests
+npm run test:ct             # run component tests with playwright.
+npm run test:ct-update      # update component snapshots.
+npm run test:api            # run tests for the hc-tcg API.
+npm run test:e2e            # run end-to-end tests with Playwright.
 ```
 
 # Building & Self Hosting

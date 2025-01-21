@@ -1035,7 +1035,7 @@ export class Database {
 						},
 						winrate: winrate ? Number(winrate) : null,
 						wins: Number(wins),
-						lossses: Number(losses),
+						losses: Number(losses),
 					}
 					return [...allDecks, newDeck]
 				}

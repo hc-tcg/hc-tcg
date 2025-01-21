@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import {ToastT} from 'common/types/app'
 import {Deck, Tag} from 'common/types/deck'
+import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
 import {getIconPath} from 'common/utils/state-gen'
@@ -34,7 +35,6 @@ import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
-import {sortCards} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 
@@ -399,7 +399,7 @@ function SelectDeck({
 			/>
 			<ScreenshotDeckModal
 				setOpen={showScreenshotModal}
-				cards={sortCards(loadedDeck.cards)}
+				cards={sortCardInstances(loadedDeck.cards).map((card) => card.props)}
 				onClose={() => setShowScreenshotModal(false)}
 			/>
 			<TagsModal
@@ -535,7 +535,7 @@ function SelectDeck({
 							<div className={css.deckListBox}>
 								<div className={css.mobileDeckPreview}>
 									<MobileCardList
-										cards={sortCards(currentDeck.cards)}
+										cards={sortCardInstances(currentDeck.cards)}
 										small={true}
 									/>
 								</div>
@@ -673,7 +673,7 @@ function SelectDeck({
 
 					<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
 						<CardList
-							cards={sortCards(selectedCards.hermits)}
+							cards={sortCardInstances(selectedCards.hermits)}
 							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
@@ -687,7 +687,7 @@ function SelectDeck({
 						)}
 					>
 						<CardList
-							cards={sortCards(selectedCards.attachableEffects)}
+							cards={sortCardInstances(selectedCards.attachableEffects)}
 							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
@@ -700,7 +700,7 @@ function SelectDeck({
 						)}
 					>
 						<CardList
-							cards={sortCards(selectedCards.singleUseEffects)}
+							cards={sortCardInstances(selectedCards.singleUseEffects)}
 							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
@@ -709,7 +709,7 @@ function SelectDeck({
 
 					<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 						<CardList
-							cards={sortCards(selectedCards.items)}
+							cards={sortCardInstances(selectedCards.items)}
 							displayTokenCost={true}
 							wrap={true}
 							disableAnimations={true}
