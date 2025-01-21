@@ -24,8 +24,8 @@ global.getState = () => store.getState()
 
 let preloadCards = CARDS_LIST.flatMap((card) => {
 	return [
-		<link rel="preload" href={getRenderedCardImage(card, true)} as="image" />,
-		<link rel="preload" href={getRenderedCardImage(card, false)} as="image" />,
+		<link rel="prerender" href={getRenderedCardImage(card, true)} />,
+		<link rel="prerender" href={getRenderedCardImage(card, false)} />,
 	]
 })
 
