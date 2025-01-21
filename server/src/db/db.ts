@@ -275,7 +275,7 @@ export class Database {
 		}
 	}
 
-	/** Return the deck with a specific ID. */
+	/** Return the deck with a specific ID, for use in the API. */
 	public async getDeckFromID(
 		deckCode: string,
 	): Promise<DatabaseResult<ApiDeck>> {
@@ -330,6 +330,69 @@ export class Database {
 					iconType,
 					cards: cards.map((card) => card.id),
 					tags,
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/** Return the deck with a specific ID. */
+	public async getPlayerDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<Deck>> {
+		try {
+			const deck = (
+				await this.pool.query(
+					`SELECT
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,decks.show_info,
+						deck_cards.card_id,deck_cards.copies,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
+						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
+						WHERE decks.deck_code = $1
+					`,
+					[deckCode],
+				)
+			).rows
+			const code = deck[0]['deck_code']
+			const name = deck[0]['name']
+			const icon = deck[0]['icon']
+			const iconType = deck[0]['icon_type']
+			const showInfo: boolean = deck[0]['show_info']
+			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
+				if (
+					row['card_id'] === null ||
+					r.find((card) => card.numericId === row['card_id'])
+				)
+					return r
+				return [
+					...r,
+					...Array(row['copies']).fill(
+						this.allCards.find((card) => card.numericId === row['card_id']),
+					),
+				]
+			}, [])
+			const tags: Array<Tag> = deck.reduce((r: Array<Tag>, row) => {
+				if (!row['tag_id'] || r.find((tag) => tag.key === row['tag_id']))
+					return r
+				return [
+					...r,
+					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
+				]
+			}, [])
+
+			return {
+				type: 'success',
+				body: {
+					code,
+					name,
+					icon,
+					iconType,
+					cards: cards.map((card) => toLocalCardInstance(card)),
+					tags,
+					public: showInfo,
 				},
 			}
 		} catch (e) {

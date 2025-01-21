@@ -1,6 +1,6 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastData} from 'common/types/app'
-import {Deck} from 'common/types/deck'
+import {PlayerInfo} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
 
@@ -9,7 +9,7 @@ type SessionState = {
 	minecraftName: string
 	playerId: PlayerId
 	playerSecret: string
-	playerDeck: Deck | null
+	playerDeck: string | null
 	connecting: boolean
 	connected: boolean
 	errorType?:
@@ -34,15 +34,7 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '' as PlayerId,
 	playerSecret: '',
-	playerDeck: {
-		name: '',
-		iconType: 'item',
-		icon: 'any',
-		code: '',
-		cards: [],
-		tags: [],
-		public: false,
-	},
+	playerDeck: null,
 	connecting: false,
 	connected: false,
 	tooltip: null,
@@ -76,6 +68,8 @@ const loginReducer = (
 				...state,
 				errorType: undefined,
 				...action.player,
+				playerDeck:
+					(action.player as PlayerInfo)?.playerDeck?.code || state.playerDeck,
 			}
 		case localMessages.CONNECTED:
 			return {
@@ -93,7 +87,7 @@ const loginReducer = (
 		case localMessages.SELECT_DECK:
 			return {
 				...state,
-				playerDeck: action.deck,
+				playerDeck: action.deck.code,
 			}
 		case localMessages.TOAST_OPEN:
 			state.toast.push({

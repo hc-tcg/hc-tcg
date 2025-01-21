@@ -17,7 +17,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame} from 'db/db-reciever'
+import {addGame, getDeck} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -303,11 +303,37 @@ function* cleanUpSaga() {
 	}
 }
 
+function* updateDeckSaga(
+	player: PlayerModel,
+	payload:
+		| {
+				databaseConnected: true
+				activeDeckCode: string
+		  }
+		| {
+				databaseConnected: false
+				activeDeck: Deck
+		  },
+) {
+	if (payload.databaseConnected) {
+		const newDeck = yield* getDeck(payload.activeDeckCode)
+		if (!newDeck) return
+		player.setPlayerDeck(newDeck)
+		return
+	}
+
+	player.setPlayerDeck(payload.activeDeck)
+}
+
 export function* joinQueue(
 	msg: RecievedClientMessage<typeof clientMessages.JOIN_QUEUE>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
+	console.log(player.deck)
 
 	if (!player) {
 		console.log('[Join queue] Player not found: ', playerId)
@@ -397,6 +423,9 @@ export function* createBossGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Create Boss game] Player not found: ', playerId)
 		return
@@ -483,6 +512,9 @@ export function* createPrivateGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Create private game] Player not found: ', playerId)
 		return
@@ -522,6 +554,9 @@ export function* joinPrivateGame(
 		payload: {code},
 	} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
 		return

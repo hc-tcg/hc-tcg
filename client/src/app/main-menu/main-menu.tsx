@@ -7,6 +7,7 @@ import {VersionLinks} from 'components/link-container'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
 import debugOptions from 'debug'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
@@ -19,10 +20,27 @@ type Props = {
 
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const {playerName, playerDeck, newPlayer} = useSelector(getSession)
+	const {
+		playerName,
+		playerDeck: playerDeckCode,
+		newPlayer,
+	} = useSelector(getSession)
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+	const playerDeck = databaseInfo?.decks.find(
+		(deck) => deck.code === playerDeckCode,
+	)
 
 	const checkForValidation = (): boolean => {
-		if (!playerDeck) return false
+		if (!playerDeckCode || !playerDeck) {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'You currently have no active deck selected!',
+				description: 'Go to the deck builder to select an active deck.',
+				image: '/images/types/type-any.png',
+			})
+			return false
+		}
 		const validation = validateDeck(playerDeck.cards.map((card) => card.props))
 		if (validation.valid) return true
 		dispatch({
