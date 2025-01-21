@@ -306,24 +306,6 @@ export function* loginSaga() {
 			})
 		}
 
-		// Set active deck
-		const activeDeckCode = getActiveDeckCode()
-		const localDatabase = yield* select(getLocalDatabaseInfo)
-		const activeDeck = localDatabase.decks.find(
-			(deck) => deck.code === activeDeckCode,
-		)
-		if (activeDeck) {
-			console.log(`Selected previous active deck: ${activeDeck.name}`)
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: activeDeck,
-			})
-			yield* sendMsg({
-				type: clientMessages.SELECT_DECK,
-				deck: activeDeck,
-			})
-		}
-
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
@@ -355,6 +337,23 @@ export function* loginSaga() {
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
+
+		// Set active deck
+		const activeDeckCode = getActiveDeckCode()
+		const localDatabase = yield* select(getLocalDatabaseInfo)
+		const activeDeck = localDatabase.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
+		if (activeDeck) {
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+		}
 	}
 }
 
