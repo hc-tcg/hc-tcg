@@ -1,5 +1,5 @@
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {sortCardInstances} from 'common/utils/cards'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
