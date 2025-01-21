@@ -506,7 +506,9 @@ export function* addGame(
 	gameLength: number,
 	winner: string | null,
 	seed: string,
+	turns: number,
 	replay: Buffer,
+	opponentCode: string | null,
 ) {
 	if (!root.db?.connected) return
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
@@ -522,7 +524,9 @@ export function* addGame(
 		gameLength,
 		winner,
 		seed,
+		turns,
 		replay,
+		opponentCode,
 	)
 
 	const players = [firstPlayerModel, secondPlayerModel]
