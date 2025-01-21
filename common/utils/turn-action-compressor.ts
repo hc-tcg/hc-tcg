@@ -12,6 +12,7 @@ import {
 	PickSlotActionData,
 	PlayCardActionData,
 	WaitActionData,
+	ForfeitAction,
 } from '../types/turn-action-data'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
@@ -271,12 +272,17 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			}
 		},
 	},
+	//@TODO Does not support brush modal
 	MODAL_REQUEST: {
 		value: 0xc,
 		bytes: 'variable',
 		compress(game, turnAction: ModalResult) {
 			if ('result' in turnAction.modalResult) {
 				const result = turnAction.modalResult.result
+
+				//@TODO THIS NEEDS TO BE FIXED TO ACTUALLY WORK BEFORE WE BRING BACK ADVENT
+				if (!('cards' in turnAction.modalResult)) return null
+
 				const cards = turnAction.modalResult.cards?.map((card): Buffer => {
 					const cardComponent = game.components.find(
 						CardComponent,
@@ -447,6 +453,24 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			}
 		},
 	},
+	FORFEIT: {
+		value: 0xf1,
+		bytes: 4,
+		compress(game, turnAction: ForfeitAction) {
+			if (game.currentPlayer.entity === turnAction.player)
+				return writeUIntToBuffer(0, 1)
+			return writeUIntToBuffer(1, 1)
+		},
+		decompress(game, _buffer) {
+			return {
+				type: 'FORFEIT',
+				player:
+					_buffer.at(0) === 0
+						? game.currentPlayer.entity
+						: game.opponentPlayer.entity,
+			}
+		},
+	},
 }
 
 const replayActionsFromValues = Object.entries(replayActions).reduce(
@@ -496,6 +520,14 @@ export function bufferToTurnActions(
 	buffer: Buffer,
 ): Array<ReplayActionData> {
 	let cursor = 0
+
+	const version = buffer.readUInt8(cursor)
+	cursor++
+
+	if (version === 0) return []
+
+	//Other version checks here
+
 	const replayActions: Array<ReplayActionData> = []
 	while (cursor < buffer.length) {
 		const actionNumber = buffer.readUInt8(cursor) & 0b00111111
@@ -509,23 +541,24 @@ export function bufferToTurnActions(
 			const bytes = buffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
 			const turnAction = action.decompress(game, bytes)
-			if (turnAction)
+			if (turnAction) {
 				replayActions.push({
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
+			}
 		} else {
 			const byteAmount = buffer.readUInt16BE(cursor)
 			cursor += VARIABLE_BYTE_MAX
 			const bytes = buffer.subarray(cursor, cursor + byteAmount)
 			const turnAction = action.decompress(game, bytes)
-			if (turnAction)
+			if (turnAction) {
 				replayActions.push({
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
+			}
 		}
-		// We need to run the action to play the game to the next state here
 	}
 
 	return replayActions
