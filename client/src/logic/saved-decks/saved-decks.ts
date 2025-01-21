@@ -1,7 +1,7 @@
 import {CARDS} from 'common/cards'
 import {Deck, LegacyDeck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
-import {generateDatabaseCode} from 'common/utils/database-codes'
+import {generateDatabaseCodeWithSeed} from 'common/utils/database-codes'
 
 export const getActiveDeckCode = (): string | null => {
 	const deck = localStorage.getItem('activeDeck')
@@ -55,7 +55,12 @@ export function getLocalStorageDecks(): Array<Deck> {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
 					const newDeck: Deck = {
-						code: parsedDeck.code ? parsedDeck.code : generateDatabaseCode(),
+						code: parsedDeck.code
+							? parsedDeck.code
+							: generateDatabaseCodeWithSeed(
+									parsedDeck.name +
+										parsedDeck.cards.reduce((r, card) => r + card.cardId, ''),
+								),
 						name: parsedDeck.name,
 						iconType: 'item',
 						icon: parsedDeck.icon,
