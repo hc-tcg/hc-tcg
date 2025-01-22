@@ -35,7 +35,12 @@ export class Database {
 	public connected: boolean
 	private bfDepth: number
 
-	constructor(env: any, allCards: Array<Card>, allAchievements: Array<Achievement>, bfDepth: number) {
+	constructor(
+		env: any,
+		allCards: Array<Card>,
+		allAchievements: Array<Achievement>,
+		bfDepth: number,
+	) {
 		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
 		this.allAchievements = allAchievements
