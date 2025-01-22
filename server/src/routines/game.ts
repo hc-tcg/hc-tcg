@@ -23,7 +23,7 @@ import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 
 import assert from 'assert'
-import {GameController} from 'game-controller'
+import {GameController} from '../game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectAction,

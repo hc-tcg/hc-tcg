@@ -23,7 +23,7 @@ import {
 import {PlayerSetupDefs} from '../../../common/utils/state-gen'
 import gameSaga from './game'
 import {put, spawn} from 'typed-redux-saga'
-import {LocalMessage, localMessages} from 'messages'
+import {LocalMessage, localMessages} from '../messages'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
 const REPLAY_VERSION = 0x01
@@ -538,7 +538,7 @@ function turnActionToBuffer(
 
 export function* turnActionsToBuffer(
 	controller: GameController,
-): Generator<any, Buffer<ArrayBuffer>> {
+): Generator<any, Buffer> {
 	const originalGame = controller.game as GameModel
 
 	const players: Array<PlayerModel> = controller.getPlayers()

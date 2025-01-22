@@ -274,7 +274,11 @@ export function testGame(
 	options: {
 		saga: (game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
-		then?: (game: GameModel, outcome: GameOutcome) => any
+		then?: (
+			game: GameModel,
+			controller: GameController,
+			outcome: GameOutcome,
+		) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
@@ -310,7 +314,11 @@ export function testGame(
 	}
 
 	if (options.then)
-		options.then(controller.game, figureOutGameResult(controller.game))
+		options.then(
+			controller.game,
+			controller,
+			figureOutGameResult(controller.game),
+		)
 }
 
 /**
