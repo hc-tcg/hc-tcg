@@ -1,9 +1,12 @@
+import {ACHIEVEMENTS_LIST} from '../achievements'
 import {Card} from '../cards/types'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	CardComponent,
 	DeckSlotComponent,
 	HandSlotComponent,
+	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
 } from '../components'
@@ -27,6 +30,7 @@ type ComponentSetupOptions = {
 	startWithAllCards: boolean
 	unlimitedCards: boolean
 	extraStartingCards: Array<string>
+	countAchievements: boolean
 }
 
 export type OpponentDefs = PlayerDefs & {
@@ -150,6 +154,29 @@ function setupEcsForPlayer(
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
+
+	if (options.countAchievements) {
+		const data = Buffer.alloc(2)
+		data[1] = 24
+
+		ACHIEVEMENTS_LIST.forEach((achievement) => {
+			const achievementComponent = components.new(
+				AchievementComponent,
+				achievement,
+				data,
+			)
+			const achievementObserver = components.new(
+				ObserverComponent,
+				achievementComponent.entity,
+			)
+			achievementComponent.props.onGameStart(
+				achievementComponent.game,
+				achievementComponent,
+				playerEntity,
+				achievementObserver,
+			)
+		})
+	}
 }
 
 export function getGameState(

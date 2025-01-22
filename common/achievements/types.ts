@@ -1,6 +1,6 @@
-import { ObserverComponent } from "../components"
-import { GameModel } from "../models/game-model"
-import { PlayerModel } from "../models/player-model"
+import {AchievementComponent, ObserverComponent} from '../components'
+import {PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
 
 export type Achievement = {
 	id: string
@@ -8,9 +8,19 @@ export type Achievement = {
 	name: string
 	description: string
 	steps: number
+	bytes: number
 	getProgress: (data: Buffer<ArrayBuffer>) => number
 	sidebarDescriptions?: Array<{type: string; name: string}>
 
-	onGameStart: (game: GameModel, player: PlayerModel, observer: ObserverComponent) => void
-	onGameEnd: (game: GameModel, player: PlayerModel) => void
+	onGameStart: (
+		game: GameModel,
+		component: AchievementComponent,
+		player: PlayerEntity,
+		observer: ObserverComponent,
+	) => void
+	onGameEnd: (
+		game: GameModel,
+		component: AchievementComponent,
+		player: PlayerEntity,
+	) => void
 }

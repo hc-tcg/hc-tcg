@@ -1,6 +1,7 @@
 import assert from 'assert'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
@@ -184,6 +185,8 @@ function* gameManager(con: GameController) {
 
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
+
+		// Maybe push achievements here?
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(
