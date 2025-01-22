@@ -65,12 +65,15 @@ export class GameController {
 	task: any
 	viewers: Array<GameViewer>
 
+	readonly props: GameControllerProps
+
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		props: GameControllerProps,
 	) {
 		this.chat = []
+		this.props = props
 
 		this.game = new GameModel(
 			props.randomSeed || GameModel.newGameSeed(),

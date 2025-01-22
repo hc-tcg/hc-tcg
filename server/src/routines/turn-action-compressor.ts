@@ -1,11 +1,16 @@
-import {GameController} from '../../server/src/game-controller'
-import {BoardSlotComponent, CardComponent, SlotComponent} from '../components'
-import query from '../components/query'
-import {CardEntity} from '../entities'
-import {GameModel} from '../models/game-model'
-import {SlotTypeT} from '../types/cards'
-import {PlayCardAction, TurnAction} from '../types/game-state'
-import {WithoutFunctions} from '../types/server-requests'
+import {GameController} from '../game-controller'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	SlotComponent,
+} from '../../../common/components'
+import query from '../../../common/components/query'
+import {CardEntity} from '../../../common/entities'
+import {GameModel} from '../../../common/models/game-model'
+import {PlayerModel} from '../../../common/models/player-model'
+import {SlotTypeT} from '../../../common/types/cards'
+import {PlayCardAction, TurnAction} from '../../../common/types/game-state'
+import {WithoutFunctions} from '../../../common/types/server-requests'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
@@ -14,10 +19,14 @@ import {
 	PlayCardActionData,
 	WaitActionData,
 	ForfeitAction,
-} from '../types/turn-action-data'
+} from '../../../common/types/turn-action-data'
+import {PlayerSetupDefs} from '../../../common/utils/state-gen'
+import gameSaga from './game'
+import {put, spawn} from 'typed-redux-saga'
+import {LocalMessage, localMessages} from 'messages'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
-const VERSION = 0x01
+const REPLAY_VERSION = 0x01
 
 type ReplayAction = {
 	value: number
@@ -517,33 +526,57 @@ function turnActionToBuffer(
 	return Buffer.concat([headerBuffer, timeBuffer])
 }
 
-export function turnActionsToBuffer(controller: GameController) {
+export function* turnActionsToBuffer(
+	controller: GameController,
+): Generator<any, Buffer<ArrayBuffer>> {
 	const originalGame = controller.game as GameModel
-	const newGame = new GameModel(
-		originalGame.rngSeed,
-		controller.players[0],
-		controller.players[1],
-		originalGame.settings,
+
+	const players: Array<PlayerModel> = controller.getPlayers()
+	if (!players[0].deck || !players[1].deck) return Buffer.from([0x00])
+
+	const firstPlayerSetupDefs: PlayerSetupDefs = {
+		model: players[0],
+		deck: players[0].deck.cards.map((card) => card.props.id),
+	}
+
+	const secondPlayerSetupDefs: PlayerSetupDefs = {
+		model: players[1],
+		deck: players[1].deck.cards.map((card) => card.props.id),
+	}
+
+	const newGameController = new GameController(
+		firstPlayerSetupDefs,
+		secondPlayerSetupDefs,
 		{
-			publishBattleLog: (logs, timeout) =>
-				newGame.publishBattleLog(logs, timeout),
+			...controller.props,
+			randomSeed: originalGame.rngSeed,
 			randomizeOrder: true,
 		},
 	)
 
+	const newGame: GameModel = newGameController.game
+
 	const buffers: Array<Buffer> = []
 
-	originalGame.turnActions.forEach((action) => {
+	newGameController.task = yield* spawn(gameSaga, newGameController)
+
+	for (let i = 0; i < originalGame.turnActions.length; i++) {
+		const action = originalGame.turnActions[i]
 		buffers.push(
 			turnActionToBuffer(
-				originalGame,
+				newGame,
 				action.action,
 				action.millisecondsSinceLastAction,
 			),
 		)
-	})
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_TURN_ACTION,
+			playerEntity: newGame.currentPlayer.entity,
+			action: action.action,
+		})
+	}
 
-	return Buffer.concat([Buffer.from([VERSION]), ...buffers])
+	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
 }
 
 export function bufferToTurnActions(
