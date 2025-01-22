@@ -774,7 +774,7 @@ export class Database {
 
 			for (let i = 0; i < gamesRows.length; i++) {
 				const game = gamesRows[i]
-				const replay: Buffer<ArrayBuffer> = game['replay']
+				const replay: Buffer = game['replay']
 
 				if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01) continue
 
