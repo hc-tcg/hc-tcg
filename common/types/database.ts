@@ -70,11 +70,3 @@ export type GamesStats = {
 	forfeitRate: number
 	errorRate: number
 }
-
-export type Achievement = {
-	id: string
-	name: string
-	description: string
-	icon: string
-	total: string
-}

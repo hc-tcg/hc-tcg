@@ -1,3 +1,4 @@
+import {Achievement} from 'common/achievements/types'
 import {Card} from 'common/cards/types'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
@@ -30,12 +31,14 @@ export type DatabaseResult<T = undefined> =
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	public allAchievements: Array<Achievement>
 	public connected: boolean
 	private bfDepth: number
 
-	constructor(env: any, allCards: Array<Card>, bfDepth: number) {
+	constructor(env: any, allCards: Array<Card>, allAchievements: Array<Achievement>, bfDepth: number) {
 		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
+		this.allAchievements = allAchievements
 		this.bfDepth = bfDepth
 		this.connected = false
 
@@ -105,15 +108,13 @@ export class Database {
 				);
 				CREATE TABLE IF NOT EXISTS achievements(
 					achievement_id varchar(7) PRIMARY KEY NOT NULL,
-					achievement_name varchar(255) NOT NULL,
-					description varchar(65535) NOT NULL,
-					icon varchar(255) NOT NULL,
-					total integer NOT NULL 
 				);
 				CREATE TABLE IF NOT EXISTS user_achievements(
 					user_id uuid REFERENCES users(user_id),
-					achievement_id varchar(7) REFERENCES achievements(achievement_id),
-					progress integer NOT NULL
+					achievement_id varchar(7) REFERENCES achievements,
+					achievement varchar(255) NOT NULL,
+					progress integer NOT NULL,
+					completion_time timestamp,
 				);
 				`,
 			)
@@ -125,6 +126,12 @@ export class Database {
 				INSERT INTO cards (card_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
 			`,
 				[this.allCards.map((card) => card.numericId)],
+			)
+			await this.pool.query(
+				`
+				INSERT INTO achievements (achievement_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
+			`,
+				[this.allAchievements.map((achievement) => achievement.numericId)],
 			)
 			console.log('Database populated')
 
@@ -1317,5 +1324,15 @@ export class Database {
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
 		}
+	}
+
+	/**Get player achievements */
+	public async getAchievements(playerId: string) {
+		const achievements = this.pool.query(`
+				SELECT achievement_id, achievement, progress, completion_time
+				FROM 
+			`)
+
+		return achievements
 	}
 }
