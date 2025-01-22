@@ -1,3 +1,5 @@
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
+import {PlayerSetupDefs} from '../utils/state-gen'
 import {TypeT} from './cards'
 import {ApiDeck} from './deck'
 
@@ -77,4 +79,10 @@ export type Achievement = {
 	description: string
 	icon: string
 	total: string
+}
+
+export type GameHistory = {
+	firstPlayer: PlayerSetupDefs
+	secondPlayer: PlayerSetupDefs
+	replay: Array<ReplayActionData>
 }
