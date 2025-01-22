@@ -504,10 +504,7 @@ export function* getStats(
 	}
 
 	const statsResult = yield* call([root.db, root.db.getUserStats], player.uuid)
-	const historyResult = yield* call(
-		[root.db, root.db.getUserGameHistory],
-		player.uuid,
-	)
+	const historyResult = yield* root.db.getUserGameHistory(player.uuid)
 
 	if (statsResult.type === 'success' && historyResult.type === 'success') {
 		broadcast([player], {

@@ -28,6 +28,7 @@ import GameLanding from './main-menu/games-landing'
 import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import GameHistory from './main-menu/game-history'
 
 function App() {
 	const section = useRouter()

@@ -98,18 +98,26 @@ function unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
 	const selectedSlotIndex = (byte & 0b00000110) >> 1
 	const opponentSlot = Boolean(byte & 0b00000001)
 
+	if (selectedSlotType === 0b10) {
+		const selectedSlot = game.components.find(
+			BoardSlotComponent,
+			query.slot.singleUse,
+		)
+		return selectedSlot
+	}
+
 	const selectedSlot = game.components.find(
 		BoardSlotComponent,
 		query.slot.rowIndex(selectedSlotRow),
 		selectedSlotType === 0b00 ? query.slot.hermit : () => true,
 		selectedSlotType === 0b01 ? query.slot.attach : () => true,
-		selectedSlotType === 0b11 ? query.slot.singleUse : () => true,
-		selectedSlotType === 0b10 ? query.slot.item : () => true,
-		selectedSlotType === 0b10
+		selectedSlotType === 0b11 ? query.slot.item : () => true,
+		selectedSlotType === 0b11
 			? query.slot.index(selectedSlotIndex)
 			: () => true,
 		opponentSlot ? query.slot.opponent : query.slot.currentPlayer,
 	)
+
 	return selectedSlot
 }
 
@@ -137,7 +145,9 @@ const playCard: ReplayAction = {
 		const selectedSlot = unpackBoardSlot(game, buffer.readUint8(0))?.entity
 		if (!selectedSlot) return null
 		const selectedCardIndex = buffer.readUInt8(1)
+		console.log(game.currentPlayer.getHand().map((card) => card.props.id))
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
+		console.log(selectedCard.props.id)
 		return {
 			type: replayActionsFromValues[this.value].turnAction as PlayCardAction,
 			slot: selectedSlot,
@@ -579,16 +589,17 @@ export function* turnActionsToBuffer(
 	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
 }
 
-export function bufferToTurnActions(
+export function* bufferToTurnActions(
 	firstPlayerSetupDefs: PlayerSetupDefs,
 	secondPlayerSetupDefs: PlayerSetupDefs,
 	seed: string,
 	actionsBuffer: Buffer,
-): Array<ReplayActionData> {
+): Generator<any, Array<ReplayActionData>> {
 	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
 		randomSeed: seed,
 		randomizeOrder: true,
 	})
+	con.task = yield* spawn(gameSaga, con)
 
 	let cursor = 0
 
@@ -619,6 +630,11 @@ export function bufferToTurnActions(
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
 				})
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_TURN_ACTION,
+					playerEntity: con.game.currentPlayer.entity,
+					action: turnAction,
+				})
 			}
 		} else {
 			const byteAmount = actionsBuffer.readUInt16BE(cursor)
@@ -629,6 +645,11 @@ export function bufferToTurnActions(
 				replayActions.push({
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+				})
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_TURN_ACTION,
+					playerEntity: con.game.currentPlayer.entity,
+					action: turnAction,
 				})
 			}
 		}

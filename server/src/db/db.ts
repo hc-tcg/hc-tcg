@@ -24,6 +24,8 @@ import {GameOutcome} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {bufferToTurnActions} from 'routines/turn-action-compressor'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
+import {PlayerDefs} from 'common/components/player-component'
+import {call} from 'typed-redux-saga'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -718,17 +720,18 @@ export class Database {
 	}
 
 	/**Get a user's game hisotry */
-	public async getUserGameHistory(
+	public *getUserGameHistory(
 		uuid: string,
-	): Promise<DatabaseResult<Array<GameHistory>>> {
+	): Generator<any, DatabaseResult<Array<GameHistory>>> {
 		try {
-			const gamesResult = await this.pool.query(
+			const gamesResult: any = yield* call(
+				[this.pool, this.pool.query],
 				`
 				SELECT * FROM games WHERE winner = $1 OR loser = $1`,
 				[uuid],
 			)
 
-			const gamesRows = gamesResult.rows
+			const gamesRows: Array<Record<string, any>> = gamesResult.rows
 
 			const allUsedDecks = gamesRows.reduce((r: Array<string>, game) => {
 				r.push(game['winner_deck_code'])
@@ -736,7 +739,30 @@ export class Database {
 				return r
 			}, [])
 
-			const decks = await this.getDecksFromCodes(allUsedDecks)
+			const allPlayersInGames = gamesRows.reduce((r: Array<string>, game) => {
+				r.push(game['winner'])
+				r.push(game['loser'])
+				return r
+			}, [])
+
+			const playersInGames: any = yield* call(
+				[this.pool, this.pool.query],
+				`
+				SELECT * FROM users WHERE user_id IN (SELECT * FROM UNNEST ($1::uuid[]))`,
+				[allPlayersInGames],
+			)
+
+			const players: Record<string, PlayerDefs> = {}
+
+			playersInGames.rows.forEach((row: Record<string, any>) => {
+				players[row['user_id']] = {
+					name: row['username'],
+					censoredName: row['username'],
+					minecraftName: row['minecraft_name'],
+				}
+			})
+
+			const decks = yield* call([this, this.getDecksFromCodes], allUsedDecks)
 
 			if (decks.type === 'failure')
 				return {
@@ -744,62 +770,67 @@ export class Database {
 					reason: decks.reason,
 				}
 
-			const gamesHistory: Array<GameHistory> = gamesRows.reduce(
-				(r: Array<GameHistory>, game) => {
-					const replay: Buffer<ArrayBuffer> = game['replay']
-					const seed: string = game['seed']
-					const firstPlayerWon = game['first_player_won']
+			const gamesHistory: Array<GameHistory> = []
 
-					const player1DeckCode: string = firstPlayerWon
-						? game['winner_deck_code']
-						: game['loser_deck_code']
-					const player2DeckCode: string = firstPlayerWon
-						? game['loser_deck_code']
-						: game['winner_deck_code']
+			for (let i = 0; i < gamesRows.length; i++) {
+				const game = gamesRows[i]
+				const replay: Buffer<ArrayBuffer> = game['replay']
 
-					const player1Deck = decks.body.find(
-						(deck) => deck.code === player1DeckCode,
-					)
-					const player2Deck = decks.body.find(
-						(deck) => deck.code === player2DeckCode,
-					)
+				if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01) continue
 
-					if (!player1Deck || !player2Deck) return r
+				const seed: string = game['seed']
+				const firstPlayerWon = game['first_player_won']
 
-					const player1Defs: PlayerSetupDefs = {
-						model: {
-							name: '',
-							minecraftName: '',
-							censoredName: '',
-						},
-						deck: player1Deck.cards.map((card) => card.props.id),
-					}
+				const player1DeckCode: string = firstPlayerWon
+					? game['winner_deck_code']
+					: game['loser_deck_code']
+				const player2DeckCode: string = firstPlayerWon
+					? game['loser_deck_code']
+					: game['winner_deck_code']
 
-					const player2Defs: PlayerSetupDefs = {
-						model: {
-							name: '',
-							minecraftName: '',
-							censoredName: '',
-						},
-						deck: player2Deck.cards.map((card) => card.props.id),
-					}
+				const player1Id: string = firstPlayerWon
+					? game['winner']
+					: game['loser']
 
-					return [
-						...r,
-						{
-							firstPlayer: player1Defs,
-							secondPlayer: player2Defs,
-							replay: bufferToTurnActions(
-								player1Defs,
-								player2Defs,
-								seed,
-								replay,
-							),
-						},
-					]
-				},
-				[],
-			)
+				const player2Id: string = firstPlayerWon
+					? game['loser']
+					: game['winner']
+
+				const player1Deck = decks.body.find(
+					(deck) => deck.code === player1DeckCode,
+				)
+				const player2Deck = decks.body.find(
+					(deck) => deck.code === player2DeckCode,
+				)
+
+				if (!player1Deck || !player2Deck) continue
+
+				const player1Defs: PlayerSetupDefs & {uuid: string} = {
+					model: players[player1Id],
+					deck: player1Deck.cards.map((card) => card.props.id),
+					uuid: player1Id,
+				}
+
+				const player2Defs: PlayerSetupDefs & {uuid: string} = {
+					model: players[player2Id],
+					deck: player2Deck.cards.map((card) => card.props.id),
+					uuid: player2Id,
+				}
+
+				const replayActions = yield* bufferToTurnActions(
+					player1Defs,
+					player2Defs,
+					seed,
+					replay,
+				)
+
+				gamesHistory.push({
+					firstPlayer: player1Defs,
+					secondPlayer: player2Defs,
+					replay: replayActions,
+					seed: seed,
+				})
+			}
 
 			return {
 				type: 'success',
@@ -907,7 +938,6 @@ export class Database {
 		opponentCode: string | null,
 	): Promise<DatabaseResult> {
 		try {
-			const replayBytes = replay.reduce((r, c) => (r << 8) & c, 0)
 			let winner
 			let winningDeck
 			let loser

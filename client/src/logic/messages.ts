@@ -23,6 +23,8 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
+import {ReplayActionData} from 'server/src/routines/turn-action-compressor'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -44,6 +46,7 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_REPLAY_GAME: null,
 	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
@@ -130,6 +133,13 @@ type Messages = [
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{
+		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
+		firstPlayer: PlayerSetupDefs
+		secondPlayer: PlayerSetupDefs
+		replay: Array<ReplayActionData>
+		seed: string
+	},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string

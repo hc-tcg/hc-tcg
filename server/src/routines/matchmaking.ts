@@ -27,6 +27,7 @@ import {
 	delay,
 	fork,
 	join,
+	put,
 	race,
 	spawn,
 	take,
@@ -810,6 +811,73 @@ export function* leavePrivateQueue(
 			)
 		}
 	}
+}
+
+//@Todo fix games from just timing out when player leaves
+export function* createReplayGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.log(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	const con = new GameController(
+		msg.payload.firstPlayer,
+		msg.payload.secondPlayer,
+		{randomSeed: msg.payload.seed, randomizeOrder: true},
+	)
+	root.addGame(con)
+	root.hooks.newGame.call(con)
+
+	const viewer = con.addViewer({
+		player: root.players[playerId],
+		spectator: true,
+		playerOnLeft: con.game.state.order[0],
+	})
+	let gameState = getLocalGameState(con.game, viewer)
+
+	broadcast([root.players[playerId]], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+		localGameState: gameState,
+	})
+
+	con.task = yield* spawn(gameSaga, con)
+
+	console.info(
+		`${con.game.logHeader}`,
+		`Replay game started: ${con.id}`,
+		`Viewer: ${msg.playerId}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
+
+	yield* delay(2000)
+
+	for (let i = 0; i < msg.payload.replay.length; i++) {
+		const action = msg.payload.replay[i]
+		yield* delay(action.millisecondsSinceLastAction)
+		yield* put({
+			type: clientMessages.TURN_ACTION,
+			payload: {
+				action: action.action,
+				playerEntity: con.game.currentPlayer.entity,
+			},
+			playerEntity: con.game.currentPlayer.entity,
+			action: action.action,
+		})
+	}
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+	console.log(`Replay game ended: ${con.id}`)
 }
 
 function onPlayerLeft(player: PlayerModel) {

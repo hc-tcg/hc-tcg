@@ -86,7 +86,8 @@ export type ApiGame = {
 }
 
 export type GameHistory = {
-	firstPlayer: PlayerSetupDefs
-	secondPlayer: PlayerSetupDefs
+	firstPlayer: PlayerSetupDefs & {uuid: string}
+	secondPlayer: PlayerSetupDefs & {uuid: string}
 	replay: Array<ReplayActionData>
+	seed: string
 }
