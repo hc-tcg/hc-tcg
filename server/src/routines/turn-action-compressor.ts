@@ -580,31 +580,40 @@ export function* turnActionsToBuffer(
 }
 
 export function bufferToTurnActions(
-	game: GameModel,
-	buffer: Buffer,
+	firstPlayerSetupDefs: PlayerSetupDefs,
+	secondPlayerSetupDefs: PlayerSetupDefs,
+	seed: string,
+	actionsBuffer: Buffer,
 ): Array<ReplayActionData> {
+	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
+		randomSeed: seed,
+		randomizeOrder: true,
+	})
+
 	let cursor = 0
 
-	const version = buffer.readUInt8(cursor)
+	const version = actionsBuffer.readUInt8(cursor)
 	cursor++
 
-	if (version === 0) return []
+	if (version === 0x00 || version === 0x30) return []
 
 	//Other version checks here
 
 	const replayActions: Array<ReplayActionData> = []
-	while (cursor < buffer.length) {
-		const actionNumber = buffer.readUInt8(cursor) & 0b00111111
-		const timeFormat = (buffer.readUInt8(cursor) & 0b10000000) >> 7
+	while (cursor < actionsBuffer.length) {
+		const actionNumber = actionsBuffer.readUInt8(cursor) & 0b00111111
+		const timeFormat = (actionsBuffer.readUInt8(cursor) & 0b10000000) >> 7
 		const action = replayActionsFromValues[actionNumber]
 		cursor++
 		let tenthsSinceLastAction =
-			timeFormat === 1 ? buffer.readUInt16BE(cursor) : buffer.readUInt8(cursor)
+			timeFormat === 1
+				? actionsBuffer.readUInt16BE(cursor)
+				: actionsBuffer.readUInt8(cursor)
 		cursor += 1 + timeFormat
 		if (action.bytes !== 'variable') {
-			const bytes = buffer.subarray(cursor, cursor + action.bytes)
+			const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
-			const turnAction = action.decompress(game, bytes)
+			const turnAction = action.decompress(con.game, bytes)
 			if (turnAction) {
 				replayActions.push({
 					action: turnAction,
@@ -612,10 +621,10 @@ export function bufferToTurnActions(
 				})
 			}
 		} else {
-			const byteAmount = buffer.readUInt16BE(cursor)
+			const byteAmount = actionsBuffer.readUInt16BE(cursor)
 			cursor += VARIABLE_BYTE_MAX
-			const bytes = buffer.subarray(cursor, cursor + byteAmount)
-			const turnAction = action.decompress(game, bytes)
+			const bytes = actionsBuffer.subarray(cursor, cursor + byteAmount)
+			const turnAction = action.decompress(con.game, bytes)
 			if (turnAction) {
 				replayActions.push({
 					action: turnAction,

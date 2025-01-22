@@ -13,6 +13,7 @@ import {
 	ApiGame,
 	CardStats,
 	DeckStats,
+	GameHistory,
 	GamesStats,
 	Stats,
 	TypeDistributionStats,
@@ -21,6 +22,8 @@ import {
 } from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
+import {bufferToTurnActions} from 'routines/turn-action-compressor'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -419,24 +422,11 @@ export class Database {
 		}
 	}
 
-	/** Return the decks associated with a user. */
-	public async getDecks(uuid: string): Promise<DatabaseResult<Array<Deck>>> {
+	/**Get decks from result */
+	private async getDecksFromResult(
+		decksResult: Array<any>,
+	): Promise<DatabaseResult<Array<Deck>>> {
 		try {
-			const decksResult = (
-				await this.pool.query(
-					`SELECT 
-						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
-						deck_cards.card_id,deck_cards.copies,decks.show_info,
-						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
-						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
-						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
-						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
-						WHERE decks.user_id = $1
-						`,
-					[uuid],
-				)
-			).rows
-
 			const decks = decksResult.reduce((allDecks: Array<Deck>, row) => {
 				const code: string = row['deck_code']
 				const showInfo: boolean = row['show_info']
@@ -503,6 +493,58 @@ export class Database {
 				type: 'success',
 				body: decks,
 			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/** Return the decks associated with a user. */
+	public async getDecksFromUuid(
+		uuid: string,
+	): Promise<DatabaseResult<Array<Deck>>> {
+		try {
+			const decksResult = (
+				await this.pool.query(
+					`SELECT 
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+						deck_cards.card_id,deck_cards.copies,decks.show_info,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
+						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
+						WHERE decks.user_id = $1
+						`,
+					[uuid],
+				)
+			).rows
+
+			return this.getDecksFromResult(decksResult)
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/** Return the decks with any number of codes. */
+	public async getDecksFromCodes(
+		codes: Array<string>,
+	): Promise<DatabaseResult<Array<Deck>>> {
+		try {
+			const decksResult = (
+				await this.pool.query(
+					`SELECT 
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,
+						deck_cards.card_id,deck_cards.copies,decks.show_info,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
+						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
+						WHERE decks.deck_code IN (SELECT * FROM UNNEST ($1::text[]))
+						`,
+					[codes],
+				)
+			).rows
+
+			return this.getDecksFromResult(decksResult)
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
 		}
@@ -669,6 +711,99 @@ export class Database {
 					forfeitLosses: Number(statRows['forfeit_losses']),
 					ties: Number(statRows['ties']),
 				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get a user's game hisotry */
+	public async getUserGameHistory(
+		uuid: string,
+	): Promise<DatabaseResult<Array<GameHistory>>> {
+		try {
+			const gamesResult = await this.pool.query(
+				`
+				SELECT * FROM games WHERE winner = $1 OR loser = $1`,
+				[uuid],
+			)
+
+			const gamesRows = gamesResult.rows
+
+			const allUsedDecks = gamesRows.reduce((r: Array<string>, game) => {
+				r.push(game['winner_deck_code'])
+				r.push(game['loser_deck_code'])
+				return r
+			}, [])
+
+			const decks = await this.getDecksFromCodes(allUsedDecks)
+
+			if (decks.type === 'failure')
+				return {
+					type: 'failure',
+					reason: decks.reason,
+				}
+
+			const gamesHistory: Array<GameHistory> = gamesRows.reduce(
+				(r: Array<GameHistory>, game) => {
+					const replay: Buffer<ArrayBuffer> = game['replay']
+					const seed: string = game['seed']
+					const firstPlayerWon = game['first_player_won']
+
+					const player1DeckCode: string = firstPlayerWon
+						? game['winner_deck_code']
+						: game['loser_deck_code']
+					const player2DeckCode: string = firstPlayerWon
+						? game['loser_deck_code']
+						: game['winner_deck_code']
+
+					const player1Deck = decks.body.find(
+						(deck) => deck.code === player1DeckCode,
+					)
+					const player2Deck = decks.body.find(
+						(deck) => deck.code === player2DeckCode,
+					)
+
+					if (!player1Deck || !player2Deck) return r
+
+					const player1Defs: PlayerSetupDefs = {
+						model: {
+							name: '',
+							minecraftName: '',
+							censoredName: '',
+						},
+						deck: player1Deck.cards.map((card) => card.props.id),
+					}
+
+					const player2Defs: PlayerSetupDefs = {
+						model: {
+							name: '',
+							minecraftName: '',
+							censoredName: '',
+						},
+						deck: player2Deck.cards.map((card) => card.props.id),
+					}
+
+					return [
+						...r,
+						{
+							firstPlayer: player1Defs,
+							secondPlayer: player2Defs,
+							replay: bufferToTurnActions(
+								player1Defs,
+								player2Defs,
+								seed,
+								replay,
+							),
+						},
+					]
+				},
+				[],
+			)
+
+			return {
+				type: 'success',
+				body: gamesHistory,
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
