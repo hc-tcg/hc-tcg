@@ -801,7 +801,7 @@ export class Database {
 					seed,
 					turns,
 					firstPlayerWon,
-					replayBytes,
+					replay,
 					opponentCode,
 				],
 			)

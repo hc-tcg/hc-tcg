@@ -36,7 +36,7 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {ReplayActionData} from '../utils/turn-action-compressor'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 
 export type GameSettings = {
 	maxTurnTime: number

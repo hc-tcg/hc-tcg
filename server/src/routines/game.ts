@@ -362,7 +362,7 @@ function checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function handleSingleTurnAction(
+export function handleSingleTurnAction(
 	con: GameController,
 	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
