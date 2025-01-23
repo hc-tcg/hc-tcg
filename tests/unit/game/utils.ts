@@ -314,9 +314,10 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	const result = figureOutGameResult(controller.game)
-
-	if (options.then) options.then(controller.game, result)
+	if (options.then) {
+		const result = figureOutGameResult(controller.game)
+		options.then(controller.game, result)
+	}
 }
 
 /**
