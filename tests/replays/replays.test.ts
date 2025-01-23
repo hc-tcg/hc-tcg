@@ -1,21 +1,6 @@
-import {
-	afterAll,
-	afterEach,
-	beforeAll,
-	beforeEach,
-	describe,
-	expect,
-	test,
-} from '@jest/globals'
-import {CARDS_LIST} from 'common/cards'
-import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
+import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
-import BuilderDoubleItem from 'common/cards/items/builder-rare'
-import Fortune from 'common/cards/single-use/fortune'
-import {config} from 'dotenv'
-import {Database} from 'server/db/db'
 import {
 	bufferToTurnActions,
 	turnActionsToBuffer,
@@ -29,36 +14,6 @@ import {
 } from '../unit/game/utils'
 
 describe('Test Replays', () => {
-	let database: Database
-	const BF_DEPTH = 4
-
-	beforeAll(async () => {
-		const env = config()
-		database = new Database(
-			{
-				...process.env,
-				...env,
-			},
-			CARDS_LIST,
-			BF_DEPTH,
-		)
-	})
-
-	afterAll(async () => {
-		await database.close()
-	})
-
-	beforeEach(async () => {
-		await database.pool.query(
-			'BEGIN TRANSACTION; DROP SCHEMA public CASCADE; CREATE SCHEMA public;',
-		)
-		return await database.new()
-	})
-
-	afterEach(async () => {
-		await database.pool.query('ROLLBACK')
-	})
-
 	test('Turn game into buffer', async () => {
 		testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
