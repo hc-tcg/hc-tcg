@@ -1,6 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import {IronArmor} from 'common/cards/attach/armor'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
+import GrianCommon from 'common/cards/hermits/grian-common'
 import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import Ladder from 'common/cards/single-use/ladder'
@@ -125,6 +127,36 @@ describe('Test Ladder', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Ladder allows row to have more health than hermit max', () => {
+		// Test is dependent on second hermit having greater max health
+		expect(FalseSymmetryRare.health).toBeLessThan(GrianCommon.health)
+
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
+					yield* playCardFromHand(game, GrianCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Ladder, 'single_use')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
+					yield* attack(game, 'secondary')
+					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })
