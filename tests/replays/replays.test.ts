@@ -4,6 +4,7 @@ import {
 	beforeAll,
 	beforeEach,
 	describe,
+	expect,
 	test,
 } from '@jest/globals'
 import {CARDS_LIST} from 'common/cards'
@@ -97,7 +98,6 @@ describe('Test Replays', () => {
 				// 	0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xc0, 0x00, 0x05, 0x00, 0x07,
 				// 	0x00, 0x05, 0x00,
 				// ])
-				console.log(turnActionsBuffer)
 				const turnActions = yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
@@ -105,7 +105,10 @@ describe('Test Replays', () => {
 					con.props,
 					turnActionsBuffer,
 				)
-				console.log(turnActions)
+
+				expect(con.game.turnActions).toBe(
+					turnActions.map((action) => action.action),
+				)
 			},
 		})
 	})
