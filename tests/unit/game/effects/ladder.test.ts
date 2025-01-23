@@ -131,8 +131,11 @@ describe('Test Ladder', () => {
 	})
 
 	test('Ladder allows row to have more health than hermit max', () => {
-		// Test is dependent on second hermit having greater max health
+		// Test is dependent on these inequalities
 		expect(FalseSymmetryRare.health).toBeLessThan(GrianCommon.health)
+		expect(EthosLabCommon.primary.damage).toBeLessThan(
+			GrianCommon.health - FalseSymmetryRare.health,
+		)
 
 		testGame(
 			{
@@ -154,6 +157,13 @@ describe('Test Ladder', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
 					yield* attack(game, 'secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
+					yield* endTurn(game)
+
+					yield* attack(game, 'primary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						GrianCommon.health - EthosLabCommon.primary.damage,
+					)
+					yield* endTurn(game)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
