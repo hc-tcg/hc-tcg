@@ -63,6 +63,9 @@ export function* authenticateUser(
 			[root.db, root.db.getAchievements],
 			player.uuid,
 		)
+		if (achievementProgress.type === 'success') {
+			player.achievementProgress = achievementProgress.body.achievementData
+		}
 
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
 	} else {

@@ -117,7 +117,7 @@ export class Database {
 				);
 				CREATE TABLE IF NOT EXISTS user_achievements(
 					user_id uuid REFERENCES users(user_id),
-					achievement_id integer REFERENCES achievements,
+					achievement_id integer REFERENCES achievements(achievement_id),
 					progress bytea NOT NULL,
 					completion_time timestamp
 				);
@@ -1331,22 +1331,53 @@ export class Database {
 		}
 	}
 
+	/**Initialize player achievements */
+	public async initializeAchievements(
+		playerId: string,
+	): Promise<DatabaseResult> {
+		try {
+			await this.pool.query(
+				'INSERT INTO user_achievements (user_id, achievement_id, progress) SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::bytea[]);',
+				[
+					this.allAchievements.map(() => playerId),
+					this.allAchievements.map((achievement) => achievement.numericId),
+					this.allAchievements.map((achievement) =>
+						Buffer.alloc(achievement.bytes),
+					),
+				],
+			)
+
+			return {
+				type: 'success',
+				body: undefined,
+			}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
+
 	/**Get player achievements */
 	public async getAchievements(
 		playerId: string,
 	): Promise<DatabaseResult<AchievementData>> {
-		// @TODO this
 		try {
-			const achievements = (
-				await this.pool.query(
-					`
-				SELECT achievement_id, progress, completion_time
-				FROM achievements
-				WHERE user_id = $1
-				`,
-					[playerId],
-				)
-			).rows.toSorted(
+			const result = await this.pool.query(
+				`
+			SELECT achievement_id, progress, completion_time
+			FROM user_achievements
+			WHERE user_id = $1
+			`,
+				[playerId],
+			)
+			if (result.rowCount !== this.allAchievements.length) {
+				await this.initializeAchievements(playerId)
+				return await this.getAchievements(playerId)
+			}
+			const achievements = result.rows.toSorted(
 				(rowA: any, rowB: any) =>
 					rowA['achievement_id'] - rowB['achievement_id'],
 			)

@@ -59,7 +59,7 @@ export function setupComponents(
 		player1Component.entity,
 		player1.deck,
 		options,
-		player1.model.achievementProgress,
+		player1.model.achievementProgress?.map((progress) => progress.progress),
 	)
 	setupEcsForPlayer(
 		game,
@@ -67,7 +67,7 @@ export function setupComponents(
 		player2Component.entity,
 		player2.deck,
 		options,
-		player2.model.achievementProgress,
+		player2.model.achievementProgress?.map((progress) => progress.progress),
 	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }

@@ -72,5 +72,8 @@ export type GamesStats = {
 }
 
 export type AchievementData = {
-	achievementData: {progress: Buffer<ArrayBuffer>; completedDate: number | null}[]
+	achievementData: {
+		progress: Buffer<ArrayBuffer>
+		completedDate: number | null
+	}[]
 }
