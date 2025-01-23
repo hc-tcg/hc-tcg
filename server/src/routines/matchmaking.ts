@@ -37,8 +37,8 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
-import ExBossAI from './virtual/exboss-ai'
 import {turnActionsToBuffer} from './turn-action-compressor'
+import ExBossAI from './virtual/exboss-ai'
 
 function setupGame(
 	player1: PlayerModel,

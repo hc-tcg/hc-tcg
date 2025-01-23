@@ -1,4 +1,4 @@
-import {GameController} from '../game-controller'
+import {put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -13,16 +13,16 @@ import {WithoutFunctions} from '../../../common/types/server-requests'
 import {
 	AnyTurnActionData,
 	ChangeActiveHermitActionData,
+	ForfeitAction,
 	ModalResult,
 	PickSlotActionData,
 	PlayCardActionData,
 	WaitActionData,
-	ForfeitAction,
 } from '../../../common/types/turn-action-data'
 import {PlayerSetupDefs} from '../../../common/utils/state-gen'
-import gameSaga from './game'
-import {put, spawn} from 'typed-redux-saga'
+import {GameController, GameControllerProps} from '../game-controller'
 import {LocalMessage, localMessages} from '../messages'
+import gameSaga from './game'
 
 const VARIABLE_BYTE_MAX = 2 // 0xFFFF / 2^16
 const REPLAY_VERSION = 0x01
@@ -162,22 +162,22 @@ const playCard: ReplayAction = {
 export const replayActions: Record<TurnAction, ReplayAction> = {
 	PLAY_HERMIT_CARD: {
 		...playCard,
-		value: 0x0,
+		value: 0x00,
 	},
 	PLAY_ITEM_CARD: {
 		...playCard,
-		value: 0x1,
+		value: 0x01,
 	},
 	PLAY_EFFECT_CARD: {
 		...playCard,
-		value: 0x2,
+		value: 0x02,
 	},
 	PLAY_SINGLE_USE_CARD: {
 		...playCard,
-		value: 0x3,
+		value: 0x03,
 	},
 	SINGLE_USE_ATTACK: {
-		value: 0x4,
+		value: 0x04,
 		bytes: 0,
 		compress() {
 			return null
@@ -189,7 +189,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	PRIMARY_ATTACK: {
-		value: 0x5,
+		value: 0x05,
 		bytes: 0,
 		compress() {
 			return null
@@ -201,7 +201,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	SECONDARY_ATTACK: {
-		value: 0x6,
+		value: 0x06,
 		bytes: 0,
 		compress() {
 			return null
@@ -213,7 +213,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	END_TURN: {
-		value: 0x7,
+		value: 0x07,
 		bytes: 0,
 		compress() {
 			return null
@@ -225,7 +225,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	APPLY_EFFECT: {
-		value: 0x8,
+		value: 0x08,
 		bytes: 0,
 		compress() {
 			return null
@@ -237,7 +237,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	REMOVE_EFFECT: {
-		value: 0x9,
+		value: 0x09,
 		bytes: 0,
 		compress() {
 			return null
@@ -249,7 +249,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	CHANGE_ACTIVE_HERMIT: {
-		value: 0xa,
+		value: 0x0a,
 		bytes: 1,
 		compress(game, turnAction: ChangeActiveHermitActionData) {
 			const slot = game.components.find(
@@ -274,7 +274,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	PICK_REQUEST: {
-		value: 0xb,
+		value: 0x0b,
 		bytes: 'variable',
 		compress(_game, turnAction: PickSlotActionData) {
 			const buffer = Buffer.from(turnAction.entity)
@@ -292,7 +292,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	//@TODO Does not support brush modal
 	MODAL_REQUEST: {
-		value: 0xc,
+		value: 0x0c,
 		bytes: 'variable',
 		compress(game, turnAction: ModalResult) {
 			if ('result' in turnAction.modalResult) {
@@ -435,7 +435,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	WAIT_FOR_TURN: {
-		value: 0xd,
+		value: 0x0d,
 		bytes: 0,
 		compress() {
 			return null
@@ -447,7 +447,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	WAIT_FOR_OPPONENT_ACTION: {
-		value: 0xe,
+		value: 0x0e,
 		bytes: 0,
 		compress() {
 			return null
@@ -459,7 +459,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	DELAY: {
-		value: 0xf0,
+		value: 0x0f,
 		bytes: 4,
 		compress(_game, turnAction: WaitActionData) {
 			return writeUIntToBuffer(turnAction.delay, 4)
@@ -472,18 +472,18 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 	},
 	FORFEIT: {
-		value: 0xf1,
-		bytes: 4,
+		value: 0x10,
+		bytes: 2,
 		compress(game, turnAction: ForfeitAction) {
 			if (game.currentPlayer.entity === turnAction.player)
 				return writeUIntToBuffer(0, 1)
 			return writeUIntToBuffer(1, 1)
 		},
-		decompress(game, _buffer) {
+		decompress(game, buffer) {
 			return {
 				type: 'FORFEIT',
 				player:
-					_buffer.at(0) === 0
+					buffer.readUInt8(0) === 0
 						? game.currentPlayer.entity
 						: game.opponentPlayer.entity,
 			}
@@ -581,9 +581,11 @@ export function* bufferToTurnActions(
 	firstPlayerSetupDefs: PlayerSetupDefs,
 	secondPlayerSetupDefs: PlayerSetupDefs,
 	seed: string,
+	props: GameControllerProps,
 	actionsBuffer: Buffer,
 ): Generator<any, Array<ReplayActionData>> {
 	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
+		...props,
 		randomSeed: seed,
 		randomizeOrder: true,
 	})
@@ -612,9 +614,9 @@ export function* bufferToTurnActions(
 		if (action.bytes !== 'variable') {
 			const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
+			console.log(action.turnAction)
 			const turnAction = action.decompress(con.game, bytes)
 			if (turnAction) {
-				console.log(turnAction)
 				replayActions.push({
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,

@@ -378,6 +378,7 @@ export function handleSingleTurnAction(
 	const actionType = turnAction.action.type
 
 	let endTurn = false
+	let forfeit = false
 
 	const availableActions =
 		turnAction.playerEntity === con.game.currentPlayer.entity
@@ -444,8 +445,9 @@ export function handleSingleTurnAction(
 				con.broadcastState()
 				break
 			case 'FORFEIT':
+				forfeit = true
 				con.game.endInfo.deadPlayerEntities = [turnAction.action.player]
-				return 'FORFEIT'
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
@@ -468,6 +470,11 @@ export function handleSingleTurnAction(
 		} else {
 			throw e
 		}
+	}
+
+	// Handle returning from forfeit here because everything else doesn't need to be run
+	if (forfeit) {
+		return 'FORFEIT'
 	}
 
 	// We log endTurn at the start of the turn so the state updates properly.
