@@ -31,20 +31,6 @@ import {
 describe('Test Replays', () => {
 	let database: Database
 	const BF_DEPTH = 4
-	const playerDeck = {
-		name: 'Testing deck',
-		icon: 'balanced',
-		iconType: 'item',
-		cards: [
-			BdoubleO100Common.numericId,
-			EthosLabCommon.numericId,
-			BalancedItem.numericId,
-			BuilderDoubleItem.numericId,
-			BuilderDoubleItem.numericId,
-			Fortune.numericId,
-		],
-		tags: [],
-	}
 
 	beforeAll(async () => {
 		const env = config()
@@ -75,7 +61,7 @@ describe('Test Replays', () => {
 
 	test('Turn game into buffer', async () => {
 		testReplayGame({
-			playerOneDeck: [EthosLabCommon, BalancedDoubleItem],
+			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
 			firstSaga: function* (con) {
 				const game = con.game
@@ -93,11 +79,6 @@ describe('Test Replays', () => {
 			},
 			afterFirstsaga: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-				// const turnActionsBuffer = Buffer.from([
-				// 	0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xc0, 0x00, 0x07, 0x00,
-				// 	0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xc0, 0x00, 0x05, 0x00, 0x07,
-				// 	0x00, 0x05, 0x00,
-				// ])
 				const turnActions = yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
