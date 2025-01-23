@@ -614,7 +614,6 @@ export function* bufferToTurnActions(
 		if (action.bytes !== 'variable') {
 			const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
-			console.log(action.turnAction)
 			const turnAction = action.decompress(con.game, bytes)
 			if (turnAction) {
 				replayActions.push({
@@ -645,8 +644,6 @@ export function* bufferToTurnActions(
 			}
 		}
 	}
-
-	console.log(replayActions)
 
 	return replayActions
 }
