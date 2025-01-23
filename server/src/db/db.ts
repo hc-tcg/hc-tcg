@@ -821,6 +821,7 @@ export class Database {
 					player1Defs,
 					player2Defs,
 					seed,
+					{},
 					replay,
 				)
 
