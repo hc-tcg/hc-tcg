@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -36,7 +37,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 
 export type GameSettings = {
 	maxTurnTime: number

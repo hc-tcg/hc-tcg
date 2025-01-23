@@ -4,33 +4,28 @@ import {
 	beforeAll,
 	beforeEach,
 	describe,
-	expect,
 	test,
 } from '@jest/globals'
-import {CARDS, CARDS_LIST} from 'common/cards'
+import {CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
+import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import Fortune from 'common/cards/single-use/fortune'
 import {config} from 'dotenv'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-	testReplayGame,
-} from '../unit/game/utils'
+import {Database} from 'server/db/db'
 import {
 	bufferToTurnActions,
 	turnActionsToBuffer,
 } from '../../server/src/routines/turn-action-compressor'
-import {Database} from 'server/db/db'
-import BalancedDoubleItem from 'common/cards/items/balanced-rare'
+import {
+	attack,
+	endTurn,
+	forfeit,
+	playCardFromHand,
+	testReplayGame,
+} from '../unit/game/utils'
 
 describe('Test Replays', () => {
 	let database: Database
@@ -97,11 +92,17 @@ describe('Test Replays', () => {
 			},
 			afterFirstsaga: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
+				// const turnActionsBuffer = Buffer.from([
+				// 	0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xc0, 0x00, 0x07, 0x00,
+				// 	0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0xc0, 0x00, 0x05, 0x00, 0x07,
+				// 	0x00, 0x05, 0x00,
+				// ])
 				console.log(turnActionsBuffer)
 				const turnActions = yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
 					con.game.rngSeed,
+					con.props,
 					turnActionsBuffer,
 				)
 				console.log(turnActions)
