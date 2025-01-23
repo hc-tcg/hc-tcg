@@ -58,6 +58,12 @@ export function* authenticateUser(
 	if (player && result.type === 'success') {
 		player.uuid = result.body.uuid
 		player.authenticated = true
+
+		const achievementProgress = yield* call(
+			[root.db, root.db.getAchievements],
+			player.uuid,
+		)
+
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
 	} else {
 		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})

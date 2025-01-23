@@ -186,7 +186,18 @@ function* gameManager(con: GameController) {
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
-		// Maybe push achievements here?
+		con.viewers.forEach((v) => {
+			if (v.spectator) return
+			const playerEntity = v.playerOnLeft.entity
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+			achievements.forEach((achievement) => {
+				// @TODO Add database bullshit here
+				achievement.props.id
+			})
+		})
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(

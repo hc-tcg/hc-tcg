@@ -15,7 +15,7 @@ export class PlayerModel {
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
-	public achievementProgress: Buffer<ArrayBuffer>[]
+	public achievementProgress: {progress: Buffer<ArrayBuffer>; completedDate: number | null}[] | undefined
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -29,7 +29,6 @@ export class PlayerModel {
 		this.socket = socket
 		this.uuid = ''
 		this.authenticated = false
-		this.achievementProgress = []
 	}
 
 	public get id() {

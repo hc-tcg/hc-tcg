@@ -1,5 +1,5 @@
 import {Achievement} from '../achievements/types'
-import type {AchievementEntity, ObserverEntity} from '../entities'
+import type {AchievementEntity, ObserverEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {GameHook} from '../types/hooks'
 
@@ -17,6 +17,7 @@ export class AchievementComponent<
 	progress: Buffer<ArrayBuffer>
 
 	observerEntity: ObserverEntity | null
+	player: PlayerEntity
 
 	hooks: {
 		onComplete: GameHook<() => void>
@@ -27,6 +28,7 @@ export class AchievementComponent<
 		entity: AchievementEntity,
 		achievement: number | Achievement,
 		initialProgress: Buffer<ArrayBuffer>,
+		player: PlayerEntity,
 	) {
 		this.game = game
 		this.entity = entity
@@ -42,5 +44,6 @@ export class AchievementComponent<
 		}
 
 		this.progress = initialProgress
+		this.player = player
 	}
 }

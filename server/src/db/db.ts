@@ -7,6 +7,7 @@ const {Pool} = pg
 import {CARDS} from 'common/cards'
 import {TypeT} from 'common/types/cards'
 import {
+	AchievementData,
 	CardStats,
 	DeckStats,
 	GamesStats,
@@ -112,14 +113,13 @@ export class Database {
 					FOREIGN KEY (tag_id) REFERENCES user_tags(tag_id) ON DELETE CASCADE
 				);
 				CREATE TABLE IF NOT EXISTS achievements(
-					achievement_id varchar(7) PRIMARY KEY NOT NULL,
+					achievement_id integer PRIMARY KEY NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS user_achievements(
 					user_id uuid REFERENCES users(user_id),
-					achievement_id varchar(7) REFERENCES achievements,
-					achievement varchar(255) NOT NULL,
-					progress integer NOT NULL,
-					completion_time timestamp,
+					achievement_id integer REFERENCES achievements,
+					progress bytea NOT NULL,
+					completion_time timestamp
 				);
 				`,
 			)
@@ -1332,12 +1332,44 @@ export class Database {
 	}
 
 	/**Get player achievements */
-	public async getAchievements(playerId: string) {
-		const achievements = this.pool.query(`
-				SELECT achievement_id, achievement, progress, completion_time
-				FROM 
-			`)
+	public async getAchievements(
+		playerId: string,
+	): Promise<DatabaseResult<AchievementData>> {
+		// @TODO this
+		try {
+			const achievements = (
+				await this.pool.query(
+					`
+				SELECT achievement_id, progress, completion_time
+				FROM achievements
+				WHERE user_id = $1
+				`,
+					[playerId],
+				)
+			).rows.toSorted(
+				(rowA: any, rowB: any) =>
+					rowA['achievement_id'] - rowB['achievement_id'],
+			)
 
-		return achievements
+			return {
+				type: 'success',
+				body: {
+					achievementData: achievements.map((row: any) => {
+						return {
+							progress: row['progress'],
+							completedDate: row['completion_time'],
+						}
+					}),
+				},
+			}
+		} catch (e) {
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
 	}
+
+	/**Update player achievements with their progress */
+	public async updateAchievements() {}
 }

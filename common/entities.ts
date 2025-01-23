@@ -1,11 +1,11 @@
 import type {
+	AchievementComponent,
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-	AchievementComponent,
 } from './components'
 import {AIComponent} from './components/ai-component'
 

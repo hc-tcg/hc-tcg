@@ -25,6 +25,7 @@ export type PlayerDefs = {
 	minecraftName: string
 	censoredName: string
 	disableDeckingOut?: true
+	achievementProgress?: Buffer<ArrayBuffer>[]
 }
 
 export class PlayerComponent {

@@ -1,8 +1,8 @@
+import {Buffer} from 'buffer'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import AchievementComponent from 'components/achievement'
 import MenuLayout from 'components/menu-layout'
 import css from './main-menu.module.scss'
-import AchievementComponent from 'components/achievement'
-import {ACHIEVEMENTS_LIST} from 'common/achievements'
-import {Buffer} from 'buffer'
 
 type Props = {
 	setMenuSection: (section: string) => void

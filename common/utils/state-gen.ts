@@ -59,6 +59,7 @@ export function setupComponents(
 		player1Component.entity,
 		player1.deck,
 		options,
+		player1.model.achievementProgress,
 	)
 	setupEcsForPlayer(
 		game,
@@ -66,6 +67,7 @@ export function setupComponents(
 		player2Component.entity,
 		player2.deck,
 		options,
+		player2.model.achievementProgress,
 	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
@@ -76,6 +78,7 @@ function setupEcsForPlayer(
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
 	options: ComponentSetupOptions,
+	achievementProgress: Buffer<ArrayBuffer>[] | undefined,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
@@ -155,24 +158,20 @@ function setupEcsForPlayer(
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
 
-	if (options.countAchievements) {
-		const data = Buffer.alloc(2)
-		data[1] = 24
-
+	if (options.countAchievements && achievementProgress) {
 		ACHIEVEMENTS_LIST.forEach((achievement) => {
 			const achievementComponent = components.new(
 				AchievementComponent,
 				achievement,
-				data,
+				achievementProgress[achievement.numericId],
+				playerEntity,
 			)
 			const achievementObserver = components.new(
 				ObserverComponent,
 				achievementComponent.entity,
 			)
 			achievementComponent.props.onGameStart(
-				achievementComponent.game,
 				achievementComponent,
-				playerEntity,
 				achievementObserver,
 			)
 		})

@@ -19,6 +19,7 @@ import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
+import Achievements from './main-menu/achievements'
 import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
@@ -26,7 +27,6 @@ import GameSettings from './main-menu/game-settings'
 import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
-import Achievements from './main-menu/achievements'
 
 function App() {
 	const section = useRouter()

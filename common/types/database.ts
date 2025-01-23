@@ -70,3 +70,7 @@ export type GamesStats = {
 	forfeitRate: number
 	errorRate: number
 }
+
+export type AchievementData = {
+	achievementData: {progress: Buffer<ArrayBuffer>; completedDate: number | null}[]
+}
